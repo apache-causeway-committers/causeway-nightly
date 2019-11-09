@@ -73,24 +73,37 @@ jobs:
     - name: Install Antora
       shell: bash
       working-directory: ${{ env.PROJECT_ROOT_PATH }}
-      run: npm i @antora/cli@2.2 @antora/site-generator-default@2.2 asciidoctor-plantuml
+      # we install the 'node' modules into the project root under 'node_modules', 
+      # because we have no privileges to install them globally with -g option
+      run: npm i @antora/cli@2.2 @antora/site-generator-default@2.2 asciidoctor-plantuml@1.3.1
       
     - name: Print Antora Version
       shell: bash
       working-directory: ${{ env.PROJECT_ROOT_PATH }}
       run: $(npm bin)/antora version
     
-    - name: Debug Directories
-      shell: bash
-      run: | 
-        ls -al /home/runner/work/isis-nightly/isis
-        ls -al /home/runner/work/isis-nightly/isis/node_modules
-        ls -al /home/runner/work/isis-nightly/isis/node_modules/@antora
-         
     - name: Build Apache Isis Site
       shell: bash
       working-directory: ${{ env.PROJECT_ROOT_PATH }}
-      run: $(npm bin)/antora --stacktrace site.yml
+      # builds static web content into ${PROJECT_ROOT_PATH}/antora/target/site,
+      # as specified in the site.yml file
+      run: |
+        $(npm bin)/antora --stacktrace site.yml
+        touch ${PROJECT_ROOT_PATH}/antora/target/site/.nojekyll 
+      
+    - name: List Docs Folder before Sync
+      shell: bash
+      run: ls -al $NIGHTLY_ROOT_PATH/docs
+      
+    - name: Rsync Site Content to Nighly Working Tree
+      shell: bash
+      working-directory: ${{ env.PROJECT_ROOT_PATH }}
+      run: rsync -av --delete --exclude ".git" antora/target/site $NIGHTLY_ROOT_PATH/docs
+      
+    - name: List Docs Folder after Sync
+      shell: bash
+      run: ls -al $NIGHTLY_ROOT_PATH/docs
+      
          
 #    - name: Build Mixins
 #      shell: bash
