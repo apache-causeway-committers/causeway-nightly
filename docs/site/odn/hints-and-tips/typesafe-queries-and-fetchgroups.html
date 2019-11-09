@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Typesafe Queries and Fetch-groups :: Apache Isis</title>
+    <link rel="canonical" href="https://isis.apache.org/odn/hints-and-tips/typesafe-queries-and-fetchgroups.html">
+    <meta name="generator" content="Antora 2.0.0">
+    <link rel="stylesheet" href="../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://isis.apache.org">Apache Isis</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Products</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">Product A</a>
+            <a class="navbar-item" href="#">Product B</a>
+            <a class="navbar-item" href="#">Product C</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Services</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">Service A</a>
+            <a class="navbar-item" href="#">Service B</a>
+            <a class="navbar-item" href="#">Service C</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Resources</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">Resource A</a>
+            <a class="navbar-item" href="#">Resource B</a>
+            <a class="navbar-item" href="#">Resource C</a>
+          </div>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="button is-primary" href="#">Download</a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="odn" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../about.html">DataNucleus ObjectStore</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../about.html">About</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../configuring.html">Configuring</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../configuring/properties.html">Properties</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../configuring/bulk-load.html">Bulk Load</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../configuring/disabling-persistence-by-reachability.html">Disabling Persistence by Reachability</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../configuring/persistence-xml.html">Persistence XML</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../configuring/using-jndi-data-source.html">Using JNDI Data Source</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../jdo-mappings.html">JDO Mappings</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../jdo-mappings/1-to-m-bidirectional-relationships.html">1-to-m bidirectional relationships</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../jdo-mappings/mandatory-properties-in-subtypes.html">Mandatory properties in subtypes</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../jdo-mappings/mapping-to-a-view.html">Mapping to a View</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../db-schemas.html">DB Schemas</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../hints-and-tips.html">Hints-n-Tips</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="overriding-jdo-annotations.html">Overriding JDO Annotations</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="subtype-entity-not-fully-populated.html">Subtype entity not fully populated</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="java8.html">Java 8</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="diagnosing-n-plus-1.html">Diagnosing n-plus-1</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="typesafe-queries-and-fetchgroups.html">Typesafe Queries and Fetchgroups</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="jdoql-and-timestamps.html">JDOQL and Timestamps</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">DataNucleus ObjectStore</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component">
+      <span class="title">Architecture & Design</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../archdesign/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component is-current">
+      <span class="title">DataNucleus ObjectStore</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Example App - Demo</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../demoapp/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Example App - Hello World</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../helloworld/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Example App - SimpleApp</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../simpleapp/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Extensions - SecMan</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../ext-secman/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Fundamentals & Beyond</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../ug/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Guides - Reference Guides</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../rg/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Maven Dependencies</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../mavendeps/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Migration Notes</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../mignotes/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Release Notes</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../relnotes/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Restful Objects Viewer</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../vro/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Runtime Services</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../runtime-services/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Security</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../security/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">SmokeTest App</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../smoketests/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Table of Contents</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../toc/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Testing</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../testing/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Wicket Viewer</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../vw/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main>
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../toc/about.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../about.html">DataNucleus ObjectStore</a></li>
+    <li><a href="../about.html">About</a></li>
+    <li><a href="../hints-and-tips.html">Hints-n-Tips</a></li>
+    <li><a href="typesafe-queries-and-fetchgroups.html">Typesafe Queries and Fetchgroups</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/hobrom/antora/isis/core/plugins/jdo/_adoc/modules/ROOT/pages/hints-and-tips/typesafe-queries-and-fetchgroups.adoc">Edit this Page</a></div>
+  </div>
+<article class="doc">
+<h1 class="page">Typesafe Queries and Fetch-groups</h1>
+<div class="paragraph">
+<p>Fetch groups provide a means to hint to DataNucleus that it should perform a SQL join when querying.
+A common use case is to avoid the <a href="diagnosing-n-plus-1.html" class="page">n+1</a> issue.</p>
+</div>
+<div class="paragraph">
+<p>(So far as I could ascertain) it isn&#8217;t possible to specify fetch group hints using JDOQL, but it is possible to specify them using the programmatic API or using typesafe queries.</p>
+</div>
+<div class="paragraph">
+<p>For example, here&#8217;s a JDOQL query:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Query(
+		name = "findCompletedOrLaterWithItemsByReportedDate", language = "JDOQL",
+		value = "SELECT "
+				+ "FROM org.estatio.capex.dom.invoice.IncomingInvoice "
+				+ "WHERE items.contains(ii) "
+				+ "   &amp;&amp; (ii.reportedDate == :reportedDate) "
+				+ "   &amp;&amp; (approvalState != 'NEW' &amp;&amp; approvalState != 'DISCARDED') "
+				+ "VARIABLES org.estatio.capex.dom.invoice.IncomingInvoiceItem ii "
+),
+public class IncomingInvoice ... { /* ... */ }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>which normally would be used from a repository:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public List&lt;IncomingInvoice&gt; findCompletedOrLaterWithItemsByReportedDate(
+        final LocalDate reportedDate) {
+    return repositoryService.allMatches(
+            new QueryDefault&lt;&gt;(
+                    IncomingInvoice.class,
+                    "findCompletedOrLaterWithItemsByReportedDate",
+                    "reportedDate", reportedDate));
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This can be re-written as a type-safe query as follows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public List&lt;IncomingInvoice&gt; findCompletedOrLaterWithItemsByReportedDate(final LocalDate reportedDate) {
+
+    final QIncomingInvoice ii = QIncomingInvoice.candidate();
+    final QIncomingInvoiceItem iii = QIncomingInvoiceItem.variable("iii");
+
+    final TypesafeQuery&lt;IncomingInvoice&gt; q =
+        isisJdoSupport.newTypesafeQuery(IncomingInvoice.class);
+
+    q.filter(
+            ii.items.contains(iii)
+        .and(iii.reportedDate.eq(reportedDate))
+        .and(ii.approvalState.ne(IncomingInvoiceApprovalState.NEW))
+        .and(ii.approvalState.ne(IncomingInvoiceApprovalState.DISCARDED)));
+    final List&lt;IncomingInvoice&gt; incomingInvoices = Lists.newArrayList(q.executeList());
+    q.closeAll();
+    return incomingInvoices;
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Now the <code>IncomingInvoice</code> has four fields that require eager loading.
+This can be specified by defining a named fetch group:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@FetchGroup(
+        name="seller_buyer_property_bankAccount",
+        members={
+                @Persistent(name="seller"),
+                @Persistent(name="buyer"),
+                @Persistent(name="property"),
+                @Persistent(name="bankAccount")
+        })
+public class IncomingInvoice ... { /* ... */ }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This fetch group can then be used in the query using <code>q.getFetchPlan().addGroup(&#8230;&#8203;)</code>.
+Putting this all together, we get:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public List&lt;IncomingInvoice&gt; findCompletedOrLaterWithItemsByReportedDate(final LocalDate reportedDate) {
+
+    final QIncomingInvoice ii = QIncomingInvoice.candidate();
+    final QIncomingInvoiceItem iii = QIncomingInvoiceItem.variable("iii");
+
+    final TypesafeQuery&lt;IncomingInvoice&gt; q =
+        isisJdoSupport.newTypesafeQuery(IncomingInvoice.class);
+
+    q.getFetchPlan().addGroup("seller_buyer_property_bankAccount");     <i class="conum" data-value="1"></i><b>(1)</b>
+
+    q.filter(
+            ii.items.contains(iii)
+        .and(iii.reportedDate.eq(reportedDate))
+        .and(ii.approvalState.ne(IncomingInvoiceApprovalState.NEW))
+        .and(ii.approvalState.ne(IncomingInvoiceApprovalState.DISCARDED)));
+    final List&lt;IncomingInvoice&gt; incomingInvoices = Lists.newArrayList(q.executeList());
+    q.closeAll();
+    return incomingInvoices;
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>specify the fetch group to use.</td>
+</tr>
+</table>
+</div>
+</article>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../_/js/site.js"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>
