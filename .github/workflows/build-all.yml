@@ -28,19 +28,27 @@ jobs:
       SHARED_VARS_FILE: /home/runner/.env
 
     steps:
+    - name: Checkout Nightly
+    - uses: actions/checkout@v1
+    
+    - name: Checkout Apache Isis
     - uses: actions/checkout@v1
       with:
         repository: apache/isis
         ref: refs/heads/master
         token: ${{ secrets.GitHub_PAT }}
+    
     - name: Set up JDK 11
       uses: actions/setup-java@v1
       with:
         java-version: 11
+    
     - name: Print Maven Version
       run: mvn --version
+    
     - name: Print Node Version
       run: node --version
+    
     - name: Setup Script Environment
       shell: bash
       # we write the more tricky varibles to the $SHARED_VARS_FILE using the full power of bash commands
@@ -56,6 +64,7 @@ jobs:
         echo MVN_STAGES\: $MVN_STAGES
         cat $SHARED_VARS_FILE
         echo ======================================
+    
     - name: Build Mixins
       shell: bash
       run: bash $CI_SCRIPTS_PATH/build-mixins.sh
