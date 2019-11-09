@@ -97,12 +97,18 @@ jobs:
       # rsync verbose, recursive and skip based on checksum
       run: rsync -avc --delete --exclude ".git" antora/target/site/* $NIGHTLY_ROOT_PATH/docs
       
-    - name: Commit Nightly Site Update
+    - name: Commit Site Update
       shell: bash
       run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
         git add ./docs
-        git commit -m "CI triggered site update $TIMESTAMP"
-        git push github HEAD:${GITHUB_REF}
+        git commit -m "CI automated site update" -a
+        
+    - name: Push Site Update
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
       
          
 #    - name: Build Mixins
