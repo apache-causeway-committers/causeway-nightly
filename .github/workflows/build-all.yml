@@ -91,18 +91,18 @@ jobs:
         $(npm bin)/antora --stacktrace site.yml
         touch ${PROJECT_ROOT_PATH}/antora/target/site/.nojekyll 
       
-    - name: List Docs Folder before Sync
-      shell: bash
-      run: ls -al $NIGHTLY_ROOT_PATH/docs
-      
     - name: Rsync Site Content to Nighly Working Tree
       shell: bash
       working-directory: ${{ env.PROJECT_ROOT_PATH }}
-      run: rsync -av --delete --exclude ".git" antora/target/site/* $NIGHTLY_ROOT_PATH/docs
+      # rsync verbose, recursive and skip based on checksum
+      run: rsync -avc --delete --exclude ".git" antora/target/site/* $NIGHTLY_ROOT_PATH/docs
       
-    - name: List Docs Folder after Sync
+    - name: Commit Nightly Site Update
       shell: bash
-      run: ls -al $NIGHTLY_ROOT_PATH/docs
+      run: |
+        git add ./docs
+        git commit -m "CI triggered site update $TIMESTAMP"
+        git push github HEAD:${GITHUB_REF}
       
          
 #    - name: Build Mixins
