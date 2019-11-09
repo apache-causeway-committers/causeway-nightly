@@ -13,6 +13,7 @@ jobs:
       CI_SCRIPTS_PATH: /home/runner/work/isis-nightly/isis/scripts/ci
       
       NIGHTLY_ROOT_PATH: ${{ github.workspace }}
+      NIGHTLY_SCRIPTS_PATH: ${{ github.workspace }}/scripts
       
       # not used, would be nice if we could transform the TIMESTAMP string into the REVISION 
       # variable here, but it seems github not yet has any string expression manipulation 
@@ -64,10 +65,23 @@ jobs:
         echo MVN_STAGES\: $MVN_STAGES
         cat $SHARED_VARS_FILE
         echo ======================================
-    
-    - name: Build Mixins
+
+    - name: Install NWM and latest Node release
       shell: bash
-      run: bash $CI_SCRIPTS_PATH/build-mixins.sh
+      run: |
+        bash $NIGHTLY_SCRIPTS_PATH/install-nwm.sh
+        nvm install --lts
+      
+    - name: Install antora
+      shell: bash
+      run: |
+        npm i -g @antora/cli@2.2 @antora/site-generator-default@2.2
+        antora version
+         
+#    - name: Build Mixins
+#      shell: bash
+#      run: bash $CI_SCRIPTS_PATH/build-mixins.sh
+
 #    - name: Build Core
 #      shell: bash
 #      run: bash $CI_SCRIPTS_PATH/build-core.sh
