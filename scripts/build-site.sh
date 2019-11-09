@@ -1,9 +1,15 @@
 #!/bin/bash
 set -e
 
-# just a stub yet
+SITE_CONFIG=$1
 
-# TODO ??? checkout the nightly repo
-# TODO ??? cd to checked out apache/isis/master
-# antora site.yml
+#disable sitemap xml file generation
+sed -i '/^  url.*$/s/^/#/' $SITE_CONFIG
+
+# run antora
+$(npm bin)/antora --stacktrace $SITE_CONFIG
+
+# add a marker, to the github not to use jekyll on the github pages folder
+touch ${PROJECT_ROOT_PATH}/antora/target/site/.nojekyll
+
 

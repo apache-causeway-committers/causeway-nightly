@@ -87,10 +87,7 @@ jobs:
       working-directory: ${{ env.PROJECT_ROOT_PATH }}
       # builds static web content into ${PROJECT_ROOT_PATH}/antora/target/site,
       # as specified in the site.yml file
-      run: |
-        "sed -i '/^  url.*$/s/^/#/' site.yml"
-        $(npm bin)/antora --stacktrace site.yml
-        touch ${PROJECT_ROOT_PATH}/antora/target/site/.nojekyll 
+      run: bash $NIGHTLY_SCRIPTS_PATH/build-site.sh site.yml
       
     - name: Rsync Site Content to Nighly Working Tree
       shell: bash
