@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Transactions and Errors :: Apache Isis</title>
+    <link rel="canonical" href="https://isis.apache.org/ug/btb/hints-and-tips/transactions-and-errors.html">
+    <meta name="generator" content="Antora 2.0.0">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://isis.apache.org">Apache Isis</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Products</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">Product A</a>
+            <a class="navbar-item" href="#">Product B</a>
+            <a class="navbar-item" href="#">Product C</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Services</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">Service A</a>
+            <a class="navbar-item" href="#">Service B</a>
+            <a class="navbar-item" href="#">Service C</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Resources</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">Resource A</a>
+            <a class="navbar-item" href="#">Resource B</a>
+            <a class="navbar-item" href="#">Resource C</a>
+          </div>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="button is-primary" href="#">Download</a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="ug" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../about.html">Fundamentals &amp; Beyond</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../about.html">About</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../../fun/about.html">Fundamentals</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../fun/core-concepts.html">Core Concepts</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../fun/building-blocks.html">Building Blocks</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../fun/programming-model.html">Programming Model</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../fun/ui-hints.html">UI Hints</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../fun/crud.html">CRUD</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../fun/business-rules.html">Business Rules</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../fun/drop-downs-and-defaults.html">Drop downs and Defaults</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../fun/available-domain-services.html">Available Domain Services</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../about.html">Beyond the Basics</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../i18n.html">i18n</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../headless-access.html">Headless Access</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../hints-and-tips.html">Hints-n-Tips</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../programming-model.html">Programming Model</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../deployment.html">Deployment</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../web-xml.html">web.xml</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Fundamentals &amp; Beyond</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component">
+      <span class="title">Architecture & Design</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../archdesign/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">DataNucleus ObjectStore</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../odn/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Example App - Demo</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../demoapp/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Example App - Hello World</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../helloworld/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Example App - SimpleApp</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../simpleapp/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Extensions - SecMan</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../ext-secman/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component is-current">
+      <span class="title">Fundamentals & Beyond</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Guides - Reference Guides</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../rg/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Maven Dependencies</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../mavendeps/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Migration Notes</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../mignotes/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Release Notes</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../relnotes/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Restful Objects Viewer</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../vro/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Runtime Services</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../runtime-services/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Security</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../security/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">SmokeTest App</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../smoketests/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Table of Contents</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../toc/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Testing</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../testing/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Wicket Viewer</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../vw/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main>
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../toc/about.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../about.html">Fundamentals & Beyond</a></li>
+    <li><a href="transactions-and-errors.html">Transactions and Errors</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///home/hobrom/antora/isis/antora/components/userguide/modules/btb/pages/hints-and-tips/transactions-and-errors.adoc">Edit this Page</a></div>
+  </div>
+<article class="doc">
+<h1 class="page">Transactions and Errors</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>In Apache Isis, every interaction (action invocation or property edit) is automatically wrapped in a transaction,
+and any repository query automatically does a flush before hand.</p>
+</div>
+<div class="paragraph">
+<p>What that means is that there&#8217;s no need to explicitly start or commit transactions in Apache Isis; this will be done
+for you. Indeed, if you do try to manage transactions (eg by reaching into the JDO <code>PersistenceManager</code> exposed by the
+<a href="../../../rg/svc/persistence-layer-api/IsisJdoSupport.html" class="page">IsisJdoSupport</a> domain service, then you are likely to confuse the
+framework and get a stack trace for your trouble.</p>
+</div>
+<div class="paragraph">
+<p>However, you can complete a given transaction and start a new one.  This is sometimes useful if writing a fixture
+script which is going to perform some sort of bulk migration of data from an old system.  For this use case, use the
+<a href="../../../rg/svc/application-layer-api/TransactionService.html" class="page"><code>TransactionService</code></a>.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class SomeLongRunningFixtureScript extends FixtureScript
+
+    protected void execute(final ExecutionContext executionContext) {
+        // do some work
+        transactionService.nextTransaction();
+        // do some work
+        transactionService.nextTransaction();
+        // do yet more work
+    }
+
+    @javax.inject.Inject
+    TransactionService transactionService;
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You get the idea.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="raise-message-in-the-ui"><a class="anchor" href="#raise-message-in-the-ui"></a>Raise message in the UI</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The framework provides the <a href="../../../rg/svc/application-layer-api/MessageService.html" class="page"><code>MessageService</code></a> as a means to return an out-of-band
+message to the end-user.  In the <a href="../../../vw/about.html" class="page">Wicket viewer</a> these are shown as "toast" pop-ups; the
+<a href="../../../vro/about.html" class="page">Restful Objects viewer</a> returns an HTTP header.</p>
+</div>
+<div class="paragraph">
+<p>The <code>UserService</code> provides three APIs, for different:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>informUser()</code> - an informational message.  In the Wicket viewer these are short-lived pop-ups that disappear after a short time.</p>
+</li>
+<li>
+<p><code>warnUser()</code> - a warning.  In the Wicket viewer these do not auto-close; they must be acknowledged.</p>
+</li>
+<li>
+<p><code>raiseError()</code> - an error.  In the Wicket viewer these do not auto-close; they must be acknowledged.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Each pop-up has a different background colour indicating its severity.</p>
+</div>
+<div class="paragraph">
+<p>None of these messages/errors has any influence on the transaction; any changes to objects will be committed.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="aborting-transactions"><a class="anchor" href="#aborting-transactions"></a>Aborting transactions</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If you want to abort Apache Isis' transaction, this can be done by throwing an exception.  The exception message
+is displayed to the user on the error page (if <a href="../../../vw/about.html" class="page">Wicket viewer</a>) or a 500 status error code (if the
+<a href="../../../vro/about.html" class="page">Restful Objects</a> viewer).</p>
+</div>
+<div class="paragraph">
+<p>If the exception thrown is because of an unexpected error (eg a <code>NullPointerException</code> in the domain app itself), then
+the error page will include a stack trace.  If however you want to indicate that the exception is in some sense
+"expected", then throw a <code>RecoverableException</code> (or any subclass, eg <code>ApplicationException</code>); the stack trace will then
+be suppressed from the error page.</p>
+</div>
+<div class="paragraph">
+<p>Another way in which exceptions might be considered "expected" could be as the result of attempting to persist an
+object which then violates some type of database constraint.  Even if the domain application checks beforehand, it
+could be that another user operating on the object at the same moment of time might result in the conflict.</p>
+</div>
+<div class="paragraph">
+<p>To handle this the <a href="../../../rg/svc/presentation-layer-spi/ExceptionRecognizer.html" class="page"><code>ExceptionRecognizer</code></a> SPI can be used.  The
+framework provides a number of implementations out-of-the-box; whenever an exception is thrown it is passed to each
+known recognizer implementation to see if it recognizes the exception and can return a user-meaningful error message.
+For example, <code>ExceptionRecognizerForSQLIntegrityConstraintViolationUniqueOrIndexException</code> checks if the
+exception inherits from <code>java.sql.SQLIntegrityConstraintViolationException</code>, and if so, constructs a suitable message.</p>
+</div>
+</div>
+</div>
+</article>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script src="../../../_/js/site.js"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>
