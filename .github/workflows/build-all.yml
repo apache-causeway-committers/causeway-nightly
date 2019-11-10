@@ -1,10 +1,19 @@
 name: Build Package Push All
 
-on: [push]
+on:
+  push:
+    branches:
+      - master
+#  pull_request:
+#    branches:
+#      - master
+    schedule:
+      # daily 04:00 in the morning
+      - cron: "0 4 * * *"
 
 jobs:
   build:
-    name: build
+    name: build-package-push-all
     runs-on: ubuntu-latest
     env:
       # to be shared amoung all steps of this job
@@ -20,9 +29,9 @@ jobs:
       # operators other than concatination   
       TIMESTAMP: ${{ github.event.head_commit.timestamp }}
       
-      # set this to 'deploy' when intent is to push the built packages to a repo
+      # set this to 'deploy' when intent is to push the built packages to a repo, 'install' otherwise
       # requires 'secrets' which we don't have yet 
-      MVN_STAGES: install
+      MVN_STAGES: deploy
       
       # though equivalent, setting SHARED_VARS_FILE to ~/.env breaks the build, not sure why
       # the tilde character appears to produce strange side-effects when used here  
@@ -91,24 +100,23 @@ jobs:
       
     - name: Rsync Site Content to Nightly Working Tree
       shell: bash
-      working-directory: ${{ env.PROJECT_ROOT_PATH }}
-      # rsync verbose, recursive and skip based on checksum
-      run: rsync -avc --delete --exclude ".git" antora/target/site/* $NIGHTLY_ROOT_PATH/docs
+      run: bash $NIGHTLY_SCRIPTS_PATH/rsync-site.sh 
       
     - name: Commit Site Update
       shell: bash
+      # will noop if git tree has not changed (see diff commands below)
       run: |
         git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
+        git config --local user.name "Apache Isis Committers (Bot)"
         git add ./docs
         git diff --quiet && git diff --staged --quiet || git commit -m "CI automated site update" -a
         
     - name: Push Site Update
+      # uses a predefinded action that does exactly this; will noop if git tree has not changed 
       uses: ad-m/github-push-action@master
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
       
-         
 #    - name: Build Mixins
 #      shell: bash
 #      run: bash $CI_SCRIPTS_PATH/build-mixins.sh
