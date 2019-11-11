@@ -128,7 +128,10 @@ jobs:
       run: bash $CI_SCRIPTS_PATH/build-mixins.sh
       
     - name: Push Mixins
-      run: ./mvnw -B -s $NIGHTLY_ROOT_PATH/.mvn/nightly-settings.xml -Drepository.url=https://${GITHUB_ACTOR}:${{ secrets.GITHUB_TOKEN }}@github.com/${GITHUB_REPOSITORY}.git
+      working-directory: ${{ env.PROJECT_ROOT_PATH }}
+      #run: ./mvnw -B -s $NIGHTLY_ROOT_PATH/.mvn/nightly-settings.xml -Drepository.url=https://${GITHUB_ACTOR}:${{ secrets.GITHUB_TOKEN }}@github.com/${GITHUB_REPOSITORY}.git
+      run: mvn -s $NIGHTLY_ROOT_PATH/.mvn/nightly-settings.xml deploy -Dregistry=https://maven.pkg.github.com/apache-isis-committers -Dtoken=GH_TOKEN
+      
 
 #    - name: Build Core
 #      shell: bash
