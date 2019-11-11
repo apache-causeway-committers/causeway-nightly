@@ -8,7 +8,7 @@ source $SHARED_VARS_FILE && export $(cut -d= -f1 $SHARED_VARS_FILE)
 
 sh $CI_SCRIPTS_PATH/print-environment.sh "nightly-build-mixins"
 
-echo "\$GH_DEPLOY_ACTOR:   ${GH_DEPLOY_ACTOR}"
+echo "\$GH_DEPLOY_OWNER:   ${GH_DEPLOY_OWNER}"
 echo "\$GITHUB_REPOSITORY: ${GITHUB_REPOSITORY}"
 
 cd $PROJECT_ROOT_PATH/mixins
@@ -28,9 +28,7 @@ mvn versions:set -DnewVersion=$REVISION
 mvn -s $NIGHTLY_ROOT_PATH/.m2/nightly-settings.xml \
     --batch-mode \
     $MVN_STAGES \
-    -Dgithub-deploy.repositoryUrl=https://${GH_DEPLOY_ACTOR}:${GH_DEPLOY_TOKEN}@github.com/${GITHUB_REPOSITORY}.git \
-    -Dregistry=https://maven.pkg.github.com/apache-isis-committers \ 
-    -Dtoken=$GH_DEPLOY_TOKEN \
+    -Dgithub-deploy.repositoryUrl=https://maven.pkg.github.com/${GITHUB_REPOSITORY} \
     -Drevision=$REVISION \
     -Dskip.mavenmixin-standard \
     -Dskip.mavenmixin-surefire \
