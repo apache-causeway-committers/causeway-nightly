@@ -11,10 +11,7 @@ sh $CI_SCRIPTS_PATH/print-environment.sh "nightly-build-mixins"
 echo "\$GH_DEPLOY_OWNER:   ${GH_DEPLOY_OWNER}"
 echo "\$GITHUB_REPOSITORY: ${GITHUB_REPOSITORY}"
 
-cd $PROJECT_ROOT_PATH/mixins
-
-# can't use flatten pom, so have to edit directly instead...
-mvn versions:set -DnewVersion=$REVISION
+cd $PROJECT_ROOT_PATH/core
 
 # setting 'github-deploy.repositoryUrl' activates the 'github-deploy' maven profile as defined in the pom.xml
 # the 'github-deploy' profile is mapped to the server setting as declared in '.m2/nightly-settings.xml'  
@@ -23,13 +20,8 @@ mvn -s $NIGHTLY_ROOT_PATH/.m2/nightly-settings.xml \
     $MVN_STAGES \
     -Dgithub-deploy.repositoryUrl=https://maven.pkg.github.com/${GITHUB_REPOSITORY} \
     -Drevision=$REVISION \
-    -Dskip.mavenmixin-standard \
-    -Dskip.mavenmixin-surefire \
-    -Dskip.mavenmixin-datanucleus-enhance \
+    -Dskip.assemble-zip \
     $CORE_ADDITIONAL_OPTS
-
-# revert the edits from earlier ...
-mvn versions:revert
 
 cd $PROJECT_ROOT_PATH
 

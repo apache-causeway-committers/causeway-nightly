@@ -59,9 +59,6 @@ jobs:
     - name: Print Maven Version
       run: mvn --version
     
-    - name: Print Node Version
-      run: node --version
-    
     - name: Setup Script Environment
       shell: bash
       # we write the more tricky varibles to the $SHARED_VARS_FILE using the full power of bash commands
@@ -78,15 +75,15 @@ jobs:
         cat $SHARED_VARS_FILE
         echo ======================================
       
-    - name: Build Mixins
+    - name: Build and Push Mixins (github packages)
       shell: bash
       working-directory: ${{ env.PROJECT_ROOT_PATH }}
       run: bash $NIGHTLY_SCRIPTS_PATH/nightly-build-mixins.sh
 
-#    - name: Build Core
-#      shell: bash
-#      run: bash $CI_SCRIPTS_PATH/build-core.sh
-        
+    - name: Build and Push Core (github packages)
+      shell: bash
+      working-directory: ${{ env.PROJECT_ROOT_PATH }}
+      run: bash $NIGHTLY_SCRIPTS_PATH/nightly-build-core.sh
  
 # FOR DEBUG USE
 #   - name: Dump GitHub context 
