@@ -6,7 +6,7 @@ echo "Shared Vars File: ${SHARED_VARS_FILE}"
 # import shared vars (non secret!)
 source $SHARED_VARS_FILE && export $(cut -d= -f1 $SHARED_VARS_FILE)
 
-sh $CI_SCRIPTS_PATH/print-environment.sh "nightly-build-mixins"
+sh $CI_SCRIPTS_PATH/print-environment.sh "nightly-build-core"
 
 echo "\$GH_DEPLOY_OWNER:   ${GH_DEPLOY_OWNER}"
 echo "\$GITHUB_REPOSITORY: ${GITHUB_REPOSITORY}"
