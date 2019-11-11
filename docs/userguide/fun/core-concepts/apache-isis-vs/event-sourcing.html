@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Apache Isis vs Event Sourcing :: Apache Isis</title>
+    <meta name="generator" content="Antora 2.2.0">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+    <link rel="stylesheet" href="../../../../_/css/site-custom.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="../../../..">Apache Isis</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Quick Start</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item navbar-heading" href="/toc/quick-start.html#starter-apps">Starter Apps</a>
+            <a class="navbar-item" href="/helloworld/about.html">Hello World</a>
+            <a class="navbar-item" href="/simpleapp/about.html">Simple App</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Guides</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item navbar-heading" href="/toc/guides.html#user-guides">User Guides</a>
+            <a class="navbar-item" href="/ug/about.html">Fundamentals & Beyond</a>
+            <a class="navbar-item" href="/demoapp/about.html">Demo App</a>
+            <hr class="navbar-divider"/>
+            <a class="navbar-item navbar-heading" href="/toc/guides.html#reference-guides">Reference Guides</a>
+            <a class="navbar-item" href="/rg/ant/about.html">Annotations</a>
+            <a class="navbar-item" href="/rg/svc/about.html">Domain Services</a>
+            <a class="navbar-item" href="/rg/cfg/about.html">Core Config Properties</a>
+            <a class="navbar-item" href="/rg/cms/about.html">Classes, Methods &amp; Schema</a>
+            <hr class="navbar-divider"/>
+            <a class="navbar-item navbar-heading" href="/toc/guides.html#testing-prototyping">Testing &amp; Prototyping</a>
+            <a class="navbar-item" href="/testing/about.html">Unit & Integ Testing</a>
+            <a class="navbar-item" href="/ext-fixtures/about.html">Fixtures (extension)</a>
+            <a class="navbar-item" href="/ext-specsupport/about.html">BDD (extension)</a>
+            <!--
+            <a class="navbar-item" href="/rg/mvn/about.html">Maven plugin</a>
+            -->
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Components</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item navbar-heading" href="/toc/components.html#wicket-viewer">Wicket Viewer</a>
+            <a class="navbar-item" href="/vw/about.html">User Guide</a>
+            <a class="navbar-item" href="/ext-viewer-wicket-excel/about.html">Excel download (extension)</a>
+            <a class="navbar-item" href="/ext-asciidoc/about.html">Asciidoc value type (extension)</a>
+            <a class="navbar-item" href="/ext-markdown/about.html">Markdown value type (extension)</a>
+            <hr class="navbar-divider"/>
+            <a class="navbar-item navbar-heading" href="/toc/components.html#wicket-viewer">Restful Objects Viewer</a>
+            <a class="navbar-item" href="/vro/about.html">User Guide</a>
+            <hr class="navbar-divider"/>
+            <a class="navbar-item navbar-heading" href="/toc/components.html#datanucleus-object-store">DataNucleus Object Store</a>
+            <a class="navbar-item" href="/odn/about.html">User Guide</a>
+            <hr class="navbar-divider"/>
+            <a class="navbar-item navbar-heading" href="/toc/components.html#security">Security</a>
+            <a class="navbar-item" href="/security/about.html">User Guide</a>
+            <a class="navbar-item" href="/ext-secman/about.html">SecMan (extension)</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Support</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item navbar-heading" href="/toc/support.html#resources">Resources</a>
+            <a class="navbar-item" href="/toc/devguide/about.html">Developers' Guide</a>
+            <a class="navbar-item" href="/mavendeps/about.html">Maven mixins</a>
+            <hr class="navbar-divider"/>
+            <a class="navbar-item navbar-heading" href="/toc/support.html#help">Mailing Lists</a>
+            <a class="navbar-item" href="/toc/mailing-list/how-to-subscribe.html">How to subscribe</a>
+            <a class="navbar-item" href="https://lists.apache.org/list.html?users@isis.apache.org">Archives (ASF Pony Mail)</a>
+            <a class="navbar-item" href="http://isis.markmail.org/search/?q=">Archives (Markmail)</a>
+            <hr class="navbar-divider"/>
+            <a class="navbar-item navbar-heading" href="/toc/support.html#releases">Releases</a>
+            <a class="navbar-item" href="/toc/downloads/how-to.html">Downloads</a>
+            <a class="navbar-item" href="/relnotes/about.html">Release Notes</a>
+            <a class="navbar-item" href="/mignotes/about.html">Migration Notes</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item">Other Resources</span>
+            <a class="navbar-item" href="https://issues.apache.org/jira/browse/ISIS">ASF JIRA</a>
+            <a class="navbar-item" href="https://cwiki.apache.org/confluence/display/ISIS/Index">ASF Wiki</a>
+            <a class="navbar-item" href="https://fisheye.apache.org/browse/~br=master/isis-git/">ASF Fisheye</a>
+            <a class="navbar-item" href="http://stackoverflow.com/questions/tagged/isis">Stack Overflow</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Internal</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item navbar-heading" href="/toc/internal.html#committers">Committers</a>
+            <a class="navbar-item" href="/toc/comguide/about.html">Committers' Guide</a>
+            <hr class="navbar-divider"/>
+            <a class="navbar-item navbar-heading" href="/toc/internal.html#implementation">Implementation</a>
+            <a class="navbar-item" href="/archdesign/about.html">Architecture & Design</a>
+            <a class="navbar-item" href="/fis/about.html">Framework Internal Services</a>
+            <a class="navbar-item" href="/smoketests/about.html">SmokeTest App</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">@ASF</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://www.apache.org/">Apache Homepage</a>
+            <a class="navbar-item" href="https://www.apache.org/events/current-event">Events</a>
+            <a class="navbar-item" href="https://www.apache.org/licenses/">Licenses</a>
+            <a class="navbar-item" href="https://www.apache.org/security/">Security</a>
+            <a class="navbar-item" href="https://www.apache.org/foundation/sponsorship.html">Sponsorship</a>
+            <a class="navbar-item" href="https://www.apache.org/foundation/thanks.html">Thanks</a>
+            <hr class="navbar-divider"/>
+            <a class="navbar-item" href="https://whimsy.apache.org/board/minutes/Isis.html">PMC board minutes</a>
+          </div>
+        </div>
+        <a class="navbar-item" href="/toc/about.html">
+          <span class="icon">
+            <img src="/_/img/isis-logo-48x48.png"></img>
+          </span>
+        </a>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="userguide" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../../about.html">Fundamentals &amp; Beyond</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../../about.html">About</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../../about.html">Fundamentals</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../core-concepts.html">Core Concepts</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../building-blocks.html">Building Blocks</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../programming-model.html">Programming Model</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../ui-hints.html">UI Hints</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../crud.html">CRUD</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../business-rules.html">Business Rules</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../drop-downs-and-defaults.html">Drop downs and Defaults</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../available-domain-services.html">Available Domain Services</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../../../btb/about.html">Beyond the Basics</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../btb/i18n.html">i18n</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../btb/headless-access.html">Headless Access</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../btb/hints-and-tips.html">Hints-n-Tips</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../btb/programming-model.html">Programming Model</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../btb/deployment.html">Deployment</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../btb/web-xml.html">web.xml</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Fundamentals &amp; Beyond</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component">
+      <span class="title">Core</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../../core/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">DataNucleus ObjectStore</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../../odn/index.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Example App - Demo</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../../demoapp/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Example App - Hello World</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../../helloworld/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Example App - SimpleApp</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../../simpleapp/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Extensions</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../../extensions/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Extensions - SecMan</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../../ext-secman/secman/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component is-current">
+      <span class="title">Fundamentals & Beyond</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../../about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Guides - Reference Guides</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../../refguide/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Maven Dependencies</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../../mavendeps/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Maven Mixins</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../../mixins/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Migration Notes</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../../mignotes/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Release Notes</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../../relnotes/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">REST Client</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../../vro/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">secman</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../../secman/index.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Security</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../../security/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Table of Contents</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../../toc/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Testing</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../../testing/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Viewer Wicket Excel (Excel Download Extensions)</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../../vw/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main role="main">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../../toc/about.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../../about.html">Fundamentals & Beyond</a></li>
+    <li><a href="event-sourcing.html">Apache Isis vs Event Sourcing</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/HEAD/antora/components/userguide/modules/fun/pages/core-concepts/apache-isis-vs/event-sourcing.adoc">Edit this Page</a></div>
+</div>
+<article class="doc">
+    <a name="section-top"></a>
+<h1 class="page">Apache Isis vs Event Sourcing</h1>
+<div class="paragraph">
+<p>The <a href="../../core-concepts.html#cqrs" class="page">CQRS architecture</a> is often combined with <em>Event Sourcing</em> pattern, though they are separate ideas.</p>
+</div>
+<div class="paragraph">
+<p>With event sourcing, each business operation emits a domain event (or possibly events) that allow other objects in the system to act accordingly.
+For example, if a customer places an order then this might emit the <code>OrderPlacedEvent</code>.
+Most significantly, the subscribers to these events can include the datastore itself; the state of the system is in effect a transaction log of every event that has occurred since "the beginning of time": it is sometimes called an event store.
+With CQRS, this event datastore corresponds to the command/write datastore (the query/read datastore is of course derived from the command datastore).</p>
+</div>
+<div class="paragraph">
+<p>Although it might seem counter-intuitive to be able store persistent state in this way (as some kind of souped-up "transaction log"), the reality is that with modern compute capabilities make it quite feasible to replay many 10s or 100s of thousands of events in a second.
+And the architecture supports some interesting use cases; for example it becomes quite trivial to rewind the system back to some previous point in time.</p>
+</div>
+<div class="paragraph">
+<p>When combined with CQRS we see a command that triggers a business operation, and an event that results from it.
+So, a <code>PlaceOrderCommand</code> command can result in an <code>OrderPlacedEvent</code> event.  A subscriber to this event might then generate a further command to act upon some other system (eg to dispatch the system).
+Note that the event might be dispatched and consumed in-process or alternatively this might occur out-of-process.
+If the latter, then the subscriber will operate within a separate transaction, meaning the usual eventual consistency concerns and also compensating actions if a rollback is required.
+CQRS/event sourcing advocates point out&#8201;&#8212;&#8201;correctly&#8201;&#8212;&#8201;that this is just how things are in the "real world" too.</p>
+</div>
+<div class="paragraph">
+<p>In Apache Isis every business action (and indeed, property and collection) emits domain events through the <a href="../../../../refguide/applib-svc/core-domain-api/EventBusService.html" class="page"><code>EventBusService</code></a>, and can optionally also be published through the <a href="../../../../refguide/applib-svc/persistence-layer-spi/PublisherService.html" class="page"><code>PublisherService</code></a>.
+The former are dispatched and consumed in-process and within the same transaction, and for this reason the <a href="../../../../refguide/applib-cm/classes/super.html#AbstractSubscriber" class="page">subscribers</a> can also veto the events.
+The latter are intended for out-of-process consumption; the (obsolete) <a href="http://github.com/isisaddons-legacy/isis-module-publishing">Isis addons' publishing</a> and the (non-ASF) <a href="https://platform.incode.org" target="_blank" rel="noopener">Incode Platform</a>'s publishmq modules provide implementations for dispatching either through a RDBMS database table, or directly through to an <a href="http://camel.apache.org">ActiveMQ</a> message queue (eg wired up to <a href="http://camel.apache.org">Apache Camel</a> event bus).</p>
+</div>
+</article>
+
+<aside class="article-aside hidden" role="navigation">
+    <h3 class="toc-title">On this page</h3>
+    <div id="article-toc"></div>
+</aside>
+</main>
+
+</div>
+<footer class="footer">
+  <p>Revision: </p>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+<script src="../../../../_/js/vendor/tocbot.js"></script>
+
+<script>
+    tocbot.init( {
+        tocSelector: '#article-toc',
+        contentSelector: 'article',
+        headingSelector: 'h2, h3, h4, h5',
+        collapseDepth: 2,
+        positionFixedSelector: '#article-toc',
+        scrollSmooth: true,
+        hasInnerContainers: true
+    } );
+    var tocList = document.getElementById( 'article-toc' ).getElementsByClassName( 'toc-list' );
+    if ( tocList && tocList.length > 0 && tocList[0].childNodes.length > 0 ) {
+        document.getElementById( 'article-toc' ).parentNode.classList.remove( 'hidden' );
+    }
+</script>
+  </body>
+</html>

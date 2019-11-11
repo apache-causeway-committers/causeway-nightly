@@ -1,0 +1,3394 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Programming Model :: Apache Isis</title>
+    <meta name="generator" content="Antora 2.2.0">
+    <link rel="stylesheet" href="../../_/css/site.css">
+    <link rel="stylesheet" href="../../_/css/site-custom.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="../..">Apache Isis</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Quick Start</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item navbar-heading" href="/toc/quick-start.html#starter-apps">Starter Apps</a>
+            <a class="navbar-item" href="/helloworld/about.html">Hello World</a>
+            <a class="navbar-item" href="/simpleapp/about.html">Simple App</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Guides</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item navbar-heading" href="/toc/guides.html#user-guides">User Guides</a>
+            <a class="navbar-item" href="/ug/about.html">Fundamentals & Beyond</a>
+            <a class="navbar-item" href="/demoapp/about.html">Demo App</a>
+            <hr class="navbar-divider"/>
+            <a class="navbar-item navbar-heading" href="/toc/guides.html#reference-guides">Reference Guides</a>
+            <a class="navbar-item" href="/rg/ant/about.html">Annotations</a>
+            <a class="navbar-item" href="/rg/svc/about.html">Domain Services</a>
+            <a class="navbar-item" href="/rg/cfg/about.html">Core Config Properties</a>
+            <a class="navbar-item" href="/rg/cms/about.html">Classes, Methods &amp; Schema</a>
+            <hr class="navbar-divider"/>
+            <a class="navbar-item navbar-heading" href="/toc/guides.html#testing-prototyping">Testing &amp; Prototyping</a>
+            <a class="navbar-item" href="/testing/about.html">Unit & Integ Testing</a>
+            <a class="navbar-item" href="/ext-fixtures/about.html">Fixtures (extension)</a>
+            <a class="navbar-item" href="/ext-specsupport/about.html">BDD (extension)</a>
+            <!--
+            <a class="navbar-item" href="/rg/mvn/about.html">Maven plugin</a>
+            -->
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Components</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item navbar-heading" href="/toc/components.html#wicket-viewer">Wicket Viewer</a>
+            <a class="navbar-item" href="/vw/about.html">User Guide</a>
+            <a class="navbar-item" href="/ext-viewer-wicket-excel/about.html">Excel download (extension)</a>
+            <a class="navbar-item" href="/ext-asciidoc/about.html">Asciidoc value type (extension)</a>
+            <a class="navbar-item" href="/ext-markdown/about.html">Markdown value type (extension)</a>
+            <hr class="navbar-divider"/>
+            <a class="navbar-item navbar-heading" href="/toc/components.html#wicket-viewer">Restful Objects Viewer</a>
+            <a class="navbar-item" href="/vro/about.html">User Guide</a>
+            <hr class="navbar-divider"/>
+            <a class="navbar-item navbar-heading" href="/toc/components.html#datanucleus-object-store">DataNucleus Object Store</a>
+            <a class="navbar-item" href="/odn/about.html">User Guide</a>
+            <hr class="navbar-divider"/>
+            <a class="navbar-item navbar-heading" href="/toc/components.html#security">Security</a>
+            <a class="navbar-item" href="/security/about.html">User Guide</a>
+            <a class="navbar-item" href="/ext-secman/about.html">SecMan (extension)</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Support</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item navbar-heading" href="/toc/support.html#resources">Resources</a>
+            <a class="navbar-item" href="/toc/devguide/about.html">Developers' Guide</a>
+            <a class="navbar-item" href="/mavendeps/about.html">Maven mixins</a>
+            <hr class="navbar-divider"/>
+            <a class="navbar-item navbar-heading" href="/toc/support.html#help">Mailing Lists</a>
+            <a class="navbar-item" href="/toc/mailing-list/how-to-subscribe.html">How to subscribe</a>
+            <a class="navbar-item" href="https://lists.apache.org/list.html?users@isis.apache.org">Archives (ASF Pony Mail)</a>
+            <a class="navbar-item" href="http://isis.markmail.org/search/?q=">Archives (Markmail)</a>
+            <hr class="navbar-divider"/>
+            <a class="navbar-item navbar-heading" href="/toc/support.html#releases">Releases</a>
+            <a class="navbar-item" href="/toc/downloads/how-to.html">Downloads</a>
+            <a class="navbar-item" href="/relnotes/about.html">Release Notes</a>
+            <a class="navbar-item" href="/mignotes/about.html">Migration Notes</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item">Other Resources</span>
+            <a class="navbar-item" href="https://issues.apache.org/jira/browse/ISIS">ASF JIRA</a>
+            <a class="navbar-item" href="https://cwiki.apache.org/confluence/display/ISIS/Index">ASF Wiki</a>
+            <a class="navbar-item" href="https://fisheye.apache.org/browse/~br=master/isis-git/">ASF Fisheye</a>
+            <a class="navbar-item" href="http://stackoverflow.com/questions/tagged/isis">Stack Overflow</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Internal</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item navbar-heading" href="/toc/internal.html#committers">Committers</a>
+            <a class="navbar-item" href="/toc/comguide/about.html">Committers' Guide</a>
+            <hr class="navbar-divider"/>
+            <a class="navbar-item navbar-heading" href="/toc/internal.html#implementation">Implementation</a>
+            <a class="navbar-item" href="/archdesign/about.html">Architecture & Design</a>
+            <a class="navbar-item" href="/fis/about.html">Framework Internal Services</a>
+            <a class="navbar-item" href="/smoketests/about.html">SmokeTest App</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">@ASF</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://www.apache.org/">Apache Homepage</a>
+            <a class="navbar-item" href="https://www.apache.org/events/current-event">Events</a>
+            <a class="navbar-item" href="https://www.apache.org/licenses/">Licenses</a>
+            <a class="navbar-item" href="https://www.apache.org/security/">Security</a>
+            <a class="navbar-item" href="https://www.apache.org/foundation/sponsorship.html">Sponsorship</a>
+            <a class="navbar-item" href="https://www.apache.org/foundation/thanks.html">Thanks</a>
+            <hr class="navbar-divider"/>
+            <a class="navbar-item" href="https://whimsy.apache.org/board/minutes/Isis.html">PMC board minutes</a>
+          </div>
+        </div>
+        <a class="navbar-item" href="/toc/about.html">
+          <span class="icon">
+            <img src="/_/img/isis-logo-48x48.png"></img>
+          </span>
+        </a>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="userguide" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../about.html">Fundamentals &amp; Beyond</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../about.html">About</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="about.html">Fundamentals</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="core-concepts.html">Core Concepts</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="building-blocks.html">Building Blocks</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="programming-model.html">Programming Model</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="ui-hints.html">UI Hints</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="crud.html">CRUD</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="business-rules.html">Business Rules</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="drop-downs-and-defaults.html">Drop downs and Defaults</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="available-domain-services.html">Available Domain Services</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../btb/about.html">Beyond the Basics</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../btb/i18n.html">i18n</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../btb/headless-access.html">Headless Access</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../btb/hints-and-tips.html">Hints-n-Tips</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../btb/programming-model.html">Programming Model</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../btb/deployment.html">Deployment</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../btb/web-xml.html">web.xml</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Fundamentals &amp; Beyond</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component">
+      <span class="title">Core</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../core/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">DataNucleus ObjectStore</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../odn/index.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Example App - Demo</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../demoapp/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Example App - Hello World</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../helloworld/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Example App - SimpleApp</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../simpleapp/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Extensions</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../extensions/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Extensions - SecMan</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../ext-secman/secman/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component is-current">
+      <span class="title">Fundamentals & Beyond</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Guides - Reference Guides</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../refguide/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Maven Dependencies</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../mavendeps/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Maven Mixins</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../mixins/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Migration Notes</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../mignotes/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Release Notes</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../relnotes/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">REST Client</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../vro/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">secman</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../secman/index.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Security</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../security/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Table of Contents</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../toc/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Testing</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../testing/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Viewer Wicket Excel (Excel Download Extensions)</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../vw/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main role="main">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../toc/about.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../about.html">Fundamentals & Beyond</a></li>
+    <li><a href="about.html">Fundamentals</a></li>
+    <li><a href="programming-model.html">Programming Model</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/HEAD/antora/components/userguide/modules/fun/pages/programming-model.adoc">Edit this Page</a></div>
+</div>
+<article class="doc">
+    <a name="section-top"></a>
+<h1 class="page">Programming Model</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Apache Isis works by building a metamodel of the domain objects: entities, domain services, view models and mixins.
+Dependent on the sort of domain object, the class methods represent
+both state&#8201;&#8212;&#8201;(single-valued) properties and (multi-valued) collections&#8201;&#8212;&#8201;and behaviour&#8201;&#8212;&#8201;actions.</p>
+</div>
+<div class="paragraph">
+<p>More specifically, both entities and view models can have properties, collections and actions, while domain services have just actions.
+Mixins also define only actions, though depending on their semantics they may be rendered as derived properties or collections on the domain object to which they contribute.</p>
+</div>
+<div class="paragraph">
+<p>In the automatically generated UI a property is rendered as a field.
+This can be either of a value type (a string, number, date, boolean etc) or can be a reference to another entity.
+A collection is generally rendered as a table.</p>
+</div>
+<div class="paragraph">
+<p>In order for Apache Isis to build its metamodel the domain objects must follow some conventions: what we call the <em>Apache Isis Programming Model</em>.
+This is just an extension of the pojo / JavaBean standard of yesteryear: properties and collections are getters/setters, while actions are simply any remaining <code>public</code> methods.</p>
+</div>
+<div class="paragraph">
+<p>Additional metamodel semantics are inferred both imperatively from <em>supporting methods</em> and declaratively from annotations.</p>
+</div>
+<div class="paragraph">
+<p>In this section we discuss the mechanics of writing domain objects that comply with Apache Isis' programming model.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>In fact, the Apache Isis programming model is extensible; you can teach Apache Isis new programming conventions and you can remove existing ones; ultimately they amount to syntax.
+The only real fundamental that can&#8217;t be changed is the notion that objects consist of properties, collections and actions.</p>
+</div>
+<div class="paragraph">
+<p>You can learn more about extending Apache Isis programming model <a href="../btb/programming-model.html" class="page">here</a>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The Apache Isis programming model uses annotations to distinguish these object types:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>view models</strong> are annotated either with <code>@DomainObject(nature=VIEW_MODEL)</code> or using <code>@ViewModel</code> (which is used is a matter of personal preference); the framework will automatically manage the view model&#8217;s state (properties only, not collections).<br></p>
+<div class="paragraph">
+<p>Or, they can be annotated using the JAXB <code>@XmlTypeAdapter</code> annotation, which allows the view models' properties <em>and</em> collections state to be managed.</p>
+</div>
+</li>
+<li>
+<p><strong>domain entities</strong> that are persisted to the database (as the vast majority will) are annotated with <code>@DomainObject(nature=ENTITY)</code>.
+In addition such domain entities are annotated with the JDO/DataNucleus annotation of
+<code>@javax.jdo.annotations.PersistenceCapable</code>.<br></p>
+<div class="paragraph">
+<p>In addition, if a domain entity is a proxy for state managed in an external system, or merely for some state held in-memory, then <code>@DomainObject(nature=EXTERNAL_ENTITY)</code> or <code>@DomainObject(nature=INMEMORY_ENTITY)</code> can be used.<br></p>
+</div>
+<div class="paragraph">
+<p>These entities' state is managed by the framework, in the same ways as view models.
+Indeed, they can additionally be annotated using <code>@XmlTypeAdapter</code> if required.</p>
+</div>
+</li>
+<li>
+<p><strong>mixins</strong> are annotated either with <code>@DomainObject(nature=MIXIN)</code> or using <code>@Mixin</code>.
+As for view models, which is used is a matter of personal preference.</p>
+</li>
+<li>
+<p>finally, <strong>domain services</strong>` are annotated with <code>@DomainService(nature=&#8230;&#8203;)</code> where the nature is either <code>VIEW</code> (for domain services whose actions appear in the viewers, eg on the top-level menu bars), or <code>DOMAIN</code> (for domain services whose
+functionality is simply for other domain objects to invoke programmatically), or <code>VIEW_REST_ONLY</code> (for domain services whose functionality is surfaced only by the <a href="../../vro/about.html" class="page">RestfulObjects viewer</a>).</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>You can generally recognize an Apache Isis domain class because it will be probably be annotated using <code>@DomainObject</code> and <code>@DomainService</code>.</p>
+</div>
+<div class="paragraph">
+<p>It&#8217;s worth emphasising is that domain entities and view models hold state, whereas domain services are generally stateless.
+If a domain service does hold state (eg the <code>Scratchpad</code> service noted above) then it should be scoped, for example using <code>@RequestScoped</code> (so that this state is short-lived and usable only within a single request).</p>
+</div>
+<div class="paragraph">
+<p>The framework also defines supplementary annotations, <code>@DomainObjectLayout</code> and <code>@DomainServiceLayout</code>.
+These provide hints relating to the layout of the domain object in the user interface.
+(Alternatively, these UI hints can be defined in a supplementary <a href="../../vw/layout.html" class="page"><code>.layout.xml</code></a> file.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="domain-entities"><a class="anchor" href="#domain-entities"></a>Domain Entities</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Entities are persistent domain objects, with their persistence handled by JDO/DataNucleus.
+As such, they are mapped to a persistent object store, typically an RDBMS, with DataNucleus taking care of both lazy loading and also the persisting of modified ("dirty") objects.</p>
+</div>
+<div class="paragraph">
+<p>Domain entities are generally decorated with both DataNucleus and Apache Isis annotations.
+Let&#8217;s look at some of the most commonly-used annotations.</p>
+</div>
+<div class="paragraph">
+<p>To start with, entities are flagged as being "persistence capable", indicating how JDO/DataNucleus should manage their identity:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@javax.jdo.annotations.PersistenceCapable(                                      <i class="conum" data-value="1"></i><b>(1)</b>
+        identityType=IdentityType.DATASTORE,                                    <i class="conum" data-value="2"></i><b>(2)</b>
+        schema = "simple",                                                      <i class="conum" data-value="3"></i><b>(3)</b>
+        table = "SimpleObject"
+)
+@javax.jdo.annotations.DatastoreIdentity(                                       <i class="conum" data-value="4"></i><b>(4)</b>
+        strategy=javax.jdo.annotations.IdGeneratorStrategy.IDENTITY,
+        column="id"
+)
+@javax.jdo.annotations.Version(                                                 <i class="conum" data-value="5"></i><b>(5)</b>
+        strategy= VersionStrategy.DATE_TIME,
+        column="version"
+)
+@DomainObject(                                                                  <i class="conum" data-value="6"></i><b>(6)</b>
+        objectType = "simple.SimpleObject"
+)
+public class SimpleObject { /* ... */ }</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The <code>@PersistenceCapable</code> annotation indicates that this is an entity to DataNucleus.
+The DataNucleus enhancer acts on the bytecode of compiled entities, injecting lazy loading and dirty object tracking functionality.
+Enhanced entities end up also implementing the <code>javax.jdo.spi.PersistenceCapable</code> interface.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Indicates how identifiers for the entity are handled.
+Using <code>DATASTORE</code> means that a DataNucleus is responsible for assigning the value (rather than the application).</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Specifies the RDBMS database schema and table name for this entity will reside.
+The schema should correspond with the module in which the entity resides.
+The table will default to the entity name if omitted.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>For entities that are using <code>DATASTORE</code> identity, indicates how the id will be assigned.
+A common strategy is to allow the database to assign the id, for example using an identity column or a sequence.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>The <code>@Version</code> annotation is useful for optimistic locking; the strategy indicates what to store in the <code>version</code> column.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>The <code>@DomainObject</code> annotation identifies the domain object to Apache Isis (not DataNucleus).
+It isn&#8217;t necessary to include this annotation&#8201;&#8212;&#8201;at least, not for entities&#8201;&#8212;&#8201;but it is nevertheless recommended.
+In particular, its strongly recommended that the <code>objectType</code> (which acts like an alias to the concrete domain class) is specified; note that it corresponds to the schema/table for DataNucleus' <code>@PersistenceCapable</code> annotation.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>All domain entities will have some sort of mandatory key properties.
+The example below is a very simple case, where the entity is identified by a <code>name</code> property:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">...
+@javax.jdo.annotations.Unique(name="SimpleObject_name_UNQ", members = {"name"}) <i class="conum" data-value="1"></i><b>(1)</b>
+public class SimpleObject
+             implements Comparable&lt;SimpleObject&gt; {                              <i class="conum" data-value="2"></i><b>(2)</b>
+
+    public SimpleObject(final String name) {                                    <i class="conum" data-value="3"></i><b>(3)</b>
+        setName(name);
+    }
+
+    @javax.jdo.annotations.Column(allowsNull="false", length=50)                <i class="conum" data-value="4"></i><b>(4)</b>
+    @lombok.Getter @lombok.Setter
+    private String name;
+
+    @Override
+    public String toString() {
+        return ObjectContracts.toString(this, "name");                          <i class="conum" data-value="5"></i><b>(5)</b>
+    }
+    @Override
+    public int compareTo(final SimpleObject other) {
+        return ObjectContracts.compare(this, other, "name");                    <i class="conum" data-value="2"></i><b>(2)</b>
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>DataNucleus will automatically add a unique index to the primary surrogate id (discussed above), but additional alternative keys can be defined using the <code>@Unique</code> annotation.
+In the example above, the "name" property is assumed to be unique.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Although not required, we strongly recommend that all entities are naturally <code>Comparable</code>.
+This then allows parent/child relationships to be defined using <code>SortedSet</code>s; RDBMS after all are set-oriented.
+The <code>ObjectContracts</code> utility class provided by Apache Isis makes it easy to implement the <code>compareTo()</code> method, but you can also just use an IDE to generate an implementation or roll your own.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Chances are that some of the properties of the entity will be mandatory, for example any properties that represent an alternate unique key to the entity.
+In regular Java programming we would represent this using a constructor that defines these mandatory properties, and in Apache Isis/DataNucleus we can likewise define such a constructor.
+When DataNucleus rehydrates domain entities from the database at runtime, it actually requires a no-arg constructor (it then sets all state reflectively).
+However, there is no need to provide such a no-arg constructor; it is added by the enhancer process.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>The <code>name</code> property itself, using Lombok to generate the getter and setter.
+The <code>@Column</code> annotation specifies the length of the column in the RDBMS; this metadata is read by JDO/DataNucleus but Apache Isis itself also infers that the property is mandatory and its length from this annotation.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>The <code>ObjectContracts</code> utility class also provides assistance for <code>toString()</code>, useful when debugging in an IDE.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>It&#8217;s also common for domain entities to have queries annotated on them.
+These are used by repository domain services to query for instances of the entity:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">...
+@javax.jdo.annotations.Queries({
+    @javax.jdo.annotations.Query(                                           <i class="conum" data-value="1"></i><b>(1)</b>
+        name = "findByName",                                                <i class="conum" data-value="2"></i><b>(2)</b>
+        value = "SELECT "                                                   <i class="conum" data-value="3"></i><b>(3)</b>
+                + "FROM domainapp.modules.simple.dom.impl.SimpleObject "    <i class="conum" data-value="4"></i><b>(4)</b>
+                + "WHERE name.indexOf(:name) &gt;= 0 ")                        <i class="conum" data-value="5"></i><b>(5)</b>
+})
+...
+public class SimpleObject { /* ... */ }</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>There may be several <code>@Query</code> annotations, nested within a <code>@Queries</code> annotation) defines queries using JDOQL.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Defines the name of the query.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>The definition of the query, using JDOQL syntax.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>The fully-qualified class name.
+Must correspond to the class on which the annotation is defined (the framework checks this automatically on bootstrapping).</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>In this particular query, is an implementation of a LIKE "name%" query.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>DataNucleus provides several APIs for defining queries, including entirely programmatic and type-safe APIs; but JDOQL is very similar to SQL and so easily learnt.</p>
+</div>
+<div class="paragraph">
+<p>The corresponding repository method for the above query is:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public List&lt;SimpleObject&gt; findByName(String name) {
+    return repositoryService.allMatches(                                    <i class="conum" data-value="1"></i><b>(1)</b>
+            new QueryDefault&lt;&gt;(SimpleObject.class,                          <i class="conum" data-value="2"></i><b>(2)</b>
+                        "findByName",                                       <i class="conum" data-value="3"></i><b>(3)</b>
+                        "name",                                             <i class="conum" data-value="4"></i><b>(4)</b>
+                        name);
+}
+
+@javax.inject.Inject
+RepositoryService repositoryService;</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The <code>RepositoryService</code> is a generic facade over the JDO/DataNucleus API, provided by the Apache Isis framework.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Specifies the class that is annotated with <code>@Query</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Corresponds to the <code>@Query#name()</code> attribute</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Corresponds to the <code>:name</code> parameter in the query JDOQL string</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>See the <a href="../../odn/about.html" class="page">DataNucleus objectstore guide</a> for further information on annotating domain entities.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="domain-services"><a class="anchor" href="#domain-services"></a>Domain Services</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This section looks at the programming model for writing your own domain services.</p>
+</div>
+<div class="sect2">
+<h3 id="organizing-services"><a class="anchor" href="#organizing-services"></a>Organizing Services</h3>
+<div class="paragraph">
+<p>In larger applications we have found it worthwhile to ensure that our domain services only act aligned with these responsibilities, employing a naming convention so that it is clear what the responsibilities of each domain service is.</p>
+</div>
+<div class="paragraph">
+<p>The application provides the <code>@DomainService(nature=&#8230;&#8203;)</code> annotation that helps distinguish some of these responsibilities:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>VIEW</code> indicates that the actions should appear on the menu of the <a href="../../vw/about.html" class="page">Wicket viewer</a>, and as top-level actions for the REST API provided by the <a href="../../vro/about.html" class="page">Restful Objects viewer</a></p>
+</li>
+<li>
+<p><code>DOMAIN</code> indicates that the actions are for other domain objects to invoke (either directly or indirectly through the event bus), but in any case should not be rendered at all in the UI</p>
+</li>
+<li>
+<p><code>VIEW_REST_ONLY</code> indicates that the actions should appear in the REST API provided by the <a href="../../vro/about.html" class="page">Restful Objects viewer</a>, but not rendered by the <a href="../../vw/about.html" class="page">Wicket viewer</a>.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>If the domain service nature is not specified (or is left to its default, <code>VIEW</code>), then the service&#8217;s actions will appear in the UI.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="repository-and-factory"><a class="anchor" href="#repository-and-factory"></a>Repository and Factory</h3>
+<div class="paragraph">
+<p>The repository/factory uses an injected <a href="../../refguide/applib-svc/persistence-layer-api/RepositoryService.html" class="page"><code>RepositoryService</code></a> to both instantiate new objects and to query the database for existing objects of a given entity type.
+It is not visible in UI, rather other services delegate to it.</p>
+</div>
+<div class="paragraph">
+<p>We suggest naming such classes <code>XxxRepository</code>, eg:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainService(
+    nature=NatureOfService.DOMAIN                               <i class="conum" data-value="1"></i><b>(1)</b>
+)
+public CustomerRepository {
+    public List&lt;Customer&gt; findByName(String name) {
+        return repositoryService.allMatches(                    <i class="conum" data-value="2"></i><b>(2)</b>
+                new QueryDefault&lt;&gt;(Customer.class,
+                            "findByName", "name", name);
+    }
+    public Customer newCustomer(...) {
+        Customer Customer =
+            repositoryService.instantiate(Customer.class);      <i class="conum" data-value="3"></i><b>(3)</b>
+        ...
+        repositoryService.persist(Customer);                    <i class="conum" data-value="3"></i><b>(3)</b>
+        return Customer;
+    }
+    public List&lt;Customer&gt; allCustomers() {
+        return repositoryService.allInstances(Customer.class);
+    }
+    @Inject
+    RepositoryService repositoryService;
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>interacted with only programmatically by other objects in the domain layer.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>uses injected <code>RepositoryService</code> to query via JDOQL.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>uses injected <code>RepositoryService</code> to first instantiate and then save into the database a new <code>Customer</code> instance.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>There is no need to annotate the actions; they are implicitly hidden because of the domain service&#8217;s nature.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="menu"><a class="anchor" href="#menu"></a>Menu</h3>
+<div class="paragraph">
+<p>Menu services provide actions to be rendered on the menu.</p>
+</div>
+<div class="paragraph">
+<p>For the Wicket viewer, each service&#8217;s actions appear as a collection of menu items of a named menu, and this menu is on one of the three menu bars provided by the Wicket viewer.
+Although these can be organised using annotations, it&#8217;s usually easier to use a <a href="../../vw/menubars-layout/file-based.html" class="page"><code>menubars.layout.xml</code></a> file.</p>
+</div>
+<div class="paragraph">
+<p>For the Restful Objects viewer, all menu services are shown in the services representation.</p>
+</div>
+<div class="paragraph">
+<p>We suggest naming such classes <code>XxxMenu</code>, eg:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainService(                                                 <i class="conum" data-value="1"></i><b>(1)</b>
+    nature = NatureOfService.VIEW
+)
+public class CustomerMenu {
+
+    @Action(semantics = SemanticsOf.SAFE)
+    @ActionLayout(bookmarking = BookmarkPolicy.AS_ROOT)
+    public List&lt;Customer&gt; findByName(                           <i class="conum" data-value="2"></i><b>(2)</b>
+            @ParameterLayout(named="Name")                      <i class="conum" data-value="3"></i><b>(3)</b>
+            final String name
+    ) {
+        return customerRepository.findByName(name);             <i class="conum" data-value="4"></i><b>(4)</b>
+    }
+
+    @Action(
+            semantics = SemanticsOf.NON_IDEMPOTENT
+    )
+    public Customer newCustomer(...) {
+        return customerRepository.newCustomer(...);
+    }
+
+    @Action(
+            semantics = SemanticsOf.SAFE,
+            restrictTo = RestrictTo.PROTOTYPING                 <i class="conum" data-value="5"></i><b>(5)</b>
+    )
+    public List&lt;Customer&gt; listAll() {
+        return customerRepository.listAll();
+    }
+
+    @Inject
+    protected CustomerRepository customerRepository;            <i class="conum" data-value="6"></i><b>(6)</b>
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The (Apache Isis) <a href="../../refguide/applib-ant/DomainService.html" class="page"><code>@DomainService</code></a> annotation is used to identify the class as a domain service.
+Apache Isis scans the classpath looking for classes with this annotation, so there very little configuration other than to tell the framework which packages to scan underneath.
+The <code>VIEW</code> nature indicates that this service&#8217;s actions should be exposed as menu items.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The <code>findByName</code> method is annotated with various Apache Isis annotations (<a href="../../refguide/applib-ant/Action.html" class="page"><code>@Action</code></a>, <a href="../../refguide/applib-ant/ActionLayout.html" class="page"><code>@ActionLayout</code></a> and <a href="../../refguide/applib-ant/MemberOrder.html" class="page"><code>@MemberOrder</code></a> and is itself rendered in the UI as a "Find By Name" menu item underneath the "Simple Objects" menu.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>The <a href="../../refguide/applib-ant/ParameterLayout.html" class="page"><code>@ParameterLayout</code></a> provides metadata for the parameter itself, in this case its name.
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>There&#8217;s no need to name the action parameters if the code is compiled using the <code>-parameters</code> flag to the Java compiler (javac); the framework will then use the name of the parameter itself.</p>
+</div>
+</td>
+</tr>
+</table>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>the action implementation delegates to an injected repository.
+The framework can inject into not just other domain services but will also automatically into domain entities and view models.
+There is further discussion of service injection <a href="#inject-services">below</a>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><a href="../../refguide/applib-ant/Action.html#restrictTo" class="page">Prototype</a> actions are rendered only in prototyping mode.
+A "list all" action such as this can be useful when exploring the domain with a small dataset.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Menu services typically delegate to an underlying repository/ies specific to the domain (rather than use <code>RepositoryService</code> directly, for example).</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Not every action on the repository need to be delegated to of course (the above example does but only because it is very simple).</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="event-subscribers"><a class="anchor" href="#event-subscribers"></a>Event Subscribers</h3>
+<div class="paragraph">
+<p>Domain services acting as event subscribers can subscribe to <a href="building-blocks.html#lifecycle-events" class="page">lifecycle</a> events, influencing the rendering and behaviour of other objects.</p>
+</div>
+<div class="paragraph">
+<p>All subscribers must subscribe to the <a href="../../refguide/applib-svc/core-domain-api/EventBusService.html" class="page"><code>EventBusService</code></a>; as this amounts to a few lines of boilerplate it&#8217;s easiest to inherit from the convenience <code>AbstractSubscriber</code> class.</p>
+</div>
+<div class="paragraph">
+<p>We suggest naming such classes <code>XxxSubscriptions</code>, for example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.springframework.context.event.EventListener;
+
+@DomainService( nature=NatureOfService.DOMAIN )         <i class="conum" data-value="1"></i><b>(1)</b>
+public class CustomerOrderSubscriptions
+                    extends AbstractSubscriber {        <i class="conum" data-value="2"></i><b>(2)</b>
+
+    @EventListener(Customer.DeletedEvent.class)         <i class="conum" data-value="3"></i><b>(3)</b>
+    public void on(final Customer.DeletedEvent ev) {    <i class="conum" data-value="4"></i><b>(4)</b>
+        Customer customer = ev.getSource();
+        orderRepository.delete(customer);
+    }
+
+    @Inject
+    OrderRepository orderRepository;
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>subscriptions do not appear in the UI at all</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>subclass from the <code>AbstractSubscriber</code> convenience superclass</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>use Spring Frameworkr&#8217;s <code>@EventListener</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>the parameter type of the method corresponds to the event emitted on the event bus.
+The actual method name does not matter (though it must have <code>public</code> visibility).</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="scoped-services"><a class="anchor" href="#scoped-services"></a>Scoped services</h3>
+<div class="paragraph">
+<p>By default all domain services are considered to be singletons, and thread-safe.</p>
+</div>
+<div class="paragraph">
+<p>Sometimes though a service&#8217;s lifetime is applicable only to a single request; in other words it is request-scoped.</p>
+</div>
+<div class="paragraph">
+<p>The CDI annotation <a href="../../refguide/applib-ant/RequestScoped.html" class="page"><code>@javax.enterprise.context.RequestScoped</code></a> is used to indicate this fact:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@javax.enterprise.context.RequestScoped
+public class MyService extends AbstractService {
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The framework provides a number of request-scoped services, include a <a href="../../refguide/applib-svc/core-domain-api/Scratchpad.html" class="page"><code>Scratchpad</code></a> service query results caching through the <a href="../../refguide/applib-svc/persistence-layer-api/QueryResultsCache.html" class="page"><code>QueryResultsCache</code></a>, and support for co-ordinating bulk actions through the <a href="../../refguide/applib-svc/application-layer-api/ActionInvocationContext.html" class="page"><code>ActionInvocationContext</code></a> service.  See the <a href="../../refguide/applib-svc/about.html" class="page">domain services</a> reference guide for further details.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="registering"><a class="anchor" href="#registering"></a>Registering</h3>
+<div class="paragraph">
+<p>The easiest way to register domain services with the framework is to use an <a href="../../refguide/applib-cm/classes/AppManifest-bootstrapping.html" class="page"><code>AppManifest</code></a>.
+This specifies the modules which contain <a href="../../refguide/applib-ant/DomainService.html" class="page"><code>@DomainService</code></a>-annotated classes.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">public class MyAppManifest implements AppManifest {
+    public List&lt;Class&lt;?&gt;&gt; getModules() {
+        return Arrays.asList(
+                ToDoAppDomainModule.class,
+                ToDoAppFixtureModule.class,
+                ToDoAppAppModule.class,
+                org.isisaddons.module.audit.AuditModule.class);
+    }
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>will load all services in the packages underneath the four modules listed.</p>
+</div>
+<div class="paragraph">
+<p>Examples of framework-provided services (as defined in the applib) include clock, auditing, publishing, exception handling, view model support, snapshots/mementos, and user/application settings management; see the <a href="../../refguide/applib-svc/about.html" class="page">domain services</a> reference guide for further details.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="initialization"><a class="anchor" href="#initialization"></a>Initialization</h3>
+<div class="paragraph">
+<p>Services can optionally declare lifecycle callbacks to initialize them (when the app is deployed) and to shut them down (when the app is undeployed).</p>
+</div>
+<div class="paragraph">
+<p>An Apache Isis session <em>is</em> available when initialization occurs (so services can interact with the object store, for example).</p>
+</div>
+<div class="paragraph">
+<p>The framework will call any <code>public</code> method annotated with <a href="../../refguide/applib-ant/PostConstruct.html" class="page"><code>@PostConstruct</code></a> with either no arguments of an argument of type <code>Map&lt;String,String&gt;</code>.
+In the latter case, the framework passes in the configuration.</p>
+</div>
+<div class="paragraph">
+<p>Shutdown is similar; the framework will call any method annotated with <a href="../../refguide/applib-ant/PreDestroy.html" class="page"><code>@PreDestroy</code></a>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="properties"><a class="anchor" href="#properties"></a>Properties</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A property is an instance variable of a domain object, of a scalar type, that holds some state about either a <a href="#view-models">view model</a>.</p>
+</div>
+<div class="paragraph">
+<p>For example, a <code>Customer</code>'s <code>firstName</code> would be a property, as would their <code>accountCreationDate</code> that they created their account.
+All properties have at least a "getter" method, and most properties have also a "setter" method (meaning that they are mutable).
+Properties that do <em>not</em> have a setter method are derived properties, and so are not persisted.</p>
+</div>
+<div class="paragraph">
+<p>Formally speaking, a property is simply a regular JavaBean getter, returning a scalar value recognized by the framework.
+Most properties (those that are editable/modifiable) will also have a setter and, if persisted, a backing instance field.
+And most properties will also have a number of annotations:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Apache Isis defines its own set own <code>@Property</code> annotation for capturing domain semantics.
+It also provides a <code>@PropertyLayout</code> for UI hints (though the information in this annotation may instead be provided by a supplementary <a href="../../vw/layout.html" class="page"><code>.layout.xml</code></a> file)</p>
+</li>
+<li>
+<p>the properties of domain entities are often annotated with the JDO/DataNucleus <code>@javax.jdo.annotations.Column</code> annotation.
+For property references, there may be other annotations to indicate whether the reference is bidirectional.
+It&#8217;s also possible (using annotations) to define a link table to hold foreign key columns.</p>
+</li>
+<li>
+<p>for the properties of view models, then JAXB annotations such as <code>@javax.xml.bind.annotation.XmlElement</code> may be present</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Apache Isis recognises some of these annotations for JDO/DataNucleus and JAXB and infers some domain semantics from them (for example, the maximum allowable length of a string property).</p>
+</div>
+<div class="paragraph">
+<p>Since writing getter and setter methods adds quite a bit of boilerplate, it&#8217;s common to use <a href="https://projectlombok.org/">Project Lombok</a> to code generate these methods at compile time (using Java&#8217;s annotation processor) simply by adding the <code>@lombok.Getter</code> and <code>@lombok.Setter</code> annotations to the field.
+The <a href="../../helloworld/about.html" class="page">HelloWorld</a> and <a href="../../simpleapp/about.html" class="page">SimpleApp</a> archetypes use this approach.</p>
+</div>
+<div class="sect2">
+<h3 id="value-vs-reference-types"><a class="anchor" href="#value-vs-reference-types"></a>Value vs Reference Types</h3>
+<div class="paragraph">
+<p>Properties can be either a value type (strings, int, date and so on) or be a reference to another object (for example, an <code>Order</code> referencing the <code>Customer</code> that placed it).</p>
+</div>
+<div class="paragraph">
+<p>For example, to map a string value type:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@lombok.Getter @lombok.Setter       <i class="conum" data-value="1"></i><b>(1)</b>
+private String notes;</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>using <a href="https://projectlombok.org/">Project Lombok</a> annotations to reduce boilerplate</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>You could also add the <code>@Property</code> annotation if you wished:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Property
+@lombok.Getter @lombok.Setter
+private String notes;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Although in this case it is not required (none of its attributes have been set).</p>
+</div>
+<div class="paragraph">
+<p>Or to map a reference type:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@lombok.Getter @lombok.Setter
+private Customer customer;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>It&#8217;s ok for a <a href="#view-models">view model</a> to reference both view model and domain entities.
+However, it isn&#8217;t valid for a domain entity to hold a persisted reference to view model (DataNucleus will not know how to persist that view model).</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>For further details on mapping associations, see the JDO/DataNucleus documentation for <a href="http://www.datanucleus.org/products/accessplatform_4_1/jdo/orm/one_to_many.html">one-to-many</a> associations, <a href="http://www.datanucleus.org/products/accessplatform_4_1/jdo/orm/many_to_one.html">many-to-one</a> associations, <a href="http://www.datanucleus.org/products/accessplatform_4_1/jdo/orm/many_to_many.html">many-to-many</a> associations, and so on.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>For domain entities, the annotations for mapping value types tend to be different for properties vs action parameters, because JDO annotations are only valid on properties.
+The table in the <a href="#properties-vs-parameters">Properties vs Parameters</a> section provides a handy reference of each.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="optional-properties"><a class="anchor" href="#optional-properties"></a>Optional Properties</h3>
+<div class="paragraph">
+<p>(For domain entities) JDO/DataNucleus' default is that a property is assumed to be mandatory if it is a primitive type (eg <code>int</code>, <code>boolean</code>), but optional if a reference type (eg <code>String</code>, <code>BigDecimal</code> etc).
+To override optionality in JDO/DataNucleus the <code>@Column(allowsNull="&#8230;&#8203;")</code> annotations is used.</p>
+</div>
+<div class="paragraph">
+<p>Apache Isis on the other hand assumes that all properties (and action parameters, for that matter) are mandatory, not optional.
+These defaults can also be overridden using Apache Isis' own annotations, specifically <code>@Property(optionality=&#8230;&#8203;)</code>, or (because it&#8217;s much less verbose) using <code>@javax.annotation.Nullable</code>.</p>
+</div>
+<div class="paragraph">
+<p>These different defaults can lead to incompatibilities between the two frameworks.
+To counteract that, Apache Isis also recognizes and honours JDO&#8217;s <code>@Column(allowsNull=&#8230;&#8203;)</code>.</p>
+</div>
+<div class="paragraph">
+<p>For example, you can write:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@javax.jdo.annotations.Column(allowsNull="true")
+@lombok.Getter @lombok.Setter
+private LocalDate date;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>rather than the more verbose:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@javax.jdo.annotations.Column(allowsNull="true")
+@Property(optionality=Optionality.OPTIONAL)
+@lombok.Getter @lombok.Setter
+private LocalDate date;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The framework will search for any incompatibilities in optionality (whether specified explicitly or defaulted implicitly) between Isis' defaults and DataNucleus, and refuse to boot if any are found (fail fast).</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="editable-properties"><a class="anchor" href="#editable-properties"></a>Editable Properties</h3>
+<div class="paragraph">
+<p>Apache Isis provides the capability to allow individual properties to be modified.
+This is specified using the <code>@Property(editing=&#8230;&#8203;)</code> attribute.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Property(editing = Editing.ENABLED)
+@lombok.Getter @lombok.Setter
+private String notes;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If this is omitted then whether editing is enabled or disabled is defined globally, in the <code>isis.properties</code> configuration file; see <a href="../../refguide/config/configuring-core.html#isis-objects-editing" class="page">reference configuration guide</a> for further details.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="ignoring-properties"><a class="anchor" href="#ignoring-properties"></a>Ignoring Properties</h3>
+<div class="paragraph">
+<p>By default Apache Isis will automatically render all properties in the <a href="../../vw/about.html" class="page">Wicket UI</a> or in the <a href="../../vro/about.html" class="page">REST API</a>.
+To get Apache Isis to ignore a property (exclude it from its metamodel), annotate the getter using <code>@Programmatic</code>.</p>
+</div>
+<div class="paragraph">
+<p>Similarly, you can tell JDO/DataNucleus to ignore a property using the <code>@javax.jdo.annotations.NotPersistent</code> annotation.
+This is independent of Apache Isis; in other words that property will still be rendered in the UI (unless also annotated with <code>@Programmatic</code>).</p>
+</div>
+<div class="paragraph">
+<p>For view models, you can tell JAXB to ignore a property using the <code>@javax.xml.bind.annotation.XmlTransient</code> annotation.
+Again, this is independent of Apache Isis.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="derived-properties"><a class="anchor" href="#derived-properties"></a>Derived Properties</h3>
+<div class="paragraph">
+<p>Derived properties are those with a getter but no setter.
+Provided that the property has not been annotated with <code>@Programmatic</code>, these will still be rendered in the UI, but they will be read-only (not editable) and their state will not be persisted.</p>
+</div>
+<div class="paragraph">
+<p>Subtly different, it is also possible to have non-persisted but still editable properties.
+In this case you will need a getter and a setter, but with the getter annotated using <code>@NotPersistent</code>.
+The implementation of these getters and setters will most likely persist state using other properties (which might be hidden from view using <code>@Programmatic</code>).</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@javax.jdo.annotations.NotPersistent
+@Property(editing=Editing.ENABLED)
+public String getAddress() {
+    return addressService.toAddress( getLatLong() );                <i class="conum" data-value="1"></i><b>(1)</b>
+}
+public void setAddress(String address) {
+    setLatLong(addressService.toLatLong(address));
+}
+
+@javax.jdo.annotations.Column
+private String latLong;
+@Programmatic
+public String getLatLong() { return latLong; }                      <i class="conum" data-value="2"></i><b>(2)</b>
+public void setLatLong(String latLong) { this.latLong = latLong; }
+
+@javax.inject.Inject
+AddressService addressService;                                      <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>the representation of the address, in human readable form, eg "10 Downing Street, London, UK"</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>the lat/long representation of the address, eg "51.503363;-0.127625"</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>an injected service that can convert to/from address and latLong.</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="data-types"><a class="anchor" href="#data-types"></a>Data types</h3>
+<div class="paragraph">
+<p>This section shows specific considerations for various datatypes, in particular how to annotate them for DataNucleus mapping to the persistence object store.</p>
+</div>
+<div class="sect3">
+<h4 id="strings-length"><a class="anchor" href="#strings-length"></a><code>String</code>s (Length)</h4>
+<div class="paragraph">
+<p>By default JDO/DataNucleus will map string properties to a <code>VARCHAR(255)</code>.
+To limit the length, use the <code>@Column(length=&#8230;&#8203;)</code> annotation.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@javax.jdo.annotations.Column(length=50)
+@lombok.Getter @lombok.Setter
+private String firstName</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This is a good example of a case where Apache Isis infers domain semantics from the JDO annotation.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="joda-dates"><a class="anchor" href="#joda-dates"></a>JODA Dates</h4>
+<div class="paragraph">
+<p>Isis' JDO objectstore bundles DataNucleus' <a href="http://www.datanucleus.org/documentation/products/plugins.html">built-in support</a> for Joda <code>LocalDate</code> and <code>LocalDateTime</code> datatypes, meaning that entity properties of these types will be persisted as appropriate data types in the database tables.</p>
+</div>
+<div class="paragraph">
+<p>It is, however, necessary to annotate your properties with <code>@javax.jdo.annotations.Persistent</code>, otherwise the data won&#8217;t actually be persisted.
+See the <a href="http://db.apache.org/jdo/field_types.html">JDO docs</a> for more details on this.</p>
+</div>
+<div class="paragraph">
+<p>Moreover, these datatypes are <em>not</em> in the default fetch group, meaning that JDO/DataNucleus will perform an additional <code>SELECT</code> query for each attribute.
+To avoid this extra query, the annotation should indicate that the property is in the default fetch group.</p>
+</div>
+<div class="paragraph">
+<p>For example, the <code>ToDoItem</code> (in the <a href="https://github.com/isisaddons/isis-app-todoapp">todoapp example app</a> (not ASF)) defines the <code>dueBy</code> property as follows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@javax.jdo.annotations.Persistent(defaultFetchGroup="true")
+@javax.jdo.annotations.Column(allowsNull="true")
+@Getter @Setter
+private LocalDate dueBy;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="bigdecimals-precision"><a class="anchor" href="#bigdecimals-precision"></a><code>BigDecimal</code>s (Precision)</h4>
+<div class="paragraph">
+<p>Working with <code>java.math.BigDecimal</code> properties takes a little care due to scale/precision issues.</p>
+</div>
+<div class="paragraph">
+<p>For example, suppose we have:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@lombok.Getter @lombok.Setter
+private BigDecimal impact;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>JDO/DataNucleus creates, at least with HSQL, the table with the field type as NUMERIC(19). No decimal digits are admitted. (Further details <a href="http://hsqldb.org/doc/2.0/guide/sqlgeneral-chapt.html#sgc_numeric_types">here</a>).</p>
+</div>
+<div class="paragraph">
+<p>What this implies is that, when a record is inserted, a log entry similar to this one appears:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">INSERT INTO ENTITY(..., IMPACT, ....) VALUES (...., 0.5, ....)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>But when that same record is retrieved, the log will show that a value of "0" is returned, instead of 0.5.</p>
+</div>
+<div class="paragraph">
+<p>The solution is to explicitly add the scale to the field like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@javax.jdo.annotations.Column(scale=2)
+@lombok.Getter @lombok.Setter
+private BigDecimal impact;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In addition, you should also set the scale of the <code>BigDecimal</code>, using <code>setScale(scale, roundingMode)</code>.</p>
+</div>
+<div class="paragraph">
+<p>More information can be found <a href="http://www.opentaps.org/docs/index.php/How_to_Use_Java_BigDecimal:_A_Tutorial">here</a> and <a href="http://www.tutorialspoint.com/java/math/bigdecimal_setscale_rm_roundingmode.htm">here</a>.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="blobs"><a class="anchor" href="#blobs"></a><code>Blob</code>s</h4>
+<div class="paragraph">
+<p>Apache Isis configures JDO/DataNucleus so that the properties of type <code>org.apache.isis.applib.value.Blob</code> and <code>org.apache.isis.applib.value.Clob</code> can also be persisted.</p>
+</div>
+<div class="paragraph">
+<p>As for Joda dates, this requires the <code>@javax.jdo.annotations.Persistent</code> annotation.
+However, whereas for dates one would always expect this value to be retrieved eagerly, for blobs and clobs it is not so clear cut.</p>
+</div>
+<div class="paragraph">
+<p>For example, in the <code>ToDoItem</code> class (in the (non-ASF) <a href="https://github.com/isisaddons/isis-app-todoapp/blob/0333852ddd18ad67e3356fccf805aa442246790d/dom/src/main/java/todoapp/dom/todoitem/ToDoItem.java#L442">todoapp example app</a>) the <code>attachment</code> property is as follows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@javax.jdo.annotations.Persistent(defaultFetchGroup="false", columns = {
+    @javax.jdo.annotations.Column(name = "attachment_name"),
+    @javax.jdo.annotations.Column(name = "attachment_mimetype"),
+    @javax.jdo.annotations.Column(name = "attachment_bytes", jdbcType="BLOB", sqlType = "LONGVARBINARY")
+})
+@Property(optionality = Optionality.OPTIONAL)
+@lombok.Getter @lombok.Setter
+private Blob attachment;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The three <code>@javax.jdo.annotations.Column</code> annotations are required because the mapping classes that Apache Isis provides (<a href="https://github.com/apache/isis/blob/isis-1.4.0/component/objectstore/jdo/jdo-datanucleus/src/main/java/org/apache/isis/objectstore/jdo/datanucleus/valuetypes/IsisBlobMapping.java#L59">IsisBlobMapping</a> and <a href="https://github.com/apache/isis/blob/isis-1.4.0/component/objectstore/jdo/jdo-datanucleus/src/main/java/org/apache/isis/objectstore/jdo/datanucleus/valuetypes/IsisClobMapping.java#L59">IsisClobMapping</a>) map to 3 columns.
+(It is not an error to omit these <code>@Column</code> annotations, but without them the names of the table columns are simply suffixed <code>_0</code>, <code>_1</code>, <code>_2</code> etc.</p>
+</div>
+<div class="paragraph">
+<p>If the <code>Blob</code> is mandatory, then use:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@javax.jdo.annotations.Persistent(defaultFetchGroup="false", columns = {
+    @javax.jdo.annotations.Column(name = "attachment_name", allowsNull="false"),
+    @javax.jdo.annotations.Column(name = "attachment_mimetype", allowsNull="false"),
+    @javax.jdo.annotations.Column(name = "attachment_bytes",
+                                  jdbcType="BLOB", sqlType = "LONGVARBINARY",
+                                  allowsNull="false")
+})
+@Property( optionality = Optionality.MANDATORY )
+@lombok.Getter @lombok.Setter
+private Blob attachment;</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>If specifying a <code>sqlType</code> of "LONGVARBINARY" does not work, try instead "BLOB".
+There can be differences in behaviour between JDBC drivers.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="clobs"><a class="anchor" href="#clobs"></a><code>Clob</code>s</h4>
+<div class="paragraph">
+<p>Mapping <code>Clob`s works in a very similar way to <code>Blob</code>s, but the `jdbcType</code> and <code>sqlType</code> attributes will, respectively, be <code>CLOB</code> and <code>LONGVARCHAR</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@javax.jdo.annotations.Persistent(defaultFetchGroup="false", columns = {
+    @javax.jdo.annotations.Column(name = "attachment_name"),
+    @javax.jdo.annotations.Column(name = "attachment_mimetype"),
+    @javax.jdo.annotations.Column(name = "attachment_chars",
+                                  jdbcType="CLOB",
+                                  sqlType = "LONGVARCHAR")
+})
+@Property( optionality = Optionality.OPTIONAL )
+@lombok.Getter @lombok.Setter
+private Clob doc;</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>If specifying a <code>sqlType</code> of "LONGVARCHAR" does not work, try instead "CLOB".  There can be differences in behaviour between JDBC drivers.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="mapping-to-varbinary-or-varchar"><a class="anchor" href="#mapping-to-varbinary-or-varchar"></a>Mapping to VARBINARY or VARCHAR</h4>
+<div class="paragraph">
+<p>Instead of mapping to a sqlType of <code>LONGVARBINARY</code> (or perhaps <code>BLOB</code>), you might instead decide to map to a <code>VARBINARY</code>.
+The difference is whether the binary data is held "on-row" or as a pointer "off-row"; with a <code>VARBINARY</code> the data is held on-row and so you will need to specify a length.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@javax.jdo.annotations.Column(
+        name = "attachment_bytes",
+        jdbcTypr="BLOB", sqlType = "VARBINARY", length=2048
+)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The same argument applies to <code>LONGVARCHAR</code> (or <code>CLOB</code>); you could instead map to a regular <code>VARCHAR</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@javax.jdo.annotations.Column(
+        name = "attachment_chars",
+        sqlType = "VARCHAR", length=2048
+)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Support and maximum allowed length will vary by database vendor.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="collections"><a class="anchor" href="#collections"></a>Collections</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A collection is an instance variable of a domain object, of a collection type that holds references to other domain objects.
+For example, a <code>Customer</code> may have a collection of <code>Order</code>s).</p>
+</div>
+<div class="paragraph">
+<p>It&#8217;s ok for a <a href="#view-models">view model</a> to reference both view model and domain entities.
+However, it isn&#8217;t valid for a domain entity to hold a persisted reference to view model (DataNucleus will not know how to persist that view model).</p>
+</div>
+<div class="paragraph">
+<p>Formally speaking, a collection is simply a regular JavaBean getter, returning a collection type (subtype of <code>java.util.Collection</code>).
+Most collections (those that are modifiable) will also have a setter and, if persisted, a backing instance field.
+And collections properties will also have a number of annotations:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Apache Isis defines its own <code>@Collection</code> annotation for capturing domain semantics.
+It also provides a <code>@CollectionLayout</code> for UI hints (though the information in this annotation may instead be provided by a supplementary <a href="../../vw/layout.html" class="page"><code>.layout.xml</code></a> file)</p>
+</li>
+<li>
+<p>the collections of domain entities are often annotated with various JDO/DataNucleus annotations, most notably <code>javax.jdo.annotations.Persistent</code>.
+This and other annotations can be used to specify if the association is bidirectional, and whether to define a link table or not to hold foreign key columns.</p>
+</li>
+<li>
+<p>for the collections of view models, then JAXB annotations such as <code>@javax.xml.bind.annotation.XmlElementWrapper</code> and <code>@javax.xml.bind.annotation.XmlElement</code> will be present</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Apache Isis recognises some of these annotations for JDO/DataNucleus and JAXB and infers some domain semantics from them (for example, the maximum allowable length of a string property).</p>
+</div>
+<div class="paragraph">
+<p>Unlike <a href="#properties">properties</a>, the framework does not allow collections to be "edited".
+Instead, <a href="#actions">action</a>s can be written that will modify the contents of the collection as a side-effect.
+For example, a <code>placeOrder(&#8230;&#8203;)</code> action will likely add an <code>Order</code> to the <code>Customer#orders</code> collection.</p>
+</div>
+<div class="paragraph">
+<p>Since writing getter and setter methods adds quite a bit of boilerplate, it&#8217;s common to use <a href="https://projectlombok.org/">Project Lombok</a> to code generate these methods at compile time (using Java&#8217;s annotation processor) simply by adding the <code>@lombok.Getter</code> and <code>@lombok.Setter</code> annotations to the field.</p>
+</div>
+<div class="sect2">
+<h3 id="mapping-bidir-1m"><a class="anchor" href="#mapping-bidir-1m"></a>Mapping bidir 1:m</h3>
+<div class="paragraph">
+<p>Bidirectional one-to-many collections are one of the most common types of associations between two entities.
+In the parent object, the collection can be defined as:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class ParentObject
+        implements Comparable&lt;ParentObject&gt;{
+
+    @javax.jdo.annotations.Persistent(
+        mappedBy = "parent",                                                <i class="conum" data-value="1"></i><b>(1)</b>
+        dependentElement = "false"                                          <i class="conum" data-value="2"></i><b>(2)</b>
+    )
+    @Collection                                                             <i class="conum" data-value="3"></i><b>(3)</b>
+    @lombok.Getter @lombok.Setter
+    private SortedSet&lt;ChildObject&gt; children = new TreeSet&lt;ChildObject&gt;();   <i class="conum" data-value="4"></i><b>(4)</b>
+
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>indicates a bidirectional association; the foreign key pointing back to the <code>Parent</code> will be in the table for <code>ChildObject</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>disable cascade delete</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>(not actually required in this case, because no attributes are set, but acts as a useful reminder that this collection will be rendered in the UI by Apache Isis)</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>uses a <code>SortedSet</code> (as opposed to some other collection type; discussion below)</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>while in the child object you will have:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class ChildObject
+        implements Comparable&lt;ChildObject&gt; {    <i class="conum" data-value="1"></i><b>(1)</b>
+
+    @javax.jdo.annotations.Column(
+        allowsNull = "false"                    <i class="conum" data-value="2"></i><b>(2)</b>
+    )
+    @Property(editing = Editing.DISABLED)       <i class="conum" data-value="3"></i><b>(3)</b>
+    @lombok.Getter @lombok.Setter
+    private ParentObject parent;
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>implements <code>Comparable</code> because is mapped using a <code>SortedSet</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>mandatory; every child must reference its parent</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>cannot be edited directly</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Generally speaking you should use <code>SortedSet</code> for collection types (as opposed to <code>Set</code>, <code>List</code> or <code>Collection</code>).
+JDO/Datanucleus does support the mapping of these other types, but RDBMS are set-oriented, so using this type introduces the least friction.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>For further details on mapping associations, see the JDO/DataNucleus documentation for <a href="http://www.datanucleus.org/products/accessplatform_4_1/jdo/orm/one_to_many.html">one-to-many</a> associations, <a href="http://www.datanucleus.org/products/accessplatform_4_1/jdo/orm/many_to_one.html">many-to-one</a> associations, <a href="http://www.datanucleus.org/products/accessplatform_4_1/jdo/orm/many_to_many.html">many-to-many</a> associations, and so on.</p>
+</div>
+<div class="paragraph">
+<p>Also, while JDO/DataNucleus itself supports <code>java.util.Map</code> as a collection type, this is not supported by Apache Isis.
+If you do wish to use this collection type, then annotate the getter with <code>@Programmatic</code> so that it is ignored by the Apache Isis framework.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="value-vs-reference-types-2"><a class="anchor" href="#value-vs-reference-types-2"></a>Value vs Reference Types</h3>
+<div class="paragraph">
+<p>Apache Isis can (currently) only provide a UI for collections of references.
+While you can use DataNucleus to persist collections/arrays of value types, such properties must be annotated as <code>@Programmatic</code> so that they are ignored by Apache Isis.</p>
+</div>
+<div class="paragraph">
+<p>If you want to visualize an array of value types in Apache Isis, then one option is to wrap value in a view model, as explained <a href="../btb/about.html#simulating-collections-of-values" class="page">elsewhere</a>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="derived-collections"><a class="anchor" href="#derived-collections"></a>Derived Collections</h3>
+<div class="paragraph">
+<p>A derived collection is simply a getter (no setter) that returns a <code>java.util.Collection</code> (or subtype).</p>
+</div>
+<div class="paragraph">
+<p>While derived properties and derived collections typically "walk the graph" to associated objects, there is nothing to prevent the returned value being the result of invoking a repository (domain service) action.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Customer {
+    ...
+    public List&lt;Order&gt; getMostRecentOrders() {
+        return orderRepo.findMostRecentOrders(this, 5);
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="actions"><a class="anchor" href="#actions"></a>Actions</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>While <a href="#collections">collections</a> define the state held by a domain object (its "know what" responsibilities), actions define the object&#8217;s behaviour (its "know how-to" responsibilities).</p>
+</div>
+<div class="paragraph">
+<p>An application whose domain objects have only/mostly "know-what" responsibilities is pretty dumb: it requires that the end-user know the business rules and doesn&#8217;t modify the state of the domain objects such that they are invalid (for example, an "end date" being before a "start date").
+Such applications are often called CRUD applications (create/read/update/delete).</p>
+</div>
+<div class="paragraph">
+<p>In more complex domains, it&#8217;s not realistic/feasible to expect the end-user to have to remember all the different business rules that govern the valid states for each domain object.
+So instead actions allow those business rules to be encoded programmatically.
+An Apache Isis application doesn&#8217;t try to constrain the end-user in how they interact with the UI (it doesn&#8217;t attempt to define a rigid business process) but it <em>does</em> aim to ensure that business rule invariants are maintained, that is that business objects aren&#8217;t allowed to go into an invalid state.</p>
+</div>
+<div class="paragraph">
+<p>For simple domain applications, you may want to start prototyping only with properties, and only later introduce actions (representing the most common business operations).
+But an alternative approach, recommended for more complex applications, is actually to start the application with all properties non-editable.
+Then, as the end-user requires the ability to modify some state, there is a context in which to ask the question "why does this state need to change?" and "are their any side-effects?" (ie, other state that changes at the same time, or other behaviour that should occur).
+If the state change is simple, for example just being able to correct an invalid address, or adding a note or comment, then that can probably be modelled as a simple editable property.
+But if the state change is more complex, then most likely an action should be used instead.</p>
+</div>
+<div class="sect2">
+<h3 id="defining-actions"><a class="anchor" href="#defining-actions"></a>Defining actions</h3>
+<div class="paragraph">
+<p>If the <a href="../../refguide/config/configuring-core.html#policy" class="page"><code>isis.reflector.explicitAnnotations.action</code></a> configuration property is set (recommended), then actions are <code>public</code> methods with the <a href="../../refguide/applib-ant/Action.html" class="page"><code>@Action</code></a> annotation.
+This annotation can also specify additional domain semantics, for example regarding idempotency.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Action(semantics=SemanticsOf.IDEMPOTENT)       <i class="conum" data-value="1"></i><b>(1)</b>
+public ShoppingBasket addToBasket(
+        Product product,
+        @ParameterLayout(named="Quantity")      <i class="conum" data-value="2"></i><b>(2)</b>
+        int quantity
+        ) {
+    ...
+    return this;
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><code>@Action</code> annotation indicates that this public method is an action..</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The names of action parameters (as rendered in the UI) will by default be the parameter types, not the paramter names.
+<div class="paragraph">
+<p>For the <code>product</code> parameter this is reasonable, but not so for the <code>quantity</code> parameter (which would by default show up with a name of "int".
+The <code>@ParameterLayout</code> annotation provides a UI hint to the framework.</p>
+</div></td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>If the <a href="../../refguide/config/configuring-core.html#policy" class="page"><code>isis.reflector.explicitAnnotations.action</code></a> configuration property is <em>not</em> set, then the rules are a little more involved: an action is a public method that is not getters or setters which represent properties or collections, and does not have one of the various method prefixes (such as <code>hide</code> or <code>validate</code>) used for represent <a href="business-rules.html" class="page">business rules</a>), and is not annotated with <a href="../../refguide/applib-ant/Programmatic.html" class="page"><code>@Programmatic</code></a>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="reference-parameter-types"><a class="anchor" href="#reference-parameter-types"></a>(Reference) Parameter types</h3>
+<div class="paragraph">
+<p>Parameter types can be value types or reference types.
+In the case of primitive types, the end-user can just enter the value directly through the parameter field.
+In the case of reference types however (such as <code>Product</code>), a drop-down must be provided from which the end-user to select.
+This is done using either a supporting <a href="../../refguide/applib-cm/methods.html#choices" class="page"><code>choices</code></a> or <a href="../../refguide/applib-cm/methods.html#autoComplete" class="page"><code>autoComplete</code></a> method.
+The "choices" is used when there is a limited set of options, while "autoComplete" is used when there are large set of options such that the end-user must provide some characters to use for a search.</p>
+</div>
+<div class="paragraph">
+<p>For example, the <code>addToBasket(&#8230;&#8203;)</code> action shown above might well have an autocomplete supporting method :</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Action(semantics=SemanticsOf.IDEMPOTENT)
+public ShoppingBasket addToBasket(
+        Product product,
+        @ParameterLayout(named="Quantity")
+        int quantity
+        ) {
+    ...
+    return this;
+}
+public List&lt;Product&gt; autoComplete0AddToBasket(              <i class="conum" data-value="1"></i><b>(1)</b>
+    @MinLength(3)                                           <i class="conum" data-value="2"></i><b>(2)</b>
+    String searchTerm) {
+    return productRepository.find(searchTerm);              <i class="conum" data-value="3"></i><b>(3)</b>
+}
+@javax.inject.Inject
+ProductRepository productRepository;</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Supporting <code>autoComplete</code> method.
+The "0" in the name means that this corresponds to parameter 0 of the "addToBasket" action (ie <code>Product</code>).
+It is also required to return a Collection of that type.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The <a href="../../refguide/applib-ant/MinLength.html" class="page"><code>@MinLength</code></a> annotation defines how many characters the end-user must enter before performing a search.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>The implementation delegates to an injected repository service.  This is typical.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Note that it is also valid to define "choices" and "autoComplete" for value types (such as <code>quantity</code>, above); it just isn&#8217;t as common to do so.</p>
+</div>
+<div class="sect3">
+<h4 id="removing-boilerplate"><a class="anchor" href="#removing-boilerplate"></a>Removing boilerplate</h4>
+<div class="paragraph">
+<p>To save having to define an <code>autoCompleteNXxx(&#8230;&#8203;)</code> method everywhere that a reference to a particular type (such as <code>Product</code>) appears as an action parameter, it is also possible to use the <code>@DomainObject</code> annotation on <code>Product</code> itself:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(
+    autoCompleteRepository=ProductRepository.class          <i class="conum" data-value="1"></i><b>(1)</b>
+    autoCompleteAction="find"                               <i class="conum" data-value="2"></i><b>(2)</b>
+)
+public class Product ... {
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Whenever an action parameter requiring a <code>Product</code> is defined, provide an autoComplete drop-down automatically</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Use the "find" method of <code>ProductRepository</code> (rather than the default name of "autoComplete")</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>(As noted above), if the number of available instances of the reference type is a small number (in other words, all of which could comfortably be shown in a drop-down) then instead the <code>choicesNXxx()</code> supporting method can be used.
+This too can be avoided by annotating the referenced class.</p>
+</div>
+<div class="paragraph">
+<p>For example, suppose we have an action to specify the <code>PaymentMethodType</code>, where there are only 10 or so such (Visa, Mastercard, Amex, Paypal etc).
+We could define this as:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Action
+public Order payUsing(PaymentMethodType type) {
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>where <code>PaymentMethodType</code> would be annotated using:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(
+    bounded=true                            <i class="conum" data-value="1"></i><b>(1)</b>
+)
+public class PaymentMethodType ... {
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>only a small (ie "bounded") number of instances available, meaning that the framework should render all in a drop-down.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="collection-parameter-types"><a class="anchor" href="#collection-parameter-types"></a>Collection Parameter types</h3>
+<div class="paragraph">
+<p>Action parameters can also be collections of values (for example <code>List&lt;String&gt;</code>), or can be collections of references (such as <code>List&lt;Customer&gt;</code>).</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Action(semantics=SemanticsOf.IDEMPOTENT)
+public ShoppingBasket addToBasket(
+        List&lt;Product&gt; products,
+        @ParameterLayout(named="Quantity") int quantity
+        ) {
+    ...
+    return this;
+}
+public List&lt;Product&gt; autoComplete0AddToBasket(@MinLength(3) String searchTerm) {
+    return ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>As the example suggests, any collection parameter type must provide a way to select items, either by way of a "choices" or "autoComplete" supporting method or alternatively defined globally using <a href="../../refguide/applib-ant/DomainObject.html" class="page"><code>@DomainObject</code></a> on the referenced type (described <a href="#actions#reference-parameter-types">above</a>).</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="optional-parameters"><a class="anchor" href="#optional-parameters"></a>Optional Parameters</h3>
+<div class="paragraph">
+<p>Whereas the <a href="#properties.adoc#optional-properties">optionality of properties</a> is defined using <a href="../../refguide/applib-ant/Column.html#allowsNull" class="page"><code>@javax.jdo.annotations.Column#allowsNull()</code></a>, that JDO annotation cannot be applied to parameter types.
+Instead, either the <a href="../../refguide/applib-ant/Nullable.html" class="page"><code>@Nullable</code></a> annotation or the <a href="../../refguide/applib-ant/Parameter.html#optionality" class="page"><code>@Parameter#optionality()</code></a>  annotation/attribute is used.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@javax.jdo.annotations.Column(allowsNull="true")                <i class="conum" data-value="1"></i><b>(1)</b>
+@lombok.Getter @lombok.Setter
+private LocalDate shipBy;
+
+@Action(semantics=SemanticsOf.IDEMPOTENT)
+public Order invoice(
+                PaymentMethodType paymentMethodType,
+                @Nullable                                       <i class="conum" data-value="2"></i><b>(2)</b>
+                @ParameterLayout(named="Ship no later than")
+                LocalDate shipBy) {
+    ...
+    setShipBy(shipBy)
+    return this;
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Specifies the property is optional.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Specifies the corresponding parameter is optional.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>See also <a href="#properties-vs-parameters">properties vs parameters</a>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="string-parameters-length"><a class="anchor" href="#string-parameters-length"></a><code>String</code> Parameters (Length)</h3>
+<div class="paragraph">
+<p>Whereas the length of string properties is defined using <a href="../../refguide/applib-ant/Column.html#length-for-strings.adoc" class="page"><code>@javax.jdo.annotations.Column#length()</code></a>, that JDO annotation cannot be applied to parameter types.
+Instead, the <a href="../../refguide/applib-ant/Parameter.html#maxLength" class="page"><code>@Parameter#maxLength()</code></a> annotation/attribute is used.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@javax.jdo.annotations.Column(length=50)                <i class="conum" data-value="1"></i><b>(1)</b>
+@lombok.Getter @lombok.Setter
+private String firstName;
+
+@javax.jdo.annotations.Column(length=50)
+@lombok.Getter @lombok.Setter
+private String lastName;
+
+public Customer updateName(
+                @Parameter(maxLength=50)                <i class="conum" data-value="2"></i><b>(2)</b>
+                @ParameterLayout(named="First name")
+                String firstName,
+                @Parameter(maxLength=50)
+                @ParameterLayout(named="Last name")
+                String lastName) {
+    setFirstName(firstName);
+    setLastName(lastName);
+    return this;
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Specifies the property length using the JDO <a href="../../refguide/applib-ant/Column.html#length.adoc" class="page"><code>@Column#length()</code></a> annotation</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Specifies the parameter length using the (Apache Isis) <a href="../../refguide/applib-ant/Parameter.html#maxLength" class="page"><code>@Parameter#maxLength()</code></a> annotation</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Incidentally, note in the above example that the new value is assigned to the properties using the setter methods; the action does not simply set the instance field directly.
+This is important, because it allows JDO/DataNucleus to keep track that this instance variable is "dirty" and so needs flushing to the database table before the transaction completes.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>See also <a href="#properties-vs-parameters">properties vs parameters</a>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="bigdecimals-precision-2"><a class="anchor" href="#bigdecimals-precision-2"></a><code>BigDecimal</code>s (Precision)</h3>
+<div class="paragraph">
+<p>Whereas the precision of <code>BigDecimal</code> properties is defined using <a href="../../refguide/applib-ant/Column.html#scale.adoc" class="page"><code>@javax.jdo.annotations.Column#scale()</code></a>, that JDO annotation cannot be applied to parameter types.
+Instead, the <a href="../../refguide/applib-ant/Digits.html" class="page"><code>@javax.validation.constraints.Digits#fraction()</code></a> annotation/attribute is used.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@javax.jdo.annotations.Column(scale=2)                              <i class="conum" data-value="1"></i><b>(1)</b>
+@lombok.Getter @lombok.Setter
+private BigDecimal discountRate;
+
+public Order updateDiscount(
+                @javax.validation.constraints.Digits(fraction=2)    <i class="conum" data-value="2"></i><b>(2)</b>
+                @ParameterLayout(named="Discount rate")
+                String discountRate) {
+    setDiscountRate(discountRate);
+    return this;
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Specifies the property precision using <a href="../../refguide/applib-ant/Column.html#scale.adoc" class="page"><code>@Column#scale()</code></a></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Specifies the corresponding parameter precision using <a href="../../refguide/applib-ant/Digits.html" class="page"><code>@Digits#fraction()</code></a>.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>See also <a href="#properties-vs-parameters">properties vs parameters</a>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="properties-vs-parameters"><a class="anchor" href="#properties-vs-parameters"></a>Properties vs Parameters</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In many cases the value types of properties and of action parameters align.
+For example, a <code>Customer</code> entity might have a <code>surname</code> property, and there might also be corresponding <code>changeSurname</code>.
+Ideally we want the surname property and surname action parameter to use the same value type.</p>
+</div>
+<div class="paragraph">
+<p>Since JDO/DataNucleus handles persistence, its annotations can only be specified for properties, not for action parameters.
+It is therefore necessary to use Apache Isis' equivalent annotations for action parameters.</p>
+</div>
+<div class="paragraph">
+<p>The table below summarises the equivalence of some of the most common cases.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. Comparing annotations of Properties vs Action Parameters</caption>
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 37.5%;">
+<col style="width: 37.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">value type/semantic</th>
+<th class="tableblock halign-left valign-top">(JDO) property</th>
+<th class="tableblock halign-left valign-top">action parameter</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">string (length)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>@javax.jdo.annotations.Column(length=50)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>@javax.jdo.annotations.Parameter(maxLength=50)</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">big decimal (precision)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>@javax.jdo.annotations.Column(scale=2)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>@javax.validation.constraints.Digits(fraction=2)</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">optionality</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>@Column(allowsNull="true")</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>@Nullable</code> or <code>ParameterLayout(optionality=Optionality.OPTIONAL</code>)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="injecting-services"><a class="anchor" href="#injecting-services"></a>Injecting services</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Apache Isis runs on top of SpringBoot, and uses SpringBoot for dependency injection, both of the applications own domain services and als of the very many additional services defined by the framework (such as <a href="../../refguide/applib-svc/persistence-layer-api/RepositoryService.html" class="page"><code>RepositoryService</code></a>).</p>
+</div>
+<div class="paragraph">
+<p>However, not only does it autowire domain services into other services, it also ensures that services are injected into any domain object (eg entity, view model, fixture script, specification etc).</p>
+</div>
+<div class="sect2">
+<h3 id="field-injection"><a class="anchor" href="#field-injection"></a>Field Injection</h3>
+<div class="paragraph">
+<p>Field injection is generally recommended, using the <code>@javax.inject.Inject</code> annotation.
+For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Customer {
+    ...
+    @javax.inject.Inject
+    OrderRepository orderRepository;
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To inject a list of services, use:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class DocumentService {
+    ...
+    @javax.inject.Inject
+    List&lt;PaperclipFactory&gt; paperclipFactories;
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We recommend using default rather than <code>private</code> visibility so that the field can be mocked out within unit tests (placed in the same package as the code under test).</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="method-injection"><a class="anchor" href="#method-injection"></a>Method Injection</h3>
+<div class="paragraph">
+<p>The framework also supports two forms of method injection.
+All that is required to inject a service into a entity/service is to provide an appropriate method or field.
+The name of the method does not matter, only that it is prefixed either <code>set</code> or <code>inject</code>, is public, and has a single parameter of the correct type.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Customer {
+    private OrderRepository orderRepository;
+    public void setOrderRepository(OrderRepository orderRepository) {
+        this.orderRepository = orderRepository;
+    }
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>or alternatively, using 'inject' as the prefix:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Customer {
+    private OrderRepository orderRepository;
+    public void injectOrderRepository(OrderRepository orderRepository) {
+        this.orderRepository = orderRepository;
+    }
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Lists of services can be injected in a similar manner.</p>
+</div>
+<div class="paragraph">
+<p>Note that the method name can be anything; it doesn&#8217;t need to be related to the type being injected.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="constructor-injection"><a class="anchor" href="#constructor-injection"></a>Constructor injection</h3>
+<div class="paragraph">
+<p>TODO: v2: this is now supported, because of Spring Boot, I think.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="multiple-implementations"><a class="anchor" href="#multiple-implementations"></a>Multiple Implementations</h3>
+<div class="paragraph">
+<p>Sometimes there may be multiple services that implement a single type.
+This is common for example for SPI service, whereby one module defines an SPI service, and other module(s) in the application implement that service.
+To support this, lists of services can be injected.</p>
+</div>
+<div class="paragraph">
+<p>When there are multiple service implementations of a given type, annotate the different implementations using Spring&#8217;s <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/core/annotation/Order.html"><code>@Order</code></a> or <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/annotation/Primary.html"><code>@Primary</code></a>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="scoping"><a class="anchor" href="#scoping"></a>Scoping</h3>
+<div class="paragraph">
+<p>TODO: v2: should describe how this works.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="qualified-injection"><a class="anchor" href="#qualified-injection"></a>Qualified Injection</h3>
+<div class="paragraph">
+<p>TODO: v2: x-ref to Spring Boot docs.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="view-models"><a class="anchor" href="#view-models"></a>View Models</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>As described in the <a href="building-blocks.html#view-models" class="page">introduction</a>, view models are domain objects like domain entities, with behaviour and state.
+However, unlike domain entities, their state is <em>not</em> persisted to a database but is instead serialized into its identifier (in effect, its URL).</p>
+</div>
+<div class="paragraph">
+<p>The framework provides two main ways to implement a view model:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The more powerful/flexible approach is to use JAXB annotations; this allows the state of the object&#8217;s properties and also its collections.</p>
+<div class="paragraph">
+<p>The serialized form of these view models is therefore XML, which also enables these view models to act as DTO (useful for various integration scenarios).</p>
+</div>
+</li>
+<li>
+<p>The other approach is to use Apache Isis specific annotations.</p>
+<div class="paragraph">
+<p>While (arguably) these explain the intent of the view model better, they are more restrictive: only the state of the object&#8217;s properties is serialized&#8201;&#8212;&#8201;collections are ignored&#8201;&#8212;&#8201;and not every datatype is recognized.</p>
+</div>
+<div class="paragraph">
+<p>On the other hand, they are more likely to perform better.
+This could be a factor for example in a dashboard/home page that references many view model instances.</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>In the sections below we consider JAXB view models both as "regular" view models, and also when using them to act as DTOs.</p>
+</div>
+<div class="sect2">
+<h3 id="jaxb"><a class="anchor" href="#jaxb"></a>JAXB View Models</h3>
+<div class="paragraph">
+<p>Here&#8217;s a typical example of a JAXB view model, to allow (certain properties of) two <code>Customer</code>s to be compared:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@XmlRootElement(name = "compareCustomers")          <i class="conum" data-value="1"></i><b>(1)</b>
+@XmlType(
+        propOrder = {                               <i class="conum" data-value="2"></i><b>(2)</b>
+            "customer1",
+            "customer2"
+        }
+)
+@XmlAccessorType(XmlAccessType.FIELD)               <i class="conum" data-value="3"></i><b>(3)</b>
+public class CompareCustomers {
+
+    @XmlElement(required = true)                    <i class="conum" data-value="4"></i><b>(4)</b>
+    @Getter @Setter
+    Customer customer1;
+
+    @XmlElement(required = true)                    <i class="conum" data-value="4"></i><b>(4)</b>
+    @Getter @Setter
+    Customer customer2;
+
+    @XmlTransient                                   <i class="conum" data-value="5"></i><b>(5)</b>
+    public String getCustomer1Name() {
+        return getCustomer1().getName();
+    }
+
+    @XmlTransient                                   <i class="conum" data-value="5"></i><b>(5)</b>
+    public String getCustomer2Name() {
+        return getCustomer2().getName();
+    }
+
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The JAXB <code>@XmlRootElement</code> annotation indicates this is a view model to Apache Isis, which then uses JAXB to serialize the state of the view model between interactions</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Optionally, the properties of the view model can be listed using the <code>XmlType#propOrder</code> attribute.
+<div class="paragraph">
+<p>This is an all-or-nothing affair: either all properties must be listed, or else the annotation omitted.</p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Specifying field accessor type allows the Lombok <code>@Getter</code> and <code>@Setter</code> annotations to be used.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>The <code>@XmlElement</code> indicates the property is part of the view model&#8217;s state.
+For collections, the <code>@XmlElementWrapper</code> would also typically be used.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>The <code>@XmlTransient</code> indicates that the property is derived and should be ignored by JAXB.
+<div class="paragraph">
+<p>The derived properties could also have been implemented using <a href="building-blocks.html#mixins" class="page">mixins</a>.</p>
+</div></td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Be aware that all the state will become the DTO&#8217;s memento, ultimately converted into a URL-safe form, by way of the <a href="../../refguide/applib-svc/presentation-layer-spi/UrlEncodingService.html" class="page"><code>UrlEncodingService</code></a>.</p>
+</div>
+<div class="paragraph">
+<p>There are limits to the lengths of URLs, however.
+If the URL does exceed limits or contains invalid characters, then provide a custom implementation of <a href="../../refguide/applib-svc/presentation-layer-spi/UrlEncodingService.html" class="page"><code>UrlEncodingService</code></a> to handle the memento string in some other fashion (eg substituting it with a GUID, with the memento cached somehow on the server).
+a URL.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="sect3">
+<h4 id="referencing-domain-entities"><a class="anchor" href="#referencing-domain-entities"></a>Referencing Domain Entities</h4>
+<div class="paragraph">
+<p>It&#8217;s quite common for view models to be "backed by" (be projections of) some underlying domain entity.
+For example, the <code>CompareCustomers</code> view model described <a href="#jaxb">above</a> actually references two underlying <code>Customer</code> entities.</p>
+</div>
+<div class="paragraph">
+<p>It wouldn&#8217;t make sense to serialize out the state of a persistent entity.
+However, the identity of the underlying entity is well defined; Apache Isis defines the <a href="../../refguide/schema/common.html" class="page">common schema</a> which defines the <code>&lt;oid-dto&gt;</code> element (and corresponding <code>OidDto</code> class): the object&#8217;s type and its identifier.
+This is basically a formal XML equivalent to the <code>Bookmark</code> object obtained from the <a href="../../refguide/applib-svc/integration-api/BookmarkService.html" class="page"><code>BookmarkService</code></a>.</p>
+</div>
+<div class="paragraph">
+<p>There is only one requirement to make this work: every referenced domain entity must be annotated with <a href="../../refguide/applib-ant/XmlJavaTypeAdapter.html" class="page"><code>@XmlJavaTypeAdapter</code></a>, specifying the framework-provided <code>PersistentEntityAdapter</code>.
+And this class is similar to the <a href="../../refguide/applib-svc/integration-api/BookmarkService.html" class="page"><code>BookmarkService</code></a>: it knows how to create an <code>OidDto</code> from an object reference.</p>
+</div>
+<div class="paragraph">
+<p>Thus, in our view model we can legitimately write:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class CompareCustomers {
+
+    @XmlElement(required = true)
+    @Getter @Setter
+    Customer customer1;
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>All we need to do is remember to add that <code>@XmlJavaTypeAdapter</code> annotation to the referenced entity:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@XmlJavaTypeAdapter(PersistentEntityAdapter.class)
+public class Customer ...  {
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>It&#8217;s also possible for a DTO view models to hold collections of objects.
+These can be of any type, either simple properties, or references to other objects.
+The only bit of boilerplate that is required is the <code>@XmlElementWrapper</code> annotation.
+This instructs JAXB to create an XML element (based on the field name) to contain each of the elements.
+(If this is omitted then the contents of the collection are at the same level as the properties; almost certainly not what is required).</p>
+</div>
+<div class="paragraph">
+<p>For example, we could perhaps generalize the view model to hold a set of <code>Customer</code>s to be compared:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class CompareCustomers {
+    ...
+    @XmlElementWrapper
+    @XmlElement(name = "customers")
+    @Getter @Setter
+    protected List&lt;Customer&gt; customersToCompare = Lists.newArrayList();
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This capability is particularly useful when the JAXB view model is being used as a <a href="#dto">DTO</a>.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="joda-datatypes"><a class="anchor" href="#joda-datatypes"></a>JODA Time Datatypes</h4>
+<div class="paragraph">
+<p>If your JAXB view model contains fields using the JODA datatypes (<code>LocalDate</code> and so on), then <code>@XmlJavaTypeAdapter</code> additional annotations in order to "teach" JAXB how to serialize out the state.</p>
+</div>
+<div class="paragraph">
+<p>The Apache Isis applib provides a number of adapters to use out-of-the-box.
+For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@XmlRootElement(name = "categorizeIncomingInvoice")
+@XmlType(
+        propOrder = {
+                ...
+                "dateReceived",
+                ...
+        }
+)
+@XmlAccessorType(XmlAccessType.FIELD)
+public class IncomingInvoiceViewModel extends IncomingOrderAndInvoiceViewModel {
+
+    @XmlJavaTypeAdapter(JodaLocalDateStringAdapter.ForJaxb.class)
+    private LocalDate dateReceived;
+
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The full list of adapter classes are:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 2. JAXB adapters</caption>
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 66.6667%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">JODA datatype</th>
+<th class="tableblock halign-left valign-top">Adapter</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top" rowspan="2"><div class="content"><div class="paragraph">
+<p><code>org.joda.time.DateTime</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JodaDateTimeStringAdapter.ForJaxb</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JodaDateTimeXMLGregorianCalendarAdapter.ForJaxb</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" rowspan="2"><div class="content"><div class="paragraph">
+<p><code>org.joda.time.LocalDate</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JodaLocalDateStringAdapter.ForJaxb</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JodaLocalDateXMLGregorianCalendarAdapter.ForJaxb</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" rowspan="2"><div class="content"><div class="paragraph">
+<p><code>org.joda.time.LocalDateTime</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JodaLocalDateTimeStringAdapter.ForJaxb</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JodaLocalDateTimeXMLGregorianCalendarAdapter.ForJaxb</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" rowspan="2"><div class="content"><div class="paragraph">
+<p><code>org.joda.time.LocalTime</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JodaLocalTimeStringAdapter.ForJaxb</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JodaLocalTimeXMLGregorianCalendarAdapter.ForJaxb</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>java.sql.Timestamp</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JavaSqlTimestampXmlGregorianCalendarAdapter.ForJaxb</code></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>If you want to roll-your-own, take a look at <a href="http://blog.bdoughan.com/2011/05/jaxb-and-joda-time-dates-and-times.html">this blog post</a>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="dto"><a class="anchor" href="#dto"></a>DTOs</h3>
+<div class="paragraph">
+<p>JAXB view models can also be used as DTOs.
+The examples in this section uses the DTO for <code>ToDoItem</code>, taken from the (non-ASF) <a href="http://github.com/isisaddons/isis-app-todoapp">Isis addons' todoapp</a>.</p>
+</div>
+<div class="paragraph">
+<p>This DTO is defined as follows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">package todoapp.app.viewmodels.todoitem.v1;                         <i class="conum" data-value="1"></i><b>(1)</b>
+@XmlRootElement(name = "toDoItemDto")                               <i class="conum" data-value="2"></i><b>(2)</b>
+@XmlType(
+        propOrder = {                                               <i class="conum" data-value="3"></i><b>(3)</b>
+            "majorVersion", "minorVersion",
+            "description", "category", ...
+            "toDoItem", "similarItems"
+        }
+)
+@DomainObjectLayout(
+        titleUiEvent = TitleUiEvent.Doop.class                      <i class="conum" data-value="4"></i><b>(4)</b>
+)
+public class ToDoItemV1_1 implements Dto {                          <i class="conum" data-value="5"></i><b>(5)</b>
+    @XmlElement(required = true, defaultValue = "1")                <i class="conum" data-value="6"></i><b>(6)</b>
+    public final String getMajorVersion() { return "1"; }
+    @XmlElement(required = true, defaultValue = "1")                <i class="conum" data-value="7"></i><b>(7)</b>
+    public String getMinorVersion() { return "1"; }
+
+    @XmlElement(required = true)                                    <i class="conum" data-value="8"></i><b>(8)</b>
+    @Getter @Setter
+    protected String description;
+    @XmlElement(required = true)
+    @Getter @Setter
+    protected String category;
+    ...
+
+    @Getter @Setter                                                 <i class="conum" data-value="9"></i><b>(9)</b>
+    protected ToDoItem toDoItem;
+    @XmlElementWrapper                                              <i class="conum" data-value="10"></i><b>(10)</b>
+    @XmlElement(name = "todoItem")
+    @Getter @Setter
+    protected List&lt;ToDoItem&gt; similarItems = Lists.newArrayList();
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>package name encodes major version; see discussion on <a href="#versioning">versioning</a></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>identifies this class as a view model and defines the root element for JAXB serialization</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>all properties in the class must be listed; (they can be ignored using <code>@XmlTransient</code>)</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>demonstrating use of UI events for a subscriber to provide the DTO&#8217;s title; see <a href="../../refguide/applib-ant/DomainObjectLayout.html#titleUiEvent" class="page"><code>@DomainObjectLayout#titleUiEvent()</code></a>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>class name encodes (major and) minor version; see discussion on <a href="#versioning">versioning</a></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>again, see discussion on <a href="#versioning">versioning</a></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>again, see discussion on <a href="#versioning">versioning</a></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td>simple scalar properties</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
+<td>reference to a persistent entity; discussed <a href="#referencing-domain-entities">here</a></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="10"></i><b>10</b></td>
+<td>reference to a collection of persistent entities; again discussed <a href="#referencing-domain-entities">here</a></td>
+</tr>
+</table>
+</div>
+<div class="sect3">
+<h4 id="versioning"><a class="anchor" href="#versioning"></a>Versioning</h4>
+<div class="paragraph">
+<p>The whole point of using DTOs (in Apache Isis, at least) is to define a formal contact between two inter-operating but independent applications.
+Since the only thing we can predicate about the future with any certainty is that it one or both of these applications will change, we should version DTOs from the get-go.
+This allows us to make changes going forward without unnecessarily breaking existing consumers of the data.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>There are several ways that versioning might be accomplished; we base our guidelines on this <a href="http://www.xfront.com/Versioning.pdf">article</a> taken from Roger Costello&#8217;s blog, well worth a read.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>We can distinguish two types of changes:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>backwardly compatible changes</p>
+</li>
+<li>
+<p>breaking changes.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>We can immediately say that the XSD namespace should change only when there is a major/breaking change.
+If following <a href="http://semver.org">semantic versioning</a> that means when we bump the major version number v1, v2, etc.</p>
+</div>
+<div class="paragraph">
+<p>XML namespaces correspond (when using JAXB) to Java packages.
+We should therefore place our DTOs in a package that contains only the major number; this package will eventually contain a range of DTOs that are intended to be backwardly compatible with one another.
+The package should also have a <code>package-info.java</code>; it is this that declares the XSD namespace:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@javax.xml.bind.annotation.XmlSchema(
+        namespace = "http://viewmodels.app.todoapp/todoitem/v1/Dto.xsd",        <i class="conum" data-value="1"></i><b>(1)</b>
+        xmlns = {
+                @javax.xml.bind.annotation.XmlNs(
+                        namespaceURI = "http://isis.apache.org/schema/common",
+                        prefix = "com"
+                )
+        },
+        elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED
+)
+package todoapp.app.viewmodels.todoitem.v1;                                     <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>the namespace URI, used by the DTO residing in this package.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>the package in which the DTO resides.  Note that this contains only the major version.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Although there is no requirement for the namespace URI to correspond to a physical URL, it should be unique.
+This usually means including a company domain name within the string.</p>
+</div>
+<div class="paragraph">
+<p>As noted above, this package will contain multiple DTO classes all with the same namespace; these represent a set of minor versions of the DTO, each subsequent one intended to be backwardly compatible with the previous.
+Since these DTO classes will all be in the same package (as per the advice above), the class should therefore include the minor version name:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">package todoapp.app.viewmodels.todoitem.v1;     <i class="conum" data-value="1"></i><b>(1)</b>
+...
+public class ToDoItemV1_1 implements Dto {      <i class="conum" data-value="2"></i><b>(2)</b>
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>package contains the major version only</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>DTO class contains the (major and) minor version</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>We also recommend that each DTO instance should also specify the version of the XSD schema that it is logically compatible with.
+Probably most consumers will not persist the DTOs; they will be processed and then discarded.
+However, it would be wrong to assume that is the case in all cases; some consumers might choose to persist the DTO (eg for replay at some later state).</p>
+</div>
+<div class="paragraph">
+<p>Thus:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class ToDoItemV1_1 implements Dto {
+    @XmlElement(required = true, defaultValue = "1")
+    public final String getMajorVersion() { return "1"; }   <i class="conum" data-value="1"></i><b>(1)</b>
+    @XmlElement(required = true, defaultValue = "1")
+    public String getMinorVersion() { return "1"; }         <i class="conum" data-value="2"></i><b>(2)</b>
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>returns the major version (in sync with the package)</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>returns the minor version (in sync with the class name)</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>These methods always return a hard-coded literal.
+Any instances serialized from these classes will implicitly "declare" the (major and) minor version of the schema with which they are compatible.
+If a consumer has a minimum version that it requires, it can therefore inspect the XML instance itself to determine if it is able to consume said XML.</p>
+</div>
+<div class="paragraph">
+<p>If a new (minor) version of a DTO is required, then we recommend copying-and-pasting the previous version, eg:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class ToDoItemV1_2 implements Dto {
+    @XmlElement(required = true, defaultValue = "1")
+    public final String getMajorVersion() { return "1"; }
+    @XmlElement(required = true, defaultValue = "2")
+    public String getMinorVersion() { return "2"; }
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Obviously, only changes made must be backward compatible, eg new members must be optional.</p>
+</div>
+<div class="paragraph">
+<p>Alternatively, you might also consider simply editing the source file, ie renaming the class and bumping up the value returned by <code>getMinorVersion()</code>.</p>
+</div>
+<div class="paragraph">
+<p>We also <em>don&#8217;t</em> recommend using inheritance (ie <code>ToDoItemV1_2</code> should not inherit from <code>ToDoItemV1_1</code>; this creates unnecessary complexity downstream if generating XSDs and DTOs for the downstream consumer.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="generating-xsds"><a class="anchor" href="#generating-xsds"></a>Generating XSDs and DTOs</h4>
+<div class="paragraph">
+<p>In the section <a href="#referencing-domain-entities">above</a> it was explained how a view model DTO can transparently reference any "backing" entities; these references are converted to internal object identifiers.</p>
+</div>
+<div class="paragraph">
+<p>However, if the consumer of the XML is another Java process (eg running within an Apache Camel route), then you might be tempted/expect to be able to use the same DTO within that Java process.
+But of course you cannot; the consumer runs in a different process space, and will not have references to the entity types themselves.</p>
+</div>
+<div class="paragraph">
+<p>For integration scenarios you&#8217;ll therefore generally want to define a DTO in a technology independent fashion, for example using XSD schema.
+This can be generated as a DTO for use within Apache Isis, while still allowing XML instances of the schema to be consumed by any other client.</p>
+</div>
+<div class="paragraph">
+<p>The (non-ASF) <a href="http://github.com/isisaddons/isis-app-todoapp">Isis addons' todoapp</a> demonstrates how use an XSD to generate a DTO; it&#8217;s mostly just boilerplate.
+In the todoapp it can be found in the <code>todoapp-xsd</code> Maven module, whose <code>pom.xml</code> is structured as two profiles:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;project ... &gt;
+    &lt;artifactId&gt;todoapp-xsd&lt;/artifactId&gt;
+    &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;${project.groupId}&lt;/groupId&gt;
+            &lt;artifactId&gt;todoapp-app&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+    &lt;profiles&gt;
+        &lt;profile&gt;
+            &lt;id&gt;isis-xsd&lt;/id&gt;
+            &lt;activation&gt;
+                &lt;property&gt;
+                    &lt;name&gt;!skip.isis-xsd&lt;/name&gt;
+                &lt;/property&gt;
+            &lt;/activation&gt;
+            ...
+        &lt;/profile&gt;
+        &lt;profile&gt;
+            &lt;id&gt;xjc&lt;/id&gt;
+            &lt;activation&gt;
+                &lt;property&gt;
+                    &lt;name&gt;!skip.xjc&lt;/name&gt;
+                &lt;/property&gt;
+            &lt;/activation&gt;
+            ...
+        &lt;/profile&gt;
+    &lt;/profiles&gt;
+&lt;/project&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>isis-xsd</code> profile generates the XSD using the <a href="#refguide:mvn:xsd.adoc" class="page unresolved"><code>xsd</code> goal</a> of Isis' maven plugin:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;build&gt;
+    &lt;plugins&gt;
+        &lt;plugin&gt;
+            &lt;groupId&gt;org.apache.isis.tool&lt;/groupId&gt;
+            &lt;artifactId&gt;isis-maven-plugin&lt;/artifactId&gt;
+            &lt;version&gt;${isis.version}&lt;/version&gt;
+            &lt;configuration&gt;
+                &lt;appManifest&gt;todoapp.dom.ToDoAppDomManifest&lt;/appManifest&gt;
+                &lt;jaxbClasses&gt;
+                    &lt;jaxbClass&gt;todoapp.app.viewmodels.todoitem.v1.ToDoItemV1_1&lt;/jaxbClass&gt;
+                &lt;/jaxbClasses&gt;
+                &lt;separate&gt;false&lt;/separate&gt;
+                &lt;commonSchemas&gt;false&lt;/commonSchemas&gt;
+            &lt;/configuration&gt;
+            &lt;dependencies&gt;
+                &lt;dependency&gt;
+                    &lt;groupId&gt;${project.groupId}&lt;/groupId&gt;
+                    &lt;artifactId&gt;todoapp-dom&lt;/artifactId&gt;
+                    &lt;version&gt;${project.version}&lt;/version&gt;
+                &lt;/dependency&gt;
+                &lt;dependency&gt;
+                    &lt;groupId&gt;com.google.guava&lt;/groupId&gt;
+                    &lt;artifactId&gt;guava&lt;/artifactId&gt;
+                    &lt;version&gt;16.0.1&lt;/version&gt;
+                &lt;/dependency&gt;
+            &lt;/dependencies&gt;
+            &lt;executions&gt;
+                &lt;execution&gt;
+                    &lt;phase&gt;generate-sources&lt;/phase&gt;
+                    &lt;goals&gt;
+                        &lt;goal&gt;xsd&lt;/goal&gt;
+                    &lt;/goals&gt;
+                &lt;/execution&gt;
+            &lt;/executions&gt;
+        &lt;/plugin&gt;
+        &lt;plugin&gt;
+            &lt;artifactId&gt;maven-assembly-plugin&lt;/artifactId&gt;
+            &lt;version&gt;2.5.3&lt;/version&gt;
+            &lt;configuration&gt;
+                &lt;descriptor&gt;src/assembly/dep.xml&lt;/descriptor&gt;
+            &lt;/configuration&gt;
+            &lt;executions&gt;
+                &lt;execution&gt;
+                    &lt;id&gt;create-archive&lt;/id&gt;
+                    &lt;phase&gt;package&lt;/phase&gt;
+                    &lt;goals&gt;
+                        &lt;goal&gt;single&lt;/goal&gt;
+                    &lt;/goals&gt;
+                &lt;/execution&gt;
+            &lt;/executions&gt;
+        &lt;/plugin&gt;
+    &lt;/plugins&gt;
+&lt;/build&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>todoapp.dom.ToDoAppDomManifest</code> is a cut-down version of the app manifest that identifies only the <code>dom</code> domain services.</p>
+</div>
+<div class="paragraph">
+<p>The <code>xjc</code> profile, meanwhile, uses the <code>maven-jaxb2-plugin</code> (a wrapper around the <code>schemagen</code> JDK tool) to generate a DTO from the XSD generated by the preceding profile:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;build&gt;
+    &lt;plugins&gt;
+        &lt;plugin&gt;
+            &lt;groupId&gt;org.jvnet.jaxb2.maven2&lt;/groupId&gt;
+            &lt;artifactId&gt;maven-jaxb2-plugin&lt;/artifactId&gt;
+            &lt;version&gt;0.12.3&lt;/version&gt;
+            &lt;executions&gt;
+                &lt;execution&gt;
+                    &lt;id&gt;xjc-generate&lt;/id&gt;
+                    &lt;phase&gt;generate-sources&lt;/phase&gt;
+                    &lt;goals&gt;
+                        &lt;goal&gt;generate&lt;/goal&gt;
+                    &lt;/goals&gt;
+                &lt;/execution&gt;
+            &lt;/executions&gt;
+            &lt;configuration&gt;
+                &lt;removeOldOutput&gt;true&lt;/removeOldOutput&gt;
+                &lt;schemaDirectory&gt;
+                    target/generated-resources/isis-xsd/viewmodels.app.todoapp
+                &lt;/schemaDirectory&gt;
+                &lt;schemaIncludes&gt;
+                    &lt;schemaInclude&gt;todoitem/v1/Dto.xsd&lt;/schemaInclude&gt;
+                &lt;/schemaIncludes&gt;
+                &lt;bindingDirectory&gt;src/main/resources&lt;/bindingDirectory&gt;
+                &lt;bindingIncludes&gt;
+                    &lt;bindingInclude&gt;binding.xml&lt;/bindingInclude&gt;
+                &lt;/bindingIncludes&gt;
+                &lt;catalog&gt;src/main/resources/catalog.xml&lt;/catalog&gt;
+            &lt;/configuration&gt;
+        &lt;/plugin&gt;
+        &lt;plugin&gt;
+            &lt;groupId&gt;org.codehaus.mojo&lt;/groupId&gt;
+            &lt;artifactId&gt;build-helper-maven-plugin&lt;/artifactId&gt;
+            &lt;version&gt;1.9.1&lt;/version&gt;
+            &lt;executions&gt;
+                &lt;execution&gt;
+                    &lt;id&gt;add-source&lt;/id&gt;
+                    &lt;phase&gt;generate-sources&lt;/phase&gt;
+                    &lt;goals&gt;
+                        &lt;goal&gt;add-source&lt;/goal&gt;
+                    &lt;/goals&gt;
+                    &lt;configuration&gt;
+                    &lt;sources&gt;
+                        &lt;source&gt;target/generated-sources/xjc&lt;/source&gt;
+                    &lt;/sources&gt;
+                    &lt;/configuration&gt;
+                &lt;/execution&gt;
+            &lt;/executions&gt;
+        &lt;/plugin&gt;
+    &lt;/plugins&gt;
+&lt;/build&gt;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="dto-consumers"><a class="anchor" href="#dto-consumers"></a>DTO Consumers</h4>
+<div class="paragraph">
+<p>The actual consumers of DTOs will generally obtain the XML of the view models either by requesting the XML directly, eg using the <a href="../../vro/about.html" class="page">RestfulObjects viewer</a>, or may have the XML sent to them asynchronously using an ESB such as Apache Camel.</p>
+</div>
+<div class="paragraph">
+<p>In the former case, the consumer requests the DTO by calling the REST API with the appropriate HTTP <code>Accept</code> header.
+An appropriate implementation of <a href="../../refguide/applib-svc/presentation-layer-spi/ContentMappingService.html" class="page"><code>ContentMappingService</code></a> can then be used to return the appropriate DTO (as XML).</p>
+</div>
+<div class="paragraph">
+<p>For the latter case, one design is simply for the application to instantiate the view model, then call the <a href="../../refguide/applib-svc/integration-api/JaxbService.html" class="page"><code>JaxbService</code></a> to obtain its corresponding XML.  This can then be published onto the ESB, for example using an <a href="http://activemq.apache.org">Apache ActiveMQ &#8482;</a> queue.</p>
+</div>
+<div class="paragraph">
+<p>However, rather than try to push all the data that might be needed by any of these external systems in a single XML event (which would require anticipating all the requirements, likely a hopeless task), a better design is to publish only the fact that something of note has changed - ie, that an action on a domain object has been invoked - and then let the consumers call back to obtain other information if required.
+This can once again be done by calling the REST API with an appropriate HTTP <code>Accept</code> header.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>This is an example of the <a href="https://leanpub.com/camel-design-patterns">VETRO pattern</a> (validate, enrich, transform, route, operate).
+In our case we focus on the validation (to determine the nature of the inbound message, ie which action was invoked), and the enrich (callback to obtain a DTO with additional information required by the consumer).</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The (non-ASF) <a href="https://platform.incode.org" target="_blank" rel="noopener">Incode Platform</a>'s publishmq module provides an out-of-the-box solution of this design.
+It provides an implementation of the <a href="../../refguide/applib-svc/persistence-layer-spi/PublisherService.html" class="page"><code>PublisherService</code></a>, but which simply publishes instances of <a href="../../refguide/schema/ixn.html" class="page"><code>InteractionDto</code></a> to an ActiveMQ queue.
+Camel (or similar) can then be hooked up to consume these events from this queue, and use a processor to parse the action memento to determine what has changed on the source system.
+Thereafter, a subsequent Camel processor can then call back to the source - via the <a href="../../vro/about.html" class="page">Restful Objects viewer</a> - to enrich the message with additional details using a DTO.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="non-jaxb"><a class="anchor" href="#non-jaxb"></a>Non-JAXB View Models</h3>
+<div class="paragraph">
+<p>Instead of using JAXB to specify a view model, it is also possible to use Apache Isis-specific annotations.</p>
+</div>
+<div class="paragraph">
+<p>As was explained <a href="#view-models">earlier</a>, the approach is described here is neither as flexible nor as powerful as using the JAXB-style of view models.
+It is however likely to be faster.</p>
+</div>
+<div class="paragraph">
+<p>While the underlying technique is the same irrespective of use case, the programming model provides various ways of defining a view model so that the original intent is not lost.
+They are:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 3. View model programming model</caption>
+<colgroup>
+<col style="width: 14.2857%;">
+<col style="width: 57.1428%;">
+<col style="width: 28.5715%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Use case</th>
+<th class="tableblock halign-left valign-top">Code</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>External entity</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(nature=Nature.EXTERNAL_ENTITY)
+public class CustomerRecordOnSAP { /* ... */ }</code></pre>
+</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Annotated with <a href="../../refguide/applib-ant/DomainObject.html#nature" class="page"><code>@DomainObject#nature()</code></a> and a nature of <code>EXTERNAL_ENTITY</code>, with memento derived automatically from the properties of the domain object.  Collections are ignored, as are any properties annotated as <a href="../../refguide/applib-ant/Property.html#notPersisted" class="page">not persisted</a>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>In-memory entity</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(nature=Nature.INMEMORY_ENTITY)
+public class Log4JAppender { /* ... */ }</code></pre>
+</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>As preceding, but using a nature of <code>INMEMORY_ENTITY</code>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Application view model</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(nature=Nature.VIEW_MODEL)
+public class Dashboard { /* ... */ }</code></pre>
+</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>As preceding, but using a nature of <code>VIEW_MODEL</code>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Application view model</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@ViewModel
+public class Dashboard { /* ... */ }</code></pre>
+</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Annotated with <a href="../../refguide/applib-ant/ViewModel.html" class="page"><code>@ViewModel</code></a> annotation (effectively just an alias)' memento is as preceding: from "persisted" properties, collections ignored</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Application view model</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class ExcelUploadManager implements ViewModel {
+  public String viewModelMemento() { /* ... */ }
+  public void viewModelInit(String memento) { /* ... */ }
+}</code></pre>
+</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Implement <a href="../../refguide/applib-cm/classes/super.html#ViewModel" class="page"><code>ViewModel</code></a> interface.  The memento is as defined by the
+interface&#8217;s methods: the programmer has full control (but also full responsibility) for the string memento.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="mixins"><a class="anchor" href="#mixins"></a>Mixins</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A <a href="building-blocks.html#mixins" class="page">mixin</a> acts like a trait or extension method, allowing one module to contribute behaviour or derived state to another object.</p>
+</div>
+<div class="paragraph">
+<p>Syntactically, a mixin is defined using either the <a href="../../refguide/applib-ant/Mixin.html" class="page"><code>@Mixin</code></a> annotation or using <a href="../../refguide/applib-ant/DomainObject.html#nature" class="page"><code>@DomainObject#nature()</code></a> attribute (specifying a nature of <code>Nature.MIXIN</code>).</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Mixin(method="coll")                                       <i class="conum" data-value="1"></i><b>(1)</b>
+public class Customer_orders {                              <i class="conum" data-value="2"></i><b>(2)</b>
+
+    private final Customer customer;
+    public Customer_orders(final Customer customer) {       <i class="conum" data-value="3"></i><b>(3)</b>
+        this.customer = customer;
+    }
+
+    @Action(semantics=SemanticsOf.SAFE)                     <i class="conum" data-value="4"></i><b>(4)</b>
+    @ActionLayout(contributed=Contributed.AS_ASSOCIATION)   <i class="conum" data-value="4"></i><b>(4)</b>
+    @CollectionLayout(defaultView="table")
+    public List&lt;Order&gt; coll() {                             <i class="conum" data-value="1"></i><b>(1)</b>
+        return repositoryService.findOrdersFor(customer);
+    }
+
+    @Inject
+    RepositoryService repositoryService;
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>indicates that this is a mixin, with "coll" as the name of the main method</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The contributed member is inferred from the name, after the "_"; in other words "orders"</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>The mixee is <code>Customer</code>.
+This could also be an interface.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Indicates that the action should be interpreted as a collection.
+This requires that the action has safe semantics, ie does not alter state/no side-effects.</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="contributed-collection"><a class="anchor" href="#contributed-collection"></a>Contributed Collection</h3>
+<div class="paragraph">
+<p>The example below shows how to contribute a collection:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Mixin(method="coll")                                           <i class="conum" data-value="1"></i><b>(1)</b>
+public class DocumentHolder_documents {
+
+    private final DocumentHolder holder;
+    public DocumentHolderDocuments(DocumentHolder holder) { this.holder = holder; }
+
+    @Action(semantics=SemanticsOf.SAFE)                         <i class="conum" data-value="2"></i><b>(2)</b>
+    @ActionLayout(contributed = Contributed.AS_ASSOCIATION)     <i class="conum" data-value="3"></i><b>(3)</b>
+    @CollectionLayout(defaultView="table")
+    public List&lt;Document&gt; coll() {                              <i class="conum" data-value="4"></i><b>(4)</b>
+        ...
+    }
+    public boolean hideColl() { /* ... */ }                           <i class="conum" data-value="5"></i><b>(5)</b>
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>indicates this is a mixin, and in this case nominates the method name.
+The recommended name for collections is "coll" (if none is specified the default name is "$$").</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>required; actions that have side-effects cannot be contributed as collections</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>required; otherwise the mixin will default to being rendered as an action</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>method (which must match <code>@Mixin#method</code> above), must accept no arguments.
+The mixin is a collection rather than a property because the return type is a collection, not a scalar.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>supporting methods follow the usual naming conventions.
+(That said, in the case of collections, because the collection is derived/read-only, the only supporting method that is relevant is <code>hideColl()</code>).</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The above will result in a contributed collection "documents" for all types that implement/extend from <code>DocumentHolder</code>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="contributed-property"><a class="anchor" href="#contributed-property"></a>Contributed Property</h3>
+<div class="paragraph">
+<p>Contributed properties are defined similarly, for example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Mixin(method="prop")                                           <i class="conum" data-value="1"></i><b>(1)</b>
+public class DocumentHolder_mostRecentDocument {
+
+    private final DocumentHolder holder;
+    public DocumentHolderDocuments(DocumentHolder holder) { this.holder = holder; }
+
+    @Action(semantics=SemanticsOf.SAFE)                         <i class="conum" data-value="2"></i><b>(2)</b>
+    @ActionLayout(contributed = Contributed.AS_ASSOCIATION)     <i class="conum" data-value="3"></i><b>(3)</b>
+    public Document prop() {                                    <i class="conum" data-value="4"></i><b>(4)</b>
+        ...
+    }
+    public boolean hiderProp() { /* ... */ }                          <i class="conum" data-value="5"></i><b>(5)</b>
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>indicates this is a mixin, and in this case nominates the method name.
+The recommended name for properties is "prop" (if none is specified the default name is "$$").</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>required; actions that have side-effects cannot be contributed as collections</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>required; otherwise the mixin will default to being rendered as an action</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>method (which must match <code>@Mixin#method</code> above), must accept no arguments.
+The mixin is a property rather than a collection because the return type is a scalar.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>supporting methods follow the usual naming conventions.
+(That said, in the case of properties, because the property is derived/read-only, the only supporting method that is relevant is <code>hideProp()</code>).</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="contributed-action"><a class="anchor" href="#contributed-action"></a>Contributed Action</h3>
+<div class="paragraph">
+<p>Contributed actions are defined similarly, for example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Mixin(method="act")                                            <i class="conum" data-value="1"></i><b>(1)</b>
+public class DocumentHolder_addDocument {
+
+    private final DocumentHolder holder;
+    public DocumentHolderDocuments(DocumentHolder holder) { this.holder = holder; }
+
+    @Action()
+    @ActionLayout(contributed = Contributed.AS_ACTION)          <i class="conum" data-value="2"></i><b>(2)</b>
+    public Document&gt; act(Document doc) {                        <i class="conum" data-value="3"></i><b>(3)</b>
+        ...
+    }
+    public boolean hideAct() { /* ... */ }                            <i class="conum" data-value="4"></i><b>(4)</b>
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>indicates this is a mixin, and in this case nominates the method name.
+The recommended name for properties is "prop" (if none is specified the default name is "$$").</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>recommended</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>method must match <code>@Mixin#method</code> above.
+Unlike contributed properties and collections, contributed actions can accept parameters.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>supporting methods follow the usual naming conventions.</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="inferred-name"><a class="anchor" href="#inferred-name"></a>Inferred Name</h3>
+<div class="paragraph">
+<p>Where the mixin follows the naming convention <code>SomeType_mixinName</code> then the method name can be abbreviated, and the name of the member being contributed is inferred from the name of the class itself, being everything after the last '_'.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Mixin(method="act")
+public class DocumentHolder_documents {
+
+    private final DocumentHolder holder;
+    public DocumentHolder_documents(DocumentHolder holder) { this.holder = holder; }
+
+    @Action(semantics=SemanticsOf.SAFE)
+    @ActionLayout(contributed = Contributed.AS_ASSOCIATION)
+    @CollectionLayout(defaultView="table")
+    public List&lt;Document&gt; act() {
+        ...
+    }
+    public boolean hideAct() { /* ... */ }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The examples above (for <a href="#contributed-action">action</a>) demonstrate this.</p>
+</div>
+<div class="paragraph">
+<p>The character "$" is also recognized as a separator between the mixin type and mixin name.
+This is useful for mixins implemented as nested static types, discussed <a href="#nested-static-classes">below</a>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="nested-static-classes"><a class="anchor" href="#nested-static-classes"></a>As Nested Static Classes</h3>
+<div class="paragraph">
+<p>As noted in the introduction, while mixins were originally introduced as a means of allowing contributions from one module to the types of another module, they are also a convenient mechanism for grouping functionality/behaviour against a concrete type.
+All the methods and supporting methods end up in a single construct, and the dependency between that functionality and the rest of the object is made more explicit.</p>
+</div>
+<div class="paragraph">
+<p>When using mixins in this fashion, it is idiomatic to write the mixin as a nested static class, using the naming convention described above to reduce duplication.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Customer {
+
+    @Mixin(method="act")
+    public static class placeOrder {                                            <i class="conum" data-value="1"></i><b>(1)</b>
+
+        private final Customer customer;
+        public placeOrder(Customer customer) { this.customer = customer; }      <i class="conum" data-value="2"></i><b>(2)</b>
+
+        @Action
+        @ActionLayout(contributed = Contributed.AS_ACTION)
+        public List&lt;Order&gt; act(Product p, int quantity) {                        <i class="conum" data-value="3"></i><b>(3)</b>
+            ...
+        }
+        public boolean hideAct() { /* ... */ }                                         <i class="conum" data-value="4"></i><b>(4)</b>
+        public String validate0Act(Product p) { ...  }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>By convention, start with a lower case, though will also work fine if capitalized.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>typically contributed to concrete class, ie the outer class</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>implementation as usual</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>supporting methods as usual</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="programmatic-usage"><a class="anchor" href="#programmatic-usage"></a>Programmatic usage</h3>
+<div class="paragraph">
+<p>When a domain object is rendered, the framework will automatically instantiate all required mixins and delegate to them dynamically.
+If writing integration tests or fixtures, or (sometimes) just regular domain logic, then you may need to instantiate mixins directly.</p>
+</div>
+<div class="paragraph">
+<p>For this you can use the <a href="../../refguide/applib-svc/core-domain-api/FactoryService.html" class="page"><code>FactoryService#mixin(&#8230;&#8203;)</code></a> method.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">DocumentHolder_documents mixin = factoryService.mixin(DocumentHolder_documents.class, customer);</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</article>
+
+<aside class="article-aside hidden" role="navigation">
+    <h3 class="toc-title">On this page</h3>
+    <div id="article-toc"></div>
+</aside>
+</main>
+
+</div>
+<footer class="footer">
+  <p>Revision: </p>
+</footer>
+<script src="../../_/js/site.js"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+<script src="../../_/js/vendor/tocbot.js"></script>
+
+<script>
+    tocbot.init( {
+        tocSelector: '#article-toc',
+        contentSelector: 'article',
+        headingSelector: 'h2, h3, h4, h5',
+        collapseDepth: 2,
+        positionFixedSelector: '#article-toc',
+        scrollSmooth: true,
+        hasInnerContainers: true
+    } );
+    var tocList = document.getElementById( 'article-toc' ).getElementsByClassName( 'toc-list' );
+    if ( tocList && tocList.length > 0 && tocList[0].childNodes.length > 0 ) {
+        document.getElementById( 'article-toc' ).parentNode.classList.remove( 'hidden' );
+    }
+</script>
+  </body>
+</html>
