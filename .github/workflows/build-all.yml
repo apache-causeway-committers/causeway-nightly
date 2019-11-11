@@ -74,7 +74,7 @@ jobs:
 
     - name: Install NVM
       shell: bash
-      run: bash $NIGHTLY_SCRIPTS_PATH/install-nvm.sh
+      run: bash $CI_SCRIPTS_PATH/install-nvm.sh
       
     - name: Install Antora
       shell: bash
@@ -93,7 +93,11 @@ jobs:
       working-directory: ${{ env.PROJECT_ROOT_PATH }}
       # builds static web content into ${PROJECT_ROOT_PATH}/antora/target/site,
       # as specified in the site.yml file
-      run: bash $NIGHTLY_SCRIPTS_PATH/build-site.sh site.yml
+      run: |
+        bash $NIGHTLY_SCRIPTS_PATH/patch-site-config.sh ${PROJECT_ROOT_PATH}/site.yml
+        bash $CI_SCRIPTS_PATH/build-site.sh site.yml
+        # add a marker, that tells github not to use jekyll on the github pages folder
+        touch ${PROJECT_ROOT_PATH}/antora/target/site/.nojekyll
       
     - name: Rsync Site Content to Nightly Working Tree
       shell: bash
