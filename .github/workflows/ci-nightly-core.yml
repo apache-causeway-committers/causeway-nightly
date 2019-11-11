@@ -1,4 +1,4 @@
-name: Nightly Build Package Push All
+name: Nightly Build Core
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
 
 jobs:
   build:
-    name: nightly
+    name: nightly-core
     runs-on: ubuntu-latest
     env:
       # to be shared amoung all steps of this job
@@ -77,52 +77,6 @@ jobs:
         echo MVN_STAGES\: $MVN_STAGES
         cat $SHARED_VARS_FILE
         echo ======================================
-
-#    - name: Install NVM
-#      shell: bash
-#      run: bash $CI_SCRIPTS_PATH/install-nvm.sh
-#      
-#    - name: Install Antora
-#      shell: bash
-#      working-directory: ${{ env.PROJECT_ROOT_PATH }}
-#      # we install the 'node' modules into the project root under 'node_modules', 
-#      # because we have no privileges to install them globally with -g option
-#      run: npm i @antora/cli@2.2 @antora/site-generator-default@2.2 asciidoctor-plantuml@1.3.1
-#      
-#    - name: Print Antora Version
-#      shell: bash
-#      working-directory: ${{ env.PROJECT_ROOT_PATH }}
-#      run: $(npm bin)/antora version
-#    
-#    - name: Build Apache Isis Site
-#      shell: bash
-#      working-directory: ${{ env.PROJECT_ROOT_PATH }}
-#      # builds static web content into ${PROJECT_ROOT_PATH}/antora/target/site,
-#      # as specified in the site.yml file
-#      run: |
-#        bash $NIGHTLY_SCRIPTS_PATH/patch-site-config.sh ${PROJECT_ROOT_PATH}/site.yml
-#        bash $CI_SCRIPTS_PATH/build-site.sh site.yml
-#        # add a marker, that tells github not to use jekyll on the github pages folder
-#        touch ${PROJECT_ROOT_PATH}/antora/target/site/.nojekyll
-#      
-#    - name: Rsync Site Content to Nightly Working Tree
-#      shell: bash
-#      run: bash $NIGHTLY_SCRIPTS_PATH/rsync-site.sh 
-#      
-#    - name: Commit Site Update
-#      shell: bash
-#      # will noop if git tree has not changed (see diff commands below)
-#      run: |
-#        git config --local user.email "action@github.com"
-#        git config --local user.name "Apache Isis Committers (Bot)"
-#        git add ./docs
-#        git diff --quiet && git diff --staged --quiet || git commit -m "CI automated site update" -a
-#        
-#    - name: Push Site Update
-#      # uses a predefinded action that does exactly this; will noop if git tree has not changed 
-#      uses: ad-m/github-push-action@master
-#      with:
-#        github_token: ${{ secrets.GITHUB_TOKEN }}
       
     - name: Build Mixins
       shell: bash
