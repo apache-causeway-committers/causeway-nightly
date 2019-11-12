@@ -34,10 +34,6 @@ jobs:
       # the tilde character appears to produce strange side-effects when used here  
       SHARED_VARS_FILE: /home/runner/.env
       
-      # deployment vars
-      GH_DEPLOY_OWNER: apache-isis-committers
-      GH_DEPLOY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      
     steps:
     - name: Checkout Nightly
       uses: actions/checkout@v1
@@ -65,24 +61,33 @@ jobs:
         echo REVISION=${BASELINE}.$(date +%Y%m%d-%H%M)-$(echo $GITHUB_SHA | cut -c1-8) > $SHARED_VARS_FILE
         echo ==============  ENV  =================
         echo BASELINE\: $BASELINE
-        echo GH_DEPLOY_OWNER\: $GH_DEPLOY_OWNER 
         echo TIMESTAMP\: $TIMESTAMP
         echo PROJECT_ROOT_PATH\: $PROJECT_ROOT_PATH
         echo CI_SCRIPTS_PATH\: $CI_SCRIPTS_PATH
         echo MVN_STAGES\: $MVN_STAGES
         cat $SHARED_VARS_FILE
         echo ======================================
-      
-    - name: Build and Push Mixins then Core (repo.incode.work)
+    
+    - name: Build and Push Mixins then Core (github packages)
       shell: bash
       working-directory: ${{ env.PROJECT_ROOT_PATH }}
       run: |
         bash $NIGHTLY_SCRIPTS_PATH/nightly-build-mixins.sh
         bash $NIGHTLY_SCRIPTS_PATH/nightly-build-core.sh
       env:
-        ## github
-        #CORE_ADDITIONAL_OPTS: '-Dgithub-deploy.repositoryUrl=https://maven.pkg.github.com/${{ github.repository }}'
-        ## gcp
+        # github packages
+        GH_DEPLOY_OWNER: apache-isis-committers
+        GH_DEPLOY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        MVN_ADDITIONAL_OPTS: '-Dgithub-deploy.repositoryUrl=https://maven.pkg.github.com/apache-isis-committers/isis-nightly'
+      
+    - name: Build and Push Mixins then Core (GCP)
+      shell: bash
+      working-directory: ${{ env.PROJECT_ROOT_PATH }}
+      run: |
+        bash $NIGHTLY_SCRIPTS_PATH/nightly-build-mixins.sh
+        bash $NIGHTLY_SCRIPTS_PATH/nightly-build-core.sh
+      env:
+        # GCP App Engine: repo.incode.work
         GCPAPPENGINEREPO_USERNAME: ${{ secrets.GCPAPPENGINEREPO_USERNAME }}
         GCPAPPENGINEREPO_PASSWORD: ${{ secrets.GCPAPPENGINEREPO_PASSWORD }}
         MVN_ADDITIONAL_OPTS: '-Dgcpappenginerepo-deploy.repositoryUrl=https://repo.incode.work'
