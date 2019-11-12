@@ -15,8 +15,7 @@ mvn versions:set -DnewVersion=$REVISION
 
 # setting 'github-deploy.repositoryUrl' activates the 'github-deploy' maven profile as defined in the pom.xml
 # the 'github-deploy' profile is mapped to the server setting as declared in '.m2/nightly-settings.xml'  
-#mvn -s $NIGHTLY_ROOT_PATH/.m2/nightly-settings.xml \
-mvn -s $PROJECT_ROOT_PATH/.m2/settings.xml \
+mvn -s $NIGHTLY_ROOT_PATH/.m2/nightly-settings.xml \
     --batch-mode \
     $MVN_STAGES \
     -Dgithub-deploy.repositoryUrl=https://maven.pkg.github.com/${GITHUB_REPOSITORY} \
