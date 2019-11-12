@@ -73,10 +73,12 @@ jobs:
         cat $SHARED_VARS_FILE
         echo ======================================
       
-    - name: Build and Push Mixins (github packages)
+    - name: Build and Push Mixins then Core (repo.incode.work)
       shell: bash
       working-directory: ${{ env.PROJECT_ROOT_PATH }}
-      run: bash $NIGHTLY_SCRIPTS_PATH/nightly-build-mixins.sh
+      run: |
+        bash $NIGHTLY_SCRIPTS_PATH/nightly-build-mixins.sh
+        bash $NIGHTLY_SCRIPTS_PATH/nightly-build-core.sh
       env:
         ## github
         #CORE_ADDITIONAL_OPTS: '-Dgithub-deploy.repositoryUrl=https://maven.pkg.github.com/${{ github.repository }}'
@@ -84,12 +86,6 @@ jobs:
         GCPAPPENGINEREPO_USERNAME: ${{ secrets.GCPAPPENGINEREPO_USERNAME }}
         GCPAPPENGINEREPO_PASSWORD: ${{ secrets.GCPAPPENGINEREPO_PASSWORD }}
         MVN_ADDITIONAL_OPTS: '-Dgcpappenginerepo-deploy.repositoryUrl=https://repo.incode.work'
-         
-
-#    - name: Build and Push Core (github packages)
-#      shell: bash
-#      working-directory: ${{ env.PROJECT_ROOT_PATH }}
-#      run: bash $NIGHTLY_SCRIPTS_PATH/nightly-build-core.sh
  
 # FOR DEBUG USE
 #   - name: Dump Env context 
