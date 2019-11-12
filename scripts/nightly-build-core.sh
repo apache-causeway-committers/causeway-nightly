@@ -8,9 +8,6 @@ source $SHARED_VARS_FILE && export $(cut -d= -f1 $SHARED_VARS_FILE)
 
 sh $CI_SCRIPTS_PATH/print-environment.sh "nightly-build-core"
 
-echo "\$GH_DEPLOY_OWNER:   ${GH_DEPLOY_OWNER}"
-echo "\$GITHUB_REPOSITORY: ${GITHUB_REPOSITORY}"
-
 cd $PROJECT_ROOT_PATH/core
 
 # setting 'github-deploy.repositoryUrl' activates the 'github-deploy' maven profile as defined in the pom.xml
