@@ -17,7 +17,7 @@ mvn -s $NIGHTLY_ROOT_PATH/.m2/nightly-settings.xml \
     $MVN_STAGES \
     -Drevision=$REVISION \
     -Dskip.assemble-zip \
-    $CORE_ADDITIONAL_OPTS
+    $MVN_ADDITIONAL_OPTS
 
 cd $PROJECT_ROOT_PATH
 
