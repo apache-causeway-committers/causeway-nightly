@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-MASTER_SHA8 = `curl --request GET \
+MASTER_SHA8 = `curl -s --request GET \
         --url https://api.github.com/repos/apache/isis/git/ref/heads/master \
         --header 'content-type: application/json' \
         | grep sha | cut -d\: -f2 | cut -d\" -f2 | cut -c1-8`
