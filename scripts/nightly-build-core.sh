@@ -15,7 +15,6 @@ cd $PROJECT_ROOT_PATH/core
 mvn -s $NIGHTLY_ROOT_PATH/.m2/nightly-settings.xml \
     --batch-mode \
     $MVN_STAGES \
-    -Dgithub-deploy.repositoryUrl=https://maven.pkg.github.com/${GITHUB_REPOSITORY} \
     -Drevision=$REVISION \
     -Dskip.assemble-zip \
     $CORE_ADDITIONAL_OPTS

@@ -18,12 +18,11 @@ mvn versions:set -DnewVersion=$REVISION
 mvn -s $NIGHTLY_ROOT_PATH/.m2/nightly-settings.xml \
     --batch-mode \
     $MVN_STAGES \
-    -Dgithub-deploy.repositoryUrl=https://maven.pkg.github.com/${GITHUB_REPOSITORY} \
     -Drevision=$REVISION \
     -Dskip.mavenmixin-standard \
     -Dskip.mavenmixin-surefire \
     -Dskip.mavenmixin-datanucleus-enhance \
-    $CORE_ADDITIONAL_OPTS
+    $MVN_ADDITIONAL_OPTS
 
 # revert the edits from earlier ...
 mvn versions:revert

@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       # to be shared amoung all steps of this job
-      BASELINE: 0.0.2-n
+      BASELINE: 2.0.0-M2
       PROJECT_ROOT_PATH: /home/runner/work/isis-nightly/isis
       CI_SCRIPTS_PATH: /home/runner/work/isis-nightly/isis/scripts/ci
       
@@ -38,10 +38,6 @@ jobs:
       GH_DEPLOY_OWNER: apache-isis-committers
       GH_DEPLOY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
-      # mvn build additional options
-      # '-e' ... show stacktraces
-      #CORE_ADDITIONAL_OPTS: -e
-
     steps:
     - name: Checkout Nightly
       uses: actions/checkout@v1
@@ -66,7 +62,7 @@ jobs:
       # we write the more tricky varibles to the $SHARED_VARS_FILE using the full power of bash commands
       # then we simply print all the (non-secret) variables as used by the build scripts to the console
       run: |
-        echo REVISION=${BASELINE}$(date +%Y%m%d-%H%M)-$(echo $GITHUB_SHA | cut -c1-8) > $SHARED_VARS_FILE
+        echo REVISION=${BASELINE}.$(date +%Y%m%d-%H%M)-$(echo $GITHUB_SHA | cut -c1-8) > $SHARED_VARS_FILE
         echo ==============  ENV  =================
         echo BASELINE\: $BASELINE
         echo GH_DEPLOY_OWNER\: $GH_DEPLOY_OWNER 
@@ -81,6 +77,12 @@ jobs:
       shell: bash
       working-directory: ${{ env.PROJECT_ROOT_PATH }}
       run: bash $NIGHTLY_SCRIPTS_PATH/nightly-build-mixins.sh
+      with:
+        ## github
+        #CORE_ADDITIONAL_OPTS: -Dgithub-deploy.repositoryUrl=https\://maven.pkg.github.com/${{ github.repository }}
+        ## gcp
+        MVN_ADDITIONAL_OPTS: -Dgcpappenginerepo-deploy.repositoryUrl=https\://repo.incode.work
+         
 
 #    - name: Build and Push Core (github packages)
 #      shell: bash
