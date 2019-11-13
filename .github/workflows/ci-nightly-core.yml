@@ -32,10 +32,6 @@ jobs:
       # set this to 'deploy' when intent is to push the built packages to a repo, 'install' otherwise
       MVN_STAGES: deploy
       
-      # though equivalent, setting SHARED_VARS_FILE to ~/.env breaks the build, not sure why
-      # the tilde character appears to produce strange side-effects when used here  
-      SHARED_VARS_FILE: /home/runner/.env
-      
     steps:
     
     - name: Checkout Nightly
@@ -65,6 +61,8 @@ jobs:
     
     - name: Setup Script Environment
       if: steps.revision.outputs.revision != 'skip'
+      env:
+        REVISION: ${{ steps.revision.outputs.revision }}
       shell: bash
       # we write the more tricky varibles to the $SHARED_VARS_FILE using the full power of bash commands
       # then we simply print all the (non-secret) variables as used by the build scripts to the console
@@ -75,11 +73,13 @@ jobs:
         echo PROJECT_ROOT_PATH\: $PROJECT_ROOT_PATH
         echo CI_SCRIPTS_PATH\: $CI_SCRIPTS_PATH
         echo MVN_STAGES\: $MVN_STAGES
-        cat $SHARED_VARS_FILE
+        echo REVISION\: $REVISION
         echo ======================================
     
 #    - name: Build and Push Mixins then Core (github packages)
-#      if: steps.revision.outputs.revision != 'skip' 
+#      if: steps.revision.outputs.revision != 'skip'
+#      env:
+#        REVISION: ${{ steps.revision.outputs.revision }}
 #      shell: bash
 #      working-directory: ${{ env.PROJECT_ROOT_PATH }}
 #      run: |
@@ -93,6 +93,8 @@ jobs:
       
     - name: Build and Push Mixins then Core (GCP)
       if: steps.revision.outputs.revision != 'skip'
+      env:
+        REVISION: ${{ steps.revision.outputs.revision }}
       shell: bash
       working-directory: ${{ env.PROJECT_ROOT_PATH }}
       run: |
@@ -106,6 +108,8 @@ jobs:
  
     - name: Build and Push Demo-App (Docker Hub)
       if: steps.revision.outputs.revision != 'skip'
+      env:
+        REVISION: ${{ steps.revision.outputs.revision }}
       shell: bash
       run: |
         bash $CI_SCRIPTS_PATH/build-demo-app.sh springboot
