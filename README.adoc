@@ -1,16 +1,84 @@
 = Apache Isis - Nightly Builds
+:toc:
 
 image:https://github.com/apache-isis-committers/isis-nightly/workflows/Nightly%20Build%20Core/badge.svg[link="https://github.com/apache-isis-committers/isis-nightly/actions?query=workflow%3A%22Nightly+Build+Core%22"]
 image:https://github.com/apache-isis-committers/isis-nightly/workflows/Nightly%20Build%20Site/badge.svg[link="https://github.com/apache-isis-committers/isis-nightly/actions?query=workflow%3A%22Nightly+Build+Site%22"]
 
-_http://isis.apache.org[Apache Isis] software is a framework for rapidly developing domain-driven apps in Java. Write your business logic in entities, domain services and repositories, and the framework dynamically generates a representation of that domain model as a webapp or a RESTful API._
+_http://isis.apache.org[Apache Isis] software is a framework for rapidly developing domain-driven apps in Java.
+Write your business logic in entities, domain services and repositories, and the framework dynamically generates a representation of that domain model as a webapp or a RESTful API._
 
-This repository automatically builds 
+== Artifacts
+
+The following are built and published nightly:
 
 Apache Isis Site::
-  * Nightly Preview: https://apache-isis-committers.github.io/isis-nightly/
+  * link:https://apache-isis-committers.github.io/isis-nightly[Nightly Preview]
 Apache Isis Maven Artifacts::
-  * Published at: https://repo.incode.work/
-  * Version Catalog: https://repo.incode.work/org/apache/isis/core/isis/maven-metadata.xml
+  * https://repo.incode.work[repo.incode.work]
+  * available versions: link:https://repo.incode.work/org/apache/isis/core/isis/maven-metadata.xml[version catalog (xml)]
 Docker Images::
-  * Published at: https://hub.docker.com/u/apacheisis/
+  * Demo app, published on Docker Hub as link:https://hub.docker.com/r/apacheisis/isis-2-demo[apacheisis/isis-2-demo]
+
+== Maven
+
+To use the Maven artifacts, add the following definition into your `pom.xml`:
+
+[source,xml]
+----
+<profiles>
+  <profile>
+    <id>repo-incode-work</id>
+    <activation>
+      <property>
+        <name>!skip.repo-incode-work</name>
+      </property>
+    </activation>
+    <repositories>
+      <repository>
+        <releases>
+          <enabled>true</enabled>
+          <updatePolicy>always</updatePolicy>
+          <checksumPolicy>fail</checksumPolicy>
+        </releases>
+        <snapshots>
+          <enabled>false</enabled>
+          <updatePolicy>always</updatePolicy>
+          <checksumPolicy>fail</checksumPolicy>
+        </snapshots>
+        <id>repo-incode-work</id>
+        <name>Incode Work (maven)</name>
+        <url>https://repo.incode.work</url>
+      </repository>
+    </repositories>
+  </profile>
+</profiles>
+----
+
+[WARNING]
+====
+These build artifacts are _not_ subject to the Apache Foundation's http://www.apache.org/foundation/governance/[rigorous governance procedures]; use at your own risk.
+====
+
+== Docker
+
+To run the demo app, use:
+
+[source,bash]
+----
+docker run -d -p8080:8080 --name isis-2-demo apacheisis/isis-2-demo:springboot
+----
+
+[IMPORTANT]
+====
+Docker CE 19.03.4 and earlier is unable to pull this format of image from Docker Hub (see https://github.com/docker/hub-feedback/issues/1871[this ticket]).
+Upgrade to CE 19.03.5 or later.
+====
+
+To kill and clean up, use:
+
+[source,bash]
+----
+docker kill isis-2-demo
+docker rm isis-2-demo
+----
+
