@@ -34,7 +34,7 @@ jobs:
     - name: Checkout Nightly
       uses: actions/checkout@v1
       
-    - name: Get new Revision if any
+    - name: Calculate new Revision (if changed since last published, else skip)
       id: revision
       run: bash $NIGHTLY_SCRIPTS_PATH/nightly-new-revision.sh
     
@@ -72,7 +72,8 @@ jobs:
         echo ======================================
       env:
         REVISION: ${{ steps.revision.outputs.revision }}
-    
+
+     ## gh-packages: does not work consistently as of 2019-11-12, maybe try again after beta phase    
 #    - name: Build and Push Mixins then Core (github packages)
 #      if: steps.revision.outputs.revision != 'skip'
 #      shell: bash
