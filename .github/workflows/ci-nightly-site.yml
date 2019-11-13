@@ -1,9 +1,10 @@
 name: Nightly Build Site
 
 on:
+  push:
   schedule:
-    # daily 04:00 (UTC) in the morning
-    - cron: '0 4 * * *'
+    # daily 05:00 (UTC) in the morning
+    - cron: '0 5 * * *'
 
 jobs:
   build:
@@ -23,6 +24,10 @@ jobs:
     steps:
     - name: Checkout Nightly
       uses: actions/checkout@v1
+      
+    - name: Get latest published Revision
+      id: revision
+      run: bash $NIGHTLY_SCRIPTS_PATH/nightly-latest-revision.sh
     
     - name: Checkout Apache Isis
       uses: actions/checkout@v1
@@ -51,7 +56,10 @@ jobs:
         echo TIMESTAMP\: $TIMESTAMP
         echo PROJECT_ROOT_PATH\: $PROJECT_ROOT_PATH
         echo CI_SCRIPTS_PATH\: $CI_SCRIPTS_PATH
+        echo REVISION (latest)\: $REVISION
         echo ======================================
+      env:
+        REVISION: ${{ steps.revision.outputs.revision }}
 
     - name: Install NVM
       shell: bash
@@ -69,6 +77,8 @@ jobs:
       working-directory: ${{ env.PROJECT_ROOT_PATH }}
       run: $(npm bin)/antora version
     
+    
+    
     - name: Build Apache Isis Site
       shell: bash
       working-directory: ${{ env.PROJECT_ROOT_PATH }}
@@ -79,6 +89,8 @@ jobs:
         bash $CI_SCRIPTS_PATH/build-site.sh site.yml
         # add a marker, that tells github not to use jekyll on the github pages folder
         touch ${PROJECT_ROOT_PATH}/antora/target/site/.nojekyll
+      env:
+        REVISION: ${{ steps.revision.outputs.revision }}
       
     - name: Rsync Site Content to Nightly Working Tree
       shell: bash
