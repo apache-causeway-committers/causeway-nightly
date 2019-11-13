@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-## isis master commit hash
+## isis master commit hash, using REST API that in this cse requires no credentials
 MASTER_SHA=`curl -s --request GET \
         --url https://api.github.com/repos/apache/isis/git/ref/heads/master \
         --header 'content-type: application/json' \
@@ -26,6 +26,8 @@ echo "-> PUBLISHED_SHA8: ${PUBLISHED_SHA8}"
 echo "-> REVISION:       ${REVISION}"
 echo ""
 
+## either output a valid 'revision' to be used by consecutive workflow jobs
+## or set 'revision=skip' in case the hashes are equal 
 if [ "$MASTER_SHA8" = "$PUBLISHED_SHA8" ]; then
   echo "Skipping update, because (shortened) hashes are equal:"
   echo "- MASTER_SHA8:    ${MASTER_SHA8}"

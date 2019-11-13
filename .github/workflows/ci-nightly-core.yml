@@ -1,9 +1,9 @@
 name: Nightly Build Core
 
 on:
-#  push:
-#    branches:
-#      - master
+  push:
+    branches:
+      - master
   schedule:
     # daily 04:00 (UTC) in the morning
     - cron: '0 4 * * *'
@@ -38,8 +38,13 @@ jobs:
     
     - name: Checkout Nightly
       uses: actions/checkout@v1
+      
+    - name: Get new Revision if any
+      id: revision
+      run: bash $NIGHTLY_SCRIPTS_PATH/nightly-new-revision.sh
     
     - name: Checkout Apache Isis
+      if: steps.revision.outputs.revision != 'skip'
       uses: actions/checkout@v1
       with:
         repository: apache/isis
@@ -47,19 +52,21 @@ jobs:
         token: ${{ secrets.GitHub_PAT }}
     
     - name: Set up JDK 11
+      if: steps.revision.outputs.revision != 'skip'
       uses: actions/setup-java@v1
       with:
         java-version: 11
     
     - name: Print Maven Version
+      if: steps.revision.outputs.revision != 'skip'
       run: mvn --version
     
     - name: Setup Script Environment
+      if: steps.revision.outputs.revision != 'skip'
       shell: bash
       # we write the more tricky varibles to the $SHARED_VARS_FILE using the full power of bash commands
       # then we simply print all the (non-secret) variables as used by the build scripts to the console
       run: |
-        echo REVISION=${BASELINE}.$(date +%Y%m%d-%H%M)-$(echo $GITHUB_SHA | cut -c1-8) > $SHARED_VARS_FILE
         echo ==============  ENV  =================
         echo BASELINE\: $BASELINE
         echo TIMESTAMP\: $TIMESTAMP
@@ -70,6 +77,7 @@ jobs:
         echo ======================================
     
 #    - name: Build and Push Mixins then Core (github packages)
+#      if: steps.revision.outputs.revision != 'skip' 
 #      shell: bash
 #      working-directory: ${{ env.PROJECT_ROOT_PATH }}
 #      run: |
@@ -82,6 +90,7 @@ jobs:
 #        MVN_ADDITIONAL_OPTS: '-Dgithub-deploy.repositoryUrl=https://maven.pkg.github.com/apache-isis-committers/isis-nightly'
       
     - name: Build and Push Mixins then Core (GCP)
+      if: steps.revision.outputs.revision != 'skip'
       shell: bash
       working-directory: ${{ env.PROJECT_ROOT_PATH }}
       run: |
@@ -94,6 +103,7 @@ jobs:
         MVN_ADDITIONAL_OPTS: '-Dgcpappenginerepo-deploy.repositoryUrl=https://repo.incode.work'
  
     - name: Build and Push Demo-App (Docker Hub)
+      if: steps.revision.outputs.revision != 'skip'
       shell: bash
       run: |
         bash $CI_SCRIPTS_PATH/build-demo-app.sh springboot
