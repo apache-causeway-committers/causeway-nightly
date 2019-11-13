@@ -22,7 +22,7 @@ echo "MASTER_SHA:        ${MASTER_SHA}"
 echo "PUBLISHED_REV:     ${PUBLISHED_REV}"
 echo "-> MASTER_SHA8:    ${MASTER_SHA8}"
 echo "-> PUBLISHED_SHA8: ${PUBLISHED_SHA8}"
-echo "##[set-output name=revision;]${BASELINE}.$(date +%Y%m%d-%H%M)-${MASTER_SHA8}"
+echo "-> REVISION:       ${BASELINE}.$(date +%Y%m%d-%H%M)-${MASTER_SHA8}"
 
 if [ "$MASTER_SHA8" = "$PUBLISHED_SHA8" ]; then
   echo "skipping update, because (shortened) hashes are equal:"
