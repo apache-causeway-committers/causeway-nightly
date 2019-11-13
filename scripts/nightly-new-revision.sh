@@ -19,30 +19,19 @@ PUBLISHED_SHA8=${PUBLISHED_REV: -8}
 
 REVISION=${BASELINE}.$(date +%Y%m%d-%H%M)-${MASTER_SHA8}
 
-## debug
 echo "MASTER_SHA:        ${MASTER_SHA}"
 echo "PUBLISHED_REV:     ${PUBLISHED_REV}"
 echo "-> MASTER_SHA8:    ${MASTER_SHA8}"
 echo "-> PUBLISHED_SHA8: ${PUBLISHED_SHA8}"
 echo "-> REVISION:       ${REVISION}"
+echo ""
 
-#if [ "$MASTER_SHA8" = "$PUBLISHED_SHA8" ]; then
-#  echo "skipping update, because (shortened) hashes are equal:"
-#  echo "- MASTER_SHA8:    ${MASTER_SHA8}"
-#  echo "- PUBLISHED_SHA8: ${PUBLISHED_SHA8}"
-#  echo "##[set-output name=revision;]skip"
-#else
-#  echo "##[set-output name=revision;]${REVISION}"
-#fi
-  
-
-# test reversed logic  
 if [ "$MASTER_SHA8" = "$PUBLISHED_SHA8" ]; then
-  echo "##[set-output name=revision;]${REVISION}"
-else
-  echo "skipping update, because (shortened) hashes are equal:"
+  echo "Skipping update, because (shortened) hashes are equal:"
   echo "- MASTER_SHA8:    ${MASTER_SHA8}"
   echo "- PUBLISHED_SHA8: ${PUBLISHED_SHA8}"
   echo "##[set-output name=revision;]skip"
-fi  
-
+else
+  echo "##[set-output name=revision;]${REVISION}"
+fi
+  
