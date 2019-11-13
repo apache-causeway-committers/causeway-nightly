@@ -14,22 +14,25 @@ PUBLISHED_REV=`curl -s GET \
         | grep release | cut -d\> -f2 | cut -d\< -f1`
    
 
-MASTER_SHA8=${MASTER_SHA: -8}        
+MASTER_SHA8=${MASTER_SHA: 8}        
 PUBLISHED_SHA8=${PUBLISHED_REV: -8}  
+
+REVISION=${BASELINE}.$(date +%Y%m%d-%H%M)-${MASTER_SHA8}
 
 ## debug
 echo "MASTER_SHA:        ${MASTER_SHA}"
 echo "PUBLISHED_REV:     ${PUBLISHED_REV}"
 echo "-> MASTER_SHA8:    ${MASTER_SHA8}"
 echo "-> PUBLISHED_SHA8: ${PUBLISHED_SHA8}"
-echo "-> REVISION:       ${BASELINE}.$(date +%Y%m%d-%H%M)-${MASTER_SHA8}"
+echo "-> REVISION:       ${REVISION}"
 
 if [ "$MASTER_SHA8" = "$PUBLISHED_SHA8" ]; then
   echo "skipping update, because (shortened) hashes are equal:"
   echo "- MASTER_SHA8:    ${MASTER_SHA8}"
   echo "- PUBLISHED_SHA8: ${PUBLISHED_SHA8}"
+  echo "##[set-output name=revision;]skip"
 else
-  echo "##[set-output name=revision;]${BASELINE}.$(date +%Y%m%d-%H%M)-${MASTER_SHA8}"
+  echo "##[set-output name=revision;]${REVISION}"
 fi
     
 

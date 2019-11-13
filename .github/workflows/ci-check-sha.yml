@@ -36,7 +36,7 @@ jobs:
       run: bash $NIGHTLY_SCRIPTS_PATH/nightly-new-revision.sh
     
     - name: Checkout Apache Isis
-      if: steps.revision.outputs.revision > 0
+      if: steps.revision.outputs.revision != skip
       uses: actions/checkout@v1
       with:
         repository: apache/isis
@@ -44,7 +44,7 @@ jobs:
         token: ${{ secrets.GitHub_PAT }}
     
     - name: Setup Script Environment
-      if: steps.revision.outputs.revision > 0
+      if: steps.revision.outputs.revision != skip
       env:
         REVISION: ${{ steps.revision.outputs.revision }}
       shell: bash
