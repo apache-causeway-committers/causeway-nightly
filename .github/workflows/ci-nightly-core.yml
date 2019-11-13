@@ -5,7 +5,7 @@ on:
     branches:
       - master
   schedule:
-    # daily 04:00 (UTC) in the morning
+    ## daily 04:00 (UTC) in the morning
     - cron: '0 4 * * *'
 
 jobs:
@@ -23,13 +23,10 @@ jobs:
       NIGHTLY_ROOT_PATH: ${{ github.workspace }}
       NIGHTLY_SCRIPTS_PATH: ${{ github.workspace }}/scripts
       
-      # used only for printing
-      # would be nice if we could transform the TIMESTAMP string into the REVISION 
-      # variable here, but it seems github not yet has any string expression manipulation 
-      # operators other than concatination   
+      ## used only for printing
       TIMESTAMP: ${{ github.event.head_commit.timestamp }}
       
-      # set this to 'deploy' when intent is to push the built packages to a repo, 'install' otherwise
+      ## set this to 'deploy' when intent is to push the built packages to a repo, 'install' otherwise
       MVN_STAGES: deploy
       
     steps:
@@ -61,11 +58,9 @@ jobs:
     
     - name: Setup Script Environment
       if: steps.revision.outputs.revision != 'skip'
-      env:
-        REVISION: ${{ steps.revision.outputs.revision }}
       shell: bash
-      # we write the more tricky varibles to the $SHARED_VARS_FILE using the full power of bash commands
-      # then we simply print all the (non-secret) variables as used by the build scripts to the console
+      ## we write the more tricky varibles to the $SHARED_VARS_FILE using the full power of bash commands
+      ## then we simply print all the (non-secret) variables as used by the build scripts to the console
       run: |
         echo ==============  ENV  =================
         echo BASELINE\: $BASELINE
@@ -75,46 +70,45 @@ jobs:
         echo MVN_STAGES\: $MVN_STAGES
         echo REVISION\: $REVISION
         echo ======================================
+      env:
+        REVISION: ${{ steps.revision.outputs.revision }}
     
 #    - name: Build and Push Mixins then Core (github packages)
 #      if: steps.revision.outputs.revision != 'skip'
-#      env:
-#        REVISION: ${{ steps.revision.outputs.revision }}
 #      shell: bash
 #      working-directory: ${{ env.PROJECT_ROOT_PATH }}
 #      run: |
 #        bash $NIGHTLY_SCRIPTS_PATH/nightly-build-mixins.sh
 #        bash $NIGHTLY_SCRIPTS_PATH/nightly-build-core.sh
 #      env:
-#        # github packages
+#        REVISION: ${{ steps.revision.outputs.revision }}
+#        ## github packages
 #        GH_DEPLOY_OWNER: apache-isis-committers
 #        GH_DEPLOY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 #        MVN_ADDITIONAL_OPTS: '-Dgithub-deploy.repositoryUrl=https://maven.pkg.github.com/apache-isis-committers/isis-nightly'
       
     - name: Build and Push Mixins then Core (GCP)
       if: steps.revision.outputs.revision != 'skip'
-      env:
-        REVISION: ${{ steps.revision.outputs.revision }}
       shell: bash
       working-directory: ${{ env.PROJECT_ROOT_PATH }}
       run: |
         bash $NIGHTLY_SCRIPTS_PATH/nightly-build-mixins.sh
         bash $NIGHTLY_SCRIPTS_PATH/nightly-build-core.sh
       env:
-        # GCP App Engine: repo.incode.work
+        REVISION: ${{ steps.revision.outputs.revision }}
+        ## GCP App Engine: repo.incode.work
         GCPAPPENGINEREPO_USERNAME: ${{ secrets.GCPAPPENGINEREPO_USERNAME }}
         GCPAPPENGINEREPO_PASSWORD: ${{ secrets.GCPAPPENGINEREPO_PASSWORD }}
         MVN_ADDITIONAL_OPTS: '-Dgcpappenginerepo-deploy.repositoryUrl=https://repo.incode.work'
  
     - name: Build and Push Demo-App (Docker Hub)
       if: steps.revision.outputs.revision != 'skip'
-      env:
-        REVISION: ${{ steps.revision.outputs.revision }}
       shell: bash
       run: |
         bash $CI_SCRIPTS_PATH/build-demo-app.sh springboot
       env:
-        # DOCKER HUB
+        REVISION: ${{ steps.revision.outputs.revision }}
+        ## DOCKER HUB
         DOCKER_REGISTRY_USERNAME: apacheisiscommitters
         DOCKER_REGISTRY_PASSWORD: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
         DOCKER_REGISTRY_URL: 'https://index.docker.io/v1/'
