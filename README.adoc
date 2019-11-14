@@ -66,18 +66,62 @@ These build artifacts are _not_ subject to the Apache Foundation's http://www.ap
 
 == Docker
 
-To run the demo app, use:
+The demo-app demonstrates features available in Apache Isis, accompanied by introductory description text. While the demo-app is still work in progress, it might be used to learn the very basics of the framework interactively.
 
-[source,bash]
+[Note]
+====
+With the following, <tag> is used as a placeholder for the docker image tag of your choice. Actual tag names might be changed without notice. Currently we have 'springboot'.
+====
+
+=== Prereqs
+
+Install https://www.docker.com/community-edition[Docker] on your computer.
+
+=== Pulling the Docker Image
+
+Pull the demo image using:
+
+[source]
 ----
-docker run -d -p8080:8080 --name isis-2-demo apacheisis/isis-2-demo:springboot
+docker pull apacheisis/isis-2-demo:<tag>
 ----
 
-To kill and clean up, use:
+This will pull down the latest demo image from https://hub.docker.com/r/apacheisis/isis-2-demo/tags/[Docker hub]
 
-[source,bash]
+=== Running the Docker Image
+
+Run the demo image using:
+
+[source]
 ----
-docker kill isis-2-demo
-docker rm isis-2-demo
+docker run --name demo --detach -p8080:8080 apacheisis/isis-2-demo:<tag>
 ----
 
+This will start a new Docker container named 'demo'.
+
+The demo-app can then be accessed at http://localhost:8080/wicket/[].
+Login with `sven:pass`.
+
+To stop and remove the container named 'demo' use:
+
+[source]
+----
+docker stop demo && docker rm demo
+----
+
+=== Customization
+
+To run the _Demo App_ in _prototyping_ mode, add an environment variable `PROTOTYPING=true`.
+The 'run' command above then becomes:
+
+[source]
+----
+docker run --name demo --detach -p8080:8080 -ePROTOTYPING=true apacheisis/isis-2-demo:<tag>
+----
+
+To run the container with your console attached, replace the '--detach' argument with '-it'. (Use CTRL-C to stop and detach.)
+
+[source]
+----
+docker run --name demo -it -p8080:8080 apacheisis/isis-2-demo:<tag>
+----
