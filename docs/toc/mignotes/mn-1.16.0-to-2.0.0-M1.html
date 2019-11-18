@@ -1,0 +1,2859 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>From v1.16.x to 2.0.0-M1 :: Apache Isis</title>
+    <meta name="generator" content="Antora 2.2.0">
+    <link rel="stylesheet" href="../../_/css/site.css">
+    <link rel="stylesheet" href="../../_/css/site-custom.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="../..">Apache Isis</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Quick Start</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Starter Apps</span>
+            <a class="navbar-item" href="../../helloworld/about.html">Hello World</a>
+            <a class="navbar-item" href="../../simpleapp/about.html">Simple App</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Demos &amp; Tutorials</span>
+            <a class="navbar-item" href="../../demoapp/about.html">Demo App</a>
+            <a class="navbar-item" href="https://danhaywood.gitlab.io/isis-petclinic-tutorial-docs/petclinic/1.16.2/intro.html">Petclinic (tutorial)</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Guides</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">User Guide</span>
+            <a class="navbar-item" href="../../userguide/about.html">Fundamentals &amp; Beyond</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Reference</span>
+            <a class="navbar-item" href="../../refguide/about.html">Reference Guide</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Security</span>
+            <a class="navbar-item" href="../../security/about.html">Security Guide</a>
+            <a class="navbar-item" href="../../ext-secman/about.html">SecMan (extension)</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Testing</span>
+            <a class="navbar-item" href="../../testing/about.html">Testing Guide</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Components</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Viewers</span>
+            <a class="navbar-item" href="../../vw/about.html">Wicket UI</a>
+            <a class="navbar-item" href="../../vro/about.html">Restful Objects (REST)</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Persistence</span>
+            <a class="navbar-item" href="../../odn/about.html">DataNucleus Object Store</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Extensions</span>
+            <a class="navbar-item" href="../../extensions/about.html">Extensions Catalog</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Support</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Resources</span>
+            <a class="navbar-item" href="../../toc/devguide/about.html">Developers' Guide</a>
+            <a class="navbar-item" href="../../toc/mavendeps/about.html">Maven dependencies</a>
+            <a class="navbar-item" href="../../toc/mixins/about.html">Maven mixins</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Mailing Lists</span>
+            <a class="navbar-item" href="../../toc/mailing-list/how-to-subscribe.html">How to subscribe</a>
+            <a class="navbar-item" href="https://issues.apache.org/jira/browse/ISIS">ASF JIRA</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Releases</span>
+            <a class="navbar-item" href="../../toc/downloads/how-to.html">Downloads</a>
+            <a class="navbar-item" href="../../relnotes/about.html">Release Notes</a>
+            <a class="navbar-item" href="../../mignotes/about.html">Migration Notes</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Internal</span>
+            <a class="navbar-item" href="../../toc/comguide/about.html">Committers' Guide</a>
+            <a class="navbar-item" href="../../core/about.html">Core Framework</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">@ASF</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://www.apache.org/">Apache Homepage</a>
+            <a class="navbar-item" href="https://www.apache.org/events/current-event">Events</a>
+            <a class="navbar-item" href="https://www.apache.org/licenses/">Licenses</a>
+            <a class="navbar-item" href="https://www.apache.org/security/">Security</a>
+            <a class="navbar-item" href="https://www.apache.org/foundation/sponsorship.html">Sponsorship</a>
+            <a class="navbar-item" href="https://www.apache.org/foundation/thanks.html">Thanks</a>
+            <hr class="navbar-divider"/>
+            <a class="navbar-item" href="https://whimsy.apache.org/board/minutes/Isis.html">PMC board minutes</a>
+          </div>
+        </div>
+        <a class="navbar-item" href="../../toc/about.html">
+          <span class="icon">
+            <img src="../../_/img/isis-logo-48x48.png"></img>
+          </span>
+        </a>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body ">
+<div class="nav-container" data-component="toc" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../about.html"> </a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">What is Apache Isis?</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../what-is-apache-isis/isis-in-pictures.html">Apache Isis in pictures</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../what-is-apache-isis/common-use-cases.html">Common Use Cases</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../what-is-apache-isis/screencasts.html">Screencasts</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../what-is-apache-isis/powered-by.html">Powered By</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Starter Apps</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../helloworld/about.html">HelloWorld</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../simpleapp/about.html">SimpleApp</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Demos &amp; Tutorials</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../demoapp/about.html">Demo App</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="https://danhaywood.gitlab.io/isis-petclinic-tutorial-docs/petclinic/1.16.2/intro.html">Petclinic (tutorial)</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Guides</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../userguide/about.html">User Guide</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../refguide/about.html">Reference Guide</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../../security/about.html">Security Guide</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../secman/about.html">SecMan (extension)</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../testing/about.html">Testing</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Components</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../vw/about.html">Wicket UI</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../vro/about.html">Restful Objects (REST API)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../odn/about.html">DataNucleus Object Store</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Extensions</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../extensions/about.html">Extensions Catalog</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Support</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../devguide/about.html">Developers' Guide</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../mavendeps/about.html">Maven Dependencies</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../mixins/about.html">Maven Mixins</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#toc:ROOT:mailing-list.adoc#how-to-subscribe">Mailing Lists</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Other Resources</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="https://issues.apache.org/jira/secure/RapidBoard.jspa?rapidView=87">ASF JIRA</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="https://cwiki.apache.org/confluence/display/ISIS/Index">ASF Wiki</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="https://fisheye.apache.org/browse/~br=master/isis-git/">ASF Fisheye</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="http://stackoverflow.com/questions/tagged/isis">Stack Overflow</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Releases</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../downloads/how-to.html">Downloads</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../relnotes/about.html">Release Notes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="about.html">Migration Notes</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Internal</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../comguide/about.html">Committers' Guide</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../comguide/about.html#cutting-a-release">Cutting a Release</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../comguide/about.html#verifying-releases">Verifying a Release</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../core/about.html">Core Framework</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../more-thanks/more-thanks.html">Acknowledgements</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title"> </span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title"> </span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Core Framework</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../core/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">DataNucleus ObjectStore</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../odn/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Extensions Catalog</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../extensions/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Reference Guide</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../refguide/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Restful Objects Viewer</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../vro/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">SecMan</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../secman/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Security Guide</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../security/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Starter App - Hello World</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../helloworld/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Starter App - SimpleApp</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../simpleapp/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Testing Guide</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../testing/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Tutorial App - Demo</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../demoapp/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">User Guide</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../userguide/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Wicket Viewer</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../vw/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main role="main">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../about.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../about.html"> </a></li>
+    <li><a href="mn-1.16.0-to-2.0.0-M1.html">From v1.16.x to 2.0.0-M1</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/HEAD/antora/components/toc/modules/mignotes/pages/mn-1.16.0-to-2.0.0-M1.adoc">Edit this Page</a></div>
+</div>
+<article class="doc">
+    <a name="section-top"></a>
+<h1 class="page">From v1.16.x to 2.0.0-M1</h1>
+<div class="sect1">
+<h2 id="meta-annotations"><a class="anchor" href="#meta-annotations"></a>Meta annotations</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Most of the Apache Isis annotations can now be associated with meta-annotations.
+Coupled with the fact that DataNucleus 5.x also supports meta annotations, this therefore allows a degree of reuse.</p>
+</div>
+<div class="paragraph">
+<p>For example, instead of:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Column(length=30)
+@Property(regex=...)
+@Getter @Setter
+private String name;
+
+public Customer updateName(
+    @Parameter(maxLength=30, regex=...)
+    String name ) {
+    setName(name);
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>we can instead define a <code>@Name</code> annotation:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Column(length=30)
+@Property(regex=...)
+@Parameter(maxLength=30, regex=...)
+public @interface @Name {}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>and then use this annotation:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Name
+@Getter @Setter
+private String name;
+
+public Customer updateName(
+    @Name
+    String name ) {
+    setName(name);
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The full list of Apache Isis annotations that can be used in meta-annotations is shown in the table below.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. Apache Isis annotations that can be used in meta-annotations</caption>
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top"></th>
+<th class="tableblock halign-left valign-top">Domain layer</th>
+<th class="tableblock halign-left valign-top">UI layer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>domain service</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant-DomainService">@DomainService</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant-DomainServiceLayout">@DomainServiceLayout</a></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>domain object</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant-DomainObject">@DomainObject</a><br>
+<a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant-ViewModel">@ViewModel</a><br>
+<a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant-MemberGroupLayout">@MemberGroupLayout</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant-DomainObjectLayout">@DomainObjectLayout</a><br>
+<a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant-ViewModelLayout">@ViewModelLayout</a></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Action</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant-Action">@Action</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant-ActionLayout">@ActionLayout</a></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>action parameter</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant-Parameter">@Parameter</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant-ParameterLayout">@ParameterLayout</a></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>property</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant-Property">@Property</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant-PropertyLayout">@PropertyLayout</a></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>collection</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant-Collection">@Collection</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant-CollectionLayout">@CollectionLayout</a></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="updated-annotations"><a class="anchor" href="#updated-annotations"></a>Updated annotations</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Prior to v2.0.0, several annotation attributes were defined as booleans.
+In order to support <a href="https://isis.apache.org/versions/2.0.0-M1/migration-notes/migration-notes.html#__migration-notes_1.15.0-to-1.16.0_meta-annotations">meta annotations</a>, these have been replaced by enums which also include a <code>NOT_SPECIFIED</code> value.
+Other enums have been extended (where necessary) to also have a <code>NOT_SPECIFIED</code> value.
+In all cases <code>NOT_SPECIFIED</code> is the new default.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 2. Updated annotations</caption>
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Annotation</th>
+<th class="tableblock halign-left valign-top">Updated attribute</th>
+<th class="tableblock halign-left valign-top">Nature of change</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top" rowspan="7"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant-Action"><code>@Action</code></a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant-Action_command"><code>command</code></a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Default changed from <code>AS_CONFIGURED</code> to <code>NOT_SPECIFIED</code>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant-Action_hidden"><code>hidden</code></a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Default changed from <code>NOWHERE</code> to <code>NOT_SPECIFIED</code>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant-Action_invokeOn"><code>invokeOn</code></a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Default changed from <code>OBJECT_ONLY</code> to <code>NOT_SPECIFIED</code>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant-Action_publishing"><code>publishing</code></a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Default changed from <code>AS_CONFIGURED</code> to <code>NOT_SPECIFIED</code>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant-Action_publishing"><code>publishing</code></a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Default changed from <code>AS_CONFIGURED</code> to <code>NOT_SPECIFIED</code>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant-Action_restrictTo"><code>restrictTo</code></a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Default changed from <code>NO_RESTRICTIONS</code> to <code>NOT_SPECIFIED</code>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant-Action_semantics"><code>semantics</code></a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Default changed from <code>NON_IDEMPOTENT</code> to <code>NOT_SPECIFIED</code>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" rowspan="3"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant-ActionLayout"><code>@ActionLayout</code></a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant-ActionLayout_bookmarking"><code>bookmarking</code></a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Default changed from <code>NEVER</code> to <code>NOT_SPECIFIED</code>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant-ActionLayout_contributed"><code>contributed</code></a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Default changed from <code>AS_BOTH</code> to <code>NOT_SPECIFIED</code>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant-ActionLayout_position"><code>position</code></a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Default changed from <code>BELOW</code> to <code>NOT_SPECIFIED</code>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" rowspan="3"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant-Collection"><code>@Collection</code></a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant-Collection_hidden"><code>hidden</code></a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Default changed from <code>NOWHERE</code> to <code>NOT_SPECIFIED</code>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant-Collection_editing"><code>editing</code></a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Default changed from <code>AS_CONFIGURED</code> to <code>NOT_SPECIFIED</code>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant-Collection_mementoSerialization"><code>mementoSerialization</code></a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Replaces <code>notPersisted</code>, taking values of <code>INCLUDED</code>, <code>EXCLUDED</code> or <code>NOT_SPECIFIED</code>.
+Defaults to <code>NOT_SPECIFIED</code>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" rowspan="4"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant-DomainObject"><code>@DomainObject</code></a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant-DomainObject_auditing"><code>auditing</code></a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Default changed from <code>AS_CONFIGURED</code> to <code>NOT_SPECIFIED</code>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant-DomainObject_bounding"><code>bounding</code></a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Replaces <code>bounded</code>, taking values of <code>BOUNDED</code>, <code>UNBOUNDED</code> and <code>NOT_SPECIFIED</code>.
+Defaults to <code>NOT_SPECIFIED</code>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant-DomainObject_editing"><code>editing</code></a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Default changed from <code>AS_CONFIGURED</code> to <code>NOT_SPECIFIED</code>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant-DomainObject_publishing"><code>publishing</code></a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Default changed from <code>AS_CONFIGURED</code> to <code>NOT_SPECIFIED</code>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant-DomainObjectLayout"><code>@DomainObjectLayout</code></a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant-DomainObjectLayout_bookmarking"><code>bookmarking</code></a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Default changed from <code>NEVER</code> to <code>NOT_SPECIFIED</code>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant-Parameter"><code>@Parameter</code></a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant-Parameter_optionality"><code>optionality</code></a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Default changed from <code>DEFAULT</code> to <code>NOT_SPECIFIED</code>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" rowspan="2"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant-ParameterLayout"><code>@ParameterLayout</code></a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant-ParameterLayout_labelPosition"><code>labelPosition</code></a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Default changed from <code>DEFAULT</code> to <code>NOT_SPECIFIED</code>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant-ParameterLayout_renderDay"><code>renderDay</code></a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Replaces <code>renderedAsDayBefore</code>, taking values of <code>AS_DAY</code>, <code>AS_DAY_BEFORE</code> or <code>NOT_SPECIFIED</code>.
+Defaults to <code>NOT_SPECIFIED</code>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" rowspan="6"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant-Property"><code>@Property</code></a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant-Property_commandReification"><code>commandReification</code></a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Default changed from <code>AS_CONFIGURED</code> to <code>NOT_SPECIFIED</code>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant-Property_editing"><code>editing</code></a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Default changed from <code>AS_CONFIGURED</code> to <code>NOT_SPECIFIED</code>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant-Property_hidden"><code>hidden</code></a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Default changed from <code>NOWHERE</code> to <code>NOT_SPECIFIED</code>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant-Property_mementoSerialization"><code>mementoSerialization</code></a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Replaces <code>notPersisted</code>, taking values of <code>INCLUDED</code>, <code>EXCLUDED</code> or <code>NOT_SPECIFIED</code>.
+Defaults to <code>NOT_SPECIFIED</code>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant-Property_optionality"><code>optionality</code></a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Default changed from <code>DEFAULT</code> to <code>NOT_SPECIFIED</code>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant-Property_publishing"><code>publishing</code></a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Default changed from <code>AS_CONFIGURED</code> to <code>NOT_SPECIFIED</code>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" rowspan="5"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant-PropertyLayout"><code>@PropertyLayout</code></a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant-PropertyLayout_labelPosition"><code>labelPosition</code></a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Default changed from <code>DEFAULT</code> to <code>NOT_SPECIFIED</code>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant-PropertyLayout_promptStyle"><code>promptStyle</code></a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Default changed from <code>DEFAULT</code> to <code>NOT_SPECIFIED</code>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant-PropertyLayout_renderDay"><code>renderDay</code></a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Replaces <code>notPersisted</code>, taking values of <code>AS_DAY</code>, <code>AS_DAY_BEFORE</code> or <code>NOT_SPECIFIED</code>.
+Defaults to <code>NOT_SPECIFIED</code>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant-PropertyLayout_repainting"><code>repainting</code></a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Replaces <code>unchanging</code>, taking values of <code>REPAINT</code>, <code>NO_REPAINT</code> or <code>NOT_SPECIFIED</code>.
+Defaults to <code>NOT_SPECIFIED</code>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant-ViewModelLayout"><code>@ViewModelLayout</code></a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant-ViewModelLayout_bookmarking"><code>bookmarking</code></a></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="removed-annotationsattributes"><a class="anchor" href="#removed-annotationsattributes"></a>Removed annotations/attributes</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The following annotations, or attributes of annotations, have been removed</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 3. Removed annotations/attributes</caption>
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Annotation</th>
+<th class="tableblock halign-left valign-top">Attribute</th>
+<th class="tableblock halign-left valign-top">Use instead</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@Action</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>publishingPayloadFactory()</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Removed, use the simpler <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgsvc/rgsvc.html#PublisherService">PublisherService</a> SPI instead.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@ActionInteraction</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_Action_domainEvent"><code>@Action#domainEvent()</code></a></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@ActionOrder</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_MemberOrder"><code>@MemberOrder()</code></a></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@Aggregated</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Never implemented internally in Isis 1.x so no replacement.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@Auditable</code>
+(JDO applib)</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_DomainObject_audited"><code>@DomainObject#auditing()</code></a></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@Audited</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_DomainObject_audited"><code>@DomainObject#auditing()</code></a></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@AutoComplete</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_DomainObject_autoComplete"><code>@DomainObject#autoComplete()</code></a></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@ActionSemantics</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_Action_semantics"><code>@Action#semantics()</code></a></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@Bookmarkable</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_DomainObject_bookmarking"><code>@DomainObject#bookmarking()</code></a></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@Bounded</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_DomainObject_bounding"><code>@DomainObject#bounding()</code></a></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@Bulk</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_Action_invokeOn"><code>@Action#invokeOn()</code></a></p>
+</div>
+<div class="paragraph">
+<p>Similarly, the <code>Bulk.InteractionContext</code> domain service is replaced with the <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgsvc/rgsvc.html#ActionInvocationContext">ActionInvocationContext</a> domain service.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@Collection</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>notPersisted</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Removed, replaced with <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_Collection_mementoSerialization"><code>@Collection#mementoSerialization()</code></a></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@CollectionInteraction</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_Collection_domainEvent"><code>@Collection
+#domainEvent()</code></a></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@CollectionLayout</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>render</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_CollectionLayout_defaultView"><code>@CollectionLayout#defaultView()</code></a></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@Command</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_Action_command"><code>@Action#command()</code></a></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@CssClass</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Either <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_ActionLayout_cssClass"><code>@ActionLayout#cssClass()</code></a>, <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_PropertyLayout_cssClass"><code>@PropertyLayout#cssClass()</code></a>, <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_CollectionLayout_cssClass"><code>@CollectionLayout#cssClass()</code></a>, <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_ParameterLayout_cssClass"><code>@ParameterLayout#cssClass()</code></a>, <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_DomainObjectLayout_cssClass"><code>@DomainObjectLayout#cssClass()</code></a> or <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_ViewModelLayout_cssClass"><code>@ViewModelLayout#cssClass()</code></a>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@CssClassFa</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Either <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_ActionLayout_cssClassFa"><code>@ActionLayout#cssClassFa()</code></a>, <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_DomainObjectLayout_cssClassFa"><code>@DomainObjectLayout#cssClassFa()</code></a> or <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_ViewModelLayout_cssClassFa"><code>@ViewModelLayout#cssClassFa()</code></a>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@Debug</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_Action_restrictTo"><code>@Action#restrictTo()</code></a></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@DescribedAs</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Either <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_ActionLayout_describedAs"><code>@ActionLayout#describedAs()</code></a>, <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_PropertyLayout_describedAs"><code>@PropertyLayout#describedAs()</code></a>, <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_CollectionLayout_describedAs"><code>@CollectionLayout#describedAs()</code></a>, <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_ParameterLayout_describedAs"><code>@ParameterLayout#describedAs()</code></a>, <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_DomainObjectLayout_describedAs"><code>@DomainObjectLayout#describedAs()</code></a> or <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_ViewModelLayout_describedAs"><code>@ViewModelLayout#describedAs()</code></a>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@Disabled</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_Property_editingDisabledReason"><code>@Property#editingDisabledReason()</code></a></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" rowspan="2"><div class="content"><div class="paragraph">
+<p><code>@DomainObject</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>bounded</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Deleted (was a boolean attribute), replaced by <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_DomainObject_bounding"><code>@Property#bounding</code></a></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>publishingPayloadFactory</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Removed, use the simpler <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgsvc/rgsvc.html#PublisherService">PublisherService</a> SPI instead.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@Exploration</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_Action_restrictTo"><code>@Action#restrictTo()</code></a></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@FieldOrder</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_MemberOrder"><code>@MemberOrder()</code></a></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@Hidden</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>For actions by either <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_Action_hidden"><code>@Action#hidden()</code></a> or <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_ActionLayout_hidden"><code>@ActionLayout#hidden()</code></a>, for properties by either <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_Property_hidden"><code>@Property#hidden()</code></a> or <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_PropertyLayout_hidden"><code>@PropertyLayout#hidden()</code></a>, for collections by either <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_Collection_hidden"><code>@Collection#hidden()</code></a> or <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_CollectionLayout_hidden"><code>@CollectionLayout#hidden()</code></a>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@Idempotent</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_Action_semantics"><code>@Action#semantics()</code></a></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@Ignore</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_Programmatic"><code>@Programmatic</code></a></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@Immutable</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_DomainObject_editing"><code>@DomainObject#editing()</code></a></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@Mandatory</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Either <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_Property_optionality"><code>@Property#optionality()</code></a> or <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_Parameter_optionality"><code>@Parameter#optionality()</code></a>.</p>
+</div>
+<div class="paragraph">
+<p>For properties, can also use <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_Column_allowsNull"><code>@Column#allowsNull()</code></a>
+Can also use <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_Nullable"><code>@Nullable</code></a> for either properties or parameters.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@Mask</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Removed, never implemented internally in Isis 1.x so no replacement.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@MaxLength</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Either <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_Property_maxLength"><code>@Property#maxLength()</code></a> or <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_Parameter_maxLength"><code>@Parameter#maxLength()</code></a>.</p>
+</div>
+<div class="paragraph">
+<p>For properties, can also use <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_Column_length"><code>@Column#length()</code></a></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@MemberGroups</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/ugvw/ugvw.html#_ugvw_layout_file-based">.layout.xml</a> file instead.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@MultiLine</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Either <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_PropertyLayout_multiLine"><code>@PropertyLayout#multiLine()</code></a> or <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_ParameterLayout_multiLine"><code>@ParameterLayout#multiLine()</code></a>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@MustSatisfy</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Either <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_Property_mustSatisfy"><code>@Property#mustSatisfy()</code></a> or <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_Parameter_mustSatisfy"><code>@Parameter#mustSatisfy()</code></a>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@NotPersisted</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_Property_notPersisted"><code>@Property#notPersisted()</code></a>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@Optional</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Either <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_Property_optionality"><code>@Property#optionality()</code></a> or <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_Parameter_optionality"><code>@Parameter#optionality()</code></a>.</p>
+</div>
+<div class="paragraph">
+<p>For properties, can also use <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_Column_allowsNull"><code>@Column#allowsNull()</code></a>
+Can also use <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_Nullable"><code>@Nullable</code></a> for either properties or parameters.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@Named</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Either <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_ActionLayout_named"><code>@ActionLayout#named()</code></a>, <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_PropertyLayout_named"><code>@PropertyLayout#named()</code></a>, <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_CollectionLayout_named"><code>@CollectionLayout#named()</code></a>, <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_ParameterLayout_named"><code>@ParameterLayout#named()</code></a>, <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_DomainObjectLayout_named"><code>@DomainObjectLayout#named()</code></a> or <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_ViewModelLayout_named"><code>@ViewModelLayout#named()</code></a>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@NotInServiceMenu</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_DomainService_nature"><code>@DomainService#nature()</code></a></p>
+</div>
+<div class="paragraph">
+<p>Specify nature of <code>VIEW_CONTRIBUTIONS_ONLY</code>.
+Alternatively, use a <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_Mixin">mixin</a>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@NotContributed</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_DomainService_nature"><code>@DomainService#nature()</code></a></p>
+</div>
+<div class="paragraph">
+<p>Specify nature of <code>VIEW_MENU_ONLY</code>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@NotPersistable</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Never implemented internally in Isis 1.x so no replacement.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@ObjectType</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Removed, <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_DomainObject_objectType"><code>@DomainObject#objectType()</code></a> or <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_DomainService_objectType"><code>@DomainService#objectType()</code></a></p>
+</div>
+<div class="paragraph">
+<p>Alternatively, for domain entities either:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>the <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_Discriminator"><code>@Discriminator</code></a> annotation can be specified; the value is used as the object type, or</p>
+</li>
+<li>
+<p>the <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_PersistenceCapable_schema"><code>@PersistenceCapable#schema()</code></a> can be specified; the value is used as the concatenated with the class name to create a two part object type.</p>
+</li>
+</ul>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@Parameter</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>minLength</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Never implemented internally in Isis 1.x so no replacement.</p>
+</div>
+<div class="paragraph">
+<p>Note that the <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_MinLength"><code>@MinLength</code></a> annotation is for use with autocomplete supporting methods (specifying the minimum number of characters to enter before an auto-complete search is performed).</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@Paged</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Either <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_CollectionLayout_paged"><code>@CollectionLayout#paged()</code></a> (for parented collections), or <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_DomainObject_paged"><code>@DomainObject#paged()</code></a> (for standalone collections)</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@ParameterLayout</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>renderedAsDayBefore</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Deleted (was a boolean attribute), replaced by <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_ParameterLayout_renderDay"><code>@ParameterLayout#renderDay</code></a>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@Plural</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_DomainObjectLayout_plural"><code>@DomainObjectLayout#plural()</code></a></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@PostsAction<br>
+InvokedEvent</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_Action_domainEvent"><code>@Action#domainEvent()</code></a></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@PostsCollection<br>
+AddedToEvent</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_Collection_domainEvent"><code>@Collection#domainEvent()</code></a></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@PostsCollection<br>
+RemovedFromEvent</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_Collection_domainEvent"><code>@Collection#domainEvent()</code></a></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@PostsProperty<br>
+ChangedEvent</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_Property_domainEvent"><code>@Property#domainEvent()</code></a></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@Property</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>notPersisted</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Removed, replaced with <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_Collection_mementoSerialization"><code>@Collection#mementoSerialization()</code></a></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@PropertyInteraction</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_Property_domainEvent"><code>@Property#domainEvent()</code></a></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" rowspan="2"><div class="content"><div class="paragraph">
+<p><code>@PropertyLayout</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>renderedAsDayBefore</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Deleted (was a boolean attribute), replaced by <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_PropertyLayout_renderDay"><code>@PropertyLayout#renderDay</code></a>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>unchanging</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Deleted (was a boolean attribute), replaced by <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_PropertyLayout_repainting"><code>@PropertyLayout#repainting</code></a>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@Prototype</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_Action_restrictTo"><code>@Action#restrictTo()</code></a></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@PublishedAction</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Removed, use <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant-Action_publishing">@Action#publishing()</a></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@PublishedObject</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Removed, use <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant-DomainObject_publishing">@DomainObject#publishing()</a></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@PublishingPayload
+FactoryForAction</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Removed, use the simpler <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgsvc/rgsvc.html#PublisherService">PublisherService</a> SPI instead.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>PublishingPayload
+FactoryForObject</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Removed, use the simpler <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgsvc/rgsvc.html#PublisherService">PublisherService</a> SPI instead.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@QueryOnly</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_Action_semantics"><code>@Action#semantics()</code></a></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@Regex</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Either <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_Property_regexPattern"><code>@Property#regexPattern()</code></a> or <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_Parameter_regexPattern"><code>@Parameter#regexPattern()</code></a>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@Render</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_CollectionLayout_defaultView"><code>@CollectionLayout#defaultView()</code></a></p>
+</div>
+<div class="paragraph">
+<p>Supporting <code>RenderType</code> enum also removed.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@RenderedAs<br>
+DayBefore</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Either <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_Property_renderDay"><code>@Property#renderDay()</code></a> or <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_Parameter_renderDay"><code>@Parameter#renderDay()</code></a>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@Resolve</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_CollectionLayout_defaultView"><code>@CollectionLayout#defaultView()</code></a></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@SortedBy</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_CollectionLayout_sortedBy"><code>@CollectionLayout#sortedBy()</code></a></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@TypeOf</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Either <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_CollectionLayout_typeOf"><code>@CollectionLayout#typeOf()</code></a> (for parented collections), or <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_ActionLayout_typeOf"><code>@ActionLayout#typeOf()</code></a> (for actions returning a standalone collection).</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@TypicalLength</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_PropertyLayout_typicalLength"><code>@PropertyLayout#typicalLength()</code></a>.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="moved-types"><a class="anchor" href="#moved-types"></a>Moved types</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The following applib types have been moved.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 4. Moved types</caption>
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Description</th>
+<th class="tableblock halign-left valign-top">Type(s)</th>
+<th class="tableblock halign-left valign-top">From</th>
+<th class="tableblock halign-left valign-top">To</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Events emitted by <code>WrapperFactory</code> when interactions occur.</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>ActionUsabilityEvent</code>, <code>PropertyVisibilityEvent</code>, <code>CollectionAccessEvent</code> etc.</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>o.a.i.applib.</code><br>
+<code>events</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>o.a.i.applib.</code><br>
+<code>services.wrapper.events</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" rowspan="2"><div class="content"><div class="paragraph">
+<p>Interface types for mixins</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Timestampable</code>
+<code>HoldsUpdatedAt</code>
+<code>HoldsUpdatedBy</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>o.a.i.applib.</code><br>
+<code>services.timestamp</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>o.a.i.applib.</code><br>
+<code>mixins.timestamp</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Dto</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>o.a.i.applib.</code><br>
+<code>services.dto</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>o.a.i.applib.</code><br>
+<code>mixins.dto</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Lifecycle events, domain events &amp; UI events</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="ulist">
+<ul>
+<li>
+<p><code>AbstractDomainEvent</code><br>
+domain events/subtypes</p>
+</li>
+<li>
+<p><code>ObjectXxxEvent</code><br>
+lifecycle events</p>
+</li>
+<li>
+<p><code>XxxUiEvent</code><br>
+UI events</p>
+</li>
+</ul>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>o.a.i.applib.services.eventbus</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="ulist">
+<ul>
+<li>
+<p><code>o.a.i.applib.</code><br>
+<code>events.domain</code></p>
+</li>
+<li>
+<p><code>o.a.i.applib.</code><br>
+<code>events.lifecycle</code></p>
+</li>
+<li>
+<p><code>o.a.i.applib.</code><br>
+<code>events.ui</code></p>
+</li>
+</ul>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="removed-configuration-properties"><a class="anchor" href="#removed-configuration-properties"></a>Removed configuration properties</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The following configuration properties are no longer recognised.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 5. Removed configuration properties</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Configuration property</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>isis.persistor.<br>
+datanucleus.<br>
+PublishingService.<br>
+serializedForm</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>PublishingService</code> has been removed.
+Use <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgsvc/rgsvc.html#_rgsvc_persistence-layer-spi_PublisherService"><code>PublisherService</code></a> instead.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="updated-classes"><a class="anchor" href="#updated-classes"></a>Updated classes</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The following classes have been updated.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 6. Updated classes</caption>
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Updated class</th>
+<th class="tableblock halign-left valign-top">Method</th>
+<th class="tableblock halign-left valign-top">Nature of change</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IsisAppModule.<br>
+ActionDomainEvent</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>N-arg constructor</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>removed; just use the 0-arg ones</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IsisAppModule.<br>
+CollectionDomainEvent</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>N-arg constructor</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>removed; just use the 0-arg ones</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IsisAppModule.<br>
+PropertyDomainEvent</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>N-arg constructor</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>removed; just use the 0-arg ones</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>FixtureScript</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>asKeyValueMap(String)</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Removed; this shouldn&#8217;t have had public visibility.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>FixtureScript</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>execute(&#8230;&#8203;)</code>
+<code>executeChild(&#8230;&#8203;)</code>
+<code>executeIfNotAlready(&#8230;&#8203;)</code>
+<code>run(&#8230;&#8203;)</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>All removed or no longer public; use <code>FixtureScript.ExecutionContext</code>'s <code>#executeChild(&#8230;&#8203;)</code> instead.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>FixtureScript</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>lookup(&#8230;&#8203;)</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Removed; use <code>FixtureScript.ExecutionContext#lookup(&#8230;&#8203;)</code> instead.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>FixtureScript.<br>
+ExecutionContext</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>add(&#8230;&#8203;)</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Removed; use <code>addResult(&#8230;&#8203;)</code> instead.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>FixtureScripts</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>deprecated constructors</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Removed</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>FixtureScripts.<br>
+MultipleExecutionStrategy</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IGNORE</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Removed, use <code>EXECUTE_ONCE_PER_CLASS</code> instead</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="removed-types"><a class="anchor" href="#removed-types"></a>Removed types</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="adapter-classes"><a class="anchor" href="#adapter-classes"></a>Adapter classes</h3>
+<div class="paragraph">
+<p>The following adapter classes have been removed.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 7. Removed adapter classes</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Removed class</th>
+<th class="tableblock halign-left valign-top">Replaced with</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>AbstractContainedObject</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>No replacement.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>AbstractDomainObject</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>No replacement.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>AbstractFactoryAndRepository</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>No replacement.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>AbstractHomePageDashboardService</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>No replacement.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="filter-classesinterfaces"><a class="anchor" href="#filter-classesinterfaces"></a>Filter classes/interfaces</h3>
+<div class="paragraph">
+<p>Also, all classes and interfaces in <code>org.apache.isis.applib.filter</code> have been removed.
+Instead, the <code>java.util.Predicate&lt;T&gt;</code> interface is used.</p>
+</div>
+<div class="paragraph">
+<p>For example, <code>RepositoryService#allMatches(&#8230;&#8203;)</code> method, which allows client-side filtering of results (typically during prototyping), now has the signature:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public interface RepositoryService {
+    ...
+    &lt;T&gt; List&lt;T&gt; allMatches(
+                    final Class&lt;T&gt; ofType,
+                    final Predicate&lt;? super T&gt; predicate,
+                    long... range);
+
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="removed-interfaces"><a class="anchor" href="#removed-interfaces"></a>Removed interfaces</h3>
+<div class="paragraph">
+<p>The following interfaces have been removed.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 8. Removed interfaces</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Removed interface</th>
+<th class="tableblock halign-left valign-top">Replaced with</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Auditable</code><br>
+(JDO applib)</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_DomainObject_audited"><code>@DomainObject#auditing()</code></a></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Bounded</code><br>
+(JDO applib)</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgant/rgant.html#_rgant_DomainObject_bounding"><code>@DomainObject#bounding()</code></a></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>NotPersistable</code><br>
+(JDO applib)</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Never implemented internally in Isis 1.x so no replacement.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>ProgramPersistable</code><br>
+(JDO applib)</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Never implemented fully in Isis 1.x so no replacement.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>AlwaysImmutable</code><br>
+(JDO applib)</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Never implemented fully in Isis 1.x so no replacement.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>ImmutableOncePersisted</code><br>
+(JDO applib)</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Never implemented fully in Isis 1.x so no replacement.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>ImmutableUntilPersisted</code><br>
+(JDO applib)</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Never implemented fully in Isis 1.x so no replacement.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>NeverImmutable</code><br>
+(JDO applib)</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Never implemented fully in Isis 1.x so no replacement.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="legacy-modules"><a class="anchor" href="#legacy-modules"></a>Legacy Modules</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Deprecated types have been moved into new "legacy" modules.
+ For example, applib types have been moved into <code>org.apache.isis.core:isis-core-applib-legacy</code> module.
+Generally speaking these types remain in the same package; in some cases they have been renamed.</p>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>These modules will be removed for the final release of 2.0.0.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="applib-legacy"><a class="anchor" href="#applib-legacy"></a>applib-legacy</h3>
+<div class="paragraph">
+<p>Deprecated types have been moved into a new <code>org.apache.isis.core:isis-core-applib-legacy</code> module.</p>
+</div>
+<div class="paragraph">
+<p>The most significant type that has been deprecated is the <code>DomainObjectContainer</code> type, but there are several others also.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 9. Legacy types under <code>org.apache.isis.applib</code></caption>
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Package</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Use instead</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>o.a.i.applib</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>DomainObjectContainer</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Use <code>RepositoryService</code>, <code>FactoryService</code>, <code>UserService</code>, <code>MessageService</code> instead etc.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" rowspan="2"><div class="content"><div class="paragraph">
+<p><code>o.a.i.applib.<br>
+annotation</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Encodable</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>No replacement</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Parseable</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>No replacement</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" rowspan="5"><div class="content"><div class="paragraph">
+<p><code>o.a.i.applib.<br>
+fixtures</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>AbstractFixture</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Use <code>FixtureScript</code> instead</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>AbstractFixtureSusa</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Use fixture with injected <code>SudoService</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>BaseFixture</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Derive from <code>FixtureScript</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>DateFixture</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Use <code>TickingClockFixture</code> instead</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>SwitchUserFixture</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Use fixture with injected <code>SudoService</code> instead</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" rowspan="2"><div class="content"><div class="paragraph">
+<p>o.a.i.applib.
+switchuser</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>SwitchUserService</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>SudoService</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>SwitchUserServiceAware</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>No replacement</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" rowspan="2"><div class="content"><div class="paragraph">
+<p><code>o.a.i.applib.<br>
+layout.component</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>CollectionLayoutData_legacy</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Renamed from <code>CollectionLayoutData</code>, provides trivial utility functions.
+No replacement.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>FieldSetData_legacy</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Renamed from <code>FieldSet</code>, provides trivial utility functions.
+No replacement.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" rowspan="2"><div class="content"><div class="paragraph">
+<p><code>o.a.i.applib.<br>
+services.background</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>BackgroundCommandService2</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Use <code>BackgroundCommandService</code> instead</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>BackgroundService2</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Use <code>BackgroundService</code> instead</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" rowspan="2"><div class="content"><div class="paragraph">
+<p><code>o.a.i.applib.<br>
+services.exceprecog</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>ExceptionRecognizer<br>
+AbstractLegacy</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Copy of the 1.16.x version of <code>ExceptionRecognizerAbstract</code>, with the original dependency on guava.
+Refactor to use the new <code>ExceptionRecognizerAbstract</code> (which uses Java 8 predicates etc. instead)</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>ExceptionRecognizer<br>
+ForTypeLegacy</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Copy of the 1.16.x version of  <code>ExceptionRecognizerForType</code>, but with the original dependency on guava.
+Replace with the new <code>ExceptionRecognizerForType</code> which uses Java 8 predicates etc.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>o.a.i.applib.<br>
+services.memento</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>MementoService</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>No replacement.
+Originally provided as a utility to view models that implemented <code>ViewModel</code> interface (as opposed to the newer approaches of annotating with <code>@ViewModel</code> or as a JAXB DTO class.</p>
+</div>
+<div class="paragraph">
+<p>Note that the framework-provided implementation, <code>MementoServiceDefault</code>, has been moved out to the corresponding <code>runtime-legacy</code> module.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>o.a.i.applib.<br>
+services.repository</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>RepositoryServiceLegacy</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Copy of the 1.16.x version of <code>RepositoryService</code>, with the original dependency on guava.
+Refactor to use the new <code>RepositoryService</code> (which uses Java 8 predicates etc. instead).</p>
+</div>
+<div class="paragraph">
+<p>Note that the framework-provided implementation, <code>RepositoryServiceLegacyInternalDefault</code>, has been moved out to the corresponding <code>metamodel-legacy</code> module.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>o.a.i.applib.<br>
+services.urlencoding</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>UrlEncodingService<br>
+UsingBaseEncoding<br>
+WithSupportForLargeUrlsAbstract</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The <code>UrlEncodingServiceWithCompression</code> (provided as the default implementation by the core framework) can be used in most cases.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>o.a.i.applib.<br>
+util</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>ObjectContractsLegacy</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Copy of the 1.16.x version of <code>ObjectContracts</code>, which heavily uses reflection.
+Use <code>ObjectContracts</code> instead.
+This provides a new API that does not require reflection and instead encourages a different coding style, but does also still support the old API.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" rowspan="3"><div class="content"><div class="paragraph">
+<p><code>o.a.i.applib.<br>
+value</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Date</code><br>
+<code>DateTime</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Use JDK8 <code>LocalDate</code>, <code>LocalDateTime</code> or Joda <code>DateTime</code> or <code>LocalDate</code> or <code>LocalDateTime</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Time</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Use JDK8 <code>LocalTime</code> or Joda <code>LocalTime</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>Timestamp</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Use <code>java.sql.Timestamp</code> or JDK8 <code>DateTime</code> or Joda <code>DateTime</code> instead</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>See also <code>transition-1-2</code> module, below, for further discussion of background services.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="integtestsupport-legacy"><a class="anchor" href="#integtestsupport-legacy"></a>integtestsupport-legacy</h3>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 10. Legacy types under <code>org.apache.isis.applib</code></caption>
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Package</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Use instead</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top" rowspan="3"><div class="content"><div class="paragraph">
+<p><code>o.a.i.core.<br>
+integtestsupport</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IntegrationTestAbstract</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Use <code>IntegrationTestAbstract3</code> instead</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IntegrationTestAbstract2</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Use <code>IntegrationTestAbstract3</code> instead</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>IsisSystemForTest</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Helper class used only by other classes in this module.
+No replacement.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>o.a.i.core.<br>
+integtestsupport.<br>
+scenarios</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>ScenarioExecutionForIntegration</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Subclass spec "glue" from <code>HeadlessWithBootstrappingAbstract</code> (the common superclass of <code>IntegrationTestAbstract3</code>) instead, and inject services into glue.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="unittestupport-legacy"><a class="anchor" href="#unittestupport-legacy"></a>unittestupport-legacy</h3>
+<div class="paragraph">
+<p>TODO</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="transition-1-2"><a class="anchor" href="#transition-1-2"></a>transition-1-2</h3>
+<div class="paragraph">
+<p>TODO</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="metamodel-legacy"><a class="anchor" href="#metamodel-legacy"></a>metamodel-legacy</h3>
+<div class="paragraph">
+<p>Contains facet factories (which build up the metamodel) for these types moved from applib to applib-legacy:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>Encodeable</code> and <code>Parseable</code> interfaces</p>
+</li>
+<li>
+<p><code>Date</code>, <code>DateTime</code>, <code>Time</code> and <code>Timestamp</code> value types</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>It provides contains an implementation of <code>ProgrammingModelPlugin</code> interface which is used to register these facet factories in a pluggable fashion.</p>
+</div>
+<div class="paragraph">
+<p>Similarly, it also provides implementations of the <code>ValuePropertyPlugin</code> interface which aggregate the set of value types, used for the swagger UI support.</p>
+</div>
+<div class="paragraph">
+<p>Finally, it also contains these framework-provided service implementations:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>DomainObjectContainerDefault</code> (for <code>DomainObjectContainer</code>)</p>
+</li>
+<li>
+<p><code>RepositoryServiceLegacyInternalDefault</code> (for <code>RepositoryServiceLegacy</code>)</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="runtime-legacy"><a class="anchor" href="#runtime-legacy"></a>runtime-legacy</h3>
+<div class="paragraph">
+<p>TODO</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="viewer-wicket-ui-legacy"><a class="anchor" href="#viewer-wicket-ui-legacy"></a>viewer-wicket-ui-legacy</h3>
+<div class="paragraph">
+<p>TODO</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="other-changes"><a class="anchor" href="#other-changes"></a>Other Changes</h2>
+<div class="sectionbody">
+<div class="sect2 16 0-to-2 0 0-M1_other-changes_view-model-urls">
+<h3 id="view-model-urls"><a class="anchor" href="#view-model-urls"></a>View model URLs</h3>
+<div class="paragraph">
+<p>The default implementation of <code>UrlEncodingService</code> provided by the framework has changed:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>in 1.16.x the implementation is <code>o.a.i.applib.services.urlencoding.UrlEncodingServiceUsingBaseEncoding</code></p>
+</li>
+<li>
+<p>in 2.0.0-M1 this is changed to <code>o.a.i.applib.services.urlencoding.UrlEncodingServiceWithCompression</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>This new implementation increases the state that can be encoded within the URL (approx 8000 characters) by first gzipping the state prior to base64 encoding the characters.</p>
+</div>
+<div class="paragraph">
+<p>However, this does mean that any persisted URLs for view models will be invalid.</p>
+</div>
+</div>
+<div class="sect2 16 0-to-2 0 0-M1_other-changes_applib-types-fully-generic">
+<h3 id="applib-types-fully-generic"><a class="anchor" href="#applib-types-fully-generic"></a>Applib types fully generic</h3>
+<div class="paragraph">
+<p>All types in the applib have now been made fully generic</p>
+</div>
+</div>
+<div class="sect2 16 0-to-2 0 0-M1_other-changes_updated-dependencies">
+<h3 id="updated-dependencies"><a class="anchor" href="#updated-dependencies"></a>Updated dependencies</h3>
+<div class="paragraph">
+<p>Wicket has been upgraded from Wicket 7.9 to Wicket 8.0.</p>
+</div>
+</div>
+<div class="sect2 16 0-to-2 0 0-M1_other-changes_removed-dependencies">
+<h3 id="removed-dependencies"><a class="anchor" href="#removed-dependencies"></a>Removed dependencies</h3>
+<div class="paragraph">
+<p>The Apache Isis applib (<code>o.a.i.core:isis-core-applib</code>) no longer depends on the google guava library.</p>
+</div>
+<div class="paragraph">
+<p>Likewise the Apache Isis Unit Test Support module (<code>o.a.i.core:isis-core-unittestsupport</code>) no longer depends on guava either.</p>
+</div>
+<div class="paragraph">
+<p>Do note however that the core framework <em>does</em> still depend on guava (though the intention is to remove this over time).</p>
+</div>
+</div>
+<div class="sect2 16 0-to-2 0 0-M1_other-changes_new-isis-core-commons-module">
+<h3 id="new-isis-core-commons-module"><a class="anchor" href="#new-isis-core-commons-module"></a>New isis-core-commons module</h3>
+<div class="paragraph">
+<p>The new <code>org.apache.isis.core:isis-core-commons</code> module provides a set of utility classes that are <em>not</em> API but that are depended upon by the applib.</p>
+</div>
+<div class="paragraph">
+<p>Because these are not API, they should not be used by application code, <em>even though</em> they will be on the applications classpath.</p>
+</div>
+<div class="paragraph">
+<p>To help prevent accidental usage:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>the package is <code>org.apache.isis.commons.internal</code></p>
+</li>
+<li>
+<p>all of the types in this module are prefixed "_".</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>For example, <code>o.a.i.commons.internal.resources._Resource</code> provides utilities for loading static resources from the classpath.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>This module performs many of the responsibilities that were previously provided by the dependency on guava.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>This module also defines a number of plugin interface types, discussed in the <a href="https://isis.apache.org/versions/2.0.0-M1/migration-notes/migration-notes.html#__migration-notes_1.16.0-to-2.0.0-M1_other-changes_plugins">section below</a>.</p>
+</div>
+</div>
+<div class="sect2 16 0-to-2 0 0-M1_other-changes_plugins">
+<h3 id="plugins"><a class="anchor" href="#plugins"></a>Plugins</h3>
+<div class="paragraph">
+<p>The framework introduces a plugin architecture whereby variations on the configuration are automatically enabled just by the presence of the Maven module on the classpath.</p>
+</div>
+<div class="paragraph">
+<p>For example, the framework can be run using either DataNucleus 4 or DataNucleus 5.
+Including the relevant module will configure the rest of the framework accordingly.</p>
+</div>
+<div class="paragraph">
+<p>The plugin architecture uses the JDK <code>ServiceLoader</code> API, whereby a Maven module can optionally provide an implementation of a well-known plugin interface type.</p>
+</div>
+<div class="paragraph">
+<p>The plugin interface types themselves are defined in various of the Maven modules, broadly depending on what consumes them.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 11. Plugin types</caption>
+<colgroup>
+<col style="width: 15.3846%;">
+<col style="width: 30.7692%;">
+<col style="width: 30.7692%;">
+<col style="width: 23.077%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Defined in</th>
+<th class="tableblock halign-left valign-top">Plugin type</th>
+<th class="tableblock halign-left valign-top">Used for</th>
+<th class="tableblock halign-left valign-top">Implementations</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top" rowspan="3"><div class="content"><div class="paragraph">
+<p><code>isis-core-commons</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>o.a.i.core.plugins.<br>
+classdiscovery.<br>
+ClassDiscoveryPlugin</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Obtain a plugin to finding types on the classpath with certain characteristics, eg annotated with certain annotations</p>
+</div>
+<div class="paragraph">
+<p>Include only one implementation on classpath.</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>ClassDiscoveryPluginUsingReflections</code> uses the <code>org.reflections</code> open source library (which depends in turn on guava).</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>o.a.i.core.plugins.<br>
+codegen.<br>
+ProxyFactoryPlugin</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Obtain a plugin acting as a factory to proxy types (as used by the <code>WrapperFactory</code> domain service).</p>
+</div>
+<div class="paragraph">
+<p>Include only one implementation on classpath,</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>o.a.i.core.plugins.codegen.
+ProxyFactoryPluginUsingByteBuddy</code> (using ByteBuddy)</p>
+</div>
+<div class="paragraph">
+<p><code>o.a.i.core.plugins.codegen.
+ProxyFactoryPluginUsingJavassist</code> (using Javassist).</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>o.a.i.core.plugins.<br>
+eventbus.<br>
+EventBusPlugin</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Obtain a plugin for finding event bus implementations.</p>
+</div>
+<div class="paragraph">
+<p>This removes the need to explicitly specify the implementation using the <code>isis.services.eventbus.implementation</code> config property; it can be left as simply "auto".</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>o.a.i.core.plugins.eventbus.
+EventBusPluginForAxon</code> (using Axon Framework)</p>
+</div>
+<div class="paragraph">
+<p><code>org.apache.isis.core.plugins.eventbus.
+EventBusPluginForGuava</code> (using Guava)</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" rowspan="3"><div class="content"><div class="paragraph">
+<p><code>isis-core-metamodel</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>org.apache.isis.core.<br>
+metamodel.progmodel.<br>
+ProgrammingModelPlugin</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Obtain plugins that can provide implementations of Isis' own <code>FacetFactory</code> SPI (which is used to build up the metamodel).</p>
+</div>
+<div class="paragraph">
+<p>There can be multiple implementations on the classpath.</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>org.apache.isis.progmodels.
+plugins.ProgrammingModelIsisTimePlugin</code> (in <code>metamodel-legacy</code>) contributes facet factories for the applib value types that have been moved to applib-legacy.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>org.apache.isis.core.<br>
+metamodel.services.<br>
+swagger.internal.<br>
+ValuePropertyPlugin</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Obtain plugins that can provide implementations of Isis' own <code>ValuePropertyFactory</code> SPI (which is used to build up Swagger representations).</p>
+</div>
+<div class="paragraph">
+<p>There can be multiple implementations on the classpath.</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>o.a.i.core.metamodel.
+services.swagger.plugins.
+IsisTimeValuePropertyPlugin</code> (in <code>metamodel-legacy</code>)
+contributes factories for the applib value types that have been moved to applib-legacy.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>o.a.i.core.<br>
+metamodel.<br>
+IsisJdoMetamodelPlugin</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Decouples the metamodel module from a particular implementation of DataNucleus.</p>
+</div>
+<div class="paragraph">
+<p>Include only one implementation on classpath,</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>o.a.i.plugins.jdo.dn4.IsisJdoSupportPlugin4</code></p>
+</div>
+<div class="paragraph">
+<p><code>o.a.i.plugins.jdo.dn5.IsisJdoSupportPlugin5</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>isis-core-runtime</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>o.a.i.core.<br>
+metamodel.<br>
+IsisJdoRuntimePlugin</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Decouples the runtime module from a particular implementation of DataNucleus.</p>
+</div>
+<div class="paragraph">
+<p>Include only one implementation on classpath,</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>o.a.i.plugins.jdo.dn4.IsisJdoSupportPlugin4</code></p>
+</div>
+<div class="paragraph">
+<p><code>o.a.i.plugins.jdo.dn5.IsisJdoSupportPlugin5</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>isis-core-viewer-restfulobjects-applib</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>o.a.i.viewer.<br>
+restfulobjects.<br>
+applib.client.<br>
+UriBuilderPlugin</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Plugin to obtain a <code>UriBuilder</code> to create uri templates.</p>
+</div>
+<div class="paragraph">
+<p>Include only one implementation on classpath,</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>o.a.i.plugins.<br>
+jaxrs.resteasy.IsisResteasy3Plugin</code></p>
+</div>
+<div class="paragraph">
+<p>or</p>
+</div>
+<div class="paragraph">
+<p><code>o.a.i.plugins.<br>
+jaxrs.resteasy.IsisResteasy4Plugin</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>isis-core-viewer-restfulobjects-server</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>o.a.i.viewer.<br>
+restfulobjects.<br>
+server.<br>
+IsisJaxrsServerPlugin</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Plugin to configure the JAX-RS runtime.</p>
+</div>
+<div class="paragraph">
+<p>Include only one implementation on classpath.</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>o.a.i.plugins.<br>
+jaxrs.resteasy.IsisResteasy3Plugin</code></p>
+</div>
+<div class="paragraph">
+<p>or</p>
+</div>
+<div class="paragraph">
+<p><code>o.a.i.plugins.<br>
+jaxrs.resteasy.IsisResteasy4Plugin</code></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>The two JDO/DataNucleus plugins are <em>not</em> independent of each other, because (as the table above shows) the same class implements both plugin interface types.
+These plugins allow the framework to run either using DataNucleus 4 (JDO 3.1 API) or using DataNucleus 5 (JDO 3.2 API).</p>
+</div>
+<div class="paragraph">
+<p>Similarly, the two RestfulObjects plugins are also <em>not</em> independent of each other; again the pattern is for a single class implements both plugin interface types.
+These plugins support alternate implementations of JAX-RS API.
+JAX-RS 2.0 (one of the JavaEE 7.0 specifications) is implemented by RestEasy 3 whereas JAX-RS 2.1 is implemented by RestEasy 4 (part of JavaEE 8).</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="isisjdosupport-domain-service"><a class="anchor" href="#isisjdosupport-domain-service"></a>IsisJdoSupport domain service</h3>
+<div class="paragraph">
+<p>In 1.16.x the <a href="https://isis.apache.org/versions/2.0.0-M1/guides/rgsvc/rgsvc.html#_rgsvc_persistence-layer-api_IsisJdoSupport"><code>IsisJdoSupport</code></a> domain service exposed the DataNucleus 4 <code>org.datanucleus.query.typesafe.TypesafeQuery</code> type in one of its signatures.
+However, in DataNucleus 5 this type was removed and replaced by <code>javax.jdo.JDOQLTypedQuery</code>, reflecting the fact that type-safe queries are now part of JDO 3.2.</p>
+</div>
+<div class="paragraph">
+<p>Consequently in 2.0.0-M1 this API has been split into three:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>IsisJdoSupport</code> (defined in <code>isis-core-applib</code>) is independent of JDO APIs</p>
+</li>
+<li>
+<p><code>IsisJdoSupport_v3_1</code> (defined in <code>isis-core-plugins-jdo-datanucleus-4</code>) extends <code>IsisJdoSupport</code> with DataNucleus 4/JDO 3.1-specific APIs</p>
+</li>
+<li>
+<p><code>IsisJdoSupport_v3_2</code> (defined in <code>isis-core-plugins-jdo-datanucleus-5</code>) extends <code>IsisJdoSupport</code> with JDO 3.2-specific APIs</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="swagger-ui"><a class="anchor" href="#swagger-ui"></a>Swagger UI</h3>
+<div class="paragraph">
+<p>Swagger UI is now reinstated as a webjar, so there is no need to have any swagger UI files in the webapp (ISIS-1908).</p>
+</div>
+</div>
+</div>
+</div>
+</article>
+<aside class="article-aside toc" role="navigation">
+    <h3 class="toc-title">On this page</h3>
+    <div id="article-toc"></div>
+</aside>
+</main>
+</div>
+<footer class="footer">
+    <div class="content">
+        <div class="copyright">
+            <p>
+                Copyright © 2010~2019 The Apache Software Foundation, licensed under the Apache License, v2.0.
+                <br/>
+                Apache, the Apache feather logo, Apache Isis, and the Apache Isis project logo are all trademarks of The Apache Software Foundation.
+            </p>
+        </div>
+        <div class="revision">
+            <p>Revision: 2.0.0-M2.20191118-1809-4864aeb6</p>
+        </div>
+    </div>
+</footer>
+<script src="../../_/js/site.js"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+<script src="../../_/js/vendor/jquery-3.4.1.min.js"></script>
+<script src="../../_/js/vendor/jquery-ui-1.12.1.custom.widget-only.min.js"></script>
+<script src="../../_/js/vendor/jquery.tocify.min.js"></script>
+
+<script>
+    $(function() {
+        $("#article-toc").tocify( {
+            showEffect: "slideDown",
+            hideEffect: "slideUp",
+            scrollTo: 120,
+            smoothScroll: true,
+            theme: "jqueryui",
+            highlightOnScroll: true
+        } );
+    });
+</script>
+  </body>
+</html>

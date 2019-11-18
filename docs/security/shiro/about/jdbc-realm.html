@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Shiro JDBC Realm :: Apache Isis</title>
+    <meta name="generator" content="Antora 2.2.0">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+    <link rel="stylesheet" href="../../../_/css/site-custom.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="../../..">Apache Isis</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Quick Start</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Starter Apps</span>
+            <a class="navbar-item" href="../../../helloworld/about.html">Hello World</a>
+            <a class="navbar-item" href="../../../simpleapp/about.html">Simple App</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Demos &amp; Tutorials</span>
+            <a class="navbar-item" href="../../../demoapp/about.html">Demo App</a>
+            <a class="navbar-item" href="https://danhaywood.gitlab.io/isis-petclinic-tutorial-docs/petclinic/1.16.2/intro.html">Petclinic (tutorial)</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Guides</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">User Guide</span>
+            <a class="navbar-item" href="../../../userguide/about.html">Fundamentals &amp; Beyond</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Reference</span>
+            <a class="navbar-item" href="../../../refguide/about.html">Reference Guide</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Security</span>
+            <a class="navbar-item" href="../../../security/about.html">Security Guide</a>
+            <a class="navbar-item" href="../../../ext-secman/about.html">SecMan (extension)</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Testing</span>
+            <a class="navbar-item" href="../../../testing/about.html">Testing Guide</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Components</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Viewers</span>
+            <a class="navbar-item" href="../../../vw/about.html">Wicket UI</a>
+            <a class="navbar-item" href="../../../vro/about.html">Restful Objects (REST)</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Persistence</span>
+            <a class="navbar-item" href="../../../odn/about.html">DataNucleus Object Store</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Extensions</span>
+            <a class="navbar-item" href="../../../extensions/about.html">Extensions Catalog</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Support</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Resources</span>
+            <a class="navbar-item" href="../../../toc/devguide/about.html">Developers' Guide</a>
+            <a class="navbar-item" href="../../../toc/mavendeps/about.html">Maven dependencies</a>
+            <a class="navbar-item" href="../../../toc/mixins/about.html">Maven mixins</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Mailing Lists</span>
+            <a class="navbar-item" href="../../../toc/mailing-list/how-to-subscribe.html">How to subscribe</a>
+            <a class="navbar-item" href="https://issues.apache.org/jira/browse/ISIS">ASF JIRA</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Releases</span>
+            <a class="navbar-item" href="../../../toc/downloads/how-to.html">Downloads</a>
+            <a class="navbar-item" href="../../../relnotes/about.html">Release Notes</a>
+            <a class="navbar-item" href="../../../mignotes/about.html">Migration Notes</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Internal</span>
+            <a class="navbar-item" href="../../../toc/comguide/about.html">Committers' Guide</a>
+            <a class="navbar-item" href="../../../core/about.html">Core Framework</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">@ASF</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://www.apache.org/">Apache Homepage</a>
+            <a class="navbar-item" href="https://www.apache.org/events/current-event">Events</a>
+            <a class="navbar-item" href="https://www.apache.org/licenses/">Licenses</a>
+            <a class="navbar-item" href="https://www.apache.org/security/">Security</a>
+            <a class="navbar-item" href="https://www.apache.org/foundation/sponsorship.html">Sponsorship</a>
+            <a class="navbar-item" href="https://www.apache.org/foundation/thanks.html">Thanks</a>
+            <hr class="navbar-divider"/>
+            <a class="navbar-item" href="https://whimsy.apache.org/board/minutes/Isis.html">PMC board minutes</a>
+          </div>
+        </div>
+        <a class="navbar-item" href="../../../toc/about.html">
+          <span class="icon">
+            <img src="../../../_/img/isis-logo-48x48.png"></img>
+          </span>
+        </a>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body ">
+<div class="nav-container" data-component="security" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../about.html">Security Guide</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../domain-services-api-for-applications.html">Domain Services (API for Applications)</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../api/about.html">API</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../bypass/about.html">Bypass Implementation</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../about.html">Shiro Implementation</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../keycloak/about.html">Keycloak Implementation</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../usage-by-isis-viewers.html">Usage by Isis Viewers</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Extensions</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../secman/about.html">SecMan</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Security Guide</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component">
+      <span class="title"> </span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../toc/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Core Framework</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../core/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">DataNucleus ObjectStore</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../odn/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Extensions Catalog</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../extensions/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Reference Guide</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../refguide/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Restful Objects Viewer</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../vro/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">SecMan</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../secman/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component is-current">
+      <span class="title">Security Guide</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Starter App - Hello World</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../helloworld/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Starter App - SimpleApp</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../simpleapp/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Testing Guide</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../testing/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Tutorial App - Demo</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../demoapp/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">User Guide</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../userguide/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Wicket Viewer</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../vw/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main role="main">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../toc/about.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../about.html">Security Guide</a></li>
+    <li><a href="jdbc-realm.html">Shiro JDBC Realm</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/HEAD/core/security/shiro/src/main/doc/modules/shiro/pages/about/jdbc-realm.adoc">Edit this Page</a></div>
+</div>
+<article class="doc">
+    <a name="section-top"></a>
+<h1 class="page">Shiro JDBC Realm</h1>
+<div class="paragraph">
+<p>There is nothing to stop you from using some other <code>Realm</code> implementation (or indeed writing one yourself).  For example, you could use Shiro&#8217;s own JDBC realm that loads user/password details from a database.</p>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>If you are happy to use a database then we strongly recommend you use the <a href="../../../secman/about.html" class="page">SecMan extension</a> instead of a vanilla JDBC; it is far more sophisticated and moreover gives you the ability to administer the system from within your Apache Isis application.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>If you go down this route, then the architecture is as follows:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="../_images/configuration/jdbc/configuring-shiro/configure-shiro-to-use-custom-jdbc-realm.png"><img src="../_images/configuration/configuring-shiro/jdbc/configure-shiro-to-use-custom-jdbc-realm.png" alt="configure shiro to use custom jdbc realm" width="600px"></a>
+</div>
+</div>
+<div class="paragraph">
+<p>There&#8217;s quite a lot of configuration required (in <code>WEB-INF/shiro.ini</code>) to set up a JDBC realm, so we&#8217;ll break it out into sections.</p>
+</div>
+<div class="paragraph">
+<p>First, we need to set up the connection to JDBC:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">jdbcRealm=org.apache.shiro.realm.jdbc.JdbcRealm        <i class="conum" data-value="1"></i><b>(1)</b>
+
+jof = org.apache.shiro.jndi.JndiObjectFactory          <i class="conum" data-value="2"></i><b>(2)</b>
+jof.resourceName = jdbc/postgres                       <i class="conum" data-value="3"></i><b>(3)</b>
+jof.requiredType = javax.sql.DataSource
+jof.resourceRef = true
+
+jdbcRealm.dataSource = $jof                            <i class="conum" data-value="4"></i><b>(4)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>instantiate the JDBC realm</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>instantiate factory object to lookup DataSource from servlet container</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>name of the datasource (as configured in <code>web.xml</code>)</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>instruct JDBC realm to obtain datasource from the JNDI</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>We next need to tell the realm how to query the database.  Shiro supports any schema; what matters is the input search argument and the output results.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">jdbcRealm.authenticationQuery =         \              <i class="conum" data-value="1"></i><b>(1)</b>
+        select password                 \
+          from users                    \
+         where username = ?
+
+jdbcRealm.userRolesQuery =              \              <i class="conum" data-value="2"></i><b>(2)</b>
+        select r.label                  \
+          from users_roles ur           \
+    inner join roles r                  \
+            on ur.role_id = r.id        \
+         where user_id = (              \
+            select id                   \
+             from users                 \
+            where username = ?);        \
+
+jdbcRealm.permissionsQuery=             \               <i class="conum" data-value="3"></i><b>(3)</b>
+        select p.permission             \
+          from roles_permissions rp     \
+    inner join permissions p            \
+            on rp.permission_id = p.id  \
+         where rp.role_id = (           \
+            select id                   \
+             from roles                 \
+            where label = ?);
+
+jdbcRealm.permissionsLookupEnabled=true                 <i class="conum" data-value="4"></i><b>(4)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>query to find password for user</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>query to find roles for user</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>query to find permissions for role</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>enable permissions lookup</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The <code>permissionsLookupEnabled</code> is very important, otherwise Shiro just returns an empty list of permissions and your users will have no access to any features(!).</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>We also should ensure that the passwords are not stored as plain-text:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">dps = org.apache.shiro.authc.credential.DefaultPasswordService   <i class="conum" data-value="1"></i><b>(1)</b>
+pm = org.apache.shiro.authc.credential.PasswordMatcher           <i class="conum" data-value="2"></i><b>(2)</b>
+pm.passwordService = $dps
+jdbcRealm.credentialsMatcher = $pm                               <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>mechanism to encrypts password</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>service to match passwords</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>instruct JDBC realm to use password matching service when authenticating</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>And finally we need to tell Shiro to use the realm, in the usual fashion:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">securityManager.realms = $jdbcRealm</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Using the above configuration you will also need to setup a <code>DataSource</code>.  The details vary by servlet container, for example this is <a href="https://tomcat.apache.org/tomcat-8.0-doc/jndi-datasource-examples-howto.html">how to do the setup on Tomcat 8.0</a>.</p>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The name of the <code>DataSource</code> can also vary by servlet container; see for example <a href="http://stackoverflow.com/questions/17441019/how-to-configure-jdbcrealm-to-obtain-its-datasource-from-jndi/23784702#23784702">this StackOverflow answer</a>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</article>
+<aside class="article-aside toc" role="navigation">
+    <h3 class="toc-title">On this page</h3>
+    <div id="article-toc"></div>
+</aside>
+</main>
+</div>
+<footer class="footer">
+    <div class="content">
+        <div class="copyright">
+            <p>
+                Copyright © 2010~2019 The Apache Software Foundation, licensed under the Apache License, v2.0.
+                <br/>
+                Apache, the Apache feather logo, Apache Isis, and the Apache Isis project logo are all trademarks of The Apache Software Foundation.
+            </p>
+        </div>
+        <div class="revision">
+            <p>Revision: 2.0.0-M2.20191118-1809-4864aeb6</p>
+        </div>
+    </div>
+</footer>
+<script src="../../../_/js/site.js"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/jquery-3.4.1.min.js"></script>
+<script src="../../../_/js/vendor/jquery-ui-1.12.1.custom.widget-only.min.js"></script>
+<script src="../../../_/js/vendor/jquery.tocify.min.js"></script>
+
+<script>
+    $(function() {
+        $("#article-toc").tocify( {
+            showEffect: "slideDown",
+            hideEffect: "slideUp",
+            scrollTo: 120,
+            smoothScroll: true,
+            theme: "jqueryui",
+            highlightOnScroll: true
+        } );
+    });
+</script>
+  </body>
+</html>
