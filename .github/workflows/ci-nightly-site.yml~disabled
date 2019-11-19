@@ -11,23 +11,24 @@ jobs:
     name: nightly-site
     runs-on: ubuntu-latest
     env:
-      # to be shared amoung all steps of this job
+      # to be shared among all steps of this job
+      BASELINE: 2.0.0-M2
       PROJECT_ROOT_PATH: /home/runner/work/isis-nightly/isis
       CI_SCRIPTS_PATH: /home/runner/work/isis-nightly/isis/scripts/ci
       
       NIGHTLY_ROOT_PATH: ${{ github.workspace }}
-      NIGHTLY_SCRIPTS_PATH: ${{ github.workspace }}/scripts
+      NIGHTLY_SCRIPTS_PATH: ${{ github.workspace }}/scripts/nightly
       
-      # used only for printing
+      # used for printing
       TIMESTAMP: ${{ github.event.head_commit.timestamp }}
-      
+
     steps:
     - name: Checkout Nightly
       uses: actions/checkout@v1
       
     - name: Get latest published Revision
       id: revision
-      run: bash $NIGHTLY_SCRIPTS_PATH/nightly-latest-revision.sh
+      run: bash $NIGHTLY_SCRIPTS_PATH/latest-revision.sh
     
     - name: Checkout Apache Isis
       uses: actions/checkout@v1
@@ -48,13 +49,16 @@ jobs:
       # then we simply print all the (non-secret) variables as used by the build scripts to the console
       run: |
         echo ==============  ENV  =================
-        echo TIMESTAMP\: $TIMESTAMP
-        echo PROJECT_ROOT_PATH\: $PROJECT_ROOT_PATH
-        echo CI_SCRIPTS_PATH\: $CI_SCRIPTS_PATH
-        echo REVISION\: $REVISION
+        echo BASELINE            \: $BASELINE
+        echo TIMESTAMP           \: $TIMESTAMP
+        echo PROJECT_ROOT_PATH   \: $PROJECT_ROOT_PATH
+        echo CI_SCRIPTS_PATH     \: $CI_SCRIPTS_PATH
+        echo NIGHTLY_ROOT_PATH   \: $NIGHTLY_ROOT_PATH
+        echo NIGHTLY_SCRIPTS_PATH\: $NIGHTLY_SCRIPTS_PATH
+        echo REVISION            \: $REVISION
         echo ======================================
       env:
-        REVISION: ${{ steps.revision.outputs.revision }}}
+        REVISION: ${{ steps.revision.outputs.revision }}
 
     - name: Install NVM
       shell: bash
@@ -71,8 +75,15 @@ jobs:
       shell: bash
       working-directory: ${{ env.PROJECT_ROOT_PATH }}
       run: $(npm bin)/antora version
-    
-    
+
+    - name: Setup Groovy
+      if: steps.revision.outputs.revision != 'skip'
+      run: sudo apt-get -f install groovy
+
+    - name: Print Groovy Version
+      if: steps.revision.outputs.revision != 'skip'
+      shell: bash
+      run: groovy --version
     
     - name: Build Apache Isis Site
       shell: bash
@@ -82,8 +93,6 @@ jobs:
       run: |
         bash $NIGHTLY_SCRIPTS_PATH/patch-site-config.sh ${PROJECT_ROOT_PATH}/site.yml
         bash $CI_SCRIPTS_PATH/build-site.sh site.yml
-        # add a marker, that tells github not to use jekyll on the github pages folder
-        touch ${PROJECT_ROOT_PATH}/antora/target/site/.nojekyll
       env:
         REVISION: ${{ steps.revision.outputs.revision }}
       
@@ -105,7 +114,3 @@ jobs:
       uses: ad-m/github-push-action@master
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-     
-
-           
-           
