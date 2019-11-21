@@ -83,8 +83,8 @@ jobs:
 #        ## github packages
 #        GH_DEPLOY_OWNER: apache-isis-committers
 #        GH_DEPLOY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#        MVN_ADDITIONAL_OPTS: '-Dgithub-deploy.repositoryUrl=https://maven.pkg.github.com/apache-isis-committers/isis-nightly'
-      
+#        MVN_ADDITIONAL_OPTS: '-DaltDeploymentRepository=github::default::https://maven.pkg.github.com/apache-isis-committers/isis-nightly'
+
     - name: Build and Push Core (GCP)
       if: steps.revision.outputs.revision != 'skip'
       shell: bash
@@ -93,10 +93,11 @@ jobs:
         bash $CI_SCRIPTS_PATH/build-core.sh
       env:
         REVISION: ${{ steps.revision.outputs.revision }}
+        ## GCP App Engine: repo.incode.work
         GCPAPPENGINEREPO_USERNAME: ${{ secrets.GCPAPPENGINEREPO_USERNAME }}
         GCPAPPENGINEREPO_PASSWORD: ${{ secrets.GCPAPPENGINEREPO_PASSWORD }}
         MVN_ADDITIONAL_OPTS: '-DaltDeploymentRepository=gcpappenginerepo::default::https://repo.incode.work'
-        SETTINGS_XML: ${{ env.NIGHTLY_ROOT_PATH }}/.m2/nightly-settings.xml
+        SETTINGS_XML: ${{ env.PROJECT_ROOT_PATH }}/.m2/settings.xml
  
     - name: Build and Push Demo-App (Docker Hub)
       if: steps.revision.outputs.revision != 'skip'
@@ -105,6 +106,7 @@ jobs:
         bash $CI_SCRIPTS_PATH/build-demo-app.sh springboot
       env:
         REVISION: ${{ steps.revision.outputs.revision }}
+        ## DOCKER HUB
         DOCKER_REGISTRY_USERNAME: apacheisiscommitters
         DOCKER_REGISTRY_PASSWORD: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
         DOCKER_REGISTRY_URL: 'https://index.docker.io/v1/'
