@@ -69,20 +69,20 @@ jobs:
       env:
         REVISION: ${{ steps.revision.outputs.revision }}
 
-     ## gh-packages: does not work consistently as of 2019-11-12, maybe try again after beta phase    
-    - name: Build and Push Core (github packages)
-      if: steps.revision.outputs.revision != 'skip'
-      shell: bash
-      working-directory: ${{ env.PROJECT_ROOT_PATH }}
-      run: |
-        bash $CI_SCRIPTS_PATH/build-core.sh
-      env:
-        REVISION: ${{ steps.revision.outputs.revision }}
-        ## github packages
-        GH_DEPLOY_OWNER: apache-isis-committers
-        GH_DEPLOY_TOKEN: ${{ secrets.WRITE_REPO_AND_PACKAGES_TOKEN }}
-        MVN_ADDITIONAL_OPTS: '-DaltReleaseDeploymentRepository=github::default::https://maven.pkg.github.com/apache-isis-committers/isis-nightly'
-        SETTINGS_XML: ${{ env.PROJECT_ROOT_PATH }}/.m2/settings.xml
+#     ## gh-packages: does not work consistently as of 2019-11-12, maybe try again after beta phase
+#    - name: Build and Push Core (github packages)
+#      if: steps.revision.outputs.revision != 'skip'
+#      shell: bash
+#      working-directory: ${{ env.PROJECT_ROOT_PATH }}
+#      run: |
+#        bash $CI_SCRIPTS_PATH/build-core.sh
+#      env:
+#        REVISION: ${{ steps.revision.outputs.revision }}
+#        ## github packages
+#        GH_DEPLOY_OWNER: apache-isis-committers
+#        GH_DEPLOY_TOKEN: ${{ secrets.WRITE_REPO_AND_PACKAGES_TOKEN }}
+#        MVN_ADDITIONAL_OPTS: '-DaltReleaseDeploymentRepository=github::default::https://maven.pkg.github.com/apache-isis-committers/isis-nightly'
+#        SETTINGS_XML: ${{ env.PROJECT_ROOT_PATH }}/.m2/settings.xml
 
     - name: Build and Push Core (GCP)
       if: steps.revision.outputs.revision != 'skip'
