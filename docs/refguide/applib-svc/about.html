@@ -12,7 +12,12 @@
 <header class="header">
   <nav class="navbar">
     <div class="navbar-brand">
-      <a class="navbar-item" href="../..">Apache Isis</a>
+      <a class="navbar-item" href="../..">
+          <span class="icon">
+            <img src="../../_/img/isis-logo-48x48.png"></img>
+          </span>
+        <span>Apache Isis</span>
+      </a>
       <button class="navbar-burger" data-target="topbar-nav">
         <span></span>
         <span></span>
@@ -20,7 +25,7 @@
       </button>
     </div>
     <div id="topbar-nav" class="navbar-menu">
-      <div class="navbar-end">
+      <a class="navbar-end">
         <div class="navbar-item has-dropdown is-hoverable">
           <a class="navbar-link" href="#">Quick Start</a>
           <div class="navbar-dropdown">
@@ -69,14 +74,14 @@
           <a class="navbar-link" href="#">Support</a>
           <div class="navbar-dropdown">
             <span class="navbar-item navbar-heading">Contact</span>
-            <a class="navbar-item" href="../../toc/mailing-list/how-to-subscribe.html">Mailing Lists</a>
-            <a class="navbar-item" href="https://the-asf.slack.com/archives/CFC42LWBV">Slack</a>
+            <a class="navbar-item" href="../../toc/support/slack-channel.html">Slack</a>
+            <a class="navbar-item" href="../../toc/support/mailing-list.html">Mailing Lists</a>
             <a class="navbar-item" href="https://issues.apache.org/jira/browse/ISIS">JIRA</a>
-            <a class="navbar-item" href="https://stackoverflow.com/questions/tagged/isis">Stack Overflow</a>
             <hr class="navbar-divider"/>
             <span class="navbar-item navbar-heading">Resources</span>
             <a class="navbar-item" href="../../toc/devguide/about.html">Developers' Guide</a>
             <a class="navbar-item" href="../../toc/mavendeps/about.html">Maven dependencies</a>
+            <a class="navbar-item" href="https://stackoverflow.com/questions/tagged/isis">Stack Overflow</a>
           </div>
         </div>
         <div class="navbar-item has-dropdown is-hoverable">
@@ -93,7 +98,7 @@
           </div>
         </div>
         <div class="navbar-item has-dropdown is-hoverable">
-          <a class="navbar-link" href="#">@ASF</a>
+          <a class="navbar-link" href="#">ASF</a>
           <div class="navbar-dropdown">
             <a class="navbar-item" href="http://www.apache.org/">Apache Homepage</a>
             <a class="navbar-item" href="https://www.apache.org/events/current-event">Events</a>
@@ -107,7 +112,7 @@
         </div>
         <a class="navbar-item" href="../../toc/about.html">
           <span class="icon">
-            <img src="../../_/img/isis-logo-48x48.png"></img>
+            <img src="../../_/img/home.png"></img>
           </span>
         </a>
       </div>
@@ -327,9 +332,6 @@
     <button class="nav-item-toggle"></button>
     <a class="nav-link" href="application-layer-api.html">Application Layer API</a>
 <ul class="nav-list">
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="application-layer-api/ActionInvocationContext.html">ActionInvocationContext</a>
-  </li>
   <li class="nav-item" data-depth="3">
     <button class="nav-item-toggle"></button>
     <a class="nav-link" href="application-layer-api/BackgroundService.html">BackgroundService</a>
@@ -605,7 +607,7 @@
       <span class="title">DataNucleus ObjectStore</span>
       <ul class="versions">
         <li class="version is-latest">
-          <a href="../../odn/about.html">master</a>
+          <a href="../../pjdo/about.html">master</a>
         </li>
       </ul>
     </li>
@@ -720,7 +722,7 @@
     <li><a href="about.html">Domain Services</a></li>
   </ul>
 </nav>
-  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/HEAD/core/applib/src/main/doc/modules/applib-svc/pages/about.adoc">edit</a></div>
+  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/HEAD/core/applib/src/main/doc/modules/applib-svc/pages/about.adoc">Edit</a></div>
 </div>
 <article class="doc">
     <a name="section-top"></a>
@@ -828,103 +830,86 @@ JDO/DataNucleus.</p>
 <div class="sectionbody">
 <div class="paragraph">
 <p>The framework provides default implementations for many of the domain services.
-This is convenient, but sometimes you will want to replace the default implementation with your own service implementation.</p>
+This is convenient, but sometimes you will want to replace the default implementation with your own service implementation.
+This is most commonly done using the Spring <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/core/annotation/Order.html">@Order</a> annotation.
+Inspect the source code of the default implementation to determine which value to use.
+The <code>OrderPrecedence</code> class provides some pre-defined precedences:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@UtilityClass
+public class OrderPrecedence {
+
+    /**
+     * Useful constant for the highest precedence value.
+     *
+     * @see java.lang.Integer#MIN_VALUE
+     * @see Ordered#HIGHEST_PRECEDENCE
+     */
+    public static final int HIGHEST = Ordered.HIGHEST_PRECEDENCE;
+
+    /**
+     * Useful constant for the lowest precedence value.
+     *
+     * @see java.lang.Integer#MAX_VALUE
+     * @see Ordered#LOWEST_PRECEDENCE
+     */
+    public static final int LOWEST = Ordered.LOWEST_PRECEDENCE;
+
+    /**
+     * Used by framework services that are unlikely to be overridden by application code.
+     */
+    public static final int HIGH = HIGHEST / 2;
+    /**
+     * Used by framework services that could be overridden by application code (though not commonly).
+     */
+    public static final int MIDPOINT = 0;
+    /**
+     * Used by framework services that are expected to be overridden by application code, or that act as a fallback.
+     */
+    public static final int LOW = OrderPrecedence.LOWEST / 2;
+
+}</code></pre>
+</div>
 </div>
 <div class="paragraph">
-<p>The trick is to use the <a href="../applib-ant/DomainServiceLayout.html#menuOrder" class="page"><code>@DomainServiceLayout#menuOrder()</code></a>
-attribute, specifying a low number (typically <code>"1"</code>).</p>
+<p>Spring offers a number of other mechanisms to specify the ordering; these can also be used.</p>
 </div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
 <div class="paragraph">
-<p>For a small number of domain services, all implementations are used (following the chain-of-responsibility pattern), not just the first one.
-The services in question are:
-<a href="presentation-layer-spi/ContentMappingService.html" class="page"><code>ContentMappingService</code></a>,
+<p>For some domain services, all framework will delegate to all available implementation, using a chain-of-responsibility pattern):
+These include:</p>
+</div>
+<div class="paragraph">
+<p><a href="presentation-layer-spi/ContentMappingService.html" class="page"><code>ContentMappingService</code></a>,
 <a href="presentation-layer-spi/GridSystemService.html" class="page"><code>GridSystemService</code></a>, and
 <a href="presentation-layer-spi/RoutingService.html" class="page"><code>RoutingService</code></a>.</p>
 </div>
-</td>
-</tr>
-</table>
-</div>
 <div class="paragraph">
 <p>For example, suppose you wanted to provide your own implementation of <a href="presentation-layer-spi/LocaleProvider.html" class="page"><code>LocaleProvider</code></a>.
-Here&#8217;s how:</p>
+The default implementation has these annotations:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainService(
-        nature = NatureOfService.DOMAIN
-)
-@DomainServiceLayout(
-        menuOrder = "1"                             <i class="conum" data-value="1"></i><b>(1)</b>
-)
-public class MyLocaleProvider implements LocaleProvider {
-    @Override
-    public Locale getLocale() {
-        return ...
-    }
-}</code></pre>
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Service
+@Named("isisWicketViewer.LocaleProviderWicket")
+@Order(OrderPrecedence.MIDPOINT)
+@Qualifier("Wicket")
+@Log4j2
+public class LocaleProviderWicket implements LocaleProvider { /* ... */ }</code></pre>
 </div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>takes precedence over the default implementation.</td>
-</tr>
-</table>
 </div>
 <div class="paragraph">
-<p>It&#8217;s also quite common to want to decorate the existing implementation (ie have your own implementation delegate to the default); this is also possible and quite easy.
-The idea is to have the framework inject all implementations of the service, and then to delegate to the first one that isn&#8217;t "this" one:</p>
+<p>To override this, use something like:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainService(nature=NatureOfService.DOMAIN)
-@DomainServiceLayout(
-        menuOrder = "1"                                                                 <i class="conum" data-value="1"></i><b>(1)</b>
-)
-public class MyLocaleProvider implements LocaleProvider {
-    @Override
-    public Locale getLocale() {
-        return getDelegateLocaleProvider().getLocale();                                 <i class="conum" data-value="2"></i><b>(2)</b>
-    }
-    private LocaleProvider getDelegateLocaleProvider() {
-        return Iterables.tryFind(localeProviders, input -&gt; input != this).orNull();     <i class="conum" data-value="3"></i><b>(3)</b>
-    }
-    @Inject
-    List&lt;LocaleProvider&gt; localeProviders;                                               <i class="conum" data-value="4"></i><b>(4)</b>
-}</code></pre>
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Service
+@Order(OrderPrecedence.HIGH)
+public class MyLocaleProvider implements LocaleProvider { /* ... */ }</code></pre>
 </div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>takes precedence over the default implementation when injected elsewhere.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>this implementation merely delegates to the default implementation</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>find the first implementation that isn&#8217;t <em>this</em> implementation (else infinite loop!)</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>injects all implementations, including this implemenation</td>
-</tr>
-</table>
 </div>
 <div class="paragraph">
-<p>The above code could be improved by caching the delegateLocaleProvider once located (rather than searching each time).</p>
+<p>It&#8217;s not necessary to annotate <code>@Named</code> or <code>@Qualifier</code>, but could be considered good practice.</p>
 </div>
 </div>
 </div>
@@ -1042,7 +1027,7 @@ The framework provides a default <code>PublisherServiceLogging</code> implementa
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20191218-0403-5fcec112</p>
+            <p>Revision: 2.0.0-M2.20191220-0402-04ccda8e</p>
         </div>
     </div>
 </footer>

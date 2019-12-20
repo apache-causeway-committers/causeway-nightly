@@ -12,7 +12,12 @@
 <header class="header">
   <nav class="navbar">
     <div class="navbar-brand">
-      <a class="navbar-item" href="../../..">Apache Isis</a>
+      <a class="navbar-item" href="../../..">
+          <span class="icon">
+            <img src="../../../_/img/isis-logo-48x48.png"></img>
+          </span>
+        <span>Apache Isis</span>
+      </a>
       <button class="navbar-burger" data-target="topbar-nav">
         <span></span>
         <span></span>
@@ -20,7 +25,7 @@
       </button>
     </div>
     <div id="topbar-nav" class="navbar-menu">
-      <div class="navbar-end">
+      <a class="navbar-end">
         <div class="navbar-item has-dropdown is-hoverable">
           <a class="navbar-link" href="#">Quick Start</a>
           <div class="navbar-dropdown">
@@ -69,14 +74,14 @@
           <a class="navbar-link" href="#">Support</a>
           <div class="navbar-dropdown">
             <span class="navbar-item navbar-heading">Contact</span>
-            <a class="navbar-item" href="../../../toc/mailing-list/how-to-subscribe.html">Mailing Lists</a>
-            <a class="navbar-item" href="https://the-asf.slack.com/archives/CFC42LWBV">Slack</a>
+            <a class="navbar-item" href="../../../toc/support/slack-channel.html">Slack</a>
+            <a class="navbar-item" href="../../../toc/support/mailing-list.html">Mailing Lists</a>
             <a class="navbar-item" href="https://issues.apache.org/jira/browse/ISIS">JIRA</a>
-            <a class="navbar-item" href="https://stackoverflow.com/questions/tagged/isis">Stack Overflow</a>
             <hr class="navbar-divider"/>
             <span class="navbar-item navbar-heading">Resources</span>
             <a class="navbar-item" href="../../../toc/devguide/about.html">Developers' Guide</a>
             <a class="navbar-item" href="../../../toc/mavendeps/about.html">Maven dependencies</a>
+            <a class="navbar-item" href="https://stackoverflow.com/questions/tagged/isis">Stack Overflow</a>
           </div>
         </div>
         <div class="navbar-item has-dropdown is-hoverable">
@@ -93,7 +98,7 @@
           </div>
         </div>
         <div class="navbar-item has-dropdown is-hoverable">
-          <a class="navbar-link" href="#">@ASF</a>
+          <a class="navbar-link" href="#">ASF</a>
           <div class="navbar-dropdown">
             <a class="navbar-item" href="http://www.apache.org/">Apache Homepage</a>
             <a class="navbar-item" href="https://www.apache.org/events/current-event">Events</a>
@@ -107,7 +112,7 @@
         </div>
         <a class="navbar-item" href="../../../toc/about.html">
           <span class="icon">
-            <img src="../../../_/img/isis-logo-48x48.png"></img>
+            <img src="../../../_/img/home.png"></img>
           </span>
         </a>
       </div>
@@ -213,7 +218,7 @@
       <span class="title">DataNucleus ObjectStore</span>
       <ul class="versions">
         <li class="version is-latest">
-          <a href="../../../odn/about.html">master</a>
+          <a href="../../../pjdo/about.html">master</a>
         </li>
       </ul>
     </li>
@@ -328,7 +333,7 @@
     <li><a href="replacing-default-service-implementations.html">Overriding Default Service Implns</a></li>
   </ul>
 </nav>
-  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/HEAD/antora/components/userguide/modules/btb/pages/hints-and-tips/replacing-default-service-implementations.adoc">edit</a></div>
+  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/HEAD/antora/components/userguide/modules/btb/pages/hints-and-tips/replacing-default-service-implementations.adoc">Edit</a></div>
 </div>
 <article class="doc">
     <a name="section-top"></a>
@@ -341,41 +346,28 @@ This is convenient, but sometimes you will want to replace the default implement
 </div>
 <div class="paragraph">
 <p>For example, suppose you wanted to provide your own implementation of <a href="../../../refguide/applib-svc/presentation-layer-spi/LocaleProvider.html" class="page"><code>LocaleProvider</code></a>.
-The trick is to use the <a href="../../../refguide/applib-ant/DomainServiceLayout.html#menuOrder" class="page"><code>@DomainServiceLayout#menuOrder()</code></a> attribute, specifying a low number (typically <code>"1"</code>).</p>
+The trick is to use the Spring <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/core/annotation/Order.html"><code>@Order</code></a> annotation or equivalent mechanism.</p>
 </div>
 <div class="paragraph">
 <p>Here&#8217;s how:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainService(
-        nature = NatureOfService.DOMAIN
-)
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Service
+@Order(OrderPrecedence.HIGH)                                <i class="conum" data-value="1"></i><b>(1)</b>
 public class MyLocaleProvider implements LocaleProvider {
     @Override
-    public Locale getLocale() {
-        return ...
-    }
+    public Locale getLocale() { /* ... */ }
 }</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>The framework uses the value of the <code>menuOrder</code> attribute to determine priority; lowest number wins.</p>
-</div>
-<div class="paragraph">
-<p>However, there is no need to specify the <code>menuOrder</code> attribute: its default value is now set to a lower value (specifically: <code>Integer.MAX_VALUE - 100</code>) than all of the framework-provided implementations, and thus always takes precedence.</p>
-</div>
-<div class="paragraph">
-<p>Thus, if a single instance is to be injected, eg:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@javax.inject.Inject
-LocalProvider localeProvider;</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>then the custom implementation will be used in preference to the framework&#8217;s default implementation.</p>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><code>OrderPrecedence</code> (in the Apache Isis applib) provides some standard values.</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>If multiple instances are injected, eg:</p>
@@ -383,11 +375,11 @@ LocalProvider localeProvider;</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@javax.inject.Inject
-List&lt;LocalProvider&gt; localeProviders;</code></pre>
+private List&lt;LocalProvider&gt; localeProviders;</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>then all implementations will be present in the list, ordered by priority; your custom implementation will be first in the list.</p>
+<p>then all implementations will be present in the list, ordered by priority.</p>
 </div>
 </div>
 </div>
@@ -465,7 +457,7 @@ public class MyLocaleProvider implements LocaleProvider {
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20191218-0403-5fcec112</p>
+            <p>Revision: 2.0.0-M2.20191220-0402-04ccda8e</p>
         </div>
     </div>
 </footer>
