@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Spring Configuration :: Apache Isis</title>
+    <title>Configuration Properties :: Apache Isis</title>
     <meta name="generator" content="Antora 2.2.0">
     <link rel="stylesheet" href="../../_/css/site.css">
     <link rel="stylesheet" href="../../_/css/site-custom.css">
@@ -551,7 +551,7 @@
     <a class="nav-link" href="configuring-core.html">Configuring Core</a>
   </li>
   <li class="nav-item is-current-page" data-depth="2">
-    <a class="nav-link" href="spring-configuration.html">Spring Configuration</a>
+    <a class="nav-link" href="configuration-properties.html">Configuration Properties</a>
   </li>
 </ul>
   </li>
@@ -720,14 +720,14 @@
   <ul>
     <li><a href="../about.html">Reference Guide</a></li>
     <li><a href="about.html">Configuration</a></li>
-    <li><a href="spring-configuration.html">Spring Configuration</a></li>
+    <li><a href="configuration-properties.html">Configuration Properties</a></li>
   </ul>
 </nav>
-  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/HEAD/core/config/src/main/doc/modules/config/pages/spring-configuration.adoc">Edit</a></div>
+  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/HEAD/core/config/src/main/doc/modules/config/pages/configuration-properties.adoc">Edit</a></div>
 </div>
 <article class="doc">
     <a name="section-top"></a>
-<h1 class="page">Spring Configuration</h1>
+<h1 class="page">Configuration Properties</h1>
 <div class="sect1">
 <h2 id="shiro-authentication"><a class="anchor" href="#shiro-authentication"></a>Shiro Authentication</h2>
 <div class="sectionbody">
@@ -1263,10 +1263,26 @@ explicit-annotations.action</p>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>isis.reflector.introspector.<br>
+lock-after-full-introspection</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>true</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>If true, then no new specifications will be allowed to be loaded once introspection has been complete. <br>
+ Only applies if the introspector is configured to perform full introspection up-front (either because of {@link IntrospectionMode#FULL} or {@link IntrospectionMode#LAZY_UNLESS_PRODUCTION} when in production); otherwise is ignored.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>isis.reflector.introspector.<br>
 mode</p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Whether all known types should be fully introspected as part of the bootstrapping, or should only be partially introspected initially. <br>
+ Leaving this as lazy means that there&#8217;s a chance that metamodel validation errors will not be discovered during bootstrap.  That said, metamodel validation is still run incrementally for any classes introspected lazily after initial bootstrapping (unless {@link #isValidateIncrementally()} is disabled.</p>
+</div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
@@ -1276,7 +1292,23 @@ parallelize</p>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>true</p>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Whether to perform introspection and metamodel validation in parallel.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>isis.reflector.introspector.<br>
+validate-incrementally</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>true</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>If true, then metamodel validation is performed after any new specification has been loaded (after the initial bootstrapping). <br>
+ This does _not&lt;/i&gt; apply if the introspector is configured to perform full introspection up-front AND when the metamodel is {@link #isLockAfterFullIntrospection() locked} after initial bootstrapping (because in that case the lock check will simply prevent any new specs from being loaded). But it will apply otherwise.  <br>
+In particular, this setting _can&lt;/i&gt; still apply even if the {@link #getMode() introspection mode} is set to {@link IntrospectionMode#FULL full}, because that in itself does not preclude some code from attempting to load some previously unknown type.  For example, a fixture script could attempt to invoke an action on some new type using the {@link org.apache.isis.applib.services.wrapper.WrapperFactory} - this will cause introspection of that new type to be performed.</p>
+</div></div></td>
 </tr>
 </tbody>
 </table>
@@ -2791,28 +2823,6 @@ registration</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="spring"><a class="anchor" href="#spring"></a>Spring</h2>
-<div class="sectionbody">
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 28.5714%;">
-<col style="width: 28.5714%;">
-<col style="width: 42.8572%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Property</th>
-<th class="tableblock halign-left valign-top">Value<br>
-(default value)</th>
-<th class="tableblock halign-left valign-top">Description
-
-Unresolved include directive in modules/config/pages/spring-configuration.adoc - include::refguide:config:example$generated/spring.adoc[]</th>
-</tr>
-</thead>
-</table>
-</div>
-</div>
-<div class="sect1">
 <h2 id="other"><a class="anchor" href="#other"></a>Other</h2>
 <div class="sectionbody">
 <table class="tableblock frame-all grid-all stretch">
@@ -2903,7 +2913,7 @@ Unresolved include directive in modules/config/pages/spring-configuration.adoc -
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200105-0403-be0440a0</p>
+            <p>Revision: 2.0.0-M2.20200106-0403-6ce14955</p>
         </div>
     </div>
 </footer>
