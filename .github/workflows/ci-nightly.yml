@@ -89,33 +89,33 @@ jobs:
 #        MVN_ADDITIONAL_OPTS: '-DaltReleaseDeploymentRepository=github::default::https://maven.pkg.github.com/apache-isis-committers/isis-nightly'
 #        SETTINGS_XML: ${{ env.PROJECT_ROOT_PATH }}/.m2/settings.xml
 
-## currently fails with
-##I/O error for image [registry-1.docker.io/apacheisis/isis-2-demo]: Read timed out
-#    - name: Build and Push Core (GCP)
-#      if: steps.revision.outputs.revision != 'skip'
-#      shell: bash
-#      working-directory: ${{ env.PROJECT_ROOT_PATH }}
-#      run: |
-#        bash $CI_SCRIPTS_PATH/build-core.sh
-#      env:
-#        REVISION: ${{ steps.revision.outputs.revision }}
-#        ## GCP App Engine: repo.incode.work
-#        GCPAPPENGINEREPO_USERNAME: ${{ secrets.GCPAPPENGINEREPO_USERNAME }}
-#        GCPAPPENGINEREPO_PASSWORD: ${{ secrets.GCPAPPENGINEREPO_PASSWORD }}
-#        MVN_ADDITIONAL_OPTS: '-DaltReleaseDeploymentRepository=gcpappenginerepo::default::https://repo.incode.work'
-#        SETTINGS_XML: ${{ env.PROJECT_ROOT_PATH }}/.m2/settings.xml
-
-    - name: Build and Push Demo-App (Docker Hub)
+    - name: Build and Push Core (GCP)
       if: steps.revision.outputs.revision != 'skip'
       shell: bash
+      working-directory: ${{ env.PROJECT_ROOT_PATH }}
       run: |
-        bash $CI_SCRIPTS_PATH/build-demo-app.sh springboot
+        bash $CI_SCRIPTS_PATH/build-core.sh
       env:
         REVISION: ${{ steps.revision.outputs.revision }}
-        ## DOCKER HUB
-        DOCKER_REGISTRY_USERNAME: apacheisiscommitters
-        DOCKER_REGISTRY_PASSWORD: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
-        DOCKER_REGISTRY_URL: 'https://index.docker.io/v1/'
+        ## GCP App Engine: repo.incode.work
+        GCPAPPENGINEREPO_USERNAME: ${{ secrets.GCPAPPENGINEREPO_USERNAME }}
+        GCPAPPENGINEREPO_PASSWORD: ${{ secrets.GCPAPPENGINEREPO_PASSWORD }}
+        MVN_ADDITIONAL_OPTS: '-DaltReleaseDeploymentRepository=gcpappenginerepo::default::https://repo.incode.work'
+        SETTINGS_XML: ${{ env.PROJECT_ROOT_PATH }}/.m2/settings.xml
+
+## currently fails with
+##I/O error for image [registry-1.docker.io/apacheisis/isis-2-demo]: Read timed out
+#    - name: Build and Push Demo-App (Docker Hub)
+#      if: steps.revision.outputs.revision != 'skip'
+#      shell: bash
+#      run: |
+#        bash $CI_SCRIPTS_PATH/build-demo-app.sh springboot
+#      env:
+#        REVISION: ${{ steps.revision.outputs.revision }}
+#        ## DOCKER HUB
+#        DOCKER_REGISTRY_USERNAME: apacheisiscommitters
+#        DOCKER_REGISTRY_PASSWORD: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
+#        DOCKER_REGISTRY_URL: 'https://index.docker.io/v1/'
     
     # ------------------------
     # -- now build the site --
