@@ -67,7 +67,7 @@
             <a class="navbar-item" href="../../security/about.html">Security Guide</a>
             <hr class="navbar-divider"/>
             <span class="navbar-item navbar-heading">Persistence</span>
-            <a class="navbar-item" href="../../odn/about.html">DataNucleus Object Store</a>
+            <a class="navbar-item" href="../../odn/about.html">DataNucleus (JDO)</a>
             <hr class="navbar-divider"/>
             <span class="navbar-item navbar-heading">Extensions</span>
             <a class="navbar-item" href="../../extensions/about.html">Extensions Catalog</a>
@@ -538,6 +538,813 @@ this is work-in-progress.
 </div>
 </div>
 <div class="sect1">
+<h2 id="to-2-0-0"><a class="anchor" href="#to-2-0-0"></a>to 2.0.0</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="maven-groupids-and-artifactids"><a class="anchor" href="#maven-groupids-and-artifactids"></a>Maven <code>groupId</code>s and <code>artifactId</code>s</h3>
+<div class="paragraph">
+<p>These follow the format:</p>
+</div>
+<div class="listingblock">
+<div class="title">filename.xml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;groupId&gt;org.apache.isis.<em>group</em>&lt;/groupId&gt;
+&lt;artifactId&gt;isis-<em>group</em>-<em>artifact</em>&lt;/artifactId&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>where <em>group</em> is one of:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>core</code></p>
+<div class="paragraph">
+<p>Core framework, includes applib</p>
+</div>
+</li>
+<li>
+<p><code>viewers</code></p>
+<div class="paragraph">
+<p>Currently <code>wicket</code> and <code>restfulobjects</code>.</p>
+</div>
+</li>
+<li>
+<p><code>persistence</code></p>
+<div class="paragraph">
+<p>Currently only <code>jdo</code> is supported.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+it&#8217;s also possible to run the framework without any configured persistence, in other words to use view models and "roll-your-own" persistence as required.
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p><code>security</code></p>
+<div class="paragraph">
+<p>Currently <code>bypass</code> (in other words, a no-op), <code>shiro</code> and <code>keycloak</code>.</p>
+</div>
+<div class="paragraph">
+<p>Shiro also has its own plugin architecture of <code>Realm</code>s.
+Apache Isis provides two <code>Realm</code> implementations (in extensions, below).</p>
+</div>
+</li>
+<li>
+<p><code>extensions</code></p>
+</li>
+<li>
+<p><code>subdomains</code></p>
+</li>
+<li>
+<p><code>mappings</code></p>
+</li>
+<li>
+<p><code>valuetypes</code></p>
+</li>
+<li>
+<p><code>incubator</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="isis-properties-replaced-by-application-properties"><a class="anchor" href="#isis-properties-replaced-by-application-properties"></a><code>isis.properties</code> replaced by <code>application.properties</code></h3>
+<div class="paragraph">
+<p>Apache Isis v1.x used <code>isis.properties</code> for configuration properties.
+Since in v2 the framework is bootstrapped and configured using Spring Boot, we decided to use the Spring Boot conventions for the configuration files.</p>
+</div>
+<div class="paragraph">
+<p>Accordingly, configuration properties should now be stored either in <code>application.properties</code> and/or <code>application.yml</code>.
+These are searched for in multiple locations (see <a href="https://docs.spring.io/spring-boot/docs/1.5.20.RELEASE/reference/html/boot-features-external-config.html">Spring docs</a>) and can be overridden using either system properties or environment variables.</p>
+</div>
+<div class="paragraph">
+<p>The starter apps use these two locations:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>./application.yml</code></p>
+<div class="paragraph">
+<p>in the default package (ie directly in <code>src/main/resources</code>) for static configuration that doesn&#8217;t change between environments</p>
+</div>
+</li>
+<li>
+<p><code>config/application.properties</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>in the <code>config</code> package (ie in <code>src/main/resources/config</code>) for dynamic configuration that changes between environments, for example JDBC URLs.</p>
+</div>
+<div class="paragraph">
+<p>We&#8217;ve found that this schema works well with IDEs such as IntelliJ that provide auto-complete of configuration properties.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="configuration-property-names"><a class="anchor" href="#configuration-property-names"></a>Configuration property names</h3>
+<div class="paragraph">
+<p>These now follow, more or less, the <code>groupId</code>s.
+Very approximately:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. Configuration property changes</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Key prefix was (in v1.x)</th>
+<th class="tableblock halign-left valign-top">Key prefix is now (in v2.x)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.<em>xxx</em></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.applib.<em>xxx</em> or<br>
+isis.core.<em>xxx</em></code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.authentication</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.security</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.persistor</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.persistence</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.persistor.datanucleus</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.persistence.jdo-datanucleus</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.persistor.datanucleus.impl</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.persistence.jdo-datanucleus.impl</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.viewers</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.metamodel.ui.</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.services.<em>xxx</em></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.core.runtime.services.<em>xxx</em></code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Note also  Spring Boot allows configuration properties to be specified using either <code>camelCase</code> or <code>kebab-case</code>.
+In general it&#8217;s fine to use either, with a preference for <code>kebab-case</code>.</p>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The only exception is the configuration properties that reside under <code>isis.persistence.jdo-datanucleus.impl</code> (what in Isis v1.x was the <code>isis.persistor.datanucleus.impl</code> key); this prefix is stripped off and all remaining properties passed through unchanged to DataNucleus.
+These must be kept in camel case format because DataNucleus doesn&#8217;t recognise kebab case.</p>
+</div>
+<div class="paragraph">
+<p>For example, use <code>isis.persistence.jdo-datanucleus.impl.javax.jdo.option.ConnectionURL</code> (and not <code>connection-url</code> for the last part of the key).</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Here, in more detail, are the before and after for recognised configuration properties.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 2. Configuration property changes</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Key was (in v1.x)</th>
+<th class="tableblock halign-left valign-top">Key is now (in v2.x)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.authentication.shiro.<br>
+&#160;&#160;autoLogoutIfAlreadyAuthenticated</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.security.shiro.<br>
+&#160;&#160;auto-logout-if-already-authenticated</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.locale</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.core.runtime.locale</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.objects.editing</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.applib.metamodel.<br>
+&#160;&#160;domain-object.editing</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.persistor.datanucleus.<br>
+&#160;&#160;classMetadataLoadedListener</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.persistence.jdo-datanucleus.<br>
+&#160;&#160;class-metadata-loaded-listener</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.persistor.datanucleus.installFixtures</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>(removed)</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.persistor.datanucleus.impl.<br>
+&#160;&#160;datanucleus.schema.autoCreateAll</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.persistence.jdo-datanucleus.impl.<br>
+&#160;&#160;datanucleus.schema.autoCreateAll</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.persistor.datanucleus.impl.<br>
+&#160;&#160;datanucleus.schema.validateAll</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.persistence.jdo-datanucleus.impl.<br>
+&#160;&#160;datanucleus.schema.validateAll</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.persistor.datanucleus.impl.<br>
+&#160;&#160;datanucleus.schema.validateTables</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.persistence.jdo-datanucleus.impl.<br>
+&#160;&#160;datanucleus.schema.validateTables</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.persistor.datanucleus.impl.<br>
+&#160;&#160;datanucleus.schema.validateConstraints</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.persistence.jdo-datanucleus.impl.<br>
+&#160;&#160;datanucleus.schema.validateConstraints</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.persistor.datanucleus.impl.<br>
+&#160;&#160;datanucleus.persistenceByReachabilityAtCommit</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.persistence.jdo-datanucleus.impl.<br>
+&#160;&#160;datanucleus.persistenceByReachabilityAtCommit</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.persistor.datanucleus.impl.<br>
+&#160;&#160;datanucleus.identifier.case</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.persistence.jdo-datanucleus.impl.<br>
+&#160;&#160;datanucleus.identifier.case</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.persistor.datanucleus.impl.<br>
+&#160;&#160;datanucleus.cache.level2.mode</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.persistence.jdo-datanucleus.impl.<br>
+&#160;&#160;datanucleus.cache.level2.mode</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.persistor.datanucleus.impl.<br>
+&#160;&#160;javax.jdo.option.ConnectionDriverName</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.persistence.jdo-datanucleus.impl.<br>
+&#160;&#160;javax.jdo.option.ConnectionDriverName</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.persistor.datanucleus.impl.<br>
+&#160;&#160;javax.jdo.option.ConnectionURL</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.persistence.jdo-datanucleus.impl.<br>
+&#160;&#160;javax.jdo.option.ConnectionURL</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.persistor.datanucleus.impl.<br>
+&#160;&#160;javax.jdo.option.ConnectionUserName</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.persistence.jdo-datanucleus.impl.<br>
+&#160;&#160;javax.jdo.option.ConnectionUserName</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.persistor.datanucleus.impl.<br>
+&#160;&#160;javax.jdo.option.ConnectionPassword</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.persistence.jdo-datanucleus.impl.<br>
+&#160;&#160;javax.jdo.option.ConnectionPassword</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.persistor.datanucleus.impl.<br>
+&#160;&#160;javax.jdo.option.<br>
+&#160;&#160;&#160;&#160;PersistenceManagerFactoryClass</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.persistence.jdo-datanucleus.impl.<br>
+&#160;&#160;javax.jdo.option.<br>
+&#160;&#160;&#160;&#160;PersistenceManagerFactoryClass</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.persistor.datanucleus.<br>
+&#160;&#160;
+standalone-collection.bulk-load</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>(removed)</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.persistor.enforceSafeSemantics</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>(removed)</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.reflector.explicitAnnotations.<br>
+&#160;&#160;action</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.applib.annotation.action<br>
+&#160;&#160;.explicit</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.reflector.facet.<br>
+&#160;&#160;actionAnnotation.<br>
+&#160;&#160;&#160;&#160;domainEvent.postForDefault</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.applib.annotation.<br>
+&#160;&#160;action.<br>
+&#160;&#160;&#160;&#160;domain-event.post-for-default</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.reflector.facet.<br>
+&#160;&#160;collectionAnnotation.<br>
+&#160;&#160;&#160;&#160;domainEvent.postForDefault</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.applib.annotation.<br>
+&#160;&#160;collection.<br>
+&#160;&#160;&#160;&#160;domain-event.post-for-default</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.reflector.facet.<br>
+&#160;&#160;cssClass.patterns</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.applib.annotation.<br>
+&#160;&#160;action-layout.<br>
+&#160;&#160;&#160;&#160;css-class.patterns</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.reflector.facet.<br>
+&#160;&#160;domainObjectAnnotation.<br>
+&#160;&#160;&#160;&#160;createdLifecycleEvent.postForDefault</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.applib.annotation.<br>
+&#160;&#160;domain-object.<br>
+&#160;&#160;&#160;&#160;created-lifecycle-event.post-for-default</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.reflector.facet.<br>
+&#160;&#160;domainObjectAnnotation.<br>
+&#160;&#160;&#160;&#160;loadedLifecycleEvent.postForDefault</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.applib.annotation.<br>
+&#160;&#160;domain-object.<br>
+&#160;&#160;&#160;&#160;loaded-lifecycle-event.post-for-default</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.reflector.facet.<br>
+&#160;&#160;domainObjectAnnotation.<br>
+&#160;&#160;&#160;&#160;persistingLifecycleEvent.postForDefault</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.applib.annotation.<br>
+&#160;&#160;domain-object.<br>
+&#160;&#160;&#160;&#160;persisting-lifecycle-event.post-for-default</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.reflector.facet.<br>
+&#160;&#160;domainObjectAnnotation.<br>
+&#160;&#160;&#160;&#160;persistedLifecycleEvent.postForDefault</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.applib.annotation.<br>
+&#160;&#160;domain-object.<br>
+&#160;&#160;&#160;&#160;persisted-lifecycle-event.post-for-default</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.reflector.facet.<br>
+&#160;&#160;domainObjectAnnotation.<br>
+&#160;&#160;&#160;&#160;removingLifecycleEvent.postForDefault</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.applib.annotation.<br>
+&#160;&#160;domain-object.<br>
+&#160;&#160;&#160;&#160;removing-lifecycle-event.post-for-default</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.reflector.facet.<br>
+&#160;&#160;domainObjectAnnotation.<br>
+&#160;&#160;&#160;&#160;updatedLifecycleEvent.postForDefault</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.applib.annotation.<br>
+&#160;&#160;domain-object.<br>
+&#160;&#160;&#160;&#160;updated-lifecycle-event.post-for-default</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.reflector.facet.<br>
+&#160;&#160;domainObjectAnnotation.<br>
+&#160;&#160;&#160;&#160;updatingLifecycleEvent.postForDefault</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.applib.annotation.<br>
+&#160;&#160;domain-object.<br>
+&#160;&#160;&#160;&#160;updating-lifecycle-event.post-for-default</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.reflector.facet.<br>
+&#160;&#160;domainObjectLayoutAnnotation.<br>
+&#160;&#160;&#160;&#160;cssClassUiEvent.postForDefault</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.applib.annotation.<br>
+&#160;&#160;domain-object-layout.<br>
+&#160;&#160;&#160;&#160;css-class-ui-event.post-for-default</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.reflector.facet.<br>
+&#160;&#160;domainObjectLayoutAnnotation.<br>
+&#160;&#160;&#160;&#160;iconUiEvent.postForDefault</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.applib.annotation.<br>
+&#160;&#160;domain-object-layout.<br>
+&#160;&#160;&#160;&#160;icon-ui-event.post-for-default</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.reflector.facet.<br>
+&#160;&#160;domainObjectLayoutAnnotation.<br>
+&#160;&#160;&#160;&#160;layoutUiEvent.postForDefault</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.applib.annotation.<br>
+&#160;&#160;domain-object-layout.<br>
+&#160;&#160;&#160;&#160;layout-ui-event.post-for-default</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.reflector.facet.<br>
+&#160;&#160;domainObjectLayoutAnnotation.<br>
+&#160;&#160;&#160;&#160;titleUiEvent.postForDefault</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.applib.annotation.<br>
+&#160;&#160;domain-object-layout.<br>
+&#160;&#160;&#160;&#160;title-ui-event.post-for-default</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.reflector.facet.<br>
+&#160;&#160;propertyAnnotation.<br>
+&#160;&#160;&#160;&#160;domainEvent.postForDefault</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.applib.annotation.<br>
+&#160;&#160;property.<br>
+&#160;&#160;&#160;&#160;domain-event.post-for-default</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.reflector.facet.<br>
+&#160;&#160;viewModelLayoutAnnotation.<br>
+&#160;&#160;&#160;&#160;cssClassUiEvent.postForDefault</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.applib.annotation.<br>
+&#160;&#160;view-model-layout.<br>
+&#160;&#160;&#160;&#160;css-class-ui-event.post-for-default</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.reflector.facet.<br>
+&#160;&#160;viewModelLayoutAnnotation.<br>
+&#160;&#160;&#160;&#160;iconUiEvent.postForDefault</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.applib.annotation.<br>
+&#160;&#160;view-model-layout.<br>
+&#160;&#160;&#160;&#160;icon-ui-event.post-for-default</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.reflector.facet.<br>
+&#160;&#160;viewModelLayoutAnnotation.<br>
+&#160;&#160;&#160;&#160;layoutUiEvent.postForDefault</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.applib.annotation.<br>
+&#160;&#160;view-model-layout.<br>
+&#160;&#160;&#160;&#160;layout-ui-event.post-for-default</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.reflector.facet.<br>
+&#160;&#160;viewModelLayoutAnnotation.<br>
+&#160;&#160;&#160;&#160;titleUiEvent.postForDefault</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.applib.annotation.<br>
+&#160;&#160;view-model-layout.<br>
+&#160;&#160;&#160;&#160;title-ui-event.post-for-default</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.reflector.facets.<br>
+&#160;&#160;viewModelSemanticCheckingFacetFactory.<br>
+&#160;&#160;&#160;&#160;enable</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.applib.annotation.<br>
+&#160;&#160;view-model.validation.<br>
+&#160;&#160;&#160;&#160;semantic-checking.enable</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.reflector.facet.<br>
+&#160;&#160;filterVisibility</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.core.metamodel.<br>
+&#160;&#160;filter-visibility</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.reflector.facets.<br>
+&#160;&#160;ignoreDeprecated</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.core.metamodel.programming-model.<br>
+&#160;&#160;ignore-deprecated</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.reflector.introspector.<br>
+&#160;&#160;parallelize</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.core.metamodel.introspector.<br>
+&#160;&#160;parallelize</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.reflector.introspector.<br>
+&#160;&#160;mode</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.core.metamodel.introspector.<br>
+&#160;&#160;mode</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.reflector.introspect.<br>
+&#160;&#160;lockAfterFullIntrospection</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.core.metamodel.introspector.<br>
+&#160;&#160;lock-after-full-introspection</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.reflector.introspect.<br>
+&#160;&#160;validateIncrementally</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.core.metamodel.introspector.<br>
+&#160;&#160;validate-incrementally</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.reflector.validator.<br>
+&#160;&#160;parallelize</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.core.metamodel.validator.<br>
+&#160;&#160;parallelize</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.reflector.validator.<br>
+&#160;&#160;allowDeprecated</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.core.metamodel.validator.<br>
+&#160;&#160;allow-deprecated</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.reflector.validator.<br>
+&#160;&#160;ensureUniqueObjectTypes</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.core.metamodel.validator.<br>
+&#160;&#160;ensure-unique-object-types</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.reflector.validator.<br>
+&#160;&#160;checkModuleExtent</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.core.metamodel.validator.<br>
+&#160;&#160;check-module-extent</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.reflector.validator.<br>
+&#160;&#160;noParamsOnly</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.core.metamodel.validator.<br>
+&#160;&#160;no-params-only</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.reflector.validator.<br>
+&#160;&#160;actionCollectionParameterChoices</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.core.metamodel.validator.<br>
+&#160;&#160;action-collection-parameter-choices</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.reflector.validator.<br>
+&#160;&#160;serviceActionsOnly</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.core.metamodel.validator.<br>
+&#160;&#160;service-actions-only</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.reflector.validator.mixinsOnly</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.core.metamodel.validator.<br>
+&#160;&#160;mixins-only</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.reflector.validator.explicitObjectType</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.core.metamodel.validator.<br>
+&#160;&#160;explicit-object-type</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.reflector.validator.<br>
+&#160;&#160;jaxbViewModelNotAbstract</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.core.metamodel.validator.<br>
+&#160;&#160;jaxb-view-model.not-abstract</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.reflector.validator.<br>
+&#160;&#160;jaxbViewModelNotInnerClass</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.core.metamodel.validator.<br>
+&#160;&#160;jaxb-view-model.not-inner-class</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.reflector.validator.<br>
+&#160;&#160;jaxbViewModelNoArgConstructor</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.core.metamodel.validator.<br>
+&#160;&#160;jaxb-view-model.no-arg-constructor</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.reflector.validator.<br>
+&#160;&#160;jaxbViewModelReferenceTypeAdapter</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.core.metamodel.validator.<br>
+&#160;&#160;jaxb-view-model.reference-type-adapter</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.reflector.validator.<br>
+&#160;&#160;jaxbViewModelDateTimeTypeAdapter</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.core.metamodel.validator.<br>
+&#160;&#160;jaxb-view-model.date-time-type-adapter</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.reflector.validator.<br>
+&#160;&#160;jdoqlFromClause</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.core.metamodel.validator.<br>
+&#160;&#160;jdoql.from-clause</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.reflector.validator.<br>
+&#160;&#160;jdoqlVariablesClause</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.core.metamodel.validator.<br>
+&#160;&#160;jdoql.variables-clause</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.service.<br>
+&#160;&#160;email.port</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.core.runtime-services.<br>
+&#160;&#160;email.port</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.service.<br>
+&#160;&#160;email.socketConnectionTimeout</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.core.runtime-services.<br>
+&#160;&#160;email.socket-connection-timeout</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.service.<br>
+&#160;&#160;email.socketTimeout</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.core.runtime-services.<br>
+&#160;&#160;email.socket-timeout</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.service.<br>
+&#160;&#160;email.throwExceptionOnFail</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.core.runtime-services.<br>
+&#160;&#160;email.throw-exception-on-fail</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.service.<br>
+&#160;&#160;email.override.to</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.core.runtime-services.<br>
+&#160;&#160;email.override.to</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.service.<br>
+&#160;&#160;email.override.cc</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.core.runtime-services.<br>
+&#160;&#160;email.override.cc</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.service.<br>
+&#160;&#160;email.override.bcc</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.core.runtime-services.<br>
+&#160;&#160;email.override.bcc</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.service.<br>
+&#160;&#160;email.sender.hostname</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.core.runtime-services.<br>
+&#160;&#160;email.sender.hostname</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.service.<br>
+&#160;&#160;email.sender.username</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.core.runtime-services.<br>
+&#160;&#160;email.sender.username</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.service.<br>
+&#160;&#160;email.sender.password</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.core.runtime-services.<br>
+&#160;&#160;email.sender.password</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.service.<br>
+&#160;&#160;email.sender.address</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.core.runtime-services.<br>
+&#160;&#160;email.sender.address</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.service.<br>
+&#160;&#160;email.tls.enabled</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.core.runtime-services.<br>
+&#160;&#160;email.tls.enabled</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.services.<br>
+&#160;&#160;applicationFeatures.init</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.core.runtime-services.<br>
+&#160;&#160;application-features.init</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.services.audit.<br>
+&#160;&#160;objects</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.applib.annotation.<br>
+&#160;&#160;domain-object.auditing</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.services.command.<br>
+&#160;&#160;actions</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.applib.annotation.<br>
+&#160;&#160;action.command</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.services.command.<br>
+&#160;&#160;properties</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.applib.annotation.<br>
+&#160;&#160;property.command</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.services.<br>
+&#160;&#160;container.disableAutoFlush</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.core.runtime-services.<br>
+&#160;&#160;repository-service.disable-auto-flush</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.services.<br>
+&#160;&#160;ExceptionRecognizerCompositeForJdoObjectStore.<br>
+&#160;&#160;&#160;&#160;disable</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.core.runtime-services.<br>
+&#160;&#160;exception-recognizer.jdo.<br>
+&#160;&#160;&#160;&#160;disable</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.services.injector.setPrefix</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>(removed)</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.services.injector.injectPrefix</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>(removed)</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.services.publishing.<br>
+&#160;&#160;actions</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.applib.annotation.<br>
+&#160;&#160;action.publishing</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.services.publishing.<br>
+&#160;&#160;objects</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.applib.annotation.<br>
+&#160;&#160;domain-object.publishing</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.services.publishing.<br>
+&#160;&#160;properties</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.applib.annotation.<br>
+&#160;&#160;property.publishing</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.services.<br>
+&#160;&#160;translation.po.mode</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.core.runtime-services.<br>
+&#160;&#160;translation.po.mode</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.viewers.<br>
+&#160;&#160;collectionLayout.defaultView</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.applib.annotation.<br>
+&#160;&#160;collection-layout.default-view</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.viewers.<br>
+&#160;&#160;.paged.parented</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.applib.annotation.<br>
+&#160;&#160;collection-layout.paged</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.viewers.<br>
+&#160;&#160;.paged.standAlone</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.applib.annotation.<br>
+&#160;&#160;domain-object-layout.paged</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.viewers.<br>
+&#160;&#160;.parameterLayout.labelPosition</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.applib.annotation.<br>
+&#160;&#160;parameter-layout.label-position</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.viewers.<br>
+&#160;&#160;.parameterLayout.label</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>(removed)</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.viewers.<br>
+&#160;&#160;.propertyLayout.labelPosition</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.applib.annotation.<br>
+&#160;&#160;property-layout.label-position</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.viewers.<br>
+&#160;&#160;.propertyLayout.label</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>(removed)</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>|
+- isis.value.format &#8594; isis.metamodel.ui.value.format
+- isis.value.money &#8594; isis.valuetypes.money
+- isis.service.xxx &#8594; isis.core.services.email
+- isis.services.container &#8594; isis.core.services.repository-service</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="no-longer-any-archetypes"><a class="anchor" href="#no-longer-any-archetypes"></a>No longer any archetypes</h3>
+<div class="paragraph">
+<p>TODO: document.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="2-0-0-m2-to-2-0-0-m3"><a class="anchor" href="#2-0-0-m2-to-2-0-0-m3"></a>2.0.0-M2 to 2.0.0-M3</h2>
 <div class="sectionbody">
 <div class="ulist">
@@ -556,7 +1363,7 @@ this is work-in-progress.
 <div class="sect2">
 <h3 id="server-sent-event-sse-support-isis-2102"><a class="anchor" href="#server-sent-event-sse-support-isis-2102"></a>Server-Sent-Event (SSE) Support (ISIS-2102)</h3>
 <div class="paragraph">
-<p>Experimental feature to allow for submission of background-tasks, that themselfes may fire UI-events to update eg. a progress-bar.</p>
+<p>Experimental feature to allow for submission of background-tasks, that themselves may fire UI-events to update eg. a progress-bar.</p>
 </div>
 <div class="paragraph">
 <p>To make this work we introduce following components:</p>
@@ -579,7 +1386,7 @@ this is work-in-progress.
 <p>An EventStreamSource is associated with an EventStream on which it may fire update events.</p>
 </li>
 <li>
-<p>These update events are propagated to the SSE Servlet, which informs its listenening clients with the update event&#8217;s payload data.</p>
+<p>These update events are propagated to the SSE Servlet, which informs its listening clients with the update event&#8217;s payload data.</p>
 </li>
 </ul>
 </div>
@@ -812,7 +1619,7 @@ tree.expand(TreePath.of(0, 1)); // expand the second child of the root node</cod
 </div>
 </div>
 <div class="paragraph">
-<p>A full example is showcased in the <a href="https://github.com/andi-huber/isis-2-demo/tree/master/src/main/java/domainapp/dom/tree">isis-2-demo</a> &#8230;&#8203;</p>
+<p>A full example is showcased in the <a href="https://github.com/apache/isis/tree/master/examples/demo/src/main/java/demoapp/dom/tree">isis-demo</a> &#8230;&#8203;</p>
 </div>
 <div class="paragraph">
 <p>Implementation of <code>TreeAdapter</code></p>
@@ -1623,7 +2430,7 @@ TODO - &#8230;&#8203; and so any concrete implementations will need to be change
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200116-0401-e7eaa3c4</p>
+            <p>Revision: 2.0.0-M2.20200116-1350-2dd6b3a2</p>
         </div>
     </div>
 </footer>
@@ -1638,6 +2445,7 @@ TODO - &#8230;&#8203; and so any concrete implementations will need to be change
         $("#article-toc").tocify( {
             showEffect: "slideDown",
             hideEffect: "slideUp",
+            selectors: "h2, h3",
             scrollTo: 120,
             smoothScroll: true,
             theme: "jqueryui",
