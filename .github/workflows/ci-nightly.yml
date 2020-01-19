@@ -102,6 +102,22 @@ jobs:
         GCPAPPENGINEREPO_PASSWORD: ${{ secrets.GCPAPPENGINEREPO_PASSWORD }}
         MVN_ADDITIONAL_OPTS: '-DaltReleaseDeploymentRepository=gcpappenginerepo::default::https://repo.incode.work'
         SETTINGS_XML: ${{ env.PROJECT_ROOT_PATH }}/.m2/settings.xml
+        
+    - name: Code Quality Analysis
+      if: steps.revision.outputs.revision != 'skip'
+      shell: bash
+      working-directory: ${{ env.PROJECT_ROOT_PATH }}
+      run: |
+        mvn verify sonar:sonar \
+        -Dsonar.projectKey=apache_isis \
+        -Dsonar.organization=apache \
+        -Dsonar.host.url=https://sonarcloud.io \
+        -Dsonar.login=$SONAR_TOKEN \
+        -Dsonar.branch.name=master \
+        -DskipTests \
+        -Denforcer.skip
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} 
 
     - name: Build and Push Demo-App (Docker Hub)
       if: steps.revision.outputs.revision != 'skip'
@@ -184,21 +200,7 @@ jobs:
       with:
         github_token: ${{ secrets.PUBLISH_TOKEN }}
     
-    - name: Code Quality Analysis
-      if: steps.revision.outputs.revision != 'skip'
-      shell: bash
-      working-directory: ${{ env.PROJECT_ROOT_PATH }}
-      run: |
-        mvn verify sonar:sonar \
-        -Dsonar.projectKey=apache_isis \
-        -Dsonar.organization=apache \
-        -Dsonar.host.url=https://sonarcloud.io \
-        -Dsonar.login=$SONAR_TOKEN \
-        -Dsonar.branch.name=master \
-        -DskipTests \
-        -Denforcer.skip
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} 
+
  
 # FOR DEBUG USE
 #   - name: Dump Env context 
