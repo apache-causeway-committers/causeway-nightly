@@ -133,6 +133,9 @@
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
   <li class="nav-item" data-depth="1">
+    <span class="nav-text">Reference Guide</span>
+  </li>
+  <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
     <a class="nav-link" href="../applib-ant/about.html">Annotations</a>
 <ul class="nav-list">
@@ -772,7 +775,15 @@ action-layout.css-class-fa.<br>
 patterns</p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Provides a mapping of patterns to font-awesome CSS classes, where the pattern is used to match against the name of the action method in order to determine a CSS class to use, for example on the action&#8217;s menu icon if rendered by the Wicket viewer.</p>
+</div>
+<div class="paragraph">
+<p>Providing a default set of patterns encourages a common set of verbs to be used.</p>
+</div>
+<div class="paragraph">
+<p>The font awesome class for individual actions can be overridden using <code>org.apache.isis.applib.annotation.ActionLayout#cssClassFa()</code>.</p>
+</div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
@@ -781,7 +792,15 @@ action-layout.css-class.<br>
 patterns</p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Provides a mapping of patterns to CSS classes, where the pattern is used to match against the name of the action method in order to determine a CSS class to use, for example on the action&#8217;s button if rendered by the Wicket viewer.</p>
+</div>
+<div class="paragraph">
+<p>Providing a default set of patterns encourages a common set of verbs to be used.</p>
+</div>
+<div class="paragraph">
+<p>The CSS class for individual actions can be overridden using <code>org.apache.isis.applib.annotation.ActionLayout#cssClass()</code>.</p>
+</div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
@@ -789,7 +808,15 @@ patterns</p>
 command</p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The default for whether action invocations should be reified as a using the `org.apache.isis.applib.services.command.spi.CommandService, possibly so that the actual execution of the action can be deferred until later (background execution) or replayed against a copy of the system.</p>
+</div>
+<div class="paragraph">
+<p>In particular, the implementation of \{@link org.apache.isis.applib.services.command.Command represents the action invocation memento (obtained using as a \{@link org.apache.isis.schema.cmd.v2.CommandDto.</p>
+</div>
+<div class="paragraph">
+<p>This setting can be overridden on a case-by-case basis using \{@link org.apache.isis.applib.annotation.Action#command()`.</p>
+</div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
@@ -799,7 +826,28 @@ domain-event.post-for-default</p>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>true</p>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Influences whether an should be published (on the internal \{@link org.apache.isis.applib.services.eventbus.EventBusService) whenever an action is being interacted with.</p>
+</div>
+<div class="paragraph">
+<p>Up to five different events can be fired during an interaction, with the event&#8217;s phase determining which (hide, disable, validate, executing and executed). Subscribers can influence the behaviour at each of these phases.</p>
+</div>
+<div class="paragraph">
+<p>The algorithm for determining whether (and what type of) an event is actually sent depends on the value of the for the action in question:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>If set to some subtype of \{@link org.apache.isis.applib.events.domain.ActionDomainEvent.Noop ActionDomainEvent.Noop, then <em>no</em> event is sent.</p>
+</li>
+<li>
+<p>If set to some subtype of ActionDomainEvent.Default, then an event is sent <em>if and only if</em> this configuration setting is set.</p>
+</li>
+<li>
+<p>If set to any other subtype, then an event <em>is</em> sent.</p>
+</li>
+</ul>
+</div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
@@ -817,7 +865,15 @@ explicit</p>
 publishing</p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The default for whether action invocations should be sent through to the for publishing.</p>
+</div>
+<div class="paragraph">
+<p>The service&#8217;s \{@link org.apache.isis.applib.services.publish.PublisherService#publish(Interaction.Execution) publish method is called only once per transaction, with collecting details of the identity of the target object, the action invoked, the action arguments and the returned object (if any).</p>
+</div>
+<div class="paragraph">
+<p>This setting can be overridden on a case-by-case basis using \{@link org.apache.isis.applib.annotation.Action#publishing().</p>
+</div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
@@ -826,7 +882,12 @@ collection-layout.<br>
 default-view</p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Defines the initial view to display collections when rendered.</p>
+</div>
+<div class="paragraph">
+<p>The value of this can be overridden on a case-by-case basis using <code>org.apache.isis.applib.annotation.CollectionLayout#defaultView()</code>. Note that this default configuration property is an enum and so defines only a fixed number of values, whereas the annotation returns a string; this is to allow for flexibility that individual viewers might support their own additional types. For example, the Wicket viewer supports which can render objects that have a date on top of a calendar view.</p>
+</div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
@@ -836,7 +897,12 @@ collection-layout.paged</p>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>12</p>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Defines the default number of objects that are shown in a "parented" collection of a domain object, result of invoking an action.</p>
+</div>
+<div class="paragraph">
+<p>This can be overridden on a case-by-case basis using <code>org.apache.isis.applib.annotation.CollectionLayout#paged()</code>.</p>
+</div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
@@ -847,7 +913,28 @@ post-for-default</p>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>true</p>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Influences whether an should be published (on the internal \{@link org.apache.isis.applib.services.eventbus.EventBusService) whenever a collection is being interacted with.</p>
+</div>
+<div class="paragraph">
+<p>Up to two different events can be fired during an interaction, with the event&#8217;s phase determining which (hide, disable)Subscribers can influence the behaviour at each of these phases.</p>
+</div>
+<div class="paragraph">
+<p>The algorithm for determining whether (and what type of) an event is actually sent depends on the value of the for the collection action in question:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>If set to some subtype of \{@link org.apache.isis.applib.events.domain.CollectionDomainEvent.Noop CollectionDomainEvent.Noop, then <em>no</em> event is sent.</p>
+</li>
+<li>
+<p>If set to some subtype of CollectionDomainEvent.Default, then an event is sent <em>if and only if</em> this configuration setting is set.</p>
+</li>
+<li>
+<p>If set to any other subtype, then an event <em>is</em> sent.</p>
+</li>
+</ul>
+</div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
@@ -863,7 +950,7 @@ post-for-default</p>
 <p>Influences whether an should be published (on the internal `org.apache.isis.applib.services.eventbus.EventBusService) whenever a domain object is about to be rendered in the UI - thereby allowing subscribers to optionally change) the CSS classes that are used.</p>
 </div>
 <div class="paragraph">
-<p>The algorithm for determining whether an event is sent depends on the value of the \{@link org.apache.isis.applib.annotation.DomainObjectLayout#cssClassUiEvent() @DomainObjectLayout(cssClassEvent=&#8230;&#8203;)` for the domain object in question.</p>
+<p>The algorithm for determining whether (and what type of) an event is sent depends on the value of the \{@link org.apache.isis.applib.annotation.DomainObjectLayout#cssClassUiEvent() @DomainObjectLayout(cssClassEvent=&#8230;&#8203;)` for the domain object in question.</p>
 </div>
 <div class="ulist">
 <ul>
@@ -893,7 +980,7 @@ post-for-default</p>
 <p>Influences whether an should be published (on the internal `org.apache.isis.applib.services.eventbus.EventBusService) whenever a domain object is about to be rendered in the UI - thereby allowing subscribers to optionally change) the icon that is used.</p>
 </div>
 <div class="paragraph">
-<p>The algorithm for determining whether an event is sent depends on the value of the \{@link org.apache.isis.applib.annotation.DomainObjectLayout#iconUiEvent() @DomainObjectLayout(iconEvent=&#8230;&#8203;)` for the domain object in question.</p>
+<p>The algorithm for determining whether (and what type of) an event is sent depends on the value of the \{@link org.apache.isis.applib.annotation.DomainObjectLayout#iconUiEvent() @DomainObjectLayout(iconEvent=&#8230;&#8203;)` for the domain object in question.</p>
 </div>
 <div class="ulist">
 <ul>
@@ -926,7 +1013,7 @@ post-for-default</p>
 <p>If a different layout value has been set, then a layout in the form <code>Xxx.layout-zzz.xml</code> use used (where <code>zzz</code> is the name of the layout).</p>
 </div>
 <div class="paragraph">
-<p>The algorithm for determining whether an event is sent depends on the value of the \{@link org.apache.isis.applib.annotation.DomainObjectLayout#layoutUiEvent() @DomainObjectLayout(layoutEvent=&#8230;&#8203;)` for the domain object in question.</p>
+<p>The algorithm for determining whether (and what type of) an event is sent depends on the value of the \{@link org.apache.isis.applib.annotation.DomainObjectLayout#layoutUiEvent() @DomainObjectLayout(layoutEvent=&#8230;&#8203;)` for the domain object in question.</p>
 </div>
 <div class="ulist">
 <ul>
@@ -950,7 +1037,12 @@ domain-object-layout.paged</p>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>25</p>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Defines the default number of objects that are shown in a "standalone" collection obtained as the result of invoking an action.</p>
+</div>
+<div class="paragraph">
+<p>This can be overridden on a case-by-case basis using <code>org.apache.isis.applib.annotation.DomainObjectLayout#paged()</code>.</p>
+</div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
@@ -966,7 +1058,7 @@ post-for-default</p>
 <p>Influences whether an should be published (on the internal `org.apache.isis.applib.services.eventbus.EventBusService) whenever a domain object is about to be rendered in the UI - thereby allowing subscribers to optionally change) the title that is used.</p>
 </div>
 <div class="paragraph">
-<p>The algorithm for determining whether an event is sent depends on the value of the \{@link org.apache.isis.applib.annotation.DomainObjectLayout#titleUiEvent() @DomainObjectLayout(titleEvent=&#8230;&#8203;)` for the domain object in question.</p>
+<p>The algorithm for determining whether (and what type of) an event is sent depends on the value of the \{@link org.apache.isis.applib.annotation.DomainObjectLayout#titleUiEvent() @DomainObjectLayout(titleEvent=&#8230;&#8203;)` for the domain object in question.</p>
 </div>
 <div class="ulist">
 <ul>
@@ -992,7 +1084,7 @@ domain-object.auditing</p>
 <p>The default for whether <em>domain entities</em> should be audited or not (meaning that any changes are sent through to the</p>
 </div>
 <div class="paragraph">
-<p>This setting can be overridden on a case-by-case basis using \{@link DomainObject#getAuditing() DomainObject#getAuditing()</p>
+<p>This setting can be overridden on a case-by-case basis using <code>org.apache.isis.applib.annotation.DomainObject#auditing() DomainObject#getAuditing()</code></p>
 </div>
 <div class="paragraph">
 <p>Note: this applies only to domain entities, not view models.</p>
@@ -1012,7 +1104,7 @@ post-for-default</p>
 <p>Influences whether an should be published (on the internal \{@link org.apache.isis.applib.services.eventbus.EventBusService) whenever a domain object has been created using</p>
 </div>
 <div class="paragraph">
-<p>The algorithm for determining whether an event is sent depends on the value of the \{@link org.apache.isis.applib.annotation.DomainObject#createdLifecycleEvent() @DomainObject(createdLifecycleEvent=&#8230;&#8203;) for the domain object in question.</p>
+<p>The algorithm for determining whether (and what type of) an event is sent depends on the value of the \{@link org.apache.isis.applib.annotation.DomainObject#createdLifecycleEvent() @DomainObject(createdLifecycleEvent=&#8230;&#8203;) for the domain object in question.</p>
 </div>
 <div class="ulist">
 <ul>
@@ -1055,7 +1147,7 @@ post-for-default</p>
 <p>Influences whether an should be published (on the internal \{@link org.apache.isis.applib.services.eventbus.EventBusService) whenever a domain <em>entity</em> has been loaded from the persistence store.</p>
 </div>
 <div class="paragraph">
-<p>The algorithm for determining whether an event is sent depends on the value of the @DomainObject(loadedLifecycleEvent=&#8230;&#8203;) for the domain object in question.</p>
+<p>The algorithm for determining whether (and what type of) an event is sent depends on the value of the @DomainObject(loadedLifecycleEvent=&#8230;&#8203;) for the domain object in question.</p>
 </div>
 <div class="ulist">
 <ul>
@@ -1088,7 +1180,7 @@ post-for-default</p>
 <p>Influences whether an should be published (on the internal \{@link org.apache.isis.applib.services.eventbus.EventBusService) whenever a domain <em>entity</em> has been persisted (for the first time) to the persistence store.</p>
 </div>
 <div class="paragraph">
-<p>The algorithm for determining whether an event is sent depends on the value of the @DomainObject(persistedLifecycleEvent=&#8230;&#8203;) for the domain object in question.</p>
+<p>The algorithm for determining whether (and what type of) an event is sent depends on the value of the @DomainObject(persistedLifecycleEvent=&#8230;&#8203;) for the domain object in question.</p>
 </div>
 <div class="ulist">
 <ul>
@@ -1121,7 +1213,7 @@ post-for-default</p>
 <p>Influences whether an should be published (on the internal \{@link org.apache.isis.applib.services.eventbus.EventBusService) whenever a domain <em>entity</em> is about to be persisting (for the first time) to the persistence store.</p>
 </div>
 <div class="paragraph">
-<p>The algorithm for determining whether an event is sent depends on the value of the @DomainObject(persistingLifecycleEvent=&#8230;&#8203;) for the domain object in question.</p>
+<p>The algorithm for determining whether (and what type of) an event is sent depends on the value of the @DomainObject(persistingLifecycleEvent=&#8230;&#8203;) for the domain object in question.</p>
 </div>
 <div class="ulist">
 <ul>
@@ -1147,13 +1239,13 @@ domain-object.publishing</p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>The default for whether the properties of domain objects can be edited, or whether instead changed objects should be sent through to the for publishing.</p>
+<p>The default for whether the identities of changed objects should be sent through to the for publishing.</p>
 </div>
 <div class="paragraph">
 <p>The service&#8217;s \{@link org.apache.isis.applib.services.publish.PublisherService#publish(PublishedObjects) publish method is called only once per transaction, with collecting details of all changed domain objects.</p>
 </div>
 <div class="paragraph">
-<p>This setting can be overridden on a case-by-case basis using \{@link DomainObject#getPublishing() DomainObject#getPublishing().</p>
+<p>This setting can be overridden on a case-by-case basis using \{@link org.apache.isis.applib.annotation.DomainObject#publishing().</p>
 </div></div></td>
 </tr>
 <tr>
@@ -1170,7 +1262,7 @@ post-for-default</p>
 <p>Influences whether an should be published (on the internal \{@link org.apache.isis.applib.services.eventbus.EventBusService) whenever a persistent domain <em>entity</em> is about to be removed (that is, deleted) from the persistence store.</p>
 </div>
 <div class="paragraph">
-<p>The algorithm for determining whether an event is sent depends on the value of the @DomainObject(removingLifecycleEvent=&#8230;&#8203;) for the domain object in question.</p>
+<p>The algorithm for determining whether (and what type of) an event is sent depends on the value of the @DomainObject(removingLifecycleEvent=&#8230;&#8203;) for the domain object in question.</p>
 </div>
 <div class="ulist">
 <ul>
@@ -1206,7 +1298,7 @@ post-for-default</p>
 <p>Influences whether an should be published (on the internal \{@link org.apache.isis.applib.services.eventbus.EventBusService) whenever a persistent domain <em>entity</em> has been updated in the persistence store.</p>
 </div>
 <div class="paragraph">
-<p>The algorithm for determining whether an event is sent depends on the value of the @DomainObject(updatedLifecycleEvent=&#8230;&#8203;) for the domain object in question.</p>
+<p>The algorithm for determining whether (and what type of) an event is sent depends on the value of the @DomainObject(updatedLifecycleEvent=&#8230;&#8203;) for the domain object in question.</p>
 </div>
 <div class="ulist">
 <ul>
@@ -1239,7 +1331,7 @@ post-for-default</p>
 <p>Influences whether an should be published (on the internal \{@link org.apache.isis.applib.services.eventbus.EventBusService) whenever a persistent domain <em>entity</em> is about to be updated in the persistence store.</p>
 </div>
 <div class="paragraph">
-<p>The algorithm for determining whether an event is sent depends on the value of the @DomainObject(updatingLifecycleEvent=&#8230;&#8203;) for the domain object in question.</p>
+<p>The algorithm for determining whether (and what type of) an event is sent depends on the value of the @DomainObject(updatingLifecycleEvent=&#8230;&#8203;) for the domain object in question.</p>
 </div>
 <div class="ulist">
 <ul>
@@ -1265,7 +1357,15 @@ parameter-layout.<br>
 label-position</p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Defines the default position for the label for an action parameter.</p>
+</div>
+<div class="paragraph">
+<p>Can be overridden on a case-by-case basis using</p>
+</div>
+<div class="paragraph">
+<p>If left as \{@link LabelPosition#NOT_SPECIFIED and not overridden, then the position depends upon the viewer implementation.</p>
+</div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
@@ -1274,7 +1374,15 @@ property-layout.<br>
 label-position</p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Defines the default position for the label for a domain object property.</p>
+</div>
+<div class="paragraph">
+<p>Can be overridden on a case-by-case basis using</p>
+</div>
+<div class="paragraph">
+<p>If left as \{@link LabelPosition#NOT_SPECIFIED and not overridden, then the position depends upon the viewer implementation.</p>
+</div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
@@ -1282,7 +1390,15 @@ label-position</p>
 property.command</p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The default for whether property edits should be reified as a using the `org.apache.isis.applib.services.command.spi.CommandService, possibly so that the actual execution of the property edit can be deferred until later (background execution) or replayed against a copy of the system.</p>
+</div>
+<div class="paragraph">
+<p>In particular, the implementation of \{@link org.apache.isis.applib.services.command.Command represents the action invocation memento (obtained using as a \{@link org.apache.isis.schema.cmd.v2.CommandDto.</p>
+</div>
+<div class="paragraph">
+<p>This setting can be overridden on a case-by-case basis using \{@link org.apache.isis.applib.annotation.Action#command()`.</p>
+</div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
@@ -1293,7 +1409,28 @@ post-for-default</p>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>true</p>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Influences whether an should be published (on the internal \{@link org.apache.isis.applib.services.eventbus.EventBusService) whenever an property is being interacted with.</p>
+</div>
+<div class="paragraph">
+<p>Up to five different events can be fired during an interaction, with the event&#8217;s phase determining which (hide, disable, validate, executing and executed). Subscribers can influence the behaviour at each of these phases.</p>
+</div>
+<div class="paragraph">
+<p>The algorithm for determining whether (and what type of) an event is actually sent depends on the value of the for the property in question:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>If set to some subtype of \{@link org.apache.isis.applib.events.domain.PropertyDomainEvent.Noop propertyDomainEvent.Noop, then <em>no</em> event is sent.</p>
+</li>
+<li>
+<p>If set to some subtype of propertyDomainEvent.Default, then an event is sent <em>if and only if</em> this configuration setting is set.</p>
+</li>
+<li>
+<p>If set to any other subtype, then an event <em>is</em> sent.</p>
+</li>
+</ul>
+</div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
@@ -1301,7 +1438,15 @@ post-for-default</p>
 property.publishing</p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The default for whether property edits should be sent through to the for publishing.</p>
+</div>
+<div class="paragraph">
+<p>The service&#8217;s \{@link org.apache.isis.applib.services.publish.PublisherService#publish(Interaction.Execution) publish method is called only once per transaction, with collecting details of the identity of the target object, the property edited, and the new value of the property.</p>
+</div>
+<div class="paragraph">
+<p>This setting can be overridden on a case-by-case basis using \{ @link org.apache.isis.applib.annotation.Property#publishing().</p>
+</div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
@@ -1317,7 +1462,7 @@ post-for-default</p>
 <p>Influences whether an should be published (on the internal `org.apache.isis.applib.services.eventbus.EventBusService) whenever a view model (annotated with @ViewModel) is about to be rendered in the UI - thereby allowing subscribers to optionally change) the CSS classes that are used.</p>
 </div>
 <div class="paragraph">
-<p>The algorithm for determining whether an event is sent depends on the value of the \{@link org.apache.isis.applib.annotation.ViewModelLayout#cssClassUiEvent() @ViewModelLayout(cssClassEvent=&#8230;&#8203;)` for the domain object in question.</p>
+<p>The algorithm for determining whether (and what type of) an event is sent depends on the value of the \{@link org.apache.isis.applib.annotation.ViewModelLayout#cssClassUiEvent() @ViewModelLayout(cssClassEvent=&#8230;&#8203;)` for the domain object in question:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -1347,7 +1492,7 @@ post-for-default</p>
 <p>Influences whether an should be published (on the internal `org.apache.isis.applib.services.eventbus.EventBusService) whenever a view model (annotated with @ViewModel) is about to be rendered in the UI - thereby allowing subscribers to optionally change) the icon that is used.</p>
 </div>
 <div class="paragraph">
-<p>The algorithm for determining whether an event is sent depends on the value of the \{@link org.apache.isis.applib.annotation.ViewModelLayout#iconUiEvent() @ViewModelLayout(iconEvent=&#8230;&#8203;)` for the domain object in question.</p>
+<p>The algorithm for determining whether (and what type of) an event is sent depends on the value of the \{@link org.apache.isis.applib.annotation.ViewModelLayout#iconUiEvent() @ViewModelLayout(iconEvent=&#8230;&#8203;)` for the domain object in question:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -1380,7 +1525,7 @@ post-for-default</p>
 <p>If a different layout value has been set, then a layout in the form <code>Xxx.layout-zzz.xml</code> use used (where <code>zzz</code> is the name of the layout).</p>
 </div>
 <div class="paragraph">
-<p>The algorithm for determining whether an event is sent depends on the value of the \{@link org.apache.isis.applib.annotation.ViewModelLayout#layoutUiEvent() @ViewModelLayout(layoutEvent=&#8230;&#8203;)` for the domain object in question.</p>
+<p>The algorithm for determining whether (and what type of) an event is sent depends on the value of the \{@link org.apache.isis.applib.annotation.ViewModelLayout#layoutUiEvent() @ViewModelLayout(layoutEvent=&#8230;&#8203;)` for the domain object in question:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -1410,7 +1555,7 @@ post-for-default</p>
 <p>Influences whether an should be published (on the internal `org.apache.isis.applib.services.eventbus.EventBusService) whenever a view model (annotated with @ViewModel) is about to be rendered in the UI - thereby allowing subscribers to optionally change) the title that is used.</p>
 </div>
 <div class="paragraph">
-<p>The algorithm for determining whether an event is sent depends on the value of the \{@link org.apache.isis.applib.annotation.ViewModelLayout#titleUiEvent() @ViewModelLayout(titleEvent=&#8230;&#8203;)` for the domain object in question.</p>
+<p>The algorithm for determining whether (and what type of) an event is sent depends on the value of the \{@link org.apache.isis.applib.annotation.ViewModelLayout#titleUiEvent() @ViewModelLayout(titleEvent=&#8230;&#8203;)` for the domain object in question:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -1433,7 +1578,9 @@ view-model.validation.<br>
 semantic-checking.enable</p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Whether to check for inconsistencies between the usage of \{@link org.apache.isis.applib.annotation.ViewModel, and \{@link org.apache.isis.applib.annotation.ViewModelLayout.</p>
+</div></div></td>
 </tr>
 </tbody>
 </table>
@@ -1468,7 +1615,12 @@ filter-visibility</p>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>true</p>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Whether domain objects to which the current user does not have visibility access should be rendered within collections or drop-down choices/autocompletes.</p>
+</div>
+<div class="paragraph">
+<p>One reason this filtering may be necessary is for multi-tenanted applications, whereby an end-user should only be able to "see" what data that they own. For efficiency, the application should only query for objects that the end-user owns. This configuration property acts as a safety net to prevent the end-user from viewing domain objects <em>even if</em> those domain objects were rehydrated from the persistence store.</p>
+</div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
@@ -1477,7 +1629,9 @@ programming-model.<br>
 ignore-deprecated</p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>If set, then any aspects of the programming model (as implemented by `FacetFactory`s that have been indicated as deprecated will simply be ignored/excluded from the metamodel.</p>
+</div></div></td>
 </tr>
 </tbody>
 </table>
@@ -1588,7 +1742,9 @@ choices</p>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>true</p>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Whether to validate that any actions that accept action parameters have either a corresponding choices or auto-complete for that action parameter, or are associated with a collection of the appropriate type.</p>
+</div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
@@ -1598,7 +1754,15 @@ validator.allow-deprecated</p>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>true</p>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>This setting is used to determine whether the use of such deprecated features is allowed.</p>
+</div>
+<div class="paragraph">
+<p>If not allowed, then metamodel validation errors will be flagged.</p>
+</div>
+<div class="paragraph">
+<p>Note that this settings has no effect if the programming model has been configured to ignore deprecated features (because in this case the programming model facets simply won&#8217;t be included in the introspection process.</p>
+</div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
@@ -1619,7 +1783,12 @@ ensure-unique-object-types</p>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>true</p>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Whether to ensure that the object type of all objects (which can be set either explicitly using or `DomainService#objectType(), or can be inferred implicitly using a variety of mechanisms) must be unique with respect to all other object types.</p>
+</div>
+<div class="paragraph">
+<p>It is <em>highly advisable</em> to leave this set as enabled (the default), and to also use explicit types (see \{@link #isExplicitObjectType()`.</p>
+</div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
@@ -1628,7 +1797,12 @@ validator.<br>
 explicit-object-type</p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Whether to ensure that the object type of all objects must be specified explicitly, using either or `DomainService#objectType().</p>
+</div>
+<div class="paragraph">
+<p>It is <em>highly advisable</em> to leave this set as enabled (the default). These object types should also (of course) be unique - that can be checked by setting the \{@link #isEnsureUniqueObjectTypes()` config property.</p>
+</div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
@@ -1710,7 +1884,15 @@ variables-clause</p>
 validator.no-params-only</p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>If set, then checks that the supports <code>hideXxx</code> and <code>disableXxx</code> methods for actions do not have take parameters.</p>
+</div>
+<div class="paragraph">
+<p>Historically, the programming model allowed these methods to accept the same number of parameters as the action method to which they relate, the rationale being for similarity with the <code>validateXxx</code> method. However, since these parameters serve no function, the programming model has been simplified so that these supporting methods are discovered if they have exactly no parameters.</p>
+</div>
+<div class="paragraph">
+<p>Note that this aspect of the programming model relates to the <code>hideXxx</code> and <code>disableXxx</code> supporting methods that relate to the entire method. Do not confuse these with the <code>hideNXxx</code> and <code>disableNXxx</code> supporting methods, which relate to the N-th parameter, and allow up to N-1 parameters to be passed in (allowing the Nth parameter to be dynamically hidden or disabled).</p>
+</div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
@@ -1732,7 +1914,9 @@ validator.mixins-only</p>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>true</p>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>If set, then domain services actions are not contributed to domain objects. @deprecated - in that in the future the programming model will simply not support contributed actions from domain services.</p>
+</div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
@@ -1743,7 +1927,9 @@ service-actions-only</p>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>true</p>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>If set, checks that any domain services have only actions associated with them, not properties or collections. @deprecated - in that in the future the programming model will simply not search for properties or collections of domain services.</p>
+</div></div></td>
 </tr>
 </tbody>
 </table>
@@ -3661,7 +3847,7 @@ registration</p>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200120-0805-ee1286c3</p>
+            <p>Revision: 2.0.0-M2.20200120-1800-910c8085</p>
         </div>
     </div>
 </footer>
