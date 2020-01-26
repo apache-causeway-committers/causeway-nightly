@@ -134,21 +134,24 @@
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../about.html">Hello World Starter App</a>
+    <a class="nav-link" href="../about.html">Starter Apps</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../about.html">Starter Parent</a>
   </li>
 </ul>
   </li>
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../helloworld/about.html">Hello World Starter App</a>
+    <a class="nav-link" href="../helloworld/about.html">Hello World</a>
   </li>
 </ul>
   </li>
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
   <li class="nav-item is-current-page" data-depth="1">
-    <a class="nav-link" href="about.html">Simple App starter app</a>
+    <a class="nav-link" href="about.html">Simple App</a>
   </li>
 </ul>
   </li>
@@ -309,7 +312,7 @@
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="../about.html">Starter Apps</a></li>
-    <li><a href="about.html">Simple App starter app</a></li>
+    <li><a href="about.html">Simple App</a></li>
   </ul>
 </nav>
   <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/HEAD/starters/adoc/modules/simpleapp/pages/about.adoc">Edit</a></div>
@@ -319,41 +322,14 @@
 <h1 class="page">Simple App Starter App</h1>
 <div id="preamble">
 <div class="sectionbody">
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-these notes are out-of-date and need to be reviewed.
-</td>
-</tr>
-</table>
+<div class="paragraph">
+<p>The quickest way to get started building an application "for real" is to use the <code>simpleapp</code> starter app.</p>
 </div>
 <div class="paragraph">
-<p>The quickest way to get started building an application "for real" is to run the <code>simpleapp</code> archetype.
-Like the <a href="https://github.com/apache/isis-app-helloworld">helloworld starter app</a>, this too will generate a very simple one-class domain model (an entity called <code>SimpleObject</code> with a couple of properties).</p>
+<p>As with the <a href="../helloworld/about.html" class="page">helloworld</a> startre app, this will download a very simple one-class domain model, namely the <code>SimpleObject</code> entity and a supporting <code>SimpleObjects</code> domain service.</p>
 </div>
 <div class="paragraph">
-<p>However, the generated application also provides more structure to assist you as your application grows.</p>
-</div>
-<div class="paragraph">
-<p>We&#8217;ll talk more about the structure of the generated app <a href="#structure-of-the-app.adoc">below</a>, but for now let&#8217;s see how to generate the application.</p>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>The (non-ASF) Incode Platform&#8217;s <a href="https://platform.incode.org/quickstart/quickstart.html">quickstart archetype</a> builds upon the simpleapp archetype, but also adds in support for various Incode Platform modules such as security, auditing, commands and publishing.</p>
-</div>
-</td>
-</tr>
-</table>
+<p>However, the app also provides more structure to assist you as your application grows, with multiple Maven modules, and examples of unit tests, integration tests and BDD (cucumber) specs.</p>
 </div>
 </div>
 </div>
@@ -384,12 +360,12 @@ It should be just as straightforward for NetBeans too.</p>
 </div>
 <div class="paragraph">
 <p>For Eclipse the maven integration story is a little less refined.
-All is not lost, however; DataNucleus also has an implementation of the enhancer as an Eclipse plugin, which usually works well enough.</p>
+All is not lost, however; DataNucleus also has an implementation of the enhancer as an Eclipse plugin, which works well enough.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="generating-the-app"><a class="anchor" href="#generating-the-app"></a>Generating the App</h2>
+<h2 id="downloading-running"><a class="anchor" href="#downloading-running"></a>Downloading &amp; Running</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Create a new directory, and <code>cd</code> into that directory.</p>
@@ -399,34 +375,384 @@ All is not lost, however; DataNucleus also has an implementation of the enhancer
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mvn archetype:generate  \
-    -D archetypeGroupId=org.apache.isis.archetype \
-    -D archetypeArtifactId=simpleapp-archetype \
-    -D archetypeVersion=2.0.0-M2 \
-    -D groupId=com.mycompany \
-    -D artifactId=myapp \
-    -D version=1.0-SNAPSHOT \
-    -B</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">APP=simpleapp
+BRANCH=master
+
+REPO=isis-app-$APP
+curl "https://codeload.github.com/apache/$REPO/zip/$BRANCH" | jar xv
+mv $REPO-$BRANCH $REPO
+cd $REPO
+
+mvn clean install
+mvn -pl webapp spring-boot:run</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>where:</p>
+<p>This should only take a few seconds to download, compile and run.
+Then browse to <a href="http://localhost:8080" class="bare">http://localhost:8080</a>, and read on.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="using-the-app"><a class="anchor" href="#using-the-app"></a>Using the App</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When you start the app, you&#8217;ll be presented with a welcome page from which you can access the webapp using either the generic UI provided by <a href="../../vw/about.html" class="page">Wicket viewer</a> or use Swagger to access the <a href="../../vro/about.html" class="page">Restful Objects viewer</a>:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/using/010-root-page.png"><img src="_images/using/010-root-page.png" alt="010 root page" width="600px"></a>
+</div>
+</div>
+<div class="paragraph">
+<p>Choose the generic Wicket UI, and navigate to the login page:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/using/020-login-to-wicket-viewer.png"><img src="_images/using/020-login-to-wicket-viewer.png" alt="020 login to wicket viewer" width="600px"></a>
+</div>
+</div>
+<div class="paragraph">
+<p>The app itself is configured to run using <a href="../../security/about.html" class="page">shiro security</a>, as configured in the <code>WEB-INF/shiro.ini</code> config file.
+You can login with:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p><code>groupId</code> represents your own organization, and</p>
+<p>username: <em>sven</em></p>
 </li>
 <li>
-<p><code>artifactId</code> is a unique identifier for this app within your organization.</p>
-</li>
-<li>
-<p><code>version</code> is the initial (snapshot) version of your app</p>
+<p>password: <em>pass</em></p>
 </li>
 </ul>
 </div>
+<div class="sect2">
+<h3 id="wicket-viewer"><a class="anchor" href="#wicket-viewer"></a>Wicket viewer</h3>
 <div class="paragraph">
-<p>The archetype generation process will then run; it only takes a few seconds.</p>
+<p>Once you&#8217;ve logged in you&#8217;ll see the default home page:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/using/030-home-page.png"><img src="_images/using/030-home-page.png" alt="030 home page" width="600px"></a>
+</div>
+</div>
+<div class="paragraph">
+<p>This is a view model annotated with <a href="../../refguide/applib-ant/HomePage.html" class="page">@HomePage</a>:</p>
+</div>
+<div class="listingblock">
+<div class="title">HomePageViewModel.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(
+        nature = Nature.VIEW_MODEL,
+        objectType = "domainapp.HomePageViewModel"
+        )
+@HomePage
+public class HomePageViewModel {
+
+    public TranslatableString title() {
+        return TranslatableString.tr("{num} objects", "num", getObjects().size());
+    }
+
+    public List&lt;SimpleObject&gt; getObjects() {
+        return simpleObjects.listAll();
+    }
+
+    @Inject SimpleObjects simpleObjects;
+}</code></pre>
+</div>
+</div>
+<div class="sect3">
+<h4 id="fixtures"><a class="anchor" href="#fixtures"></a>Fixtures</h4>
+<div class="paragraph">
+<p>When prototyping against an in-memory database, it&#8217;s useful to have a mechanism to create some initial state.
+This can be done using fixture scripts, accessible from the <span class="menuseq"><b class="menu">Prototyping</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="menuitem">Run Fixture Script</b></span>:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/using/032-run-fixture-script-prompt.png"><img src="_images/using/032-run-fixture-script-prompt.png" alt="032 run fixture script prompt" width="px"></a>
+</div>
+</div>
+<div class="paragraph">
+<p>This brings up a dialog to select the fixture script:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/using/033-run-fixture-script-prompt.png"><img src="_images/using/033-run-fixture-script-prompt.png" alt="033 run fixture script prompt" width="px"></a>
+</div>
+</div>
+<div class="paragraph">
+<p>This surfaces this code:</p>
+</div>
+<div class="listingblock">
+<div class="title">DomainAppDemo.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class DomainAppDemo extends FixtureScript {
+
+    @Override
+    protected void execute(final ExecutionContext ec) {
+        ec.executeChild(this, new TeardownFixtureAbstract2() {
+            @Override
+            protected void execute(final ExecutionContext executionContext) {
+                deleteFrom(SimpleObject.class);
+            }
+        });
+        ec.executeChild(this, new SimpleObject_persona.PersistAll());
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>When executed, all objects created by the fixture are listed:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/using/034-run-fixture-script-result.png"><img src="_images/using/034-run-fixture-script-result.png" alt="034 run fixture script result" width="px"></a>
+</div>
+</div>
+<div class="paragraph">
+<p>Navigating back to the home page shows the newly created objects:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/using/036-home-page-after-fixture-scriptpng.png"><img src="_images/using/036-home-page-after-fixture-scriptpng.png" alt="036 home page after fixture scriptpng" width="600px"></a>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="create-an-object"><a class="anchor" href="#create-an-object"></a>Create an object</h4>
+<div class="paragraph">
+<p>You can also of course create new objects:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/using/040-create-object-from-menu.png"><img src="_images/using/040-create-object-from-menu.png" alt="040 create object from menu" width="600px"></a>
+</div>
+</div>
+<div class="paragraph">
+<p>To avoid obscuring the current page, this is configured to bring up a sidebar dialog:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/using/050-create-object-from-menu-prompt.png"><img src="_images/using/050-create-object-from-menu-prompt.png" alt="050 create object from menu prompt" width="600px"></a>
+</div>
+</div>
+<div class="paragraph">
+<p>Hitting OK returns the created object:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/using/060-created-object.png"><img src="_images/using/060-created-object.png" alt="060 created object" width="600px"></a>
+</div>
+</div>
+<div class="paragraph">
+<p>The above functionality is implemented by this code:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public static class CreateActionDomainEvent extends ActionDomainEvent {}
+@Action(semantics = SemanticsOf.NON_IDEMPOTENT, domainEvent = CreateActionDomainEvent.class)
+@ActionLayout(promptStyle = PromptStyle.DIALOG_SIDEBAR)
+public SimpleObject create(
+        @Name final String name) {
+    return repositoryService.persist(SimpleObject.ofName(name));
+}</code></pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+Policies such as modal or sidebar can be specified per action, or globally in <code>application.yml</code> file.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="invoke-an-action"><a class="anchor" href="#invoke-an-action"></a>Invoke an action</h4>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The <code>CreatedActionDomainEvent</code> is published on an in-memory event bus; this allows subscribers to veto or to react to the action invocation.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The <code>SimpleObject</code> contains a couple of properties, and a single action to update that property.</p>
+</div>
+<div class="paragraph">
+<p>The <code>name</code> property is read-only, and can only be modified using the <code>updateName</code> action:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/using/070-update-name.png"><img src="_images/using/070-update-name.png" alt="070 update name" width="600px"></a>
+</div>
+</div>
+<div class="paragraph">
+<p>The above functionality is implemented by this code:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public static class UpdateNameActionDomainEvent extends SimpleObject.ActionDomainEvent {}
+@Action(semantics = IDEMPOTENT,
+        publishing = Publishing.ENABLED,
+        associateWith = "name",
+        domainEvent = UpdateNameActionDomainEvent.class)
+public SimpleObject updateName(
+        @Name final String name) {
+    setName(name);
+    return this;
+}
+public String default0UpdateName() {
+    return getName();
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>updateName</code> action is annotated with publishing enabled.
+This means that the action invocation is converted into XML and dispatched to all configured implementations of the <a href="../../refguide/applib-svc/persistence-layer-spi/PublisherService.html" class="page">PublisherService</a> SPI.</p>
+</div>
+<div class="paragraph">
+<p>The framework provides a default implementation that just logs the interaction:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/using/075-publish-logging-1.png"><img src="_images/using/075-publish-logging-1.png" alt="075 publish logging 1" width="600px"></a>
+</div>
+</div>
+<div class="paragraph">
+<p>In fact, it also logs the fact that the object itself was modified:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/using/076-publish-logging-2.png"><img src="_images/using/076-publish-logging-2.png" alt="076 publish logging 2" width="600px"></a>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="edit-a-property"><a class="anchor" href="#edit-a-property"></a>Edit a property</h4>
+<div class="paragraph">
+<p>The <code>notes</code> property is editable, and can be edited in-place.
+For example:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/using/080-edit-notes.png"><img src="_images/using/080-edit-notes.png" alt="080 edit notes" width="600px"></a>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="actions-requiring-confirmations"><a class="anchor" href="#actions-requiring-confirmations"></a>Actions requiring confirmations</h4>
+<div class="paragraph">
+<p>It&#8217;s also possible to delete an object:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/using/090-delete-object.png"><img src="_images/using/090-delete-object.png" alt="090 delete object" width="600px"></a>
+</div>
+</div>
+<div class="paragraph">
+<p>The viewer displays a message confirming that the object has been deleted:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/using/100-object-deleted.png"><img src="_images/using/100-object-deleted.png" alt="100 object deleted" width="600px"></a>
+</div>
+</div>
+<div class="paragraph">
+<p>The above functionality is implemented by this code:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public static class DeleteActionDomainEvent extends SimpleObject.ActionDomainEvent {}
+@Action(semantics = NON_IDEMPOTENT_ARE_YOU_SURE, domainEvent = DeleteActionDomainEvent.class)
+public void delete() {
+    final String title = titleService.titleOf(this);
+    messageService.informUser(String.format("'%s' deleted", title));
+    repositoryService.removeAndFlush(this);
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Note that this uses three services provided by the framework; these are injected into the domain object automatically.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="swagger-restful-objects"><a class="anchor" href="#swagger-restful-objects"></a>Swagger (Restful Objects)</h3>
+<div class="paragraph">
+<p>Using <span class="menuseq"><b class="menu">Prototyping</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="menuitem">Open Swagger UI</b></span> menu item (or just going back to the home page at <a href="http://localhost:8080">localhost:8080</a>) we can use <a href="https://swagger.io/">Swagger UI</a> as a front-end to the REST API provided by the Restful Objects viewer.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/using/200-swagger-ui-before-reload.png"><img src="_images/using/200-swagger-ui-before-reload.png" alt="200 swagger ui before reload" width="600px"></a>
+</div>
+</div>
+<div class="paragraph">
+<p>The public API (where the calling client is assumed to be 3rd party) only exposes view models, not entities.
+If the API is private (or for prototyping), then resources corresponding to entities are also exposed:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/using/210-simpleapp-resources.png"><img src="_images/using/210-simpleapp-resources.png" alt="210 simpleapp resources" width="600px"></a>
+</div>
+</div>
+<div class="paragraph">
+<p>For example, an object can be created using the resource that represents the <code>SimpleObjects#create</code> action:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/using/220-create-object-thru-rest-api.png"><img src="_images/using/220-create-object-thru-rest-api.png" alt="220 create object thru rest api" width="600px"></a>
+</div>
+</div>
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-caution" title="Caution"></i>
+</td>
+<td class="content">
+if invoking the action returns a 401 (unauthorised), then navigate to the REST API directly (<a href="http://localhost:8080/restful" class="bare">http://localhost:8080/restful</a> to authenticate the browser first]).
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The response indicates that the object was successfully created:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/using/230-create-object-thru-rest-api-response.png"><img src="_images/using/230-create-object-thru-rest-api-response.png" alt="230 create object thru rest api response" width="600px"></a>
+</div>
+</div>
+<div class="paragraph">
+<p>The Swagger UI also provides a resource to retrieve any object:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/using/240-retrieve-object-using-rest-api.png"><img src="_images/using/240-retrieve-object-using-rest-api.png" alt="240 retrieve object using rest api" width="600px"></a>
+</div>
+</div>
+<div class="paragraph">
+<p>This results in a representation of the domain object (as per the requested <code>Response Content Type</code>, ie <code>ACCEPT</code> header):</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/using/250-retrieve-object-using-rest-api-response.png"><img src="_images/using/250-retrieve-object-using-rest-api-response.png" alt="250 retrieve object using rest api response" width="600px"></a>
+</div>
+</div>
+<div class="paragraph">
+<p>The Swagger UI is provided as a convenience; the REST API is actually a complete hypermedia API (in other words you can follow the links to access all the behaviour exposed in the regular Wicket app).
+The REST API implemented by Apache Isis is specified in the <a href="http://www.restfulobjects.org">Restful Object spec</a>.</p>
+</div>
 </div>
 </div>
 </div>
@@ -434,53 +760,259 @@ All is not lost, however; DataNucleus also has an implementation of the enhancer
 <h2 id="structure-of-the-app"><a class="anchor" href="#structure-of-the-app"></a>Structure of the App</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>As mentioned above, the application generated by the simpleapp archetype is a multi-module project, structured so that you easily extend it as your application grows.</p>
+<p>The simpleapp starter app is a multi-module project, structured so that you easily extend it as your application grows.</p>
 </div>
 <div class="paragraph">
-<p>The application consists of three modules, with a top-level module acting as an aggregator and also parent:</p>
+<p>The application consists of three modules, with a top-level module acting as an aggregator, the <code>module-simple</code> module that contains the business logic, and <code>webapp</code> module that acts as a bootstrapper.</p>
 </div>
-<div class="imageblock">
+<div class="imageblock plantuml">
 <div class="content">
-<a class="image" href="_images/using-simple-app/structure/structure/Slide1.PNG"><img src="_images/using-simple-app/structure/structure/Slide1.PNG" alt="Slide1" width="800px"></a>
+<img src="http://www.plantuml.com/plantuml/png/SoWkIImgAStDuOekJqrAB2Y8LR2noKqiIyrJoCrFASr9jRFZYeQmT8ipSmjoKcCLC5KWDElfsYcWgUToICrB0Te00000" alt="diagram">
 </div>
+<div class="title">Figure 1. simpleapp module dependencies</div>
 </div>
 <div class="paragraph">
-<p>The application separates domain object model holding the business logic (the <code>myapp-module-simple</code> Maven module containing <code>SimpleObject</code> entity and supporting domain classes) from the bootstrapping modules (<code>myapp-application</code> Maven module and the <code>myapp-webapp</code> module).</p>
+<p>Each Maven module contains exactly one <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/annotation/Configuration.html">@Configuration</a> class, residing at the package root for that Maven module.
+So, the <code>module-simple</code> maven
+The location of this class is used for classpath scanning.</p>
 </div>
 <div class="paragraph">
 <p>In a larger application there would likely be many more modules containing these domain object modules.
-For example, you might have a <code>myapp-module-customer</code> holding a <code>Customer</code> entity and related entities/services, a <code>myapp-module-product</code> holding a <code>Product</code> catalog, and a <code>myapp-module-order</code> to hold the <code>Order</code>s placed by <code>Customer</code>s:</p>
+For example, you might have a <code>module-customer</code> holding a <code>Customer</code> entity and related entities/services, a <code>module-product</code> holding a <code>Product</code> catalog, and a <code>module-order</code> to hold the <code>Order</code>s placed by <code>Customer</code>s:</p>
 </div>
-<div class="imageblock">
+<div class="imageblock plantuml">
 <div class="content">
-<a class="image" href="_images/using-simple-app/structure/structure/Slide2.PNG"><img src="_images/using-simple-app/structure/structure/Slide2.PNG" alt="Slide2" width="800px"></a>
+<img src="http://www.plantuml.com/plantuml/png/SoWkIImgAStDuOekJqrAB2Y8LR2noKqiIyrJoCrFASr9jRFZYeQmTFEBKbABOXLmAqWkBIx9pyMlfg08I2UNO5E2S8AUhfq2ggteZa1M0RSMdoAOlLmEgNafGFy20000" alt="diagram">
 </div>
+<div class="title">Figure 2. Typical application dependencies</div>
 </div>
 <div class="paragraph">
 <p>We can use Maven dependency management to ensure that there are no cyclic dependencies (order "knows about" product but product does not know about orders) and ensure that the codebase remains decoupled.
 When Java9 modules are commonplace, we&#8217;ll also be able to restrict visibility of classes between modules.</p>
 </div>
-<div class="admonitionblock warning">
+<div class="paragraph">
+<p>Let&#8217;s now review the contents of each of the modules in the simpleapp starter app.</p>
+</div>
+<div class="sect2">
+<h3 id="module-simples-srcmainjava"><a class="anchor" href="#module-simples-srcmainjava"></a>module-simple&#8217;s src/main/java</h3>
+<div class="paragraph">
+<p>Under <code>src/main/java</code> we have:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code>src/main/java/
+  domainapp/                            <i class="conum" data-value="1"></i><b>(1)</b>
+    modules/                            <i class="conum" data-value="2"></i><b>(2)</b>
+      simple/                           <i class="conum" data-value="2"></i><b>(2)</b>
+        dom/                            <i class="conum" data-value="3"></i><b>(3)</b>
+          sp/                           <i class="conum" data-value="4"></i><b>(4)</b>
+            SimpleObject.java
+            SimpleObject.layout.xml
+            SimpleObject.png
+            SimpleObjects.java
+        fixture/                        <i class="conum" data-value="5"></i><b>(5)</b>
+          SimpleObject_persona.java
+          SimpleObjectBuilder.java
+        types/                          <i class="conum" data-value="6"></i><b>(6)</b>
+          Name.java
+          Notes.java
+      SimpleModule.java                 <i class="conum" data-value="7"></i><b>(7)</b>
+  META-INF/
+    persistence.xml                     <i class="conum" data-value="8"></i><b>(8)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
 <table>
 <tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>Note that while Maven dependencies are transitive (in the example the <code>myapp-application</code> needs only depend directly on <code>myapp-module-order</code>, the modules defined in the <code>AppManifest</code> are <em>not</em> transitive: all modules must be listed.</p>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>For simplicity, all the Java source files generated by the archetype are placed in a <code>domainapp</code> top-level package.
+Change as required.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Defines the 'simple' module.
+Apache Isis can be used for both microservice and monolithic architectures, but for the latter it encourages "modular monoliths" from the start.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>The <code>dom</code> package holds the "domain object model" for this module.
+Modules may have other packages, common ones include <code>types</code> and <code>fixture</code>s (as below), also <code>api</code>s, <code>contribution</code>s, <code>spi</code>s</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Holds classes for the <code>so</code> ("simple object") entity/aggregate, consisting of the entity definition itself (<code>SimpleObject</code>) and a corresponding repository (<code>SimpleObjects</code>).
+The associated <code>.layout.xml</code> and <code>.png</code> are optional but provide metadata/resources for rendering (Maven is configured to also treat <code>src/main/java</code> as a resource location).</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>The <code>fixture</code> package contains classes to set up the database to an initial state (as described <a href="#fixtures">earlier</a>.
+One of the classes is a <code>FixtureScript</code> (defines <em>how</em> to set up the data) the other is a persona enum (defines <em>what</em> data to set up).</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>The <code>types</code> package contains meta-annotations to describe the usage of common value types such as <code>String</code>s.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td><code>SimpleModule</code> is a Spring <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/annotation/Configuration.html">@Configuration</a> which allows the domain services and entities of the module to be located.<br>
+This is discussed in more detail below.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td>The <code>persistence.xml</code> file is required when using the JDO/DataNucleus object store (though it is basically boilerplate, an empty file).</td>
+</tr>
+</table>
 </div>
-</td>
+<div class="sect3">
+<h4 id="simplemodule"><a class="anchor" href="#simplemodule"></a>SimpleModule</h4>
+<div class="paragraph">
+<p>Every module within an Apache Isis application should have a module class.
+Its purpose is to define a package to scan from, and optionally to declare any transitive dependencies.
+In the case of <code>SimpleModule</code>, it consists of:</p>
+</div>
+<div class="listingblock">
+<div class="title">SimpleModule.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">package domainapp.modules.simple;
+// ... imports omitted ...
+@Configuration
+@Import({})                                             <i class="conum" data-value="1"></i><b>(1)</b>
+@ComponentScan                                          <i class="conum" data-value="2"></i><b>(2)</b>
+public class SimpleModule
+                implements ModuleWithFixtures {         <i class="conum" data-value="3"></i><b>(3)</b>
+
+    @Override
+    public FixtureScript getTeardownFixture() {
+        return new TeardownFixtureAbstract2() {
+            @Override
+            protected void execute(ExecutionContext executionContext) {
+                deleteFrom(SimpleObject.class);
+            }
+        };
+    }
+
+    public static class PropertyDomainEvent&lt;S,T&gt;        <i class="conum" data-value="4"></i><b>(4)</b>
+    extends org.apache.isis.applib.events.domain.PropertyDomainEvent&lt;S,T&gt; {}
+
+    public static class CollectionDomainEvent&lt;S,T&gt;
+    extends org.apache.isis.applib.events.domain.CollectionDomainEvent&lt;S,T&gt; {}
+
+    public static class ActionDomainEvent&lt;S&gt; extends
+    org.apache.isis.applib.events.domain.ActionDomainEvent&lt;S&gt; {}
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>This module has no dependencies.
+If there were, these would be expressed in terms of module classes (each being a Spring <code>@Configuration</code>)</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>specifies this class' package as a root to scan for Spring <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/stereotype/Component.html">@Component</a>s.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Optionally, modules can implement the testing&#8217;s <code>ModuleWithFixtures</code> interface.
+Through this, they can provide a fixture script which can be used to teardown all entities that are "owned" by the module.
+Since the module dependency graph is known, this allows all data to be removed, useful for prototyping and sometimes for integration tests.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>The actions for the domain objects and domain services all emit domain events, ultimately inheriting from <a href="../../refguide/applib-cm/classes/domainevent/ActionDomainEvent.html" class="page">ActionDomainEvent</a>.
+By convention, this inheritance hierarchy includes classes defined at the module level.
+This then allows subscribes to subscribe to all actions emitted by anything within the module.<br>
+Events can also be emitted for <a href="../../refguide/applib-cm/classes/domainevent/PropertyDomainEvent.html" class="page">properties</a> and <a href="../../refguide/applib-cm/classes/domainevent/CollectionDomainEvent.html" class="page">collections</a>.</td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>Let&#8217;s now review the contents of each of the generated modules.</p>
+<p>The scanning mechanism is leveraged by Apache Isis to pick up three types of classes:</p>
+</div>
+<div class="paragraph">
+<p>This will pick up the <code>SimpleObjects</code> repository because it is annotated with the framework&#8217;s <a href="../../refguide/applib-ant/DomainService.html" class="page">@DomainService</a> annotation; itself meta-annotated with <code>@Component</code>.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>all domain services</p>
+<div class="paragraph">
+<p>These are classes that are annotated with the framework&#8217;s <a href="../../refguide/applib-ant/DomainService.html" class="page">@DomainService</a> annotation.
+Because <code>@DomainService</code> is meta-annotated as a <code>@Component</code>, these are found automatically and are managed by Spring (ie instantiated, injected etc).</p>
+</div>
+<div class="paragraph">
+<p>Depending on their nature, domain services are used to build up the menu, or are available to call programmatically, eg repositories, or sometimes both.</p>
+</div>
+<div class="paragraph">
+<p>In the simpleapp starter app, the only domain service  is <code>SimpleObjects</code>.
+This appears in the menu, and also acts as a repository for the <code>SimpleObject</code> entity.</p>
+</div>
+</li>
+<li>
+<p>all entities.</p>
+<div class="paragraph">
+<p>These are entities that are annotated with <code>@javax.jdo.annotations.PersistenceCapable</code>.
+These are passed through to the JDO/DataNucleus object store, in order to create database mappings from the entities to relational tables</p>
+</div>
+<div class="paragraph">
+<p>In the simpleapp starter app, the only entity is <code>SimpleObject</code>.</p>
+</div>
+</li>
+<li>
+<p>all fixture scripts</p>
+<div class="paragraph">
+<p>These are classes that extend from the testing applib&#8217;s <code>FixtureScript</code> class, and are used to setup the database when running in prototype mode (against an in-memory database).</p>
+</div>
+<div class="paragraph">
+<p>As already discussed, the <code>fixture</code> package provides classes to create sample objects, while the <code>SimpleModule</code> provides a fixture script to tear down all data from the module.</p>
+</div>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="myapp-parent"><a class="anchor" href="#myapp-parent"></a>myapp (parent)</h3>
+<h3 id="module-simples-srctestjava"><a class="anchor" href="#module-simples-srctestjava"></a>module-simple&#8217;s src/test/java</h3>
 <div class="paragraph">
-<p>The parent module is a fairly conventional, declaring its child modules (using <code>&lt;dependencyManagement&gt;</code> elements) and aggregating them (using <code>&lt;module&gt;</code> elements).</p>
+<p>Under <code>src/test/java</code> we have:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code>src/test/java/
+  domainapp/
+    modules/
+      simple/
+        dom/
+          so/                                   <i class="conum" data-value="1"></i><b>(1)</b>
+            SimpleObject_Test.java
+            SimpleObjects_Test.java
+        integtests/
+          tests/                                <i class="conum" data-value="2"></i><b>(2)</b>
+            SimpleObject_IntegTest.java
+            SimpleObjects_IntegTest.java
+          SimpleModuleIntegTestAbstract.java    <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>These are very simple unit tests of <code>SimpleObject</code> and <code>SimpleObjects</code> with the package structure the same as in <code>src/main/java</code>.
+They are written in JUnit 5, and use JMockito as the mocking library.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Integration tests for the module.
+These use the <a href="../../refguide/applib-svc/application-layer-api/WrapperFactory.html" class="page">WrapperFactory</a> to simulate interactions through the UI.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>The <code>SimpleModuleIntegTestAbstract</code> superclass bootstraps the module&#8217;s integration tests.
+This is discussed in more detail below.</td>
+</tr>
+</table>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -489,127 +1021,96 @@ When Java9 modules are commonplace, we&#8217;ll also be able to restrict visibil
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-<div class="paragraph">
-<p>One thing you&#8217;ll discover when you review the generated classes is that they all reside under the <code>domainapp</code> package.</p>
-</div>
-<div class="paragraph">
-<p>While it&#8217;s more conventional to use the inverse domain name for package (eg <code>com.mycompany.myapp</code>, that&#8217;s only really appropriate for library code that will be released for reuse by multiple applications in different orgnisations (eg open source).</p>
-</div>
-<div class="paragraph">
-<p>For internal application though this is less of a concern; indeed, avoiding the domain name means that if the company rebrands or is taken over then nothing needs be changed.</p>
-</div>
-<div class="paragraph">
-<p>Of course, you are always free to move the classes to a different package if you wish.</p>
-</div>
+these integration tests are annotated with the Spring <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/transaction/annotation/Transactional.html">@Transactional</a>, which means that Spring will automatically roll back the changes to the database; there&#8217;s no need to delete data afterwards.
 </td>
 </tr>
 </table>
 </div>
-</div>
-<div class="sect2">
-<h3 id="myapp-application"><a class="anchor" href="#myapp-application"></a>myapp-application</h3>
-<div class="paragraph">
-<p>The production classes for <code>myapp-application</code> module (in <code>src/main/java</code>) are:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code>src/
-  main/
-    java/
-      domainapp/
-        application/
-          DomainAppApplicationModule.java
-          fixture/
-            DomainAppFixtureScriptsSpecificationProvider.java
-            scenarios/
-              DomainAppDemo.java
-          manifest/
-            DomainAppAppManifest.java
-            DomainAppAppManifestBypassSecurity.java
-            DomainAppAppManifestWithFixtures.java
-            DomainAppAppManifestWithFixturesBypassSecurity.java
-            isis-non-changing.properties
-            menubars.layout.xml
-          services
-            healthcheck
-              HealthCheckServiceImpl.java
-            homepage
-              HomePageService.java
-              HomePageViewModel.java
-              HomePageViewModel.layout.xml
-              HomePageViewModel.layout.png</code></pre>
-</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+the naming convention&#8201;&#8212;&#8201;with <code>Test</code> and <code>IntegTest</code> suffixes&#8201;&#8212;&#8201;is important, because the Maven surefire plugin is configured to run multiple times, one <code>&lt;execution&gt;</code> for each suffix.
+</td>
+</tr>
+</table>
 </div>
 <div class="sect3">
-<h4 id="manifest"><a class="anchor" href="#manifest"></a>Manifest</h4>
+<h4 id="simplemoduleintegtestabstract"><a class="anchor" href="#simplemoduleintegtestabstract"></a>SimpleModuleIntegTestAbstract</h4>
 <div class="paragraph">
-<p>The <code>DomainAppAppManifest</code> is the most important class here, typically being used to bootstrap the application.
-It is quite short:</p>
+<p>The <code>SimpleModuleIntegTestAbstract</code> is the superclass of all integration tests in the module, annotated with <a href="https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/test/context/SpringBootTest.html">@SpringBootTest</a>:</p>
 </div>
 <div class="listingblock">
+<div class="title">SimpleModuleIntegTestAbstract.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class DomainAppAppManifest extends AppManifestAbstract2 {
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@SpringBootTest(
+        classes = SimpleModuleIntegTestAbstract.AppManifest.class   <i class="conum" data-value="1"></i><b>(1)</b>
+)
+@TestPropertySource({                                               <i class="conum" data-value="2"></i><b>(2)</b>
+        IsisPresets.H2InMemory_withUniqueSchema,                    <i class="conum" data-value="3"></i><b>(3)</b>
+        IsisPresets.DataNucleusAutoCreate,                          <i class="conum" data-value="4"></i><b>(4)</b>
+        IsisPresets.UseLog4j2Test,                                  <i class="conum" data-value="5"></i><b>(5)</b>
+})
+public abstract class SimpleModuleIntegTestAbstract
+        extends IsisIntegrationTestAbstractWithFixtures {           <i class="conum" data-value="6"></i><b>(6)</b>
 
-    public static final Builder BUILDER = Builder
-            .forModule(new DomainAppApplicationModule())
-            .withConfigurationPropertiesFile(
-                    DomainAppAppManifest.class, "isis-non-changing.properties")
-            .withAuthMechanism("shiro");
+    @Configuration
+    @Import({
+        IsisModuleCoreRuntimeServices.class,                        <i class="conum" data-value="7"></i><b>(7)</b>
+        IsisModuleSecurityBypass.class,
+        IsisModuleJdoDataNucleus5.class,
+        IsisModuleTestingFixturesApplib.class,                      <i class="conum" data-value="8"></i><b>(8)</b>
 
-    public DomainAppAppManifest() {
-        super(BUILDER);
+        SimpleModule.class
+    })
+    public static class AppManifest {
     }
 }</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>Rather than implement <code>AppManifest</code> directly, <code>DomainAppAppManifest</code> uses the builder provided by the convenience <code>AppManifestAbstract2</code>), to define three things:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>a list of modules - there&#8217;s just one, <code>DomainAppApplicationModule</code></p>
-</li>
-<li>
-<p>the location of a configuration file, <code>isis-non-changing.properties</code>, read in as a resource from the classpath</p>
-</li>
-<li>
-<p>specifying an authentication/authorisation mechanism, in this case Apache Shiro integration.</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>The manifest uses the builder defined by <code>AppManifestAbstract2</code> and references a single top-level (Isis) module, namely <code>DomainAppApplicationModule</code>:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class DomainAppApplicationModule extends ModuleAbstract {
-    @Override
-    public Set&lt;Module&gt; getDependencies() {
-        return Sets.&lt;Module&gt;newHashSet(new SimpleModule());
-    }
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>where <code>SimpleModule</code> in defined in the <code>mypp-module-simple</code> module (below).</p>
-</div>
-<div class="paragraph">
-<p>The primary purpose of the module class is to identify packages and subpackages that the framework should scan for entities and domain services.
-The transitive dependencies between modules are automatically resolved.
-The net effect is that all the domain services and entities in this module as well as those modules referenced are included into the app.</p>
-</div>
-<div class="paragraph">
-<p>Going back to the manifest, it also defines the <code>isis-non-changing.properties</code> configuration properties, loaded as a static resource from the classpath.</p>
-</div>
-<div class="paragraph">
-<p>You&#8217;ll find that there&#8217;s also a similar file called <code>isis.properties</code>, which resides at <code>WEB-INF/isis.properties</code>.
-This also provides configuration options (the framework simply combines them) but those in <code>WEB-INF/isis.properties</code> are restricted to settings that are likely to change from environment to environment, most notably JDBC URL connection strings.
-Separating these out makes it easy to reconfigure the application to run against different databases in different environments (dev, test, production etc).</p>
-</div>
-<div class="paragraph">
-<p>Finally, the app manifest identifies Apache Shiro for authentication and authorisation.
-Shiro in turn is configured using the <code>WEB-INF/shiro.ini</code> file.</p>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The <code>AppManifest</code> (defined as a nested static class below) lists the modules needed to bootstrap the integration test.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Spring allows additional properties to be defined through the <a href="https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/test/context/TestPropertySource.html">@TestPropertySource</a> annotation</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Runs the tests in memory using H2.
+A unique schema allows tests to potentially be run in parallel</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Ensures that JDO/DataNucleus is configured to create the database schema first.
+This may be required because the application might otherwise be configured to use the <a href="../../userguide/flyway/about.html" class="page">Flyway integration</a>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Sets up logging to use the configuration defined in the <code>log4j2-test.xml</code> file</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Tests typically inherit from <code>IsisIntegrationTestAbstract</code>, which provides some convenience methods to inherit from.
+In this case, the test inherits from the <code>IsisIntegrationTestAbstractWithFixtures</code> subclass which also adds in support for running fixtures.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>Specifies the modules that make up Apache Isis framework itself.
+These include core, security set to the bypass implementation (effecively is ignored) and JDO/DataNucleus for persistence.
+Note that there no viewers are bootstrapped because the tests are run through Spring&#8217;s integration testing framework, rather than (say) as Selenium tests.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td>Brings in support for running fixtures.</td>
+</tr>
+</table>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -618,104 +1119,446 @@ Shiro in turn is configured using the <code>WEB-INF/shiro.ini</code> file.</p>
 <i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-<div class="paragraph">
-<p>The security integration provided by Apache Isis and Shiro is quite sophisticated; to get started though you can just login using username: <code>sven</code>, password: <code>pass</code>.</p>
-</div>
+You can learn more about testing in the <a href="../../testing/about.html" class="page">Testing Guide</a>.
 </td>
 </tr>
 </table>
 </div>
-<div class="paragraph">
-<p>The <code>menubars.layout.xml</code> file also resides in the same package as the manifest; this defines the menubar structure.</p>
-</div>
-<div class="paragraph">
-<p>There are also several variations on the app manifest; these can be used to bootstrap the application with fixtures, or disabling security.</p>
 </div>
 </div>
-<div class="sect3">
-<h4 id="domain-services"><a class="anchor" href="#domain-services"></a>Domain Services</h4>
+<div class="sect2">
+<h3 id="webapps-srcmainjava"><a class="anchor" href="#webapps-srcmainjava"></a>webapp&#8217;s src/main/java</h3>
 <div class="paragraph">
-<p>The <code>domainapp.application.services</code> package contains two SPI implementations.</p>
-</div>
-<div class="paragraph">
-<p>The <code>HomePageService</code> domain service simply has a single action annotated with <code>@HomePage</code>:</p>
+<p>Under <code>src/main/java</code> we have:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Action(semantics = SemanticsOf.SAFE)
-@HomePage
-public HomePageViewModel homePage() {
-    return factoryService.instantiate(HomePageViewModel.class);
+<pre class="highlightjs highlight"><code>src/main/java/
+  domainapp/
+    webapp/
+      application/
+        fixture/
+          scenarios/                                            <i class="conum" data-value="1"></i><b>(1)</b>
+            DomainAppDemo.java                                  <i class="conum" data-value="2"></i><b>(2)</b>
+            DomainAppFixtureScriptsSpecificationProvider.java   <i class="conum" data-value="3"></i><b>(3)</b>
+        services/
+          health/
+            HealthCheckServiceImpl.java                         <i class="conum" data-value="4"></i><b>(4)</b>
+          homepage/
+            HomePageViewModel.java                              <i class="conum" data-value="5"></i><b>(5)</b>
+            HomePageViewModel.layout.xml
+            HomePageViewModel.png
+         ApplicationModule.java                                 <i class="conum" data-value="6"></i><b>(6)</b>
+      AppManifest.java                                          <i class="conum" data-value="7"></i><b>(7)</b>
+      SimpleApp.java                                            <i class="conum" data-value="8"></i><b>(8)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Defines scenarios (fixtures) for setting up the system into a known state.
+Used for prototyping and also integration testing.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The <code>DomainAppDemo</code> is the fixture that was run <a href="#fixtures">earlier on</a>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>The <code>DomainAppFixtureScriptsSpecificationProvider</code> is used to configure the run fixture script menu item shown on the "Prototyping" menu.
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Fixture scenarios also need to be <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/annotation/Import.html">@Import</a>ed, typically in the top-level <code>AppManifest</code>.
+</td>
+</tr>
+</table>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>An implementation of the <a href="../../refguide/applib-svc/application-layer-spi/HealthCheckService.html" class="page">HealtCheckService</a>.
+This integrates with Spring Boot&#8217;s <a href="https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/actuate/health/HealthIndicator.html">HealthIndicator</a> SPI, surfaced through the <a href="https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-features.html">Spring Boot Actuator</a>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Annotated with <a href="../../refguide/applib-ant/HomePage.html" class="page">@HomePage</a> and so is shown automatically as the home page.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Defines the services in the webapp module, along with dependencies onto the other modules in the application.<br>
+Discussed in more detail below.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td><code>AppManifest</code> is the top-level Spring <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/annotation/Configuration.html">@Configuration</a> that specifies the components of Apache Isis to use, along with the modules making up the application itself (ie <code>ApplicationModule</code>, which depends in turn on <code>SimpleModule</code>).<br>
+This is discussed in more detail below</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td><code>SimpleApp</code> is the <a href="https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/autoconfigure/SpringBootApplication.html">@SpringBootApplication</a> used to bootstrap the app.
+It&#8217;s pretty much boilerplate - the important piece is that it references <code>AppManifest</code>.<br>
+It&#8217;s discussed in more detail below</td>
+</tr>
+</table>
+</div>
+<div class="sect3">
+<h4 id="applicationmodule"><a class="anchor" href="#applicationmodule"></a>ApplicationModule</h4>
+<div class="paragraph">
+<p>The <code>ApplicationModule</code> defines the services in the webapp module, along with dependencies onto the other modules in the application.
+It&#8217;s very simple though:</p>
+</div>
+<div class="listingblock">
+<div class="title">ApplicationModule.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">package domainapp.webapp.application;
+// ... imports omitted ...
+@Configuration
+@Import(SimpleModule.class)             <i class="conum" data-value="1"></i><b>(1)</b>
+@ComponentScan                          <i class="conum" data-value="2"></i><b>(2)</b>
+public class ApplicationModule {
 }</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>which returns the <code>HomePageViewModel</code> for use as the home page.
-The <code>HomePageViewModel</code> itself just renders a collection of <code>SimpleObject</code>s in a list (<code>HomePageViewModel.layout.xml</code> defines the UI layout).</p>
-</div>
-<div class="paragraph">
-<p>The other SPI implementation is the <code>HealthCheckServiceImpl</code> domain service, which is used to indicate if the application is running healthily.
-This is exposed as the <code>/restful/health</code> REST endpoint.
-The implementation itself simply runs a query on the <code>SimpleObjects</code> repository service, thus checking that the database is configured correctly and available.</p>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>This module depends on the <code>SimpleModule</code> module.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>specifies this class' package as a root to scan for Spring <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/stereotype/Component.html">@Component</a>s.</td>
+</tr>
+</table>
 </div>
 </div>
 <div class="sect3">
-<h4 id="fixtures"><a class="anchor" href="#fixtures"></a>Fixtures</h4>
+<h4 id="appmanifest"><a class="anchor" href="#appmanifest"></a>AppManifest</h4>
 <div class="paragraph">
-<p>The final package in the application module is <code>domainapp.application.fixture</code>.
-The important class here is <code>DomainAppDemo</code>, a fixture script that can be used to setup the application with some dummy data.
-This is used in the app itself when running in prototype mode (against an in-memory database), and can also be used by integration tests.</p>
+<p>The "app manifest" (the name has been retained from Apache Isis v1.x) is the top-level Spring <code>@Configuration</code>.
+It looks like this:</p>
 </div>
-<div class="paragraph">
-<p>There is in fact also a domain service defined here, namely <code>DomainAppFixtureScriptsSpecificationProvider</code>.
-This is just used to configure the run fixture script menu item shown on the "Prototyping" menu.</p>
+<div class="listingblock">
+<div class="title">AppManifest.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Configuration
+@Import({
+        IsisModuleCoreRuntimeServices.class,                    <i class="conum" data-value="1"></i><b>(1)</b>
+        IsisModuleSecurityShiro.class,                          <i class="conum" data-value="2"></i><b>(2)</b>
+        IsisModuleJdoDataNucleus5.class,                        <i class="conum" data-value="3"></i><b>(3)</b>
+        IsisModuleViewerRestfulObjectsJaxrsResteasy4.class,     <i class="conum" data-value="4"></i><b>(4)</b>
+        IsisModuleViewerWicketViewer.class,                     <i class="conum" data-value="5"></i><b>(5)</b>
+
+        IsisModuleTestingH2ConsoleUi.class,                     <i class="conum" data-value="6"></i><b>(6)</b>
+        IsisModuleTestingFixturesApplib.class,                  <i class="conum" data-value="7"></i><b>(7)</b>
+
+        IsisModuleExtFlywayImpl.class,                          <i class="conum" data-value="8"></i><b>(8)</b>
+
+        ApplicationModule.class,                                <i class="conum" data-value="9"></i><b>(9)</b>
+
+        DomainAppDemo.class                                     <i class="conum" data-value="10"></i><b>(10)</b>
+})
+@PropertySource(IsisPresets.NoTranslations)                     <i class="conum" data-value="11"></i><b>(11)</b>
+@PropertySource(IsisPresets.DebugDiscovery),
+public class AppManifest {
+}</code></pre>
 </div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Mandatory - specifies the core of the Apache Isis framework</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Enables the Shiro security mechanism.
+There are several implementations, precisely one must be selected</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Enables JDO/DataNucleus for persistence.
+Optional (though if omitted then only <a href="../../userguide/fun/building-blocks/types-of-domain-objects.html" class="page">view models</a> may be used, with hand-rolled persistence).</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Enables the <a href="../../vro/about.html" class="page">Restful Objects viewer</a> (ie REST API).</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Enables the <a href="../../vw/about.html" class="page">Wicket viewer</a></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Enables the H2 Console (menu from the "Prototyping" menu), applicable only if running against h2 in-memory database.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>Brings in support to run <a href="../../testing/fixtures/about.html" class="page">fixtures</a> within the application, eg for prototyping.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td>Enables the <a href="../../userguide/flyway/about.html" class="page">Flyway</a> integration.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
+<td>References the application&#8217;s module(s), in this case just the one, <code>ApplicationModule</code>.<br>
+This is discussed below.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="10"></i><b>10</b></td>
+<td>Makes the fixture scenario classes available for discovery.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="11"></i><b>11</b></td>
+<td>Normally configuration properties are picked up from Spring Boot&#8217;s <code>application.properties</code> or <code>application.yaml</code> files, but additional properties can be overridden directly.
+These two both use the <code>IsisPresets</code> convenience class, to disable i18n support and for additional debugging log statements.</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="simpleapp"><a class="anchor" href="#simpleapp"></a>SimpleApp</h4>
 <div class="paragraph">
-<p>The module also defines a number of BDD specs and integration tests, in <code>src/test/java</code>.
-The BDD specs (run using Cucumber) reside under <code>domain.application.bdd</code>:</p>
+<p>The application is bootstrapped using <code>SimpleApp</code>, a regular <code>@SpringBootApplication</code>.
+It is mostly boilerplate:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code>src/
-  test/
-    java/
-      domainapp/
-        application/
-          bdd/
-            specglue/
-              BootstrappingGlue.java
-              CatalogOfFixturesGlue.java
-            specs/
-              RunIntegBddSpecs.java
-              SimpleObjectSpec_listAllAndCreate.feature</code></pre>
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@SpringBootApplication
+@Import({
+    AppManifest.class,                                          <i class="conum" data-value="1"></i><b>(1)</b>
+})
+public class SimpleApp
+            extends SpringBootServletInitializer {
+
+    public static void main(String[] args) {
+        IsisPresets.prototyping();                              <i class="conum" data-value="2"></i><b>(2)</b>
+        SpringApplication.run(
+                new Class[] { SimpleApp.class }, args);
+    }
+}</code></pre>
 </div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>references the <code>AppManifest</code> mentioned earlier</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>specifies prototyping mode.
+This enables actions marked for prototyping to become available, useful during the early stages of development.
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+As an alternative to making this call, you can also just run with a system property <code>-DPROTOTYPING=true</code>
+</td>
+</tr>
+</table>
+</div></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="webapps-srcmainresources"><a class="anchor" href="#webapps-srcmainresources"></a>webapp&#8217;s src/main/resources</h3>
+<div class="paragraph">
+<p>Under <code>src/main/resources</code> we have:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code>src/main/resources
+  config/
+    application.properties              <i class="conum" data-value="1"></i><b>(1)</b>
+    application-SQLSERVER.properties    <i class="conum" data-value="2"></i><b>(2)</b>
+  db/
+    migration/
+      SQLSERVER/
+        Vyyyy.mm.dd.hh.ss__xxx.sql      <i class="conum" data-value="3"></i><b>(3)</b>
+  static/                               <i class="conum" data-value="4"></i><b>(4)</b>
+  templates/                            <i class="conum" data-value="5"></i><b>(5)</b>
+  application.yml                       <i class="conum" data-value="6"></i><b>(6)</b>
+  banner.txt                            <i class="conum" data-value="7"></i><b>(7)</b>
+  log4j2-spring.xml                     <i class="conum" data-value="8"></i><b>(8)</b>
+  menubars.layout.xml                   <i class="conum" data-value="9"></i><b>(9)</b>
+  shiro.ini                             <i class="conum" data-value="10"></i><b>(10)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>By convention, we use <code>config/application.properties</code> to hold configuration properties that change between environments (dev, test, prod).
+Typically this just holds JDBC connection strings, etc.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Enabled if run using the <code>SQLSERVER</code> profile (eg using <code>-Dspring.profiles.active=SQLSERVER</code>). Configures to use a SQL Server database, and enables Flyway to set up the database schema</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Flyway migration scripts.<br>
+This leverages a feature in Spring Boot&#8217;s Flyway integration which allows different variants of scripts for different vendors to be stored, in a <code>db.migration.{vendor}</code> package.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>The <code>static</code> package (a <a href="https://docs.spring.io/spring-boot/docs/current/reference/html/spring-boot-features.html#boot-features-spring-mvc-static-content">Spring convention</a>) provides access for static resources that are accessible from the webapp</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>The <code>templates</code> package holds a fallback error page, which is the <a href="https://www.baeldung.com/spring-thymeleaf-template-directory#change-default">default location</a> for pages rendered using Spring Boot&#8217;s integration with Thymeleaf.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>By convention, we use <code>application.yml</code> to hold configuration properties that do <em>not</em> change between environments.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>The <code>banner.txt</code> is shown when bootstrapping.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td>The <code>log4j2-spring.xml</code> configures log4j2 (the logging system used by Apache Isis)</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
+<td>The <code>menubars.layout.xml</code> arranges the actions of the domain services into menus.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="10"></i><b>10</b></td>
+<td>The <code>shiro.ini</code> file configures Shiro security integration (see the <code>IsisModuleSecurityShiro</code> module imported in the <code>AppManifest</code>, above).
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The <a href="../../security/shiro/about.html" class="page">Shiro security</a> integration is much more flexible than simple file-based authentication.</p>
+</div>
+</td>
+</tr>
+</table>
+</div></td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
-<p>Here the <code>BootstrappingGlue</code> glue class inherits from the framework&#8217;s <code>HeadlessWithBootstrappingAbstract</code> class, and bootstraps using the <code>DomainAppApplicationModule</code> mentioned above.</p>
+<p>To call out some of the files under <code>static</code>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The <code>index.html</code> is the page shown at the root of the package, providing links to either the Wicket viewer or to the Swagger UI.
+In a production application this is usually replaced with a page that does an HTTP 302 redirect to the Wicket viewer.</p>
+</li>
+<li>
+<p>In <code>css/application.css</code> you can use to customise CSS, typically to highlight certain fields or states.
+The pages generated by the Wicket viewer have plenty of CSS classes to target.
+You can also implement the <code>cssClass()</code> method in each domain object to provide additional CSS classes to target.</p>
+</li>
+<li>
+<p>Similarly, in <code>scripts/application.js</code> you have the option to add arbitrary Javascript.
+JQuery is available by default.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="no-srcmainwebapp"><a class="anchor" href="#no-srcmainwebapp"></a>No src/main/webapp</h3>
+<div class="paragraph">
+<p>Note that there is no <code>src/main/webapp/</code> or <code>WEB-INF/web.xml</code> - the servlets and filters are configured by Apache Isis automatically.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="webapps-srctestjava"><a class="anchor" href="#webapps-srctestjava"></a>webapp&#8217;s src/test/java</h3>
+<div class="paragraph">
+<p>Under <code>src/test/java</code> we have different sets of tests.
+We&#8217;ll inspect each in turn.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+the naming convention&#8201;&#8212;&#8201;with <code>Test</code>, <code>IntegTest</code> and <code>IntegBddSpecs</code> suffixes&#8201;&#8212;&#8201;is important, because the Maven surefire plugin is configured to run multiple times, one <code>&lt;execution&gt;</code> for each suffix.
+</td>
+</tr>
+</table>
+</div>
+<div class="sect3">
+<h4 id="bdd-specs"><a class="anchor" href="#bdd-specs"></a>BDD Specs</h4>
+<div class="paragraph">
+<p>The simplapp starter app includes support for <a href="../../testing/specsupport/about.html" class="page">BDD (Cucumber)</a> specifications.
+These reside under <code>domain.webapp.bdd</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code>src/test/java
+  domainapp/
+    webapp/
+      bdd/
+        glue/
+          SimpleObjectsStepDef.java                     <i class="conum" data-value="1"></i><b>(1)</b>
+        specs/
+          SimpleObjectSpec_listAllAndCreate.feature     <i class="conum" data-value="2"></i><b>(2)</b>
+        RunIntegBddSpecs.java                           <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>defines the step definitions (or "glue") which describes how to interact with the application.<br>
+This class inherits from <code>ApplicationIntegTestAbstract</code>, the base class for integration tests, described in the <a href="#integration-tests">next section</a>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>the feature file, discussed below.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>boilerplate used to run the BDD Cucumber tests using JUni5 4.x.</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>There is just one feature file: <code>SimpleObjectSpec_listAllAndCreate.feature</code>, which is pretty simple:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-feature hljs" data-lang="feature">@DomainAppDemo
-Feature: List and Create New Simple Objects
+<pre class="highlightjs highlight"><code class="language-feature hljs" data-lang="feature">Feature: List and Create New Simple Objects
 
   Scenario: Existing simple objects can be listed and new ones created
-    Given there are initially 10 simple objects
+    Given there are initially 3 simple objects
     When  I create a new simple object
-    Then  there are 11 simple objects</code></pre>
+    Then  there are 4 simple objects</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>The <code>@DomainAppDemo</code> annotation causes the <code>DomainAppDemo</code> fixture script to be run; this is the purpose of the <code>CatalogOfFixturesGlue</code> glue class.</p>
+<p>The set up of the 3 initial objects is part of the step definitions.</p>
 </div>
-<div class="paragraph">
-<p>The specs themselves are run by the <code>RunIntegBddSpecs.java</code> class, which specifies which packages to search for "glue".
-This is just standard Cucumber bootstrapping.</p>
 </div>
+<div class="sect3">
+<h4 id="integration-tests"><a class="anchor" href="#integration-tests"></a>Integration Tests</h4>
 <div class="paragraph">
-<p>The integration tests meanwhile are in <code>domainapp.application.integtests</code>:</p>
+<p>The integration tests are in <code>domainapp.application.integtests</code>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -723,55 +1566,98 @@ This is just standard Cucumber bootstrapping.</p>
   test/
     java/
       domainapp/
-        application/
+        webapp/
           integtests/
-            DomainAppIntegTestAbstract.java
-            mml/
-              approved/
-              received/
-              MetaModelService_IntegTest.java
+            metamodel/
+              lockdown/
+                approved/
+                  ...
+                current/
+                  ...
+                LockDownMetaModel_IntegTest.java    <i class="conum" data-value="1"></i><b>(1)</b>
+              ValidateDomainModel_IntegTest.java    <i class="conum" data-value="2"></i><b>(2)</b>
             smoke/
-              Smoke_IntegTest.java</code></pre>
+              Smoke_IntegTest.java                  <i class="conum" data-value="3"></i><b>(3)</b>
+            ApplicationIntegTestAbstract.java       <i class="conum" data-value="4"></i><b>(4)</b></code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>There are two different sets of tests.</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>The <code>Smoke_IntegTest</code> performs a number of high-level smoke tests, to check that the core functionality works correctly.</p>
-<div class="paragraph">
-<p>This test inherits <code>DomainAppIntegTestAbstract</code>, which in turn inherits from <code>IntegrationTestAbstract3</code> and uses the <code>DomainAppApplicationModule</code> previously discussed.</p>
-</div>
-<div class="paragraph">
-<p>Moreover, the <code>Smoke_IntegTest</code> uses the same <code>DomainAppDemo</code> fixture script.
-The application and the smoke tests therefore run with the exact same state, making debugging easy.</p>
-</div>
-</li>
-<li>
-<p>The <code>MetaModelService_IntegTest</code> demonstrates how to use approval tests to verify that the metamodel is unchanged between releases of Apache Isis.</p>
-<div class="paragraph">
-<p>By default this test does nothing; it is activated by setting system properties ("lockdown.learn" or "lockdown.verify").
-When in "learn" mode, the test calls the <code>MetaModelService</code> to export an XML representation of the internal metamodel.
-These can then be moved from the <code>received</code> directory to the <code>approved</code> directory, as "known-to-good".</p>
-</div>
-<div class="paragraph">
-<p>Then, if Apache Isis is updated, then the "verify" test can be called to check that the metamodel created by the new version of the framework is the same as the previous version.</p>
-</div>
-</li>
-</ul>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Uses approval tests to verify that the metamodel is unchanged between releases of Apache Isis.<br>
+Discussed in more detail below.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Bootstraps the app and runs the metamodel validators to check that there are not metamodel errors.<br>
+This can also be done simply when running the application, but performing the checks through integration tests enables "fail-fast" checking, as part of CI, for example.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Performs a number of high-level smoke tests, to check that the core functionality works correctly.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Base class used to bootstrap all integration tests for this module.
+It is very similar to the base class used to bootstrap the integration tests for the simple module <a href="#SimpleModuleIntegTestAbstract">[SimpleModuleIntegTestAbstract]</a>, but referencing <code>ApplicationModule</code> rather than <code>SimpleModule</code>.</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
-<p>With regard to the naming of these various BDD specs and integration tests, they follow the naming convention required by the (non-ASF) <a href="http://github.com/danhaywood/java-mavenmixin-surefire">"surefire" mavenmixin</a> that configures the maven surefire plugin.</p>
+<p>The purpose of the metamodel lockdown tests is to capture regressions in Apache Isis itself whenever it is updated.</p>
 </div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="myapp-module-simple"><a class="anchor" href="#myapp-module-simple"></a>myapp-module-simple</h3>
 <div class="paragraph">
-<p>This module is where the domain object model lives, that is the business logic of the application itself.
-This typically comprises entities, domain services, mixins and view models.</p>
+<p>Normally the metamodel of the application will evolve all of the time, so the metamodel lockdown tests are disabled by default and only enabled with <code>-Dmetamodel.lockdown</code>.
+If you want to capture the current metamodel, then enable and they will likely fail.
+The new export of the metamodel will be in <code>current</code> and can simply be approved (by copying over to the <code>approved</code> directory.</p>
+</div>
+<div class="paragraph">
+<p>However, if you are upgrading Apache Isis then you may want to check that the metamodel being built by the next version of Apache Isis is the same as previous.
+In this case, update Apache Isis (by updating the `&lt;version&gt; of the parent pom) and run the lockdown tests to check for differences.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="unit-tests"><a class="anchor" href="#unit-tests"></a>Unit Tests</h4>
+<div class="paragraph">
+<p>The integration tests are in <code>domainapp.application.unittests</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code>src/test/java
+  domainapp/
+    webapp/
+       unittests/
+         mavendeps/
+           lockdown/
+             approved/
+               ...
+             current/
+               ...
+             LockDownMavenDeps_Test.java                <i class="conum" data-value="1"></i><b>(1)</b>
+       util/
+         CurrentVsApprovedApprovalTextWriter.java       <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>lock down test to check the transitive set of dependencies used by the application</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>utility class used by the lock down tests (unit tests and integ tests).</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The maven dependency lock down tests are disabled by default, only enabled using <code>-Dmavendeps.lockdown</code>.
+The <code>pom.xml</code> is configured to run the Maven <code>dependency:tree</code> and <code>dependency:list</code> goals, capturing the current dependencies.
+These are compared to the approved versions.</p>
+</div>
+<div class="paragraph">
+<p>Any time the Apache Isis version is updated, run these tests using <code>-Dmavendeps.lockdown</code> to capture and approve the new versions.</p>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -780,374 +1666,56 @@ This typically comprises entities, domain services, mixins and view models.</p>
 <i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-<div class="paragraph">
-<p>As discussed above, larger applications will likely have multiple modules each containing their own slice of business logic.</p>
-</div>
-<div class="paragraph">
-<p>Initially though you should probably just use regular Java packages to separate out functionality; you can carve out separate modules later on once the responsibilities of each have settled down.</p>
-</div>
+The Maven dependency lock down tests are useful to capture any accidental changes to the dependency tree, so consider enabling them all of the time.
 </td>
 </tr>
 </table>
 </div>
-<div class="paragraph">
-<p>The classes for the simple module reside in the <code>domainapp.modules.simple</code> package.
-Under <code>src/main/java</code> we have:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code>src/
-  main/
-    java/
-      domainapp/
-        application/
-          DomainAppApplicationModule.java
-          fixture/
-            DomainAppFixtureScriptsSpecificationProvider.java
-            scenarios/
-              DomainAppDemo.java
-          manifest/
-            DomainAppAppManifest.java
-            DomainAppAppManifestBypassSecurity.java
-            DomainAppAppManifestWithFixtures.java
-            DomainAppAppManifestWithFixturesBypassSecurity.java
-            isis-non-changing.properties
-            menubars.layout.xml
-          services
-            healthcheck
-              HealthCheckServiceImpl.java
-            homepage
-              HomePageService.java
-              HomePageViewModel.java
-              HomePageViewModel.layout.xml
-              HomePageViewModel.layout.png</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The <code>SimpleModule</code> is the (single) module class referenced from the previously discussed <code>DomainAppApplicationModule</code>, meaning that all the entities, domain services and fixtures within it are included within the application.</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>SimpleObject</code> is the (one-and-only) domain entity defined (with <code>SimpleObject.layout.xml</code> defines its layout in the UI).</p>
-</li>
-<li>
-<p><code>SimpleObjects</code> domain service&#8217;s whos actions appear as menu items and which acts as a repository to create and find <code>SimpleObject</code>s.</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>The <code>SimpleModule</code> class also defines a teardown fixture, automatically called by integration tests.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class SimpleModule extends ModuleAbstract {
-    @Override
-    public FixtureScript getTeardownFixture() {
-        return new TeardownFixtureAbstract2() {
-            @Override
-            protected void execute(ExecutionContext ec) {
-                deleteFrom(SimpleObject.class);
-            }
-        };
-    }
-    ...
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>In the <code>fixture</code> subpackage is the <code>SimpleObject_persona</code> "persona" which uses the corresponding <code>SimpleObjectBuilder</code> builder script; further discussion on this pattern <a href="#fixtures:ROOT:about.adoc#persona-and-builders.adoc" class="page unresolved">here</a>.
-These fixtures are also used by "local" integration tests, which reside under <code>src/test/java</code>.</p>
-</div>
-<div class="paragraph">
-<p>There are also unit tests and "glue" for the BDD specs:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code>src/
-  test/
-    java/
-      domainapp/
-        modules/
-          simple/
-            dom/
-              impl/
-                SimpleObject_Test.java
-                SimpleObjectRepository_Test.java
-            integtests/
-              SimpleModuleIntegTestAbstract.java
-                tests/
-                  SimpleObject_IntegTest.java
-                  SimpleObjectMenu_IntegTest.java
-              specglue/
-                SimpleObjectMenuGlue.java</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The simpleapp application has both "local" integration tests (defined within the <code>myapp-module-simple</code> module) and also "global" integration tests (the "smoke" tests in <code>myapp-application</code> module).
-There&#8217;s a role for both: local integration tests should fully exercise the module but may need to mock out collaborations between modules, while global integration tests exercise the whole application (but an over-reliance on these can cause test run times to bloat).</p>
-</div>
-<div class="paragraph">
-<p>With regard to the naming of these various BDD specs and integration tests, they follow the naming convention required by the (non-ASF) <a href="http://github.com/danhaywood/java-mavenmixin-surefire">"surefire" mavenmixin</a> that configures the maven surefire plugin.
-Integration tests include the name "IntegTest", while unit tests contain merely "Test".</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="myapp-webapp"><a class="anchor" href="#myapp-webapp"></a>myapp-webapp</h3>
+<h3 id="root-modules-pom-xml"><a class="anchor" href="#root-modules-pom-xml"></a>Root module&#8217;s pom.xml</h3>
 <div class="paragraph">
-<p>Finally, in the <code>myapp-webapp</code> module we have the configuration to package and bootstrap the application as a webapp.
-Under <code>src/main/webapp</code> are various resources, used either to configure the webapp, or that are served up by the running webapp:</p>
+<p>In the parent module we of course have the <code>pom.xml</code>.
+This inherits from <code>isis-app-starter-parent</code>:</p>
 </div>
 <div class="listingblock">
+<div class="title">pom.xml</div>
 <div class="content">
-<pre class="highlightjs highlight"><code>src/
-  main/
-    webapp/
-      src/
-        main/
-          webapp/
-            about/
-              index.html
-            css/
-              application.css
-            scripts/
-              application.js
-            swagger-ui/
-            WEB-INF/
-              isis.properties
-              logging.properties
-              shiro.ini
-              translations.po
-              web.xml</code></pre>
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;parent&gt;
+    &lt;groupId&gt;org.apache.isis.app&lt;/groupId&gt;
+    &lt;artifactId&gt;isis-app-starter-parent&lt;/artifactId&gt;
+    &lt;version&gt;XXX&lt;/version&gt;
+&lt;/parent&gt;</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Most important of these is <code>WEB-INF/web.xml</code>, which bootstraps both the Wicket viewer and the Restful Objects viewer, along with Shiro security.
-This is done using a webapp context listener:</p>
-</div>
-<div class="listingblock">
-<div class="title">web.xml</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;web-app ...&gt;
-  ...
-  &lt;listener&gt;
-      &lt;listener-class&gt;org.apache.isis.core.webapp.IsisWebAppContextListener&lt;/listener-class&gt;
-  &lt;/listener&gt;
-  ...
-&lt;/web-app&gt;</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The <code>about/index.html</code> is the page shown at the root of the package, providing links to either the Wicket viewer or to the Swagger UI.
-In a production application this is usually replaced with a page that does an HTTP 302 redirect to the Wicket viewer.</p>
-</div>
-<div class="paragraph">
-<p>In <code>css/application.css</code> you can use to customise CSS, typically to highlight certain fields or states.
-The pages generated by the Wicket viewer have plenty of CSS classes to target.
-You can also implement the <code>cssClass()</code> method in each domain object to provide additional CSS classes to target.</p>
-</div>
-<div class="paragraph">
-<p>Similarly, in <code>scripts/application.js</code> you have the option to add arbitrary Javascript.
-JQuery is available by default.</p>
-</div>
-<div class="paragraph">
-<p>In <code>swagger-ui</code> is a copy of the Swagger 2.x UI classes, preconfigured to run against the REST API exposed by the Restful Objects viewer.
-This can be useful for developing custom applications, and is accessible from the initial page (served up by <code>about/index.html</code>).</p>
-</div>
-<div class="paragraph">
-<p>Finally in <code>WEB-INF</code> we have the standard <code>web.xml</code> (already briefly discussed) along with several other files:</p>
+<p>... which builds upon Spring Boot&#8217;s own <code>org.springframework.boot:spring-boot-starter-parent</code>.
+This means:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p><code>isis.properties</code> contains further configuration settings for Apache Isis itself.</p>
-<div class="paragraph">
-<p>(As already discussed), these are in addition to the configuration properties found in various configuration properties that live alongside and that are loaded by the <code>DomainAppAppManifest</code> class.
-Those in the WEB-INF/isis.properties file are those that are likely to change when running the application in different environments.</p>
-</div>
+<p>the set of third party dependencies declared have been validated as compatible by Spring Boot team</p>
 </li>
 <li>
-<p><code>logging.properties</code> configures log4j.</p>
-<div class="paragraph">
-<p>The framework is configured to use slf4j running against log4j.</p>
-</div>
+<p>build plugins are declared and configured appropriately</p>
 </li>
 <li>
-<p><code>shiro.ini</code> configures Apache Shiro, used for security (authentication and authorisation)</p>
-</li>
-<li>
-<p><code>web.xml</code> configures the Wicket viewer and Restful Objects viewer.
-It also sets up various filters for serving up static resources with caching HTTP headers.</p>
+<p>imports to the Apache Isis dependencies are declared via <code>&lt;dependencyManagement&gt;</code></p>
 </li>
 </ul>
-</div>
-<div class="paragraph">
-<p>The webapp module&#8217;s <code>pom.xml</code> also has several tricks up its sleeve:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>most fundamentally, it allows the application to be packaged up as a regular <code>.war</code> file for deployment to a servlet container such as Tomcat 8.x</p>
-</li>
-<li>
-<p>it also uses the jetty-console mavenmixin to package the application as a standalone executable JAR (with an embedded jetty container).</p>
-<div class="paragraph">
-<p>The files in <code>src/main/jettyconsole</code> provide a splash image (if not run in headless mode).</p>
-</div>
-</li>
-<li>
-<p>the docker mavenmixin packages up the application as a docker image.</p>
-<div class="paragraph">
-<p>This uses the Dockerfile residing in <code>docker/Dockerfile</code> (under <code>src/main/resources</code>).</p>
-</div>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Under <code>src/main/resources</code> there is:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code>src/
-  main/
-    resources/
-      docker/
-        Dockerfile</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>As you might expect, this is used to create a Docker image.
-The <code>Dockerfile</code> is very simple; the built webapp is deployed as the ROOT.war into Apache Tomcat:</p>
-</div>
-<div class="listingblock">
-<div class="title">Dockerfile</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-Dockerfile hljs" data-lang="Dockerfile">FROM incodehq/tomcat
-RUN rm -rf ${DEPLOYMENT_DIR}/ROOT
-COPY ${docker-plugin.resource.include} ${DEPLOYMENT_DIR}/ROOT.war
-EXPOSE 8080</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Now you know your way around the code generated by the archetype, lets see how to build the app and run it.</p>
 </div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="building-the-app"><a class="anchor" href="#building-the-app"></a>Building the App</h2>
+<h2 id="running-from-within-the-ide"><a class="anchor" href="#running-from-within-the-ide"></a>Running from within the IDE</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Switch into the root directory of your newly generated app, and build your app:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd myapp
-mvn clean install</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>where <code>myapp</code> is the <code>artifactId</code> entered above.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="running-the-app"><a class="anchor" href="#running-the-app"></a>Running the App</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The <code>simpleapp</code> archetype generates a single WAR file, configured to run both the <a href="../../vw/about.html" class="page">Wicket viewer</a> and the <a href="../../vro/about.html" class="page">Restful Objects viewer</a>.
-The archetype also configures the DataNucleus/JDO Objectstore to use an in-memory HSQLDB connection.</p>
-</div>
-<div class="paragraph">
-<p>Once you&#8217;ve built the app, you can run the WAR in a variety of ways.</p>
-</div>
-<div class="sect2">
-<h3 id="using-mvn-jetty-plugin"><a class="anchor" href="#using-mvn-jetty-plugin"></a>Using mvn Jetty plugin</h3>
-<div class="paragraph">
-<p>First, you could run the WAR in a Maven-hosted Jetty instance, though you need to <code>cd</code> into the <code>webapp</code> module:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mvn -pl webapp jetty:run</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>You can also provide a system property to change the port:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mvn -pl webapp jetty:run -D jetty.port=9090</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="using-a-regular-servlet-container"><a class="anchor" href="#using-a-regular-servlet-container"></a>Using a regular servlet container</h3>
-<div class="paragraph">
-<p>You can also take the built WAR file and deploy it into a standalone servlet container such as [Tomcat](<a href="http://tomcat.apache.org" class="bare">http://tomcat.apache.org</a>).
-The default configuration does not require any configuration of the servlet container; just drop the WAR file into the <code>webapps</code> directory.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="using-docker"><a class="anchor" href="#using-docker"></a>Using Docker</h3>
-<div class="paragraph">
-<p>It&#8217;s also possible to package up the application as a docker image to run as a container.</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>To package up the application as a docker image (specifying the docker image name as a system property):<br></p>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mvn install -Dmavenmixin-docker -Ddocker-plugin.imageName=mycompany/myapp</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Alternatively, define the <code>${docker-plugin.imageName}</code> in the <code>webapp</code> module and use simply:<br></p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mvn install -Dmavenmixin-docker</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The packaged image can be viewed using <code>docker images</code>.</p>
-</div>
-</li>
-<li>
-<p>To run a docker image previously packaged:<br></p>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">docker container run -d -p 8080:8080 mycompany/myapp</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>This can then be accessed at <a href="http://localhost:8080">localhost:8080</a>.</p>
-</div>
-<div class="paragraph">
-<p>See <a href="https://github.com/danhaywood/java-mavenmixin-docker#how-to-consume">mavenmixin-docker</a> for further details on how to run docker images.</p>
-</div>
-</li>
-<li>
-<p>To upload the application as a docker image to <a href="https://hub.docker.com">docker hub</a> (or some other docker registry):<br></p>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mvn -pl webapp deploy -Dmavenmixin-docker</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>This assumes that the <code>${docker-plugin.imageName}</code> property has been defined, <em>and</em> also that docker registry credentials have been specified in <code>~/.m2/settings.xml</code>.
-Once more, see <a href="https://github.com/danhaywood/java-mavenmixin-docker#how-to-configure">mavenmixin-docker</a> for further details.</p>
-</div>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect2">
-<h3 id="from-within-the-ide"><a class="anchor" href="#from-within-the-ide"></a>From within the IDE</h3>
-<div class="paragraph">
-<p>Most of the time, though, you&#8217;ll probably want to run the app from within your IDE.
+<p>Most of the time you&#8217;ll probably want to run the app from within your IDE.
 The mechanics of doing this will vary by IDE; see the <a href="../../toc/devguide/ide.html" class="page">Developers' Guide</a> for details of setting up Eclipse or IntelliJ IDEA.
-Basically, though, it amounts to running <code>org.apache.isis.WebServer</code>, and ensuring that the <a href="../../toc/devguide/hints-and-tips/datanucleus-enhancer.html" class="page">DataNucleus enhancer</a> has properly processed all domain entities.</p>
+Basically, though, it amounts to running the <code>main()</code> method in the <code>SimpleApp</code>, but also (and this bit is important) ensuring that the <a href="../../toc/devguide/hints-and-tips/datanucleus-enhancer.html" class="page">DataNucleus enhancer</a> has properly processed all domain entities.</p>
 </div>
 <div class="paragraph">
 <p>Here&#8217;s what the setup looks like in IntelliJ IDEA:</p>
@@ -1158,7 +1726,7 @@ Basically, though, it amounts to running <code>org.apache.isis.WebServer</code>,
 </div>
 </div>
 <div class="paragraph">
-<p>with the maven goal to run the DataNucleus enhancer (discussed in more detail <a href="../../toc/devguide/hints-and-tips/datanucleus-enhancer.html" class="page">here</a>) before launch defined as:</p>
+<p>which uses an IntelliJ feature to run a different run configuration to run DataNucleus enhancer (discussed in more detail <a href="../../toc/devguide/hints-and-tips/datanucleus-enhancer.html" class="page">here</a>) beforehand:</p>
 </div>
 <div class="imageblock">
 <div class="content">
@@ -1167,188 +1735,18 @@ Basically, though, it amounts to running <code>org.apache.isis.WebServer</code>,
 </div>
 </div>
 </div>
-</div>
 <div class="sect1">
-<h2 id="running-with-fixtures"><a class="anchor" href="#running-with-fixtures"></a>Running with Fixtures</h2>
+<h2 id="experimenting-with-the-app"><a class="anchor" href="#experimenting-with-the-app"></a>Experimenting with the App</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>It is also possible to start the application with a pre-defined set of data; useful for demos or manual exploratory testing.
-This is done by specifying a <a href="#fixtures:ROOT:about.adoc" class="page unresolved">fixture script</a> on the command line.</p>
-</div>
-<div class="paragraph">
-<p>If you are running the app from an IDE, then you can specify the fixture script using the <code>--fixture</code> flag.  The archetype provides the <code>domainapp.fixture.scenarios.RecreateSimpleObjects</code> fixture script, for example:</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<a class="image" href="_images/simpleapp-webapp-with-fixtures.png"><img src="_images/simpleapp-webapp-with-fixtures.png" alt="simpleapp webapp with fixtures" width="600px"></a>
-</div>
-</div>
-<div class="paragraph">
-<p>Alternatively, you can run with a different <a href="../../refguide/applib-cm/classes/AppManifest-bootstrapping.html" class="page"><code>AppManifest</code></a> using the <code>--appManifest</code> (or <code>-m</code>) flag.
-The archetype provides
-<code>domainapp.app.DomainAppAppManifestWithFixtures</code> which specifies the aforementioned <code>RecreateSimpleObjects</code> fixture.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="using-the-app"><a class="anchor" href="#using-the-app"></a>Using the App</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The generated application is almost identical similar to that generated by <a href="https://github.com/apache/isis-app-helloworld">helloworld starter app</a>; a description of how to use it can be found <a href="https://github.com/apache/isis-app-helloworld#using-the-app">here</a>.</p>
-</div>
-<div class="paragraph">
-<p>One additional feature that the simpleapp contains over the helloworld app is a home page.
-This shows all domain objects (as installed by fixture scripts, described <a href="https://github.com/apache/isis-app-simpleapp#running-with-fixtures">above</a>).</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<a class="image" href="_images/using-simple-app/030-home-page.png"><img src="_images/using-simple-app/030-home-page.png" alt="030 home page" width="600px"></a>
-</div>
-</div>
-<div class="paragraph">
-<p>It&#8217;s also possible to run fixture scripts from the app itself:</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<a class="image" href="_images/using-simple-app/040-run-fixture-script-menu.png"><img src="_images/using-simple-app/040-run-fixture-script-menu.png" alt="040 run fixture script menu" width="600px"></a>
-</div>
-</div>
-<div class="paragraph">
-<p>Some fixture scripts may allow their default behaviour to be tweaked ((eg specify how many objects to create):</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<a class="image" href="_images/using-simple-app/050-run-fixture-script-prompt.png"><img src="_images/using-simple-app/050-run-fixture-script-prompt.png" alt="050 run fixture script prompt" width="600px"></a>
-</div>
-</div>
-<div class="paragraph">
-<p>The table summarises the resultant fixtures that were run:</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<a class="image" href="_images/using-simple-app/060-run-fixture-script-result.png"><img src="_images/using-simple-app/060-run-fixture-script-result.png" alt="060 run fixture script result" width="600px"></a>
-</div>
-</div>
-<div class="paragraph">
-<p>Navigating back to the home page shows the newly created objects:</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<a class="image" href="_images/using-simple-app/070-home-page.png"><img src="_images/using-simple-app/070-home-page.png" alt="070 home page" width="600px"></a>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="using-gitlab-ci-and-dockerhub"><a class="anchor" href="#using-gitlab-ci-and-dockerhub"></a>Using GitLab CI and DockerHub</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The archetype provides configuration files to allow you to build and package the application using <a href="https://gitlab.com/">GitLab</a> (for continuous integration pipelines) and <a href="https://hub.docker.com/">Docker Hub</a> (as a registry of Docker images).</p>
-</div>
-<div class="paragraph">
-<p>To use, you&#8217;ll need an account on both GitLab and DockerHub.</p>
-</div>
-<div class="sect2">
-<h3 id="dockerhub"><a class="anchor" href="#dockerhub"></a>DockerHub</h3>
-<div class="paragraph">
-<p>Simply create Docker repository "myapp" in DockerHub.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="source-code"><a class="anchor" href="#source-code"></a>Source code</h3>
-<div class="paragraph">
-<p>In the <code>.gitlab-ci.yml</code> file, update the name of the Docker repository on DockerHub:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-yml hljs" data-lang="yml">variables:
-  ...
-  DOCKER_REGISTRY_REPOSITORY: "myapp"</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="gitlab"><a class="anchor" href="#gitlab"></a>GitLab</h3>
-<div class="paragraph">
-<p>Create a git repository "myapp" in GitLab.</p>
-</div>
-<div class="paragraph">
-<p>Using Settings &gt; CI/CD, specify the following <em>Secret Variables</em>:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>DOCKER_REGISTRY_USERNAME</code> - corresponds to user account name on DockerHub</p>
-</li>
-<li>
-<p><code>DOCKER_REGISTRY_PASSWORD</code> - corresponding password</p>
-</li>
-<li>
-<p><code>DOCKER_REGISTRY_EMAIL</code> - associated email for the user account</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Finally, push a copy of the generated application to this repository using the instructions provided by GitLab.</p>
-</div>
-<div class="paragraph">
-<p>This will kick off a pipeline that will build the image and push to DockerHub.</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<a class="image" href="_images/dockerhub-tags.png"><img src="_images/dockerhub-tags.png" alt="dockerhub tags" width="600px"></a>
-</div>
-</div>
-<div class="paragraph">
-<p>The tag name is based on a combination of the date, the branch and the git shaId.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="running-the-image"><a class="anchor" href="#running-the-image"></a>Running the Image</h3>
-<div class="paragraph">
-<p>You can run the image in a new container using:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">docker run -p 8080:8080 -d XXX/YYY:ZZZ</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>where</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>XXX</code> is your DockerHub account name (<code>DOCKER_REGISTRY_USERNAME</code> secret variable in GitLab CI)</p>
-</li>
-<li>
-<p><code>YYY</code> is the name of the DockerHub registry (<code>DOCKER_REGISTRY_REPOSITORY</code> in the <code>.gitlab-ci.yml</code> file)</p>
-</li>
-<li>
-<p><code>ZZZ</code> is the tag of the image to run</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>For example, using the screenshot above, that image could be run using:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">docker run -p 8080:8080 -d danhaywood/simpleapp:20180315.0935.master.4521215</code></pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="modifying-the-app"><a class="anchor" href="#modifying-the-app"></a>Modifying the App</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Once you are familiar with the generated app, you&#8217;ll want to start modifying it.
-There is plenty of guidance on this site; start with this guide (fundamentals) and then look at the other guides linked to from the top-level menu or from the main <a href="../../toc/about.html" class="page">table of contents</a>.</p>
+<p>Once you are familiar with the app, try modifying it.
+There is plenty more guidance on this site; start with the <a href="../../userguide/fun/about.html" class="page">User Guide Fundamentals</a> and then look at the other guides linked to from the top-level menu or from the main <a href="../../toc/about.html" class="page">table of contents</a>.</p>
 </div>
 <div class="paragraph">
 <p>If you use IntelliJ IDEA or Eclipse, do also install the <a href="../../toc/devguide/about.html#live-templates" class="page">live templates (for IntelliJ)</a> / <a href="../../toc/devguide/about.html#editor-templates" class="page">editor templates (for Eclipse)</a>; these will help you follow the Apache Isis naming conventions.</p>
+</div>
+<div class="paragraph">
+<p>If you run into issues, please don&#8217;t hesitate to ask for help on the users mailing list or the Slack channel, as per the <a href="../../toc/landing-page/support.html" class="page">support page</a>.</p>
 </div>
 </div>
 </div>
@@ -1369,7 +1767,7 @@ There is plenty of guidance on this site; start with this guide (fundamentals) a
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200125-0400-7d6bae37</p>
+            <p>Revision: 2.0.0-M2.20200126-1558-667e8a4d</p>
         </div>
     </div>
 </footer>

@@ -348,11 +348,40 @@
 <article class="doc">
     <a name="section-top"></a>
 <h1 class="page">Keycloak Security</h1>
+<div id="preamble">
+<div class="sectionbody">
 <div class="paragraph">
 <p>This guide describes the configuration of the Keycloak implementation of Apache Isis' <code>Authenticator and `Authorizor</code> APIs.</p>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="faq"><a class="anchor" href="#faq"></a>FAQ</h2>
+<div class="sectionbody">
+<div class="dlist">
+<dl>
+<dt class="hdlist1">How do I switch from using Shiro to using Keycloak?</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>First, update the webapp&#8217;s <code>pom.xml</code> to reference <code>org.apache.isis.security:isis-security-keycloak-impl</code> (instead of <code>o.a.i.security:isis-security-shiro-impl</code>)</p>
+</li>
+<li>
+<p>Then change the <code>AppManifest</code> class to reference <code>IsisModuleSecurityKeycloak</code> instead of IsisModuleSecurityShiro`</p>
+</li>
+</ul>
+</div>
 <div class="paragraph">
-<p>TODO: v2</p>
+<p>This will result in the <code>KeycloakFilter</code> (<a href="https://github.com/apache/isis/blob/master/security/keycloak/src/main/java/org/apache/isis/security/keycloak/webmodule/KeycloakFilter.java">code here</a>) being configured.<br></p>
+</div>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>As you can see, it expects for Keycloak to set three <code>X-Auth-Xxx</code> headers, and it just blindly trusts them to create an appropriate <code>AuthenticationSession</code>.</p>
+</div>
+</div>
 </div>
 </article>
 <aside class="article-aside toc" role="navigation">
@@ -371,7 +400,7 @@
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200125-0400-7d6bae37</p>
+            <p>Revision: 2.0.0-M2.20200126-1558-667e8a4d</p>
         </div>
     </div>
 </footer>
