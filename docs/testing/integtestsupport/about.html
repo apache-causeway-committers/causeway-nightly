@@ -45,16 +45,15 @@
             <span class="navbar-item navbar-heading">Core</span>
             <a class="navbar-item" href="../../userguide/about.html">User Guide</a>
             <a class="navbar-item" href="../../refguide/about.html">Reference Guide</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Development</span>
+            <a class="navbar-item" href="../../toc/devguide/about.html">Developers' Guide</a>
             <a class="navbar-item" href="../../testing/about.html">Testing Guide</a>
             <hr class="navbar-divider"/>
             <span class="navbar-item navbar-heading">Libraries</span>
             <a class="navbar-item" href="../../subdomain/about.html">Subdomain Libraries</a>
             <a class="navbar-item" href="../../valuetypes/about.html">Value Types</a>
             <a class="navbar-item" href="../../mappings/about.html">Bounded Context Mapping Libraries</a>
-            <hr class="navbar-divider"/>
-            <span class="navbar-item navbar-heading">Resources</span>
-            <a class="navbar-item" href="../../toc/devguide/about.html">Developers' Guide</a>
-            <a class="navbar-item" href="../../toc/mavendeps/about.html">Maven dependencies</a>
           </div>
         </div>
         <div class="navbar-item has-dropdown is-hoverable">
@@ -134,22 +133,19 @@
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../overview.html">Overview</a>
-  </li>
-  <li class="nav-item" data-depth="1">
     <a class="nav-link" href="../unittestsupport/about.html">Unit Test Support</a>
   </li>
   <li class="nav-item is-current-page" data-depth="1">
     <a class="nav-link" href="about.html">Integ Test Support</a>
   </li>
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../specsupport/about.html">BDD Spec Support (extension)</a>
+    <a class="nav-link" href="../specsupport/about.html">BDD Spec Support</a>
   </li>
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../fixtures/about.html">Fixture Scripts (extension)</a>
+    <a class="nav-link" href="../fixtures/about.html">Fixture Scripts</a>
   </li>
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../fakedata/about.html">Fakedata (extension)</a>
+    <a class="nav-link" href="../fakedata/about.html">Fakedata</a>
   </li>
   <li class="nav-item" data-depth="1">
     <a class="nav-link" href="../h2console/about.html">H2 Console</a>
@@ -327,202 +323,24 @@
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>As discussed in the introductory overview of this chapter, Apache Isis allows you to integration test your domain objects from within JUnit.  There are several parts to this:</p>
+<p>Apache Isis builds on top of Spring Boot&#8217;s integration testing support, in particular using <a href="https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/test/context/SpringBootTest.html">@SpringBootTest</a>.
+This configures and bootstraps the Apache Isis runtime, usually running against an in-memory database.</p>
+</div>
+<div class="paragraph">
+<p>On top of that, we usually:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>configuring the Apache Isis runtime so it can be bootstrapped (mostly boilerplate)</p>
+<p>use <a href="../fixtures/about.html" class="page">fixture scripts</a> to set up the app&#8217;s initial state</p>
 </li>
 <li>
-<p>defining a base class to perform said bootstrapping</p>
-</li>
-<li>
-<p>using fixture scripts to set up the app</p>
-</li>
-<li>
-<p>using <code>WrapperFactory</code> so that the UI can be simulated.</p>
+<p>use the <a href="../../refguide/applib-svc/application-layer-api/WrapperFactory.html" class="page">WrapperFactory</a> to simulate the UI.</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>We&#8217;ll get to all that shortly, but let&#8217;s start by taking a look at what a typical integration test looks like.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="typical-usage"><a class="anchor" href="#typical-usage"></a>Typical Usage</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>This example adapted from the <a href="http://github.com/isisaddons/isis-app-todoapp">Isis addons' todoapp</a> (non-ASF).  The code we want to test (simplified) is:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class ToDoItem ... {
-
-    private boolean complete;
-    @Property( editing = Editing.DISABLED )
-    public boolean isComplete() {
-        return complete;
-    }
-    public void setComplete(final boolean complete) {
-        this.complete = complete;
-    }
-
-    @Action()
-    public ToDoItem completed() {
-        setComplete(true);
-        ...
-        return this;
-    }
-    public String disableCompleted() {
-        return isComplete() ? "Already completed" : null;
-    }
-    ...
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>We typically put the bootstrapping of Apache Isis into a superclass (<code>AbstractToDoIntegTest</code> below), then subclass as required.</p>
-</div>
-<div class="paragraph">
-<p>For this test (of the "completed()" action) we need an instance of a <code>ToDoItem</code> that is not yet complete.  Here&#8217;s the setup:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class ToDoItemIntegTest extends AbstractToDoIntegTest {
-
-    @Inject
-    FixtureScripts fixtureScripts;                              <i class="conum" data-value="1"></i><b>(1)</b>
-    @Inject
-    ToDoItems toDoItems;                                        <i class="conum" data-value="2"></i><b>(2)</b>
-    ToDoItem toDoItem;                                          <i class="conum" data-value="3"></i><b>(3)</b>
-
-    @Before
-    public void setUp() throws Exception {
-        RecreateToDoItemsForCurrentUser fixtureScript =         <i class="conum" data-value="4"></i><b>(4)</b>
-            new RecreateToDoItemsForCurrentUser();
-        fixtureScripts.runFixtureScript(fixtureScript, null);
-        final List&lt;ToDoItem&gt; all = toDoItems.notYetComplete();  <i class="conum" data-value="5"></i><b>(5)</b>
-        toDoItem = wrap(all.get(0));                            <i class="conum" data-value="6"></i><b>(6)</b>
-    }
-    ...
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>the <a href="../../refguide/applib-cm/classes/super.html#FixtureScripts" class="page"><code>FixtureScripts</code></a> domain service is injected, providing us with the ability to run fixture scripts</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>likewise, an instance of the <code>ToDoItems</code> domain service is injected.  We&#8217;ll use this to lookup&#8230;&#8203;</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>the object under test, held as a field</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>the fixture script for this test; it deletes all existing todo items (for the current user only) and then recreates them</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>we lookup one of the just-created todo items&#8230;&#8203;</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
-<td>and then wrap it so that our interactions with it are as if through the UI</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>The following code tests the happy case, that a not-yet-completed <code>ToDoItem</code> can be completed by invoking the <code>completed()</code> action:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class ToDoItemIntegTest ... {
-    ...
-    public static class Completed extends ToDoItemIntegTest { <i class="conum" data-value="1"></i><b>(1)</b>
-        @Test
-        public void happyCase() throws Exception {
-            // given
-            assertThat(toDoItem.isComplete()).isFalse();      <i class="conum" data-value="2"></i><b>(2)</b>
-            // when
-            toDoItem.completed();
-            // then
-            assertThat(toDoItem.isComplete()).isTrue();
-        }
-        ...
-    }
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>the idiom we follow is to use nested static classes to identify the class responsibility being tested</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>the <a href="http://github.com/isisaddons/isis-app-todoapp">todoapp</a> uses <a href="http://joel-costigliola.github.io/assertj">AssertJ</a>.</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>What about when a todo item is already completed?  The <code>disableCompleted()</code> method in the class says that it shouldn&#8217;t be allowed (the action would be greyed out in the UI with an appropriate tooltip).  The following test verifies this:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">        @Test
-        public void cannotCompleteIfAlreadyCompleted() throws Exception {
-            // given
-            unwrap(toDoItem).setComplete(true);                     <i class="conum" data-value="1"></i><b>(1)</b>
-            // expect
-            expectedExceptions.expectMessage("Already completed");  <i class="conum" data-value="2"></i><b>(2)</b>
-            // when
-            toDoItem.completed();
-        }</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>we unwrap the domain object in order to set its state directly</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>the expectedExceptions <a href="http://junit.org/junit4/javadoc/latest/org/junit/rules/ExpectedException.html">JUnit rule</a> (defined by a superclass) verifies that the appropiate exception is indeed thrown (in the "when")</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>And what about the fact that the underlying "complete" property is annotated as being disabled?
-If the <code>ToDoItem</code> is put into edit mode in the UI, the complete checkbox should remain read-only.
-Here&#8217;s a verify similar test that verifies this also:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">        @Test
-        public void cannotSetPropertyDirectly() throws Exception {
-            // expect
-            expectedExceptions.expectMessage("Always disabled");  <i class="conum" data-value="1"></i><b>(1)</b>
-            // when
-            toDoItem.setComplete(true);
-        }</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>again we use the exceptedExceptions rule.</td>
-</tr>
-</table>
+<p>To explain further, let&#8217;s walk through of the <a href="../../starters/simpleapp/about.html" class="page">SimpleApp</a> starter app.</p>
 </div>
 </div>
 </div>
@@ -530,350 +348,177 @@ Here&#8217;s a verify similar test that verifies this also:</p>
 <h2 id="bootstrapping"><a class="anchor" href="#bootstrapping"></a>Bootstrapping</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Integration tests instantiate an Apache Isis "runtime" (as a singleton) within a JUnit test.
-Because (depending on the size of your app) it takes a little time to bootstrap Apache Isis, the framework caches the runtime on a thread-local from one test to the next.</p>
+<p>We typically put the bootstrapping of Apache Isis into a superclass, one for each Maven module.
+This allows an individual "slice" of the application to be tested, rather than as a monolith.</p>
 </div>
 <div class="paragraph">
-<p>The recommended way to bootstrapping of integration tests is done using a <a href="../../refguide/applib-cm/classes/AppManifest2-bootstrapping.html" class="page"><code>Module</code></a> implementation, along with the <code>IntegrationTestAbstract3</code> superclass.</p>
-</div>
-<div class="paragraph">
-<p>For example, the <a href="https://github.com/apache/isis-app-simpleapp">SimpleApp archetype</a>'s integration tests all inherit from this class:</p>
+<p>So, for the <code>module-simple</code> module, we have:</p>
 </div>
 <div class="listingblock">
+<div class="title">SimpleModuleIntegTestAbstract.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public abstract class DomainAppIntegTestAbstract extends IntegrationTestAbstract3 {
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@SpringBootTest(
+        classes = SimpleModuleIntegTestAbstract.AppManifest.class
+)
+@TestPropertySource({
+        IsisPresets.H2InMemory_withUniqueSchema,
+        IsisPresets.DataNucleusAutoCreate,
+        IsisPresets.UseLog4j2Test,
+})
+public abstract class SimpleModuleIntegTestAbstract extends IsisIntegrationTestAbstractWithFixtures {
 
-    public DomainAppIntegTestAbstract() {
-        super(new DomainAppApplicationModule());
+    @Configuration
+    @Import({
+        IsisModuleCoreRuntimeServices.class,
+        IsisModuleSecurityBypass.class,
+        IsisModuleJdoDataNucleus5.class,
+        IsisModuleTestingFixturesApplib.class,
+        SimpleModule.class                      <i class="conum" data-value="1"></i><b>(1)</b>
+    })
+    public static class AppManifest {
     }
 }</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>where <code>DomainAppApplicationModule</code> in turn declares all the dependencies that make up the application.</p>
-</div>
-<div class="paragraph">
-<p>If required, the <code>Module</code> can be customised first using the various <code>withXxx(&#8230;&#8203;)</code> methods to specify addition modules, domain services and configuration properties.</p>
-</div>
-<div class="sect2">
-<h3 id="faster-bootstrapping"><a class="anchor" href="#faster-bootstrapping"></a>Faster Bootstrapping</h3>
-<div class="paragraph">
-<p>The <code>IntegrationTestAbstract3</code> superclass also allows the introspection mode to be specified, which can reduce the time to bootstrap the test.</p>
-</div>
-<div class="paragraph">
-<p>By default integration tests are run in "production" deployment mode, so with the <code>isis.reflector.introspection.mode</code> set to its default of "lazy_unless_production" this will actually result in full introspection of the Apache Isis metamodel.
-The <em>does</em> have the benefit that the metamodel will be validated, but - as mentioned - with the corresponding downside of taking longer to bootstrap.</p>
-</div>
-<div class="paragraph">
-<p>To bootstrap lazily, override as follows:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public abstract class DomainAppIntegTestAbstract extends IntegrationTestAbstract3 {
-
-    public DomainAppIntegTestAbstract() {
-        super(new DomainAppApplicationModule(), IntrospectionMode.LAZY);
-    }
-}</code></pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="abstract-class"><a class="anchor" href="#abstract-class"></a>Abstract class</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>When writing integration tests, it&#8217;s easiest to inherit from the <code>IntegrationTestAbstract3</code> base class.</p>
-</div>
-<div class="paragraph">
-<p>This base class <a href="#bootstrapping">bootstraps</a> the framework (caching the framework on a thread-local), and provides various utility methods and framework-provided services for use by your application&#8217;s subclass tests.</p>
-</div>
-<div class="sect2">
-<h3 id="integrationtestabstract3"><a class="anchor" href="#integrationtestabstract3"></a><code>IntegrationTestAbstract3</code></h3>
-<div class="paragraph">
-<p>We recommend that your integration tests inherit from Apache Isis' <code>IntegrationTestAbstract3</code> class.
-The primary benefit over its predecessor, <code>IntegrationTestAbstract2</code> (discussed <a href="#IntegrationTestAbstract2">below</a> is that it allows the test to be bootstrapped by passing in a <code>Module</code> rather than an <code>AppManifest</code>.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public abstract class DomainAppIntegTest
-                        extends IntegrationTestAbstract3 {
-
-    public DomainAppIntegTestAbstract() {
-        super(new DomainAppApplicationModule());
-    }
-}</code></pre>
-</div>
-</div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-TODO: v2 - out of date, we no longer support <code>isis.integTest.module</code> system property.
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>The <code>IntegrationTestAbstract3</code> class also allows the module to be specified externally, using either the <code>isis.integTest.module</code> or the (more general) <code>isis.headless.module</code> system property, eg by updating the <code>pom.xml</code>.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-TODO: v2 - out of date, we no longer support <code>isis.integTest.module</code> system property.
-</td>
-</tr>
-</table>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;properties&gt;
-    &lt;isis.integTest.module&gt;
-        org.estatio.module.application.EstatioApplicationModule
-    &lt;/isis.integTest.module&gt;
-&lt;/properties&gt;</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>This is required when the codebase is organised as multiple "logical" modules within a single Maven "physical" module (ie <code>src/main/java</code> compilation unit).
-The integration testing framework will bootstrap the module specified by the system property and cache for all tests discovered within the physical module.</p>
-</div>
-<div class="paragraph">
-<p>This test class provides a number of helper/convenience methods and JUnit rules:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Rule
-public IsisTransactionRule isisTransactionRule =                         <i class="conum" data-value="1"></i><b>(1)</b>
-    new IsisTransactionRule();
-@Rule
-public JUnitRuleMockery2 context =                                       <i class="conum" data-value="2"></i><b>(2)</b>
-    JUnitRuleMockery2.createFor(Mode.INTERFACES_AND_CLASSES);
-@Rule
-public ExpectedException expectedExceptions =                            <i class="conum" data-value="3"></i><b>(3)</b>
-    ExpectedException.none();
-@Rule
-public ExceptionRecognizerTranslate exceptionRecognizerTranslations =    <i class="conum" data-value="4"></i><b>(4)</b>
-    ExceptionRecognizerTranslate.create();</code></pre>
 </div>
 </div>
 <div class="colist arabic">
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>ensures an Apache Isis session/transaction running for each test</td>
+<td>references just the <code>SimpleModule</code></td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>while in the <code>webapp</code> module we have:</p>
+</div>
+<div class="listingblock">
+<div class="title">ApplicationIntegTestAbstract.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@SpringBootTest(
+        classes = ApplicationIntegTestAbstract.AppManifest.class
+)
+@TestPropertySource({
+        IsisPresets.H2InMemory_withUniqueSchema,
+        IsisPresets.DataNucleusAutoCreate,
+        IsisPresets.UseLog4j2Test,
+})
+@ContextConfiguration
+public abstract class ApplicationIntegTestAbstract extends IsisIntegrationTestAbstract {
+
+    @Configuration
+    @Import({
+        IsisModuleCoreRuntimeServices.class,
+        IsisModuleJdoDataNucleus5.class,
+        IsisModuleSecurityBypass.class,
+        IsisModuleTestingFixturesApplib.class,
+        ApplicationModule.class                 <i class="conum" data-value="1"></i><b>(1)</b>
+    })
+    public static class AppManifest {
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>references the top-level <code>ApplicationModule</code></td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>You can see that these are very similar, what&#8217;s different is the module referenced.</p>
+</div>
+<div class="paragraph">
+<p>They both also force an in-memory database, with JDO/DataNucleus ORM configured to autocreate the database schema.</p>
+</div>
+<div class="sect2">
+<h3 id="faster-bootstrapping"><a class="anchor" href="#faster-bootstrapping"></a>Faster bootstrapping</h3>
+<div class="paragraph">
+<p>By default integration tests are run in "production" deployment mode.
+With the <code>isis.core.meta-model.introspector.mode=</code> set to its default value, this results in full introspection of the Apache Isis metamodel.</p>
+</div>
+<div class="paragraph">
+<p>While this <em>does</em> have the benefit that the metamodel will be validated, the downside is that the test takes longer to bootstrap.</p>
+</div>
+<div class="paragraph">
+<p>To bootstrap lazily, set the property to 'lazy'.
+This can be done by adding:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@TestPropertySource(IsisPresets.IntrospectLazily)</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="typical-usage"><a class="anchor" href="#typical-usage"></a>Typical Usage</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Let&#8217;s now drill down and look at <code>SimpleObject_IntegTest</code>, which (not surprisingly) is the integration test that exercises the <code>SimpleObject</code> class:</p>
+</div>
+<div class="listingblock">
+<div class="title">SimpleObject_IntegTest.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Transactional                                                                  <i class="conum" data-value="1"></i><b>(1)</b>
+public class SimpleObject_IntegTest extends SimpleModuleIntegTestAbstract {     <i class="conum" data-value="2"></i><b>(2)</b>
+
+    SimpleObject simpleObject;
+
+    @BeforeEach                                                                 <i class="conum" data-value="3"></i><b>(3)</b>
+    public void setUp() {
+        // given
+        simpleObject = fixtureScripts.runPersona(SimpleObject_persona.FOO);     <i class="conum" data-value="4"></i><b>(4)</b>
+    }
+
+    //...
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The Spring <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/transaction/annotation/Transactional.html">@Transactional</a> annotation means that any changes made in the database will be rolled back automatically.
+There&#8217;s further discussion <a href="#manual-teardown">below</a>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>sets up a JMock context (using Apache Isis' extension to JMock as described in <a href="../unittestsupport/about.html#jmock-extensions" class="page">JMock Extensions</a>.</td>
+<td>inherits from the module-level abstract class (which in turn will be annotated with <code>@SpringBootTest</code>, see <a href="#bootstrapping">bootstrapping</a> earlier).</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>standard JUnit rule for writing tests that throw exceptions</td>
+<td>uses JUnit 5</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>to capture messages that require translation, as described in <a href="../../userguide/btb/i18n.html" class="page">i18 support</a>.</td>
+<td>uses a <a href="../fixtures/about.html" class="page">fixture script</a> to setup the database.
+The <code>FixtureScripts</code> domain service is inherited from the superclass.</td>
 </tr>
 </table>
 </div>
+<div class="sect2">
+<h3 id="testing-a-property"><a class="anchor" href="#testing-a-property"></a>Testing a property</h3>
 <div class="paragraph">
-<p>All of these rules could be inlined in your own base class; as we say, they are a convenience.</p>
+<p>For example, let&#8217;s test the <code>SimpleObject#name</code> property:</p>
 </div>
-<div class="paragraph">
-<p>The class also provides a number of injected domain services,  notably
-<a href="../../refguide/applib-svc/persistence-layer-api/RepositoryService.html" class="page"><code>RepositoryService</code></a>, <a href="../../refguide/applib-svc/core-domain-api/FactoryService.html" class="page"><code>FactoryService</code></a>, <a href="../../refguide/applib-svc/metadata-api/ServiceRegistry.html" class="page"><code>ServiceRegistry2</code></a>, <a href="../../refguide/applib-svc/application-layer-api/WrapperFactory.html" class="page"><code>WrapperFactory</code></a> (to wrap objects simulating interaction through the user interface), <a href="../../refguide/applib-svc/application-layer-api/TransactionService.html" class="page"><code>TransactionService</code></a> (most commonly used to commit changes after the fixture setup) and <a href="../../refguide/applib-svc/application-layer-api/SessionManagementService.html" class="page"><code>SessionManagementService</code></a> (for tests that check interactions over multiple separate sessions).</p>
+<div class="listingblock">
+<div class="title">SimpleObject.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject()
+public class SimpleObject
+    ...
+    @lombok.Getter @lombok.Setter
+    @Name private String name;
+    ...
+}</code></pre>
 </div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="configuration-properties"><a class="anchor" href="#configuration-properties"></a>Configuration Properties</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The recommended way to run integration tests is against an HSQLDB in-memory database.
-This can be done using the application&#8217;s usual <a href="../../refguide/applib-cm/classes/AppManifest-bootstrapping.html" class="page"><code>AppManifest</code></a>, and then overriding JDBC URL and similar.</p>
-</div>
-<div class="paragraph">
-<p>If inheriting from `IntegrationTestAbstract3&#8217;s then these configuration properties are set up automatically:</p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. Default Configuration Properties for Integration Tests</caption>
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 16.6666%;">
-<col style="width: 50.0001%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Property</th>
-<th class="tableblock halign-left valign-top">Value</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>isis.persistor.datanucleus.impl.</code><br>
-<code>javax.jdo.option.ConnectionURL</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">jdbc:hsqldb:mem:test</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>JDBC URL</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>isis.persistor.datanucleus.impl.</code><br>
-<code>javax.jdo.option.ConnectionDriverName</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">org.hsqldb.jdbcDriver</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>JDBC Driver</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>isis.persistor.datanucleus.impl.</code><br>
-<code>javax.jdo.option.ConnectionUserName</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">sa</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Username</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>isis.persistor.datanucleus.impl.</code><br>
-<code>javax.jdo.option.ConnectionPassword</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;empty string&gt;</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Password, possibly encrypted (see <code>datanucleus.ConnectionPasswordEncrypter</code>, below).</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>isis.persistor.datanucleus.impl.</code><br>
-<code>datanucleus.ConnectionPasswordEncrypter</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;empty string&gt;</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Specify the <code>datanucleus.ConnectionPasswordDecrypter</code> implementation used to decrypt the password.</p>
 </div>
 <div class="paragraph">
-<p>See the <a href="http://www.datanucleus.org/products/accessplatform_4_1/persistence_properties.html#ConnectionPasswordDecrypter">DataNucleus documentation</a> for further details.</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>isis.persistor.datanucleus.impl.</code><br>
-<code>datanucleus.schema.autoCreateAll</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Recreate DB for each test run (an in-memory database)</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>isis.persistor.datanucleus.impl.</code><br>
-<code>datanucleus.schema.validateAll</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Disable validations (minimize bootstrap time)</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>isis.persistor.datanucleus.impl.</code><br>
-<code>datanucleus.persistenceByReachabilityAtCommit</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>As per WEB-INF/persistor_datanucleus.properties</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>isis.persistor.datanucleus.impl.</code><br>
-<code>datanucleus.identifier.case</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">MixedCase</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>As per WEB-INF/persistor_datanucleus.properties</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>isis.persistor.datanucleus.impl.</code><br>
-<code>datanucleus.cache.level2.type</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">none</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>As per WEB-INF/persistor_datanucleus.properties</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>isis.persistor.datanucleus.impl.</code><br>
-<code>datanucleus.cache.level2.mode</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">ENABLE_SELECTIVE</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>As per WEB-INF/persistor_datanucleus.properties</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>isis.persistor.datanucleus.</code><br>
-<code>install-fixtures</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Automatically install any fixtures that might have been registered</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>isis.persistor.</code><br>
-<code>enforceSafeSemantics</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>isis.deploymentType</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">server_prototype</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"></div></td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<div class="sect1">
-<h2 id="wrapper-factory"><a class="anchor" href="#wrapper-factory"></a>Wrapper Factory</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The <a href="../../refguide/applib-svc/application-layer-api/WrapperFactory.html" class="page"><code>WrapperFactory</code></a> service is responsible for wrapping a domain object in a dynamic proxy, of the same type as the object being proxied.
-And the role of this wrapper is to simulate the UI.</p>
+<p>Properties are visible but unmodifiable by default
+We therefore have two tests for each of these facts.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -882,15 +527,359 @@ And the role of this wrapper is to simulate the UI.</p>
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-<div class="paragraph">
-<p><code>WrapperFactory</code> uses <a href="http://www.javassist.org">javassist</a> to perform its magic; this is the same technology that ORMs such as <a href="http://hibernate.org/">Hibernate</a> use to manage lazy loading/dirty tracking (DataNucleus uses a different mechanism).</p>
-</div>
+Non-editable properties is change from Isis v1.x.
+Use the <code>isis.applib.annotation.domain-object.editing</code> configuration property to pverride.
 </td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>It does this by allowing through method invocations that would be allowed if the user were interacting with the domain object through one of the viewers, but throwing an exception if the user attempts to interact with the domain object in a way that would not be possible if using the UI.</p>
+<p>By convention, we group tests into nested static classes, so the corresponding integration test is:</p>
+</div>
+<div class="listingblock">
+<div class="title">SimpleObject_IntegTest.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class SimpleObject_IntegTest extends SimpleModuleIntegTestAbstract {
+    ...
+    public static class name extends SimpleObject_IntegTest {   <i class="conum" data-value="1"></i><b>(1)</b>
+
+        @Test
+        public void accessible() {
+            // when
+            final String name = wrap(simpleObject).getName();   <i class="conum" data-value="2"></i><b>(2)</b>
+
+            // then
+            assertThat(name).isEqualTo(simpleObject.getName()); <i class="conum" data-value="3"></i><b>(3)</b>
+        }
+
+        @Test
+        public void not_editable() {
+
+            // expect
+            assertThrows(DisabledException.class, ()-&gt;{         <i class="conum" data-value="4"></i><b>(4)</b>
+
+                // when
+                wrap(simpleObject).setName("new name");
+            });
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>inherit from <code>SimpleObject_IntegTest</code>
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-caution" title="Caution"></i>
+</td>
+<td class="content">
+JUnit 5&#8217;s <code>@Nested</code> annotation doesn&#8217;t work here.
+</td>
+</tr>
+</table>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>we use the <a href="#wrapper-factory">WrapperFactory</a> to access the domain object.
+<div class="paragraph">
+<p>This will check that property (for access) is visible to the current user.</p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>we use <a href="http://joel-costigliola.github.io/assertj">AssertJ</a> for assertions.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>attempting to set the name on the property (through the wrapper) is disallowed.
+We detect this by catching a <code>DisabledException</code> (using JUnit 5&#8217;s <code>assertThrows()</code>).</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="testing-an-action"><a class="anchor" href="#testing-an-action"></a>Testing an action</h3>
+<div class="paragraph">
+<p>The way that the simple app allows the name to be updated is through an <code>updateName</code> action:</p>
+</div>
+<div class="listingblock">
+<div class="title">SimpleObject.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject()
+public class SimpleObject
+    ...
+    public static class UpdateNameActionDomainEvent extends SimpleObject.ActionDomainEvent {}
+    @Action(...
+            domainEvent = UpdateNameActionDomainEvent.class)                <i class="conum" data-value="1"></i><b>(1)</b>
+    public SimpleObject updateName(
+            @Name final String name) {                                      <i class="conum" data-value="2"></i><b>(2)</b>
+        setName(name);                                                      <i class="conum" data-value="3"></i><b>(3)</b>
+        return this;
+    }
+    public String default0UpdateName() {                                    <i class="conum" data-value="4"></i><b>(4)</b>
+        return getName();
+    }
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>an event will be emitted whenever the action is interacted with</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>(the <code>@Name</code> annotation is discussed later)</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>the business functionality to be tested.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>(we normally test default methods using unit tests).</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The corresponding integration test is:</p>
+</div>
+<div class="listingblock">
+<div class="title">SimpleObject_IntegTest.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class SimpleObject_IntegTest extends SimpleModuleIntegTestAbstract {
+    ...
+    public static class updateName extends SimpleObject_IntegTest {
+
+        @DomainService                                                      <i class="conum" data-value="1"></i><b>(1)</b>
+        public static class UpdateNameListener {
+
+            @Getter
+            List&lt;SimpleObject.UpdateNameActionDomainEvent&gt; events = new ArrayList&lt;&gt;();
+
+            @EventListener(SimpleObject.UpdateNameActionDomainEvent.class)
+            public void on(SimpleObject.UpdateNameActionDomainEvent ev) {
+                events.add(ev);
+            }
+        }
+
+        @Inject
+        UpdateNameListener updateNameListener;
+
+        @Test
+        public void can_be_updated_directly() {
+
+            // given
+            updateNameListener.getEvents().clear();
+
+            // when
+            wrap(simpleObject).updateName("new name");                      <i class="conum" data-value="2"></i><b>(2)</b>
+            transactionService.flushTransaction();
+
+            // then
+            assertThat(wrap(simpleObject).getName()).isEqualTo("new name"); <i class="conum" data-value="3"></i><b>(3)</b>
+            assertThat(updateNameListener.getEvents()).hasSize(5);          <i class="conum" data-value="4"></i><b>(4)</b>
+        }
+    }</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>defines a domain service to detect the domain events emitted when interacting with the action (through the wrapper).
+<div class="paragraph">
+<p>This domain service is not part of the production code base, but is detected automatically thanks to <code>@ComponentScan</code> on the <code>SimpleModule</code>.</p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>interact with the action through the wrapper</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>verify the object was updated correctly</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>verify that the domain events were emitted.
+<div class="paragraph">
+<p>Since this was a successful interaction, there will have been 5 events, one for each of the event phases (hide, disable, validate, executing, executed)</p>
+</div></td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="testing-a-type-meta-annotation"><a class="anchor" href="#testing-a-type-meta-annotation"></a>Testing a type meta-annotation</h3>
+<div class="paragraph">
+<p>As was pointed out earlier, the <code>name</code> parameter to <code>updateName()</code> has the <code>@Name</code> meta-annotation.
+This meta-annotation also defines some business rules, through <code>@Property</code> and <code>@Parameter</code>:</p>
+</div>
+<div class="listingblock">
+<div class="title">Name.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Property(mustSatisfy = Name.NoExclamationMarks.class, maxLength = Name.MAX_LEN)
+@Parameter(mustSatisfy = Name.NoExclamationMarks.class, maxLength = Name.MAX_LEN)
+@ParameterLayout(named = "Name")
+...
+public @interface Name {
+
+    int MAX_LEN = 40;
+
+    class NoExclamationMarks extends AbstractSpecification2&lt;String&gt; {
+
+        @Override
+        public TranslatableString satisfiesTranslatableSafely(final String name) {
+            return name != null &amp;&amp; name.contains("!")
+                    ? TranslatableString.tr("Exclamation mark is not allowed")
+                            : null;
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We test this by checking the wrapper throws an <code>InvalidException</code>:</p>
+</div>
+<div class="listingblock">
+<div class="title">SimpleObject_IntegTest.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class SimpleObject_IntegTest extends SimpleModuleIntegTestAbstract {
+    ...
+    public static class updateName extends SimpleObject_IntegTest {
+        ...
+        @Test
+        public void failsValidation() {
+
+            // expect
+            InvalidException cause = assertThrows(InvalidException.class, ()-&gt;{
+
+                // when
+                wrap(simpleObject).updateName("new name!");
+            });
+
+            // then
+            assertThat(cause.getMessage(), containsString("Exclamation mark is not allowed."));
+        }
+    }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Some of the methods being called here are inherited from the superclass, so let&#8217;s look at that next.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="isisintegrationtestabstract"><a class="anchor" href="#isisintegrationtestabstract"></a>IsisIntegrationTestAbstract</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>For convenience the framework provides the <code>IsisIntegrationTestAbstract</code> as a base class for integration tests.</p>
+</div>
+<div class="paragraph">
+<p>This is the class that provides the <code>wrap(&#8230;&#8203;)</code> method (as see in the <a href="#typical-usage">previous section</a>).
+It also provides a number of other convenience methods:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>wrap()</code> - as just mentioned.
+Also has an alias of <code>w()</code>.</p>
+</li>
+<li>
+<p><code>unwrap()</code> - to unwrap.</p>
+</li>
+<li>
+<p><code>mixin()</code> - to instantiate a mixin around a domain object.
+Also has an alias of <code>m()</code>.</p>
+</li>
+<li>
+<p><code>wrapMixin()</code> - which naturally enough <code>wrap()</code>s the result of a <code>mixin()</code>.
+This has an alias of <code>wm()</code>.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>This class also provides a number of injected domain services:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../../refguide/applib-svc/persistence-layer-api/RepositoryService.html" class="page"><code>RepositoryService</code></a></p>
+<div class="paragraph">
+<p>to query and persist objects through a generic repository</p>
+</div>
+</li>
+<li>
+<p><a href="../../refguide/applib-svc/core-domain-api/FactoryService.html" class="page"><code>FactoryService</code></a></p>
+<div class="paragraph">
+<p>for instantiating domain objects and mixins</p>
+</div>
+</li>
+<li>
+<p><a href="../../refguide/applib-svc/core-domain-api/UserService.html" class="page"><code>UserService</code></a></p>
+<div class="paragraph">
+<p>to acces the current user</p>
+</div>
+</li>
+<li>
+<p><a href="../../refguide/applib-svc/metadata-api/ServiceRegistry.html" class="page"><code>ServiceRegistry</code></a></p>
+<div class="paragraph">
+<p>to access domain services</p>
+</div>
+</li>
+<li>
+<p><a href="../../refguide/applib-svc/metadata-api/MetamodelService.html" class="page"><code>MetaModelService</code></a></p>
+<div class="paragraph">
+<p>to access the metamodel.</p>
+</div>
+</li>
+<li>
+<p><a href="../../refguide/applib-svc/application-layer-api/WrapperFactory.html" class="page"><code>WrapperFactory</code></a></p>
+<div class="paragraph">
+<p>to simulate interactions through the UI.
+This is discussed further <a href="#wrapper-factory">below</a>.</p>
+</div>
+</li>
+<li>
+<p><a href="../../refguide/applib-svc/application-layer-api/TransactionService.html" class="page"><code>TransactionService</code></a></p>
+<div class="paragraph">
+<p>for more control over transactions</p>
+</div>
+</li>
+<li>
+<p><a href="../../refguide/applib-svc/application-layer-api/SessionManagementService.html" class="page"><code>SessionManagementService</code></a></p>
+<div class="paragraph">
+<p>for tests that check interactions over multiple separate sessions</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The class also defines (as a nested static class) the <code>CommandSupport</code> as a domain service.
+If <code>@Import</code>ed into the integration test&#8217;s "app manifest", this ensures that any <code>Command</code>s that are raised as the result of interactions through the wrapper factory are setup correctly.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="wrapper-factory"><a class="anchor" href="#wrapper-factory"></a>Wrapper Factory</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <a href="../../refguide/applib-svc/application-layer-api/WrapperFactory.html" class="page"><code>WrapperFactory</code></a> service is responsible for wrapping a domain object in a dynamic proxy, of the same type as the object being proxied.
+The role of this wrapper is to simulate the UI.</p>
+</div>
+<div class="paragraph">
+<p>It does this by allowing through method invocations that would be allowed if the user were interacting with the domain object through one of the viewers, but throwing an exception if the user attempts to interact with the domain object in a way that would not be possible if using the UI.
+The <code>WrapperFactory</code> uses <a href="https://bytebuddy.net/">ByteBuddy</a> to perform its magic.</p>
 </div>
 <div class="paragraph">
 <p>The mechanics are as follows:</p>
@@ -924,9 +913,6 @@ It&#8217;s straightforward enough: if the member is invisible then a <code>Hidde
 <div class="content">
 <a class="image" href="_images/wrapper-factory.png"><img src="_images/wrapper-factory.png" alt="wrapper factory" width="600px"></a>
 </div>
-</div>
-<div class="paragraph">
-<p>Let&#8217;s look in a bit more detail at what the test can do with the wrapper.</p>
 </div>
 <div class="sect2">
 <h3 id="wrapping-and-unwrapping"><a class="anchor" href="#wrapping-and-unwrapping"></a>Wrapping and Unwrapping</h3>
@@ -979,21 +965,15 @@ That means:</p>
 <p>for <strong><em>object properties</em></strong> the test can call the getter or setter method</p>
 </li>
 <li>
-<p>for <strong><em>object collections</em></strong> the test can call the getter.</p>
-<div class="paragraph">
-<p>If there is a supporting <code>addTo&#8230;&#8203;()</code> or <code>removeFrom&#8230;&#8203;()</code> method, then these can be called.
-It can also call <code>add(&#8230;&#8203;)</code> or <code>remove(&#8230;&#8203;)</code> on the collection (returned by the gettter) itself.</p>
-</div>
-<div class="admonitionblock note">
+<p>for <strong><em>object collections</em></strong> the test can call the getter to access the contents.</p>
+<div class="admonitionblock warning">
 <table>
 <tr>
 <td class="icon">
-<i class="fa icon-note" title="Note"></i>
+<i class="fa icon-warning" title="Warning"></i>
 </td>
 <td class="content">
-<div class="paragraph">
-<p>In this respect the wrapper is more functional than the <a href="../../vw/about.html" class="page">Wicket viewer</a> (which does not expose the ability to mutate collections directly).</p>
-</div>
+For this to work properly, the collection should be marked as read-only, generally globally using the <code>isis.applib.annotation.domain-object.editing</code> configuration property.
 </td>
 </tr>
 </table>
@@ -1023,47 +1003,35 @@ Instead, we recommend that your test verifies an object&#8217;s title by calling
 <p>As well as enforcing business rules, the wrapper has another important feature, namely that it will cause domain events to be fired.</p>
 </div>
 <div class="paragraph">
-<p>For example, if we have an action annotated with <code>@Action(domainEvent=&#8230;&#8203;</code>):</p>
+<p>The walk through of <a href="#typical-usage">SimpleApp</a> above showed how this works.</p>
 </div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class ToDoItem ... {
-    @Action(
-            domainEvent =CompletedEvent.class
-    )
-    public ToDoItem completed() { /* ... */ }
-    ...
-}</code></pre>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="manual-teardown"><a class="anchor" href="#manual-teardown"></a>Manual Teardown</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The Spring <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/transaction/annotation/Transactional.html">@Transactional</a> annotation means that any changes made in the database will be rolled back automatically.
+Normally this is what we want.
+For more on this topic, see the <a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/testing.html#testcontext-tx-enabling-transactions">Spring docs</a>.</p>
 </div>
 <div class="paragraph">
-<p>then invoking the action through the proxy will cause the event (<code>CompletedEvent</code> above) to be fired to any subscribers.
-A test might therefore look like:</p>
+<p>Sometimes you may want to commit to the database to verify state, eg using Spring&#8217;s <a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/testing.html#spring-testing-annotation-commit">@Commit</a> annotation.
+In these cases, you&#8217;ll need to manually tear down the database contents afterwards, in readiness for the next test.</p>
+</div>
+<div class="paragraph">
+<p>This can be done using the <a href="../fixtures/about.html" class="page">fixture</a> library&#8217;s <code>ModuleWithFixtures</code> interface:</p>
 </div>
 <div class="listingblock">
+<div class="title">ModuleWithFixtures.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class SomeIntegratTest /* ... */ {
-    @Inject
-    private EventBusService eventBusService;                                       <i class="conum" data-value="1"></i><b>(1)</b>
-
-    @Test
-    public void subscriberReceivesEvents() {
-
-        // given
-        final ToDoItem.CompletedEvent[] evHolder = new ToDoItem.CompletedEvent[1]; <i class="conum" data-value="2"></i><b>(2)</b>
-        eventBusService.register(new Object() {
-            @org.springframework.context.event.EventListener(ToDoItem.CompletedEvent.class)
-            public void on(final ToDoItem.CompletedEvent ev) {                     <i class="conum" data-value="3"></i><b>(3)</b>
-                evHolder[0] = ev;
-            }
-        });
-
-        // when
-        toDoItem.completed();                                                      <i class="conum" data-value="4"></i><b>(4)</b>
-
-        // then
-        then(evHolder[0].getSource()).isEqualTo(unwrap(toDoItem));                 <i class="conum" data-value="5"></i><b>(5)</b>
-        then(evHolder[0].getIdentifier().getMemberName()).isEqualTo("completed");
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public interface ModuleWithFixtures {
+    default FixtureScript getRefDataSetupFixture() {        <i class="conum" data-value="1"></i><b>(1)</b>
+        return FixtureScript.NOOP;
+    }
+    default FixtureScript getTeardownFixture() {            <i class="conum" data-value="2"></i><b>(2)</b>
+        return FixtureScript.NOOP;
     }
 }</code></pre>
 </div>
@@ -1072,43 +1040,55 @@ A test might therefore look like:</p>
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>inject <a href="../../refguide/applib-svc/core-domain-api/EventBusService.html" class="page"><code>EventBusService</code></a> into this test</td>
+<td>Optionally each module can define a <code>FixtureScript</code> which holds immutable "reference data".</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>holder for subscriber to capture event to</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>subscriber&#8217;s callback, using Spring events</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>invoking the domain object using the wrapper</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>assert that the event was populated</td>
+<td>Optionally each module can define a tear-down <code>FixtureScript</code>, used to remove the contents of all of the operational/transactional entities (but ignoring reference data fixtures).</td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>The wrapper will also fire domain events for properties (if annotated with <code>@Property(domainEvent=&#8230;&#8203;)</code>) or collections (if annotated with <code>@Collection(domainEvent=&#8230;&#8203;)</code>).</p>
+<p>This should be implemented by module classes, eg as is the case for <code>SimpleModule</code>.</p>
 </div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
+<div class="listingblock">
+<div class="title">SimpleModule.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Configuration
+@Import({})
+@ComponentScan
+public class SimpleModule implements ModuleWithFixtures {
+
+    @Override
+    public FixtureScript getTeardownFixture() {
+        return new TeardownFixtureAbstract() {
+            @Override
+            protected void execute(ExecutionContext executionContext) {
+                deleteFrom(SimpleObject.class);
+            }
+        };
+    }
+    ...
+}</code></pre>
+</div>
+</div>
 <div class="paragraph">
-<p>It isn&#8217;t possible to use the <code>WrapperFactory</code> in a unit test, because there needs to be a running instance of Apache Isis that holds the metamodel.</p>
+<p>The <code>ModuleWithFixturesService</code> aggregates all these setup and teardown fixtures, honouring the module dependencies:</p>
 </div>
-</td>
-</tr>
-</table>
+<div class="listingblock">
+<div class="title">ModuleWithFixtures.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Service
+public class ModuleWithFixturesService {
+    ...
+    public FixtureScript getRefDataSetupFixture() { ... }
+    public FixtureScript getTeardownFixture() { ... }
+    ...
+}</code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>Thus, the setup fixture runs the setup for the "inner-most" "leaf-level" modules with no dependencies first, whereas the teardown fixture runs in the opposite order, with the "outer-most" "top-level" modules torn down first.</p>
 </div>
 </div>
 </div>
@@ -1116,71 +1096,98 @@ A test might therefore look like:</p>
 <h2 id="maven-configuration"><a class="anchor" href="#maven-configuration"></a>Maven Configuration</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Apache Isis' integration test support is automatically configured if you use the <a href="https://github.com/apache/isis-app-simpleapp">SimpleApp starter app</a>.
-To set it up manually, update the <code>pom.xml</code> of your domain object model module:</p>
+<p>Apache Isis' integ test support is most easily configured through a dependency on the <code>isis-mavendeps-testing</code> module:</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
-    &lt;groupId&gt;org.apache.isis.core&lt;/groupId&gt;
-    &lt;artifactId&gt;isis-core-integtestsupport&lt;/artifactId&gt;
-&lt;/dependency&gt;
-&lt;dependency&gt;
-    &lt;groupId&gt;org.apache.isis.core&lt;/groupId&gt;
-    &lt;artifactId&gt;isis-core-wrapper&lt;/artifactId&gt;
+    &lt;groupId&gt;org.apache.isis.mavendeps&lt;/groupId&gt;
+    &lt;artifactId&gt;isis-mavendeps-testing&lt;/artifactId&gt;
+    &lt;scope&gt;test&lt;/scope&gt;                             <i class="conum" data-value="1"></i><b>(1)</b>
+    &lt;type&gt;pom&lt;/type&gt;
 &lt;/dependency&gt;</code></pre>
 </div>
 </div>
-<div class="admonitionblock note">
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Normally <code>test</code>; usual Maven scoping rules apply.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>There is no need to specify the version if you inherit from from the <a href="../../starters/parent-pom/about.html" class="page">starter app parent POM</a>, then</p>
+</div>
+<div class="paragraph">
+<p>This will set up unit testing, integration testing and BDD specs support .</p>
+</div>
+<div class="admonitionblock caution">
 <table>
 <tr>
 <td class="icon">
-<i class="fa icon-note" title="Note"></i>
+<i class="fa icon-caution" title="Caution"></i>
 </td>
 <td class="content">
 <div class="paragraph">
-<p>This can also be done by adding a dependency to <code>org.apache.isis.mavendeps:isis-mavendeps-testing</code> module; see the <a href="https://github.com/apache/isis-app-simpleapp">SimpleApp starter app</a>.</p>
+<p>The <a href="../../starters/parent-pom/about.html" class="page">Parent POM</a> configures the Maven surefire plugin in three separate executions for unit test, integ test and BDD specs.
+This relies on a naming convention:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>unit tests, which must have a suffix <code>Test</code>, but excluding &#8230;&#8203;</p>
+</li>
+<li>
+<p>integ tests, which must have the suffix <code>IntegTest</code></p>
+</li>
+<li>
+<p>BDD specs, which must have suffix <code>IntegBddSpecs</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Not following this convention is likely to cause integ tests/specs to fail.</p>
 </div>
 </td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>We also recommend that you configure the <code>maven-surefire-plugin</code> to pick up the following class patterns:</p>
+<p>If you just want to set up integration testing support, then use:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;plugin&gt;
-    &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
-    &lt;artifactId&gt;maven-surefire-plugin&lt;/artifactId&gt;
-    &lt;version&gt;2.10&lt;/version&gt;
-    &lt;configuration&gt;
-        &lt;includes&gt;
-            &lt;include&gt;**/*Test.java&lt;/include&gt;
-            &lt;include&gt;**/*Test_*.java&lt;/include&gt;
-            &lt;include&gt;**/*Spec*.java&lt;/include&gt;
-        &lt;/includes&gt;
-        &lt;excludes&gt;
-            &lt;exclude&gt;**/Test*.java&lt;/exclude&gt;
-            &lt;exclude&gt;**/*ForTesting.java&lt;/exclude&gt;
-            &lt;exclude&gt;**/*Abstract*.java&lt;/exclude&gt;
-        &lt;/excludes&gt;
-        &lt;useFile&gt;true&lt;/useFile&gt;
-        &lt;printSummary&gt;true&lt;/printSummary&gt;
-        &lt;outputDirectory&gt;${project.build.directory}/surefire-reports&lt;/outputDirectory&gt;
-    &lt;/configuration&gt;
-&lt;/plugin&gt;</code></pre>
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
+    &lt;groupId&gt;org.apache.isis.core&lt;/groupId&gt;
+    &lt;artifactId&gt;isis-core-integtestsupport&lt;/artifactId&gt;
+    &lt;scope&gt;test&lt;/scope&gt;
+&lt;/dependency&gt;</code></pre>
 </div>
 </div>
-<div class="admonitionblock note">
+</div>
+</div>
+<div class="sect1">
+<h2 id="hints-n-tips"><a class="anchor" href="#hints-n-tips"></a>Hints-n-Tips</h2>
+<div class="sectionbody">
+<div class="admonitionblock tip">
 <table>
 <tr>
 <td class="icon">
-<i class="fa icon-note" title="Note"></i>
+<i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
+<div class="title">Using JDO/DataNucleus</div>
 <div class="paragraph">
-<p>This can also be done using mavenmixins; see the <a href="https://github.com/apache/isis-app-simpleapp">SimpleApp starter app</a>.</p>
+<p>When running integration tests through the IDE, and if using the JDO/DataNucleus ORM, then make sure the module(s) with entities have been enhanced first.</p>
+</div>
+<div class="paragraph">
+<p>If using IntelliJ, we recommend creating a run Maven configuration that runs <code>datanucleus:enhance</code>, and then pinning the configuration once run as a tab in the "Debug" window for easy access.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/pin-enhance-run-configuration.png/"><img src="_images/pin-enhance-run-configuration.png" alt="pin enhance run configuration" width="400px"></a>
+</div>
 </div>
 </td>
 </tr>
@@ -1205,7 +1212,7 @@ To set it up manually, update the <code>pom.xml</code> of your domain object mod
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200129-0401-0ef33692</p>
+            <p>Revision: 2.0.0-M2.20200130-0853-72118c82</p>
         </div>
     </div>
 </footer>

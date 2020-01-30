@@ -45,16 +45,15 @@
             <span class="navbar-item navbar-heading">Core</span>
             <a class="navbar-item" href="../userguide/about.html">User Guide</a>
             <a class="navbar-item" href="../refguide/about.html">Reference Guide</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Development</span>
+            <a class="navbar-item" href="../toc/devguide/about.html">Developers' Guide</a>
             <a class="navbar-item" href="../testing/about.html">Testing Guide</a>
             <hr class="navbar-divider"/>
             <span class="navbar-item navbar-heading">Libraries</span>
             <a class="navbar-item" href="../subdomain/about.html">Subdomain Libraries</a>
             <a class="navbar-item" href="../valuetypes/about.html">Value Types</a>
             <a class="navbar-item" href="../mappings/about.html">Bounded Context Mapping Libraries</a>
-            <hr class="navbar-divider"/>
-            <span class="navbar-item navbar-heading">Resources</span>
-            <a class="navbar-item" href="../toc/devguide/about.html">Developers' Guide</a>
-            <a class="navbar-item" href="../toc/mavendeps/about.html">Maven dependencies</a>
           </div>
         </div>
         <div class="navbar-item has-dropdown is-hoverable">
@@ -134,22 +133,19 @@
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="overview.html">Overview</a>
-  </li>
-  <li class="nav-item" data-depth="1">
     <a class="nav-link" href="unittestsupport/about.html">Unit Test Support</a>
   </li>
   <li class="nav-item" data-depth="1">
     <a class="nav-link" href="integtestsupport/about.html">Integ Test Support</a>
   </li>
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="specsupport/about.html">BDD Spec Support (extension)</a>
+    <a class="nav-link" href="specsupport/about.html">BDD Spec Support</a>
   </li>
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="fixtures/about.html">Fixture Scripts (extension)</a>
+    <a class="nav-link" href="fixtures/about.html">Fixture Scripts</a>
   </li>
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="fakedata/about.html">Fakedata (extension)</a>
+    <a class="nav-link" href="fakedata/about.html">Fakedata</a>
   </li>
   <li class="nav-item" data-depth="1">
     <a class="nav-link" href="h2console/about.html">H2 Console</a>
@@ -319,18 +315,276 @@
     <li><a href="about.html">Testing</a></li>
   </ul>
 </nav>
-  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/HEAD/antora/components/testing/modules/ROOT/pages/about.adoc">Edit</a></div>
+  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/HEAD/testing/adoc/modules/ROOT/pages/about.adoc">Edit</a></div>
 </div>
 <article class="doc">
     <a name="section-top"></a>
 <h1 class="page">Testing</h1>
+<div id="preamble">
+<div class="sectionbody">
 <div class="paragraph">
-<p>If you are going to use Apache Isis for developing complex business-critical applications, then being able to write automated tests for those applications becomes massively important.
-As such Apache Isis treats the topic of testing very seriously.
-(Though we say it ourselves), the framework has support that goes way above what is provided by other application frameworks.</p>
+<p>If you are using Apache Isis to develop complex business-critical applications, then being able to write automated tests for those applications is massively important.
+As such Apache Isis treats the topic of testing very seriously.</p>
 </div>
 <div class="paragraph">
 <p>This guide describes those features available to you for testing your Apache Isis application.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="unit-tests-vs-integ-tests"><a class="anchor" href="#unit-tests-vs-integ-tests"></a>Unit tests vs Integ tests</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>We divide automated tests into two broad categories:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="unittestsupport/about.html" class="page">unit tests</a> exercise a single unit (usually a method) of a domain object, in isolation.</p>
+<div class="paragraph">
+<p>Dependencies of that object are mocked out.  These are written by a developer and for a developer; they are to ensure that a particular "cog in the machine" works correctly</p>
+</div>
+</li>
+<li>
+<p><a href="integtestsupport/about.html" class="page">integration tests</a> exercise the application as a whole, usually focusing on one particular business operation (action).</p>
+<div class="paragraph">
+<p>These are tests that represent the acceptance criteria of some business story; their intent should make sense to the domain expert (even if the domain expert is "non-technical")</p>
+</div>
+<div class="paragraph">
+<p>For larger "modular monoliths", integration tests can also run against a particular vertical slice of the application.
+The <a href="../starters/simpleapp/about.html" class="page">SimpleApp</a> starter app demonstrates this technique.</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>To put it another way:</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Integration tests ensure that you are <strong><em>building the right system</em></strong></p>
+</div>
+<div class="paragraph">
+<p>Unit tests ensure that you are <strong><em>building the system right</em></strong>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Integration tests leverage Spring Boot&#8217;s integration testing infrastructure,in particular using <a href="https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/test/context/SpringBootTest.html">@SpringBootTest</a>.
+This configures and bootstraps the Apache Isis runtime, usually running against an in-memory database.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="integ-tests-vs-bdd-specs"><a class="anchor" href="#integ-tests-vs-bdd-specs"></a>Integ tests vs BDD Specs</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>We further sub-divide integration tests into:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>those that are implemented in Java and JUnit (we call these simply <em>"integration tests"</em>)<br></p>
+<div class="paragraph">
+<p>Even if a domain expert understands the intent of these tests, the actual implementation will probably be pretty opaque to them.
+Also, the only output from the tests is a (hopefully) green CI job</p>
+</div>
+</li>
+<li>
+<p>tests (or rather, specifications) that are implemented in a <em>behaviour-driven design</em> (BDD) language such as <a href="https://cucumber.io/">Cucumber</a>.
+We call these <em>"BDD specs"</em>, and provide the <a href="specsupport/about.html" class="page">BDD spec support</a> module to makes Cucumber and <code>@SpringBootTest</code> work together.</p>
+<div class="paragraph">
+<p>The natural language specification then maps down onto some glue code that is used to drive the application.
+But the benefits of taking a BDD approach include the fact that your domain expert will be able to read the tests/specifications, and that when you run the specs, you also get documentation of the application&#8217;s behaviour ("living documentation").</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>It&#8217;s up to you whether you use BDD specs for your apps; it will depend on your development process and company culture.  But if you don&#8217;t then you certainly should write integration tests: acceptance criteria for user stories should be automated!</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="simulated-ui-wrapperfactory"><a class="anchor" href="#simulated-ui-wrapperfactory"></a>Simulated UI (<code>WrapperFactory</code>)</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When we talk about integration tests/specs here, we mean tests that exercise the domain object logic, through to the actual database.  But we also want the tests to exercise the app from the users&#8217;s perspective, which means including the user interface.</p>
+</div>
+<div class="paragraph">
+<p>For most other frameworks that would require having to test the application in a very heavy weight/fragile fashion using a tool such as <a href="http://docs.seleniumhq.org/">Selenium</a>, driving a web browser to navigate .  In this regard though, Apache Isis has a significant trick up its sleeve.  Because Apache Isis implements the naked objects pattern, it means that the UI is generated automatically from declared domain-objects, -views and -services. This therefore allows for other implementations of the UI.</p>
+</div>
+<div class="paragraph">
+<p>The <a href="../refguide/applib-svc/application-layer-api/WrapperFactory.html" class="page"><code>WrapperFactory</code></a> domain service allows a test to wrap domain objects and thus to interact with said objects "as if" through the UI:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="testing:integtestsupport:_images/wrapper-factory.png"><img src="integtestsupport/_images/wrapper-factory.png" alt="wrapper factory" width="400px"></a>
+</div>
+<div class="title">Figure 1. Wrapper objects</div>
+</div>
+<div class="paragraph">
+<p>If the test invokes an action that is disabled, then the wrapper will throw an appropriate exception.
+If the action is ok to invoke, it delegates through.
+There&#8217;s more discussion on the wrapper factory in the <a href="integtestsupport/about.html#wrapper-factory" class="page">integ test support</a> chapter.</p>
+</div>
+<div class="paragraph">
+<p>What this means is that an Apache Isis application can be tested end-to-end without having to deploy it onto a webserver; the whole app can be tested while running in-memory.
+Although integration tests re (necessarily) slower than unit tests, they are not any harder to write (in fact, in some respects they are easier).</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="dependency-injection"><a class="anchor" href="#dependency-injection"></a>Dependency Injection</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Spring Boot will automatically inject dependencies into integration tests and services, and Apache Isis extends this to also inject services into every domain object (entity or view model).
+This is most useful when writing unit tests; simply mock out the service and inject into the domain object.</p>
+</div>
+<div class="paragraph">
+<p>There are a number of syntaxes supported, but the simplest is to use <code>@javax.inject.Inject</code> annotation; for example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@javax.inject.Inject
+CustomerRepository customers;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Domain services are discovered by Spring Boot, either explicitly referenced in the <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/annotation/Import.html">@Import</a> annotation, or picked up from class path scanning of <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/annotation/ComponentScan.html">@ComponentScan</a>.
+Any service annotated or meta-annotated with <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/stereotype/Component.html">@Component</a> can be discovered; this includes classes annotated with Apache Isis' <a href="../refguide/applib-ant/DomainService.html" class="page">@DomainService</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="givenwhenthen"><a class="anchor" href="#givenwhenthen"></a>Given/When/Then</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Whatever type of test/spec you are writing, we recommend you follow the given/when/then idiom:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>given</strong> the system is in this state (preconditions)</p>
+</li>
+<li>
+<p><strong>when</strong> I poke it with a stick</p>
+</li>
+<li>
+<p><strong>then</strong> it looks like this (postconditions)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>A good test should be 5 to 10 lines long; the test should be there to help you reason about the behaviour of the system.
+Certainly if the test becomes more than 20 lines it&#8217;ll be too difficult to understand.</p>
+</div>
+<div class="paragraph">
+<p>The "when" part is usually a one-liner, and in the "then" part there will often be only two or three assertions that you want to make that the system has changed as it should.</p>
+</div>
+<div class="paragraph">
+<p>For unit test the "given" part shouldn&#8217;t be too difficult either: just instantiate the class under test, wire in the appropriate mocks and set up the expectations.
+And if there are too many mock expectations to set up, then "listen to the tests" &#8230;&#8203; they are telling you your design needs some work.</p>
+</div>
+<div class="paragraph">
+<p>Where things get difficult though is the "given" for integration tests; which is the topic of the next section&#8230;&#8203;</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="fixture-management"><a class="anchor" href="#fixture-management"></a>Fixture Management</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In the previous section we discussed using given/when/then as a form of organizing tests, and why you should keep your tests small.</p>
+</div>
+<div class="paragraph">
+<p>For integration tests though it can be difficult to keep the "given" short; there could be a lot of prerequisite data that needs to exist before you can actually exercise your system.
+Moreover, however we do set up that data, but we also want to do so in a way that is resilient to the system changing over time.</p>
+</div>
+<div class="paragraph">
+<p>The solution that Apache Isis provides is
+<a href="fixtures/about.html" class="page">fixture scripts</a>, supported by a domain service (also) called <a href="../refguide/applib-cm/classes/super.html#FixtureScripts" class="page">Fixture Scripts</a>.
+This defines a pattern (command pattern and composite pattern) with supporting classes to help ensure that the "data setup" for your tests are reusable and maintainable over time.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="fake-data"><a class="anchor" href="#fake-data"></a>Fake data</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In any given test there are often quite a few variables involved, to initialize the state of the objects, or to act as arguments for invoking a method, or when asserting on post-conditions.
+Sometimes those values are important (eg verifying that an <code>Order</code>'s state went from PENDING to SHIPPED, say), but often they aren&#8217;t (a customer&#8217;s name, for example).
+Nevertheless all this data may need to be set up, especially in integration tests.</p>
+</div>
+<div class="paragraph">
+<p>We want our tests to be easily understood, and we want the reader&#8217;s eye to be drawn to the values that are significant and ignore those that are not.</p>
+</div>
+<div class="paragraph">
+<p>One way to do this is to use random (or fake) values for any insignificant data.
+This in effect tells the reader that "any value will do".
+Moreover, if it turns out that any data won&#8217;t do, and that there&#8217;s some behaviour that is sensitive to the value, then the test will start to flicker, passing and then failing depending on inputs.
+This is A Good Thing&#8482;.</p>
+</div>
+<div class="paragraph">
+<p>Apache Isis provides the <a href="testing:fakedata:about.adoc">Fake Data</a> library to assist with this.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Using fake data works very well with fixture scripts; the fixture script can invoke the business action with sensible (fake/random) defaults, and only require that the essential information is passed into it by the test.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="feature-toggles"><a class="anchor" href="#feature-toggles"></a>Feature Toggles</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Writing automated tests is just good development practice.
+Also good practice is developing on the mainline (master, trunk); so that your continuous integration system really is integrating all code.
+Said another way: <a href="http://martinfowler.com/bliki/FeatureBranch.html">don&#8217;t use branches</a>!</p>
+</div>
+<div class="paragraph">
+<p>Sometimes, though, a feature will take longer to implement than your iteration cycle.
+In such a case, how do you use continuous integration to keep everyone working on the mainline without revealing a half-implemented feature on your releases?</p>
+</div>
+<div class="paragraph">
+<p>One option is to use <a href="http://martinfowler.com/bliki/FeatureToggle.html">feature toggle</a>s.
+These let us decouple deployment (meaning shipping code into production) from release (meaning let users have access to and use that feature).</p>
+</div>
+<div class="paragraph">
+<p>At its simplest, a feature toggle could be a global variable disabling the functionality until fully ready, or it might even just be implemented using security.
+More sophisticated implementations make access more dynamic, for example by granting access to "alpha" or canary users.</p>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+TODO: v2: intention is to bring in incode-platform&#8217;s feature toggle library.
+</td>
+</tr>
+</table>
+</div>
+</div>
 </div>
 </article>
 <aside class="article-aside toc" role="navigation">
@@ -349,7 +603,7 @@ As such Apache Isis treats the topic of testing very seriously.
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200129-0401-0ef33692</p>
+            <p>Revision: 2.0.0-M2.20200130-0853-72118c82</p>
         </div>
     </div>
 </footer>

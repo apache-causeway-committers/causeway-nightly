@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Simple App Starter App :: Apache Isis</title>
+    <title>SimpleApp :: Apache Isis</title>
     <meta name="generator" content="Antora 2.2.0">
     <link rel="stylesheet" href="../../_/css/site.css">
     <link rel="stylesheet" href="../../_/css/site-custom.css">
@@ -45,16 +45,15 @@
             <span class="navbar-item navbar-heading">Core</span>
             <a class="navbar-item" href="../../userguide/about.html">User Guide</a>
             <a class="navbar-item" href="../../refguide/about.html">Reference Guide</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Development</span>
+            <a class="navbar-item" href="../../toc/devguide/about.html">Developers' Guide</a>
             <a class="navbar-item" href="../../testing/about.html">Testing Guide</a>
             <hr class="navbar-divider"/>
             <span class="navbar-item navbar-heading">Libraries</span>
             <a class="navbar-item" href="../../subdomain/about.html">Subdomain Libraries</a>
             <a class="navbar-item" href="../../valuetypes/about.html">Value Types</a>
             <a class="navbar-item" href="../../mappings/about.html">Bounded Context Mapping Libraries</a>
-            <hr class="navbar-divider"/>
-            <span class="navbar-item navbar-heading">Resources</span>
-            <a class="navbar-item" href="../../toc/devguide/about.html">Developers' Guide</a>
-            <a class="navbar-item" href="../../toc/mavendeps/about.html">Maven dependencies</a>
           </div>
         </div>
         <div class="navbar-item has-dropdown is-hoverable">
@@ -134,21 +133,31 @@
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../about.html">Starter Parent</a>
+    <a class="nav-link" href="../about.html">Quick Start</a>
   </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="0">
-<ul class="nav-list">
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../helloworld/about.html">Hello World</a>
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Starter Apps</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../helloworld/about.html">HelloWorld</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="about.html">SimpleApp</a>
   </li>
 </ul>
   </li>
-  <li class="nav-item" data-depth="0">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Resources</span>
 <ul class="nav-list">
-  <li class="nav-item is-current-page" data-depth="1">
-    <a class="nav-link" href="about.html">SimpleApp</a>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../parent-pom/about.html">Parent POM</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../mavendeps/about.html">Maven Dependencies</a>
+  </li>
+</ul>
   </li>
 </ul>
   </li>
@@ -308,7 +317,7 @@
   <a href="../../toc/about.html" class="home-link"></a>
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
-    <li><a href="../about.html">Starter Apps</a></li>
+    <li>Starter Apps</li>
     <li><a href="about.html">SimpleApp</a></li>
   </ul>
 </nav>
@@ -316,7 +325,7 @@
 </div>
 <article class="doc">
     <a name="section-top"></a>
-<h1 class="page">Simple App Starter App</h1>
+<h1 class="page">SimpleApp</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
@@ -759,6 +768,8 @@ The REST API implemented by Apache Isis is specified in the <a href="http://www.
 <div class="paragraph">
 <p>The simpleapp starter app is a multi-module project, structured so that you easily extend it as your application grows.</p>
 </div>
+<div class="sect2">
+<h3 id="application-modules"><a class="anchor" href="#application-modules"></a>Application Modules</h3>
 <div class="paragraph">
 <p>The application consists of three modules, with a top-level module acting as an aggregator, the <code>module-simple</code> module that contains the business logic, and <code>webapp</code> module that acts as a bootstrapper.</p>
 </div>
@@ -787,8 +798,34 @@ For example, you might have a <code>module-customer</code> holding a <code>Custo
 <p>We can use Maven dependency management to ensure that there are no cyclic dependencies (order "knows about" product but product does not know about orders) and ensure that the codebase remains decoupled.
 When Java9 modules are commonplace, we&#8217;ll also be able to restrict visibility of classes between modules.</p>
 </div>
+</div>
+<div class="sect2">
+<h3 id="bootstrapping-framework-modules"><a class="anchor" href="#bootstrapping-framework-modules"></a>Bootstrapping &amp; Framework Modules</h3>
+<div class="paragraph">
+<p>One of the main responsibilities of Spring Boot is - naturally enough - to bootstrap the application.
+For the webapp, this is done using a class annotated with <a href="https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/autoconfigure/SpringBootApplication.html">@SpringBootApplication</a>.
+For integration tests, this uses the <a href="https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/test/context/SpringBootTest.html">@SpringBootTest</a> annotation.</p>
+</div>
+<div class="paragraph">
+<p>These two different annotations reference a (class annotated with) <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/annotation/Configuration.html">@Configuration</a>, which in turn can <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/annotation/Import.html">@Import</a> other annotations.</p>
+</div>
+<div class="paragraph">
+<p>By convention, the top-level <code>@Configuration</code> in an Apache Isis application is called the "app manifest".
+This references not only the application-level modules (described <a href="#application-modules">above</a>), but also the framework&#8217;s modules.
+There will be several of these app manifests, typically one for the webapp itself, and one for integration testing each module.</p>
+</div>
+<div class="paragraph">
+<p>The <a href="_attachments/simpleapp-modules-dependencies.pptx">diagram</a> below shows how classes fit together:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/simpleapp-modules-dependencies.png/"><img src="_images/simpleapp-modules-dependencies.png" alt="simpleapp modules dependencies" width="600px"></a>
+</div>
+<div class="title">Figure 3. Module Dependencies</div>
+</div>
 <div class="paragraph">
 <p>Let&#8217;s now review the contents of each of the modules in the simpleapp starter app.</p>
+</div>
 </div>
 <div class="sect2">
 <h3 id="module-simples-srcmainjava"><a class="anchor" href="#module-simples-srcmainjava"></a>module-simple&#8217;s src/main/java</h3>
@@ -871,7 +908,7 @@ In the case of <code>SimpleModule</code>, it consists of:</p>
 <div class="title">SimpleModule.java</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">package domainapp.modules.simple;
-// ... imports omitted ...
+... imports omitted ...
 @Configuration
 @Import({})                                             <i class="conum" data-value="1"></i><b>(1)</b>
 @ComponentScan                                          <i class="conum" data-value="2"></i><b>(2)</b>
@@ -1214,7 +1251,7 @@ It&#8217;s very simple though:</p>
 <div class="title">ApplicationModule.java</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">package domainapp.webapp.application;
-// ... imports omitted ...
+... imports omitted ...
 @Configuration
 @Import(SimpleModule.class)             <i class="conum" data-value="1"></i><b>(1)</b>
 @ComponentScan                          <i class="conum" data-value="2"></i><b>(2)</b>
@@ -1764,7 +1801,7 @@ There is plenty more guidance on this site; start with the <a href="../../usergu
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200129-0401-0ef33692</p>
+            <p>Revision: 2.0.0-M2.20200130-0853-72118c82</p>
         </div>
     </div>
 </footer>
