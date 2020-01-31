@@ -546,24 +546,11 @@
 </ul>
 </div>
 <div class="paragraph">
-<p>Apache Isis itself consists of three separately releasable modules; relative to the <a href="https://github.com/apache/isis">source code root</a> there are:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>core</code></p>
-</li>
-<li>
-<p><code>component/example/archetypes/helloworld</code></p>
-</li>
-<li>
-<p><code>component/example/archetypes/simpleapp</code></p>
-</li>
-</ul>
+<p>Apache Isis itself is released in one go, everything is ultimately a child of <code>core-parent/pom.xml</code> (relative to the <a href="https://github.com/apache/isis">source code root</a>).
+This section details the process for formally releasing this module.</p>
 </div>
 <div class="paragraph">
-<p>This section details the process for formally releasing Isis modules.  It describes the process for both <code>core</code> and then the archetypes.
-The subsequent sections describe how other committers can <a href="about.html#verifying-releases.adoc" class="page">verify a release</a> and how the release manager can then perform <a href="#toc:comguide:post-release">post-release</a> activities and set up for the next development iteration.</p>
+<p>The subsequent sections describe how other committers can <a href="about.html#verifying-releases.adoc" class="page">verify a release</a> and how the release manager can then perform <a href="#toc:comguide:post-release">post-release</a> activities and set up for the next development iteration.</p>
 </div>
 <div class="paragraph">
 <p>If you&#8217;ve not performed a release before, then note that there are some configuration <a href="about.html#release-process-prereqs" class="page">prerequisites</a> that must be configured first.
@@ -579,7 +566,7 @@ They should work on Linux and MacOS; for Windows, use mSysGit.</p>
 <h2 id="obtain-consensus"><a class="anchor" href="#obtain-consensus"></a>Obtain Consensus</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Before releasing <code>core</code>, ensure there is consensus on the <a href="#toc:ROOT:support.adoc" class="page unresolved">dev mailing list</a> that this is the right time for a release.
+<p>Before releasing the framework, ensure there is consensus on the <a href="#toc:ROOT:support.adoc" class="page unresolved">dev mailing list</a> that this is the right time for a release.
 The discussion should include confirming the version number to be used, and to confirm content.</p>
 </div>
 <div class="paragraph">
@@ -606,7 +593,7 @@ export ISISREL=2.0.0-M3
 export ISISRC=RC1
 export ISISBRANCH=release-$ISISREL-$ISISRC
 export ISISJIRA=ISIS-9999                           <i class="conum" data-value="2"></i><b>(2)</b>
-export CATALINA_HOME=/c/java/apache-tomcat-9.0.10   <i class="conum" data-value="3"></i><b>(3)</b>
+export ISISART=isis
 
 env | grep ISIS | sort</code></pre>
 </div>
@@ -622,10 +609,6 @@ env | grep ISIS | sort</code></pre>
 <td>set to an "umbrella" ticket for all release activities.
 (One should exist already, <a href="post-release-successful.html#create-new-jira" class="page">created at</a> the beginning of the development cycle now completing).</td>
 </tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>adjust as required (Tomcat is used to smoke test the simpleapp archetype)</td>
-</tr>
 </table>
 </div>
 <div class="paragraph">
@@ -639,7 +622,7 @@ env | grep ISIS | sort</code></pre>
 </td>
 <td class="content">
 <div class="paragraph">
-<p>Note that the branch name is intentionally <strong>not</strong> the same any of the eventual tag names (eg <code>isis-2.0.0-M3</code> or <code>simpleapp-archetype-2.0.0-M3</code>).</p>
+<p>Note that the branch name is intentionally <strong>not</strong> the same as the eventual tag names (eg <code>isis-2.0.0-M3</code>).</p>
 </div>
 </td>
 </tr>
@@ -670,30 +653,38 @@ git checkout -b $ISISBRANCH</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">grep SNAPSHOT `/bin/find . -name pom.xml | grep -v target | grep -v mothball | sort`</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">grep SNAPSHOT $(/bin/find . -name pom.xml | grep -v target  sort)</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>The only mention of <code>SNAPSHOT</code> should be in the <code>revision</code> property of the root <code>core/pom.xml</code> file.</p>
+<p>The only mention of <code>SNAPSHOT</code> should be in the <code>revision</code> property of the root <code>core-prent/pom.xml</code> file.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="bump-revision-property-to-isisrel"><a class="anchor" href="#bump-revision-property-to-isisrel"></a>Bump <code>revision</code> property to <code>$ISISREL</code></h2>
+<h2 id="releasing-the-framework"><a class="anchor" href="#releasing-the-framework"></a>Releasing the Framework</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Previously we used the <code>maven-release-plugin</code> which took responsibility for bumping the <code>&lt;version&gt;</code> from -SNAPSHOT to release, and then onto the next -SNAPSHOT.
-However, this plugin does not seem to be compatible with the support for <code>${revision}</code> property introduced in Maven 3.5.0 in order <a href="https://maven.apache.org/maven-ci-friendly.html">to support CI/CD use cases</a>; at least we couldn&#8217;t make it work.</p>
-</div>
-<div class="paragraph">
-<p>So, instead, we perform the edit of <code>${revision}</code> in the three <code>pom.xml</code> files (for <code>core</code> and the two archetypes):</p>
-</div>
-<div class="paragraph">
-<p>Change all of these to the release version, using:</p>
+<p>Switch to the appropriate directory:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sh scripts/version-bump.sh $ISISJIRA $ISISREL</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd core-parent</code></pre>
+</div>
+</div>
+<div class="sect2">
+<h3 id="bump-revision-property-to-isisrel"><a class="anchor" href="#bump-revision-property-to-isisrel"></a>Bump <code>revision</code> property to <code>$ISISREL</code></h3>
+<div class="paragraph">
+<p>Previously we used the <code>maven-release-plugin</code> which took responsibility for bumping the <code>&lt;version&gt;</code> from -SNAPSHOT to release, and then onto the next -SNAPSHOT.
+However, we now use a simpler process, and just use <code>mvn versions:set</code>.</p>
+</div>
+<div class="paragraph">
+<p>So, bump to the release version:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mvn versions:set -DnewVersion=${ISISREL}
+git commit -am "${ISISJIRA}: bumps version to ${ISISREL}"</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -707,34 +698,17 @@ However, this plugin does not seem to be compatible with the support for <code>$
 &lt;/properties&gt;</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>After release, there is a <a href="#reset-revision">similar step at the end</a> to reset back to <code>1.0.0-SNAPSHOT</code>.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="releasing-core"><a class="anchor" href="#releasing-core"></a>Releasing Core</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>First, we release <code>core</code>.
-Switch to the appropriate directory:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd core</code></pre>
-</div>
-</div>
-<div class="sect2">
-<h3 id="set-environment-variables-2"><a class="anchor" href="#set-environment-variables-2"></a>Set environment variables</h3>
-<div class="paragraph">
-<p>Set additional environment variables for the core "artifact":</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">export ISISART=isis
-
-env | grep ISIS | sort</code></pre>
-</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+After release, there is a <a href="#reset-revision">similar step at the end</a> to reset back to <code>2.0.0-SNAPSHOT</code>.
+</td>
+</tr>
+</table>
 </div>
 </div>
 <div class="sect2">
@@ -754,9 +728,8 @@ for a in `/bin/find . -name rat.txt -print`; do grep '!AL' $a; done</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>where <code>rat.numUnapprovedLicenses</code> property is set to a high figure, temporarily overriding the default value of 0.
-This will allow the command to run over all submodules, rather than failing after the first one.
-The command writes out a <code>target\rat.txt</code> for each submodule.  missing license notes are indicated using the key <code>!???</code>.
+<p>where <code>rat.numUnapprovedLicenses</code> property is set to a high figure, temporarily overriding the default value of 0. This will allow the command to run over all submodules, rather than failing after the first one.
+The command writes out a <code>target\rat.txt</code> for each submodule. missing license notes are indicated using the key <code>!???</code>.
 The <code>for</code> command collates all the errors.</p>
 </div>
 <div class="paragraph">
@@ -842,9 +815,7 @@ licenses to remove from supplemental-models.xml (are spurious):
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd core
-mvn versions:set -DnewVersion=$ISISVER
-git commit -am "$ISISJIRA: updates to pom.xml etc for release"</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git commit -am "$ISISJIRA: updates to pom.xml etc for release"</code></pre>
 </div>
 </div>
 </div>
@@ -905,7 +876,7 @@ git tag $ISISART-$ISISREL-$ISISRC</code></pre>
 <h2 id="checkclose-staging-repo"><a class="anchor" href="#checkclose-staging-repo"></a>Check/Close Staging Repo</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The <code>mvn deploy</code> commands will have uploaded release artifacts for both <code>core</code> and the <code>simpleapp</code> archetype into a newly created staging repository on the ASF Nexus repository server.</p>
+<p>The <code>mvn deploy</code> commands will have uploaded all of the release artifacts into a newly created staging repository on the ASF Nexus repository server.</p>
 </div>
 <div class="paragraph">
 <p>Log onto <a href="http://repository.apache.org">repository.apache.org</a> (using your ASF LDAP account):</p>
@@ -927,10 +898,12 @@ git tag $ISISART-$ISISREL-$ISISRC</code></pre>
 <p>If nothing appears in a staging repo you should stop here and work out why.</p>
 </div>
 <div class="paragraph">
-<p>Assuming that the repo has been populated, make a note of its repo id; this is needed for the voting thread. In the screenshot above the id is <code>org.apache.isis-008</code>.</p>
+<p>Assuming that the repo has been populated, make a note of its repo id; this is needed for the voting thread.
+In the screenshot above the id is <code>org.apache.isis-008</code>.</p>
 </div>
 <div class="paragraph">
-<p>After checking that the staging repository contains the artifacts that you expect you should close the staging repository. This will make it available so that people can check the release.</p>
+<p>After checking that the staging repository contains the artifacts that you expect you should close the staging repository.
+This will make it available so that people can check the release.</p>
 </div>
 <div class="paragraph">
 <p>Press the Close button and complete the dialog:</p>
@@ -978,7 +951,8 @@ git tag $ISISART-$ISISREL-$ISISRC</code></pre>
 </td>
 <td class="content">
 <div class="paragraph">
-<p>Unfortunately, Nexus does not seem to allow subkeys to be used for signing. See <a href="about.html#key-generation" class="page">Key Generation</a> for more details.</p>
+<p>Unfortunately, Nexus does not seem to allow subkeys to be used for signing.
+See <a href="about.html#key-generation" class="page">Key Generation</a> for more details.</p>
 </div>
 </td>
 </tr>
@@ -990,8 +964,8 @@ git tag $ISISART-$ISISREL-$ISISRC</code></pre>
 <h2 id="reset-revision-property"><a class="anchor" href="#reset-revision-property"></a>Reset <code>revision</code> property</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>At the beginning of the release process we bumped the <code>revision</code> property to the release version, ie <code>$ISISREL</code>.
-With the release now deployed we now need to reset the revision back down to the base snapshot, ie <code>1.0.0-SNAPSHOT</code>.</p>
+<p>At the beginning of the release process we bumped the version to the release version, ie <code>$ISISREL</code>.
+With the release now deployed we now need to reset the revision back down to the base snapshot, ie <code>2.0.0-SNAPSHOT</code>.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -1002,18 +976,20 @@ With the release now deployed we now need to reset the revision back down to the
 <td class="content">
 <div class="paragraph">
 <p>Previously we bumped to the next development snapshot.
-However, this approach doesn&#8217;t play well with CI/CD when Apache Isis is mounted as a git submodule, so instead we always use <code>1.0.0-SNAPSHOT</code> for all development work.</p>
+However, this approach doesn&#8217;t play well with CI/CD when Apache Isis is mounted as a git submodule, so instead we always use <code>2.0.0-SNAPSHOT</code> for all development work.</p>
 </div>
 </td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>In the root of the Apache Isis repo, we do this for all three <code>pom.xml</code>s with:</p>
+<p>Therefore:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sh scripts/version-reset.sh $ISISJIRA</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd core-parent
+mvn versions:set -DnewVersion=2.0.0-SNAPSHOT
+git commit -am "${ISISJIRA}: resetting version"</code></pre>
 </div>
 </div>
 </div>
@@ -1030,13 +1006,11 @@ However, this approach doesn&#8217;t play well with CI/CD when Apache Isis is mo
 </div>
 </div>
 <div class="paragraph">
-<p>and also push tags for both core and the archetype:</p>
+<p>and also push tags:</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git push origin refs/tags/isis-$ISISREL:refs/tags/isis-$ISISREL-$ISISRC
-git push origin refs/tags/simpleapp-archetype-$ISISREL:refs/tags/simpleapp-archetype-$ISISREL-$ISISRC
-git push origin refs/tags/helloworld-archetype-$ISISREL:refs/tags/helloworld-archetype-$ISISREL-$ISISRC
 git fetch</code></pre>
 </div>
 </div>
@@ -1053,6 +1027,72 @@ git fetch</code></pre>
 </td>
 </tr>
 </table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="update-starter-apps"><a class="anchor" href="#update-starter-apps"></a>Update starter apps</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>For each starter app, we create a new branch and make the changes there, pushing the branch back if the sanity check passes.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>for helloworld, the steps are:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git checkout master
+git pull --ff-only
+
+git checkout -b $ISISBRANCH
+
+mvn versions:update-parent -DparentVersion=$ISISREL
+mvn versions:set -DnewVersion=$ISISREL
+
+mvn clean install -o
+mvn spring-boot:run</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>for simple app, the steps are almost the same:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git checkout master
+git pull --ff-only
+
+git checkout -b $ISISBRANCH
+
+mvn versions:update-parent -DparentVersion=$ISISREL
+mvn versions:set -DnewVersion=$ISISREL
+
+mvn clean install -o -Dmetamodel.lockdown
+mvn -pl webapp test -o -Dmavendeps.lockdown</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Approve any failed lockdown tests (the mavendeps will fail first time arround because the dependencies on Apache Isis itself have just be bumped).
+Repeat, then run the app as a sanity check:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mvn clean install -o -Dmetamodel.lockdown
+mvn -pl webapp test -o -Dmavendeps.lockdown
+
+mvn -pl webapp spring-boot:run</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>For both apps, push the release branch to origin once ok:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git push -u origin $ISISBRANCH</code></pre>
+</div>
+</div>
+</li>
+</ul>
 </div>
 </div>
 </div>
@@ -1087,9 +1127,7 @@ Adapt as required:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">I've cut a release for Apache Isis Framework (Core, Extensions, Mavendeps + Mixins):
-
-* Framework 2.0.0-M3
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">I've just cut a new release for Apache Isis Framework.
 
 The source code artifacts have been uploaded to staging repositories on repository.apache.org.
 For each zip there is a corresponding signature file (append .asc to the zip's url).
@@ -1105,8 +1143,6 @@ To verify the source code, you can use the following commands (in an empty direc
     gpg --import /tmp/KEYS
 
     rm -rf isis-$VERSION*
-    rm -rf simpleapp-archetype-$VERSION*
-    rm -rf helloworld-archetype-$VERSION*
 
     curl -O -L https://raw.githubusercontent.com/apache/isis/06f947ad7a0968c34d8e6941a77e12aa0196cd17/scripts/verify-isis-release.sh
 
@@ -1175,7 +1211,7 @@ Please verify the release and cast your vote.  The vote will be open for a minim
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200130-1438-5caed743</p>
+            <p>Revision: 2.0.0-M2.20200131-0944-d16c3bab</p>
         </div>
     </div>
 </footer>

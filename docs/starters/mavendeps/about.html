@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Maven Dependencies :: Apache Isis</title>
+    <title>Convenience POMs :: Apache Isis</title>
     <meta name="generator" content="Antora 2.2.0">
     <link rel="stylesheet" href="../../_/css/site.css">
     <link rel="stylesheet" href="../../_/css/site-custom.css">
@@ -133,19 +133,10 @@
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../about.html">Quick Start</a>
-  </li>
-  <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">Starter Apps</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../helloworld/about.html">HelloWorld</a>
   </li>
-  <li class="nav-item" data-depth="2">
+  <li class="nav-item" data-depth="1">
     <a class="nav-link" href="../simpleapp/about.html">SimpleApp</a>
-  </li>
-</ul>
   </li>
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
@@ -155,7 +146,7 @@
     <a class="nav-link" href="../parent-pom/about.html">Parent POM</a>
   </li>
   <li class="nav-item is-current-page" data-depth="2">
-    <a class="nav-link" href="about.html">Maven Dependencies</a>
+    <a class="nav-link" href="about.html">Convenience POMs</a>
   </li>
 </ul>
   </li>
@@ -319,16 +310,537 @@
   <ul>
     <li><a href="../about.html">Starter Apps</a></li>
     <li>Resources</li>
-    <li><a href="about.html">Maven Dependencies</a></li>
+    <li><a href="about.html">Convenience POMs</a></li>
   </ul>
 </nav>
   <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/HEAD/mavendeps/adoc/modules/mavendeps/pages/about.adoc">Edit</a></div>
 </div>
 <article class="doc">
     <a name="section-top"></a>
-<h1 class="page">Maven Dependencies</h1>
+<h1 class="page">Convenience POMs</h1>
+<div id="preamble">
+<div class="sectionbody">
 <div class="paragraph">
-<p>TODO: to document</p>
+<p>The framework provides a number of "convenience" POMs that act as aggregators of other dependencies.</p>
+</div>
+<div class="paragraph">
+<p>For example, when writing unit tests for your domain app,
+it can simply depend on the <code>isis-mavendeps-unittesting</code> artifact (rather than have to reference all of JUnit, AssertJ, Spring Boot, Hamcrest, Mockito and so on).</p>
+</div>
+<div class="paragraph">
+<p>Currently five convenience POMs are provided.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="isis-mavendeps-webapp"><a class="anchor" href="#isis-mavendeps-webapp"></a>isis-mavendeps-webapp</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>isis-mavendeps-webapp</code> aggregates the main runtime dependencies of a production webapp.</p>
+</div>
+<div class="paragraph">
+<p>To use, add the following :</p>
+</div>
+<div class="listingblock">
+<div class="title">webapp/pom.xml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.apache.isis.mavendeps&lt;/groupId&gt;
+        &lt;artifactId&gt;isis-mavendeps-webapp&lt;/artifactId&gt;
+        &lt;type&gt;pom&lt;/type&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For convenience, it includes all of the current components available:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Spring Boot (<a href="https://docs.spring.io/spring-boot/docs/current/reference/html/getting-started.html#getting-started-first-application-dependencies">spring-boot-starter-web</a>)</p>
+</li>
+<li>
+<p>Apache Isis Core - the <a href="../../refguide/about.html" class="page">Applib</a> and underlying implementation (<a href="../../core/runtime-services/about.html" class="page">Runtime Services</a>)</p>
+</li>
+<li>
+<p>All the security implementations (<a href="../../security/bypass/about.html" class="page">Bypass</a>,
+<a href="../../security/shiro/about.html" class="page">Shiro</a>, <a href="../../security/keycloak/about.html" class="page">Keycloak</a>)</p>
+</li>
+<li>
+<p>All the viewer implementations (
+<a href="../../vw/about.html" class="page">Wicket</a>, <a href="../../vro/about.html" class="page">Restful Objects</a>)</p>
+</li>
+<li>
+<p>All the persistence implementations (<a href="../../pjdo/about.html" class="page">JDO/DataNucleus</a>)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>If you don&#8217;t need any of these (for example, you&#8217;ll probably only want one security implementation), then you can exclude the others.</p>
+</div>
+<div class="paragraph">
+<p>Also, remember that adding the class onto the classpath does <em>not</em> make that functionality available (Apache Isis does not currently leverage Spring Boot&#8217;s <a href="https://docs.spring.io/spring-boot/docs/current/reference/html/using-spring-boot.html#using-boot-auto-configuration">auto configuration</a> capabilities).
+So, you must also add in the appropriate <code>IsisModuleXxx</code> to your application&#8217;s top-level <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/annotation/Configuration.html">@Configuration</a> (aka "app manifest").
+For example, see the <a href="../simpleapp/about.html#appmanifest" class="page">AppManifest for the SimpleApp</a> starter app.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="testing-and-bdd-specs"><a class="anchor" href="#testing-and-bdd-specs"></a>Testing and BDD Specs</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Three convenience POMs are provided to support  <a href="../../testing/unittestsupport/about.html" class="page">unit testing</a>, <a href="../../testing/integtestsupport/about.html" class="page">integ testing</a> or running <a href="../../testing/specsupport/about.html" class="page">BDD (Cucumber) specs</a>.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+in fact, these convenience POMs are just thin wrappers around the corresponding <code>isis-testing-xxx-applib</code> modules.
+We&#8217;ve added them for consistency.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>To use them when unit testing, add:</p>
+</div>
+<div class="listingblock">
+<div class="title">webapp/pom.xml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.apache.isis.mavendeps&lt;/groupId&gt;
+        &lt;artifactId&gt;isis-mavendeps-unittests&lt;/artifactId&gt;
+        &lt;type&gt;pom&lt;/type&gt;
+        &lt;scope&gt;test&lt;/scope&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For integration testing, add:</p>
+</div>
+<div class="listingblock">
+<div class="title">webapp/pom.xml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.apache.isis.mavendeps&lt;/groupId&gt;
+        &lt;artifactId&gt;isis-mavendeps-integtests&lt;/artifactId&gt;
+        &lt;type&gt;pom&lt;/type&gt;
+        &lt;scope&gt;test&lt;/scope&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For BDD (Cucumber) specs, within an integration testing context:</p>
+</div>
+<div class="listingblock">
+<div class="title">webapp/pom.xml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.apache.isis.mavendeps&lt;/groupId&gt;
+        &lt;artifactId&gt;isis-mavendeps-integspecs&lt;/artifactId&gt;
+        &lt;type&gt;pom&lt;/type&gt;
+        &lt;scope&gt;test&lt;/scope&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The table below summarises the dependencies that each of these convenience POMs brings in.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. Dependencies of the Convenience POM for Tests/Specs</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 16.6666%;">
+<col style="width: 16.6666%;">
+<col style="width: 16.6668%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Dependency</th>
+<th class="tableblock halign-center valign-top">mavendeps-
+unittests</th>
+<th class="tableblock halign-center valign-top">mavendeps-
+integtests</th>
+<th class="tableblock halign-center valign-top">mavendeps-
+integspecs</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Apache Isis' own <a href="../../testing/unittestsupport/about.html" class="page">unit test support</a><br>
+with JMock2 extensions to mock classes</p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>Y</p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>-</p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>-</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Apache Isis' own <a href="../../testing/integtestsupport/about.html" class="page">integ test support</a></p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>-</p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>Y</p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>Y</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Apache Isis' own <a href="../../testing/specsupport/about.html" class="page">BDD spec support</a></p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>-</p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>-</p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>Y</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://junit.org/junit5/docs/current/user-guide/">JUnit 5 "jupiter"</a></p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>Y</p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>Y</p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>Y</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://junit.org/junit5/docs/current/user-guide/#migrating-from-junit4">JUnit 5 "vintage"</a></p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>Y</p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>-</p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>-</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://docs.spring.io/spring-boot/docs/current/reference/html/spring-boot-features.html#boot-features-testing">Spring Boot Test</a></p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>Y</p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>Y</p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>Y</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="http://hamcrest.org/JavaHamcrest/">Hamcrest</a> (core + library)</p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>Y</p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>Y</p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>Y</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://joel-costigliola.github.io/assertj/">AssertJ</a></p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>Y</p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>Y</p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>Y</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://site.mockito.org/">Mockito</a></p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>Y</p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>Y</p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>Y</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="http://jmock.org/">JMock</a></p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>Y</p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>-</p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>-</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://github.com/approvals/ApprovalTests.Java">Approval tests</a></p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>Y</p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>Y</p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>Y</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="http://picocontainer.com/">PicoContainer</a><br>
+(for JMock2 extensions)</p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>Y</p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>-</p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>-</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Apache Isis <a href="../../refguide/about.html" class="page">Applib</a></p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>Y</p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>Y</p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>Y</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Apache Isis <a href="../../core/runtime-services/about.html" class="page">Runtime Services</a></p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>-</p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>Y</p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>Y</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Apache Isis <a href="../../security/bypass/about.html" class="page">Bypass</a> security</p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>-</p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>Y</p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>Y</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Apache Isis <a href="../../pjdo/about.html" class="page">JDO/DataNucleus</a></p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>-</p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>Y</p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>Y</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Apache Isis <a href="../../testing/fakedata/about.html" class="page">Fake Data</a></p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>Y</p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>Y</p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>Y</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Apache Isis <a href="../../testing/fixtures/about.html" class="page">Fixture Scripts</a></p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>-</p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>Y</p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>Y</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://github.com/google/guava/wiki">Google&#8217;s Guava</a></p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>Y</p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>-</p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>-</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="http://hsqldb.org">HSQLDB</a></p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>-</p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>Y</p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>Y</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://www.h2database.com">H2 Database</a></p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>-</p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>Y</p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>Y</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="jdk11"><a class="anchor" href="#jdk11"></a>jdk11</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>While Apache Isis v2 will run happily on Java 8, it is of course also possible to it on later versions.</p>
+</div>
+<div class="paragraph">
+<p>However, between Java 8 and Java 11 a number of packages related to JavaEE were removed from the JRE, but these packages are used by the framework, specifically</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>JAX-WS packages (<code>javax.jws</code>, <code>javax.jws.soap</code>, <code>javax.xml.soap</code>, and <code>javax.xml.ws.*</code>)</p>
+</li>
+<li>
+<p>JAXB packages (<code>javax.xml.bind.*</code>)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>So, if you <em>do</em> want to run your Apache Isis application on Java 11 or later, then these dependencies need to be added in.</p>
+</div>
+<div class="paragraph">
+<p>All you need to do is include this dependency in the webapp module:</p>
+</div>
+<div class="paragraph">
+<p>To use, add the following :</p>
+</div>
+<div class="listingblock">
+<div class="title">webapp/pom.xml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.apache.isis.mavendeps&lt;/groupId&gt;
+        &lt;artifactId&gt;isis-mavendeps-jdk11&lt;/artifactId&gt;
+        &lt;type&gt;pom&lt;/type&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If you are running on JDK11, then this will activate a profile to bring in the missing packages.
+Otherwise it will be ignored.</p>
+</div>
+<div class="paragraph">
+<p>For more on this topic, see:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://www.oracle.com/technetwork/java/javase/11-relnote-issues-5012449.html#JDK-8190378">JDK11 release notes</a></p>
+</li>
+<li>
+<p><a href="http://openjdk.java.net/jeps/320">JEP 320</a> under which the packages were removed (also includes notes on replacements)</p>
+</li>
+<li>
+<p><a href="https://blog.codefx.org/java/java-11-migration-guide/#Removal-Of-Java-EE-Modules">this blog post</a> on how to fix it</p>
+</li>
+<li>
+<p><a href="https://stackoverflow.com/questions/48204141/replacements-for-deprecated-jpms-modules-with-java-ee-apis/48204154#48204154">this SO answer</a> on how to fix it</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 </article>
 <aside class="article-aside toc" role="navigation">
@@ -347,7 +859,7 @@
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200130-1438-5caed743</p>
+            <p>Revision: 2.0.0-M2.20200131-0944-d16c3bab</p>
         </div>
     </div>
 </footer>

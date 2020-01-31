@@ -133,19 +133,10 @@
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../about.html">Quick Start</a>
-  </li>
-  <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">Starter Apps</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../helloworld/about.html">HelloWorld</a>
   </li>
-  <li class="nav-item" data-depth="2">
+  <li class="nav-item" data-depth="1">
     <a class="nav-link" href="../simpleapp/about.html">SimpleApp</a>
-  </li>
-</ul>
   </li>
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
@@ -155,7 +146,7 @@
     <a class="nav-link" href="about.html">Parent POM</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../mavendeps/about.html">Maven Dependencies</a>
+    <a class="nav-link" href="../mavendeps/about.html">Convenience POMs</a>
   </li>
 </ul>
   </li>
@@ -372,78 +363,61 @@ It builds upon a similar POM provided by the Spring Boot framework, which ensure
 </div>
 <div class="imageblock">
 <div class="content">
-<a class="image" href="_images/parent-pom.png"><img src="_images/parent-pom.png" alt="parent pom" width="600px"></a>
+<a class="image" href="_images/parent-pom.png"><img src="_images/parent-pom.png" alt="parent pom" width="800px"></a>
 </div>
 </div>
 <div class="paragraph">
-<p>So, you can see that the parent POM:</p>
+<p>As the diagram shows, the parent POM inherits two Spring Boot parent POMs: directly from <code>org.springframework.boot:spring-boot-starter-parent</code>, and transitively inherits from <code>org.springframework.boot:spring-boot-dependencies</code>.</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>inherits from <code>org.springframework.boot:spring-boot-starter-parent</code></p>
-<div class="paragraph">
-<p>This configures various <code>&lt;build&gt;/&lt;plugins&gt;</code> and <code>&lt;resources</code>&gt;</p>
-</div>
+<p><code>spring-boot-starter-parent</code> configures various <code>&lt;build&gt;/&lt;plugins&gt;</code> and <code>&lt;resources&gt;</code>, while</p>
 </li>
 <li>
-<p>transitively inherits from <code>org.springframework.boot:spring-boot-dependencies</code></p>
-<div class="paragraph">
-<p>This defines numerous <code>xxx.version</code> properties for various third party applications, and sets up corresponding <code>&lt;dependencyManagement&gt;/&lt;dependencies&gt;</code>.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-These have been validated as being compatible with each other by the Spring Boot team.
-</td>
-</tr>
-</table>
-</div>
-</li>
-<li>
-<p>imports <code>org.apache.isis.core:isis</code> (using scope=import, type=pom)</p>
-<div class="paragraph">
-<p>... setting up <code>&lt;dependencyManagement&gt;/&lt;dependencies&gt;</code> entries for all of the core modules.</p>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-The two core modules most commonly referenced in domain applications are <code>o.a.i.core:isis-applib</code> and <code>o.a.i.core:isis-schema</code>.
-</td>
-</tr>
-</table>
-</div>
-</li>
-<li>
-<p>similarly imports <code>o.a.i.testing:isis-testing</code>, for the <code>isis-testing-xxx</code> modules</p>
-</li>
-<li>
-<p>imports <code>o.a.i.extensions:isis-extensions</code>, for <code>isis-extension-xxx</code> modules</p>
-</li>
-<li>
-<p>imports <code>o.a.i.subdomains:isis-subdomains</code>, for <code>isis-subdomain-xxx</code> modules</p>
-</li>
-<li>
-<p>imports <code>o.a.i.mappings:isis-mappings</code>, for <code>isis-mappings-xxx</code> modules</p>
-</li>
-<li>
-<p>imports <code>o.a.i.valuetypes:isis-valuetypes</code>, for <code>isis-valuetypes-xxx</code> modules</p>
-</li>
-<li>
-<p>imports <code>o.a.i.incubator:isis-incubator</code>, for <code>isis-incubator-xxx</code> modules</p>
-</li>
-<li>
-<p>imports <code>o.a.i.legacy:isis-legacy</code>, for <code>isis-legacy-xxx</code> modules</p>
+<p><code>spring-boot-dependencies</code> the second defines numerous <code>xxx.version</code> properties for various third party applications (validated as being compatible with each other by the Spring Boot team), and sets up corresponding <code>&lt;dependencyManagement&gt;/&lt;dependencies&gt;</code>.</p>
 </li>
 </ul>
+</div>
+<div class="paragraph">
+<p>The parent POM also import (using <code>scope=import, type=pom</code>) each of the "bill of material" POMs provided by Apache Isis framework:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>org.apache.isis.core:isis</code> -</p>
+<div class="paragraph">
+<p>The two core modules most commonly referenced by domain applications are <code>o.a.i.core:isis-applib</code> and <code>o.a.i.core:isis-schema</code>.</p>
+</div>
+</li>
+<li>
+<p><code>o.a.i.testing:isis-testing</code></p>
+<div class="paragraph">
+<p>For the <code>isis-testing-xxx</code> modules (fixture scripts, unit test support, integ test support etc)</p>
+</div>
+</li>
+<li>
+<p><code>o.a.i.extensions:isis-extensions</code></p>
+</li>
+<li>
+<p><code>o.a.i.subdomains:isis-subdomains</code></p>
+</li>
+<li>
+<p><code>o.a.i.mappings:isis-mappings</code></p>
+</li>
+<li>
+<p><code>o.a.i.valuetypes:isis-valuetypes</code></p>
+</li>
+<li>
+<p><code>o.a.i.incubator:isis-incubator</code></p>
+</li>
+<li>
+<p><code>o.a.i.legacy:isis-legacy</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>These all set up <code>&lt;dependencyManagement&gt;/&lt;dependencies&gt;</code> entries for all of the modules, meaning that there&#8217;s only one place to update the version to Apache Isis (the reference to the parent POM).</p>
 </div>
 </div>
 </div>
@@ -464,7 +438,7 @@ The two core modules most commonly referenced in domain applications are <code>o
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200130-1438-5caed743</p>
+            <p>Revision: 2.0.0-M2.20200131-0944-d16c3bab</p>
         </div>
     </div>
 </footer>
