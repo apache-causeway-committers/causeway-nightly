@@ -145,9 +145,6 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../what-is-apache-isis/screencasts.html">Screencasts</a>
   </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../what-is-apache-isis/powered-by.html">Powered By</a>
-  </li>
 </ul>
   </li>
   <li class="nav-item" data-depth="1">
@@ -155,7 +152,7 @@
     <span class="nav-text">Starter Apps</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../../starters/helloworld/about.html">Hello World</a>
+    <a class="nav-link" href="../../starters/helloworld/about.html">HelloWorld</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../../starters/simpleapp/about.html">SimpleApp</a>
@@ -168,7 +165,7 @@
     <a class="nav-link" href="../../starters/parent-pom/about.html">Parent POM</a>
   </li>
   <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../../starters/mavendeps/about.html">Maven Dependencies</a>
+    <a class="nav-link" href="../../starters/mavendeps/about.html">Aggregator POMs</a>
   </li>
 </ul>
   </li>
@@ -396,10 +393,10 @@
       </ul>
     </li>
     <li class="component">
-      <span class="title">DataNucleus ObjectStore</span>
+      <span class="title">Demo App</span>
       <ul class="versions">
         <li class="version is-latest">
-          <a href="../../pjdo/about.html">master</a>
+          <a href="../../demoapp/about.html">master</a>
         </li>
       </ul>
     </li>
@@ -416,6 +413,14 @@
       <ul class="versions">
         <li class="version is-latest">
           <a href="../../incubator/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">JDO/DataNucleus</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../pjdo/about.html">master</a>
         </li>
       </ul>
     </li>
@@ -472,14 +477,6 @@
       <ul class="versions">
         <li class="version is-latest">
           <a href="../../testing/about.html">master</a>
-        </li>
-      </ul>
-    </li>
-    <li class="component">
-      <span class="title">Tutorial App - Demo</span>
-      <ul class="versions">
-        <li class="version is-latest">
-          <a href="../../demoapp/about.html">master</a>
         </li>
       </ul>
     </li>
@@ -596,9 +593,7 @@ I'll now go ahead and complete the post-release activities.</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sh scripts/promoterctag.sh isis-2.0.0-M3 RC1
-sh scripts/promoterctag.sh helloworld-archetype-2.0.0-M3 RC1
-sh scripts/promoterctag.sh simpleapp-archetype-2.0.0-M3 RC1</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sh scripts/promoterctag.sh isis-2.0.0-M3 RC1</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -642,10 +637,7 @@ The directory structure of Apache Isis reflects the directory structure in our g
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code>isis/
-  core/
-  example/
-    archetype/
-      simpleapp/</code></pre>
+  core/</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -690,48 +682,6 @@ svn add $fullname-$new_ver-$zip
 
 svn delete $fullname-$old_ver-$asc
 svn delete $fullname-$old_ver-$md5
-svn delete $fullname-$old_ver-$zip
-
-popd
-
-
-#
-# helloworld-archetype
-#
-type="archetype"
-fullname="helloworld-archetype"
-pushd $type/$fullname
-
-curl -O $repo_root/$type/$fullname/$new_ver/$fullname-$new_ver-$md5
-svn add $fullname-$new_ver-$md5
-curl -O $repo_root/$type/$fullname/$new_ver/$fullname-$new_ver-$asc
-svn add $fullname-$new_ver-$asc
-curl -O $repo_root/$type/$fullname/$new_ver/$fullname-$new_ver-$zip
-svn add $fullname-$new_ver-$zip
-
-svn delete $fullname-$old_ver-$md5
-svn delete $fullname-$old_ver-$asc
-svn delete $fullname-$old_ver-$zip
-
-popd
-
-
-#
-# simpleapp-archetype
-#
-type="archetype"
-fullname="simpleapp-archetype"
-pushd $type/$fullname
-
-curl -O $repo_root/$type/$fullname/$new_ver/$fullname-$new_ver-$md5
-svn add $fullname-$new_ver-$md5
-curl -O $repo_root/$type/$fullname/$new_ver/$fullname-$new_ver-$asc
-svn add $fullname-$new_ver-$asc
-curl -O $repo_root/$type/$fullname/$new_ver/$fullname-$new_ver-$zip
-svn add $fullname-$new_ver-$zip
-
-svn delete $fullname-$old_ver-$md5
-svn delete $fullname-$old_ver-$asc
 svn delete $fullname-$old_ver-$zip
 
 popd</code></pre>
@@ -906,12 +856,6 @@ mvn -Drevision=$ISISREL \
 <p>Update the [<code>site.yml</code>] file that declares the current and next releases.</p>
 </li>
 <li>
-<p>Update any pages (<code>.adoc</code>, <code>.md</code>, <code>.html</code> etc) that describe how to run the archetype, and ensure they reference the correct version.</p>
-<div class="paragraph">
-<p>A search for <code>archetypeGroupId=org.apache.isis.archetype</code> should find these pages.</p>
-</div>
-</li>
-<li>
 <p>update the <code>doap_isis.rdf</code> file (which provides a machine-parseable description of the project) with details of the new release.
 Validate using the <a href="http://www.w3.org/RDF/Validator/">W3C RDF Validator</a> service.</p>
 <div class="paragraph">
@@ -1004,9 +948,6 @@ mv content/versions/SNAPSHOT content/versions/current</code></pre>
 <ul>
 <li>
 <p>update the menu to reference the new version</p>
-</li>
-<li>
-<p>update the version in the archetype.</p>
 </li>
 </ul>
 </div>
@@ -1248,7 +1189,7 @@ git push</code></pre>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200131-1559-7516c085</p>
+            <p>Revision: 2.0.0-M2.20200201-0400-2fbfcbe2</p>
         </div>
     </div>
 </footer>

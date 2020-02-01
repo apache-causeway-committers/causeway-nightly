@@ -133,9 +133,6 @@
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../about.html">About the Reference Guides</a>
-  </li>
-  <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
     <a class="nav-link" href="../applib-ant/about.html">Annotations</a>
 <ul class="nav-list">
@@ -618,10 +615,10 @@
       </ul>
     </li>
     <li class="component">
-      <span class="title">DataNucleus ObjectStore</span>
+      <span class="title">Demo App</span>
       <ul class="versions">
         <li class="version is-latest">
-          <a href="../../pjdo/about.html">master</a>
+          <a href="../../demoapp/about.html">master</a>
         </li>
       </ul>
     </li>
@@ -638,6 +635,14 @@
       <ul class="versions">
         <li class="version is-latest">
           <a href="../../incubator/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">JDO/DataNucleus</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../pjdo/about.html">master</a>
         </li>
       </ul>
     </li>
@@ -698,14 +703,6 @@
       </ul>
     </li>
     <li class="component">
-      <span class="title">Tutorial App - Demo</span>
-      <ul class="versions">
-        <li class="version is-latest">
-          <a href="../../demoapp/about.html">master</a>
-        </li>
-      </ul>
-    </li>
-    <li class="component">
       <span class="title">User Guide</span>
       <ul class="versions">
         <li class="version is-latest">
@@ -758,7 +755,7 @@
 </div>
 </div>
 <div class="sect1">
-<h2 id="AppManifest-bootstrapping"><a class="anchor" href="#AppManifest-bootstrapping"></a><code>AppManifest</code> (bootstrapping)</h2>
+<h2 id="appmanifest-bootstrapping"><a class="anchor" href="#appmanifest-bootstrapping"></a><code>AppManifest</code> (bootstrapping)</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>This section describes how to implement the <code>AppManifest</code> interface to bootstrap both an Apache Isis web application, and also its integration tests.</p>
@@ -853,16 +850,16 @@ public final class MyAppDomainModule {
 The value of the <code>isis.services-installer</code> configuration property is also ignored.</p>
 </div>
 <div class="paragraph">
-<p>For example, the (non-ASF) <a href="http://github.com/isisaddons/isis-app-todoapp">Isis addons' todoapp</a> defines the following:</p>
+<p>For example, the <a href="http://github.com/apache/isis-app-todoapp">TodoApp</a> defines the following:</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Override
 public List&lt;Class&lt;?&gt;&gt; getModules() {
     return Arrays.asList(
-            ToDoAppDomainModule.class,
-            ToDoAppFixtureModule.class,
-            ToDoAppAppModule.class,
+            TodoAppDomainModule.class,
+            TodoAppFixtureModule.class,
+            TodoAppAppModule.class,
             org.isisaddons.module.audit.AuditModule.class,
             org.isisaddons.module.command.CommandModule.class,
             org.isisaddons.module.devutils.DevUtilsModule.class,
@@ -1038,11 +1035,9 @@ Here the <code>AppManifest</code> just needs to be specified as a configuration 
 </div>
 </li>
 <li>
-<p>the second is also as a webapp, but from within the context of the IDE.<br></p>
-<div class="paragraph">
-<p>Here, it&#8217;s common to use the <code>org.apache.isis.WebServer</code> class to launch your application from the <a href="../../userguide/btb/about.html#cmd-line" class="page">command line</a>.
+<p>the second is also as a webapp, but from within the context of the IDE.<br>
++ Here, it&#8217;s common to use the <code>org.apache.isis.WebServer</code> class to launch your application from the <a href="../../userguide/btb/about.html#cmd-line" class="page">command line</a>.
 This allows the <code>AppManifest</code> to be specified using the <code>-m</code> (or <code>--manifest</code>) flag:<br></p>
-</div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">java org.apache.isis.WebServer -m com.mycompany.myapp.MyAppAppManifestWithFixtures</code></pre>
@@ -1050,10 +1045,8 @@ This allows the <code>AppManifest</code> to be specified using the <code>-m</cod
 </div>
 </li>
 <li>
-<p>the third case is within an integration test.<br></p>
-<div class="paragraph">
-<p>The code to boostrap an integration test is shown in the <a href="../../testing/integtestsupport/about.html#bootstrapping" class="page">testing guide</a>, but once again an <code>AppManifest</code> is required.</p>
-</div>
+<p>the third case is within an integration test.<br>
++ The code to boostrap an integration test is shown in the <a href="../../testing/integtestsupport/about.html#bootstrapping" class="page">testing guide</a>, but once again an <code>AppManifest</code> is required.</p>
 </li>
 </ul>
 </div>
@@ -1076,6 +1069,18 @@ Sometimes though it is necessary to "tweak" the <code>AppManifest</code>:</p>
 </div>
 <div class="sect3">
 <h4 id="appmanifestabstract"><a class="anchor" href="#appmanifestabstract"></a>AppManifestAbstract</h4>
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-caution" title="Caution"></i>
+</td>
+<td class="content">
+TODO: v2: this is all out of date and superceded by Spring Boot
+</td>
+</tr>
+</table>
+</div>
 <div class="admonitionblock important">
 <table>
 <tr>
@@ -1103,21 +1108,17 @@ This takes an instance of a <code>AppManifestAbstract.Builder</code> in its cons
 <div class="ulist">
 <ul>
 <li>
-<p>those that are fixed and do not change between environments.<br></p>
-<div class="paragraph">
-<p>In other words these describe how the application chooses to configure the framework itself, eg global disable of editing of properties, or enabling of auditing.</p>
-</div>
+<p>those that are fixed and do not change between environments.<br>
++ In other words these describe how the application chooses to configure the framework itself, eg global disable of editing of properties, or enabling of auditing.</p>
 </li>
 <li>
-<p>those that change between environments.<br></p>
-<div class="paragraph">
-<p>The classic example here is the JDBC URL.</p>
-</div>
+<p>those that change between environments.<br>
++ The classic example here is the JDBC URL.</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>For example, the <a href="https://github.com/apache/isis-app-simpleapp">SimpleApp archetype</a>'s <code>AppManifest</code> is defined as:</p>
+<p>For example, the <a href="../../starters/simpleapp/about.html" class="page">SimpleApp</a> starter app&#8217;s <code>AppManifest</code> is defined as:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1150,7 +1151,7 @@ This takes an instance of a <code>AppManifestAbstract.Builder</code> in its cons
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>the (non-changing with environment) set of configuration properties, loaded relative to the manifest itself;  corresponds to <code>AppManifest#getConfigurationProperties()</code></td>
+<td>the (non-changing with environment) set of configuration properties, loaded relative to the manifest itself; corresponds to <code>AppManifest#getConfigurationProperties()</code></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
@@ -4160,7 +4161,7 @@ This is always "GET".</td>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200131-1559-7516c085</p>
+            <p>Revision: 2.0.0-M2.20200201-0400-2fbfcbe2</p>
         </div>
     </div>
 </footer>

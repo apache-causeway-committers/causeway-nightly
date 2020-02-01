@@ -191,7 +191,7 @@
     <span class="nav-text">Extensions</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../../flyway/about.html">Flyway (Extension)</a>
+    <a class="nav-link" href="../../flyway/about.html">Flyway</a>
   </li>
 </ul>
   </li>
@@ -231,10 +231,10 @@
       </ul>
     </li>
     <li class="component">
-      <span class="title">DataNucleus ObjectStore</span>
+      <span class="title">Demo App</span>
       <ul class="versions">
         <li class="version is-latest">
-          <a href="../../../pjdo/about.html">master</a>
+          <a href="../../../demoapp/about.html">master</a>
         </li>
       </ul>
     </li>
@@ -251,6 +251,14 @@
       <ul class="versions">
         <li class="version is-latest">
           <a href="../../../incubator/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">JDO/DataNucleus</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../pjdo/about.html">master</a>
         </li>
       </ul>
     </li>
@@ -310,14 +318,6 @@
         </li>
       </ul>
     </li>
-    <li class="component">
-      <span class="title">Tutorial App - Demo</span>
-      <ul class="versions">
-        <li class="version is-latest">
-          <a href="../../../demoapp/about.html">master</a>
-        </li>
-      </ul>
-    </li>
     <li class="component is-current">
       <span class="title">User Guide</span>
       <ul class="versions">
@@ -363,24 +363,48 @@
     <a name="section-top"></a>
 <h1 class="page">Modules</h1>
 <div class="paragraph">
-<p>We tend to use Maven modules as a way to group related domain objects together; we can then reason about all the classes in that module as a single unit.
-By convention there will be a single top-level package corresponding to the module.</p>
+<p>We tend to use Maven modules as a way to group related domain objects together; we can then reason about all the classes in that module as a single unit.</p>
 </div>
 <div class="paragraph">
-<p>For example, the (non-ASF) <a href="https://platform.incode.org" target="_blank" rel="noopener">Incode Platform</a>'s <a href="http://platform.incode.org/modules/lib/excel/lib-excel.html">Excel</a> module has a top-level package of <code>org.incode.module.excel</code>.
-Within the module there may be various subpackages, but it&#8217;s the module that defines the namespace.</p>
+<p>There will be a single top-level package corresponding to the module, and this will be aligned with the <code>&lt;groupId&gt;</code> and <code>&lt;artifactId&gt;</code> of the Maven module in which it resides
+For example, the <a href="../../../subdomains/excel/about.html" class="page">Excel subdomain</a> module has a top-level package of <code>org.apache.isis.subdomains.excel</code>.
+Within the module there may be various subpackages, but it&#8217;s the top-level package that defines the namespace.</p>
 </div>
-<div class="admonitionblock note">
+<div class="paragraph">
+<p>In this top-level package there will also be a class annotated with Spring&#8217;s <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/annotation/Configuration.html">@Configuration</a> annotation.
+The class is also often anntotated with <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/annotation/Import.html">@Import</a>, through which the dependencies of this module may appear.
+And there is one other annotation that often appears, namely <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/annotation/ComponentScan.html">@ComponentScan</a>.
+This indicates that the classpath should be scanned for domain services, entities and <a href="../../../testing/fixtures/about.html" class="page">fixture scripts</a>.</p>
+</div>
+<div class="paragraph">
+<p>For example, if an application&#8217;s customer module needs to use the aforementioned Excel subdomain model (perhaps to generate a downloadable report), then this would be expressed using:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">package com.mycompany.modules.customer;
+...
+
+@Configuration                                  <i class="conum" data-value="1"></i><b>(1)</b>
+@Import({
+    IsisModuleSubdomainsExcelApplib.class       <i class="conum" data-value="2"></i><b>(2)</b>
+})
+@ComponentScan                                  <i class="conum" data-value="3"></i><b>(3)</b>
+public class CustomerModule {}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
 <table>
 <tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>TODO: flesh out with details on how modules are used under Spring Boot.</p>
-</div>
-</td>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>indicates that this is a module (so far as Spring Boot is concerned)</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>indicates a dependency on the Excel module (more precisely, its "applib")</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>indicates that the classpath be scanned to find domain services and entities etc under this package, eg a <code>Customer</code> entity or a <code>CustomerRepository</code> domain service.</td>
 </tr>
 </table>
 </div>
@@ -401,7 +425,7 @@ Within the module there may be various subpackages, but it&#8217;s the module th
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200131-1559-7516c085</p>
+            <p>Revision: 2.0.0-M2.20200201-0400-2fbfcbe2</p>
         </div>
     </div>
 </footer>

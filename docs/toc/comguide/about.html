@@ -145,9 +145,6 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../what-is-apache-isis/screencasts.html">Screencasts</a>
   </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../what-is-apache-isis/powered-by.html">Powered By</a>
-  </li>
 </ul>
   </li>
   <li class="nav-item" data-depth="1">
@@ -155,7 +152,7 @@
     <span class="nav-text">Starter Apps</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../../starters/helloworld/about.html">Hello World</a>
+    <a class="nav-link" href="../../starters/helloworld/about.html">HelloWorld</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../../starters/simpleapp/about.html">SimpleApp</a>
@@ -168,7 +165,7 @@
     <a class="nav-link" href="../../starters/parent-pom/about.html">Parent POM</a>
   </li>
   <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../../starters/mavendeps/about.html">Maven Dependencies</a>
+    <a class="nav-link" href="../../starters/mavendeps/about.html">Aggregator POMs</a>
   </li>
 </ul>
   </li>
@@ -396,10 +393,10 @@
       </ul>
     </li>
     <li class="component">
-      <span class="title">DataNucleus ObjectStore</span>
+      <span class="title">Demo App</span>
       <ul class="versions">
         <li class="version is-latest">
-          <a href="../../pjdo/about.html">master</a>
+          <a href="../../demoapp/about.html">master</a>
         </li>
       </ul>
     </li>
@@ -416,6 +413,14 @@
       <ul class="versions">
         <li class="version is-latest">
           <a href="../../incubator/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">JDO/DataNucleus</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../pjdo/about.html">master</a>
         </li>
       </ul>
     </li>
@@ -472,14 +477,6 @@
       <ul class="versions">
         <li class="version is-latest">
           <a href="../../testing/about.html">master</a>
-        </li>
-      </ul>
-    </li>
-    <li class="component">
-      <span class="title">Tutorial App - Demo</span>
-      <ul class="versions">
-        <li class="version is-latest">
-          <a href="../../demoapp/about.html">master</a>
         </li>
       </ul>
     </li>
@@ -967,8 +964,8 @@ However, we now use a simpler process, and just use <code>mvn versions:set</code
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mvn versions:set -DnewVersion=${ISISREL}
-git commit -am "${ISISJIRA}: bumps version to ${ISISREL}"</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mvn versions:set -DnewVersion=$ISISREL
+git commit -am "$ISISJIRA: bumps version to $ISISREL"</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1269,7 +1266,7 @@ However, this approach doesn&#8217;t play well with CI/CD when Apache Isis is mo
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd core-parent
 mvn versions:set -DnewVersion=2.0.0-SNAPSHOT
-git commit -am "${ISISJIRA}: resetting version"</code></pre>
+git commit -am "$ISISJIRA: resetting version"</code></pre>
 </div>
 </div>
 </div>
@@ -1406,7 +1403,7 @@ Adapt as required:</p>
 The source code artifacts have been uploaded to staging repositories on repository.apache.org.
 For each zip there is a corresponding signature file (append .asc to the zip's url).
 
-In the source code repo the code has been tagged as isis-2.0.0-M3-RC1, helloworld-archetype-2.0.0-M3-RC1 and simpleapp-archetype-2.0.0-M3-RC1; see https://github.com/apache/isis/tags
+In the source code repo the code has been tagged as isis-2.0.0-M3-RC1; see https://github.com/apache/isis/tags
 
 To verify the source code, you can use the following commands (in an empty directory):
 
@@ -1418,23 +1415,10 @@ To verify the source code, you can use the following commands (in an empty direc
 
     rm -rf isis-$VERSION*
 
-    curl -O -L https://raw.githubusercontent.com/apache/isis/06f947ad7a0968c34d8e6941a77e12aa0196cd17/scripts/verify-isis-release.sh
+    curl -O -L https://raw.githubusercontent.com/apache/isis/xxxx/scripts/verify-isis-release.sh
 
     chmod +x ./verify-isis-release.sh
     ./verify-isis-release.sh $NEXUSREPONUM $VERSION
-
-
-Assuming this completes successfully, you can then test the two applications generated from the `simpleapp` and `helloworld` archetypes:
-
-    pushd test-simpleapp/myapp
-    mvn -pl webapp jetty:run
-    popd
-
-and
-
-    pushd test-helloworld/myapp
-    mvn jetty:run
-    popd
 
 
 For more details, see https://isis.apache.org/toc/comguide/about.html#verifying-releases
@@ -1577,10 +1561,8 @@ curl http://www.apache.org/dist/isis/KEYS &gt; /tmp/KEYS
 gpg --import /tmp/KEYS
 
 rm -rf isis-$VERSION*
-rm -rf simpleapp-archetype-$VERSION*
-rm -rf helloworld-archetype-$VERSION*
 
-curl -O -L https://gist.githubusercontent.com/danhaywood/9b052f68ef56cfdbeb3eb1603c5f772a/raw/a083599d34a502a18c5ccfd4a4d26f18352ca0e4/verify-isis-release.sh
+curl -O -L https://gist.githubusercontent.com/danhaywood/xxx/raw/xxx/verify-isis-release.sh
 
 chmod +x ./verify-isis-release.sh
 ./verify-isis-release.sh $NEXUSREPONUM $VERSION</code></pre>
@@ -1615,42 +1597,12 @@ chmod +x ./verify-isis-release.sh
 </div>
 </li>
 <li>
-<p>builds all the framework code from source</p>
-<div class="paragraph">
-<p>that is, <code>core</code>, <code>simpleapp-archetype</code> and <code>helloworld-archetype</code></p>
-</div>
-</li>
-<li>
-<p>generates and build an app for each of the two archetypes</p>
+<p>builds the framework code from source</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>Assuming this completes successfully, you can then test the two applications generated from the <code>simpleapp</code> and <code>helloworld</code> archetypes:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Test out simpleapp using:</p>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">pushd test-simpleapp/myapp
-mvn -pl webapp jetty:run
-popd</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>Test out helloworld using:</p>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">pushd test-helloworld/myapp
-mvn jetty:run
-popd</code></pre>
-</div>
-</div>
-</li>
-</ul>
+<p>Assuming this completes successfully, you can then test the two starter applications; adjust the version if required.</p>
 </div>
 <div class="paragraph">
 <p>You can if you wish perform some additional optional checks, listed in the sections below.
@@ -1660,7 +1612,7 @@ Alternatively, you can <a href="verifying-releases.html#casting-a-vote" class="p
 <div class="sect2">
 <h3 id="optional-verifying-binary-artifacts"><a class="anchor" href="#optional-verifying-binary-artifacts"></a>(Optional) Verifying binary artifacts</h3>
 <div class="paragraph">
-<p>You can verify the binary releases by configuring your local Maven install to point to the Maven staging repository (or repositories) and then using them, eg to run the <a href="https://github.com/apache/isis-app-helloworld">HelloWorld archetype</a> or the <a href="https://github.com/apache/isis-app-simpleapp">SimpleApp archetype</a> and running the resultant app.</p>
+<p>You can verify the binary releases by configuring your local Maven install to point to the Maven staging repository (or repositories) and then using them, eg to run the <a href="../../starters/helloworld/about.html" class="page">HelloWorld starter app</a> or the <a href="../../starters/simpleapp/about.html" class="page">SimpleApp starter app</a> (adjust the parent version if required).</p>
 </div>
 <div class="paragraph">
 <p>Configuring your local Maven install amounts to updating the <code>~/.m2/settings.xml</code> file:</p>
@@ -1811,9 +1763,7 @@ I'll now go ahead and complete the post-release activities.</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sh scripts/promoterctag.sh isis-2.0.0-M3 RC1
-sh scripts/promoterctag.sh helloworld-archetype-2.0.0-M3 RC1
-sh scripts/promoterctag.sh simpleapp-archetype-2.0.0-M3 RC1</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sh scripts/promoterctag.sh isis-2.0.0-M3 RC1</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1853,10 +1803,7 @@ The directory structure of Apache Isis reflects the directory structure in our g
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code>isis/
-  core/
-  example/
-    archetype/
-      simpleapp/</code></pre>
+  core/</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1901,48 +1848,6 @@ svn add $fullname-$new_ver-$zip
 
 svn delete $fullname-$old_ver-$asc
 svn delete $fullname-$old_ver-$md5
-svn delete $fullname-$old_ver-$zip
-
-popd
-
-
-#
-# helloworld-archetype
-#
-type="archetype"
-fullname="helloworld-archetype"
-pushd $type/$fullname
-
-curl -O $repo_root/$type/$fullname/$new_ver/$fullname-$new_ver-$md5
-svn add $fullname-$new_ver-$md5
-curl -O $repo_root/$type/$fullname/$new_ver/$fullname-$new_ver-$asc
-svn add $fullname-$new_ver-$asc
-curl -O $repo_root/$type/$fullname/$new_ver/$fullname-$new_ver-$zip
-svn add $fullname-$new_ver-$zip
-
-svn delete $fullname-$old_ver-$md5
-svn delete $fullname-$old_ver-$asc
-svn delete $fullname-$old_ver-$zip
-
-popd
-
-
-#
-# simpleapp-archetype
-#
-type="archetype"
-fullname="simpleapp-archetype"
-pushd $type/$fullname
-
-curl -O $repo_root/$type/$fullname/$new_ver/$fullname-$new_ver-$md5
-svn add $fullname-$new_ver-$md5
-curl -O $repo_root/$type/$fullname/$new_ver/$fullname-$new_ver-$asc
-svn add $fullname-$new_ver-$asc
-curl -O $repo_root/$type/$fullname/$new_ver/$fullname-$new_ver-$zip
-svn add $fullname-$new_ver-$zip
-
-svn delete $fullname-$old_ver-$md5
-svn delete $fullname-$old_ver-$asc
 svn delete $fullname-$old_ver-$zip
 
 popd</code></pre>
@@ -2111,12 +2016,6 @@ mvn -Drevision=$ISISREL \
 <p>Update the [<code>site.yml</code>] file that declares the current and next releases.</p>
 </li>
 <li>
-<p>Update any pages (<code>.adoc</code>, <code>.md</code>, <code>.html</code> etc) that describe how to run the archetype, and ensure they reference the correct version.</p>
-<div class="paragraph">
-<p>A search for <code>archetypeGroupId=org.apache.isis.archetype</code> should find these pages.</p>
-</div>
-</li>
-<li>
 <p>update the <code>doap_isis.rdf</code> file (which provides a machine-parseable description of the project) with details of the new release.
 Validate using the <a href="http://www.w3.org/RDF/Validator/">W3C RDF Validator</a> service.</p>
 <div class="paragraph">
@@ -2209,9 +2108,6 @@ mv content/versions/SNAPSHOT content/versions/current</code></pre>
 <ul>
 <li>
 <p>update the menu to reference the new version</p>
-</li>
-<li>
-<p>update the version in the archetype.</p>
 </li>
 </ul>
 </div>
@@ -2483,35 +2379,26 @@ The vote is UNSUCCESSFUL.</code></pre>
 <div class="paragraph">
 <p>Tidy up remote branches in the git repo:</p>
 </div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git push --delete origin release-2.0.0-M3-RC1
+git push --delete origin isis-2.0.0-M3-RC1
+git tag -d isis-2.0.0-M3</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>These steps:</p>
+</div>
 <div class="ulist">
 <ul>
 <li>
-<p>delete the remote branch, for example:<br></p>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git push --delete origin release-2.0.0-M3-RC1</code></pre>
-</div>
-</div>
+<p>delete the remote branch</p>
 </li>
 <li>
-<p>delete the remote origin server&#8217;s tags, for example:<br></p>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git push --delete origin isis-2.0.0-M3-RC1
-git push --delete origin helloworld-archetype-2.0.0-M3-RC1
-git push --delete origin simpleapp-archetype-2.0.0-M3-RC1</code></pre>
-</div>
-</div>
+<p>delete the remote origin server&#8217;s tags</p>
 </li>
 <li>
-<p>delete the tags that were created locally, for example:<br></p>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git tag -d isis-2.0.0-M3
-git tag -d helloworld-archetype-2.0.0-M3
-git tag -d simpleapp-archetype-2.0.0-M3</code></pre>
-</div>
-</div>
+<p>delete the tags that were created locally</p>
 </li>
 </ul>
 </div>
@@ -2658,20 +2545,6 @@ Since <code>-SNAPSHOT</code> changes on a day-to-day basis, the idea is to tag a
 <p>Whereas <a href="#cutting-a-release.adoc">formal release</a>s and <a href="#toc:comguide:release-process-for-snapshots">snapshot release</a>s are public (released through the Maven repository maintained by Apache Software Foundation), interim releases are non-public and rely on infrastructure provided by a developer team.
 The tagged release resides <em>not</em> in the <a href="#toc:ROOT:downloads.adoc#\__downloads_source_code" class="page unresolved">official Apache Isis git repository</a>, but instead in a fork/clone maintained by the developer team.</p>
 </div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>The procedure developed here was put together for the team working on the <a href="#toc:ROOT:powered-by/powered-by.adoc#_powered-by_estatio" class="page unresolved">Estatio app</a>, which maintains its own <a href="https://github.com/incodehq/isis">fork on github</a> and uses <a href="https://www.cloudbees.com/">CloudBees</a> as a Jenkins build server/private Maven repo.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
 <div class="sect2">
 <h3 id="prerequisites-4"><a class="anchor" href="#prerequisites-4"></a>Prerequisites</h3>
 <div class="paragraph">
@@ -2683,11 +2556,8 @@ To build it should use the command:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mvn clean install -Dskip.app -Dskip.arch</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mvn clean install -Dskip.app</code></pre>
 </div>
-</div>
-<div class="paragraph">
-<p>that is, skipping the example simpleapp and archetype; only <code>core</code> framework is built</p>
 </div>
 <div class="paragraph">
 <p>The CI server should then also publish the resultant artifacts to a local Maven repository.
@@ -4417,7 +4287,7 @@ modify_committee.pl isis --remove joebloggs</code></pre>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200131-1559-7516c085</p>
+            <p>Revision: 2.0.0-M2.20200201-0400-2fbfcbe2</p>
         </div>
     </div>
 </footer>
