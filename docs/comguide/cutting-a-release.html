@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Cutting a Release :: Apache Isis</title>
+    <meta name="generator" content="Antora 2.2.0">
+    <link rel="stylesheet" href="../_/css/site.css">
+    <link rel="stylesheet" href="../_/css/site-custom.css">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Raleway:300,400,500,700,800|Montserrat:300,400,700" rel="stylesheet">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="..">
+          <span class="icon">
+            <img src="../_/img/isis-logo-48x48.png"></img>
+          </span>
+        <span>Apache Isis</span>
+      </a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <a class="navbar-end">
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Quick Start</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Starter Apps</span>
+            <a class="navbar-item" href="../docs/starters/helloworld.html">Hello World</a>
+            <a class="navbar-item" href="../docs/starters/simpleapp.html">Simple App</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Demos &amp; Tutorials</span>
+            <a class="navbar-item" href="../docs/demoapp/about.html">Demo App</a>
+            <a class="navbar-item" href="https://danhaywood.gitlab.io/isis-petclinic-tutorial-docs/petclinic/1.16.2/intro.html">Petclinic (tutorial)</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Resources</span>
+            <a class="navbar-item" href="../docs/resources/cheatsheet.html">Cheatsheet</a>
+            <a class="navbar-item" href="../docs/resources/icons.html">Icons</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Guides</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Development</span>
+            <a class="navbar-item" href="../docs/setupguide/about.html">Setup Guide</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Core</span>
+            <a class="navbar-item" href="../userguide/about.html">User Guide</a>
+            <a class="navbar-item" href="../refguide/about.html">Reference Guide</a>
+            <a class="navbar-item" href="../testing/about.html">Testing Guide</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Libraries</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">For Use in Apps</span>
+            <a class="navbar-item" href="../subdomain/about.html">Subdomain Libraries</a>
+            <a class="navbar-item" href="../valuetypes/about.html">Value Types</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Integrate between Apps</span>
+            <a class="navbar-item" href="../mappings/about.html">Bounded Context Mapping Libraries</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Other</span>
+            <a class="navbar-item" href="../incubator/about.html">Incubator</a>
+            <a class="navbar-item" href="../legacy/about.html">Legacy</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Components</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Viewers</span>
+            <a class="navbar-item" href="../vw/about.html">Wicket UI</a>
+            <a class="navbar-item" href="../vro/about.html">Restful Objects (REST)</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Security</span>
+            <a class="navbar-item" href="../security/about.html">Security Guide</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Persistence</span>
+            <a class="navbar-item" href="../odn/about.html">DataNucleus (JDO)</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Extensions</span>
+            <a class="navbar-item" href="../extensions/about.html">Extensions Catalog</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Support</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Contact</span>
+            <a class="navbar-item" href="../docs/support/slack-channel.html">Slack</a>
+            <a class="navbar-item" href="../docs/support/mailing-list.html">Mailing Lists</a>
+            <a class="navbar-item" href="https://issues.apache.org/jira/browse/ISIS">JIRA</a>
+            <a class="navbar-item" href="https://stackoverflow.com/questions/tagged/isis">Stack Overflow</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Releases</span>
+            <a class="navbar-item" href="../docs/downloads/how-to.html">Downloads</a>
+            <a class="navbar-item" href="../relnotes/about.html">Release Notes</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Framework</span>
+            <a class="navbar-item" href="../docs/conguide/about.html">Contributors' Guide</a>
+            <a class="navbar-item" href="../docs/comguide/about.html">Committers' Guide</a>
+            <a class="navbar-item" href="../core/about.html">Core Design</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">ASF</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://www.apache.org/">Apache Homepage</a>
+            <a class="navbar-item" href="https://www.apache.org/events/current-event">Events</a>
+            <a class="navbar-item" href="https://www.apache.org/licenses/">Licenses</a>
+            <a class="navbar-item" href="https://www.apache.org/security/">Security</a>
+            <a class="navbar-item" href="https://www.apache.org/foundation/sponsorship.html">Sponsorship</a>
+            <a class="navbar-item" href="https://www.apache.org/foundation/thanks.html">Thanks</a>
+            <hr class="navbar-divider"/>
+            <a class="navbar-item" href="https://whimsy.apache.org/board/minutes/Isis.html">PMC board minutes</a>
+          </div>
+        </div>
+        <a class="navbar-item" href="../docs/about.html">
+          <span class="icon">
+            <img src="../_/img/home.png"></img>
+          </span>
+        </a>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body ">
+<div class="nav-container" data-component="comguide" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="about.html">Committers&#x27; Guide</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="applying-patches.html">Applying Patches</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="merging-a-pull-request.html">Merging a Pull Request</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="1">
+    <a class="nav-link" href="cutting-a-release.html">Cutting a Release</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="verifying-releases.html">Verifying Releases</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="post-release-successful.html">Post Release (Successful)</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="post-release-unsuccessful.html">Post Release (Unsuccessful)</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="release-process-for-snapshots.html">Release Process for Snapshots</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="release-process-for-interim-releases.html">Release Process for Interim Releases</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="antora-publish-procedure.html">Antora Publish Procedure</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="key-generation.html">Key Generation</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="release-process-prereqs.html">Appendix: Release Process Prereqs</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="policies.html">Appendix: Policies</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="pmc-notes.html">Appendix: PMC Notes</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Committers&#x27; Guide</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component">
+      <span class="title"> </span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../docs/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">BC Mappings Catalog</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../mappings/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component is-current">
+      <span class="title">Committers' Guide</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Contributors' Guide</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../conguide/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Core Framework</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../core/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Extensions Catalog</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../extensions/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Guides (redirecting)</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../guides/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Incubator Catalog</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../incubator/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">JDO/DataNucleus</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../pjdo/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Legacy Catalog</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../legacy/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Reference Guide</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../refguide/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Release Notes</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../relnotes/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Restful Objects Viewer</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../vro/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Security Guide</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../security/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Setup Guide</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../setupguide/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Subdomains Catalog</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../subdomains/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Testing Guide</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../testing/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">User Guide</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../userguide/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Value Types Catalog</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../valuetypes/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Wicket Viewer</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../vw/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main role="main">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../docs/about.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="about.html">Committers' Guide</a></li>
+    <li><a href="cutting-a-release.html">Cutting a Release</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/HEAD/antora/components/comguide/modules/ROOT/pages/cutting-a-release.adoc">Edit</a></div>
+</div>
+<article class="doc">
+    <a name="section-top"></a>
+<h1 class="page">Cutting a Release</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>The release process consists of:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>the release manager cutting the release (documented below)</p>
+</li>
+<li>
+<p>Members of the Apache Isis PMC <a href="verifying-releases.html" class="page">verifying</a> and voting on the release</p>
+</li>
+<li>
+<p>the release manager performing post-release tasks, for either a <a href="post-release-successful.html" class="page">successful</a> or an <a href="#comguide:ROOT:post-release-unsuccessful">unsuccessful</a> vote.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Apache Isis itself is released in one go, everything is ultimately a child of <code>core-parent/pom.xml</code> (relative to the <a href="https://github.com/apache/isis">source code root</a>).
+This section details the process for formally releasing this module.</p>
+</div>
+<div class="paragraph">
+<p>The subsequent sections describe how other committers can <a href="verifying-releases.html" class="page">verify a release</a> and how the release manager can then perform <a href="#comguide:ROOT:post-release">post-release</a> activities and set up for the next development iteration.</p>
+</div>
+<div class="paragraph">
+<p>If you&#8217;ve not performed a release before, then note that there are some configuration <a href="release-process-prereqs.html" class="page">prerequisites</a> that must be configured first.
+In particular, you&#8217;ll need signed public/private keys, and the ASF Nexus staging repo inlocal <code>~/.m2/settings.xml</code> file.</p>
+</div>
+<div class="paragraph">
+<p>These release notes using bash command line tools.
+They should work on Linux and MacOS; for Windows, use mSysGit.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="obtain-consensus"><a class="anchor" href="#obtain-consensus"></a>Obtain Consensus</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Before releasing the framework, ensure there is consensus on the <a href="#docs:ROOT:support.adoc" class="page unresolved">dev mailing list</a> that this is the right time for a release.
+The discussion should include confirming the version number to be used, and to confirm content.</p>
+</div>
+<div class="paragraph">
+<p>These discussions should also confirm the version number of the module being released.
+This should be in line with our <a href="#comguide:ROOT:versioning-policy.adoc" class="page unresolved">semantic versioning policy</a>.</p>
+</div>
+<div class="paragraph">
+<p>Make sure you have a JIRA ticket open against which to perform all commits.
+In most cases a JIRA ticket will have been created at the beginning of the previous release cycle.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="set-environment-variables"><a class="anchor" href="#set-environment-variables"></a>Set environment variables</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>We use environment variables to parameterize as many of the steps as possible.
+For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">export ISISTMP=/c/tmp                               <i class="conum" data-value="1"></i><b>(1)</b>
+export ISISREL=2.0.0-M3
+export ISISRC=RC1
+export ISISBRANCH=release-$ISISREL-$ISISRC
+export ISISJIRA=ISIS-9999                           <i class="conum" data-value="2"></i><b>(2)</b>
+export ISISART=isis
+
+env | grep ISIS | sort</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>adjust by platform</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>set to an "umbrella" ticket for all release activities.
+(One should exist already, <a href="post-release-successful.html#create-new-jira" class="page">created at</a> the beginning of the development cycle now completing).</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Obviously, alter <code>$ISISREL</code> as required, and bump <code>$ISISRC</code> for re-releasing following an <a href="post-release-unsuccessful.html" class="page">unsuccessful</a> release.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Note that the branch name is intentionally <strong>not</strong> the same as the eventual tag names (eg <code>isis-2.0.0-M3</code>).</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="pull-down-code-to-release"><a class="anchor" href="#pull-down-code-to-release"></a>Pull down code to release</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Set the HEAD of your local git repo to the commit to be released.
+This will usually be the tip of the origin&#8217;s <code>master</code> branch.
+Then, create a release branch for the version number being released; eg:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git checkout master
+git pull --ff-only
+git checkout -b $ISISBRANCH</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The release is performed on a branch; if we are successful, this branch will be merged back into master.</p>
+</div>
+<div class="paragraph">
+<p>Check that there are no snapshot dependencies:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">grep SNAPSHOT $(/bin/find . -name pom.xml | grep -v target  sort)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The only mention of <code>SNAPSHOT</code> should be in the <code>revision</code> property of the root <code>core-prent/pom.xml</code> file.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="releasing-the-framework"><a class="anchor" href="#releasing-the-framework"></a>Releasing the Framework</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Switch to the appropriate directory:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd core-parent</code></pre>
+</div>
+</div>
+<div class="sect2">
+<h3 id="bump-revision-property-to-isisrel"><a class="anchor" href="#bump-revision-property-to-isisrel"></a>Bump <code>revision</code> property to <code>$ISISREL</code></h3>
+<div class="paragraph">
+<p>Previously we used the <code>maven-release-plugin</code> which took responsibility for bumping the <code>&lt;version&gt;</code> from -SNAPSHOT to release, and then onto the next -SNAPSHOT.
+However, we now use a simpler process, and just use <code>mvn versions:set</code>.</p>
+</div>
+<div class="paragraph">
+<p>So, bump to the release version:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mvn versions:set -DnewVersion=$ISISREL
+git commit -am "$ISISJIRA: bumps version to $ISISREL"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>so that they should read:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;properties&gt;
+    &lt;revision&gt;2.0.0-M3&lt;/revision&gt;
+    ...
+&lt;/properties&gt;</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+After release, there is a <a href="#reset-revision">similar step at the end</a> to reset back to <code>2.0.0-SNAPSHOT</code>.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="license-headers"><a class="anchor" href="#license-headers"></a>License headers</h3>
+<div class="paragraph">
+<p>The Apache Release Audit Tool <code>RAT</code> (from the <a href="http://creadur.apache.org">Apache Creadur</a> project) checks for missing license header files.
+The parent <code>pom.xml</code> of each releasable module specifies the RAT Maven plugin, with a number of custom exclusions.</p>
+</div>
+<div class="paragraph">
+<p>To run the RAT tool, use:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mvn org.apache.rat:apache-rat-plugin:check -D rat.numUnapprovedLicenses=50 -o &amp;&amp; \
+for a in `/bin/find . -name rat.txt -print`; do grep '!???' $a; done || \
+for a in `/bin/find . -name rat.txt -print`; do grep '!AL' $a; done</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>where <code>rat.numUnapprovedLicenses</code> property is set to a high figure, temporarily overriding the default value of 0. This will allow the command to run over all submodules, rather than failing after the first one.
+The command writes out a <code>target\rat.txt</code> for each submodule. missing license notes are indicated using the key <code>!???</code>.
+The <code>for</code> command collates all the errors.</p>
+</div>
+<div class="paragraph">
+<p>Investigate and fix any reported violations, typically by either:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>adding genuinely missing license headers from Java (or other) source files, or</p>
+</li>
+<li>
+<p>updating the <code>&lt;excludes&gt;</code> element for the <code>apache-rat-plugin</code> plugin to ignore test files, log files and any other non-source code files</p>
+</li>
+<li>
+<p>also look to remove any stale <code>&lt;exclude&gt;</code> entries</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Once you&#8217;ve fixed all issues, confirm once more that <code>apache-rat-plugin</code> no longer reports any license violations, this time leaving the <code>rat.numUnapprovedLicenses</code> property to its default, 0:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mvn org.apache.rat:apache-rat-plugin:check -D rat.numUnapprovedLicenses=0 -o &amp;&amp; \
+for a in `find . -name rat.txt -print`; do grep '!???' $a; done</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="missing-license-check"><a class="anchor" href="#missing-license-check"></a>Missing License Check</h3>
+<div class="paragraph">
+<p>Although Apache Isis has no dependencies on artifacts with incompatible licenses, the POMs for some of these dependencies (in the Maven central repo) do not necessarily contain the required license information.
+Without appropriate additional configuration, this would result in the generated <code>DEPENDENCIES</code> file and generated Maven site indicating dependencies as having "unknown" licenses.</p>
+</div>
+<div class="paragraph">
+<p>Fortunately, Maven allows the missing information to be provided by configuring the <code>maven-remote-resources-plugin</code>.
+This is stored in the <code>src/main/appended-resources/supplemental-models.xml</code> file, relative to the root of each releasable module.</p>
+</div>
+<div class="paragraph">
+<p>It&#8217;s first necessary to have built the framework locally at least once:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mvn clean install -o</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Once this is done, capture the missing license information using:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mvn license:download-licenses &amp;&amp; \
+groovy ../scripts/checkmissinglicenses.groovy</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The Maven plugin creates a <code>license.xml</code> file in the <code>target/generated-resources</code> directory of each module.
+The script then searches for these <code>licenses.xml</code> files, and compares them against the contents of the <code>supplemental-models.xml</code> file.</p>
+</div>
+<div class="paragraph">
+<p>For example, the output could be something like:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">licenses to add to supplemental-models.xml:
+
+[org.slf4j, slf4j-api, 1.5.7]
+[org.codehaus.groovy, groovy-all, 1.7.2]
+
+licenses to remove from supplemental-models.xml (are spurious):
+
+[org.slf4j, slf4j-api, 1.5.2]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If any missing entries are listed or are spurious, then update <code>supplemental-models.xml</code> and try again.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="commit-changes"><a class="anchor" href="#commit-changes"></a>Commit changes</h3>
+<div class="paragraph">
+<p>Commit any changes from the preceding steps:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git commit -am "$ISISJIRA: updates to pom.xml etc for release"</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="sanity-check"><a class="anchor" href="#sanity-check"></a>Sanity check</h3>
+<div class="paragraph">
+<p>Perform one last sanity check on the codebase.
+Delete all Isis artifacts from your local Maven repo, then build using the <code>-o</code> offline flag:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">rm -rf ~/.m2/repository/org/apache/isis
+mvn clean install -o</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="deploy"><a class="anchor" href="#deploy"></a>Deploy</h3>
+<div class="paragraph">
+<p>Since the <code>&lt;version&gt;</code> has already been updated, we just use <code>mvn deploy</code> to upload the artifacts.
+We activate the (inherited) <code>apache-release</code> profile to bring in the <code>gpg</code> plugin for code signing.</p>
+</div>
+<div class="paragraph">
+<p>To build and deploy and tag, we use:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mvn -P apache-release \
+    clean deploy      \
+    -Dgit \
+    -Dgpg.passphrase="this is not really my passphrase"
+
+git tag $ISISART-$ISISREL
+git tag $ISISART-$ISISREL-$ISISRC</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>using your own GPG passphrase, of course.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>This requires <code>gpg</code> v2.1 or later.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="checkclose-staging-repo"><a class="anchor" href="#checkclose-staging-repo"></a>Check/Close Staging Repo</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>mvn deploy</code> commands will have uploaded all of the release artifacts into a newly created staging repository on the ASF Nexus repository server.</p>
+</div>
+<div class="paragraph">
+<p>Log onto <a href="http://repository.apache.org">repository.apache.org</a> (using your ASF LDAP account):</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/release-process/nexus-staging-0.png"><img src="_images/release-process/nexus-staging-0.png" alt="nexus staging 0" width="600px"></a>
+</div>
+</div>
+<div class="paragraph">
+<p>And then check that the release has been staged (select <code>staging repositories</code> from left-hand side):</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/release-process/nexus-staging-1.png"><img src="_images/release-process/nexus-staging-1.png" alt="nexus staging 1" width="600px"></a>
+</div>
+</div>
+<div class="paragraph">
+<p>If nothing appears in a staging repo you should stop here and work out why.</p>
+</div>
+<div class="paragraph">
+<p>Assuming that the repo has been populated, make a note of its repo id; this is needed for the voting thread.
+In the screenshot above the id is <code>org.apache.isis-008</code>.</p>
+</div>
+<div class="paragraph">
+<p>After checking that the staging repository contains the artifacts that you expect you should close the staging repository.
+This will make it available so that people can check the release.</p>
+</div>
+<div class="paragraph">
+<p>Press the Close button and complete the dialog:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/release-process/nexus-staging-2.png"><img src="_images/release-process/nexus-staging-2.png" alt="nexus staging 2" width="600px"></a>
+</div>
+</div>
+<div class="paragraph">
+<p>Nexus should start the process of closing the repository.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/release-process/nexus-staging-2a.png"><img src="_images/release-process/nexus-staging-2a.png" alt="nexus staging 2a" width="600px"></a>
+</div>
+</div>
+<div class="paragraph">
+<p>All being well, the close should (eventually) complete successfully (keep hitting refresh):</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/release-process/nexus-staging-3.png"><img src="_images/release-process/nexus-staging-3.png" alt="nexus staging 3" width="600px"></a>
+</div>
+</div>
+<div class="paragraph">
+<p>The Nexus repository manager will also email you with confirmation of a successful close.</p>
+</div>
+<div class="paragraph">
+<p>If Nexus has problems with the key signature, however, then the close will be aborted:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/release-process/nexus-staging-4.png"><img src="_images/release-process/nexus-staging-4.png" alt="nexus staging 4" width="600px"></a>
+</div>
+</div>
+<div class="paragraph">
+<p>Use <code>gpg --keyserver hkp://pgp.mit.edu --recv-keys nnnnnnnn</code> to confirm that the key is available.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Unfortunately, Nexus does not seem to allow subkeys to be used for signing.
+See <a href="key-generation.html" class="page">Key Generation</a> for more details.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="reset-revision-property"><a class="anchor" href="#reset-revision-property"></a>Reset <code>revision</code> property</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>At the beginning of the release process we bumped the version to the release version, ie <code>$ISISREL</code>.
+With the release now deployed we now need to reset the revision back down to the base snapshot, ie <code>2.0.0-SNAPSHOT</code>.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Previously we bumped to the next development snapshot.
+However, this approach doesn&#8217;t play well with CI/CD when Apache Isis is mounted as a git submodule, so instead we always use <code>2.0.0-SNAPSHOT</code> for all development work.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Therefore:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd core-parent
+mvn versions:set -DnewVersion=2.0.0-SNAPSHOT
+git commit -am "$ISISJIRA: resetting version"</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="push-branches"><a class="anchor" href="#push-branches"></a>Push branches</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Push the release branch to origin:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git push -u origin $ISISBRANCH</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>and also push tags:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git push origin refs/tags/isis-$ISISREL:refs/tags/isis-$ISISREL-$ISISRC
+git fetch</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The remote tags aren&#8217;t visible locally but can be seen <a href="https://github.com/apache/isis/tags">online</a>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="update-starter-apps"><a class="anchor" href="#update-starter-apps"></a>Update starter apps</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>For each starter app, we create a new branch and make the changes there, pushing the branch back if the sanity check passes.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>for helloworld, the steps are:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git checkout master
+git pull --ff-only
+
+git checkout -b $ISISBRANCH
+
+mvn versions:update-parent -DparentVersion=$ISISREL
+mvn versions:set -DnewVersion=$ISISREL
+
+mvn clean install -o
+mvn spring-boot:run</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>for simple app, the steps are almost the same:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git checkout master
+git pull --ff-only
+
+git checkout -b $ISISBRANCH
+
+mvn versions:update-parent -DparentVersion=$ISISREL
+mvn versions:set -DnewVersion=$ISISREL
+
+mvn clean install -o -Dmetamodel.lockdown
+mvn -pl webapp test -o -Dmavendeps.lockdown</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Approve any failed lockdown tests (the mavendeps will fail first time arround because the dependencies on Apache Isis itself have just be bumped).
+Repeat, then run the app as a sanity check:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mvn clean install -o -Dmetamodel.lockdown
+mvn -pl webapp test -o -Dmavendeps.lockdown
+
+mvn -pl webapp spring-boot:run</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>For both apps, push the release branch to origin once ok:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git push -u origin $ISISBRANCH</code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="voting"><a class="anchor" href="#voting"></a>Voting</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Once the artifacts have been uploaded, you can call a vote.</p>
+</div>
+<div class="paragraph">
+<p>In all cases, votes last for 72 hours and require a +3 (binding) vote from members.</p>
+</div>
+<div class="sect2">
+<h3 id="start-voting-thread-on-dev-mailing-list"><a class="anchor" href="#start-voting-thread-on-dev-mailing-list"></a>Start voting thread on dev mailing list</h3>
+<div class="paragraph">
+<p>That is, <a href="mailto:dev@apache.isis.org" class="bare">mailto:dev@apache.isis.org</a></p>
+</div>
+<div class="paragraph">
+<p>The following boilerplate is for a release of the Apache Isis Core.
+Adapt as required:</p>
+</div>
+<div class="paragraph">
+<p>Use the following subject, eg:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">[VOTE] Apache Isis Core release 2.0.0-M3 RC1</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And use the following body:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">I've just cut a new release for Apache Isis Framework.
+
+The source code artifacts have been uploaded to staging repositories on repository.apache.org.
+For each zip there is a corresponding signature file (append .asc to the zip's url).
+
+In the source code repo the code has been tagged as isis-2.0.0-M3-RC1; see https://github.com/apache/isis/tags
+
+To verify the source code, you can use the following commands (in an empty directory):
+
+    NEXUSREPONUM=10xx
+    VERSION=2.0.0-M3
+
+    curl http://www.apache.org/dist/isis/KEYS &gt; /tmp/KEYS
+    gpg --import /tmp/KEYS
+
+    rm -rf isis-$VERSION*
+
+    curl -O -L https://raw.githubusercontent.com/apache/isis/xxxx/scripts/verify-isis-release.sh
+
+    chmod +x ./verify-isis-release.sh
+    ./verify-isis-release.sh $NEXUSREPONUM $VERSION
+
+
+For more details, see https://isis.apache.org/toc/comguide/about.html#verifying-releases
+
+Please verify the release and cast your vote.  The vote will be open for a minimum of 72 hours.
+
+[ ] +1
+[ ]  0
+[ ] -1</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Remember to update:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>the version number (<code>2.0.0-M3</code> or whatever)</p>
+</li>
+<li>
+<p>the release candidate number (<code>RC1</code> or whatever)</p>
+</li>
+<li>
+<p>the <code>NEXUSREPONUM</code> to the repository id as provided by Nexus earlier (<code>10xx</code> or whatever)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Note that the email also references the procedure for other committers to <a href="verifying-releases.html" class="page">verify the release</a>.</p>
+</div>
+</div>
+</div>
+</div>
+</article>
+<aside class="article-aside toc" role="navigation">
+    <p class="toc-title">On this page</p>
+    <div id="article-toc"></div>
+</aside>
+</main>
+</div>
+<footer class="footer">
+    <div class="content">
+        <div class="copyright">
+            <p>
+                Copyright © 2010~2019 The Apache Software Foundation, licensed under the Apache License, v2.0.
+                <br/>
+                Apache, the Apache feather logo, Apache Isis, and the Apache Isis project logo are all trademarks of The Apache Software Foundation.
+            </p>
+        </div>
+        <div class="revision">
+            <p>Revision: 2.0.0-M2.20200206-0400-f8919a74</p>
+        </div>
+    </div>
+</footer>
+<script src="../_/js/site.js"></script>
+<script async src="../_/js/vendor/highlight.js"></script>
+<script src="../_/js/vendor/jquery-3.4.1.min.js"></script>
+<script src="../_/js/vendor/jquery-ui-1.12.1.custom.widget-only.min.js"></script>
+<script src="../_/js/vendor/jquery.tocify.min.js"></script>
+
+<script>
+    $(function() {
+        $("#article-toc").tocify( {
+            showEffect: "slideDown",
+            hideEffect: "slideUp",
+            selectors: "h2, h3",
+            scrollTo: 120,
+            smoothScroll: true,
+            theme: "jqueryui",
+            highlightOnScroll: true
+        } );
+    });
+</script>
+  </body>
+</html>

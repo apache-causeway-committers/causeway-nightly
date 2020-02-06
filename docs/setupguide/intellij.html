@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Developing using IntelliJ IDEA :: Apache Isis</title>
+    <meta name="generator" content="Antora 2.2.0">
+    <link rel="stylesheet" href="../_/css/site.css">
+    <link rel="stylesheet" href="../_/css/site-custom.css">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Raleway:300,400,500,700,800|Montserrat:300,400,700" rel="stylesheet">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="..">
+          <span class="icon">
+            <img src="../_/img/isis-logo-48x48.png"></img>
+          </span>
+        <span>Apache Isis</span>
+      </a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <a class="navbar-end">
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Quick Start</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Starter Apps</span>
+            <a class="navbar-item" href="../docs/starters/helloworld.html">Hello World</a>
+            <a class="navbar-item" href="../docs/starters/simpleapp.html">Simple App</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Demos &amp; Tutorials</span>
+            <a class="navbar-item" href="../docs/demoapp/about.html">Demo App</a>
+            <a class="navbar-item" href="https://danhaywood.gitlab.io/isis-petclinic-tutorial-docs/petclinic/1.16.2/intro.html">Petclinic (tutorial)</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Resources</span>
+            <a class="navbar-item" href="../docs/resources/cheatsheet.html">Cheatsheet</a>
+            <a class="navbar-item" href="../docs/resources/icons.html">Icons</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Guides</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Development</span>
+            <a class="navbar-item" href="../docs/setupguide/about.html">Setup Guide</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Core</span>
+            <a class="navbar-item" href="../userguide/about.html">User Guide</a>
+            <a class="navbar-item" href="../refguide/about.html">Reference Guide</a>
+            <a class="navbar-item" href="../testing/about.html">Testing Guide</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Libraries</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">For Use in Apps</span>
+            <a class="navbar-item" href="../subdomain/about.html">Subdomain Libraries</a>
+            <a class="navbar-item" href="../valuetypes/about.html">Value Types</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Integrate between Apps</span>
+            <a class="navbar-item" href="../mappings/about.html">Bounded Context Mapping Libraries</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Other</span>
+            <a class="navbar-item" href="../incubator/about.html">Incubator</a>
+            <a class="navbar-item" href="../legacy/about.html">Legacy</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Components</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Viewers</span>
+            <a class="navbar-item" href="../vw/about.html">Wicket UI</a>
+            <a class="navbar-item" href="../vro/about.html">Restful Objects (REST)</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Security</span>
+            <a class="navbar-item" href="../security/about.html">Security Guide</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Persistence</span>
+            <a class="navbar-item" href="../odn/about.html">DataNucleus (JDO)</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Extensions</span>
+            <a class="navbar-item" href="../extensions/about.html">Extensions Catalog</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Support</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Contact</span>
+            <a class="navbar-item" href="../docs/support/slack-channel.html">Slack</a>
+            <a class="navbar-item" href="../docs/support/mailing-list.html">Mailing Lists</a>
+            <a class="navbar-item" href="https://issues.apache.org/jira/browse/ISIS">JIRA</a>
+            <a class="navbar-item" href="https://stackoverflow.com/questions/tagged/isis">Stack Overflow</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Releases</span>
+            <a class="navbar-item" href="../docs/downloads/how-to.html">Downloads</a>
+            <a class="navbar-item" href="../relnotes/about.html">Release Notes</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Framework</span>
+            <a class="navbar-item" href="../docs/conguide/about.html">Contributors' Guide</a>
+            <a class="navbar-item" href="../docs/comguide/about.html">Committers' Guide</a>
+            <a class="navbar-item" href="../core/about.html">Core Design</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">ASF</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://www.apache.org/">Apache Homepage</a>
+            <a class="navbar-item" href="https://www.apache.org/events/current-event">Events</a>
+            <a class="navbar-item" href="https://www.apache.org/licenses/">Licenses</a>
+            <a class="navbar-item" href="https://www.apache.org/security/">Security</a>
+            <a class="navbar-item" href="https://www.apache.org/foundation/sponsorship.html">Sponsorship</a>
+            <a class="navbar-item" href="https://www.apache.org/foundation/thanks.html">Thanks</a>
+            <hr class="navbar-divider"/>
+            <a class="navbar-item" href="https://whimsy.apache.org/board/minutes/Isis.html">PMC board minutes</a>
+          </div>
+        </div>
+        <a class="navbar-item" href="../docs/about.html">
+          <span class="icon">
+            <img src="../_/img/home.png"></img>
+          </span>
+        </a>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body ">
+<div class="nav-container" data-component="setupguide" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="about.html">Setup Guide</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item is-current-page" data-depth="1">
+    <a class="nav-link" href="intellij.html">Using IntelliJ</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="hints-and-tips.html">Hints and Tips</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="git-cookbook.html">Git Cookbook</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="working-with-many-repos.html">Working with Many Repos</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="#resources/cheat-sheet.adoc">Cheat Sheet</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="#resources/icons.adoc">Icons</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Setup Guide</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component">
+      <span class="title"> </span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../docs/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">BC Mappings Catalog</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../mappings/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Committers' Guide</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../comguide/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Contributors' Guide</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../conguide/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Core Framework</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../core/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Extensions Catalog</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../extensions/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Guides (redirecting)</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../guides/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Incubator Catalog</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../incubator/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">JDO/DataNucleus</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../pjdo/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Legacy Catalog</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../legacy/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Reference Guide</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../refguide/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Release Notes</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../relnotes/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Restful Objects Viewer</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../vro/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Security Guide</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../security/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component is-current">
+      <span class="title">Setup Guide</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Subdomains Catalog</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../subdomains/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Testing Guide</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../testing/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">User Guide</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../userguide/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Value Types Catalog</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../valuetypes/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Wicket Viewer</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../vw/about.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main role="main">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../docs/about.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="about.html">Setup Guide</a></li>
+    <li><a href="intellij.html">Using IntelliJ</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/HEAD/antora/components/setupguide/modules/ROOT/pages/intellij.adoc">Edit</a></div>
+</div>
+<article class="doc">
+    <a name="section-top"></a>
+<h1 class="page">Developing using IntelliJ IDEA</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This section describes how to install and setup JetBrains' IntelliJ IDEA, then how to import an application into IntelliJ and run it.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+This material does not constitute an endorsement; JetBrains is not affiliated to Apache Software Foundation in any way.
+JetBrains does however provide complimentary copies of the IntelliJ IDE to Apache committers.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="installing-and-setting-up"><a class="anchor" href="#installing-and-setting-up"></a>Installing and Setting up</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This section covers installation and setup.
+These notes/screenshots were prepared using IntelliJ IDEA Community Edition 2019.3, but is believed to be compatible with more recent versions/other editions of the IDE.</p>
+</div>
+<div class="sect2">
+<h3 id="download-and-install"><a class="anchor" href="#download-and-install"></a>Download and Install</h3>
+<div class="paragraph">
+<p><a href="https://www.jetbrains.com/idea/download/">Download</a> latest version of IntelliJ Community Edition, and install.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="import-project"><a class="anchor" href="#import-project"></a>Import Project</h3>
+<div class="paragraph">
+<p>In IntelliJ a project can contain multiple modules; these need not be physically located together.</p>
+</div>
+<div class="paragraph">
+<p>Download either the <a href="../docs/starters/helloworld.html" class="page">HelloWorld</a> or <a href="../docs/starters/simpleapp.html" class="page">SimpleApp</a> starter app to your filesystem.</p>
+</div>
+<div class="paragraph">
+<p>From the welcome screen, select "import project":</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/intellij-idea/015-import-project/010-welcome.png"><img src="_images/intellij-idea/015-import-project/010-welcome.png" alt="010 welcome" width="400px"></a>
+</div>
+</div>
+<div class="paragraph">
+<p>Navigate to the top-level pom.xml of the starter app:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/intellij-idea/015-import-project/020-import-pom.png"><img src="_images/intellij-idea/015-import-project/020-import-pom.png" alt="020 import pom" width="300px"></a>
+</div>
+</div>
+<div class="paragraph">
+<p>Project imported:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/intellij-idea/015-import-project/030-imported.png"><img src="_images/intellij-idea/015-import-project/030-imported.png" alt="030 imported" width="800px"></a>
+</div>
+</div>
+<div class="paragraph">
+<p>Start off by creating a new project:</p>
+</div>
+<div class="paragraph">
+<p>Use <span class="menuseq"><b class="menu">File</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="menuitem">Project Structure</b></span> to confirm that JDK 8 is configured:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/intellij-idea/015-import-project/040-project-structure.png"><img src="_images/intellij-idea/015-import-project/040-project-structure.png" alt="040 project structure" width="400px"></a>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="other-settings-compiler"><a class="anchor" href="#other-settings-compiler"></a>Other Settings (Compiler)</h3>
+<div class="paragraph">
+<p>There are a number of compiler settings that influence the compiler.
+We highly recommend you set these.</p>
+</div>
+<div class="paragraph">
+<p>On the <strong>Compiler</strong> Settings page, ensure that <code>build automatically</code> is enabled (and optionally <code>compile independent modules in parallel</code>):</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/intellij-idea/040-other-settings-compiler/010-build-automatically.png"><img src="_images/intellij-idea/040-other-settings-compiler/010-build-automatically.png" alt="010 build automatically" width="700px"></a>
+</div>
+<div class="title">Figure 1. IntelliJ Compiler Settings</div>
+</div>
+<div class="paragraph">
+<p>On the <strong>Annotation Processors</strong> page, confirm that these are enabled for all of the <code>packaging=jar</code> modules (in other words, those that contain Java and have a <code>src/main/java</code> directory):</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/intellij-idea/040-other-settings-compiler/020-annotation-processor.png"><img src="_images/intellij-idea/040-other-settings-compiler/020-annotation-processor.png" alt="020 annotation processor" width="700px"></a>
+</div>
+<div class="title">Figure 2. IntelliJ Annotation Processor Settings</div>
+</div>
+<div class="paragraph">
+<p>This setting enables the generation of the <code>Q*</code> classes for DataNucleus type-safe queries, as well as being required for frameworks such as <a href="hints-and-tips.html#project-lombok" class="page">Project Lombok</a>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="other-settings-maven"><a class="anchor" href="#other-settings-maven"></a>Other Settings (Maven)</h3>
+<div class="paragraph">
+<p>There are also some other settings for Maven that we recommend you adjust (though these are less critical):</p>
+</div>
+<div class="paragraph">
+<p>On the Maven settings page:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/intellij-idea/042-other-settings-maven/010-maven-installation.png"><img src="_images/intellij-idea/042-other-settings-maven/010-maven-installation.png" alt="010 maven installation" width="700px"></a>
+</div>
+<div class="title">Figure 3. IntelliJ Maven Settings - Installation</div>
+</div>
+<div class="paragraph">
+<p>Still on the Maven settings page, configure as follows:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/intellij-idea/042-other-settings-maven/020-maven-configuration.png"><img src="_images/intellij-idea/042-other-settings-maven/020-maven-configuration.png" alt="020 maven configuration" width="700px"></a>
+</div>
+<div class="title">Figure 4. IntelliJ Maven Settings - Configuration</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="other-settings-misc"><a class="anchor" href="#other-settings-misc"></a>Other Settings (Misc)</h3>
+<div class="paragraph">
+<p>These settings are optional but also recommended.</p>
+</div>
+<div class="paragraph">
+<p>On the <strong>Auto Import</strong> settings page, check the <code>optimize imports on the fly</code> and <code>add unambiguous imports on the fly</code></p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/intellij-idea/044-other-settings-misc/010-auto-import.png"><img src="_images/intellij-idea/044-other-settings-misc/010-auto-import.png" alt="010 auto import" width="700px"></a>
+</div>
+<div class="title">Figure 5. IntelliJ Auto Import Setting</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="running"><a class="anchor" href="#running"></a>Running</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Let&#8217;s see how to run both the app and the tests.</p>
+</div>
+<div class="sect2">
+<h3 id="running-the-app"><a class="anchor" href="#running-the-app"></a>Running the App</h3>
+<div class="paragraph">
+<p>We run the application by creating a Run configuration, using <code>Run &gt; Edit Configurations</code>.</p>
+</div>
+<div class="paragraph">
+<p>There is one complication.
+DataNucleus requires that all entities are bytecode enhanced.
+When building from the command line using Maven, the <code>datanucleus:enhance</code> Maven plugin takes care of this.
+When building within IntelliJ, though, there is no similar plugin.</p>
+</div>
+<div class="paragraph">
+<p>However, this is easily solved: we can just have IntelliJ run the enhance as a separate run configuration before the run configuration that runs the app itself.</p>
+</div>
+<div class="paragraph">
+<p>First, set up the run configuration to do the enhance:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/intellij-idea/110-running-the-app/005-datanucleus-enhance-run-configuration.png"><img src="_images/intellij-idea/110-running-the-app/005-datanucleus-enhance-run-configuration.png" alt="005 datanucleus enhance run configuration" width="700px"></a>
+</div>
+<div class="title">Figure 6. Run Configuration to enhance the entities</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+Check "work offline" (on the General tab) to speed this up slightly.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>If on Windows you encounter a "The command line is too long" error, then set '-Dfork=false' as a VM option (on the Runner tab).</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Then, set up the run configuration for the app.
+Note how it runs the enhance configuration first:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/intellij-idea/110-running-the-app/010-run-configuration.png"><img src="_images/intellij-idea/110-running-the-app/010-run-configuration.png" alt="010 run configuration" width="700px"></a>
+</div>
+<div class="title">Figure 7. Run Configuration to run the app</div>
+</div>
+<div class="paragraph">
+<p>You should now be able to run the app using <code>Run &gt; Run Configuration</code>.
+The same configuration can also be used to debug the app if you so need.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="running-the-unit-tests"><a class="anchor" href="#running-the-unit-tests"></a>Running the Unit Tests</h3>
+<div class="paragraph">
+<p>The easiest way to run the unit tests is just to right click on the relevant package in the <em>Project Window</em>, and choose run unit tests.
+Hopefully your tests will pass (!).</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/intellij-idea/110-running-the-app/030-running-unit-tests.png"><img src="_images/intellij-idea/110-running-the-app/030-running-unit-tests.png" alt="030 running unit tests" width="300px"></a>
+</div>
+<div class="title">Figure 8. Running Unit Tests from Project Explorer</div>
+</div>
+<div class="paragraph">
+<p>As a side-effect, this will create a run configuration, very similar to the one we manually created for the main app:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/intellij-idea/110-running-the-app/040-running-unit-tests-run-configuration.png"><img src="_images/intellij-idea/110-running-the-app/040-running-unit-tests-run-configuration.png" alt="040 running unit tests run configuration" width="700px"></a>
+</div>
+<div class="title">Figure 9. Unit Tests Run Configuration</div>
+</div>
+<div class="paragraph">
+<p>Thereafter, you should run units by selecting this configuration (if you use the right click approach you&#8217;ll end up with lots of run configurations, all similar).</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="running-the-integration-tests"><a class="anchor" href="#running-the-integration-tests"></a>Running the Integration Tests</h3>
+<div class="paragraph">
+<p>Integration tests can be run in the same way as unit tests, however the module must also have been enhanced.</p>
+</div>
+<div class="paragraph">
+<p>One approach is to initially run the tests use the right click on the <code>integtests</code> module:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/intellij-idea/110-running-the-app/045-running-integ-tests.png"><img src="_images/intellij-idea/110-running-the-app/045-running-integ-tests.png" alt="045 running integ tests" width="400px"></a>
+</div>
+<div class="title">Figure 10. Running Integ Tests from Project Explorer</div>
+</div>
+<div class="paragraph">
+<p>The tests might fail because the entities won&#8217;t have been enhanced.
+However, we can then easily update the run configuration to run the datanucleus enhancer goal (same as when running the application):</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/intellij-idea/110-running-the-app/050-running-integration-tests-run-configuration.png"><img src="_images/intellij-idea/110-running-the-app/050-running-integration-tests-run-configuration.png" alt="050 running integration tests run configuration" width="700px"></a>
+</div>
+<div class="title">Figure 11. Integration Tests Run Configuration</div>
+</div>
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-caution" title="Caution"></i>
+</td>
+<td class="content">
+Make sure that the <code>search for tests</code> radio button is set to <code>In single module</code>.
+If this radio button is set to one of the other options then you may obtain class loading issues.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="hints-and-tips"><a class="anchor" href="#hints-and-tips"></a>Hints and Tips</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="keyboard-cheat-sheets"><a class="anchor" href="#keyboard-cheat-sheets"></a>Keyboard Cheat Sheets</h3>
+<div class="paragraph">
+<p>You can download 1-page PDFs cheat sheets for IntelliJ&#8217;s keyboard shortcuts:
+* for <a href="https://www.jetbrains.com/idea/docs/IntelliJIDEA_ReferenceCard.pdf">Windows</a>
+* for <a href="https://www.jetbrains.com/idea/docs/IntelliJIDEA_ReferenceCard_Mac.pdf">MacOS</a></p>
+</div>
+<div class="paragraph">
+<p>Probably the most important shortcut on them is for <code>Find Action</code>:
+- <code>ctrl-shift-A</code> on Windows
+- <code>cmd-shift-A</code> on MacOS.</p>
+</div>
+<div class="paragraph">
+<p>This will let you search for any action just by typing its name.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="switch-between-tools-editors"><a class="anchor" href="#switch-between-tools-editors"></a>Switch between Tools &amp; Editors</h3>
+<div class="paragraph">
+<p>The Tool Windows are the views around the editor (to left, bottom and right).
+It&#8217;s possible to move these around to your preferred locations.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Use <code>alt-1</code> through <code>alt-9</code> (or <code>cmd-1</code> through <code>alt-9</code>) to select the tool windows</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Press it twice and the tool window will hide itself; so can use to toggle</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>If in the <em>Project Window</em> (say) and hit enter on a file, then it will be shown in the editor, but (conveniently) the focus remains in the tool window.
+To switch to the editor, just press <code>Esc</code>.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>If in the <em>Terminal Window</em>, you&#8217;ll need to press <code>Shift-Esc</code>.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>If on the editor and want to locate the file in (say) the <em>Project Window</em>, use <code>alt-F1</code>.</p>
+</li>
+<li>
+<p>To change the size of any tool window, use <code>ctrl-shift-arrow</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Using these shortcuts you can easily toggle between the tool windows and the editor, without using the mouse.
+Peachy!</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="navigating-around"><a class="anchor" href="#navigating-around"></a>Navigating Around</h3>
+<div class="paragraph">
+<p>For all of the following, you don&#8217;t need to type every letter, typing "ab" will actually search for ".<strong>a.*b.</strong>".</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>to open classes or files or methods that you know the name of:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>ctrl-N</code> to open class</p>
+</li>
+<li>
+<p><code>ctrl-shift-N</code> to open a file</p>
+</li>
+<li>
+<p>(bit fiddly this) <code>ctrl-shift-alt-N</code> to search for any symbol.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>open up dialog of recent files: <code>ctrl-E</code></p>
+</li>
+<li>
+<p>search for any file: <code>shift-shift</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Navigating around:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>find callers of a method (the call hierarchy): <code>ctrl-alt-H</code></p>
+</li>
+<li>
+<p>find subclasses or overrides: <code>ctrl-alt-B</code></p>
+</li>
+<li>
+<p>find superclasses/interface/declaration: <code>ctrl-B</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Viewing the structure (ie outline) of a class
+* <code>ctrl-F12</code> will pop-up a dialog showing all members
+** hit <code>ctrl-F12</code> again to also see inherited members</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="editing"><a class="anchor" href="#editing"></a>Editing</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Extend selection using <code>ctrl-W</code></p>
+<div class="ulist">
+<ul>
+<li>
+<p>and contract it down again using <code>ctrl-shift-W</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>to duplicate a line, it&#8217;s <code>ctrl-D</code></p>
+<div class="ulist">
+<ul>
+<li>
+<p>if you have some text selected (or even some lines), it&#8217;ll actually duplicate the entire selection</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>to delete a line, it&#8217;s <code>ctrl-X</code></p>
+</li>
+<li>
+<p>to move a line up or down: <code>shift-alt-up</code> and <code>shift-alt-down</code></p>
+<div class="ulist">
+<ul>
+<li>
+<p>if you have selected several lines, it&#8217;ll move them all togethe</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><code>ctrl-shift-J</code> can be handy for joining lines together</p>
+<div class="ulist">
+<ul>
+<li>
+<p>just hit enter to split them apart (even in string quotes; IntelliJ will "do the right thing")</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="intentions-and-code-completion"><a class="anchor" href="#intentions-and-code-completion"></a>Intentions and Code Completion</h3>
+<div class="paragraph">
+<p>Massively useful is the "Intentions" popup; IntelliJ tries to guess what you might want to do.
+You can activate this using`alt-enter`, whenever you see a lightbulb/tooltip in the margin of the current line.</p>
+</div>
+<div class="paragraph">
+<p>Code completion usually happens whenever you type '.'.
+You can also use <code>ctrl-space</code> to bring these up.</p>
+</div>
+<div class="paragraph">
+<p>In certain circumstances (eg in methods0) you can also type <code>ctrl-shift-space</code> to get a smart list of methods etc that you might want to call.
+Can be useful.</p>
+</div>
+<div class="paragraph">
+<p>Last, when invoking a method, use <code>ctrl-P</code> to see the parameter types.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="refactoring"><a class="anchor" href="#refactoring"></a>Refactoring</h3>
+<div class="paragraph">
+<p>Loads of good stuff on the <code>Refactor</code> menu; most used are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Rename (<code>shift-F6</code>)</p>
+</li>
+<li>
+<p>Extract</p>
+<div class="ulist">
+<ul>
+<li>
+<p>method: <code>ctrl-alt-M</code></p>
+</li>
+<li>
+<p>variable: <code>ctrl-alt-V</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Inline method/variable: <code>ctrl-alt-N</code></p>
+</li>
+<li>
+<p>Change signature</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>If you can&#8217;t remember all those shortcuts, just use <code>ctrl-shift-alt-T</code> (might want to rebind that to something else!) and get a context-sensitive list of refactorings available for the currently selected object</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="plugins"><a class="anchor" href="#plugins"></a>Plugins</h3>
+<div class="paragraph">
+<p>You might want to set up some additional plugins.
+You can do this using <code>File &gt; Settings &gt; Plugins</code> (or equivalently <code>File &gt; Other Settings &gt; Configure Plugins</code>).</p>
+</div>
+<div class="paragraph">
+<p>Recommended are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://plugins.jetbrains.com/plugin/7179?pr=idea">Maven Helper</a> plugin</p>
+</li>
+<li>
+<p><a href="https://plugins.jetbrains.com/plugin/7391-asciidoc">AsciiDoctor</a> plugin</p>
+<div class="paragraph">
+<p>Extremely useful if you are doing any authoring of documents (plugin&#8217;s git repo is <a href="https://github.com/asciidoctor/asciidoctor-intellij-plugin">here</a>)</p>
+</div>
+</li>
+<li>
+<p><a href="https://plugins.jetbrains.com/plugin/6317-lombok">Lombok</a> plugin</p>
+<div class="paragraph">
+<p>If you plan to use <a href="https://projectlombok.org">Project Lombok</a> to reduce boilerplate.</p>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="troubleshooting"><a class="anchor" href="#troubleshooting"></a>Troubleshooting</h3>
+<div class="paragraph">
+<p>When a Maven module is imported, IntelliJ generates its own project files (suffix <code>.ipr</code>), and the application is actually built from that.</p>
+</div>
+<div class="paragraph">
+<p>Occasionally these don&#8217;t keep in sync (even if auto-import of Maven modules has been enabled).</p>
+</div>
+<div class="paragraph">
+<p>To fix the issue, try:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>reimport module</p>
+</li>
+<li>
+<p>rebuild selected modules/entire project</p>
+</li>
+<li>
+<p>remove and then re-add the project</p>
+</li>
+<li>
+<p>restart, invalidating caches</p>
+</li>
+<li>
+<p>hit StackOverflow (!)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>One thing worth knowing; IntelliJ actively scans the filesystem all the time.
+It&#8217;s therefore (almost always) fine to build the app from the Maven command line; IntelliJ will detect the changes and keep in sync.
+If you want to force that, use <code>File &gt; Synchronize</code>, <code>ctrl-alt-Y</code>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="faster-turnaround-times"><a class="anchor" href="#faster-turnaround-times"></a>Faster turnaround times</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In this section are several options that will reduce the time it takes between making a source code edit and seeing the results in the running app. code/build/deploy/review feedback loop.</p>
+</div>
+</div>
+</div>
+</article>
+<aside class="article-aside toc" role="navigation">
+    <p class="toc-title">On this page</p>
+    <div id="article-toc"></div>
+</aside>
+</main>
+</div>
+<footer class="footer">
+    <div class="content">
+        <div class="copyright">
+            <p>
+                Copyright © 2010~2019 The Apache Software Foundation, licensed under the Apache License, v2.0.
+                <br/>
+                Apache, the Apache feather logo, Apache Isis, and the Apache Isis project logo are all trademarks of The Apache Software Foundation.
+            </p>
+        </div>
+        <div class="revision">
+            <p>Revision: 2.0.0-M2.20200206-0400-f8919a74</p>
+        </div>
+    </div>
+</footer>
+<script src="../_/js/site.js"></script>
+<script async src="../_/js/vendor/highlight.js"></script>
+<script src="../_/js/vendor/jquery-3.4.1.min.js"></script>
+<script src="../_/js/vendor/jquery-ui-1.12.1.custom.widget-only.min.js"></script>
+<script src="../_/js/vendor/jquery.tocify.min.js"></script>
+
+<script>
+    $(function() {
+        $("#article-toc").tocify( {
+            showEffect: "slideDown",
+            hideEffect: "slideUp",
+            selectors: "h2, h3",
+            scrollTo: 120,
+            smoothScroll: true,
+            theme: "jqueryui",
+            highlightOnScroll: true
+        } );
+    });
+</script>
+  </body>
+</html>
