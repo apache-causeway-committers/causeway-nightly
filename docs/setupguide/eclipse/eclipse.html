@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Datanucleus Enhancer :: Apache Isis</title>
+    <title>Developing using Eclipse :: Apache Isis</title>
     <meta name="generator" content="Antora 2.2.0">
     <link rel="stylesheet" href="../../_/css/site.css">
     <link rel="stylesheet" href="../../_/css/site-custom.css">
@@ -139,22 +139,14 @@
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../intellij.html">Using IntelliJ</a>
+    <a class="nav-link" href="../intellij/about.html">Using IntelliJ</a>
   </li>
-  <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../hints-and-tips.html">Hints and Tips</a>
+</ul>
   </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../git-cookbook.html">Git Cookbook</a>
-  </li>
-  <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../working-with-many-repos.html">Working with Many Repos</a>
-  </li>
-  <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="#resources/cheat-sheet.adoc">Cheat Sheet</a>
-  </li>
-  <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="#resources/icons.adoc">Icons</a>
+    <a class="nav-link" href="../hints-and-tips/about.html">Hints &amp; Tips</a>
   </li>
 </ul>
   </li>
@@ -339,22 +331,18 @@
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="../about.html">Setup Guide</a></li>
-    <li><a href="datanucleus-enhancer.html">Datanucleus Enhancer</a></li>
+    <li><a href="eclipse.html">Developing using Eclipse</a></li>
   </ul>
 </nav>
-  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/HEAD/antora/components/setupguide/modules/ROOT/pages/hints-and-tips/datanucleus-enhancer.adoc">Edit</a></div>
+  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/HEAD/antora/components/setupguide/modules/eclipse/pages/eclipse.adoc">Edit</a></div>
 </div>
 <article class="doc">
     <a name="section-top"></a>
-<h1 class="page">Datanucleus Enhancer</h1>
+<h1 class="page">Developing using Eclipse</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p><a href="http://www.datanucleus.org/">DataNucleus</a> is the reference implementation of the JDO (Java data objects) spec, and Apache Isis integrates with DataNucleus as its persistence layer.
-Datanucleus is a very powerful library, allowing domain entities to be mapped not only to relational database tables, but also to NoSQL stores such as <a href="http://neo4j.com/">Neo4J</a>, <a href="http://www.mongodb.org/">MongoDB</a> and <a href="http://cassandra.apache.org/">Apache Cassandra</a>.</p>
-</div>
-<div class="paragraph">
-<p>With such power comes a little bit of complexity to the development environment: all domain entities must be enhanced through the DataNucleus enhancer.</p>
+<p>If you are an <a href="http://www.eclipse.org">Eclipse</a> user, then we recommend you download the "Eclipse JEE package" configuration.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -363,71 +351,306 @@ Datanucleus is a very powerful library, allowing domain entities to be mapped no
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-<div class="paragraph">
-<p>Bytecode enhancement is actually a requirement of the JDO spec; the process is described in outline <a href="http://db.apache.org/jdo/enhancement.html">here</a>.</p>
-</div>
+This material does not constitute an endorsement; Eclipse foundation is not affiliated to Apache Software Foundation in any way.
 </td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>What this means is that the enhancer&#8201;&#8212;&#8201;available as both a Maven plugin and as an Eclipse plugin&#8201;&#8212;&#8201;must, one way or another, be integrated into your development environment.</p>
+<p>When running an Apache Isis application, it&#8217;s necessary to setup the development environment so that the Java bytecode can be enhanced by the <a href="http://www.datanucleus.org">DataNucleus</a> enhancer.
+If working in Eclipse, then JDO enhancement is most easily done by installing the <a href="http://www.datanucleus.org/products/accessplatform/jpa/tools.html#eclipse">DataNucleus' Eclipse plugin</a>.
+This hooks the bytecode enhancement of your domain objects into Eclipse&#8217;s normal incremental compilation.</p>
 </div>
 <div class="paragraph">
-<p>If working from the Maven command line, JDO enhancement is done using the <code>datanucleus-maven-plugin</code>.</p>
-</div>
-<div class="paragraph">
-<p>Both the <a href="../../docs/starters/helloworld.html" class="page">HelloWorld</a> and <a href="../../docs/starters/simpleapp.html" class="page">SimpleApp</a> starter apps have this plugin pre-configured.</p>
+<p>This plugin needs to be configured for each of your domain modules (usually just one in any given app).</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="meta-infpersistence-xml"><a class="anchor" href="#meta-infpersistence-xml"></a>META-INF/persistence.xml</h2>
+<h2 id="editor-templates"><a class="anchor" href="#editor-templates"></a>Editor Templates</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>It&#8217;s also a good idea to ensure that every domain module(s) containing entities has a JDO <code>META-INF/persistence.xml</code> file:</p>
+<p>We provide a set of editor templates.
+These are used to add new methods to existing classes.
+(These are equivalent to the <a href="../intellij/about.html#live-templates" class="page">IntelliJ live templates</a>):</p>
 </div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;?xml version="1.0" encoding="UTF-8" ?&gt;
-&lt;persistence xmlns="http://java.sun.com/xml/ns/persistence"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd" version="1.0"&gt;
-
-    &lt;persistence-unit name="simple"&gt; <i class="conum" data-value="1"></i><b>(1)</b>
-    &lt;/persistence-unit&gt;
-&lt;/persistence&gt;</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>change as required; typically is the name of the domain module.</td>
-</tr>
-</table>
+<div class="ulist">
+<ul>
+<li>
+<p><code>is</code> (Apache Isis domain objects).  <a href="./resources/eclipse/isis-templates.xml">Download</a></p>
+</li>
+<li>
+<p><code>ju</code> (for JUnit tests) <a href="./resources/eclipse/junit4-templates.xml">Download</a></p>
+</li>
+<li>
+<p><code>jm</code> (for JMock mocks or libraries) <a href="./resources/eclipse/jmock2-templates.xml">Download</a></p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
-<p>Again, the <a href="../../docs/starters/helloworld.html" class="page">HelloWorld</a> and <a href="../../docs/starters/simpleapp.html" class="page">Simpleapp</a> starter apps do this.</p>
+<p>To install, download each XML file, then go to <code>Windows &gt; Preferences &gt; Java &gt; Editor &gt; Templates</code> and choose <code>Import</code>.</p>
 </div>
-<div class="admonitionblock warning">
+</div>
+</div>
+<div class="sect1">
+<h2 id="install-project-lombok"><a class="anchor" href="#install-project-lombok"></a>Install Project Lombok</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <a href="../../docs/starters/simpleapp.html" class="page">SimpleApp</a> starter app uses <a href="http://projectlombok.org">Project Lombok</a> annotations (<code>@Getter</code> and <code>@Setter</code> and so on) to reduce the boilerplate.
+For Eclipse IDE this requires an <a href="https://projectlombok.org/setup/eclipse">installation step</a>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Locate the <code>lombok.jar</code> jar file:</p>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/eclipse/2017-oxygen/010-lombok-locate-jar.png"><img src="_images/eclipse/2017-oxygen/010-lombok-locate-jar.png" alt="010 lombok locate jar" width="600px"></a>
+</div>
+</div>
+</li>
+<li>
+<p>Run using <code>java -jar</code> (or double click on Windows):</p>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/eclipse/2017-oxygen/020-lombok-install-into-eclipse.png"><img src="_images/eclipse/2017-oxygen/020-lombok-install-into-eclipse.png" alt="020 lombok install into eclipse" width="600px"></a>
+</div>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Then restart Eclipse.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="install-the-datanucleus-plugin"><a class="anchor" href="#install-the-datanucleus-plugin"></a>Install the DataNucleus plugin</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The DataNucleus plugin hooks into the Eclipse compiler and will automatically enhance the compiled class files:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Use Help &gt; Install New Software:</p>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/eclipse/2017-oxygen/030-datanucleus-install-new-software.png"><img src="_images/eclipse/2017-oxygen/030-datanucleus-install-new-software.png" alt="030 datanucleus install new software" width="600px"></a>
+</div>
+</div>
+</li>
+<li>
+<p>Specify the DataNucleus plugin repository:</p>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/eclipse/2017-oxygen/040-datanucleus-specify-repository.png"><img src="_images/eclipse/2017-oxygen/040-datanucleus-specify-repository.png" alt="040 datanucleus specify repository" width="400px"></a>
+</div>
+</div>
+</li>
+<li>
+<p>Select the plugin</p>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/eclipse/2017-oxygen/050-datanucleus-select-plugin.png"><img src="_images/eclipse/2017-oxygen/050-datanucleus-select-plugin.png" alt="050 datanucleus select plugin" width="600px"></a>
+</div>
+</div>
+</li>
+<li>
+<p>Press Next and Finish to complete the installation of the plugin</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Then restart Eclipse</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="importing-the-project"><a class="anchor" href="#importing-the-project"></a>Importing the Project</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Use File &gt; Import, then Maven &gt; Existing Maven Projects.</p>
+</div>
+<div class="paragraph">
+<p>However, you will have some compile errors until you enable annotation processing, discussed below.</p>
+</div>
+<div class="sect2">
+<h3 id="enable-annotation-processing"><a class="anchor" href="#enable-annotation-processing"></a>Enable Annotation Processing</h3>
+<div class="paragraph">
+<p>Both DataNucleus and Project Lombok use annotation processors that must be enabled in Eclipse.</p>
+</div>
+<div class="paragraph">
+<p>For each project, open its <em>Properties</em> page and then <em>Java Compiler &gt; Annotation Processing</em> to specify the generated source directory of <code>target/generated-sources/annotations</code>:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/eclipse/2017-oxygen/060-enable-annotation-processor.png"><img src="_images/eclipse/2017-oxygen/060-enable-annotation-processor.png" alt="060 enable annotation processor" width="600px"></a>
+</div>
+</div>
+<div class="paragraph">
+<p>Eclipse should automatically add this directory as a source path; at this point all remaining compiler errors should disappear.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="configure-datanucleus"><a class="anchor" href="#configure-datanucleus"></a>Configure DataNucleus</h2>
+<div class="sectionbody">
+<div class="admonitionblock tip">
 <table>
 <tr>
 <td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
+<i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
 <div class="paragraph">
-<p>If running on Windows, then there&#8217;s a good chance you&#8217;ll hit the <a href="http://msdn.microsoft.com/en-us/library/aa365247%28VS.85%29.aspx#maxpath">maximum path length limit</a>.
-In this case the <code>persistence.xml</code> file is mandatory rather than optional.</p>
-</div>
-<div class="paragraph">
-<p>This file is also required if you are using developing in Eclipse and relying on the DataNucleus plugin for Eclipse rather than the DataNucleus plugin for Maven.
-More information can be found <a href="../eclipse.html" class="page">here</a>.</p>
+<p>Make sure you are in the 'Java' Perspective, not the 'Java EE' Perspective.</p>
 </div>
 </td>
 </tr>
 </table>
+</div>
+<div class="paragraph">
+<p>In Eclipse, for the <em>domain object model</em> project(s), first add DataNucleus support:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/eclipse/eclipse-100-project-support.png"><img src="_images/eclipse/eclipse-100-project-support.png" alt="eclipse 100 project support" width="600px"></a>
+</div>
+</div>
+<div class="paragraph">
+<p>Then turn on Auto-Enhancement:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/eclipse/eclipse-110-project-support.png"><img src="_images/eclipse/eclipse-110-project-support.png" alt="eclipse 110 project support" width="600px"></a>
+</div>
+</div>
+<div class="sect2">
+<h3 id="update-the-classpath"><a class="anchor" href="#update-the-classpath"></a>Update the classpath</h3>
+<div class="paragraph">
+<p>DataNucleus' enhancer uses the domain object model&#8217;s own classpath to reference DataNucleus JARs.
+So, even though your domain objects are unlikely to depend on DataNucleus, these references must still be present.</p>
+</div>
+<div class="paragraph">
+<p>See the section in <a href="#setupguide:ROOT:hints-and-tips.adoc#datanucleus-enhancer" class="page unresolved">DataNucleus enhancer</a> for details of the contents of the <code>pom.xml</code>.
+If you&#8217;ve based your app on either the <a href="../../docs/starters/helloworld.html" class="page">HelloWorld</a> or the <a href="../../docs/starters/simpleapp.html" class="page">SimpleApp</a> starter app, then it&#8217;ll be set up already.</p>
+</div>
+<div class="paragraph">
+<p>Then, tell DataNucleus to use the project classpath:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/eclipse/eclipse-010-windows-preferences.png"><img src="_images/eclipse/eclipse-010-windows-preferences.png" alt="eclipse 010 windows preferences" width="750px"></a>
+</div>
+</div>
+<div class="paragraph">
+<p>When the enhancer runs, it will print out to the console:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/eclipse/eclipse-120-console.png"><img src="_images/eclipse/eclipse-120-console.png" alt="eclipse 120 console" width="500px"></a>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="workaround-for-path-limits-the-dn-plugin-to-use-the-persistence-xml"><a class="anchor" href="#workaround-for-path-limits-the-dn-plugin-to-use-the-persistence-xml"></a>Workaround for path limits (the DN plugin to use the persistence.xml)</h3>
+<div class="paragraph">
+<p>If running on Windows then the DataNucleus plugin is very likely to hit the Windows path limit.</p>
+</div>
+<div class="paragraph">
+<p>To fix this, we configure the enhancer to read from the <code>persistence.xml</code> file.</p>
+</div>
+<div class="paragraph">
+<p>As a prerequisite, first make sure that your domain object model has a <code>persistence.xml</code> file.
+Then specify the <code>persistence-unit</code> in the project properties:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/eclipse/eclipse-025-project-properties.png"><img src="_images/eclipse/eclipse-025-project-properties.png" alt="eclipse 025 project properties" width="750px"></a>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="workaround-if-the-enhancer-fails"><a class="anchor" href="#workaround-if-the-enhancer-fails"></a>Workaround: If the enhancer fails</h3>
+<div class="paragraph">
+<p>On occasion it appears that Eclipse can attempt to run two instances of the DataNucleus enhancer.
+This is probably due to multiple Eclipse builders being defined; we&#8217;ve noticed multiple entries in the Eclipse&#8217;s <code>Debug</code> view:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/eclipse/eclipse-210-enhancer-fails-duplicates.png"><img src="_images/eclipse/eclipse-210-enhancer-fails-duplicates.png" alt="eclipse 210 enhancer fails duplicates" width="600px"></a>
+</div>
+</div>
+<div class="paragraph">
+<p>At any rate, you&#8217;ll know you&#8217;ve encountered this error if you see the following in the console:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/eclipse/eclipse-200-enhancer-fails-duplicates.png"><img src="_images/eclipse/eclipse-200-enhancer-fails-duplicates.png" alt="eclipse 200 enhancer fails duplicates" width="600px"></a>
+</div>
+</div>
+<div class="paragraph">
+<p>The best solution is to remove DataNucleus support and then to re-add it:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/eclipse/eclipse-220-enhancer-fails-duplicates.png"><img src="_images/eclipse/eclipse-220-enhancer-fails-duplicates.png" alt="eclipse 220 enhancer fails duplicates" width="600px"></a>
+</div>
+</div>
+<div class="paragraph">
+<p>If you consistently hit problems, then the final recourse is to disable the automatic enhancement and to remember to manually enhance your domain object model before each run.</p>
+</div>
+<div class="paragraph">
+<p>Not ideal, we know.
+Please feel free to contribute a better solution :-)</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="running-the-app"><a class="anchor" href="#running-the-app"></a>Running the App</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Create a launch configuration that runs the main class annotated with <a href="https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/autoconfigure/SpringBootApplication.html">@SpringBootApplication</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="other-domain-projects"><a class="anchor" href="#other-domain-projects"></a>Other domain projects.</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>There is nothing to prevent you having multiple domain projects.
+You might want to do such that each domain project corresponds to a <a href="http://www.methodsandtools.com/archive/archive.php?id=97p2">DDD module</a>, thus guaranteeing that there are no cyclic dependencies between your modules.</p>
+</div>
+<div class="paragraph">
+<p>If you do this, make sure that each project has its own <code>persistence.xml</code> file.
+And, remember also to configure Eclipse&#8217;s DataNucleus plugin for these other domain projects.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="advanced"><a class="anchor" href="#advanced"></a>Advanced</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In this section are a couple of options that will reduce the length of the change code/build/deploy/review feedback loop.</p>
+</div>
+<div class="sect2">
+<h3 id="setting-up-dcevm"><a class="anchor" href="#setting-up-dcevm"></a>Setting up DCEVM</h3>
+<div class="paragraph">
+<p><a href="http://github.com/dcevm/dcevm">DCEVM</a> enhances the JVM with true hot-swap adding/removing of methods as well as more reliable hot swapping of the implementation of existing methods.</p>
+</div>
+<div class="paragraph">
+<p>In the context of Apache Isis, this is very useful for contributed actions and mixins and also view models; you should then be able to write these actions and have them be picked up without restarting the application.</p>
+</div>
+<div class="paragraph">
+<p>Changing persisting domain entities is more problematic, for two reasons: the JDO/DataNucleus enhancer needs to run on domain entities, and also at runtime JDO/DataNucleus would need to rebuild its own metamodel.
+You may find that adding actions will work, but adding new properties or collections is much less likely to.</p>
+</div>
+<div class="paragraph">
+<p>For details of setting up DCEVM, see the <a href="../intellij/hints-and-tips.html#setting-up-dcevm" class="page">corresponding section</a> in the IntelliJ documentation.</p>
+</div>
 </div>
 </div>
 </div>
@@ -448,7 +671,7 @@ More information can be found <a href="../eclipse.html" class="page">here</a>.</
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200206-0400-f8919a74</p>
+            <p>Revision: 2.0.0-M2.20200207-1053-4c8fed25</p>
         </div>
     </div>
 </footer>
@@ -462,6 +685,7 @@ More information can be found <a href="../eclipse.html" class="page">here</a>.</
     $(function() {
         $("#article-toc").tocify( {
             showEffect: "slideDown",
+            hashGenerator: "pretty",
             hideEffect: "slideUp",
             selectors: "h2, h3",
             scrollTo: 120,
