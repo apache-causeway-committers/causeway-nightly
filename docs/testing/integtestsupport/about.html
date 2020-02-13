@@ -142,7 +142,16 @@
     <a class="nav-link" href="../unittestsupport/about.html">Unit Test Support</a>
   </li>
   <li class="nav-item is-current-page" data-depth="1">
+    <button class="nav-item-toggle"></button>
     <a class="nav-link" href="about.html">Integ Test Support</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="domain-model-validator.html">Domain Model Validator</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="swagger-exporter.html">Swagger Exporter</a>
+  </li>
+</ul>
   </li>
   <li class="nav-item" data-depth="1">
     <a class="nav-link" href="../specsupport/about.html">BDD Spec Support</a>
@@ -1115,6 +1124,79 @@ public class ModuleWithFixturesService {
 </div>
 </div>
 <div class="sect1">
+<h2 id="validate-metamodel"><a class="anchor" href="#validate-metamodel"></a>Validate MetaModel</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Metamodel validation checks for a number of semantic errors with the domain model.
+For example, if a supporting method (such as <code>default0UpdateName()</code> in <code>SimpleObject</code>) is misspelt, then this would be flagged.</p>
+</div>
+<div class="paragraph">
+<p>Running up the application will flag any metamodel validation issues, as will running an integration test.
+However, depending upon configuration, the metamodel may only be built lazily, meaning that issues will only be detected while the application is running, rather than at bootstrap.</p>
+</div>
+<div class="paragraph">
+<p>The <code>DomainModelValidator</code> is a simple utility class that will fullu rebuild the metamodel if required, and then verify that there are no issues.</p>
+</div>
+<div class="listingblock">
+<div class="title">ValidateDomainModel_IntegTest.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">class ValidateDomainModel_IntegTest
+        extends ApplicationIntegTestAbstract {
+
+    @Inject ServiceRegistry serviceRegistry;
+
+    @Test
+    void validate() {
+        new DomainModelValidator(serviceRegistry).assertValid();
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To see this in action in the <a href="../../docs/starters/simpleapp.html" class="page">simpleapp</a> starter app:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>change <code>isis.applib.annotation.action.explicit</code> to <code>false</code> in <code>application.yml</code></p>
+</li>
+<li>
+<p>introduce an error, for example by renaming <code>default0UpdateName</code> to <code>default0UpdateFoo</code>.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="swagger-exporter"><a class="anchor" href="#swagger-exporter"></a>Swagger Exporter</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>@SpringBootTest(
+classes = {
+ApplicationIntegTestAbstract.AppManifest.class,
+IsisModuleViewerRestfulObjectsJaxrsResteasy4.class
+}
+)
+class SwaggerExport_IntegTest extends ApplicationIntegTestAbstract {</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>@Inject ServiceRegistry serviceRegistry;</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>    @Test
+    void export() throws IOException {
+        new SwaggerExporter(serviceRegistry)
+                .export(SwaggerService.Visibility.PRIVATE, SwaggerService.Format.JSON);
+    }
+}</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="maven-configuration"><a class="anchor" href="#maven-configuration"></a>Maven Configuration</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -1232,7 +1314,7 @@ This relies on a naming convention:</p>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200212-0401-41a22e71</p>
+            <p>Revision: 2.0.0-M2.20200213-0401-f9ecfe08</p>
         </div>
     </div>
 </footer>
