@@ -769,6 +769,8 @@
 <article class="doc">
     <a name="section-top"></a>
 <h1 class="page"><code>@Parameter</code></h1>
+<div id="preamble">
+<div class="sectionbody">
 <div class="paragraph">
 <p>The <code>@Parameter</code> annotation applies to action parameters collecting together all domain semantics within a single annotation.</p>
 </div>
@@ -880,12 +882,287 @@
 </tr>
 </table>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="fileAccept"><a class="anchor" href="#fileAccept"></a><code>fileAccept()</code></h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>include:Parameter/fileAccept.adoc[leveloffset=+1]
-include:Parameter/maxLength.adoc[leveloffset=+1]
-include:Parameter/mustSatisfy.adoc[leveloffset=+1]
-include:Parameter/optionality.adoc[leveloffset=+1]
-include:Parameter/regexPattern.adoc[leveloffset=+1]</p>
+<p>The <code>fileAccept()</code> attribute applies only to <a href="../applib-cm/classes/value-types.html#Blob" class="page"><code>Blob</code></a>
+or <a href="../applib-cm/classes/value-types.html#Clob" class="page"><code>Clob</code></a> parameters, indicating the type of file to accept when
+uploading a new value.   The attribute is also supported on <a href="Property.html#fileAccept" class="page">properties</a>.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Scanner {
+    public ScannedDocument newScan(
+        @Parameter(fileAccept="image/*")            <i class="conum" data-value="1"></i><b>(1)</b>
+        @ParameterLayout(named="Scanned image")     <i class="conum" data-value="2"></i><b>(2)</b>
+        final Blob scannedImage) {
+        ...
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>as per <a href="http://www.w3schools.com/tags/att_input_accept.asp">reference docs</a>, either a media type (such as
+<code>image/*</code>) or a file type extension (such as <code>.png</code>).</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>the <code>@ParameterLayout(named=&#8230;&#8203;)</code> attribute is required for Java 7; for Java 8 it can be omitted if the
+(non-ASF) <a href="https://platform.incode.org" target="_blank" rel="noopener">Incode Platform</a>'s paraname8 metamodel extension is used.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="maxLength"><a class="anchor" href="#maxLength"></a><code>maxLength()</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>maxLength()</code> attribute applies only to <code>String</code> parameters, indicating the maximum number of characters that the user may enter (for example in a text field in the UI).  It is ignored if applied to parameters of any other type.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class CustomerRepository {
+    public Customer newCustomer(
+        @Parameter(maxLength=30)
+        @ParameterLayout(named="First Name")  <i class="conum" data-value="1"></i><b>(1)</b>
+        final String firstName,
+        @Parameter(maxLength=50)
+        @ParameterLayout(named="Last Name")
+        final String lastName) {
+        ...
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>the <code>@ParameterLayout(named=&#8230;&#8203;)</code> attribute is required for Java 7; for Java 8 it can be omitted if the (non-ASF) <a href="https://platform.incode.org" target="_blank" rel="noopener">Incode Platform</a>'s paraname8 metamodel extension is used.</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="see-also"><a class="anchor" href="#see-also"></a>See also</h3>
+<div class="paragraph">
+<p>This attribute can also be applied to <a href="Property.html#maxLength" class="page">properties</a>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="mustSatisfy"><a class="anchor" href="#mustSatisfy"></a><code>mustSatisfy()</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>mustSatisfy()</code> attribute allows arbitrary validation to be applied to parameters using an (implementation of a) <code>org.apache.isis.applib.spec.Specification</code> object.  The attribute is also supported on <a href="Property.html#mustSatisfy" class="page">properties</a>.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The specification implementations can (of course) be reused between parameters and <a href="Property.html#mustSatisfy" class="page">properties</a>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The <code>Specification</code> is consulted during validation, being passed the proposed value.  If the proposed value fails, then the value returned is the used as the invalidity reason.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class StartWithCapitalLetterSpecification
+        extends AbstractSpecification&lt;String&gt; {            <i class="conum" data-value="1"></i><b>(1)</b>
+    public String satisfiesSafely(String proposed) {
+        return "".equals(proposed)
+            ? "Empty string"
+            : !Character.isUpperCase(proposed.charAt(0))
+                ? "Does not start with a capital letter"
+                : null;
+    }
+}
+public class CustomerRepository {
+    public Customer newCustomer(
+            @Parameter(
+                mustSatisfy=StartWithCapitalLetterSpecification.class
+            )
+            @ParameterLayout(named="First Name")
+            final String firstName,
+            @Parameter(
+                mustSatisfy=StartWithCapitalLetterSpecification.class
+            )
+            @ParameterLayout(named="Last Name")
+            final String lastName) {
+        ...
+    }
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>the <code>AbstractSpecification</code> class conveniently handles type-safety and dealing with null values.  The applib also provides <code>SpecificationAnd</code> and <code>SpecificationOr</code> to allow specifications to be combined "algebraically".</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>It is also possible to provide translatable reasons.  Rather than implement <code>Specification</code>, instead implement <code>Specification2</code> which defines the API:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public interface Specification2 extends Specification {
+    public TranslatableString satisfiesTranslatable(Object obj); <i class="conum" data-value="1"></i><b>(1)</b>
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Return <code>null</code> if specification satisfied, otherwise the reason as a translatable string</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>With <code>Specification2</code> there is no need to implement the inherited <code>satifies(Object)</code>; that method will never be called.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="optionality"><a class="anchor" href="#optionality"></a><code>optionality()</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>By default, Apache Isis assumes that all parameters of an action are required (mandatory).  The <code>optionality()</code> attribute allows this to be relaxed.  The attribute is also supported for <a href="Property.html#optionality" class="page">properties</a>.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The attribute has no meaning for a primitive type such as <code>int</code>: primitives will always have a default value (e.g. zero).  If optionality is required, then use the corresponding wrapper class (e.g. <code>java.lang.Integer</code>) and annotate with <code>Parameter#optionality()</code> as required.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The values for the attribute are simply <code>OPTIONAL</code> or <code>MANDATORY</code>.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Customer {
+    public Order placeOrder(
+            final Product product,
+            @ParameterLayout(named = "Quantity")
+            final int quantity,
+            @Parameter(optionality = Optionality.OPTIONAL)
+            @ParameterLayout(named = "Special Instructions")
+            final String instr) {
+        ...
+    }
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>It is also possible to specify optionality using <a href="Nullable.html" class="page"><code>@Nullable</code></a> annotation.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="regexPattern"><a class="anchor" href="#regexPattern"></a><code>regexPattern()</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>There are three attributes related to enforcing regular expressions:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The <code>regexPattern()</code> attribute validates the contents of any string parameter with respect to a regular expression pattern. It is ignored if applied to parameters of any other type.</p>
+</li>
+<li>
+<p>The <code>regexPatternFlags()</code> attribute specifies flags that modify the handling of the pattern.  The values are those
+that would normally be passed to <code>java.util.regex.Pattern#compile(String,int)</code>.</p>
+</li>
+<li>
+<p>The related <code>regexPatternReplacement()</code> attribute specifies the error message to show if
+the provided argument does not match the regex pattern.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Customer {
+    public void updateEmail(
+            @Parameter(
+                regexPattern = "(\\w+\\.)*\\w+@(\\w+\\.)+[A-Za-z]+",
+                regexPatternFlags = Pattern.CASE_INSENSITIVE,
+                regexPatternReplacement = "Must be valid email address (containing a '@') symbol"   <i class="conum" data-value="1"></i><b>(1)</b>
+            )
+            @ParameterLayout(named = "Email")
+            final String email) {
+        ...
+    }
+)</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Note that there is currently no i18n support for this phrase.</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="see-also-2"><a class="anchor" href="#see-also-2"></a>See also</h3>
+<div class="paragraph">
+<p>This attribute can also be specified for <a href="Property.html#regexPattern" class="page">properties</a>.</p>
+</div>
+</div>
+</div>
 </div>
 </article>
 <aside class="article-aside toc" role="navigation">
@@ -904,7 +1181,7 @@ include:Parameter/regexPattern.adoc[leveloffset=+1]</p>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200215-0401-a118e0ee</p>
+            <p>Revision: 2.0.0-M2.20200216-0401-cd6b9b40</p>
         </div>
     </div>
 </footer>

@@ -769,6 +769,8 @@
 <article class="doc">
     <a name="section-top"></a>
 <h1 class="page"><code>@DomainObjectLayout</code></h1>
+<div id="preamble">
+<div class="sectionbody">
 <div class="paragraph">
 <p>The <code>@DomainObjectLayout</code> annotation applies to domain classes, collecting together all UI hints within a single annotation.</p>
 </div>
@@ -931,18 +933,968 @@ public class ToDoItem {
 </tr>
 </table>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="bookmarking"><a class="anchor" href="#bookmarking"></a><code>bookmarking()</code></h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>include:DomainObjectLayout/bookmarking.adoc[leveloffset=+1]
-include:DomainObjectLayout/cssClass.adoc[leveloffset=+1]
-include:DomainObjectLayout/cssClassFa.adoc[leveloffset=+1]
-include:DomainObjectLayout/cssClassUiEvent.adoc[leveloffset=+1]
-include:DomainObjectLayout/describedAs.adoc[leveloffset=+1]
-include:DomainObjectLayout/iconUiEvent.adoc[leveloffset=+1]
-include:DomainObjectLayout/layoutUiEvent.adoc[leveloffset=+1]
-include:DomainObjectLayout/named.adoc[leveloffset=+1]
-include:DomainObjectLayout/paged.adoc[leveloffset=+1]
-include:DomainObjectLayout/plural.adoc[leveloffset=+1]
-include:DomainObjectLayout/titleUiEvent.adoc[leveloffset=+1]</p>
+<p>The <code>bookmarking()</code> attribute indicates that an entity is automatically bookmarked.
+This attribute is also supported for  <a href="Action.html#bookmarking" class="page">domain objects</a>.</p>
+</div>
+<div class="paragraph">
+<p>(In the Wicket viewer), a link to a bookmarked object is shown in the bookmarks panel:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/reference-annotations/DomainObjectLayout/bookmarking.png"><img src="_images/reference-annotations/DomainObjectLayout/bookmarking.png" alt="bookmarking" width="720px"></a>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Note that this screenshot shows an earlier version of the <a href="../../vw/about.html" class="page">Wicket viewer</a> UI (specifically, pre 1.8.0).</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(bookmarking=BookmarkPolicy.AS_ROOT)
+public class ToDoItem ... {
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>indicates that the <code>ToDoItem</code> class is bookmarkable:</p>
+</div>
+<div class="paragraph">
+<p>It is also possible to nest bookmarkable entities.
+For example, this screenshot is taken from <a href="http://github.com/estatio/estatio">Estatio</a>:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/reference-annotations/DomainObjectLayout/bookmarking-nested.png"><img src="_images/reference-annotations/DomainObjectLayout/bookmarking-nested.png" alt="bookmarking nested" width="720px"></a>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Note that this screenshot shows an earlier version of the <a href="../../vw/about.html" class="page">Wicket viewer</a> UI (specifically, pre 1.8.0).</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>For example, the <code>Property</code> entity "[OXF] Oxford Super Mall" is a root bookmark, but the <code>Unit</code> child entity "[OXF-001] Unit 1" only appears as a bookmark <em>but only if</em> its parent <code>Property</code> has already been bookmarked.</p>
+</div>
+<div class="paragraph">
+<p>This is accomplished with the following annotations:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(bookmarking=BookmarkPolicy.AS_ROOT)
+public class Property { /* ... */ }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>and</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(bookmarking=BookmarkPolicy.AS_CHILD)
+public abstract class Unit { /* ... */ }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The nesting can be done to any level; the Estatio screenshot also shows a bookmark nesting <code>Lease</code> &gt; <code>LeaseItem</code> &gt;  <code>LeaseTerm</code> (3 levels deep).</p>
+</div>
+<div class="sect2">
+<h3 id="see-also"><a class="anchor" href="#see-also"></a>See also</h3>
+<div class="paragraph">
+<p>This attribute can also be applied to <a href="ViewModelLayout.html#bookmarking" class="page">view models</a>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="cssClass"><a class="anchor" href="#cssClass"></a><code>cssClass()</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>cssClass()</code> attribute can be used to render additional CSS classes in the HTML (a wrapping <code>&lt;div&gt;</code>) that represents the domain object.
+<a href="#refguide:config:application-specific/application-css.adoc" class="page unresolved">Application-specific CSS</a> can then be used to target and adjust the UI representation of that particular element.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject
+@DomainObjectLayout(
+    cssClass="x-core-entity"
+)
+public class ToDoItem { /* ... */ }</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The similar <a href="#cssClassFa"><code>@DomainObjectLayout#cssClassFa()</code></a> annotation attribute is also used as a hint to apply CSS, but in particular to allow <a href="http://fortawesome.github.io/Font-Awesome/icons/">Font Awesome icons</a> to be rendered as the icon for classes.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="see-also-2"><a class="anchor" href="#see-also-2"></a>See also</h3>
+<div class="paragraph">
+<p>This attribute can also be applied to:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="ViewModelLayout.html#cssClass" class="page">view models</a></p>
+</li>
+<li>
+<p><a href="ActionLayout.html#cssClass" class="page">actions</a></p>
+</li>
+<li>
+<p><a href="PropertyLayout.html#cssClass" class="page">properties</a>,</p>
+</li>
+<li>
+<p><a href="CollectionLayout.html#cssClass" class="page">collections</a></p>
+</li>
+<li>
+<p><a href="ParameterLayout.html#cssClass" class="page">parameters</a>.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="cssClassFa"><a class="anchor" href="#cssClassFa"></a><code>cssClassFa()</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>cssClassFa()</code> attribute is used to specify the name of a <a href="http://fortawesome.github.io/Font-Awesome/icons/">Font Awesome icon</a> name, to be rendered as the domain object&#8217;s icon.</p>
+</div>
+<div class="paragraph">
+<p>If necessary the icon specified can be overridden by a particular object instance using the <a href="../applib-cm/methods.html#iconName" class="page"><code>iconName()</code></a> method.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObjectLayout(
+    cssClassFa="fa-check-circle"
+)
+public class ToDoItem { /* ... */ }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>There can be multiple "fa-" classes, eg to mirror or rotate the icon.
+There is no need to include the mandatory <code>fa</code> "marker" CSS class; it will be automatically added to the list.
+The <code>fa-</code> prefix can also be omitted from the class names; it will be prepended to each if required.</p>
+</div>
+<div class="paragraph">
+<p>The related <code>cssClassFaPosition()</code> attribute is currently unused for domain objects; the icon is always rendered to the left.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The similar <a href="#cssClass"><code>@DomainObjectLayout#cssClass()</code></a> annotation attribute is also used as a hint to apply CSS, but for wrapping the representation of an object or object member so that it can be styled in an application-specific way.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="see-also-3"><a class="anchor" href="#see-also-3"></a>See also</h3>
+<div class="paragraph">
+<p>These attributes can also be applied to:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="ViewModelLayout.html#cssClassFa" class="page">view models</a> to specify the object&#8217;s icon, and</p>
+</li>
+<li>
+<p><a href="ActionLayout.html#cssClassFa" class="page">actions</a> to specify an icon for the action&#8217;s representation as a button or menu item.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="cssClassUiEvent"><a class="anchor" href="#cssClassUiEvent"></a>cssClassUiEvent()</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Whenever a domain object is to be rendered, the framework fires off an CSS class UI event to obtain a CSS class to use in any wrapping <code>&lt;div&gt;</code>s and <code>&lt;span&gt;</code>s that render the domain object.
+This is as an alternative to implementing <a href="../applib-cm/methods.html#cssClass" class="page"><code>cssClass()</code></a> reserved method.
+(If <code>cssClass()</code> is present, then it will take precedence).</p>
+</div>
+<div class="paragraph">
+<p>Subscribers subscribe through the <a href="../applib-svc/core-domain-api/EventBusService.html" class="page"><code>EventBusService</code></a> and can use obtain a reference to the domain object from the event.
+From this they can, if they wish, specify a CSS class for the domain object using the event&#8217;s API.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The feature was originally introduced so that <a href="XmlRootElement.html" class="page"><code>@XmlRootElement</code></a>-annotated <a href="../../userguide/fun/building-blocks.html#view-models" class="page">view model</a>s could be kept as minimal as possible, just defining the data.
+UI events allow subscribers to provide UI hints, while <a href="../../userguide/fun/building-blocks.html#mixins" class="page">mixin</a>s can be used to provide the behaviour.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>By default the event raised is <code>CssClassUiEvent.Default</code>.
+For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObjectLayout
+public class ToDoItemDto {
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The purpose of the <code>cssClassUiEvent()</code> attribute is to allows a custom subclass to be emitted instead.
+A similar attribute is available for titles and icons.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObjectLayout(
+    iconUiEvent=ToDoItemDto.CssClassUiEvent.class
+)
+public class ToDoItemDto {
+    public static class CssClassUiEvent
+        extends org.apache.isis.applib.events.ui.CssClassUiEvent&lt;ToDoItemDto&gt; { }
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The benefit is that subscribers can be more targeted as to the events that they subscribe to.</p>
+</div>
+<div class="sect2">
+<h3 id="subscribers"><a class="anchor" href="#subscribers"></a>Subscribers</h3>
+<div class="paragraph">
+<p>Subscribers (which must be domain services) subscribe using either the <a href="https://github.com/google/guava">Guava</a> API
+or (if the <a href="../applib-svc/core-domain-api/EventBusService.html" class="page"><code>EventBusService</code></a> has been appropriately configured)
+using the <a href="http://www.axonframework.org/">Axon Framework</a> API.
+The examples below are compatible with both.</p>
+</div>
+<div class="paragraph">
+<p>Subscribers can be either coarse-grained (if they subscribe to the top-level event type):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.springframework.context.event.EventListener;
+
+@DomainService(nature=NatureOfService.DOMAIN)
+public class SomeSubscriber extends AbstractSubscriber {
+    @EventListener(CssClassUiEvent.class)
+    public void on(CssClassUiEvent ev) {
+        if(ev.getSource() instanceof ToDoItemDto) {
+            ...
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>or can be fine-grained (by subscribing to specific event subtypes):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.springframework.context.event.EventListener;
+
+@DomainService(nature=NatureOfService.DOMAIN)
+public class SomeSubscriber extends AbstractSubscriber {
+    @EventListener(ToDoItemDto.CssClassUiEvent.class)
+    public void on(ToDoItemDto.CssClassUiEvent ev) {
+        ...
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The subscriber should then use <code>CssClassUiEvent#setCssClass(&#8230;&#8203;)</code> to actually specify the CSS class to be used.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="default-doop-and-noop-events"><a class="anchor" href="#default-doop-and-noop-events"></a>Default, Doop and Noop events</h3>
+<div class="paragraph">
+<p>If the <code>cssClassUiEvent</code> attribute is not explicitly specified (is left as its default value, <code>CssClassUiEvent.Default</code>), then the framework will, by default, post an event.</p>
+</div>
+<div class="paragraph">
+<p>If this is not required, then the <code>isis.reflector.facet.domainObjectLayoutAnnotation.cssClassUiEvent.postForDefault</code> configuration property can be set to "false"; this will disable posting.</p>
+</div>
+<div class="paragraph">
+<p>On the other hand, if the <code>cssClassUiEvent</code> has been explicitly specified to some subclass, then an event will be posted.
+The framework provides <code>CssClassUiEvent.Doop</code> as such a subclass, so setting the <code>cssClassUiEvent</code> attribute to this class will ensure that the event to be posted, irrespective of the configuration property setting.</p>
+</div>
+<div class="paragraph">
+<p>And, conversely, the framework also provides <code>CssClassUiEvent.Noop</code>; if <code>cssClassUiEvent</code> attribute is set to this class, then no event will be posted.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="raising-events-programmatically"><a class="anchor" href="#raising-events-programmatically"></a>Raising events programmatically</h3>
+<div class="paragraph">
+<p>Normally events are only raised for interactions through the UI.
+However, events can be raised programmatically either by calling the <a href="../applib-svc/core-domain-api/EventBusService.html" class="page"><code>EventBusService</code></a> API directly.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="see-also-4"><a class="anchor" href="#see-also-4"></a>See also</h3>
+<div class="paragraph">
+<p>This attribute can also be applied to <a href="ViewModelLayout.html#cssClassUiEvent" class="page">view models</a>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="describedAs"><a class="anchor" href="#describedAs"></a><code>describedAs()</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>describedAs()</code> attribute is used to provide a short description of the domain object to the user.
+In the <a href="../../vw/about.html" class="page">Wicket viewer</a> it is displayed as a 'tool tip'.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObjectLayout(
+    describedAs="A customer who may have originally become known to us via the marketing system or who may have contacted us directly."
+ )
+public class ProspectiveSale {
+   ...
+}</code></pre>
+</div>
+</div>
+<div class="sect2">
+<h3 id="see-also-5"><a class="anchor" href="#see-also-5"></a>See also</h3>
+<div class="paragraph">
+<p>The attribute can also be specified for:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="CollectionLayout.html#describedAs" class="page">collections</a></p>
+</li>
+<li>
+<p><a href="PropertyLayout.html#describedAs" class="page">properties</a></p>
+</li>
+<li>
+<p><a href="ActionLayout.html#describedAs" class="page">actions</a></p>
+</li>
+<li>
+<p><a href="ParameterLayout.html#describedAs" class="page">parameters</a> and</p>
+</li>
+<li>
+<p><a href="ViewModelLayout.html#describedAs" class="page">view models</a>.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="iconUiEvent"><a class="anchor" href="#iconUiEvent"></a>iconUiEvent()</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Whenever a domain object is to be rendered, the framework fires off an icon UI event to obtain an icon (name) for the object (if possible).
+This is as an alternative to implementing <a href="../applib-cm/methods.html#iconName" class="page"><code>iconName()</code></a> reserved method.
+(If <code>iconName()</code> is present, then it will take precedence).</p>
+</div>
+<div class="paragraph">
+<p>Subscribers subscribe through the <a href="../applib-svc/core-domain-api/EventBusService.html" class="page"><code>EventBusService</code></a> and can use obtain a reference to the domain object from the event.
+From this they can, if they wish, specify an icon name for the domain object using the event&#8217;s API.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The feature was originally introduced so that <a href="XmlRootElement.html" class="page"><code>@XmlRootElement</code></a>-annotated <a href="../../userguide/fun/building-blocks.html#view-models" class="page">view model</a>s could be kept as minimal as possible, just defining the data.
+UI events allow subscribers to provide UI hints, while <a href="../../userguide/fun/building-blocks.html#mixins" class="page">mixin</a>s can be used to provide the behaviour.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>By default the event raised is <code>IconUiEvent.Default</code>.
+For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObjectLayout
+public class ToDoItemDto {
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The purpose of the <code>iconUiEvent()</code> attribute is to allows a custom subclass to be emitted instead.
+A similar attribute is available for titles and CSS classes.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObjectLayout(
+    iconUiEvent=ToDoItemDto.IconUiEvent.class
+)
+public class ToDoItemDto {
+    public static class IconUiEvent
+        extends org.apache.isis.applib.events.ui.IconUiEvent&lt;ToDoItemDto&gt; { }
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The benefit is that subscribers can be more targeted as to the events that they subscribe to.</p>
+</div>
+<div class="sect2">
+<h3 id="subscribers-2"><a class="anchor" href="#subscribers-2"></a>Subscribers</h3>
+<div class="paragraph">
+<p>Subscribers (which must be domain services) subscribe using either the <a href="https://github.com/google/guava">Guava</a> API or (if the <a href="../applib-svc/core-domain-api/EventBusService.html" class="page"><code>EventBusService</code></a> has been appropriately configured) using the <a href="http://www.axonframework.org/">Axon Framework</a> API.
+The examples below are compatible with both.</p>
+</div>
+<div class="paragraph">
+<p>Subscribers can be either coarse-grained (if they subscribe to the top-level event type):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.springframework.context.event.EventListener;
+
+@DomainService(nature=NatureOfService.DOMAIN)
+public class SomeSubscriber extends AbstractSubscriber {
+    @EventListener(IconUiEvent.class)
+    public void on(IconUiEvent ev) {
+        if(ev.getSource() instanceof ToDoItemDto) {
+            ...
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>or can be fine-grained (by subscribing to specific event subtypes):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.springframework.context.event.EventListener;
+
+@DomainService(nature=NatureOfService.DOMAIN)
+public class SomeSubscriber extends AbstractSubscriber {
+    @EventListener(ToDoItemDto.IconUiEvent.class)
+    public void on(ToDoItemDto.IconUiEvent ev) {
+        ...
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The subscriber should then use <code>IconUiEvent#setIconName(&#8230;&#8203;)</code> to actually specify the icon name to be used.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="default-doop-and-noop-events-2"><a class="anchor" href="#default-doop-and-noop-events-2"></a>Default, Doop and Noop events</h3>
+<div class="paragraph">
+<p>If the <code>iconUiEvent</code> attribute is not explicitly specified (is left as its default value, <code>IconUiEvent.Default</code>), then the framework will, by default, post an event.</p>
+</div>
+<div class="paragraph">
+<p>If this is not required, then the <code>isis.reflector.facet.domainObjectLayoutAnnotation.iconUiEvent.postForDefault</code> configuration property can be set to "false"; this will disable posting.</p>
+</div>
+<div class="paragraph">
+<p>On the other hand, if the <code>iconUiEvent</code> has been explicitly specified to some subclass, then an event will be posted.
+The framework provides <code>IconUiEvent.Doop</code> as such a subclass, so setting the <code>iconUiEvent</code> attribute to this class will ensure that the event to be posted, irrespective of the configuration property setting.</p>
+</div>
+<div class="paragraph">
+<p>And, conversely, the framework also provides <code>IconUiEvent.Noop</code>; if <code>iconUiEvent</code> attribute is set to this class, then no event will be posted.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="raising-events-programmatically-2"><a class="anchor" href="#raising-events-programmatically-2"></a>Raising events programmatically</h3>
+<div class="paragraph">
+<p>Normally events are only raised for interactions through the UI.
+However, events can be raised programmatically by calling the <a href="../applib-svc/core-domain-api/EventBusService.html" class="page"><code>EventBusService</code></a> API directly.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="see-also-6"><a class="anchor" href="#see-also-6"></a>See also</h3>
+<div class="paragraph">
+<p>This attribute can also be applied to <a href="ViewModelLayout.html#iconNameUiEvent" class="page">view models</a>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="layoutUiEvent"><a class="anchor" href="#layoutUiEvent"></a>layoutUiEvent()</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Whenever a domain object is to be rendered, the framework fires off an layout UI event to obtain an alternative layout name with which to render the domain object.
+This is as an alternative to implementing <a href="../applib-cm/methods.html#layout" class="page"><code>layout()</code></a> reserved method.
+(If <code>layout()</code> is present, then it will take precedence).</p>
+</div>
+<div class="paragraph">
+<p>Subscribers subscribe through the <a href="../applib-svc/core-domain-api/EventBusService.html" class="page"><code>EventBusService</code></a> and can use obtain a reference to the domain object from the event.
+From this they can, if they wish, specify a CSS class for the domain object using the event&#8217;s API.</p>
+</div>
+<div class="paragraph">
+<p>By default the event raised is <code>LayoutUiEvent.Default</code>.
+For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObjectLayout
+public class ToDoItemDto {
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The purpose of the <code>layoutUiEvent()</code> attribute is to allows a custom subclass to be emitted instead.
+A similar attribute is available for titles and icons.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObjectLayout(
+    iconUiEvent=ToDoItemDto.LayoutUiEvent.class
+)
+public class ToDoItemDto {
+    public static class LayoutUiEvent
+        extends org.apache.isis.applib.events.ui.LayoutUiEvent&lt;ToDoItemDto&gt; { }
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The benefit is that subscribers can be more targeted as to the events that they subscribe to.</p>
+</div>
+<div class="sect2">
+<h3 id="subscribers-3"><a class="anchor" href="#subscribers-3"></a>Subscribers</h3>
+<div class="paragraph">
+<p>Subscribers (which must be domain services) subscribe using either the <a href="https://github.com/google/guava">Guava</a> API or (if the <a href="../applib-svc/core-domain-api/EventBusService.html" class="page"><code>EventBusService</code></a> has been appropriately configured) using the <a href="http://www.axonframework.org/">Axon Framework</a> API.
+The examples below are compatible with both.</p>
+</div>
+<div class="paragraph">
+<p>Subscribers can be either coarse-grained (if they subscribe to the top-level event type):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.springframework.context.event.EventListener;
+
+@DomainService(nature=NatureOfService.DOMAIN)
+public class SomeSubscriber extends AbstractSubscriber {
+    @EventListener(LayoutUiEvent.class)
+    public void on(LayoutUiEvent ev) {
+        if(ev.getSource() instanceof ToDoItemDto) {
+            ...
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>or can be fine-grained (by subscribing to specific event subtypes):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.springframework.context.event.EventListener;
+
+@DomainService(nature=NatureOfService.DOMAIN)
+public class SomeSubscriber extends AbstractSubscriber {
+    @EventListner(ToDoItemDto.LayoutUiEvent.class)
+    public void on(ToDoItemDto.LayoutUiEvent ev) {
+        ...
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The subscriber should then use <code>LayoutUiEvent#setLayout(&#8230;&#8203;)</code> to actually specify the CSS class to be used.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="default-doop-and-noop-events-3"><a class="anchor" href="#default-doop-and-noop-events-3"></a>Default, Doop and Noop events</h3>
+<div class="paragraph">
+<p>If the <code>layoutUiEvent</code> attribute is not explicitly specified (is left as its default value, <code>LayoutUiEvent.Default</code>), then the framework will, by default, post an event.</p>
+</div>
+<div class="paragraph">
+<p>If this is not required, then the <code>isis.reflector.facet.domainObjectLayoutAnnotation.layoutUiEvent.postForDefault</code> configuration property can be set to "false"; this will disable posting.</p>
+</div>
+<div class="paragraph">
+<p>On the other hand, if the <code>layoutUiEvent</code> has been explicitly specified to some subclass, then an event will be posted.
+The framework provides <code>LayoutUiEvent.Doop</code> as such a subclass, so setting the <code>layoutUiEvent</code> attribute to this class will ensure that the event to be posted, irrespective of the configuration property setting.</p>
+</div>
+<div class="paragraph">
+<p>And, conversely, the framework also provides <code>LayoutUiEvent.Noop</code>; if <code>layoutUiEvent</code> attribute is set to this class, then no event will be posted.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="raising-events-programmatically-3"><a class="anchor" href="#raising-events-programmatically-3"></a>Raising events programmatically</h3>
+<div class="paragraph">
+<p>Normally events are only raised for interactions through the UI.
+However, events can be raised programmatically by calling the <a href="../applib-svc/core-domain-api/EventBusService.html" class="page"><code>EventBusService</code></a> API directly.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="see-also-7"><a class="anchor" href="#see-also-7"></a>See also</h3>
+<div class="paragraph">
+<p>This attribute can also be applied to <a href="ViewModelLayout.html#layoutUiEvent" class="page">view models</a>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="named"><a class="anchor" href="#named"></a><code>named()</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>named()</code> attribute explicitly specifies the domain object&#8217;s name, overriding the name that would normally be inferred from the Java source code.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Following the <a href="http://en.wikipedia.org/wiki/Don%27t_repeat_yourself">don&#8217;t repeat yourself</a> principle, we recommend that you only use this attribute when the desired name cannot be used in Java source code.
+Examples of that include a name that would be a reserved Java keyword (eg "package"), or a name that has punctuation, eg apostrophes.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObjectLayout(
+   named="Customer"
+)
+public class CustomerImpl implements Customer{
+   ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>It&#8217;s also possible to specify a <a href="#plural">plural form</a> of the name, used by the framework when rendering a standalone collection of the domain object.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The framework also provides a separate, powerful mechanism for <a href="../../userguide/btb/i18n.html" class="page">internationalization</a>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="see-also-8"><a class="anchor" href="#see-also-8"></a>See also</h3>
+<div class="paragraph">
+<p>The attribute can also be specified for:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="ActionLayout.html#named" class="page">actions</a></p>
+</li>
+<li>
+<p><a href="CollectionLayout.html#named" class="page">collections</a></p>
+</li>
+<li>
+<p><a href="PropertyLayout.html#named" class="page">properties</a></p>
+</li>
+<li>
+<p><a href="ParameterLayout.html#named" class="page">parameters</a></p>
+</li>
+<li>
+<p><a href="ViewModelLayout.html#named" class="page">view models</a></p>
+</li>
+<li>
+<p><a href="DomainServiceLayout.html#named" class="page">domain services</a>.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="paged"><a class="anchor" href="#paged"></a><code>paged()</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>paged()</code> attribute specifies the number of rows to display in a standalone collection, as returned from an action invocation.</p>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The <a href="../../vro/about.html" class="page">RestfulObjects viewer</a> currently does not support paging.
+The <a href="../../vw/about.html" class="page">Wicket viewer</a> <em>does</em> support paging, but note that the paging is performed client-side rather than server-side.</p>
+</div>
+<div class="paragraph">
+<p>We therefore recommend that large collections should instead be modelled as actions (to allow filtering to be applied to limit the number of rows).</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObjectLayout(paged=15)
+public class Order {
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>It is also possible to specify a global default for the page size of standalone collections, using the <a href="../config/configuring-core.html" class="page">configuration property</a> <code>isis.viewer.paged.standalone</code>.</p>
+</div>
+<div class="sect2">
+<h3 id="see-also-9"><a class="anchor" href="#see-also-9"></a>See also</h3>
+<div class="paragraph">
+<p>This attribute can also be applied to:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="ViewModelLayout.html#paged" class="page">view models</a>, and</p>
+</li>
+<li>
+<p><a href="CollectionLayout.html#paged" class="page">collections</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="plural"><a class="anchor" href="#plural"></a><code>plural()</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When Apache Isis displays a standalone collection of several objects, it will label the collection using the plural form of the object type.
+By default the plural name will be derived from the end of the singular name, with support for some basic English language defaults (eg using "ies" for names ending with a "y").
+The <code>plural()</code> attribute allows the plural form of the class name to be specified explicitly.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObjectLayout(plural="Children")
+public class Child {
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="sect2">
+<h3 id="see-also-10"><a class="anchor" href="#see-also-10"></a>See also</h3>
+<div class="paragraph">
+<p>This attribute is also supported for <a href="ViewModelLayout.html#plural" class="page">view models</a>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="titleUiEvent"><a class="anchor" href="#titleUiEvent"></a>titleUiEvent()</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Whenever a domain object is to be rendered, the framework fires off a title UI event to obtain a title for the object.
+This is as an alternative to implementing <a href="../applib-cm/methods.html#title" class="page"><code>title()</code></a> reserved method, or using the <a href="Title.html" class="page"><code>@Title</code></a> annotation, within the class itself.
+(If either <code>title()</code> or <code>@Title</code> are present, then they will take precedence).</p>
+</div>
+<div class="paragraph">
+<p>Subscribers subscribe through the <a href="../applib-svc/core-domain-api/EventBusService.html" class="page"><code>EventBusService</code></a> and can
+use obtain a reference to the domain object from the event.
+From this they can, if they wish, specify a title for the domain object using the event&#8217;s API.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The feature was originally introduced so that <a href="XmlRootElement.html" class="page"><code>@XmlRootElement</code></a>-annotated <a href="../../userguide/fun/building-blocks.html#view-models" class="page">view model</a>s could be kept as minimal as possible, just defining the data.
+UI events allow subscribers to provide UI hints, while <a href="../../userguide/fun/building-blocks.html#mixins" class="page">mixin</a>s can be used to provide the behaviour.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>By default the event raised is <code>TitleUiEvent.Default</code>.
+For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObjectLayout
+public class ToDoItemDto {
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The purpose of the <code>titleUiEvent()</code> attribute is to allows a custom subclass to be emitted instead.
+A similar attribute is available for icon names and CSS classes.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObjectLayout(
+    titleUiEvent=ToDoItemDto.TitleUiEvent.class
+)
+public class ToDoItemDto {
+    public static class TitleUiEvent
+        extends org.apache.isis.applib.events.ui.TitleUiEvent&lt;ToDoItemDto&gt; { }
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The benefit is that subscribers can be more targeted as to the events that they subscribe to.</p>
+</div>
+<div class="sect2">
+<h3 id="subscribers-4"><a class="anchor" href="#subscribers-4"></a>Subscribers</h3>
+<div class="paragraph">
+<p>Subscribers (which must be domain services) subscribe using either the <a href="https://github.com/google/guava">Guava</a> API or (if the <a href="../applib-svc/core-domain-api/EventBusService.html" class="page"><code>EventBusService</code></a> has been appropriately configured) using the <a href="http://www.axonframework.org/">Axon Framework</a> API.
+The examples below are compatible with both.</p>
+</div>
+<div class="paragraph">
+<p>Subscribers can be either coarse-grained (if they subscribe to the top-level event type):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.springframework.context.event.EventListener;
+
+@DomainService(nature=NatureOfService.DOMAIN)
+public class SomeSubscriber extends AbstractSubscriber {
+    @EventListener(TitleUiEvent.class)
+    public void on(TitleUiEvent ev) {
+        if(ev.getSource() instanceof ToDoItemDto) {
+            ...
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>or can be fine-grained (by subscribing to specific event subtypes):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.springframework.context.event.EventListener;
+
+@DomainService(nature=NatureOfService.DOMAIN)
+public class SomeSubscriber extends AbstractSubscriber {
+    @EventListener(ToDoItemDto.TitleUiEvent.class)
+    public void on(ToDoItemDto.TitleUiEvent ev) {
+        ...
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The subscriber should then use either <code>TitleUiEvent#setTranslatableTitle(&#8230;&#8203;)</code> or <code>TitleUiEvent#setTitle(&#8230;&#8203;)</code> to actually specify the title to be used.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="default-doop-and-noop-events-4"><a class="anchor" href="#default-doop-and-noop-events-4"></a>Default, Doop and Noop events</h3>
+<div class="paragraph">
+<p>If the <code>titleUiEvent</code> attribute is not explicitly specified (is left as its default value, <code>TitleUiEvent.Default</code>), then the framework will, by default, post an event.</p>
+</div>
+<div class="paragraph">
+<p>If this is not required, then the <code>isis.reflector.facet.domainObjectLayoutAnnotation.titleUiEvent.postForDefault</code> configuration property can be set to "false"; this will disable posting.</p>
+</div>
+<div class="paragraph">
+<p>On the other hand, if the <code>titleUiEvent</code> has been explicitly specified to some subclass, then an event will be posted.
+The framework provides <code>TitleUiEvent.Doop</code> as such a subclass, so setting the <code>titleUiEvent</code> attribute to this class will ensure that the event to be posted, irrespective of the configuration property setting.</p>
+</div>
+<div class="paragraph">
+<p>And, conversely, the framework also provides <code>TitleUiEvent.Noop</code>; if <code>titleUiEvent</code> attribute is set to this class, thn no event will be posted.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="raising-events-programmatically-4"><a class="anchor" href="#raising-events-programmatically-4"></a>Raising events programmatically</h3>
+<div class="paragraph">
+<p>Normally events are only raised for interactions through the UI.
+However, events can be raised programmatically either by calling the <a href="../applib-svc/core-domain-api/EventBusService.html" class="page"><code>EventBusService</code></a> API directly, or as a result of calling the <a href="../applib-svc/application-layer-api/TitleService.html" class="page"><code>TitleService</code></a>'s <code>titleOf(&#8230;&#8203;)</code> method.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="see-also-11"><a class="anchor" href="#see-also-11"></a>See also</h3>
+<div class="paragraph">
+<p>This attribute can also be applied to <a href="ViewModelLayout.html#titleUiEvent" class="page">view models</a>.</p>
+</div>
+</div>
+</div>
 </div>
 </article>
 <aside class="article-aside toc" role="navigation">
@@ -961,7 +1913,7 @@ include:DomainObjectLayout/titleUiEvent.adoc[leveloffset=+1]</p>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200215-0401-a118e0ee</p>
+            <p>Revision: 2.0.0-M2.20200216-0401-cd6b9b40</p>
         </div>
     </div>
 </footer>
