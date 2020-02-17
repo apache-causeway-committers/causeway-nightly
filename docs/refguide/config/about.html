@@ -548,19 +548,55 @@
     <a class="nav-link" href="about.html">Configuration</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="deployment-types.html">Deployment Types</a>
+    <a class="nav-link" href="sections/isis.applib.html">Applib</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="configuration-files.html">Configuration Files</a>
+    <a class="nav-link" href="sections/isis.core.meta-model.html">Core MetaModel</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="specifying-components.html">Specifying Components</a>
+    <a class="nav-link" href="sections/isis.core.meta-model.introspector.html">Core MetaModel Introspection</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="configuring-core.html">Configuring Core</a>
+    <a class="nav-link" href="sections/isis.core.meta-model.validator.html">MetaModel Validator</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="configuration-properties.html">Configuration Properties</a>
+    <a class="nav-link" href="sections/isis.core.runtime.html">Core Runtime Services configurations</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="sections/isis.core.runtime-services.html">Core Runtime Services configurations</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="sections/isis.security.shiro.html">Shiro Security Implementation</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="sections/isis.persistence.jdo-datanucleus.html">JDO DataNucleus</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="sections/isis.persistence.jdo-datanucleus.impl.html">DataNucleus Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="sections/isis.viewer.restfulobjects.html">Restful Objects Viewer</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="sections/isis.viewer.wicket.html">Wicket Viewer</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="sections/isis.extensions.html">Extensions</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="sections/isis.value-types.html">Value types</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="sections/isis.testing.html">Testing</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="sections/isis.legacy.html">Legacy</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="sections/resteasy.html">RestEasy Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="sections/Other.html">Other</a>
   </li>
 </ul>
   </li>
@@ -768,12 +804,274 @@
 <article class="doc">
     <a name="section-top"></a>
 <h1 class="page">Configuration Properties</h1>
+<div id="preamble">
+<div class="sectionbody">
 <div class="paragraph">
-<p>Apache Isis' is a Spring Boot application, and so is typically configured using an <code>application.properties</code> or <code>application.yaml</code> file.
-The configuration can be obtained from a variety of external locations; see the <a href="https://docs.spring.io/spring-boot/docs/current/reference/html/spring-boot-features.html#boot-features-external-config">Spring Boot</a> documentation for more details.</p>
+<p>Apache Isis' is a Spring Boot application, and so is typically configured using an <code>application.properties</code> or <code>application.yml</code> file.</p>
 </div>
 <div class="paragraph">
-<p>This guide describes how the configuration properties available to configure an Apache Isis application.</p>
+<p>The configuration can be obtained from a variety of external locations; see the <a href="https://docs.spring.io/spring-boot/docs/current/reference/html/spring-boot-features.html#boot-features-external-config">Spring Boot</a> documentation for more details.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+The <a href="../../docs/starters/about.html" class="page">starter apps</a> use <code>application.yml</code> for configuration that doesn&#8217;t change between environments, and <code>config/application.properties</code> for settings (such as JDBC URL) that does vary.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>This chapter describes the configuration properties available to configure an Apache Isis application.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="deployment-types"><a class="anchor" href="#deployment-types"></a>Deployment Types</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Apache Isis distinguishes between the application being run in prototyping mode vs running in production mode.
+The framework calls this the "deployment type" (corresponding internally to the <code>DeploymentType</code> class).</p>
+</div>
+<div class="paragraph">
+<p>A similar concept appears in the <a href="https://wicket.apache.org">Apache Wicket</a> framework (which is the library with which the <a href="../../vw/about.html" class="page">Wicket viewer</a> is implemented, of course).
+Wicket&#8217;s term is the "configuration".</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. Wicket equivalent concepts</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Apache Isis<br>
+deployment type</th>
+<th class="tableblock halign-left valign-top">Apache Wicket library<br>
+configuration</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><em>prototyping</em></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><em>development</em></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><em>production</em></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><em>deployment</em></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>By default Apache Isis runs in production mode.
+But if configured to run instead in prototyping mode, then any actions <a href="../applib-ant/Action.html#restrictto" class="page">restricted to</a> to prototype mode are visible.
+In particular, the "Prototyping" menu will appear, containing a number of framework-provided menu services - all restricted to prototyping mode.
+For example, menu items to run in <a href="../../testing/fixtures/about.html" class="page">fixture scripts</a> are on this menu.</p>
+</div>
+<div class="paragraph">
+<p>Prototyping mode can be enabled in a number of ways:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>environment variable:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">export PROTOTYPING=true</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p><code>PROTOTYPING</code> system property</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">-DPROTOTYPING=true</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p><code>isis.deploymentType</code> system property</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">-Disis.deploymentType=PROTOTYPING</code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>It is also possible to explicitly specify production mode:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>PRODUCTION</code> system property</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">-DPROTOTYPING=false</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p><code>isis.deploymentType</code> system property</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">-Disis.deploymentType=PRODUCTION</code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>If (by a combination of mechanisms) both prototyping and production modes are specified, then production mode wins.</p>
+</div>
+<div class="sect2">
+<h3 id="isissystemenvironment-domain-service"><a class="anchor" href="#isissystemenvironment-domain-service"></a><code>IsisSystemEnvironment</code> domain service</h3>
+<div class="paragraph">
+<p>Applications can discover the prototyping mode by injecting the <a href="../applib-svc/testing/IsisSystemEnvironment.html" class="page">IsisSystemEnvironment</a> service.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="specifying-components"><a class="anchor" href="#specifying-components"></a>Specifying components</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Components are pluggable parts of the Apache Isis framework that are responsible for the presentation layer, for security, or for persistence.
+Each component corresponds to one or more Maven module(s), and are specified using the Spring <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/annotation/Import.html">@Import</a> statements from a top-level class annotated with Spring&#8217;s <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/annotation/Configuration.html">@Configuration</a> annotation.
+These are then bootstrapped from a <a href="https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/autoconfigure/SpringBootApplication.html">@SpringBootApplication</a> or <a href="https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/test/context/SpringBootTest.html">@SpringBootTest</a>.</p>
+</div>
+<div class="paragraph">
+<p>For example, the <a href="../../docs/starters/simpleapp.html" class="page">simpleapp starter app</a> project is bootstrapped using <code>SimpleApp</code>, annotated with <code>@SpringBootApplication</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@SpringBootApplication
+@Import({
+    AppManifest.class,                                          <i class="conum" data-value="1"></i><b>(1)</b>
+})
+public class SimpleApp
+            extends SpringBootServletInitializer {
+
+    public static void main(String[] args) {
+        IsisPresets.prototyping();                              <i class="conum" data-value="2"></i><b>(2)</b>
+        SpringApplication.run(
+                new Class[] { SimpleApp.class }, args);
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>references the <code>AppManifest</code>, discussed below.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>specifies prototyping mode.
+This enables actions marked for prototyping to become available, useful during the early stages of development.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>In turn, the "app manifest" (the name has been retained from Apache Isis v1.x) is the top-level Spring <code>@Configuration</code>.
+It looks like this:</p>
+</div>
+<div class="listingblock">
+<div class="title">AppManifest.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Configuration
+@Import({
+        IsisModuleCoreRuntimeServices.class,                    <i class="conum" data-value="1"></i><b>(1)</b>
+        IsisModuleSecurityShiro.class,                          <i class="conum" data-value="2"></i><b>(2)</b>
+        IsisModuleJdoDataNucleus5.class,                        <i class="conum" data-value="3"></i><b>(3)</b>
+        IsisModuleViewerRestfulObjectsJaxrsResteasy4.class,     <i class="conum" data-value="4"></i><b>(4)</b>
+        IsisModuleViewerWicketViewer.class,                     <i class="conum" data-value="5"></i><b>(5)</b>
+        ...
+        ApplicationModule.class,                                <i class="conum" data-value="6"></i><b>(6)</b>
+        ...
+})
+public class AppManifest {
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Mandatory - specifies the core of the Apache Isis framework</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Enables the Shiro security mechanism.
+There are several security implementations, precisely one must be selected</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Enables JDO/DataNucleus for persistence.
+Optional (though if omitted then only <a href="../../userguide/fun/building-blocks/types-of-domain-objects.html" class="page">view models</a> may be used, with hand-rolled persistence).</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Enables the <a href="../../vro/about.html" class="page">Restful Objects viewer</a> (ie REST API).</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Enables the <a href="../../vw/about.html" class="page">Wicket viewer</a></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>References the application&#8217;s module(s), in this case just the one, <code>ApplicationModule</code>.<br></td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>All of the components available are named in the form`IsisModuleXxx`, so they are easy to discover.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Components currently do <em>not</em> use Spring Boot&#8217;s auto-configuration capabilities.
+That means that it&#8217;s not enough to just add the appropriate Maven module to the classpath; its corresponding <code>IsisModuleXxx</code> must be referenced using an <code>@Import</code>.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="configuration-properties"><a class="anchor" href="#configuration-properties"></a>Configuration Properties</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The core framework has a large number of configuration properties, as do the various <a href="#specifying-components">components</a>.
+For that matter, so do some of the <a href="../../subdomains/about.html" class="page">subdomain</a> libraries, bounded context <a href="../../mappings/about.html" class="page">mapping</a> libraries and <a href="../../valuetypes/about.html" class="page">value type</a> libraries.</p>
+</div>
+<div class="paragraph">
+<p>The remainder of this guide lists the various configuration properties available, broken out into logical sections.</p>
+</div>
+<div class="sect2">
+<h3 id="isisconfiguration-domain-service"><a class="anchor" href="#isisconfiguration-domain-service"></a><code>IsisConfiguration</code> domain service</h3>
+<div class="paragraph">
+<p>Applications can discover the current configuration properties by injecting the <a href="../applib-svc/core-domain-api/IsisConfiguration.html" class="page"><code>IsisConfiguration</code></a> domain service.</p>
+</div>
+</div>
+</div>
 </div>
 </article>
 <aside class="article-aside toc" role="navigation">
@@ -792,7 +1090,7 @@ The configuration can be obtained from a variety of external locations; see the 
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200216-1507-fb03b934</p>
+            <p>Revision: 2.0.0-M2.20200217-0401-d1281ae8</p>
         </div>
     </div>
 </footer>
