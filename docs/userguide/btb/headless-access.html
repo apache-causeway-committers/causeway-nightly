@@ -410,7 +410,7 @@
 <p>Note that the calling thread runs in the same process space as the Apache Isis domain object model (must be physically linked to the JAR files containing the domain classes).  For use cases where the calling thread runs in some other process space (eg migrating data from a legacy system), then the <a href="../../vro/about.html" class="page">Restful Objects viewer</a> is usually the way to go.</p>
 </div>
 <div class="paragraph">
-<p>The API described in this chapter is reasonably low-level, allowing code to interact very directly with the Apache Isis metamodel and runtime.  Such callers should be considered trusted: they do not (by default) honour any business rules eg implicit in the Isis annotations or hide/disable/validate methods.  However the <a href="../../refguide/applib-svc/application-layer-api/WrapperFactory.html" class="page"><code>WrapperFactory</code></a> service could be used to enforce such business rules if required.</p>
+<p>The API described in this chapter is reasonably low-level, allowing code to interact very directly with the Apache Isis metamodel and runtime.  Such callers should be considered trusted: they do not (by default) honour any business rules eg implicit in the Isis annotations or hide/disable/validate methods.  However the <a href="../../refguide/applib-svc/WrapperFactory.html" class="page"><code>WrapperFactory</code></a> service could be used to enforce such business rules if required.</p>
 </div>
 </div>
 </div>
@@ -471,63 +471,6 @@ The passed object represents passes a context from the caller (eg the scheduler,
 </div>
 </div>
 </div>
-<div class="sect1">
-<h2 id="BackgroundCommandExecution"><a class="anchor" href="#BackgroundCommandExecution"></a>BackgroundCommandExecution</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The <code>BackgroundCommandExecution</code> class (a subclass of <a href="about.html#BackgroundCommandService" class="page"><code>BackgroundCommandService</code></a>.</p>
-</div>
-<div class="paragraph">
-<p>Its signature is:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public abstract class BackgroundCommandExecution extends AbstractIsisSessionTemplate {
-    protected void doExecute(Object context) { /* ... */ }
-    protected abstract List&lt;? extends Command&gt; findBackgroundCommandsToExecute(); <i class="conum" data-value="1"></i><b>(1)</b>
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><code>findBackgroundCommandsToExecute()</code> is a mandatory hook method for subclasses to implement.</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>This allows for different implementations of the <code>CommandService</code> and <code>BackgroundCommandService</code> to persist to wherever.</p>
-</div>
-<div class="paragraph">
-<p>The diagram below (<a href="http://yuml.me/edit/363b335f">yuml.me/363b335f</a>) shows the dependencies between these various classes:</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<a class="image" href="_images/headless-access/BackgroundCommandExecution.png"><img src="_images/headless-access/BackgroundCommandExecution.png" alt="BackgroundCommandExecution" width="400px"></a>
-</div>
-<div class="title">Figure 1. Inheritance Hierarchy for <code>BackgroundCommandExecution</code></div>
-</div>
-<div class="sect2">
-<h3 id="background-execution"><a class="anchor" href="#background-execution"></a>Background Execution</h3>
-<div class="paragraph">
-<p>The <code>BackgroundCommandExecutionFromBackgroundCommandServiceJdo</code> is a concrete subclass of <code>BackgroundCommandExecution</code> (see the <a href="../../refguide/applib-svc/application-layer-api/BackgroundService.html" class="page"><code>BackgroundCommandService</code></a>), the intended use being for the class to be instantiated regularly (eg every 10 seconds) by a scheduler such as <a href="http://quartz-scheduler.org">Quartz</a>) to poll for <code>Command</code>s to be executed, and then execute them.</p>
-</div>
-<div class="paragraph">
-<p>This implementation queries for <code>Command</code>s persisted by the (non-ASF) <a href="https://platform.incode.org" target="_blank" rel="noopener">Incode Platform</a>'s command module&#8217;s  implementations of <a href="../../refguide/applib-svc/application-layer-spi/CommandService.html" class="page"><code>CommandService</code></a> and <a href="../../refguide/applib-svc/application-layer-spi/BackgroundCommandService.html" class="page"><code>BackgroundCommandService</code></a> using the <code>BackgroundCommandServiceJdoRepository</code>.</p>
-</div>
-<div class="paragraph">
-<p>The diagram below (<a href="http://yuml.me/edit/25343da1">yuml.me/25343da1</a>) shows the inheritance hierarchy for this class:</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<a class="image" href="_images/headless-access/BackgroundCommandExecutionFromBackgroundCommandServiceJdo.png"><img src="_images/headless-access/BackgroundCommandExecutionFromBackgroundCommandServiceJdo.png" alt="BackgroundCommandExecutionFromBackgroundCommandServiceJdo" width="500px"></a>
-</div>
-<div class="title">Figure 2. Inheritance Hierarchy for <code>BackgroundCommandExecutionFromBackgroundCommandServiceJdo</code></div>
-</div>
-</div>
-</div>
-</div>
 </article>
 <aside class="article-aside toc" role="navigation">
     <p class="toc-title">On this page</p>
@@ -545,7 +488,7 @@ The passed object represents passes a context from the caller (eg the scheduler,
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200220-0401-b1245c00</p>
+            <p>Revision: 2.0.0-M2.20200221-0400-ba3598bf</p>
         </div>
     </div>
 </footer>

@@ -389,10 +389,10 @@
 </div>
 <div class="paragraph">
 <p>In the former case, the consumer requests the DTO by calling the REST API with the appropriate HTTP <code>Accept</code> header.
-An appropriate implementation of <a href="../../../../../refguide/applib-svc/presentation-layer-spi/ContentMappingService.html" class="page"><code>ContentMappingService</code></a> can then be used to return the appropriate DTO (as XML).</p>
+An appropriate implementation of <a href="../../../../../refguide/applib-svc/ContentMappingService.html" class="page"><code>ContentMappingService</code></a> can then be used to return the appropriate DTO (as XML).</p>
 </div>
 <div class="paragraph">
-<p>For the latter case, one design is simply for the application to instantiate the view model, then call the <a href="../../../../../refguide/applib-svc/integration-api/JaxbService.html" class="page"><code>JaxbService</code></a> to obtain its corresponding XML.  This can then be published onto the ESB, for example using an <a href="http://activemq.apache.org">Apache ActiveMQ &#8482;</a> queue.</p>
+<p>For the latter case, one design is simply for the application to instantiate the view model, then call the <a href="../../../../../refguide/applib-svc/JaxbService.html" class="page"><code>JaxbService</code></a> to obtain its corresponding XML.  This can then be published onto the ESB, for example using an <a href="http://activemq.apache.org">Apache ActiveMQ &#8482;</a> queue.</p>
 </div>
 <div class="paragraph">
 <p>However, rather than try to push all the data that might be needed by any of these external systems in a single XML event (which would require anticipating all the requirements, likely a hopeless task), a better design is to publish only the fact that something of note has changed - ie, that an action on a domain object has been invoked - and then let the consumers call back to obtain other information if required.
@@ -415,7 +415,7 @@ In our case we focus on the validation (to determine the nature of the inbound m
 </div>
 <div class="paragraph">
 <p>The (non-ASF) <a href="https://platform.incode.org" target="_blank" rel="noopener">Incode Platform</a>'s publishmq module provides an out-of-the-box solution of this design.
-It provides an implementation of the <a href="../../../../../refguide/applib-svc/persistence-layer-spi/PublisherService.html" class="page"><code>PublisherService</code></a>, but which simply publishes instances of <a href="../../../../../refguide/schema/ixn.html" class="page"><code>InteractionDto</code></a> to an ActiveMQ queue.
+It provides an implementation of the <a href="../../../../../refguide/applib-svc/PublisherService.html" class="page"><code>PublisherService</code></a>, but which simply publishes instances of <a href="../../../../../refguide/schema/ixn.html" class="page"><code>InteractionDto</code></a> to an ActiveMQ queue.
 Camel (or similar) can then be hooked up to consume these events from this queue, and use a processor to parse the action memento to determine what has changed on the source system.
 Thereafter, a subsequent Camel processor can then call back to the source - via the <a href="../../../../../vro/about.html" class="page">Restful Objects viewer</a> - to enrich the message with additional details using a DTO.</p>
 </div>
@@ -436,7 +436,7 @@ Thereafter, a subsequent Camel processor can then call back to the source - via 
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200220-0401-b1245c00</p>
+            <p>Revision: 2.0.0-M2.20200221-0400-ba3598bf</p>
         </div>
     </div>
 </footer>

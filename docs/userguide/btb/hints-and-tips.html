@@ -510,7 +510,7 @@ public String validateDelete(boolean areYouSure) {
 This is convenient, but sometimes you will want to replace the default implementation with your own service implementation.</p>
 </div>
 <div class="paragraph">
-<p>For example, suppose you wanted to provide your own implementation of <a href="../../refguide/applib-svc/presentation-layer-spi/LocaleProvider.html" class="page"><code>LocaleProvider</code></a>.
+<p>For example, suppose you wanted to provide your own implementation of <a href="../../refguide/applib-svc/LocaleProvider.html" class="page"><code>LocaleProvider</code></a>.
 The trick is to use the Spring <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/core/annotation/Order.html"><code>@Order</code></a> annotation or equivalent mechanism.</p>
 </div>
 <div class="paragraph">
@@ -613,7 +613,7 @@ public class MyLocaleProvider implements LocaleProvider {
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-FIXME - a write-up of the "vetoing subscriber" design pattern, eg as described in the  <a href="../../refguide/applib-svc/integration-api/BookmarkService.html" class="page"><code>BookmarkService</code></a>
+FIXME - a write-up of the "vetoing subscriber" design pattern, eg as described in the  <a href="../../refguide/applib-svc/BookmarkService.html" class="page"><code>BookmarkService</code></a>
 </td>
 </tr>
 </table>
@@ -633,19 +633,16 @@ FIXME - a write-up of the "vetoing subscriber" design pattern, eg as described i
 <h2 id="transactions-and-errors"><a class="anchor" href="#transactions-and-errors"></a>Transactions and Errors</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>In Apache Isis, every interaction (action invocation or property edit) is automatically wrapped in a transaction,
-and any repository query automatically does a flush before hand.</p>
+<p>In Apache Isis, every interaction (action invocation or property edit) is automatically wrapped in a transaction, and any repository query automatically does a flush before hand.</p>
 </div>
 <div class="paragraph">
-<p>What that means is that there&#8217;s no need to explicitly start or commit transactions in Apache Isis; this will be done
-for you. Indeed, if you do try to manage transactions (eg by reaching into the JDO <code>PersistenceManager</code> exposed by the
-<a href="../../refguide/applib-svc/persistence-layer-api/IsisJdoSupport.html" class="page">IsisJdoSupport</a> domain service, then you are likely to confuse the
-framework and get a stack trace for your trouble.</p>
+<p>What that means is that there&#8217;s no need to explicitly start or commit transactions in Apache Isis; this will be done for you.
+Indeed, if you do try to manage transactions (eg by reaching into the JDO <code>PersistenceManager</code> exposed by the <a href="../../pjdo/services/IsisJdoSupport.html" class="page">IsisJdoSupport</a> domain service, then you are likely to confuse the framework and get a stack trace for your trouble.</p>
 </div>
 <div class="paragraph">
-<p>However, you can complete a given transaction and start a new one.  This is sometimes useful if writing a fixture
-script which is going to perform some sort of bulk migration of data from an old system.  For this use case, use the
-<a href="../../refguide/applib-svc/application-layer-api/TransactionService.html" class="page"><code>TransactionService</code></a>.</p>
+<p>However, you can complete a given transaction and start a new one.
+This is sometimes useful if writing a fixture script which is going to perform some sort of bulk migration of data from an old system.
+For this use case, use the <a href="../../refguide/applib-svc/TransactionService.html" class="page"><code>TransactionService</code></a>.</p>
 </div>
 <div class="paragraph">
 <p>For example:</p>
@@ -673,8 +670,8 @@ script which is going to perform some sort of bulk migration of data from an old
 <div class="sect2">
 <h3 id="raise-message-in-the-ui"><a class="anchor" href="#raise-message-in-the-ui"></a>Raise message in the UI</h3>
 <div class="paragraph">
-<p>The framework provides the <a href="../../refguide/applib-svc/application-layer-api/MessageService.html" class="page"><code>MessageService</code></a> as a means to return an out-of-band
-message to the end-user.  In the <a href="../../vw/about.html" class="page">Wicket viewer</a> these are shown as "toast" pop-ups; the
+<p>The framework provides the <a href="../../refguide/applib-svc/MessageService.html" class="page"><code>MessageService</code></a> as a means to return an out-of-band message to the end-user.
+In the <a href="../../vw/about.html" class="page">Wicket viewer</a> these are shown as "toast" pop-ups; the
 <a href="../../vro/about.html" class="page">Restful Objects viewer</a> returns an HTTP header.</p>
 </div>
 <div class="paragraph">
@@ -683,13 +680,16 @@ message to the end-user.  In the <a href="../../vw/about.html" class="page">Wick
 <div class="ulist">
 <ul>
 <li>
-<p><code>informUser()</code> - an informational message.  In the Wicket viewer these are short-lived pop-ups that disappear after a short time.</p>
+<p><code>informUser()</code> - an informational message.
+In the Wicket viewer these are short-lived pop-ups that disappear after a short time.</p>
 </li>
 <li>
-<p><code>warnUser()</code> - a warning.  In the Wicket viewer these do not auto-close; they must be acknowledged.</p>
+<p><code>warnUser()</code> - a warning.
+In the Wicket viewer these do not auto-close; they must be acknowledged.</p>
 </li>
 <li>
-<p><code>raiseError()</code> - an error.  In the Wicket viewer these do not auto-close; they must be acknowledged.</p>
+<p><code>raiseError()</code> - an error.
+In the Wicket viewer these do not auto-close; they must be acknowledged.</p>
 </li>
 </ul>
 </div>
@@ -703,27 +703,22 @@ message to the end-user.  In the <a href="../../vw/about.html" class="page">Wick
 <div class="sect2">
 <h3 id="aborting-transactions"><a class="anchor" href="#aborting-transactions"></a>Aborting transactions</h3>
 <div class="paragraph">
-<p>If you want to abort Apache Isis' transaction, this can be done by throwing an exception.  The exception message
-is displayed to the user on the error page (if <a href="../../vw/about.html" class="page">Wicket viewer</a>) or a 500 status error code (if the
+<p>If you want to abort Apache Isis' transaction, this can be done by throwing an exception.
+The exception message is displayed to the user on the error page (if <a href="../../vw/about.html" class="page">Wicket viewer</a>) or a 500 status error code (if the
 <a href="../../vro/about.html" class="page">Restful Objects</a> viewer).</p>
 </div>
 <div class="paragraph">
-<p>If the exception thrown is because of an unexpected error (eg a <code>NullPointerException</code> in the domain app itself), then
-the error page will include a stack trace.  If however you want to indicate that the exception is in some sense
-"expected", then throw a <code>RecoverableException</code> (or any subclass, eg <code>ApplicationException</code>); the stack trace will then
-be suppressed from the error page.</p>
+<p>If the exception thrown is because of an unexpected error (eg a <code>NullPointerException</code> in the domain app itself), then the error page will include a stack trace.
+If however you want to indicate that the exception is in some sense "expected", then throw a <code>RecoverableException</code> (or any subclass, eg <code>ApplicationException</code>); the stack trace will then be suppressed from the error page.</p>
 </div>
 <div class="paragraph">
-<p>Another way in which exceptions might be considered "expected" could be as the result of attempting to persist an
-object which then violates some type of database constraint.  Even if the domain application checks beforehand, it
-could be that another user operating on the object at the same moment of time might result in the conflict.</p>
+<p>Another way in which exceptions might be considered "expected" could be as the result of attempting to persist an object which then violates some type of database constraint.
+Even if the domain application checks beforehand, it could be that another user operating on the object at the same moment of time might result in the conflict.</p>
 </div>
 <div class="paragraph">
-<p>To handle this the <a href="../../refguide/applib-svc/presentation-layer-spi/ExceptionRecognizer.html" class="page"><code>ExceptionRecognizer</code></a> SPI can be used.  The
-framework provides a number of implementations out-of-the-box; whenever an exception is thrown it is passed to each
-known recognizer implementation to see if it recognizes the exception and can return a user-meaningful error message.
-For example, <code>ExceptionRecognizerForSQLIntegrityConstraintViolationUniqueOrIndexException</code> checks if the
-exception inherits from <code>java.sql.SQLIntegrityConstraintViolationException</code>, and if so, constructs a suitable message.</p>
+<p>To handle this the <a href="../../refguide/applib-svc/ExceptionRecognizerService.html" class="page"><code>ExceptionRecognizer</code></a> SPI can be used.
+The framework provides a number of implementations out-of-the-box; whenever an exception is thrown it is passed to each known recognizer implementation to see if it recognizes the exception and can return a user-meaningful error message.
+For example, <code>ExceptionRecognizerForSQLIntegrityConstraintViolationUniqueOrIndexException</code> checks if the exception inherits from <code>java.sql.SQLIntegrityConstraintViolationException</code>, and if so, constructs a suitable message.</p>
 </div>
 </div>
 </div>
@@ -833,7 +828,7 @@ public class TitlingService {
 Specifically, it&#8217;s important that the framework doesn&#8217;t "know" about the view model until its state is "sufficiently" populated to distinguish from other view models.</p>
 </div>
 <div class="paragraph">
-<p>In practical terms, this means that view models should be instantiated using a constructor, and then injecting services (if required) using the <a href="../../refguide/applib-svc/metadata-api/ServiceRegistry.html" class="page"><code>ServiceRegistry</code></a> service:</p>
+<p>In practical terms, this means that view models should be instantiated using a constructor, and then injecting services (if required) using the <a href="../../refguide/applib-svc/ServiceRegistry.html" class="page"><code>ServiceRegistry</code></a> service:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -842,7 +837,7 @@ serviceRegistry.injectServicesInto(viewModel);</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>What will most likely <strong>fail</strong> is to use the <a href="../../refguide/applib-svc/core-domain-api/FactoryService.html" class="page"><code>FactoryService</code></a>:</p>
+<p>What will most likely <strong>fail</strong> is to use the <a href="../../refguide/applib-svc/FactoryService.html" class="page"><code>FactoryService</code></a>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1090,7 +1085,7 @@ But how to implement this?</em></p>
 </ul>
 </div>
 <div class="paragraph">
-<p>One way to implement this idea is to provide a custom implementation of the <a href="../../refguide/applib-svc/presentation-layer-spi/RoutingService.html" class="page"><code>RoutingService</code></a> SPI domain service.
+<p>One way to implement this idea is to provide a custom implementation of the <a href="../../refguide/applib-svc/RoutingService.html" class="page"><code>RoutingService</code></a> SPI domain service.
 The default implementation will either return the current object (if not null), else the home page (as defined by <a href="../../refguide/applib-ant/HomePage.html" class="page"><code>@HomePage</code></a>) if one exists.</p>
 </div>
 <div class="paragraph">
@@ -1127,10 +1122,10 @@ public class RoutingServiceUsingBreadcrumbs extends RoutingServiceDefault {
         return firstViewModelOrNonDeletedPojoIfAny.orElse(homePage());          <i class="conum" data-value="9"></i><b>(9)</b>
     }
     private Object homePage() {
-        return homePageProviderService.homePage();
+        return homePageResolverService.homePage();
     }
     @Inject
-    HomePageProviderService homePageProviderService;
+    HomePageResolverService homePageResolverService;
     @Inject
     RepositoryService repositoryService;
 }</code></pre>
@@ -1448,7 +1443,7 @@ a domain object, for instance to check English syntax?</em></p>
 </ul>
 </div>
 <div class="paragraph">
-<p>One way to implement is to use the <a href="../../refguide/applib-svc/core-domain-api/EventBusService.html" class="page">event bus</a>:</p>
+<p>One way to implement is to use the <a href="../../refguide/applib-svc/EventBusService.html" class="page">event bus</a>:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -1498,7 +1493,7 @@ a domain object, for instance to check English syntax?</em></p>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200220-0401-b1245c00</p>
+            <p>Revision: 2.0.0-M2.20200221-0400-ba3598bf</p>
         </div>
     </div>
 </footer>

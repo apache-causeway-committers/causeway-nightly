@@ -389,7 +389,7 @@
 <div class="sectionbody">
 <div class="paragraph">
 <p>This chapter shows the idioms for creating, reading, updating and deleting <a href="building-blocks.html#domain-entities" class="page">domain entities</a>.
-The main domain services used for this are <a href="../../refguide/applib-svc/persistence-layer-api/RepositoryService.html" class="page"><code>RepositoryService</code></a> and <a href="../../refguide/applib-svc/core-domain-api/FactoryService.html" class="page"><code>FactoryService</code></a>.</p>
+The main domain services used for this are <a href="../../refguide/applib-svc/RepositoryService.html" class="page"><code>RepositoryService</code></a> and <a href="../../refguide/applib-svc/FactoryService.html" class="page"><code>FactoryService</code></a>.</p>
 </div>
 <div class="paragraph">
 <p>It also shows how to instantiate <a href="building-blocks.html#view-models" class="page">view models</a> and how to programmatically instantiate <a href="building-blocks.html#mixins" class="page">mixins</a> (useful primarily for <a href="../../testing/integtestsupport/about.html" class="page">integration testing</a>).</p>
@@ -400,7 +400,7 @@ The main domain services used for this are <a href="../../refguide/applib-svc/pe
 <h2 id="instantiating"><a class="anchor" href="#instantiating"></a>Instantiating</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Both domain entities and view models can be instantiated using the <a href="../../refguide/applib-svc/core-domain-api/FactoryService.html" class="page"><code>FactoryService</code></a> provided by the framework.
+<p>Both domain entities and view models can be instantiated using the <a href="../../refguide/applib-svc/FactoryService.html" class="page"><code>FactoryService</code></a> provided by the framework.
 For example:</p>
 </div>
 <div class="listingblock">
@@ -437,8 +437,8 @@ For example:</p>
 </div>
 </div>
 <div class="paragraph">
-<p>In such cases, the domain object cannot be instantiated using <code>FactoryService</code>.
-Instead the <a href="../../refguide/applib-svc/metadata-api/ServiceRegistry.html" class="page"><code>ServiceRegistry</code></a> service can be used to inject services:</p>
+<p>In such cases, the domain object cannot be instantiated using <a href="../../refguide/applib-svc/FactoryService.html" class="page"><code>FactoryService</code></a>.
+Instead the <a href="../../refguide/applib-svc/ServiceRegistry.html" class="page"><code>ServiceRegistry</code></a> service can be used to inject services:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -472,7 +472,7 @@ serviceRegistry.injectServicesInto(placeOrderMixin);</code></pre>
 <h2 id="persisting"><a class="anchor" href="#persisting"></a>Persisting</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Once a domain entity has been instantiated and initialized, it can be persisted using the <a href="../../refguide/applib-svc/persistence-layer-api/RepositoryService.html" class="page"><code>RepositoryService</code></a>.</p>
+<p>Once a domain entity has been instantiated and initialized, it can be persisted using the <a href="../../refguide/applib-svc/RepositoryService.html" class="page"><code>RepositoryService</code></a>.</p>
 </div>
 <div class="paragraph">
 <p>For example:</p>
@@ -515,7 +515,7 @@ If the domain entity has an N-arg constructor, then the code is often simpler:</
 <div class="paragraph">
 <p>It&#8217;s worth being aware that the framework does <em>not</em> eagerly persist the object.
 Rather, it queues up an internal command structure representing the object persistence request.
-This is then executed either at the end of the transaction, or if a <a href="crud/finding.html" class="page">query is run</a>, or if the internal queue is manually flushed using <a href="../../refguide/applib-svc/application-layer-api/TransactionService.html" class="page"><code>TransactionService</code></a>'s <code>flush()</code> method.
+This is then executed either at the end of the transaction, or if a <a href="crud/finding.html" class="page">query is run</a>, or if the internal queue is manually flushed using <a href="../../refguide/applib-svc/TransactionService.html" class="page"><code>TransactionService</code></a>'s <code>flush()</code> method.
 Flushing also happens when a repository query is executed, so that the pending persist operation is performed first.
 Generally therefore the lazy persistence approach works well enough.</p>
 </div>
@@ -557,7 +557,7 @@ This avoid the need to explicitly call "persist".</p>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Retrieving domain entities typically requires a JDOQL query defined on the domain entity, and a corresponding repository service for that domain entity type.
-This repository calls the framework-provided <a href="../../refguide/applib-svc/persistence-layer-api/RepositoryService.html" class="page"><code>RepositoryService</code></a> to actually submit the query.</p>
+This repository calls the framework-provided <a href="../../refguide/applib-svc/RepositoryService.html" class="page"><code>RepositoryService</code></a> to actually submit the query.</p>
 </div>
 <div class="paragraph">
 <p>For example:</p>
@@ -625,7 +625,7 @@ public class CustomerRepository {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The <a href="../../refguide/applib-svc/persistence-layer-api/RepositoryService.html" class="page"><code>RepositoryService</code></a> is a generic facade over the JDO/DataNucleus API.</td>
+<td>The <a href="../../refguide/applib-svc/RepositoryService.html" class="page"><code>RepositoryService</code></a> is a generic facade over the JDO/DataNucleus API.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
@@ -651,7 +651,7 @@ This ensures that the database query runs against an up-to-date table so that al
 <div class="sect2">
 <h3 id="type-safe-queries"><a class="anchor" href="#type-safe-queries"></a>Type-safe queries</h3>
 <div class="paragraph">
-<p>DataNucleus also supports type-safe queries; see <a href="../../refguide/applib-svc/persistence-layer-api/IsisJdoSupport.html#type-safe-jdoql-queries" class="page">here</a> for further details.</p>
+<p>DataNucleus also supports type-safe queries; see <a href="../../pjdo/services/IsisJdoSupport.html#type-safe-jdoql-queries" class="page">here</a> for further details.</p>
 </div>
 </div>
 </div>
@@ -669,10 +669,10 @@ Rather, the ORM (DataNucleus) automatically keeps track of the state of each obj
 <div class="ulist">
 <ul>
 <li>
-<p><a href="../../refguide/applib-svc/application-layer-api/TransactionService.html" class="page"><code>TransactionService</code></a> acts at the Apache Isis layer, and flushes any pending object persistence or object deletions</p>
+<p><a href="../../refguide/applib-svc/TransactionService.html" class="page"><code>TransactionService</code></a> acts at the Apache Isis layer, and flushes any pending object persistence or object deletions</p>
 </li>
 <li>
-<p>using <a href="../../refguide/applib-svc/persistence-layer-api/IsisJdoSupport.html" class="page"><code>IsisJdoSupport</code></a> it is possible to reach down to the underlying JDO API, and perform a flush of pending object updates also.</p>
+<p>using <a href="../../pjdo/services/IsisJdoSupport.html" class="page"><code>IsisJdoSupport</code></a> it is possible to reach down to the underlying JDO API, and perform a flush of pending object updates also.</p>
 </li>
 </ul>
 </div>
@@ -685,7 +685,7 @@ Rather, the ORM (DataNucleus) automatically keeps track of the state of each obj
 <h2 id="deleting"><a class="anchor" href="#deleting"></a>Deleting Objects</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Domain entities can be deleted using <a href="../../refguide/applib-svc/persistence-layer-api/RepositoryService.html" class="page"><code>RepositoryService</code></a>.
+<p>Domain entities can be deleted using <a href="../../refguide/applib-svc/RepositoryService.html" class="page"><code>RepositoryService</code></a>.
 For example:</p>
 </div>
 <div class="listingblock">
@@ -697,7 +697,7 @@ repositoryService.remove(customer);</code></pre>
 <div class="paragraph">
 <p>It&#8217;s worth being aware that (as for persisting new entities) the framework does <em>not</em> eagerly delete the object.
 Rather, it queues up an internal command structure representing the object deletion request.
-This is then executed either at the end of the transaction, or if a  <a href="crud/finding.html" class="page">query is run</a>, or if the internal queue is manually flushed using <a href="../../refguide/applib-svc/application-layer-api/TransactionService.html" class="page"><code>TransactionService</code></a>'s <code>flush()</code> method.</p>
+This is then executed either at the end of the transaction, or if a  <a href="crud/finding.html" class="page">query is run</a>, or if the internal queue is manually flushed using <a href="../../refguide/applib-svc/TransactionService.html" class="page"><code>TransactionService</code></a>'s <code>flush()</code> method.</p>
 </div>
 <div class="paragraph">
 <p>Alternatively, you can use:</p>
@@ -732,7 +732,7 @@ This is then executed either at the end of the transaction, or if a  <a href="cr
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200220-0401-b1245c00</p>
+            <p>Revision: 2.0.0-M2.20200221-0400-ba3598bf</p>
         </div>
     </div>
 </footer>

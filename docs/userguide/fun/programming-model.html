@@ -741,7 +741,7 @@ RepositoryService repositoryService;</code></pre>
 <div class="sect2">
 <h3 id="repository-and-factory"><a class="anchor" href="#repository-and-factory"></a>Repository and Factory</h3>
 <div class="paragraph">
-<p>The repository/factory uses an injected <a href="../../refguide/applib-svc/persistence-layer-api/RepositoryService.html" class="page"><code>RepositoryService</code></a> to both instantiate new objects and to query the database for existing objects of a given entity type.
+<p>The repository/factory uses an injected <a href="../../refguide/applib-svc/RepositoryService.html" class="page"><code>RepositoryService</code></a> to both instantiate new objects and to query the database for existing objects of a given entity type.
 It is not visible in UI, rather other services delegate to it.</p>
 </div>
 <div class="paragraph">
@@ -913,7 +913,7 @@ TODO: v2: update for Spring events rather than axon/guava
 <p>Domain services acting as event subscribers can subscribe to <a href="building-blocks.html#lifecycle-events" class="page">lifecycle</a> events, influencing the rendering and behaviour of other objects.</p>
 </div>
 <div class="paragraph">
-<p>All subscribers must subscribe to the <a href="../../refguide/applib-svc/core-domain-api/EventBusService.html" class="page"><code>EventBusService</code></a>; as this amounts to a few lines of boilerplate it&#8217;s easiest to inherit from the convenience <code>AbstractSubscriber</code> class.</p>
+<p>All subscribers must subscribe to the <a href="../../refguide/applib-svc/EventBusService.html" class="page"><code>EventBusService</code></a>; as this amounts to a few lines of boilerplate it&#8217;s easiest to inherit from the convenience <code>AbstractSubscriber</code> class.</p>
 </div>
 <div class="paragraph">
 <p>We suggest naming such classes <code>XxxSubscriptions</code>, for example:</p>
@@ -991,7 +991,7 @@ public class MyService extends AbstractService {
 </div>
 </div>
 <div class="paragraph">
-<p>The framework provides a number of request-scoped services, including a <a href="../../refguide/applib-svc/core-domain-api/Scratchpad.html" class="page"><code>Scratchpad</code></a> service and a query results caching through the <a href="../../refguide/applib-svc/persistence-layer-api/QueryResultsCache.html" class="page"><code>QueryResultsCache</code></a>.
+<p>The framework provides a number of request-scoped services, including a <a href="../../refguide/applib-svc/Scratchpad.html" class="page"><code>Scratchpad</code></a> service and a query results caching through the <a href="../../refguide/applib-svc/QueryResultsCache.html" class="page"><code>QueryResultsCache</code></a>.
 See the <a href="../../refguide/applib-svc/about.html" class="page">domain services</a> reference guide for further details.</p>
 </div>
 </div>
@@ -2113,7 +2113,7 @@ It is therefore necessary to use Apache Isis' equivalent annotations for action 
 <h2 id="injecting-services"><a class="anchor" href="#injecting-services"></a>Injecting services</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Apache Isis runs on top of SpringBoot, and uses SpringBoot for dependency injection, both of the applications own domain services and als of the very many additional services defined by the framework (such as <a href="../../refguide/applib-svc/persistence-layer-api/RepositoryService.html" class="page"><code>RepositoryService</code></a>).</p>
+<p>Apache Isis runs on top of SpringBoot, and uses SpringBoot for dependency injection, both of the applications own domain services and als of the very many additional services defined by the framework (such as <a href="../../refguide/applib-svc/RepositoryService.html" class="page"><code>RepositoryService</code></a>).</p>
 </div>
 <div class="paragraph">
 <p>However, not only does it autowire domain services into other services, it also ensures that services are injected into any domain object (eg entity, view model, fixture script, specification etc).</p>
@@ -2360,11 +2360,11 @@ For collections, the <code>@XmlElementWrapper</code> would also typically be use
 </td>
 <td class="content">
 <div class="paragraph">
-<p>Be aware that all the state will become the DTO&#8217;s memento, ultimately converted into a URL-safe form, by way of the <a href="../../refguide/applib-svc/presentation-layer-spi/UrlEncodingService.html" class="page"><code>UrlEncodingService</code></a>.</p>
+<p>Be aware that all the state will become the DTO&#8217;s memento, ultimately converted into a URL-safe form, by way of the <a href="../../refguide/applib-svc/UrlEncodingService.html" class="page"><code>UrlEncodingService</code></a>.</p>
 </div>
 <div class="paragraph">
 <p>There are limits to the lengths of URLs, however.
-If the URL does exceed limits or contains invalid characters, then provide a custom implementation of <a href="../../refguide/applib-svc/presentation-layer-spi/UrlEncodingService.html" class="page"><code>UrlEncodingService</code></a> to handle the memento string in some other fashion (eg substituting it with a GUID, with the memento cached somehow on the server).
+If the URL does exceed limits or contains invalid characters, then provide a custom implementation of <a href="../../refguide/applib-svc/UrlEncodingService.html" class="page"><code>UrlEncodingService</code></a> to handle the memento string in some other fashion (eg substituting it with a GUID, with the memento cached somehow on the server).
 a URL.</p>
 </div>
 </td>
@@ -2380,11 +2380,11 @@ For example, the <code>CompareCustomers</code> view model described <a href="#ja
 <div class="paragraph">
 <p>It wouldn&#8217;t make sense to serialize out the state of a persistent entity.
 However, the identity of the underlying entity is well defined; Apache Isis defines the <a href="../../refguide/schema/common.html" class="page">common schema</a> which defines the <code>&lt;oid-dto&gt;</code> element (and corresponding <code>OidDto</code> class): the object&#8217;s type and its identifier.
-This is basically a formal XML equivalent to the <code>Bookmark</code> object obtained from the <a href="../../refguide/applib-svc/integration-api/BookmarkService.html" class="page"><code>BookmarkService</code></a>.</p>
+This is basically a formal XML equivalent to the <code>Bookmark</code> object obtained from the <a href="../../refguide/applib-svc/BookmarkService.html" class="page"><code>BookmarkService</code></a>.</p>
 </div>
 <div class="paragraph">
 <p>There is only one requirement to make this work: every referenced domain entity must be annotated with <a href="../../refguide/applib-ant/XmlJavaTypeAdapter.html" class="page"><code>@XmlJavaTypeAdapter</code></a>, specifying the framework-provided <code>PersistentEntityAdapter</code>.
-And this class is similar to the <a href="../../refguide/applib-svc/integration-api/BookmarkService.html" class="page"><code>BookmarkService</code></a>: it knows how to create an <code>OidDto</code> from an object reference.</p>
+And this class is similar to the <a href="../../refguide/applib-svc/BookmarkService.html" class="page"><code>BookmarkService</code></a>: it knows how to create an <code>OidDto</code> from an object reference.</p>
 </div>
 <div class="paragraph">
 <p>Thus, in our view model we can legitimately write:</p>
@@ -2987,10 +2987,10 @@ In the todoapp it can be found in the <code>todoapp-xsd</code> Maven module, who
 </div>
 <div class="paragraph">
 <p>In the former case, the consumer requests the DTO by calling the REST API with the appropriate HTTP <code>Accept</code> header.
-An appropriate implementation of <a href="../../refguide/applib-svc/presentation-layer-spi/ContentMappingService.html" class="page"><code>ContentMappingService</code></a> can then be used to return the appropriate DTO (as XML).</p>
+An appropriate implementation of <a href="../../refguide/applib-svc/ContentMappingService.html" class="page"><code>ContentMappingService</code></a> can then be used to return the appropriate DTO (as XML).</p>
 </div>
 <div class="paragraph">
-<p>For the latter case, one design is simply for the application to instantiate the view model, then call the <a href="../../refguide/applib-svc/integration-api/JaxbService.html" class="page"><code>JaxbService</code></a> to obtain its corresponding XML.  This can then be published onto the ESB, for example using an <a href="http://activemq.apache.org">Apache ActiveMQ &#8482;</a> queue.</p>
+<p>For the latter case, one design is simply for the application to instantiate the view model, then call the <a href="../../refguide/applib-svc/JaxbService.html" class="page"><code>JaxbService</code></a> to obtain its corresponding XML.  This can then be published onto the ESB, for example using an <a href="http://activemq.apache.org">Apache ActiveMQ &#8482;</a> queue.</p>
 </div>
 <div class="paragraph">
 <p>However, rather than try to push all the data that might be needed by any of these external systems in a single XML event (which would require anticipating all the requirements, likely a hopeless task), a better design is to publish only the fact that something of note has changed - ie, that an action on a domain object has been invoked - and then let the consumers call back to obtain other information if required.
@@ -3013,7 +3013,7 @@ In our case we focus on the validation (to determine the nature of the inbound m
 </div>
 <div class="paragraph">
 <p>The (non-ASF) <a href="https://platform.incode.org" target="_blank" rel="noopener">Incode Platform</a>'s publishmq module provides an out-of-the-box solution of this design.
-It provides an implementation of the <a href="../../refguide/applib-svc/persistence-layer-spi/PublisherService.html" class="page"><code>PublisherService</code></a>, but which simply publishes instances of <a href="../../refguide/schema/ixn.html" class="page"><code>InteractionDto</code></a> to an ActiveMQ queue.
+It provides an implementation of the <a href="../../refguide/applib-svc/PublisherService.html" class="page"><code>PublisherService</code></a>, but which simply publishes instances of <a href="../../refguide/schema/ixn.html" class="page"><code>InteractionDto</code></a> to an ActiveMQ queue.
 Camel (or similar) can then be hooked up to consume these events from this queue, and use a processor to parse the action memento to determine what has changed on the source system.
 Thereafter, a subsequent Camel processor can then call back to the source - via the <a href="../../vro/about.html" class="page">Restful Objects viewer</a> - to enrich the message with additional details using a DTO.</p>
 </div>
@@ -3446,7 +3446,7 @@ All the methods and supporting methods end up in a single construct, and the dep
 If writing integration tests or fixtures, or (sometimes) just regular domain logic, then you may need to instantiate mixins directly.</p>
 </div>
 <div class="paragraph">
-<p>For this you can use the <a href="../../refguide/applib-svc/core-domain-api/FactoryService.html" class="page"><code>FactoryService#mixin(&#8230;&#8203;)</code></a> method.</p>
+<p>For this you can use the <a href="../../refguide/applib-svc/FactoryService.html" class="page"><code>FactoryService#mixin(&#8230;&#8203;)</code></a> method.</p>
 </div>
 <div class="paragraph">
 <p>For example:</p>
@@ -3476,7 +3476,7 @@ If writing integration tests or fixtures, or (sometimes) just regular domain log
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200220-0401-b1245c00</p>
+            <p>Revision: 2.0.0-M2.20200221-0400-ba3598bf</p>
         </div>
     </div>
 </footer>
