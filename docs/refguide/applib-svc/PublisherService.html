@@ -281,13 +281,16 @@
     <a class="nav-link" href="CommandDtoProcessorService.html">CommandDtoProcessorService</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="CommandExecutorService.html">CommandDtoProcessorService</a>
+    <a class="nav-link" href="CommandExecutorService.html">CommandExecutorService</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="CommandService.html">CommandService</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="ConfigurationViewService.html">ConfigurationViewService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="ConfigurationMenu.html">ConfigurationMenu</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="ContentMappingService.html">ContentMappingService</a>
@@ -341,6 +344,9 @@
     <a class="nav-link" href="LayoutService.html">LayoutService</a>
   </li>
   <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="LayoutServiceMenu.html">LayoutServiceMenu</a>
+  </li>
+  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="LocaleProvider.html">LocaleProvider</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -354,6 +360,9 @@
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="MetaModelService.html">MetamodelService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="MetaModelServiceMenu.html">MetamodelServiceMenu</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="MetricsService.html">MetricsService</a>
@@ -899,15 +908,21 @@ If contributions are not required in the UI, these can be suppressed either usin
 <p>the <a href="InteractionContext.html" class="page"><code>InteractionContext</code></a> is used to obtain the <code>Interaction</code> from which the member executions are published.</p>
 </li>
 <li>
-<p>the (internal) <a href="#runtime-services:ROOT:persistence-layer/ChangedObjectsServiceInternal.adoc" class="page unresolved"><code>ChangedObjectsServiceInternal</code></a> domain service is used to obtain the set of objects modified throughout the transaction</p>
+<p>the (internal) <a href="../../core/runtime-services/ChangedObjectsService.html" class="page"><code>ChangedObjectsService</code></a> domain service is used to obtain the set of objects modified throughout the transaction</p>
 </li>
 <li>
-<p>the (internal) <a href="#runtime-services:ROOT:spi/PublisherServiceInternal.adoc" class="page unresolved"><code>PublisherServiceInternal</code></a> domain service filters these down to those changed objects that are also published (as per <a href="../applib-ant/DomainObject.html#publishing" class="page"><code>@DomainObject#publishing()</code></a>) and delegates to the <code>PublisherService</code>.</p>
+<p>the (internal) <a href="../../core/runtime-services/PublishingDispatchService.html" class="page"><code>PublisherDispatchService</code></a> domain service filters these down to those changed objects that are also published (as per <a href="../applib-ant/DomainObject.html#publishing" class="page"><code>@DomainObject#publishing()</code></a>) and delegates to the <code>PublisherService</code>.</p>
 </li>
 <li>
 <p>the <a href="MetricsService.html" class="page"><code>MetricsService</code></a> is used to obtain the objects that are loaded throughout the transaction; this info is used in order to instantiate the <code>PublishedObjects</code> object passed through to the <code>PublisherService</code>.</p>
 </li>
 </ul>
+</div>
+<div class="paragraph">
+<p>The services provided by this module combine very well with the <a href="CommandService.html" class="page"><code>CommandService</code></a> and with <a href="AuditerService.html" class="page"><code>AuditerService</code></a>.
+The <code>CommandService</code> captures the <em>cause</em> of an interaction (an action was invoked, a property was edited), while the <code>PublisherService</code> captures the <em>effect</em> of that interaction in terms of events, and the <code>AuditerService</code> captures the effect of the interaction in terms of changed state.
+You may also want to configure the <a href="PublisherService.html" class="page"><code>PublisherService</code></a>, which also captures the effect of the interaction but as an event.
+All three of these services collaborate implicitly by way of the <a href="../applib-cm/classes/mixins.html#HasUniqueId" class="page"><code>HasUniqueId</code></a> interface.</p>
 </div>
 <div class="paragraph">
 <p>The <a href="EventBusService.html" class="page"><code>EventBusService</code></a> differs from the <code>PublisherService</code> in that it is intended for fine-grained publish/subscribe for object-to-object interactions within an Apache Isis domain object model.
@@ -933,7 +948,7 @@ That said, it is possible to obtain a serialization of the action invocation/pro
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200224-1129-4cd75392</p>
+            <p>Revision: 2.0.0-M2.20200226-0400-676cfbe6</p>
         </div>
     </div>
 </footer>

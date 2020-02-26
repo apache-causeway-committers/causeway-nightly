@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Presentation Layer :: Apache Isis</title>
+    <title>RepresentationService :: Apache Isis</title>
     <meta name="generator" content="Antora 2.2.0">
     <link rel="stylesheet" href="../../_/css/site.css">
     <link rel="stylesheet" href="../../_/css/site-custom.css">
@@ -128,7 +128,7 @@
     </div>
   </nav>
 </header>
-<div class="body  -toc -title">
+<div class="body ">
 <div class="nav-container" data-component="core" data-version="master">
   <aside class="nav">
     <div class="panels">
@@ -172,50 +172,32 @@
     <button class="nav-item-toggle"></button>
     <a class="nav-link" href="about.html">Runtime Services</a>
 <ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="ContentNegotiationService.html">ContentNegotiationService</a>
+  </li>
   <li class="nav-item is-current-page" data-depth="2">
-    <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="presentation-layer.html">Presentation Layer</a>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="presentation-layer/ContentNegotiationService.html">ContentNegotiationService</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="presentation-layer/RepresentationService.html">RepresentationService</a>
-  </li>
-</ul>
+    <a class="nav-link" href="RepresentationService.html">RepresentationService</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="application-layer.html">Application Layer</a>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="application-layer/AuthenticationSessionProvider.html">AuthenticationSessionProvider</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="application-layer/CommandDtoServiceInternal.html">CommandDtoServiceInternal</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="application-layer/InteractionDtoServiceInternal.html">InteractionDtoServiceInternal</a>
-  </li>
-</ul>
+    <a class="nav-link" href="AuthenticationSessionProvider.html">AuthenticationSessionProvider</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="persistence-layer.html">Persistence Layer</a>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="persistence-layer/AuditingServiceInternal.html">AuditingServiceInternal</a>
+    <a class="nav-link" href="CommandDtoServiceInternal.html">CommandDtoServiceInternal</a>
   </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="persistence-layer/ChangedObjectsServiceInternal.html">ChangedObjectsServiceInternal</a>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="InteractionDtoServiceInternal.html">InteractionDtoServiceInternal</a>
   </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="persistence-layer/PersistenceSessionServiceInternal.html">PersistenceSessionServiceInternal</a>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="AuditingServiceInternal.html">AuditingServiceInternal</a>
   </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="persistence-layer/PublishingServiceInternal.html">PublishingServiceInternal</a>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="ChangedObjectsService.html">ChangedObjectsServiceInternal</a>
   </li>
-</ul>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="PersistenceSessionServiceInternal.html">PersistenceSessionServiceInternal</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="PublishingDispatchService.html">PublishingDispatchService</a>
   </li>
 </ul>
   </li>
@@ -401,84 +383,148 @@
   <ul>
     <li><a href="../about.html">Core Framework</a></li>
     <li><a href="about.html">Runtime Services</a></li>
-    <li><a href="presentation-layer.html">Presentation Layer</a></li>
+    <li><a href="RepresentationService.html">RepresentationService</a></li>
   </ul>
 </nav>
-  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/HEAD/core/runtimeservices/src/main/adoc/modules/runtime-services/pages/presentation-layer.adoc">Edit</a></div>
+  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/HEAD/core/runtimeservices/src/main/adoc/modules/runtime-services/pages/RepresentationService.adoc">Edit</a></div>
 </div>
 <article class="doc">
     <a name="section-top"></a>
-<h1 class="page">Presentation Layer</h1>
+<h1 class="page"><code>RepresentationService</code></h1>
+<div id="preamble">
+<div class="sectionbody">
 <div class="paragraph">
-<p>These domain services are internal to the framework, controlling various aspects of the presentation layer.</p>
+<p>The <code>RepresentationService</code> is the main plug-in point for the <a href="../../vro/about.html" class="page">RestfulObjects viewer</a> to generate representations.</p>
 </div>
 <div class="paragraph">
-<p>The table below summarizes the presentation layer internal SPIs defined by Apache Isis.
-It also lists their corresponding implementation, either a default implementation provided by Apache Isis itself, or provided by one of the (non-ASF) <a href="https://platform.incode.org" target="_blank" rel="noopener">Incode Platform</a> modules.</p>
+<p>The default implementations ultimately generate representations according to the <a href="http://restfulobjects.org">Restful Objects spec</a> v1.0.
+However, it also delegates to the <a href="ContentNegotiationService.html" class="page"><code>ContentNegotiationService</code></a> which provides a mechanism for altering representations according to the HTTP <code>Accept</code> header.
+This allows more flexible representations to be generated for REST clients that (perhaps through their use of a certain Javascript library, say) expect, or at least works best with, a certain style of representation.</p>
 </div>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. Internal Services</caption>
-<colgroup>
-<col style="width: 30%;">
-<col style="width: 30%;">
-<col style="width: 20%;">
-<col style="width: 20%;">
-</colgroup>
-<thead>
+<div class="paragraph">
+<p>In all there are three domain services that can influence the representations generated: this service, <a href="ContentNegotiationService.html" class="page"><code>ContentNegotiationService</code></a> and the <a href="../../refguide/applib-svc/ContentMappingService.html" class="page"><code>ContentMappingService</code></a>.
+The diagram below shows how these collaborate:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/RepresentationService/service-collaborations.png"><img src="_images/RepresentationService/service-collaborations.png" alt="service collaborations" width="700px"></a>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>RepresentationServiceContentNegotiator</code> is the default implementation of the top-level <code>RepresentationService</code>, and it delegates to list of injecting <code>ContentNegotiationService</code> services.
+Using a chain of responsibility pattern, it returns the first non-null representation.
+For their part, the implementations of <code>ContentNegotiationService</code> use the HTTP Accept header to determine if they should render any representation or just return null.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="spi"><a class="anchor" href="#spi"></a>SPI</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The SPI defined by this service is:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public interface RepresentationService {
+    Response objectRepresentation(                  <i class="conum" data-value="1"></i><b>(1)</b>
+            Context rendererContext,
+            ObjectAdapter objectAdapter);
+    Response propertyDetails(                       <i class="conum" data-value="2"></i><b>(2)</b>
+            Context rendererContext,
+            ObjectAndProperty objectAndProperty,
+            MemberReprMode memberReprMode);
+    Response collectionDetails(                     <i class="conum" data-value="3"></i><b>(3)</b>
+            Context rendererContext,
+            ObjectAndCollection objectAndCollection,
+            MemberReprMode memberReprMode);
+    Response actionPrompt(                          <i class="conum" data-value="4"></i><b>(4)</b>
+            Context rendererContext,
+            ObjectAndAction objectAndAction);
+    Response actionResult(                          <i class="conum" data-value="5"></i><b>(5)</b>
+            Context rendererContext,
+            ObjectAndActionInvocation objectAndActionInvocation,
+            ActionResultReprRenderer.SelfLink selfLink);
+    public static interface Context extends RendererContext {
+        ObjectAdapterLinkTo getAdapterLinkTo();
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
 <tr>
-<th class="tableblock halign-left valign-top">SPI</th>
-<th class="tableblock halign-left valign-top">Maven Module<br>
-Impl&#8217;n (g: a:)</th>
-<th class="tableblock halign-left valign-top">Implementation</th>
-<th class="tableblock halign-left valign-top">Notes</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="presentation-layer/ContentNegotiationService.html" class="page"><code>o.a.i.v.ro.</code><br>
-<code>rendering.service.conneg.</code><br>
-<code>ContentNegotiationService</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Encodes the algorithm that delegates to any registered <a href="../../refguide/applib-svc/ContentMappingService.html" class="page"><code>ContentMappingService</code></a>s.</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ContentNegotiationService-</code><br>
-<code>XRoDomainType</code><br>
-<code>o.a.i.core</code><br>
-<code>isis-core-viewer-restfulobjects-rendering</code></p></td>
-<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>representation of a single object, eg as per section 14.4 of the RO spec, v1.0</td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="presentation-layer/RepresentationService.html" class="page"><code>o.a.i.v.ro.</code><br>
-<code>rendering.service.</code><br>
-<code>RepresentationService</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Generates the representations, delegating to any registered <a href="presentation-layer/ContentNegotiationService.html" class="page"><code>ContentNegotiationService</code></a>s.</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>RepresentationService-</code><br>
-<code>ForRestfulObjects</code><br>
-<code>o.a.i.core</code><br>
-<code>isis-core-viewer-restfulobjects-rendering</code></p></td>
-<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>representation of a single property of an object, eg as per section 16.4 of the RO spec v1.0</td>
 </tr>
-</tbody>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>representation of a single collection of an object, eg as per section 17.5 of the RO spec v1.0</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>representation of a single action (prompt) of an object, eg as per section 18.2 of the RO spec v1.0</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>representation of the results of a single action invocation, eg as per section 19.5 of the RO spec v1.0</td>
+</tr>
 </table>
+</div>
 <div class="paragraph">
-<p>Key:</p>
+<p>These methods provide:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p><code>o.a.i</code> is an abbreviation for <code>org.apache.isis</code></p>
+<p>a <code>RendererContext</code> which provides access to request-specific context (eg HTTP headers), session-specific context (eg authentication) and global context (eg configuration settings)</p>
 </li>
 <li>
-<p><code>o.ia.m</code> is an abbreviation for <code>org.isisaddons.module</code></p>
+<p>an object representing the information to be rendered<br></p>
+<div class="paragraph">
+<p>eg <code>ObjectAdapter</code>, <code>ObjectAndProperty</code>, <code>ObjectAndCollection</code> etc</p>
+</div>
 </li>
 <li>
-<p><code>o.a.i.c.m.s</code> is an abbreviation for <code>org.apache.isis.core.metamodel.services</code></p>
-</li>
-<li>
-<p><code>o.a.i.c.r.s</code> is an abbreviation for <code>org.apache.isis.core.runtime.services</code></p>
-</li>
-<li>
-<p><code>o.a.i.v.ro</code> is an abbreviation for <code>org.apache.isis.viewer.restfulobjects</code></p>
+<p>for members, whether the representation is in read/write mode<br></p>
+<div class="paragraph">
+<p>ie <code>MemberReprMode</code></p>
+</div>
 </li>
 </ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="implementation"><a class="anchor" href="#implementation"></a>Implementation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>As discussed in the introduction, the framework provides a default implementation, <code>o.a.i.v.ro.rendering.service.RepresentationServiceContentNegotiator</code>.
+This delegates to <a href="ContentNegotiationService.html" class="page"><code>ContentNegotiationService</code></a> to generate an alternative representation; but if none is provided then it falls back on generating the representations as defined in the <a href="http://restfulobjects.org">Restful Objects spec</a> v1.0.</p>
+</div>
+<div class="paragraph">
+<p>To use an alternative implementation, use Spring&#8217;s <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/core/annotation/Order.html"><code>@Order</code></a> annotation (as explained in the <a href="../../refguide/applib-svc/about.html#overriding-the-services.adoc" class="page">introduction</a> to this guide).</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="registering-the-services"><a class="anchor" href="#registering-the-services"></a>Registering the Services</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Apache Isis' default implementation of <code>RepresentationService</code> service is automatically registered and injected (it is annotated with <code>@DomainService</code>) so no further configuration is required.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="related-services"><a class="anchor" href="#related-services"></a>Related Services</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The default implementation delegates to <a href="ContentNegotiationService.html" class="page"><code>ContentNegotiationService</code></a>, whose default implementation may delegate in turn to <a href="../../refguide/applib-svc/ContentMappingService.html" class="page"><code>ContentMappingService</code></a> (if present).</p>
+</div>
+</div>
 </div>
 </article>
 <aside class="article-aside toc" role="navigation">
@@ -497,7 +543,7 @@ Impl&#8217;n (g: a:)</th>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200224-1129-4cd75392</p>
+            <p>Revision: 2.0.0-M2.20200226-0400-676cfbe6</p>
         </div>
     </div>
 </footer>

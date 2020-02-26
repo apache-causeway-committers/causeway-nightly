@@ -281,13 +281,16 @@
     <a class="nav-link" href="CommandDtoProcessorService.html">CommandDtoProcessorService</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="CommandExecutorService.html">CommandDtoProcessorService</a>
+    <a class="nav-link" href="CommandExecutorService.html">CommandExecutorService</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="CommandService.html">CommandService</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="ConfigurationViewService.html">ConfigurationViewService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="ConfigurationMenu.html">ConfigurationMenu</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="ContentMappingService.html">ContentMappingService</a>
@@ -341,6 +344,9 @@
     <a class="nav-link" href="LayoutService.html">LayoutService</a>
   </li>
   <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="LayoutServiceMenu.html">LayoutServiceMenu</a>
+  </li>
+  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="LocaleProvider.html">LocaleProvider</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -354,6 +360,9 @@
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="MetaModelService.html">MetamodelService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="MetaModelServiceMenu.html">MetamodelServiceMenu</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="MetricsService.html">MetricsService</a>
@@ -774,14 +783,31 @@ This should be done in their <a href="../applib-ant/PostConstruct.html" class="p
 </tr>
 </table>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="implementation"><a class="anchor" href="#implementation"></a>Implementation</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>To use an alternative implementation, implement the <code>EventBusService</code> domain service and use Spring&#8217;s <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/core/annotation/Order.html"><code>@Order</code></a> annotation (as explained in the <a href="about.html#overriding-the-services.adoc" class="page">introduction</a> to this guide).</p>
+<p>The framework provides a default implementation of the service, <code>o.a.i.objectstore.jdo.datanucleus.service.eventbus.EventBusServiceJdo</code>.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="registering-subscribers"><a class="anchor" href="#registering-subscribers"></a>Registering Subscribers</h2>
 <div class="sectionbody">
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+TODO: v2: this is no longer required.
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
 <p>The <code>register()</code> method should be called in the <a href="../applib-ant/PostConstruct.html" class="page"><code>@PostConstruct</code></a> lifecycle method.
 It is valid and probably the least confusing to readers to also "unregister" in the <a href="../applib-ant/PreDestroy.html" class="page"><code>@PreDestroy</code></a> lifecycle method (though as noted <a href="#api-and-implementation">above</a>, unregistering is actually a no-op).</p>
@@ -1129,91 +1155,6 @@ public class ReserveStockSubscriber extends AbstractSubscriber{
 }</code></pre>
 </div>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="implementation"><a class="anchor" href="#implementation"></a>Implementation</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The framework provides a default implementation of the service, <code>o.a.i.objectstore.jdo.datanucleus.service.eventbus.EventBusServiceJdo</code>.</p>
-</div>
-<div class="sect2">
-<h3 id="configuration-properties"><a class="anchor" href="#configuration-properties"></a>Configuration Properties</h3>
-<div class="paragraph">
-<p>The default implementation of this service defines the following configuration properties:</p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 16.6666%;">
-<col style="width: 50.0001%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Property</th>
-<th class="tableblock halign-left valign-top">Value<br>
-(default value)</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>isis.services.</code><br>
-<code>eventbus.</code><br>
-<code>implementation</code><br></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>guava</code>, <code>axon</code>,<br>
-FQCN (<code><em>guava</em></code>)</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>which implementation to use by the <a href="EventBusService.html" class="page"><code>EventBusService</code></a> as the underlying event bus.</p>
-</div>
-<div class="paragraph">
-<p>The implementation of <code>EventBusService</code> provided by Apache Isis will by default use <a href="https://code.google.com/p/guava-libraries/">Guava</a>'s <a href="https://code.google.com/p/guava-libraries/wiki/EventBusExplained"><code>EventBus</code></a> as the underlying in-memory event bus.  Alternatively the <a href="http://www.axonframework.org/">AxonFramework</a>'s <a href="http://www.axonframework.org/docs/2.4/single.html#d5e1489">SimpleEventBus</a> can be used.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="title">Guava vs Axon, which to use?</div>
-<div class="paragraph">
-<p>Guava actually queues up events; they are not guaranteed to be dispatched immediately.  This generally is not problem, but can be for cases where the subscriber may in turn want to post its own events (using <a href="WrapperFactory.html" class="page"><code>WrapperFactory</code></a>).</p>
-</div>
-<div class="paragraph">
-<p>The Axon <code>SimpleEventBus</code>-based implementation on the other hand is fully synchronous; events are dispatched as soon as they are posted.  This works well in all scenarios (that we have tested).</p>
-</div>
-</td>
-</tr>
-</table>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>isis.services.</code><br>
-<code>eventbus.</code><br>
-<code>allowLate</code><br>
-<code>Registration</code><br></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code>,<code>false</code><br>
-(<code>false</code>)</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>whether a domain service can register with the <a href="EventBusService.html" class="page"><code>EventBusService</code></a> after any events have posted.<br></p>
-</div>
-<div class="paragraph">
-<p>Late registration refers to the idea that a domain service can register itself with the <code>EventBusService</code> after events have been posted.
-Since domain services are set up at boot time, this almost certainly constitutes a bug in the code and so by default late registration is <em>not</em> allowed.
-Setting the above property to <code>true</code> disables this check.</p>
-</div>
-<div class="paragraph">
-<p>Since this almost certainly constitutes a bug in application code, by default this is disallowed.</p>
-</div></div></td>
-</tr>
-</tbody>
-</table>
-</div>
 <div class="sect2">
 <h3 id="spi"><a class="anchor" href="#spi"></a>SPI</h3>
 <div class="paragraph">
@@ -1273,7 +1214,7 @@ Setting the above property to <code>true</code> disables this check.</p>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200224-1129-4cd75392</p>
+            <p>Revision: 2.0.0-M2.20200226-0400-676cfbe6</p>
         </div>
     </div>
 </footer>

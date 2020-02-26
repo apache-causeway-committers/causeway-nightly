@@ -441,10 +441,10 @@ However one benefit of using step definitions (rather than integration tests) is
 <div class="ulist">
 <ul>
 <li>
-<p>a <code>XxxSpec.feature</code> file, describing the feature and the scenarios (given/when/then)s that constitute its acceptance criteria</p>
+<p>a <code>Xxx.feature</code> file, describing the feature and the scenarios (given/when/then)s that constitute its acceptance criteria</p>
 </li>
 <li>
-<p>a <code>RunIntegBddSpecs</code> class file to run the specification (all boilerplate).
+<p>a <code>RunCucumberTest</code> class file to run the specifications (all boilerplate).
 This will run all <code>.feature</code> files in the same package or subpackages, but is basically just boilerplate.</p>
 </li>
 <li>
@@ -468,29 +468,20 @@ We therefore recommend that they reside in a separate package, and are organized
 <h2 id="bootstrapping"><a class="anchor" href="#bootstrapping"></a>Bootstrapping</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The <code>RunIntegBddSpecs</code> class uses the Cucumber (JUnit4) runner to discover the features and step defs (glue).
-It also determines how to emit the results.</p>
+<p>The <code>RunCucumberSpecs</code> class is annotated with the <code>@Cucumber</code> JUnit 5 <a href="https://junit.org/junit5/docs/current/user-guide/#launcher-api-engines-custom">platform test engine</a> to discover the features and step defs (glue).</p>
 </div>
 <div class="paragraph">
-<p>The class itself is pretty much boilerplate:</p>
+<p>The class itself is trivial:</p>
 </div>
 <div class="listingblock">
-<div class="title">RunIntegBddSpecs.java</div>
+<div class="title">RunCucumberSpecs.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">package domainapp.webapp.bdd;                           <i class="conum" data-value="1"></i><b>(1)</b>
-...
-@RunWith(Cucumber.class)                                <i class="conum" data-value="2"></i><b>(2)</b>
-@CucumberOptions(
-        plugin = {
-                "html:target/cucumber-html-report"
-                ,"json:target/cucumber.json"            <i class="conum" data-value="3"></i><b>(3)</b>
-        },
-        strict = true,
-        tags = { "not @backlog", "not @ignore" },
-        glue = {}
-        )
-public class RunIntegBddSpecs {
-    // intentionally empty
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">package domainapp.webapp.bdd;
+
+import io.cucumber.junit.platform.engine.Cucumber;
+
+@Cucumber                                           <i class="conum" data-value="1"></i><b>(1)</b>
+public class RunCucumberSpecs {
 }</code></pre>
 </div>
 </div>
@@ -498,20 +489,19 @@ public class RunIntegBddSpecs {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>All feature files and step definitions under this package will be found.
-<div class="paragraph">
-<p>This can be overridden using the <code>glue</code> attribute, if required.</p>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>The tests are run through JUnit 4</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>The JSON formatter allows integration with enhanced reports.</td>
+<td>The tests are run through JUnit 5, as a custom platform engine</td>
 </tr>
 </table>
+</div>
+<div class="paragraph">
+<p>The Cucumber engine is configured using JUnit 5&#8217;s standard mechanism, namely the <code>junit-platform.properties</code> file (in the root package):</p>
+</div>
+<div class="listingblock">
+<div class="title">junit-platform.properties</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">cucumber.filter.tags=not @backlog and not @ignore
+cucumber.glue=domainapp.webapp.bdd.stepdefs</code></pre>
+</div>
 </div>
 <div class="paragraph">
 <p>We also use two "infrastructure" step definitions to bootstrap and configure Spring.
@@ -524,7 +514,7 @@ These are also boilerplate:</p>
 <div class="listingblock">
 <div class="title">BootstrapStepDef.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">package domainapp.webapp.bdd.infrastructure;                <i class="conum" data-value="1"></i><b>(1)</b>
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">package domainapp.webapp.bdd.stepdefs.infrastructure;       <i class="conum" data-value="1"></i><b>(1)</b>
 ...
 
 public class BootstrapStepDef
@@ -541,7 +531,8 @@ public class BootstrapStepDef
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>in a subpackage of <code>RunIntegBddSpecs</code></td>
+<td>in a subpackage of <code>domainapp.webapp.bdd.stepdefs</code>.<br>
+See <code>junit-platform.properties</code>, above.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
@@ -563,7 +554,7 @@ public class BootstrapStepDef
 <div class="listingblock">
 <div class="title">TransactionalStepDef.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">package domainapp.webapp.bdd.infrastructure;                <i class="conum" data-value="1"></i><b>(1)</b>
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">package domainapp.webapp.bdd.stepdefs.infrastructure;       <i class="conum" data-value="1"></i><b>(1)</b>
 ...
 public class TransactionalStepDef {                         <i class="conum" data-value="2"></i><b>(2)</b>
 
@@ -597,7 +588,7 @@ public class TransactionalStepDef {                         <i class="conum" dat
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>again, in a subpackage of <code>RunIntegBddSpecs</code></td>
+<td>again, in a subpackage of the <code>stepdefs</code> package.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
@@ -665,17 +656,17 @@ public class TransactionalStepDef {                         <i class="conum" dat
 <div class="listingblock">
 <div class="title">DomainAppDemoStepDef.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">package domainapp.webapp.bdd.fixtures;
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">package domainapp.webapp.bdd.stepdefs.fixtures;                      <i class="conum" data-value="1"></i><b>(1)</b>
 ...
 
 public class DomainAppDemoStepDef {
 
-    @Before(value="@DomainAppDemo", order= OrderPrecedence.MIDPOINT) <i class="conum" data-value="1"></i><b>(1)</b>
+    @Before(value="@DomainAppDemo", order= OrderPrecedence.MIDPOINT) <i class="conum" data-value="2"></i><b>(2)</b>
     public void runDomainAppDemo() {
-        fixtureScripts.runFixtureScript(new DomainAppDemo(), null);  <i class="conum" data-value="2"></i><b>(2)</b>
+        fixtureScripts.runFixtureScript(new DomainAppDemo(), null);  <i class="conum" data-value="3"></i><b>(3)</b>
     }
 
-    @Inject private FixtureScripts fixtureScripts;                   <i class="conum" data-value="3"></i><b>(3)</b>
+    @Inject private FixtureScripts fixtureScripts;                   <i class="conum" data-value="4"></i><b>(4)</b>
 }</code></pre>
 </div>
 </div>
@@ -683,14 +674,18 @@ public class DomainAppDemoStepDef {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>specifies the tag to match</td>
+<td>again, under the <code>stepdefs</code> package</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>invokes the similarly named <code>FixtureScript</code></td>
+<td>specifies the tag to match</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>invokes the similarly named <code>FixtureScript</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
 <td>The <code>fixtureScripts</code> service is injected automatically</td>
 </tr>
 </table>
@@ -704,15 +699,15 @@ This is where the heavy lifting gets done:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">package domainapp.webapp.bdd.stepdefs;
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">package domainapp.webapp.bdd.stepdefs.domain;                           <i class="conum" data-value="1"></i><b>(1)</b>
 ...
 public class SimpleObjectsStepDef {
 
-    @Inject protected SimpleObjects simpleObjects;                      <i class="conum" data-value="1"></i><b>(1)</b>
+    @Inject protected SimpleObjects simpleObjects;                      <i class="conum" data-value="2"></i><b>(2)</b>
 
-    @Given("^there (?:is|are).* (\\d+) simple object[s]?$")             <i class="conum" data-value="2"></i><b>(2)</b>
+    @Given("^there (?:is|are).* (\\d+) simple object[s]?$")             <i class="conum" data-value="3"></i><b>(3)</b>
     public void there_are_N_simple_objects(int n) {
-        final List&lt;SimpleObject&gt; list = wrap(simpleObjects).listAll();  <i class="conum" data-value="3"></i><b>(3)</b>
+        final List&lt;SimpleObject&gt; list = wrap(simpleObjects).listAll();  <i class="conum" data-value="4"></i><b>(4)</b>
         assertThat(list.size(), is(n));
     }
 
@@ -725,7 +720,7 @@ public class SimpleObjectsStepDef {
         return wrapperFactory.wrap(domainObject);
     }
 
-    @Inject protected WrapperFactory wrapperFactory;                    <i class="conum" data-value="4"></i><b>(4)</b>
+    @Inject protected WrapperFactory wrapperFactory;                    <i class="conum" data-value="5"></i><b>(5)</b>
 }</code></pre>
 </div>
 </div>
@@ -733,19 +728,23 @@ public class SimpleObjectsStepDef {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>injected domain service being interacted with</td>
+<td>again, under the <code>stepdefs</code> package</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>regex to match to feature file specification.</td>
+<td>injected domain service being interacted with</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>regex to match to feature file specification.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
 <td>code that interacts with the domain service.
 This is done using the <a href="../integtestsupport/about.html#wrapper-factory" class="page">WrapperFactory</a> to simulate the UI.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
 <td>supporting domain services</td>
 </tr>
 </table>
@@ -769,17 +768,60 @@ See <a href="http://www.thinkcode.se/blog/2017/04/01/sharing-state-between-steps
 </div>
 </div>
 <div class="sect1">
-<h2 id="maven-configuration"><a class="anchor" href="#maven-configuration"></a>Maven Configuration</h2>
+<h2 id="running-from-the-ide"><a class="anchor" href="#running-from-the-ide"></a>Running from the IDE</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Apache Isis' BDD spec support is most easily configured through a dependency on the <code>isis-mavendeps-testing</code> module:</p>
+<p>IntelliJ IDEA (ultimate edition) has built-in support for running individual features:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/intellij-idea-run-feature.png"><img src="_images/intellij-idea-run-feature.png" alt="intellij idea run feature" width="400px"></a>
+</div>
+</div>
+<div class="paragraph">
+<p>Running the feature will automatically create a Run Configuration.
+It may however be necessary to tweak this Run Configuration before the feature file runs successfully:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="_images/intellij-idea-feature-run-configuration.png"><img src="_images/intellij-idea-feature-run-configuration.png" alt="intellij idea feature run configuration"></a>
+</div>
+</div>
+<div class="paragraph">
+<p>There are (up to) three things to change:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>the "Glue" property can be simplified to just the <code>domainapp.webapp.bdd.stepdefs</code> package</p>
+</li>
+<li>
+<p>the "Working directory" property should be set to <code>${MODULE_WORKING_DIR}</code></p>
+<div class="paragraph">
+<p>Note: at the time of writing this doesn&#8217;t seem to be in the drop-down, so just type it in</p>
+</div>
+</li>
+<li>
+<p>in the "Before launch", make sure that the domain entities are enhanced.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="maven-configuration"><a class="anchor" href="#maven-configuration"></a>Maven Configuration</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="dependencies"><a class="anchor" href="#dependencies"></a>Dependencies</h3>
+<div class="paragraph">
+<p>Apache Isis' BDD spec support is most easily configured through a dependency on the <code>isis-mavendeps-integspecs</code> module:</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
     &lt;groupId&gt;org.apache.isis.mavendeps&lt;/groupId&gt;
     &lt;artifactId&gt;isis-mavendeps-integspecs&lt;/artifactId&gt;
-    &lt;scope&gt;test&lt;/scope&gt;                             <i class="conum" data-value="1"></i><b>(1)</b>
+    &lt;scope&gt;test&lt;/scope&gt;                                <i class="conum" data-value="1"></i><b>(1)</b>
     &lt;type&gt;pom&lt;/type&gt;
 &lt;/dependency&gt;</code></pre>
 </div>
@@ -793,39 +835,8 @@ See <a href="http://www.thinkcode.se/blog/2017/04/01/sharing-state-between-steps
 </table>
 </div>
 <div class="paragraph">
-<p>This will set up BDD specs support.
+<p>This will set up dependencies for BDD specs support libraries, along with a number of libraries.
 There is no need to specify the version if you inherit from from the <a href="../../docs/parent-pom/about.html" class="page">Parent POM</a>.</p>
-</div>
-<div class="admonitionblock caution">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-caution" title="Caution"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>The <a href="../../docs/parent-pom/about.html" class="page">Parent POM</a> configures the Maven surefire plugin in three separate executions for unit test, integ test and BDD specs.
-This relies on a naming convention:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>unit tests, which must have a suffix <code>Test</code>, but excluding &#8230;&#8203;</p>
-</li>
-<li>
-<p>integ tests, which must have the suffix <code>IntegTest</code></p>
-</li>
-<li>
-<p>BDD specs, which must have suffix <code>IntegBddSpecs</code></p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Not following this convention is likely to cause integ tests/specs to fail.</p>
-</div>
-</td>
-</tr>
-</table>
 </div>
 <div class="paragraph">
 <p>If you just want to set up BDD spec support, then use:</p>
@@ -839,42 +850,71 @@ This relies on a naming convention:</p>
 &lt;/dependency&gt;</code></pre>
 </div>
 </div>
+</div>
+<div class="sect2">
+<h3 id="cucumber-cli"><a class="anchor" href="#cucumber-cli"></a>Cucumber CLI</h3>
 <div class="paragraph">
-<p>You may also find it more convenient to place the <code>.feature</code> files in <code>src/test/java</code>, rather than <code>src/test/resources</code>.
-If you wish to do this, then your integtest module&#8217;s <code>pom.xml</code> must contain:</p>
+<p>At the time of writing, the Maven Surefire does not support custom JUnit platform test engines.
+As a workaround, we use the Antrun plugin to execute the Cucumber CLI.</p>
 </div>
 <div class="listingblock">
+<div class="title">webapp/pom.xml</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;build&gt;
-    &lt;testResources&gt;
-        &lt;testResource&gt;
-            &lt;filtering&gt;false&lt;/filtering&gt;
-            &lt;directory&gt;src/test/resources&lt;/directory&gt;
-        &lt;/testResource&gt;
-        &lt;testResource&gt;
-            &lt;filtering&gt;false&lt;/filtering&gt;
-            &lt;directory&gt;src/test/java&lt;/directory&gt;
-            &lt;includes&gt;
-                &lt;include&gt;**&lt;/include&gt;
-            &lt;/includes&gt;
-            &lt;excludes&gt;
-                &lt;exclude&gt;**/*.java&lt;/exclude&gt;
-            &lt;/excludes&gt;
-        &lt;/testResource&gt;
-    &lt;/testResources&gt;
-&lt;/build&gt;</code></pre>
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;plugin&gt;
+  &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+  &lt;artifactId&gt;maven-antrun-plugin&lt;/artifactId&gt;
+  &lt;executions&gt;
+    &lt;execution&gt;
+      &lt;id&gt;cucumber-cli&lt;/id&gt;
+      &lt;phase&gt;integration-test&lt;/phase&gt;
+      &lt;goals&gt;
+        &lt;goal&gt;run&lt;/goal&gt;
+      &lt;/goals&gt;
+      &lt;configuration&gt;
+        &lt;target&gt;
+          &lt;echo message="Running Cucumber CLI" /&gt;
+          &lt;java classname="io.cucumber.core.cli.Main"
+                fork="true"
+                failonerror="true"
+                newenvironment="true"
+                maxmemory="1024m"
+                classpathref="maven.test.classpath"&gt;
+            &lt;arg value="--plugin" /&gt;
+            &lt;arg value="json:${project.build.directory}/cucumber-no-clobber.json" /&gt;
+            &lt;arg value="--glue" /&gt;
+            &lt;arg value="domainapp.webapp.bdd.stepdefs" /&gt;
+            &lt;arg value="${project.build.directory}/test-classes/domainapp/webapp/bdd/specs" /&gt;
+          &lt;/java&gt;
+        &lt;/target&gt;
+      &lt;/configuration&gt;
+    &lt;/execution&gt;
+  &lt;/executions&gt;
+&lt;/plugin&gt;</code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>This uses all of the step definitions found in the <code>stepdefs</code> package, and writes the results to the <code>cucumber-no-clobber.json</code> file.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+see <a href="https://github.com/cucumber/cucumber-jvm/blob/master/core/src/main/resources/io/cucumber/core/options/USAGE.txt">Cucumber-JVM</a> documentat for the full set of arguments.
+</td>
+</tr>
+</table>
 </div>
 </div>
-<div class="sect1">
-<h2 id="generated-report"><a class="anchor" href="#generated-report"></a>Generated Report</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="generated-report"><a class="anchor" href="#generated-report"></a>Generated Report</h3>
 <div class="paragraph">
 <p>BDD is all about creating a conversation with the domain expert, and that includes providing meaningful feedback as to whether the spec is passing or failing.</p>
 </div>
 <div class="paragraph">
-<p>The <a href="../../docs/starters/simpleapp.html" class="page">SimpleApp</a>'s <code>webapp</code> module uses a Maven plugin to generate a snazzy HTML website based on the contents of the <code>.json</code> file emitted by <code>RunBddIntegSpecs</code>.</p>
+<p>The <a href="../../docs/starters/simpleapp.html" class="page">SimpleApp</a>'s <code>webapp</code> module uses a Maven plugin to generate a snazzy HTML website based on the contents of the <code>.json</code> file emitted by the <a href="#cucumber-cli">Cucumber CLI</a>.</p>
 </div>
 <div class="paragraph">
 <p>The plugin&#8217;s configuration is:</p>
@@ -883,29 +923,32 @@ If you wish to do this, then your integtest module&#8217;s <code>pom.xml</code> 
 <div class="title">webapp/pom.xml</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;plugin&gt;
-    &lt;groupId&gt;net.masterthought&lt;/groupId&gt;
-    &lt;artifactId&gt;maven-cucumber-reporting&lt;/artifactId&gt;
-    &lt;version&gt;${maven-cucumber-reporting.version}&lt;/version&gt;
-    &lt;executions&gt;
-        &lt;execution&gt;
-            &lt;id&gt;execution&lt;/id&gt;
-            &lt;phase&gt;verify&lt;/phase&gt;
-            &lt;goals&gt;
-                &lt;goal&gt;generate&lt;/goal&gt;
-            &lt;/goals&gt;
-            &lt;configuration&gt;
-                &lt;projectName&gt;SimpleApp&lt;/projectName&gt;
-                &lt;outputDirectory&gt;${project.build.directory}&lt;/outputDirectory&gt;
-                &lt;inputDirectory&gt;${project.build.directory}&lt;/inputDirectory&gt;
-                &lt;jsonFiles&gt;
-                    &lt;param&gt;**/*.json&lt;/param&gt;
-                &lt;/jsonFiles&gt;
-                &lt;skip&gt;${skipBSs}&lt;/skip&gt;
-            &lt;/configuration&gt;
-        &lt;/execution&gt;
-    &lt;/executions&gt;
+  &lt;groupId&gt;net.masterthought&lt;/groupId&gt;
+  &lt;artifactId&gt;maven-cucumber-reporting&lt;/artifactId&gt;
+  &lt;version&gt;${maven-cucumber-reporting.version}&lt;/version&gt;
+  &lt;executions&gt;
+    &lt;execution&gt;
+      &lt;id&gt;default&lt;/id&gt;
+      &lt;phase&gt;post-integration-test&lt;/phase&gt;
+      &lt;goals&gt;
+        &lt;goal&gt;generate&lt;/goal&gt;
+      &lt;/goals&gt;
+      &lt;configuration&gt;
+        &lt;projectName&gt;SimpleApp&lt;/projectName&gt;
+        &lt;outputDirectory&gt;${project.build.directory}&lt;/outputDirectory&gt;
+        &lt;inputDirectory&gt;${project.build.directory}&lt;/inputDirectory&gt;
+        &lt;jsonFiles&gt;
+          &lt;param&gt;**/cucumber-no-clobber.json&lt;/param&gt;
+        &lt;/jsonFiles&gt;
+        &lt;skip&gt;${skipBDD}&lt;/skip&gt;
+      &lt;/configuration&gt;
+    &lt;/execution&gt;
+  &lt;/executions&gt;
 &lt;/plugin&gt;</code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>Note how this reads the same file that was generated by Cucumber CLI.</p>
 </div>
 <div class="paragraph">
 <p>The report generated by <a href="../../docs/starters/simpleapp.html" class="page">SimpleApp</a> looks like this:</p>
@@ -917,6 +960,7 @@ If you wish to do this, then your integtest module&#8217;s <code>pom.xml</code> 
 </div>
 <div class="paragraph">
 <p>The idea is that this could then be published to a webserver to create an information radiator.</p>
+</div>
 </div>
 </div>
 </div>
@@ -937,7 +981,7 @@ If you wish to do this, then your integtest module&#8217;s <code>pom.xml</code> 
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200224-1129-4cd75392</p>
+            <p>Revision: 2.0.0-M2.20200226-0400-676cfbe6</p>
         </div>
     </div>
 </footer>

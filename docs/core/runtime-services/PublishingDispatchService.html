@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Persistence Layer internal SPI :: Apache Isis</title>
+    <title>PublishingServiceInternal :: Apache Isis</title>
     <meta name="generator" content="Antora 2.2.0">
     <link rel="stylesheet" href="../../_/css/site.css">
     <link rel="stylesheet" href="../../_/css/site-custom.css">
@@ -128,7 +128,7 @@
     </div>
   </nav>
 </header>
-<div class="body  -toc -title">
+<div class="body ">
 <div class="nav-container" data-component="core" data-version="master">
   <aside class="nav">
     <div class="panels">
@@ -173,49 +173,31 @@
     <a class="nav-link" href="about.html">Runtime Services</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="presentation-layer.html">Presentation Layer</a>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="presentation-layer/ContentNegotiationService.html">ContentNegotiationService</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="presentation-layer/RepresentationService.html">RepresentationService</a>
-  </li>
-</ul>
+    <a class="nav-link" href="ContentNegotiationService.html">ContentNegotiationService</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="application-layer.html">Application Layer</a>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="application-layer/AuthenticationSessionProvider.html">AuthenticationSessionProvider</a>
+    <a class="nav-link" href="RepresentationService.html">RepresentationService</a>
   </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="application-layer/CommandDtoServiceInternal.html">CommandDtoServiceInternal</a>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="AuthenticationSessionProvider.html">AuthenticationSessionProvider</a>
   </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="application-layer/InteractionDtoServiceInternal.html">InteractionDtoServiceInternal</a>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="CommandDtoServiceInternal.html">CommandDtoServiceInternal</a>
   </li>
-</ul>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="InteractionDtoServiceInternal.html">InteractionDtoServiceInternal</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="AuditingServiceInternal.html">AuditingServiceInternal</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="ChangedObjectsService.html">ChangedObjectsServiceInternal</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="PersistenceSessionServiceInternal.html">PersistenceSessionServiceInternal</a>
   </li>
   <li class="nav-item is-current-page" data-depth="2">
-    <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="persistence-layer.html">Persistence Layer</a>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="persistence-layer/AuditingServiceInternal.html">AuditingServiceInternal</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="persistence-layer/ChangedObjectsServiceInternal.html">ChangedObjectsServiceInternal</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="persistence-layer/PersistenceSessionServiceInternal.html">PersistenceSessionServiceInternal</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="persistence-layer/PublishingServiceInternal.html">PublishingServiceInternal</a>
-  </li>
-</ul>
+    <a class="nav-link" href="PublishingDispatchService.html">PublishingDispatchService</a>
   </li>
 </ul>
   </li>
@@ -401,98 +383,88 @@
   <ul>
     <li><a href="../about.html">Core Framework</a></li>
     <li><a href="about.html">Runtime Services</a></li>
-    <li><a href="persistence-layer.html">Persistence Layer</a></li>
+    <li><a href="PublishingDispatchService.html">PublishingDispatchService</a></li>
   </ul>
 </nav>
-  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/HEAD/core/runtimeservices/src/main/adoc/modules/runtime-services/pages/persistence-layer.adoc">Edit</a></div>
+  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/HEAD/core/runtimeservices/src/main/adoc/modules/runtime-services/pages/PublishingDispatchService.adoc">Edit</a></div>
 </div>
 <article class="doc">
     <a name="section-top"></a>
-<h1 class="page">Persistence Layer internal SPI</h1>
+<h1 class="page"><code>PublishingServiceInternal</code></h1>
+<div id="preamble">
+<div class="sectionbody">
 <div class="paragraph">
-<p>These domain services are internal to the framework, controlling various aspects of the persistence layer.</p>
+<p>The (internal) <code>PublishingDispatchService</code> domain service acts as an internal facade to any configured <a href="../../refguide/applib-svc/PublisherService.html" class="page"><code>PublisherService</code></a> domain service(s).</p>
 </div>
 <div class="paragraph">
-<p>The table below summarizes the persistence layer internal SPIs defined by Apache Isis.
-It also lists their corresponding implementation, either a default implementation provided by Apache Isis itself, or provided by one of the (non-ASF) <a href="https://platform.incode.org" target="_blank" rel="noopener">Incode Platform</a> modules.</p>
+<p>For published action invocations/ property edits, it provides an API for those member executions to call.</p>
 </div>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. Internal Services</caption>
-<colgroup>
-<col style="width: 30%;">
-<col style="width: 30%;">
-<col style="width: 20%;">
-<col style="width: 20%;">
-</colgroup>
-<thead>
+<div class="paragraph">
+<p>For published objects, it provides an API for the framework to call at the end of the interaction; it obtains details of the changed objects (from the <a href="ChangedObjectsService.html" class="page"><code>ChangedObjectsServiceInternal</code></a>) and filters them to just those objects that are to be published; these are then passed through to any configured <code>PublisherService</code> implementations.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="spi-and-implementation"><a class="anchor" href="#spi-and-implementation"></a>SPI and Implementation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The SPI of the service is:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class PublishingServiceInternal {
+    void publishAction(                             <i class="conum" data-value="1"></i><b>(1)</b>
+            Interaction.Execution execution);
+    void publishProperty(                           <i class="conum" data-value="2"></i><b>(2)</b>
+            Interaction.Execution execution);
+    void publishObjects();                          <i class="conum" data-value="3"></i><b>(3)</b>
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
 <tr>
-<th class="tableblock halign-left valign-top">SPI</th>
-<th class="tableblock halign-left valign-top">Maven Module<br>
-Impl&#8217;n (g: a:)</th>
-<th class="tableblock halign-left valign-top">Implementation</th>
-<th class="tableblock halign-left valign-top">Notes</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="persistence-layer/AuditingServiceInternal.html" class="page"><code>o.a.i.c.r.s.auditing.</code><br>
-<code>AuditingServiceInternal</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Co-ordinates between
-<a href="persistence-layer/ChangedObjectsServiceInternal.html" class="page"><code>ChangedObjectsServiceInternal</code></a> and
-<a href="#core:runtime-services:spi/AuditerService.adoc" class="page unresolved"><code>AuditerService</code></a>.</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">concrete class.</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="persistence-layer/ChangedObjectsServiceInternal.html" class="page"><code>o.a.i.c.r.s.changes.</code><br>
-<code>ChangedObjectsServiceInternal</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Request-scoped service holding objects enlisted into current transaction.</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">concrete class.</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>to publish an action invocation, as represented by the specified member <code>Execution</code> parameter and with the <a href="../../refguide/applib-ant/Action.html#publishing" class="page"><code>@Action#publishing</code></a> annotation attribute or equivalent, to any configured <a href="../../refguide/applib-svc/PublisherService.html" class="page"><code>PublisherService</code></a>.
+The <code>Execution</code> object will be an instance of <code>ActionInvocation</code> (see <a href="../../refguide/applib-svc/InteractionContext.html" class="page"><code>InteractionContext</code></a> for details).</td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="persistence-layer/PersistenceSessionServiceInternal.html" class="page"><code>o.a.i.c.m.s.</code><br>
-<code>persistsession.</code><br>
-<code>PersistenceSessionServiceInternal</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Acts as a facade to the underlying JDO persistence session / database connection.  As such it provides methods for
-querying and for persisting objects.</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>PersistenceSessionService-</code><br>
-<code>InternalDefault</code><br>
-<code>isis-core-runtime</code></p></td>
-<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>to publish a property edit, as as represented by the specified member <code>Execution</code> parameter and with the <a href="../../refguide/applib-ant/Property.html#publishing" class="page"><code>@Property#publishing</code></a> annotation attribute or equivalent, to any configured <a href="../../refguide/applib-svc/PublisherService.html" class="page"><code>PublisherService</code></a>.
+The <code>Execution</code> object will be an instance of <code>PropertyEdit</code> (see <a href="../../refguide/applib-svc/InteractionContext.html" class="page"><code>InteractionContext</code></a> for details).</td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="persistence-layer/PublishingServiceInternal.html" class="page"><code>o.a.i.c.m.s.publishing.</code><br>
-<code>PublishingServiceInternal</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Co-ordinates between
-<a href="persistence-layer/ChangedObjectsServiceInternal.html" class="page"><code>ChangedObjectsServiceInternal</code></a> and
-<a href="../../refguide/applib-svc/MetricsService.html" class="page"><code>MetricsService</code></a> and the SPI services, and the
-<a href="../../refguide/applib-svc/PublisherService.html" class="page"><code>PublisherService</code></a>.</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>PublishingService-</code><br>
-<code>InternalDefault</code><br>
-<code>isis-core-runtime</code></p></td>
-<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>to publish all changed objects that are to be published (with the <a href="../../refguide/applib-ant/DomainObject.html#publishing" class="page"><code>@DomainObject#publishing</code></a> annotation attribute or equivalent).</td>
 </tr>
-</tbody>
 </table>
-<div class="paragraph">
-<p>Key:</p>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>o.a.i</code> is an abbreviation for <code>org.apache.isis</code></p>
-</li>
-<li>
-<p><code>o.ia.m</code> is an abbreviation for <code>org.isisaddons.module</code></p>
-</li>
-<li>
-<p><code>o.a.i.c.m.s</code> is an abbreviation for <code>org.apache.isis.core.metamodel.services</code></p>
-</li>
-<li>
-<p><code>o.a.i.c.r.s</code> is an abbreviation for <code>org.apache.isis.core.runtime.services</code></p>
-</li>
-</ul>
+<div class="paragraph">
+<p>The service implementation is <code>o.a.i.c.m.s.publishing.PublishingServiceInternal</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="registering-the-service"><a class="anchor" href="#registering-the-service"></a>Registering the Service</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Apache Isis' default implementation of <code>PublishingServiceInternal</code> class is automatically registered (it is annotated with <code>@DomainService</code>) so no further configuration is required.</p>
+</div>
+<div class="paragraph">
+<p>To use an alternative implementation, use Spring&#8217;s <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/core/annotation/Order.html"><code>@Order</code></a> annotation (as explained in the <a href="../../refguide/applib-svc/about.html#overriding-the-services.adoc" class="page">introduction</a> to this guide).</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="related-classes"><a class="anchor" href="#related-classes"></a>Related Classes</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The service delegates between the (internal) <a href="ChangedObjectsService.html" class="page"><code>ChangedObjectsServiceInternal</code></a> domain service to the configured <a href="../../refguide/applib-svc/PublisherService.html" class="page"><code>PublisherService</code></a>.</p>
+</div>
+<div class="paragraph">
+<p>The (internal) <a href="AuditingServiceInternal.html" class="page"><code>AuditingServiceInternal</code></a> performs a similar function for the <a href="../../refguide/applib-svc/PublisherService.html" class="page"><code>PublisherService</code></a>, also collating details of the changed objects from <code>ChangedObjectsServiceInternal</code>.</p>
+</div>
+</div>
 </div>
 </article>
 <aside class="article-aside toc" role="navigation">
@@ -511,7 +483,7 @@ querying and for persisting objects.</p></td>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200224-1129-4cd75392</p>
+            <p>Revision: 2.0.0-M2.20200226-0400-676cfbe6</p>
         </div>
     </div>
 </footer>

@@ -281,13 +281,16 @@
     <a class="nav-link" href="CommandDtoProcessorService.html">CommandDtoProcessorService</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="CommandExecutorService.html">CommandDtoProcessorService</a>
+    <a class="nav-link" href="CommandExecutorService.html">CommandExecutorService</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="CommandService.html">CommandService</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="ConfigurationViewService.html">ConfigurationViewService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="ConfigurationMenu.html">ConfigurationMenu</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="ContentMappingService.html">ContentMappingService</a>
@@ -341,6 +344,9 @@
     <a class="nav-link" href="LayoutService.html">LayoutService</a>
   </li>
   <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="LayoutServiceMenu.html">LayoutServiceMenu</a>
+  </li>
+  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="LocaleProvider.html">LocaleProvider</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -354,6 +360,9 @@
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="MetaModelService.html">MetamodelService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="MetaModelServiceMenu.html">MetamodelServiceMenu</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="MetricsService.html">MetricsService</a>
@@ -710,9 +719,7 @@
 <h2 id="types-of-domain-service"><a class="anchor" href="#types-of-domain-service"></a>Types of Domain Service</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The domain services also group into various broad categories.
-Many support functionality of the various layers of the system (presentation layer, application layer, core domain, persistence layer); others exist to allow the domain objects to integrate with other bounded contexts, or provide various metadata (eg for development-time tooling).
-The diagram below shows these categories:</p>
+<p>The domain services can be categories as API or SPI, and relating to a particular architectural layers:</p>
 </div>
 <div class="imageblock">
 <div class="content">
@@ -720,7 +727,7 @@ The diagram below shows these categories:</p>
 </div>
 </div>
 <div class="paragraph">
-<p>What distinguishes API from SPI is primarily whether it is called by the domain application itself, or is called by the framework.</p>
+<p>What distinguishes API from SPI is primarily whether it is called by the domain application itself, or is called by the framework:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -1922,7 +1929,7 @@ Importantly, this also minimizes the coupling between your code and Apache Isis,
 <p>The framework also defines a number of "internal" services.
 These are not part of the framework&#8217;s formal API, in that they use classes that are outside of the applib.
 These internal framework services should be thought of as part of the internal design of the framework, and are liable to change from release to release.
-The internal framework services are documented in the <a href="#runtime-services:ROOT:about.adoc" class="page unresolved">Framework Internal Services</a> guide.</p>
+The internal framework services are documented in the <a href="../../core/runtime-services/about.html" class="page">Framework Internal Services</a> guide.</p>
 </div>
 </div>
 </div>
@@ -2117,19 +2124,19 @@ Whether this occurs depends on whether the action/property has been annotated (u
 </div>
 </li>
 <li>
-<p>As each execution progresses, and objects that are modified are "enlisted" into the (internal) <a href="#runtime-services:ROOT:persistence-layer/ChangedObjectsServiceInternal.adoc" class="page unresolved"><code>ChangedObjectsServiceInternal</code></a> domain service.
+<p>As each execution progresses, and objects that are modified are "enlisted" into the (internal) <a href="#core:runtime-services:ChangedObjectsServiceInternal.adoc" class="page unresolved"><code>ChangedObjectsServiceInternal</code></a> domain service.
 Metrics as to which objects are merely loaded into memory are also captured using the <a href="MetricsService.html" class="page"><code>MetricsService</code></a> (not shown on the diagram).</p>
 </li>
 <li>
 <p>At the end of each execution, details of that execution are published through the (internal)
-<a href="#runtime-services:ROOT:spi/PublisherServiceInternal.adoc" class="page unresolved"><code>PublisherServiceInternal</code></a> domain service.
+<a href="#core:runtime-services:PublisherDispatchService.adoc" class="page unresolved"><code>PublisherDispatchService</code></a> domain service.
 This is only done for actions/properties annotated appropriate (with <a href="../applib-ant/Action.html#publishing" class="page"><code>@Action#publishing()</code></a> or <a href="../applib-ant/Property.html#publishing" class="page"><code>@Property#publishing()</code></a>).</p>
 <div class="paragraph">
 <p>The internal service delegates in turn to any registered <a href="PublisherService.html" class="page"><code>PublisherService</code></a>s (there may be more than one).</p>
 </div>
 </li>
 <li>
-<p>At the end of each transaction, details of all changed objects are published, again through the (internal) <a href="#runtime-services:ROOT:spi/PublisherServiceInternal.adoc" class="page unresolved"><code>PublisherServiceInternal</code></a> to any registered <code>PublisherService</code> implementations.
+<p>At the end of each transaction, details of all changed objects are published, again through the (internal) <a href="#core:runtime-services:PublisherDispatchService.adoc" class="page unresolved"><code>PublisherServiceInternal</code></a> to any registered <code>PublisherService</code> implementations.
 Only domain objects specified to be published with <a href="../applib-ant/DomainObject.html#publishing" class="page"><code>@DomainObject#publishing()</code></a> are published.<br></p>
 <div class="admonitionblock note">
 <table>
@@ -2147,7 +2154,7 @@ Only domain objects specified to be published with <a href="../applib-ant/Domain
 </div>
 </li>
 <li>
-<p>Also at the end of each transaction, details of all changed properties are passed to any registered <a href="AuditerService.html" class="page"><code>AuditerService</code></a>(s) by way of the (internal) <a href="#runtime-services:ROOT:persistence-layer/AuditingServiceInternal.adoc" class="page unresolved"><code>AuditingServiceInternal</code></a> domain service.</p>
+<p>Also at the end of each transaction, details of all changed properties are passed to any registered <a href="AuditerService.html" class="page"><code>AuditerService</code></a>(s) by way of the (internal) <a href="../../core/runtime-services/AuditingServiceInternal.html" class="page"><code>AuditingServiceInternal</code></a> domain service.</p>
 </li>
 </ul>
 </div>
@@ -2188,7 +2195,7 @@ The framework provides a default <code>PublisherServiceLogging</code> implementa
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200224-1129-4cd75392</p>
+            <p>Revision: 2.0.0-M2.20200226-0400-676cfbe6</p>
         </div>
     </div>
 </footer>

@@ -281,13 +281,16 @@
     <a class="nav-link" href="CommandDtoProcessorService.html">CommandDtoProcessorService</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="CommandExecutorService.html">CommandDtoProcessorService</a>
+    <a class="nav-link" href="CommandExecutorService.html">CommandExecutorService</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="CommandService.html">CommandService</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="ConfigurationViewService.html">ConfigurationViewService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="ConfigurationMenu.html">ConfigurationMenu</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="ContentMappingService.html">ContentMappingService</a>
@@ -341,6 +344,9 @@
     <a class="nav-link" href="LayoutService.html">LayoutService</a>
   </li>
   <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="LayoutServiceMenu.html">LayoutServiceMenu</a>
+  </li>
+  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="LocaleProvider.html">LocaleProvider</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -354,6 +360,9 @@
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="MetaModelService.html">MetamodelService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="MetaModelServiceMenu.html">MetamodelServiceMenu</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="MetricsService.html">MetricsService</a>
@@ -713,21 +722,31 @@ With an appropriate implementation
 the <code>Command</code> may then be persisted.</p>
 </div>
 <div class="paragraph">
-<p>There are a number of use cases:</p>
+<p>There are two main use cases:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>to enable profiling of the running application (which actions are invoked then most often, what is their response time)</p>
-</li>
-<li>
-<p>if a <a href="PublisherService.html" class="page"><code>PublisherService</code></a> is configured, they provide better traceability as the <code>Command</code> is also correlated with any published events, again through the unique <code>transactionId</code> GUID</p>
-</li>
-<li>
-<p>if a <a href="AuditerService.html" class="page"><code>AuditerService</code></a> is configured, they provide better audit information, since the <code>Command</code> (the 'cause' of an action) can be correlated to the audit records (the "effect" of the action) through the <code>transactionId</code> GUID</p>
+<p>to allow invocation of <code>Command</code>s to be deferred, for example to be invoked in the background</p>
 </li>
 <li>
 <p>to allow <code>Command</code>s to be replicated and replayed to another system (usually for testing or dual-running/migration purposes).</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>This is normally done using the <code>CommandWithDto</code> subtype, that can return a representation of the <code>Command</code> as an XML instance of the <a href="../schema/cmd.html" class="page"><code>cmd.xsd</code></a> schema, which also captures a unique transactionId (GUID) for the command.</p>
+</div>
+<div class="paragraph">
+<p>Commands are often combined with implementations of the <a href="PublisherService.html" class="page"><code>PublisherService</code></a> and sometimes also the <a href="AuditerService.html" class="page"><code>AuditerService</code></a>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>the <a href="PublisherService.html" class="page"><code>PublisherService</code></a> publishes interactions as they have  is configured, they provide better traceability as the <code>Command</code> is also correlated with any published events, again through the unique <code>transactionId</code> GUID</p>
+</li>
+<li>
+<p>if a <a href="AuditerService.html" class="page"><code>AuditerService</code></a> is configured, they provide better audit information, since the <code>Command</code> (the 'cause' of an action) can be correlated to the audit records (the "effect" of the action) through the <code>transactionId</code> GUID</p>
 </li>
 </ul>
 </div>
@@ -737,7 +756,7 @@ the <code>Command</code> may then be persisted.</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="api-implementation"><a class="anchor" href="#api-implementation"></a>API &amp; Implementation</h2>
+<h2 id="api"><a class="anchor" href="#api"></a>API</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>The <code>CommandContext</code> request-scoped service defines the following very simple API:</p>
@@ -750,13 +769,6 @@ public class CommandContext {
     public Command getCommand() { /* ... */ }
 }</code></pre>
 </div>
-</div>
-<div class="paragraph">
-<p>This class (<code>o.a.i.applib.services.command.CommandContext</code>) is also the default implementation.</p>
-</div>
-<div class="paragraph">
-<p>Under normal circumstances there shouldn&#8217;t be any need to replace this implementation with another.
-But if you do need to for some reason, then subclass and use Spring&#8217;s <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/core/annotation/Order.html"><code>@Order</code></a> annotation (as explained in the <a href="about.html#overriding-the-services.adoc" class="page">introduction</a> to this guide).</p>
 </div>
 <div class="paragraph">
 <p>The <code>Command</code> type referenced above is in fact an interface, defined as:</p>
@@ -868,6 +880,14 @@ But if you do need to for some reason, then subclass and use Spring&#8217;s <a h
 <a href="InteractionContext.html" class="page"><code>InteractionContext</code></a> and <code>Interaction#next()</code>.</td>
 </tr>
 </table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="implementation"><a class="anchor" href="#implementation"></a>Implementation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This class (<code>o.a.i.applib.services.command.CommandContext</code>) is also the default implementation.</p>
 </div>
 </div>
 </div>
@@ -993,7 +1013,7 @@ can also be persisted by way of the <a href="CommandService.html" class="page"><
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200224-1129-4cd75392</p>
+            <p>Revision: 2.0.0-M2.20200226-0400-676cfbe6</p>
         </div>
     </div>
 </footer>
