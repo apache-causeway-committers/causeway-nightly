@@ -710,13 +710,13 @@
 <div class="sectionbody">
 <div class="paragraph">
 <p>The <code>CommandContext</code> service is a <a href="../applib-ant/RequestScoped.html" class="page">request-scoped</a> service that reifies the invocation of an action on a domain object into an object itself.
-This reified information is encapsulated within the <code>Command</code> object.</p>
+This reified information is encapsulated within the <a href="#command"><code>Command</code></a> object.</p>
 </div>
 <div class="paragraph">
-<p>By default, the <code>Command</code> is held in-memory only; once the action invocation has completed, the <code>Command</code> object is gone.
-The optional supporting <a href="CommandService.html" class="page"><code>CommandService</code></a> enables the implementation of <code>Command</code> to be pluggable.
+<p>By default, the command is held in-memory only; once the action invocation has completed, the command object is gone.
+The optional supporting <a href="CommandService.html" class="page"><code>CommandService</code></a> enables the implementation of <a href="#command"><code>Command</code></a> to be pluggable.
 With an appropriate implementation
-the <code>Command</code> may then be persisted.</p>
+the <a href="#command"><code>Command</code></a> instance may then be persisted.</p>
 </div>
 <div class="paragraph">
 <p>There are two main use cases:</p>
@@ -734,22 +734,6 @@ the <code>Command</code> may then be persisted.</p>
 <div class="paragraph">
 <p>This is normally done using the <code>CommandWithDto</code> subtype, that can return a representation of the <code>Command</code> as an XML instance of the <a href="../schema/cmd.html" class="page"><code>cmd.xsd</code></a> schema, which also captures a unique transactionId (GUID) for the command.</p>
 </div>
-<div class="paragraph">
-<p>Commands are often combined with implementations of the <a href="PublisherService.html" class="page"><code>PublisherService</code></a> and sometimes also the <a href="AuditerService.html" class="page"><code>AuditerService</code></a>:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>the <a href="PublisherService.html" class="page"><code>PublisherService</code></a> publishes interactions as they have  is configured, they provide better traceability as the <code>Command</code> is also correlated with any published events, again through the unique <code>transactionId</code> GUID</p>
-</li>
-<li>
-<p>if a <a href="AuditerService.html" class="page"><code>AuditerService</code></a> is configured, they provide better audit information, since the <code>Command</code> (the 'cause' of an action) can be correlated to the audit records (the "effect" of the action) through the <code>transactionId</code> GUID</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>In general, though, However, while persistent <code>Command</code>s <em>can</em> be used for these use cases, it is recommended instead to use the <a href="InteractionContext.html" class="page"><code>InteractionContext</code></a> service and persistent implementations of the <code>Interaction</code> object, eg as provided by the (non-ASF) <a href="https://platform.incode.org" target="_blank" rel="noopener">Incode Platform</a>'s publishmq module.</p>
-</div>
 </div>
 </div>
 <div class="sect1">
@@ -760,44 +744,47 @@ the <code>Command</code> may then be persisted.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@RequestScoped
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Service
+@Named("isisApplib.CommandContext")
+@Order(OrderPrecedence.MIDPOINT)
+@Primary
+@Qualifier("Default")
+@IsisSessionScope
+@Log4j2
 public class CommandContext {
-    @Programmatic
-    public Command getCommand() { /* ... */ }
+
+    @Getter
+    private Command command;
+
 }</code></pre>
 </div>
 </div>
+<div class="sect2">
+<h3 id="command"><a class="anchor" href="#command"></a><code>Command</code></h3>
 <div class="paragraph">
-<p>The <code>Command</code> type referenced above is in fact an interface, defined as:</p>
+<p>The <code>Command</code> type in turn is defined as:</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public interface Command extends HasUniqueId {
 
-    public abstract String getUser();               <i class="conum" data-value="1"></i><b>(1)</b>
-    public abstract Timestamp getTimestamp();       <i class="conum" data-value="2"></i><b>(2)</b>
-
-    public abstract Bookmark getTarget();           <i class="conum" data-value="3"></i><b>(3)</b>
-    public abstract String getMemberIdentifier();   <i class="conum" data-value="4"></i><b>(4)</b>
-    public abstract String getTargetClass();        <i class="conum" data-value="5"></i><b>(5)</b>
-    public abstract String getTargetAction();       <i class="conum" data-value="6"></i><b>(6)</b>
-    public String getArguments();                   <i class="conum" data-value="7"></i><b>(7)</b>
-    public String getMemento();                     <i class="conum" data-value="8"></i><b>(8)</b>
-
-    public ExecuteIn getExecuteIn();                <i class="conum" data-value="9"></i><b>(9)</b>
-    public Executor getExecutor();                  <i class="conum" data-value="10"></i><b>(10)</b>
-    public Persistence getPersistence();            <i class="conum" data-value="11"></i><b>(11)</b>
-    public boolean isPersistHint();                 <i class="conum" data-value="12"></i><b>(12)</b>
-
-    public abstract Timestamp getStartedAt();       <i class="conum" data-value="13"></i><b>(13)</b>
-    public abstract Timestamp getCompletedAt();     <i class="conum" data-value="14"></i><b>(14)</b>
-    public Command getParent();                     <i class="conum" data-value="15"></i><b>(15)</b>
-
-    public Bookmark getResult();                    <i class="conum" data-value="16"></i><b>(16)</b>
-    public String getException();                   <i class="conum" data-value="17"></i><b>(17)</b>
-
-    @Deprecated
-    int next(final String sequenceAbbr);            <i class="conum" data-value="18"></i><b>(18)</b>
+    String getUser();                           <i class="conum" data-value="1"></i><b>(1)</b>
+    Timestamp getTimestamp();                   <i class="conum" data-value="2"></i><b>(2)</b>
+    Bookmark getTarget();                       <i class="conum" data-value="3"></i><b>(3)</b>
+    String getMemberIdentifier();               <i class="conum" data-value="4"></i><b>(4)</b>
+    String getTargetClass();                    <i class="conum" data-value="5"></i><b>(5)</b>
+    String getTargetAction();                   <i class="conum" data-value="6"></i><b>(6)</b>
+    String getArguments();                      <i class="conum" data-value="7"></i><b>(7)</b>
+    String getMemento();                        <i class="conum" data-value="8"></i><b>(8)</b>
+    CommandExecuteIn getExecuteIn();            <i class="conum" data-value="9"></i><b>(9)</b>
+    Executor getExecutor();                     <i class="conum" data-value="10"></i><b>(10)</b>
+    Timestamp getStartedAt();                   <i class="conum" data-value="11"></i><b>(11)</b>
+    Timestamp getCompletedAt();                 <i class="conum" data-value="12"></i><b>(12)</b>
+    Command getParent();                        <i class="conum" data-value="13"></i><b>(13)</b>
+    String getException();                      <i class="conum" data-value="14"></i><b>(14)</b>
+    Bookmark getResult();                       <i class="conum" data-value="15"></i><b>(15)</b>
+    CommandPersistence getPersistence();        <i class="conum" data-value="16"></i><b>(16)</b>
+    boolean isPersistHint();                    <i class="conum" data-value="17"></i><b>(17)</b>
 }</code></pre>
 </div>
 </div>
@@ -805,78 +792,112 @@ public class CommandContext {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><code>getUser()</code> - is the user that initiated the action.</td>
+<td>user that initiated the action.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><code>getTimestamp()</code> - the date/time at which this action was created.</td>
+<td>date/time at which this action was created.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td><code>getTarget()</code> - bookmark of the target object (entity or service) on which this action was performed</td>
+<td>bookmark of the target object (entity or service) on which this action was performed</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td><code>getMemberIdentifier()</code> - holds a string representation of the invoked action</td>
+<td>holds a string representation of the invoked action</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
-<td><code>getTargetClass()</code> - a human-friendly description of the class of the target object</td>
+<td>human-friendly description of the class of the target object</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="6"></i><b>6</b></td>
-<td><code>getTargetAction()</code> - a human-friendly name of the action invoked on the target object</td>
+<td>human-friendly name of the action invoked on the target object</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="7"></i><b>7</b></td>
-<td><code>getArguments()</code> - a human-friendly description of the arguments with which the action was invoked</td>
+<td>human-friendly description of the arguments with which the action was invoked</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="8"></i><b>8</b></td>
-<td><code>getMemento()</code> - a formal (XML or similar) specification of the action to invoke/being invoked</td>
+<td>formal (XML or similar) specification of the action to invoke/being invoked</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="9"></i><b>9</b></td>
-<td><code>getExecuteIn()</code> - whether this command is executed in the foreground or background</td>
+<td>whether this command is executed in the foreground or background
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public enum CommandExecuteIn {
+
+    FOREGROUND,
+
+    BACKGROUND,
+
+    REPLAYABLE,
+
+    EXCLUDED
+
+
+}</code></pre>
+</div>
+</div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="10"></i><b>10</b></td>
-<td><code>getExecutor()</code> - the (current) executor of this command, either user, or background service, or other (eg redirect after post).</td>
+<td>the (current) executor of this command:
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">enum Executor {
+    USER,
+    BACKGROUND,
+    OTHER
+}</code></pre>
+</div>
+</div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="11"></i><b>11</b></td>
-<td><code>getPersistence()</code>- the policy controlling whether this command should ultimately be persisted (either "persisted", "if hinted", or "not persisted")</td>
+<td>date/time at which this action started (same as <code>timestamp</code> property for foreground commands)</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="12"></i><b>12</b></td>
-<td><code>isPersistHint()</code> - whether that the command should be persisted, if persistence policy is "if hinted".</td>
+<td>date/time at which this action completed.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="13"></i><b>13</b></td>
-<td><code>getStartedAt()</code> - the date/time at which this action started (same as <code>timestamp</code> property for foreground commands)</td>
+<td>for actions created through the <code>BackgroundService</code>, captures the parent action</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="14"></i><b>14</b></td>
-<td><code>getCompletedAt()</code> - the date/time at which this action completed.</td>
+<td>exception stack trace, if action threw exception</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="15"></i><b>15</b></td>
-<td><code>getParent()</code> - for actions created through the <code>BackgroundService</code>, captures the parent action</td>
+<td>bookmark to object returned by action, if any</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="16"></i><b>16</b></td>
-<td><code>getResult()</code> - bookmark to object returned by action, if any</td>
+<td>the policy controlling whether this command should ultimately be persisted:
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public enum CommandPersistence {
+
+    PERSISTED,
+
+    IF_HINTED,
+
+    NOT_PERSISTED
+
+}</code></pre>
+</div>
+</div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="17"></i><b>17</b></td>
-<td><code>getException()</code> - exception stack trace if action threw exception</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="18"></i><b>18</b></td>
-<td>No longer used by the framework; see instead
-<a href="InteractionContext.html" class="page"><code>InteractionContext</code></a> and <code>Interaction#next()</code>.</td>
+<td>whether that the command should be persisted, if persistence policy is "if hinted".</td>
 </tr>
 </table>
+</div>
 </div>
 </div>
 </div>
@@ -905,22 +926,8 @@ public class CommandContext {
 }</code></pre>
 </div>
 </div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
 <div class="paragraph">
-<p>As an alternative to annotating every action with <code>@Action#command()</code>, alternatively this can be configured as the default using <code>isis.services.command.actions</code> configuration property.</p>
-</div>
-<div class="paragraph">
-<p>See <a href="../applib-ant/Action.html#command" class="page"><code>@Action#command()</code></a> and <a href="#refguide:config:configuring-core.adoc" class="page unresolved">runtime configuration</a> for further details.</p>
-</div>
-</td>
-</tr>
-</table>
+<p>As an alternative to annotating every action with <a href="../applib-ant/Action.html#command" class="page"><code>@Action#command()</code></a>, use the <a href="../config/sections/isis.applib.html#isis.applib.annotation.action.command" class="page"><code>isis.applib.annotation.action.command</code></a> to define a global default.</p>
 </div>
 </div>
 </div>
@@ -955,41 +962,31 @@ To expand the above example:</p>
 }</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>If run in the background, it might then notify the user (eg by email) if all work is done.</p>
-</div>
-<div class="paragraph">
-<p>This leads us onto a related point, distinguishing the current effective user vs the originating "real" user.
-When running in the foreground, the current user can be obtained from the <a href="UserService.html" class="page"><code>UserService</code></a>, using:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">String user = userService.getUser().getName();</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>If running in the background, however, then the current user will be the credentials of the background process, for example as run by a Quartz scheduler job.</p>
-</div>
-<div class="paragraph">
-<p>The domain object can still obtain the original ("effective") user that caused the job to be created, using:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">String user = commandContext.getCommand().getUser();</code></pre>
-</div>
-</div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="related-services"><a class="anchor" href="#related-services"></a>Related Services</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The <a href="CommandContext.html" class="page"><code>CommandContext</code></a> service is very similar in nature to the <a href="InteractionContext.html" class="page"><code>InteractionContext</code></a>, in that the <code>Command</code> object accessed through it is very similar to the <code>Interaction</code> object obtained from the <code>InteractionContext</code>.
-The principle distinction is that while <code>Command</code> represents the <em>intention</em> to invoke an action or edit a property, the <code>Interaction</code> (and contained <code>Execution</code>s) represents the actual execution.</p>
+<p>The <a href="CommandContext.html" class="page"><code>CommandContext</code></a> service is very similar in nature to the <a href="InteractionContext.html" class="page"><code>InteractionContext</code></a>, in that the <a href="#command"><code>Command</code></a> object accessed through it is very similar to the <a href="InteractionContext.html#interaction" class="page"><code>Interaction</code></a> object obtained from the <a href="InteractionContext.html" class="page"><code>InteractionContext</code></a>.
+The principle distinction is that while <a href="#command"><code>Command</code></a> represents the <em>intention</em> to invoke an action or edit a property, the <a href="InteractionContext.html#interaction" class="page"><code>Interaction</code></a> (and contained <code>Execution</code>s) represents the actual execution.</p>
 </div>
 <div class="paragraph">
-<p><code>Command</code>s
+<p><a href="#command"><code>Command</code></a>s
 can also be persisted by way of the <a href="CommandService.html" class="page"><code>CommandService</code></a>.</p>
+</div>
+<div class="paragraph">
+<p>Commands are often combined with implementations of the <a href="PublisherService.html" class="page"><code>PublisherService</code></a> and sometimes also the <a href="AuditerService.html" class="page"><code>AuditerService</code></a>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>the <a href="PublisherService.html" class="page"><code>PublisherService</code></a> publishes interactions as they have  is configured, they provide better traceability as the <code>Command</code> is also correlated with any published events, again through the unique <code>transactionId</code> GUID</p>
+</li>
+<li>
+<p>if a <a href="AuditerService.html" class="page"><code>AuditerService</code></a> is configured, they provide better audit information, since the <code>Command</code> (the 'cause' of an action) can be correlated to the audit records (the "effect" of the action) through the <code>transactionId</code> GUID</p>
+</li>
+</ul>
 </div>
 </div>
 </div>
@@ -1010,7 +1007,7 @@ can also be persisted by way of the <a href="CommandService.html" class="page"><
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200303-0401-00e4cd3a</p>
+            <p>Revision: 2.0.0-M2.20200304-0401-c5901e18</p>
         </div>
     </div>
 </footer>

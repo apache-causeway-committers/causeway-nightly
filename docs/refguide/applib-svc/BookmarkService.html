@@ -709,27 +709,15 @@
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>The <code>BookmarkService</code> domain service (and its various supertypes) provides the ability to obtain a serializable <code>o.a.i.applib.bookmarks.Bookmark</code> for any (persisted) domain object, and to lookup domain objects given a <code>Bookmark</code>.
+<p>The <code>BookmarkService</code> domain service (and its various supertypes) provides the ability to obtain a serializable <a href="#bookmark"><code>Bookmark</code></a> for any (persisted) domain object, and to lookup domain objects given a <a href="#bookmark"><code>Bookmark</code></a>.
 This can then in turn be converted to and from a string.</p>
 </div>
 <div class="paragraph">
-<p>For example, a <code>Customer</code> object with:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>an object type of "custmgmt.Customer" (as per <a href="../applib-ant/DomainObject.html#objectType" class="page"><code>DomainObject#objectType</code></a> or equivalent) , and</p>
-</li>
-<li>
-<p>an id=123</p>
-</li>
-</ul>
+<p>For example, a <code>Customer</code> object with an <a href="../applib-ant/DomainObject.html#objectType" class="page">object type</a> of "custmgmt.Customer" and an id of 123
+would correspond to a <a href="#bookmark"><code>Bookmark</code></a> with a string representation of "custmgmt.Customer|123".</p>
 </div>
 <div class="paragraph">
-<p>could correspond to a <code>Bookmark</code> with a string representation of <code>custmgmt.Customer|123</code>.</p>
-</div>
-<div class="paragraph">
-<p><code>Bookmark</code>s are useful to store a reference to an arbitrary object, although be aware that there is no referential integrity.</p>
+<p>Bookmarks are useful to store a reference to an arbitrary object, although be aware that there is no referential integrity.</p>
 </div>
 <div class="paragraph">
 <p>Several of the extension libraries use bookmarks.
@@ -750,21 +738,11 @@ For example the <a href="AuditerService.html" class="page"><code>AuditerService<
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public interface BookmarkService {
 
-    /**
-     * Given any {@link Bookmark} this service is able to reconstruct to originating domain object the {@link Bookmark}
-     * was created for.
-     * &lt;p&gt;
-     * Note: Not every domain object is bookmark-able.
-     * &lt;/p&gt;
-     * @param domainObject
-     * @return optionally a {@link Bookmark} representing given {@code domainObject}
-     */
     Bookmark bookmarkFor(@Nullable Object domainObject);
 
     default Bookmark bookmarkForElseThrow(Object domainObject) {
         // ...
     }
-
 
     Bookmark bookmarkFor(Class&lt;?&gt; cls, String identifier);
 
@@ -772,14 +750,35 @@ For example the <a href="AuditerService.html" class="page"><code>AuditerService<
 
     Object lookup(Bookmark bookmark);
 
-    /**
-     * As {@link #lookup(Bookmark)}, but down-casting to the specified type.
-     */
     default &lt;T&gt; T lookup(Bookmark bookmark, Class&lt;T&gt; cls) {
         return cls.cast(lookup(bookmark));
     }
 
 }</code></pre>
+</div>
+</div>
+<div class="sect2">
+<h3 id="bookmark"><a class="anchor" href="#bookmark"></a><code>Bookmark</code></h3>
+<div class="paragraph">
+<p>The <code>Bookmark</code> type is:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Bookmark implements Serializable {
+
+    @NonNull  private final String objectType;
+    @NonNull  private final String identifier;
+
+    public static Bookmark of(String objectType, String identifier) {
+        return new Bookmark(objectType, identifier, /*hintId*/ null);
+    }
+    // ...
+
+    public static Optional&lt;Bookmark&gt; parse(@Nullable String str) {
+        // ...
+    }
+}</code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -795,8 +794,6 @@ For example the <a href="AuditerService.html" class="page"><code>AuditerService<
 <div class="sect1">
 <h2 id="related-mixins"><a class="anchor" href="#related-mixins"></a>Related Mixins</h2>
 <div class="sectionbody">
-<div class="sect2">
-<h3 id="bookmarkholder"><a class="anchor" href="#bookmarkholder"></a><code>BookmarkHolder</code></h3>
 <div class="paragraph">
 <p>The <code>BookmarkHolder</code> interface is intended to be implemented by domain objects that use a <code>Bookmark</code> to reference a (single) domain object; an example might be a class such as the audit entry, mentioned above.
 The interface is simply:</p>
@@ -804,9 +801,7 @@ The interface is simply:</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public interface BookmarkHolder {
-
     Bookmark bookmark();
-
 }</code></pre>
 </div>
 </div>
@@ -834,7 +829,6 @@ The interface is simply:</p>
 </div>
 </div>
 </div>
-</div>
 </article>
 <aside class="article-aside toc" role="navigation">
     <p class="toc-title">On this page</p>
@@ -852,7 +846,7 @@ The interface is simply:</p>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200303-0401-00e4cd3a</p>
+            <p>Revision: 2.0.0-M2.20200304-0401-c5901e18</p>
         </div>
     </div>
 </footer>
