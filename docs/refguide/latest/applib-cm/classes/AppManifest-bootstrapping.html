@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>AppManifest (bootstrapping) :: Apache Isis</title>
+    <meta name="generator" content="Antora 2.2.0">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+    <link rel="stylesheet" href="../../../../_/css/site-custom.css">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Raleway:300,400,500,700,800|Montserrat:300,400,700" rel="stylesheet">
+<link rel="home" href="../../../.." title="Apache Isis">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="../../../..">
+          <span class="icon">
+            <img src="../../../../_/img/isis-logo-48x48.png"></img>
+          </span>
+        <span>Apache Isis</span>
+      </a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <a class="navbar-end">
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Quick Start</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Starter Apps</span>
+            <a class="navbar-item" href="../../../../docs/latest/starters/helloworld.html">Hello World</a>
+            <a class="navbar-item" href="../../../../docs/latest/starters/simpleapp.html">Simple App</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Demos &amp; Tutorials</span>
+            <a class="navbar-item" href="../../../../docs/latest/demo/about.html">Demo App</a>
+            <a class="navbar-item" href="https://danhaywood.gitlab.io/isis-petclinic-tutorial-docs/petclinic/1.16.2/intro.html">Petclinic (tutorial)</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Resources</span>
+            <a class="navbar-item" href="../../../../docs/latest/resources/cheatsheet.html">Cheatsheet</a>
+            <a class="navbar-item" href="../../../../docs/latest/resources/icons.html">Icons</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Guides</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Development</span>
+            <a class="navbar-item" href="../../../../setupguide/latest/about.html">Setup Guide</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Core</span>
+            <a class="navbar-item" href="../../../../userguide/latest/about.html">User Guide</a>
+            <a class="navbar-item" href="../../../../refguide/latest/about.html">Reference Guide</a>
+            <a class="navbar-item" href="../../../../testing/latest/about.html">Testing Guide</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Libraries</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">For Use in Apps</span>
+            <a class="navbar-item" href="../../../../subdomains/latest/about.html">Subdomain Libraries</a>
+            <a class="navbar-item" href="../../../../valuetypes/latest/about.html">Value Types</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Integrate between Apps</span>
+            <a class="navbar-item" href="../../../../mappings/latest/about.html">Bounded Context Mapping Libraries</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Other</span>
+            <a class="navbar-item" href="../../../../incubator/latest/about.html">Incubator</a>
+            <a class="navbar-item" href="../../../../legacy/latest/about.html">Legacy</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Components</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Viewers</span>
+            <a class="navbar-item" href="../../../../vw/latest/about.html">Wicket UI</a>
+            <a class="navbar-item" href="../../../../vro/latest/about.html">Restful Objects (REST)</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Security</span>
+            <a class="navbar-item" href="../../../../security/latest/about.html">Security Guide</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Persistence</span>
+            <a class="navbar-item" href="../../../../pjdo/latest/about.html">DataNucleus (JDO)</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Extensions</span>
+            <a class="navbar-item" href="../../../../extensions/latest/about.html">Extensions Catalog</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Support</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Contact</span>
+            <a class="navbar-item" href="../../../../docs/latest/support/slack-channel.html">Slack</a>
+            <a class="navbar-item" href="../../../../docs/latest/support/mailing-list.html">Mailing Lists</a>
+            <a class="navbar-item" href="https://issues.apache.org/jira/browse/ISIS">JIRA</a>
+            <a class="navbar-item" href="https://stackoverflow.com/questions/tagged/isis">Stack Overflow</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Releases</span>
+            <a class="navbar-item" href="../../../../docs/latest/downloads/how-to.html">Downloads</a>
+            <a class="navbar-item" href="../../../../relnotes/latest/about.html">Release Notes</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Framework</span>
+            <a class="navbar-item" href="../../../../conguide/latest/about.html">Contributors' Guide</a>
+            <a class="navbar-item" href="../../../../comguide/latest/about.html">Committers' Guide</a>
+            <a class="navbar-item" href="../../../../core/latest/about.html">Core Design</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Archive</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">v1.x Docs</span>
+            <a class="navbar-item" href="../../../../versions/1.17.0/documentation.html">1.17.0</a>
+            <a class="navbar-item" href="../../../../versions/1.16.2/documentation.html">1.16.2</a>
+            <a class="navbar-item" href="../../../../versions/1.16.1/documentation.html">1.16.1</a>
+            <a class="navbar-item" href="../../../../versions/1.16.0/documentation.html">1.16.0</a>
+            <a class="navbar-item" href="../../../../versions/1.15.1/documentation.html">1.15.1</a>
+            <a class="navbar-item" href="../../../../versions/1.15.0/documentation.html">1.15.0</a>
+            <a class="navbar-item" href="../../../../versions/1.14.0/documentation.html">1.14.0</a>
+            <a class="navbar-item" href="../../../../versions/1.13.2.1/documentation.html">1.13.2.1</a>
+            <a class="navbar-item" href="../../../../versions/1.13.2/documentation.html">1.13.2</a>
+            <a class="navbar-item" href="../../../../versions/1.13.1/documentation.html">1.13.1</a>
+            <a class="navbar-item" href="../../../../versions/1.13.0/documentation.html">1.13.0</a>
+            <a class="navbar-item" href="../../../../versions/1.12.2/documentation.html">1.12.2</a>
+            <a class="navbar-item" href="../../../../versions/1.12.1/documentation.html">1.12.1</a>
+            <a class="navbar-item" href="../../../../versions/1.12.0/documentation.html">1.12.0</a>
+            <a class="navbar-item" href="../../../../versions/1.11.1/documentation.html">1.11.1</a>
+            <a class="navbar-item" href="../../../../versions/1.11.0/documentation.html">1.11.0</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">ASF</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://www.apache.org/">Apache Homepage</a>
+            <a class="navbar-item" href="https://www.apache.org/events/current-event">Events</a>
+            <a class="navbar-item" href="https://www.apache.org/licenses/">Licenses</a>
+            <a class="navbar-item" href="https://www.apache.org/security/">Security</a>
+            <a class="navbar-item" href="https://www.apache.org/foundation/sponsorship.html">Sponsorship</a>
+            <a class="navbar-item" href="https://www.apache.org/foundation/thanks.html">Thanks</a>
+            <hr class="navbar-divider"/>
+            <a class="navbar-item" href="https://whimsy.apache.org/board/minutes/Isis.html">PMC board minutes</a>
+          </div>
+        </div>
+        <a class="navbar-item" href="../../../../docs/latest/about.html">
+          <span class="icon">
+            <img src="../../../../_/img/home.png"></img>
+          </span>
+        </a>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body ">
+<div class="nav-container" data-component="refguide" data-version="latest">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-pagination">
+  <a class="page-previous disabled" rel="prev" href="" title=""><span></span></a>
+  <a class="page-next disabled" rel="next"
+     href="" title=""><span></span></a>
+<!--
+page.parent doesn't seem to be set...
+  <a class="page-parent disabled" rel="prev" href="" title=""><span></span></a>
+-->
+</div>
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../about.html">Reference Guide</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../../applib-ant/about.html">Annotations</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-ant/Action.html">Action</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-ant/ActionLayout.html">ActionLayout</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-ant/Collection.html">Collection</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-ant/CollectionLayout.html">CollectionLayout</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-ant/Column.html">Column</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-ant/Digits.html">Digits</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-ant/Discriminator.html">Discriminator</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-ant/DomainObject.html">DomainObject</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-ant/DomainObjectLayout.html">DomainObjectLayout</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-ant/DomainService.html">DomainService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-ant/DomainServiceLayout.html">DomainServiceLayout</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-ant/Facets.html">Facets</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-ant/HomePage.html">HomePage</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-ant/Inject.html">Inject</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-ant/MemberGroupLayout.html">MemberGroupLayout</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-ant/MemberOrder.html">MemberOrder</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-ant/Mixin.html">Mixin</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-ant/NotPersistent.html">NotPersistent.</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-ant/Nullable.html">Nullable</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-ant/MinLength.html">MinLength</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-ant/Parameter.html">Parameter</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-ant/ParameterLayout.html">ParameterLayout</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-ant/Pattern.html">Pattern</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-ant/PersistenceCapable.html">PersistenceCapable</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-ant/PostConstruct.html">PostConstruct</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-ant/PreDestroy.html">PreDestroy</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-ant/PrimaryKey.html">PrimaryKey</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-ant/Programmatic.html">Programmatic</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-ant/Property.html">Property</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-ant/PropertyLayout.html">PropertyLayout</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-ant/IsisSessionScope.html">RequestScoped</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-ant/Title.html">Title</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-ant/ViewModel.html">ViewModel</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-ant/ViewModelLayout.html">ViewModelLayout</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-ant/XmlJavaTypeAdapter.html">XmlJavaTypeAdapter</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-ant/XmlRootElement.html">XmlRootElement</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../../applib-svc/about.html">Domain Services</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-svc/AcceptHeaderService.html">AcceptHeaderService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-svc/ApplicationFeatureRepository.html">ApplicationFeatureRepository</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-svc/AuditerService.html">AuditerService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-svc/BookmarkService.html">BookmarkService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-svc/BookmarkUiService.html">BookmarkUiService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-svc/ClockService.html">ClockService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-svc/CommandContext.html">CommandContext</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-svc/CommandDtoProcessorService.html">CommandDtoProcessorService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-svc/CommandExecutorService.html">CommandExecutorService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-svc/CommandService.html">CommandService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-svc/ConfigurationMenu.html">ConfigurationMenu</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-svc/ConfigurationViewService.html">ConfigurationViewService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-svc/ContentMappingService.html">ContentMappingService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-svc/DeepLinkService.html">DeepLinkService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-svc/EmailNotificationService.html">EmailNotificationService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-svc/EmailService.html">EmailService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-svc/ErrorReportingService.html">ErrorReportingService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-svc/EventBusService.html">EventBusService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-svc/ExceptionRecognizerService.html">ExceptionRecognizerService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-svc/FactoryService.html">FactoryService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-svc/GridLoaderService.html">GridLoaderService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-svc/GridService.html">GridService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-svc/GridSystemService.html">GridSystemService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-svc/HealthCheckService.html">HealthCheckService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-svc/HintStore.html">HintStore</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-svc/HomePageResolverService.html">HomePageResolverService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-svc/InteractionContext.html">InteractionContext</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-svc/JaxbService.html">JaxbService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-svc/LayoutService.html">LayoutService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-svc/LayoutServiceMenu.html">LayoutServiceMenu</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-svc/LocaleProvider.html">LocaleProvider</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-svc/MenuBarsLoaderService.html">MenuBarsLoaderService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-svc/MenuBarsService.html">MenuBarsService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-svc/MessageService.html">MessageService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-svc/MetaModelService.html">MetamodelService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-svc/MetaModelServiceMenu.html">MetamodelServiceMenu</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-svc/MetricsService.html">MetricsService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-svc/PublisherService.html">PublisherService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-svc/QueryResultsCache.html">QueryResultsCache</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-svc/RepositoryService.html">RepositoryService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-svc/RoutingService.html">RoutingService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-svc/Scratchpad.html">Scratchpad</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-svc/ServiceInjector.html">ServiceInjector</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-svc/ServiceRegistry.html">ServiceRegistry</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-svc/SessionLoggingService.html">SessionLoggingService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-svc/SudoService.html">SudoService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-svc/SwaggerService.html">SwaggerService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-svc/TableColumnOrderService.html">TableColumnOrderService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-svc/TitleService.html">TitleService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-svc/TranslationService.html">TranslationService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-svc/TranslationsResolver.html">TranslationsResolver</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-svc/TransactionService.html">TransactionService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-svc/UrlEncodingService.html">UrlEncodingService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-svc/UserProfileService.html">UserProfileService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-svc/UserRegistrationService.html">UserRegistrationService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-svc/UserService.html">UserService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-svc/WrapperFactory.html">WrapperFactory</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-svc/XmlService.html">XmlService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../applib-svc/XmlSnapshotService.html">XmlSnapshotService</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../about.html">Classes &amp; Methods</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../methods.html">Methods</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../classes.html">Classes</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../../config/about.html">Configuration</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../config/sections/isis.applib.html">Applib</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../config/sections/isis.core.meta-model.html">Core MetaModel</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../config/sections/isis.core.meta-model.introspector.html">Core MetaModel Introspection</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../config/sections/isis.core.meta-model.validator.html">MetaModel Validator</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../config/sections/isis.core.runtime.html">Core Runtime Services configurations</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../config/sections/isis.core.runtime-services.html">Core Runtime Services configurations</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../config/sections/isis.security.shiro.html">Shiro Security Implementation</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../config/sections/isis.persistence.jdo-datanucleus.html">JDO DataNucleus</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../config/sections/isis.persistence.jdo-datanucleus.impl.html">DataNucleus Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../config/sections/isis.viewer.restfulobjects.html">Restful Objects Viewer</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../config/sections/isis.viewer.wicket.html">Wicket Viewer</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../config/sections/isis.extensions.html">Extensions</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../config/sections/isis.value-types.html">Value types</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../config/sections/isis.testing.html">Testing</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../config/sections/isis.legacy.html">Legacy</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../config/sections/resteasy.html">RestEasy Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../config/sections/Other.html">Other</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../../schema/about.html">Schema</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../schema/mml.html">MetaModel</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../schema/cmd.html">Command</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../schema/ixn.html">Interaction</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../schema/chg.html">Changes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../schema/common.html">Common</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Reference Guide</span>
+    <span class="version">latest</span>
+  </div>
+  <ul class="components">
+    <li class="component">
+      <span class="title"> </span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../../docs/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">BC Mappings Catalog</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../../mappings/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Committers' Guide</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../../comguide/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Contributors' Guide</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../../conguide/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Core Framework</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../../core/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Extensions Catalog</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../../extensions/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Incubator Catalog</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../../incubator/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">JDO/DataNucleus</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../../pjdo/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Legacy Catalog</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../../legacy/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component is-current">
+      <span class="title">Reference Guide</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Release Notes</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../../relnotes/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Restful Objects Viewer</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../../vro/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Security Guide</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../../security/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Setup Guide</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../../setupguide/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Subdomains Catalog</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../../subdomains/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Testing Guide</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../../testing/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">User Guide</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../../userguide/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Value Types Catalog</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../../valuetypes/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Wicket Viewer</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../../vw/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main role="main">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../../docs/latest/about.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../about.html">Reference Guide</a></li>
+    <li><a href="AppManifest-bootstrapping.html"><code>AppManifest</code> (bootstrapping)</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/HEAD/api/applib/src/main/adoc/modules/applib-cm/pages/classes/AppManifest-bootstrapping.adoc">Edit</a></div>
+</div>
+<article class="doc">
+    <a name="section-top"></a>
+<h1 class="page"><code>AppManifest</code> (bootstrapping)</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This section describes how to implement the <code>AppManifest</code> interface to bootstrap both an Apache Isis web application, and also its integration tests.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The framework-provided <code>AppManifestAbstract2</code> and <code>AppManifestAbstract2.Builder</code> makes it easy to write an <code>AppManifest</code>, defined by a set of <a href="#refguide:applib-cm:classes/Module.adoc" class="page unresolved"><code>Module</code></a> implementations.
+The app manifest can then be used both to bootstrap the application "proper", or for integration tests.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="api"><a class="anchor" href="#api"></a>API</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>AppManifest</code> interface allows the constituent parts of an application to be defined programmatically, most specifically the packages that contain domain services and/or persistent entities.
+Its API is defined as:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public interface AppManifest {
+    public List&lt;Class&lt;?&gt;&gt; getModules();                         <i class="conum" data-value="1"></i><b>(1)</b>
+    public List&lt;Class&lt;?&gt;&gt; getAdditionalServices();              <i class="conum" data-value="2"></i><b>(2)</b>
+    public String getAuthenticationMechanism();                 <i class="conum" data-value="3"></i><b>(3)</b>
+    public String getAuthorizationMechanism();                  <i class="conum" data-value="4"></i><b>(4)</b>
+    public List&lt;Class&lt;? extends FixtureScript&gt;&gt; getFixtures();  <i class="conum" data-value="5"></i><b>(5)</b>
+    public Map&lt;String,String&gt; getConfigurationProperties();     <i class="conum" data-value="6"></i><b>(6)</b>
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Must return a non-null list of classes, each of which representing the root of one of the modules containing services and possibly entities, which together makes up the running application.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>If non-<code>null</code>, overrides the value of <code>isis.services</code> configuration property to specify a list of additional classes to be instantiated as domain services (over and above the domain services defined via <code>getModules()</code> method.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>If non-<code>null</code>, overrides the value of <code>isis.authentication</code> configuration property to specify the authentication mechanism.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>If non-<code>null</code>, overrides the value of <code>isis.authorization</code> configuration property to specify the authorization mechanism.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>If non-<code>null</code>, overrides the value of <code>isis.fixtures</code> configuration property to specify a fixture script to be installed.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Overrides for any other configuration properties.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The following sections describe each of these methods in a little more detail.</p>
+</div>
+<div class="sect2">
+<h3 id="getmodules"><a class="anchor" href="#getmodules"></a><code>getModules()</code></h3>
+<div class="paragraph">
+<p>The most significant method (the only one which must return a non-<code>null</code> value) is the <code>getModules()</code> method.
+Each module is identified by a class; the framework simply uses that class' package as the root to search for domain services (annotated with <a href="../../applib-ant/DomainService.html" class="page"><code>@DomainService</code></a>) and entities (annotated with <a href="../../applib-ant/PersistenceCapable.html" class="page"><code>@PersistenceCapable</code></a>).
+Generally there is one such module class per Maven module.</p>
+</div>
+<div class="paragraph">
+<p>A module class for a domain module might for example be defined as:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">package com.mycompany.myapp.dom;
+public final class MyAppDomainModule {
+    private MyAppDomainModule() {}
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This tells the framework that the package and subpackages under <code>com.mycompany.myapp.dom</code> should be searched for domain services (annotated with <code>@DomainService</code>), mixins (<code>@Mixin</code>) and entities (<code>@PersistenceCapabable</code>).</p>
+</div>
+<div class="paragraph">
+<p>As is perhaps apparent, the <code>getModules()</code> method replaces and overrides both the <code>isis.services.ServicesInstallerFromAnnotation.packagePrefix</code> key (usually found in the <code>isis.properties</code>  file) and also the`isis.persistor.datanucleus.RegisterEntities.packagePrefix` key (usually found in the <code>persistor_datanucleus.properties</code> file).
+The value of the <code>isis.services-installer</code> configuration property is also ignored.</p>
+</div>
+<div class="paragraph">
+<p>For example, the <a href="http://github.com/apache/isis-app-todoapp">TodoApp</a> defines the following:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Override
+public List&lt;Class&lt;?&gt;&gt; getModules() {
+    return Arrays.asList(
+            TodoAppDomainModule.class,
+            TodoAppFixtureModule.class,
+            TodoAppAppModule.class,
+            org.isisaddons.module.audit.AuditModule.class,
+            org.isisaddons.module.command.CommandModule.class,
+            org.isisaddons.module.devutils.DevUtilsModule.class,
+            org.isisaddons.module.docx.DocxModule.class,
+            org.isisaddons.module.publishing.PublishingModule.class,
+            org.isisaddons.module.sessionlogger.SessionLoggerModule.class,
+            org.isisaddons.module.settings.SettingsModule.class,
+            org.isisaddons.wicket.gmap3.cpt.service.Gmap3ServiceModule.class
+    );
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>As can be seen, the various (non-ASF) <a href="https://platform.incode.org" target="_blank" rel="noopener">Incode Platform</a> modules also each provide a module class that can be easily referenced.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="getadditionalservices"><a class="anchor" href="#getadditionalservices"></a><code>getAdditionalServices()</code></h3>
+<div class="paragraph">
+<p>We normally we recommend that services are defined exclusively through <code>getModules()</code>, and that this method should therefore return an empty list.
+However, there are certain use cases where the a service must be explicitly specified either because the service required does not (for whatever reason) have a <a href="../../applib-ant/DomainService.html" class="page"><code>@DomainService</code></a> annotation.</p>
+</div>
+<div class="paragraph">
+<p>For example, the <a href="../../../../security/latest/about.html" class="page">SecMan extension</a> allows the policy to evaluate conflicting permissions to be specified by explicitly registering either the <code>PermissionsEvaluationServiceAllowBeatsVeto</code> domain service or the <code>PermissionsEvaluationServiceVetoBeatsAllow</code> domain service:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Override
+public List&lt;Class&lt;?&gt;&gt; getAdditionalServices() {
+    return Arrays.asList(
+            org.isisaddons.module.security.dom.permission.PermissionsEvaluationServiceVetoBeatsAllow.class
+    );
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If this method returns a non-<code>null</code> value, then it overrides the value of <code>isis.services</code> configuration property.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="getauthenticationmechanism"><a class="anchor" href="#getauthenticationmechanism"></a><code>getAuthenticationMechanism()</code></h3>
+<div class="paragraph">
+<p>If non-<code>null</code>, this method specifies the authentication mechanism to use.
+The valid values are currently <code>"shiro"</code>  or <code>"bypass"</code>.
+If null is returned then the value of the <code>isis.authentication</code> configuration property (in <code>isis.properties</code> file) is used instead.</p>
+</div>
+<div class="paragraph">
+<p>See the <a href="../../../../security/latest/about.html" class="page">security guide</a> for further details on configuring shiro or bypass security.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>This property is ignored for integration tests (which always uses the <code>"bypass"</code> mechanism).</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="getauthorizationmechanism"><a class="anchor" href="#getauthorizationmechanism"></a><code>getAuthorizationMechanism()</code></h3>
+<div class="paragraph">
+<p>If non-<code>null</code>, this method specifies the authorization mechanism to use.
+The valid values are currently <code>"shiro"</code>  or <code>"bypass"</code>.
+If null is returned then the value of the <code>isis.authorization</code> configuration property (in <code>isis.properties</code> file) is used instead.</p>
+</div>
+<div class="paragraph">
+<p>See the <a href="../../../../security/latest/about.html" class="page">security guide</a> for further details on configuring shiro or bypass security.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>This property is ignored for integration tests (which always uses the <code>"bypass"</code> mechanism).</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="getfixtures"><a class="anchor" href="#getfixtures"></a><code>getFixtures()</code></h3>
+<div class="paragraph">
+<p>If non-<code>null</code>, this method specifies the fixture script(s) to be run on startup.
+This is particularly useful when developing or demoing while using an in-memory database.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Override
+public List&lt;Class&lt;? extends FixtureScript&gt;&gt; getFixtures() {
+    return Lists.newArrayList(todoapp.fixture.demo.DemoFixture.class);
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Note that in order for fixtures to be installed it is also necessary to set the <code>isis.persistor.datanucleus.install-fixtures</code> key to <code>true</code>.
+This can most easily be done using the <code>getConfigurationProperties()</code> method, discussed below.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="getconfigurationproperties"><a class="anchor" href="#getconfigurationproperties"></a><code>getConfigurationProperties()</code></h3>
+<div class="paragraph">
+<p>This method allow arbitrary other configuration properties to be overridden.
+One common use case is in conjunction with the <code>getFixtures()</code> method, discussed above:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Override
+public Map&lt;String, String&gt; getConfigurationProperties() {
+    Map&lt;String, String&gt; props = Maps.newHashMap();
+    props.put("isis.persistor.datanucleus.install-fixtures", "true");
+    return props;
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="bootstrapping"><a class="anchor" href="#bootstrapping"></a>Bootstrapping</h2>
+<div class="sectionbody">
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The recommendations in this section no longer apply if using the <a href="../classes.html#bootstrapping" class="page"><code>AppManifest2</code></a> interface and <code>Module</code>s to bootstrap your application.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>One of the primary goals of the <code>AppManifest</code> is to unify the bootstrapping of both integration tests and the webapp.
+This requires that the integration tests and webapp can both reference the implementation.</p>
+</div>
+<div class="paragraph">
+<p>We strongly recommend using a <code>myapp-app</code> Maven module to hold the implementation of the <code>AppManifest</code>.
+This Maven module can then also hold dependencies which are common to both integration tests and the webapp, specifically the <code>org.apache.isis.core:isis-core-runtime</code> and the <code>org.apache.isis.core:isis-core-wrapper</code> modules.</p>
+</div>
+<div class="paragraph">
+<p>We also strongly recommend that any application-layer domain services and view models (code that references persistent domain entities but that is not referenced back) is moved to this <code>myapp-app</code> module.
+This will allow the architectural layering of the overall application to be enforced by Maven.</p>
+</div>
+<div class="paragraph">
+<p>What then remains is to update the bootstrapping code itself.</p>
+</div>
+<div class="paragraph">
+<p>There are several different contexts in which the framework needs to be bootstrapped:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>the first is as a "regular" webapp (using the <a href="../../../../vw/latest/about.html" class="page">Wicket viewer</a>).
+Here the <code>AppManifest</code> just needs to be specified as a configuration property, usually done using the <code>WEB-INF/isis.properties</code> configuration file:<br></p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">isis.appManifest=domainapp.app.MyAppAppManifest</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>the second is also as a webapp, but from within the context of the IDE.<br>
++ Here, it&#8217;s common to use the <code>org.apache.isis.WebServer</code> class to launch your application from the <a href="../../../../userguide/latest/btb/about.html#cmd-line" class="page">command line</a>.
+This allows the <code>AppManifest</code> to be specified using the <code>-m</code> (or <code>--manifest</code>) flag:<br></p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">java org.apache.isis.WebServer -m com.mycompany.myapp.MyAppAppManifestWithFixtures</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>the third case is within an integration test.<br>
++ The code to boostrap an integration test is shown in the <a href="../../../../testing/latest/integtestsupport/about.html#bootstrapping" class="page">testing guide</a>, but once again an <code>AppManifest</code> is required.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>In some cases an integration test uses the exact same <code>AppManifest</code> as the regular webapp.
+Sometimes though it is necessary to "tweak" the <code>AppManifest</code>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>it might use additional services, such as services to mock out external dependencies, or to provide fake data</p>
+</li>
+<li>
+<p>it might override certain configuration properties, eg to run against an in-memory HSQLDB database.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The next section describes some helper classes that the framework provides to help achieve this.</p>
+</div>
+<div class="sect2">
+<h3 id="appmanifestabstract"><a class="anchor" href="#appmanifestabstract"></a>AppManifestAbstract</h3>
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-caution" title="Caution"></i>
+</td>
+<td class="content">
+TODO: v2: this is all out of date and superceded by Spring Boot
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The framework-provided <code>AppManifestAbstract2</code> and <code>AppManifestAbstract2.Builder</code> supercede <code>AppManifestAbstract</code>, making it easy to write an <code>AppManifest</code> defined by a set of <a href="#refguide:applib-cm:classes/Module.adoc" class="page unresolved"><code>Module</code></a> implementations.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The <code>AppManifestAbstract</code> and its associated builder (<code>AppManifestAbstract.Builder</code>) make it easy to bootstrap the application both as a webapp and also as an integration test.</p>
+</div>
+<div class="paragraph">
+<p>Rather than implement <code>AppManifest</code> interface directly, instead your application subclasses from <code>AppManifestAbstract</code>.
+This takes an instance of a <code>AppManifestAbstract.Builder</code> in its constructor; the builder is what allows for variation between environments.</p>
+</div>
+<div class="paragraph">
+<p>Moreover, these classes recognise that configuration properties fall into two broad classes:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>those that are fixed and do not change between environments.<br>
++ In other words these describe how the application chooses to configure the framework itself, eg global disable of editing of properties, or enabling of auditing.</p>
+</li>
+<li>
+<p>those that change between environments.<br>
++ The classic example here is the JDBC URL.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>For example, the <a href="../../../../docs/latest/starters/simpleapp.html" class="page">SimpleApp</a> starter app&#8217;s <code>AppManifest</code> is defined as:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class DomainAppAppManifest extends AppManifestAbstract {
+
+    public static final Builder BUILDER = Builder.forModules(
+                    SimpleModuleDomSubmodule.class,                         <i class="conum" data-value="1"></i><b>(1)</b>
+                    DomainAppApplicationModuleFixtureSubmodule.class,
+                    DomainAppApplicationModuleServicesSubmodule.class
+            )
+            .withConfigurationPropertiesFile(DomainAppAppManifest.class,    <i class="conum" data-value="2"></i><b>(2)</b>
+                    "isis.properties",
+                    "authentication_shiro.properties",
+                    "persistor_datanucleus.properties",
+                    "viewer_restfulobjects.properties",
+                    "viewer_wicket.properties"
+            ).withAuthMechanism("shiro");                                   <i class="conum" data-value="3"></i><b>(3)</b>
+
+    public DomainAppAppManifest() {
+        super(BUILDER);                                                     <i class="conum" data-value="4"></i><b>(4)</b>
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>the modules that make up the application; corresponds to <code>AppManifest#getModules()</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>the (non-changing with environment) set of configuration properties, loaded relative to the manifest itself; corresponds to <code>AppManifest#getConfigurationProperties()</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>override of components; correponds to both <code>AppManifest#getAuthenticationMechanism()</code> and <code>AppManifest#getAuthorizationMechanism()</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Pass the builder up to the superclass.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>If the integration tests requires no tweaking, then the <code>AppManifest</code> can be used directly, for example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public abstract class DomainAppIntegTestAbstract extends IntegrationTestAbstract2 {
+    @BeforeClass
+    public static void initSystem() {
+        bootstrapUsing(new DomainAppAppManifest());
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>On the other hand, if tweaking is required then exposing the builder as a <code>public static</code> field makes this easy to do:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public abstract class DomainAppIntegTestAbstract extends IntegrationTestAbstract2 {
+    @BeforeClass
+    public static void initSystem() {
+        bootstrapUsing(DomainAppAppManifest.BUILDER
+                            .withAdditionalModules(...)
+                            .withAdditionalServices(...)
+                            .withConfigurationPropertiesFile("...")
+                            .withConfigurationProperty("...","...")
+                            .build()
+        );
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</article>
+<aside class="article-aside toc" role="navigation">
+    <p class="toc-title">On this page</p>
+    <div id="article-toc"></div>
+</aside>
+</main>
+</div>
+<footer class="footer">
+    <div class="content">
+        <div class="copyright">
+            <p>
+                Copyright © 2010~2020 The Apache Software Foundation, licensed under the Apache License, v2.0.
+                <br/>
+                Apache, the Apache feather logo, Apache Isis, and the Apache Isis project logo are all trademarks of The Apache Software Foundation.
+            </p>
+        </div>
+        <div class="revision">
+            <p>Revision: 2.0.0-M2.20200317-0401-36ebf196</p>
+        </div>
+    </div>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+<script src="../../../../_/js/vendor/jquery-3.4.1.min.js"></script>
+<script src="../../../../_/js/vendor/jquery-ui-1.12.1.custom.widget-only.min.js"></script>
+<script src="../../../../_/js/vendor/jquery.tocify.min.js"></script>
+
+<script>
+    $(function() {
+        $("#article-toc").tocify( {
+            showEffect: "slideDown",
+            hashGenerator: "pretty",
+            hideEffect: "slideUp",
+            selectors: "h2, h3",
+            scrollTo: 120,
+            smoothScroll: true,
+            theme: "jqueryui",
+            highlightOnScroll: true
+        } );
+    });
+</script>
+  </body>
+</html>
