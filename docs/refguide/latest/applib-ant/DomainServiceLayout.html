@@ -102,33 +102,12 @@
             <span class="navbar-item navbar-heading">Releases</span>
             <a class="navbar-item" href="../../../docs/latest/downloads/how-to.html">Downloads</a>
             <a class="navbar-item" href="../../../relnotes/latest/about.html">Release Notes</a>
+            <a class="navbar-item" href="../../../docs/latest/archive/1-x.html">Archive (1.x)</a>
             <hr class="navbar-divider"/>
             <span class="navbar-item navbar-heading">Framework</span>
             <a class="navbar-item" href="../../../conguide/latest/about.html">Contributors' Guide</a>
             <a class="navbar-item" href="../../../comguide/latest/about.html">Committers' Guide</a>
             <a class="navbar-item" href="../../../core/latest/about.html">Core Design</a>
-          </div>
-        </div>
-        <div class="navbar-item has-dropdown is-hoverable">
-          <a class="navbar-link" href="#">Archive</a>
-          <div class="navbar-dropdown">
-            <span class="navbar-item navbar-heading">v1.x Docs</span>
-            <a class="navbar-item" href="../../../versions/1.17.0/documentation.html">1.17.0</a>
-            <a class="navbar-item" href="../../../versions/1.16.2/documentation.html">1.16.2</a>
-            <a class="navbar-item" href="../../../versions/1.16.1/documentation.html">1.16.1</a>
-            <a class="navbar-item" href="../../../versions/1.16.0/documentation.html">1.16.0</a>
-            <a class="navbar-item" href="../../../versions/1.15.1/documentation.html">1.15.1</a>
-            <a class="navbar-item" href="../../../versions/1.15.0/documentation.html">1.15.0</a>
-            <a class="navbar-item" href="../../../versions/1.14.0/documentation.html">1.14.0</a>
-            <a class="navbar-item" href="../../../versions/1.13.2.1/documentation.html">1.13.2.1</a>
-            <a class="navbar-item" href="../../../versions/1.13.2/documentation.html">1.13.2</a>
-            <a class="navbar-item" href="../../../versions/1.13.1/documentation.html">1.13.1</a>
-            <a class="navbar-item" href="../../../versions/1.13.0/documentation.html">1.13.0</a>
-            <a class="navbar-item" href="../../../versions/1.12.2/documentation.html">1.12.2</a>
-            <a class="navbar-item" href="../../../versions/1.12.1/documentation.html">1.12.1</a>
-            <a class="navbar-item" href="../../../versions/1.12.0/documentation.html">1.12.0</a>
-            <a class="navbar-item" href="../../../versions/1.11.1/documentation.html">1.11.1</a>
-            <a class="navbar-item" href="../../../versions/1.11.0/documentation.html">1.11.0</a>
           </div>
         </div>
         <div class="navbar-item has-dropdown is-hoverable">
@@ -219,9 +198,6 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="Inject.html">Inject</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="MemberGroupLayout.html">MemberGroupLayout</a>
-  </li>
-  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="MemberOrder.html">MemberOrder</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -274,9 +250,6 @@ page.parent doesn't seem to be set...
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="ViewModel.html">ViewModel</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="ViewModelLayout.html">ViewModelLayout</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="XmlJavaTypeAdapter.html">XmlJavaTypeAdapter</a>
@@ -763,39 +736,55 @@ page.parent doesn't seem to be set...
 </table>
 </div>
 <div class="paragraph">
-<p>The table below summarizes the annotation&#8217;s attributes.</p>
+<p>The annotation is:</p>
 </div>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. <code>@DomainServiceLayout</code> attributes</caption>
-<colgroup>
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Inherited
+@Target({
+        ElementType.TYPE,
+        ElementType.ANNOTATION_TYPE
+})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface DomainServiceLayout {
+
+    MenuBar menuBar()                           <i class="conum" data-value="1"></i><b>(1)</b>
+            default MenuBar.NOT_SPECIFIED;
+
+    String named()                              <i class="conum" data-value="2"></i><b>(2)</b>
+            default "";
+
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
 <tr>
-<th class="tableblock halign-left valign-top">Attribute</th>
-<th class="tableblock halign-left valign-top">Values (default)</th>
-<th class="tableblock halign-left valign-top">Description</th>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><a href="#menubar"><code>menuBar()</code></a>
+<div class="paragraph">
+<p>The menubar in which the menu that holds this service&#8217;s actions should reside:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public enum MenuBar {
+    PRIMARY,
+    SECONDARY,
+    TERTIARY,
+    NOT_SPECIFIED
+}</code></pre>
+</div>
+</div></td>
 </tr>
-</thead>
-<tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#menuBar"><code>menuBar()</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>PRIMARY</code>, <code>SECONDARY</code>, <code>TERTIARY</code> (<code>PRIMARY</code>).</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>the menubar in which the menu that holds this service&#8217;s actions should reside.</p>
-</div></div></td>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><a href="#named"><code>named()</code></a>
+<div class="paragraph">
+<p>Name of this class (overriding the name derived from its name in code)</p>
+</div></td>
 </tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#named"><code>named()</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">string, eg "Customers"</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>name of this class (overriding the name derived from its name in code)</p>
-</div></div></td>
-</tr>
-</tbody>
 </table>
+</div>
 <div class="paragraph">
 <p>For example:</p>
 </div>
@@ -804,27 +793,12 @@ page.parent doesn't seem to be set...
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainService
 @DomainServiceLayout(
     menuBar=MenuBar.PRIMARY,
-    menuOrder="100",
     named="ToDos"
 )
 public class ToDoItems {
     ...
 }</code></pre>
 </div>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>Note that there is (currently) no support for specifying UI hints for domain services through the dynamic <a href="../../../vw/latest/layout.html#file-based" class="page"><code>.layout.xml</code></a> file (only for properties, collections and actions are supported).</p>
-</div>
-</td>
-</tr>
-</table>
 </div>
 </div>
 </div>
@@ -891,110 +865,6 @@ Alternatively, use <code>menubars.layout.xml</code> layout file to organize menu
 </div>
 </div>
 <div class="sect1">
-<h2 id="menuorder"><a class="anchor" href="#menuorder"></a><code>menuOrder</code></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The <code>menuOrder</code> attribute determines the ordering of a domain service&#8217;s actions as menu items within a specified menu bar and top-level menu.</p>
-</div>
-<div class="paragraph">
-<p>The algorithm works as follows:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>first, the <a href="#menuBar"><code>menuBar()</code></a> determines which of the three menu bars the service&#8217;s actions should be rendered</p>
-</li>
-<li>
-<p>then, the domain service&#8217;s top-level name (typically explicitly specified using <a href="#named"><code>named()</code></a>) is used to determine the top-level menu item to be rendered on the menu bar</p>
-</li>
-<li>
-<p>finally, if there is more than domain service that has the same name, then the <code>menuOrder</code> attribute is used to order those actions on the menu item drop-down.</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>For example, the screenshot below shows the "prototyping" menu from the <a href="http://github.com/apache/isis-app-todoapp">TodoApp</a>:</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<a class="image" href="_images/reference-annotations/DomainServiceLayout/menuOrder.png"><img src="_images/reference-annotations/DomainServiceLayout/menuOrder.png" alt="menuOrder" width="500px"></a>
-</div>
-</div>
-<div class="paragraph">
-<p>The <a href="../../../vw/latest/about.html" class="page">Wicket viewer</a> automatically places separators between actions from different domain services.  From this we can infer that there are actually five different domain services that are all rendered on the "prototyping" top-level menu.</p>
-</div>
-<div class="paragraph">
-<p>One of these is the todoapp&#8217;s <code>DemoDomainEventSubscriptions</code> service:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainService(
-        nature = NatureOfService.VIEW_MENU_ONLY
-)
-@DomainServiceLayout(
-        menuBar = MenuBar.SECONDARY,
-        named = "Prototyping",                   <i class="conum" data-value="1"></i><b>(1)</b>
-        menuOrder = "500.20")                    <i class="conum" data-value="2"></i><b>(2)</b>
-public class DemoDomainEventSubscriptions {
-    @ActionLayout(named="Set subscriber behaviour")
-    @MemberOrder(sequence = "500.20.1")          <i class="conum" data-value="3"></i><b>(3)</b>
-    public void subscriberBehaviour(...) { /* ... */ }
-    ...
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>render on the "Prototyping" menu</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>positioning relative to other service&#8217;s on the "Prototyping" menu</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>by convention (nothing more) the <code>@MemberOrder#sequence</code> attribute continues the same Dewey decimal sequence format (a simple string "1" could in fact have been used instead)</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>while others come from services provided by Apache Isis itself, eg:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainServiceLayout(
-        named = "Prototyping",              <i class="conum" data-value="1"></i><b>(1)</b>
-        menuBar = MenuBar.SECONDARY,
-        menuOrder = "500.500"               <i class="conum" data-value="2"></i><b>(2)</b>
-)
-public class MetaModelServiceMenu {
-    @MemberOrder(sequence="500.500.1")      <i class="conum" data-value="3"></i><b>(3)</b>
-    public Clob downloadMetaModel( ... ) { /* ... */ }
-    ...
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>render on the "Prototyping" menu</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>positioning relative to other service&#8217;s on the "Prototyping" menu; this appears after the <code>DemoDomainEventSubscriptions</code> service shown above</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>by convention (nothing more) the <code>@MemberOrder#sequence</code> attribute continues the same Dewey decimal sequence format (a simple string "1", "2", "3", &#8230;&#8203; could in fact have been used instead)</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-<div class="sect1">
 <h2 id="named"><a class="anchor" href="#named"></a><code>named</code></h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -1036,9 +906,6 @@ public class CustomerRepository {
 <li>
 <p><a href="DomainObjectLayout.html#named" class="page">domain objects</a></p>
 </li>
-<li>
-<p><a href="ViewModelLayout.html#named" class="page">view models</a>.</p>
-</li>
 </ul>
 </div>
 </div>
@@ -1061,7 +928,7 @@ public class CustomerRepository {
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200317-0401-36ebf196</p>
+            <p>Revision: 2.0.0-M2.20200318-0401-7b207f08</p>
         </div>
     </div>
 </footer>

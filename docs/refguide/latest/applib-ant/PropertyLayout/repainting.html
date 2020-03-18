@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>cssClassFa :: Apache Isis</title>
+    <title>repainting() :: Apache Isis</title>
     <meta name="generator" content="Antora 2.2.0">
     <link rel="stylesheet" href="../../../../_/css/site.css">
     <link rel="stylesheet" href="../../../../_/css/site-custom.css">
@@ -100,33 +100,12 @@
             <span class="navbar-item navbar-heading">Releases</span>
             <a class="navbar-item" href="../../../../docs/latest/downloads/how-to.html">Downloads</a>
             <a class="navbar-item" href="../../../../relnotes/latest/about.html">Release Notes</a>
+            <a class="navbar-item" href="../../../../docs/latest/archive/1-x.html">Archive (1.x)</a>
             <hr class="navbar-divider"/>
             <span class="navbar-item navbar-heading">Framework</span>
             <a class="navbar-item" href="../../../../conguide/latest/about.html">Contributors' Guide</a>
             <a class="navbar-item" href="../../../../comguide/latest/about.html">Committers' Guide</a>
             <a class="navbar-item" href="../../../../core/latest/about.html">Core Design</a>
-          </div>
-        </div>
-        <div class="navbar-item has-dropdown is-hoverable">
-          <a class="navbar-link" href="#">Archive</a>
-          <div class="navbar-dropdown">
-            <span class="navbar-item navbar-heading">v1.x Docs</span>
-            <a class="navbar-item" href="../../../../versions/1.17.0/documentation.html">1.17.0</a>
-            <a class="navbar-item" href="../../../../versions/1.16.2/documentation.html">1.16.2</a>
-            <a class="navbar-item" href="../../../../versions/1.16.1/documentation.html">1.16.1</a>
-            <a class="navbar-item" href="../../../../versions/1.16.0/documentation.html">1.16.0</a>
-            <a class="navbar-item" href="../../../../versions/1.15.1/documentation.html">1.15.1</a>
-            <a class="navbar-item" href="../../../../versions/1.15.0/documentation.html">1.15.0</a>
-            <a class="navbar-item" href="../../../../versions/1.14.0/documentation.html">1.14.0</a>
-            <a class="navbar-item" href="../../../../versions/1.13.2.1/documentation.html">1.13.2.1</a>
-            <a class="navbar-item" href="../../../../versions/1.13.2/documentation.html">1.13.2</a>
-            <a class="navbar-item" href="../../../../versions/1.13.1/documentation.html">1.13.1</a>
-            <a class="navbar-item" href="../../../../versions/1.13.0/documentation.html">1.13.0</a>
-            <a class="navbar-item" href="../../../../versions/1.12.2/documentation.html">1.12.2</a>
-            <a class="navbar-item" href="../../../../versions/1.12.1/documentation.html">1.12.1</a>
-            <a class="navbar-item" href="../../../../versions/1.12.0/documentation.html">1.12.0</a>
-            <a class="navbar-item" href="../../../../versions/1.11.1/documentation.html">1.11.1</a>
-            <a class="navbar-item" href="../../../../versions/1.11.0/documentation.html">1.11.0</a>
           </div>
         </div>
         <div class="navbar-item has-dropdown is-hoverable">
@@ -217,9 +196,6 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../Inject.html">Inject</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../MemberGroupLayout.html">MemberGroupLayout</a>
-  </li>
-  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../MemberOrder.html">MemberOrder</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -272,9 +248,6 @@ page.parent doesn't seem to be set...
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../ViewModel.html">ViewModel</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ViewModelLayout.html">ViewModelLayout</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../XmlJavaTypeAdapter.html">XmlJavaTypeAdapter</a>
@@ -732,19 +705,52 @@ page.parent doesn't seem to be set...
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="../../about.html">Reference Guide</a></li>
-    <li><a href="cssClassFa.html"><code>cssClassFa</code></a></li>
+    <li><a href="repainting.html"><code>repainting()</code></a></li>
   </ul>
 </nav>
-  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/HEAD/api/applib/src/main/adoc/modules/applib-ant/pages/ViewModelLayout/cssClassFa.adoc">Edit</a></div>
+  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/HEAD/api/applib/src/main/adoc/modules/applib-ant/pages/PropertyLayout/repainting.adoc">Edit</a></div>
 </div>
 <article class="doc">
     <a name="section-top"></a>
-<h1 class="page"><code>cssClassFa</code></h1>
+<h1 class="page"><code>repainting()</code></h1>
 <div class="paragraph">
-<p>The <code>cssClassFa</code> attribute is used to specify the name of a <a href="http://fortawesome.github.io/Font-Awesome/icons/">Font Awesome icon</a> name, to be rendered as the domain object&#8217;s icon.</p>
+<p>The <code>repainting</code> attribute is used to indicate that the value held by the property never changes over time, even when other properties of the object do change.</p>
 </div>
 <div class="paragraph">
-<p>This is equivalent to <a href="../DomainObjectLayout.html#cssClassFa" class="page"><code>@DomainObjectLayout#cssClassFa()</code></a>, but for view models instead of entities.</p>
+<p>Setting this attribute to <code>true</code> is used as a hint to the viewer to not redraw the property after an AJAX update of some other property/ies of the object have changed.
+This is primarily for performance, eg can improve the user experience when rendering PDFs/blobs.</p>
+</div>
+<div class="paragraph">
+<p>Note that for this to work, the viewer will also ensure that none of the property&#8217;s parent component (such as a tab group panel) are re-rendered.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Design note: we considered implementing this an "immutable" flag on the <a href="../Property.html" class="page"><code>@Property</code></a> annotation (because this flag is typically appropriate for immutable/unchanging properties of a domain object).
+However, we decided not to do that, on the basis that it might be interpreted as having a deeper impact within the framework than simply a hint for rendering.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Document {
+    @PropertyLayout(
+        repainting=Repainting.NO_REPAINT
+    )
+    public Blob getBlob(){ /* ... */ }
+    public void setBlob(Blob blob) { /* ... */ }
+}</code></pre>
+</div>
 </div>
 </article>
 <aside class="article-aside toc" role="navigation">
@@ -763,7 +769,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200317-0401-36ebf196</p>
+            <p>Revision: 2.0.0-M2.20200318-0401-7b207f08</p>
         </div>
     </div>
 </footer>

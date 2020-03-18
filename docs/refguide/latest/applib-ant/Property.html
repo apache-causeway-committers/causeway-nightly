@@ -102,33 +102,12 @@
             <span class="navbar-item navbar-heading">Releases</span>
             <a class="navbar-item" href="../../../docs/latest/downloads/how-to.html">Downloads</a>
             <a class="navbar-item" href="../../../relnotes/latest/about.html">Release Notes</a>
+            <a class="navbar-item" href="../../../docs/latest/archive/1-x.html">Archive (1.x)</a>
             <hr class="navbar-divider"/>
             <span class="navbar-item navbar-heading">Framework</span>
             <a class="navbar-item" href="../../../conguide/latest/about.html">Contributors' Guide</a>
             <a class="navbar-item" href="../../../comguide/latest/about.html">Committers' Guide</a>
             <a class="navbar-item" href="../../../core/latest/about.html">Core Design</a>
-          </div>
-        </div>
-        <div class="navbar-item has-dropdown is-hoverable">
-          <a class="navbar-link" href="#">Archive</a>
-          <div class="navbar-dropdown">
-            <span class="navbar-item navbar-heading">v1.x Docs</span>
-            <a class="navbar-item" href="../../../versions/1.17.0/documentation.html">1.17.0</a>
-            <a class="navbar-item" href="../../../versions/1.16.2/documentation.html">1.16.2</a>
-            <a class="navbar-item" href="../../../versions/1.16.1/documentation.html">1.16.1</a>
-            <a class="navbar-item" href="../../../versions/1.16.0/documentation.html">1.16.0</a>
-            <a class="navbar-item" href="../../../versions/1.15.1/documentation.html">1.15.1</a>
-            <a class="navbar-item" href="../../../versions/1.15.0/documentation.html">1.15.0</a>
-            <a class="navbar-item" href="../../../versions/1.14.0/documentation.html">1.14.0</a>
-            <a class="navbar-item" href="../../../versions/1.13.2.1/documentation.html">1.13.2.1</a>
-            <a class="navbar-item" href="../../../versions/1.13.2/documentation.html">1.13.2</a>
-            <a class="navbar-item" href="../../../versions/1.13.1/documentation.html">1.13.1</a>
-            <a class="navbar-item" href="../../../versions/1.13.0/documentation.html">1.13.0</a>
-            <a class="navbar-item" href="../../../versions/1.12.2/documentation.html">1.12.2</a>
-            <a class="navbar-item" href="../../../versions/1.12.1/documentation.html">1.12.1</a>
-            <a class="navbar-item" href="../../../versions/1.12.0/documentation.html">1.12.0</a>
-            <a class="navbar-item" href="../../../versions/1.11.1/documentation.html">1.11.1</a>
-            <a class="navbar-item" href="../../../versions/1.11.0/documentation.html">1.11.0</a>
           </div>
         </div>
         <div class="navbar-item has-dropdown is-hoverable">
@@ -219,9 +198,6 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="Inject.html">Inject</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="MemberGroupLayout.html">MemberGroupLayout</a>
-  </li>
-  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="MemberOrder.html">MemberOrder</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -274,9 +250,6 @@ page.parent doesn't seem to be set...
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="ViewModel.html">ViewModel</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="ViewModelLayout.html">ViewModelLayout</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="XmlJavaTypeAdapter.html">XmlJavaTypeAdapter</a>
@@ -751,168 +724,236 @@ page.parent doesn't seem to be set...
 <div class="paragraph">
 <p>It is also possible to apply the annotation to actions of domain services that are acting as contributed properties.</p>
 </div>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. <code>@Property</code> attributes</caption>
-<colgroup>
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Inherited
+@Target({
+        ElementType.METHOD,
+        ElementType.FIELD,
+        ElementType.TYPE,
+        ElementType.ANNOTATION_TYPE
+})
+@Retention(RetentionPolicy.RUNTIME)
+@Mixin(method = "prop")
+public @interface Property {
+
+    CommandReification command()                                <i class="conum" data-value="1"></i><b>(1)</b>
+            default CommandReification.NOT_SPECIFIED;
+
+    CommandPersistence commandPersistence()                     <i class="conum" data-value="2"></i><b>(2)</b>
+            default CommandPersistence.PERSISTED;
+
+    CommandExecuteIn commandExecuteIn()                         <i class="conum" data-value="3"></i><b>(3)</b>
+            default CommandExecuteIn.FOREGROUND;
+
+    Class&lt;? extends CommandDtoProcessor&gt; commandDtoProcessor()  <i class="conum" data-value="4"></i><b>(4)</b>
+            default CommandDtoProcessor.class;
+
+    Class&lt;? extends PropertyDomainEvent&lt;?,?&gt;&gt; domainEvent()     <i class="conum" data-value="5"></i><b>(5)</b>
+            default PropertyDomainEvent.Default.class;
+
+    Editing editing()                                           <i class="conum" data-value="6"></i><b>(6)</b>
+            default Editing.NOT_SPECIFIED;
+
+    String editingDisabledReason()                              <i class="conum" data-value="7"></i><b>(7)</b>
+            default "";
+
+    String fileAccept()                                         <i class="conum" data-value="8"></i><b>(8)</b>
+            default "";
+
+    Where hidden()                                              <i class="conum" data-value="9"></i><b>(9)</b>
+            default Where.NOT_SPECIFIED;
+
+    int maxLength()                                             <i class="conum" data-value="10"></i><b>(10)</b>
+            default -1;
+
+    MementoSerialization mementoSerialization()                 <i class="conum" data-value="11"></i><b>(11)</b>
+            default MementoSerialization.NOT_SPECIFIED;
+
+    Class&lt;? extends Specification&gt;[] mustSatisfy()              <i class="conum" data-value="12"></i><b>(12)</b>
+            default {};
+
+    Optionality optionality()                                   <i class="conum" data-value="13"></i><b>(13)</b>
+            default Optionality.NOT_SPECIFIED;
+
+    Projecting projecting()                                     <i class="conum" data-value="14"></i><b>(14)</b>
+            default Projecting.NOT_SPECIFIED;
+
+    Publishing publishing()                                     <i class="conum" data-value="15"></i><b>(15)</b>
+            default Publishing.NOT_SPECIFIED;
+
+    String regexPattern()                                       <i class="conum" data-value="16"></i><b>(16)</b>
+            default "";
+
+    int regexPatternFlags()                                     <i class="conum" data-value="17"></i><b>(17)</b>
+            default 0;
+
+    String regexPatternReplacement()                            <i class="conum" data-value="18"></i><b>(18)</b>
+            default "Doesn't match pattern";
+
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
 <tr>
-<th class="tableblock halign-left valign-top">Attribute</th>
-<th class="tableblock halign-left valign-top">Values (default)</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#command"><code>command()</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>AS_CONFIGURED</code>, <code>ENABLED</code>, <code>DISABLED</code><br>
-(<code>AS_CONFIGURED</code>)</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>whether the property edit should be reified into a <code>o.a.i.applib.</code><br>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><a href="#command"><code>command()</code></a>
+<div class="paragraph">
+<p>Whether the property edit should be reified into a <code>o.a.i.applib.</code><br>
 <code>services.command.Command</code> object through the <a href="../applib-svc/CommandContext.html" class="page"><code>CommandContext</code></a> service.</p>
-</div></div></td>
+</div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>commandExecuteIn()</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>FOREGROUND</code>,<code>BACKGROUND</code><br>
-(<code>FOREGROUND</code>)</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>whether to execute the command immediately, or to persist it (assuming that an appropriate implementation of <a href="../applib-svc/CommandService.html" class="page"><code>CommandService</code></a> has been configured) such that a background scheduler can execute the command asynchronously</p>
-</div></div></td>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><code>commandPersistence()</code>
+<div class="paragraph">
+<p>Whether the reified <code>Command</code> (as provided by the <code>CommandContext</code> domain service) should actually be persisted (assuming an appropriate implementation of <a href="../applib-svc/CommandService.html" class="page"><code>CommandService</code></a> has been configured).</p>
+</div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>commandPersistence()</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>PERSISTED</code>, <code>NOT_PERSISTED</code>, <code>IF_HINTED</code><br>
-(<code>PERSISTED</code>)</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>whether the reified <code>Command</code> (as provided by the <code>CommandContext</code> domain service) should actually be persisted (assuming an appropriate implementation of <a href="../applib-svc/CommandService.html" class="page"><code>CommandService</code></a> has been configured).</p>
-</div></div></td>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><code>commandExecuteIn()</code>
+<div class="paragraph">
+<p>Whether to execute the command immediately, or to persist it (assuming that an appropriate implementation of <a href="../applib-svc/CommandService.html" class="page"><code>CommandService</code></a> has been configured) such that a background scheduler can execute the command asynchronously</p>
+</div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>commandDtoProcessor()</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Implementation of <code>CommandDtoProcessor</code> interface<br>
-(null)</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>If the <code>Command</code> also implements <code>CommandWithDto</code> (meaning that it can return a <code>CommandDto</code>, in other words be converted into an XML memento), then optionally specifies a processor that can refine this XML.</p>
-</div></div></td>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><code>commandDtoProcessor()</code>
+<div class="paragraph">
+<p>If the <code>Command</code> also implements <code>CommandWithDto</code> (meaning that it can return a <code>CommandDto</code>, in other words be converted into an XML memento), then optionally specifies the implementation of a <code>CommandDtoProcessor</code> that can refine this XML.</p>
+</div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#domainEvent"><code>domainEvent()</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">subtype of <code>PropertyDomainEvent</code><br>
-(<code>PropertyDomainEvent.Default</code>)</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>the event type to be posted to the <a href="../applib-svc/EventBusService.html" class="page"><code>EventBusService</code></a> to broadcast the property&#8217;s business rule checking (hide, disable, validate) and its modification (before and after).</p>
-</div></div></td>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><a href="#domainevent"><code>domainEvent()</code></a>
+<div class="paragraph">
+<p>The event type to be posted to the <a href="../applib-svc/EventBusService.html" class="page"><code>EventBusService</code></a> to broadcast the property&#8217;s business rule checking (hide, disable, validate) and its modification (before and after).</p>
+</div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#editing"><code>editing()</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ENABLED</code>, <code>DISABLED</code>, <code>AS_CONFIGURED</code><br>
-(<code>AS_CONFIGURED</code>)</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>whether a property can be modified or cleared from within the UI</p>
-</div></div></td>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td><a href="#editing"><code>editing()</code></a>
+<div class="paragraph">
+<p>Whether a property can be modified or cleared from within the UI</p>
+</div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#fileAccept"><code>fileAccept()</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Media type or file extension</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Hints the files to be uploaded to a <a href="../applib-cm/classes/value-types.html#Blob" class="page"><code>Blob</code></a>
- or <a href="../applib-cm/classes/value-types.html#Clob" class="page"><code>Clob</code></a>.<br>
-<br>
-Note that this does not prevent the user from uploading some other file type; rather it merely defaults the file type in the file open dialog.</p>
-</div></div></td>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td><code>editingDisabledReason()</code>
+<div class="paragraph">
+<p>The reason that this property cannot be modified.</p>
+</div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#hidden"><code>hidden()</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>EVERYWHERE</code>, <code>OBJECT_FORMS</code>, <code>PARENTED_TABLES</code>, <code>STANDALONE_TABLES</code>, <code>ALL_TABLES</code>, <code>NOWHERE</code><br>
-(<code>NOWHERE</code>)</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>indicates where (in the UI) the property should be hidden from the user.</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#maxLength"><code>maxLength()</code></a></p></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>maximum number of characters for string parameters; ignored otherwise<br></p>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td><a href="#fileaccept"><code>fileAccept()</code></a>
+<div class="paragraph">
+<p>Hints the file type (media type or file extension) to be uploaded to a <a href="../applib-cm/classes/value-types.html#Blob" class="page"><code>Blob</code></a>
+ or <a href="../applib-cm/classes/value-types.html#Clob" class="page"><code>Clob</code></a>.<br></p>
 </div>
 <div class="paragraph">
-<p>In many/most cases you should however use <a href="Column.html" class="page"><code>@Column#length()</code></a></p>
-</div></div></td>
+<p>Note that this does not prevent the user from uploading some other file type; rather it merely defaults the file type in the file open dialog.</p>
+</div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#mustSatisfy"><code>mustSatisfy()</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">implementation of <code>o.a.i.applib.spec.Specification</code></p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>allows arbitrary validation to be applied</p>
-</div></div></td>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
+<td><a href="#hidden"><code>hidden()</code></a>
+<div class="paragraph">
+<p>Indicates where (in the UI) the property should be hidden from the user.</p>
+</div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#notPersisted"><code>notPersisted()</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code>, <code>false</code><br>
-(<code>false</code>)</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>whether to exclude from snapshots.<br></p>
+<td><i class="conum" data-value="10"></i><b>10</b></td>
+<td><a href="#maxlength"><code>maxLength()</code></a>
+<div class="paragraph">
+<p>Maximum number of characters for string parameters; ignored otherwise<br></p>
 </div>
-<div class="admonitionblock warning">
+<div class="admonitionblock tip">
 <table>
 <tr>
 <td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
+<i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-<div class="paragraph">
-<p>Property must also be annotated with <code>@javax.jdo.annotations.NotPersistent</code> in order to not be persisted.</p>
-</div>
+In many/most cases you should however use <a href="Column.html" class="page"><code>@Column#length()</code></a>
 </td>
 </tr>
 </table>
-</div></div></td>
+</div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#optionality"><code>optionality()</code></a></p></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>specifies a property is optional rather than mandatory<br></p>
-</div>
+<td><i class="conum" data-value="11"></i><b>11</b></td>
+<td><a href="#mementoserialization"><code>mementoSerialization()</code></a>
 <div class="paragraph">
-<p>In many/most cases you should however use <a href="Column.html" class="page"><code>@Column#allowsNull()</code></a></p>
-</div></div></td>
+<p>Whether to exclude from snapshots.<br></p>
+</div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#projecting"><code>projecting()</code></a></p></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>indicates that owning object is a view model that is acting as a projection of the underlying entity referenced by this property.</p>
-</div></div></td>
+<td><i class="conum" data-value="12"></i><b>12</b></td>
+<td><a href="#mustsatisfy"><code>mustSatisfy()</code></a>
+<div class="paragraph">
+<p>Implementation of <code>o.a.i.applib.spec.Specification</code> that allows arbitrary validation to be applied.</p>
+</div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#publishing"><code>publishing()</code></a></p></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>determines whether the editing of a property should be published.</p>
-</div></div></td>
-</tr>
+<td><i class="conum" data-value="13"></i><b>13</b></td>
+<td><a href="#optionality"><code>optionality()</code></a>
+<div class="paragraph">
+<p>Specifies a property is optional rather than mandatory</p>
+</div>
+<div class="admonitionblock tip">
+<table>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#regexPattern"><code>regexPattern()</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">regular expression</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>validates the contents of a string parameter against the regular expression pattern</p>
-</div></div></td>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+In many/most cases you should however use <a href="Column.html" class="page"><code>@Column#allowsNull()</code></a>
+</td>
 </tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>regexPatternFlags()</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">value of flags as normally passed to <code>java.util.regex.</code><br>
-<code>Pattern#compile(&#8230;&#8203;)</code></p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>modifies the compilation of the regular expression</p>
-</div></div></td>
-</tr>
-</tbody>
 </table>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="14"></i><b>14</b></td>
+<td><a href="#projecting"><code>projecting()</code></a>
+<div class="paragraph">
+<p>Indicates that owning object is a view model that is acting as a projection of the underlying entity referenced by this property.</p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="15"></i><b>15</b></td>
+<td><a href="#publishing"><code>publishing()</code></a>
+<div class="paragraph">
+<p>Determines whether the editing of a property should be published.</p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="16"></i><b>16</b></td>
+<td><a href="#regexpattern"><code>regexPattern()</code></a>
+<div class="paragraph">
+<p>Validates the contents of a string parameter against the regular expression pattern</p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="17"></i><b>17</b></td>
+<td><code>regexPatternFlags()</code>
+<div class="paragraph">
+<p>Value of flags as normally passed to <code>java.util.regex.</code><br>
+<code>Pattern#compile(&#8230;&#8203;)</code>, modifying the compilation of the regular expression</p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="18"></i><b>18</b></td>
+<td><code>regexPatternReplacement()</code>
+<div class="paragraph">
+<p>Unused.</p>
+</div></td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
 <p>For example:</p>
 </div>
@@ -1949,7 +1990,7 @@ tables. Annotating with <code>@Property(where=Where.NOWHERE)</code> overrides th
 </div>
 </div>
 <div class="sect1">
-<h2 id="maxLength"><a class="anchor" href="#maxLength"></a><code>maxLength()</code></h2>
+<h2 id="maxlength"><a class="anchor" href="#maxlength"></a><code>maxLength()</code></h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>The <code>maxLength</code> attribute applies only to <code>String</code> properties, indicating the maximum number of characters that the user may enter (for example in a text field in the UI).
@@ -2100,25 +2141,10 @@ Rather than implement <code>Specification</code>, instead implement <code>Specif
 </div>
 </div>
 <div class="sect1">
-<h2 id="notPersisted"><a class="anchor" href="#notPersisted"></a><code>notPersisted()</code></h2>
+<h2 id="mementoserialization"><a class="anchor" href="#mementoserialization"></a><code>mementoSerialization</code></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The (somewhat misnamed) <code>notPersisted</code> attribute indicates that the collection should be excluded from any snapshots generated by the <a href="../applib-svc/XmlSnapshotService.html" class="page"><code>XmlSnapshotService</code></a>.</p>
-</div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>This annotation does <em>not</em> specify that a property is not persisted in the JDO/DataNucleus objectstore.
-See below for details as to how to additionally annotate the property for this.</p>
-</div>
-</td>
-</tr>
-</table>
+<p>The <code>mementoSerialization</code> attribute indicates whether the property should be included/excluded from any snapshots generated by the <a href="../applib-svc/XmlSnapshotService.html" class="page"><code>XmlSnapshotService</code></a>.</p>
 </div>
 <div class="paragraph">
 <p>For example:</p>
@@ -2126,43 +2152,12 @@ See below for details as to how to additionally annotate the property for this.<
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Order {
-    @Property(notPersisted=true)
+    @Property(mementoSerialization=EXCLUDED)
     public Order getPreviousOrder() {...}
     public void setPreviousOrder(Order previousOrder) {...}
     ...
 }</code></pre>
 </div>
-</div>
-<div class="paragraph">
-<p>Historically this annotation also hinted as to whether the property&#8217;s value contents should be persisted in the object store.
-However, the JDO/DataNucleus objectstore does not recognize this annotation.
-Thus, to ensure that a property is actually not persisted, it should <strong>also</strong> be annotated with <code>@javax.jdo.annotations.NotPersistent</code>.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Order {
-    @Property(notPersisted=true)               <i class="conum" data-value="1"></i><b>(1)</b>
-    @javax.jdo.annotations.NotPersistent       <i class="conum" data-value="2"></i><b>(2)</b>
-    public Order getPreviousOrder() {...}
-    public void setPreviousOrder(Order previousOrder) {...}
-    ...
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>ignored by Apache Isis</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>ignored by JDO/DataNucleus</td>
-</tr>
-</table>
 </div>
 <div class="paragraph">
 <p>Alternatively, if the property is derived, then providing only a "getter" will also work:</p>
@@ -2178,7 +2173,7 @@ Thus, to ensure that a property is actually not persisted, it should <strong>als
 <div class="sect2">
 <h3 id="see-also-5"><a class="anchor" href="#see-also-5"></a>See also</h3>
 <div class="paragraph">
-<p>This attribute is also supported for <a href="Collection.html#notPersisted" class="page">collections</a>.</p>
+<p>This attribute is also supported for <a href="Collection.html#mementoSerializationp" class="page">collections</a>.</p>
 </div>
 </div>
 </div>
@@ -2568,7 +2563,7 @@ The values are those that would normally be passed to <code>java.util.regex.Patt
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200317-0401-36ebf196</p>
+            <p>Revision: 2.0.0-M2.20200318-0401-7b207f08</p>
         </div>
     </div>
 </footer>

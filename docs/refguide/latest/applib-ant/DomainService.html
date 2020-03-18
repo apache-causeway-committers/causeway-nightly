@@ -102,33 +102,12 @@
             <span class="navbar-item navbar-heading">Releases</span>
             <a class="navbar-item" href="../../../docs/latest/downloads/how-to.html">Downloads</a>
             <a class="navbar-item" href="../../../relnotes/latest/about.html">Release Notes</a>
+            <a class="navbar-item" href="../../../docs/latest/archive/1-x.html">Archive (1.x)</a>
             <hr class="navbar-divider"/>
             <span class="navbar-item navbar-heading">Framework</span>
             <a class="navbar-item" href="../../../conguide/latest/about.html">Contributors' Guide</a>
             <a class="navbar-item" href="../../../comguide/latest/about.html">Committers' Guide</a>
             <a class="navbar-item" href="../../../core/latest/about.html">Core Design</a>
-          </div>
-        </div>
-        <div class="navbar-item has-dropdown is-hoverable">
-          <a class="navbar-link" href="#">Archive</a>
-          <div class="navbar-dropdown">
-            <span class="navbar-item navbar-heading">v1.x Docs</span>
-            <a class="navbar-item" href="../../../versions/1.17.0/documentation.html">1.17.0</a>
-            <a class="navbar-item" href="../../../versions/1.16.2/documentation.html">1.16.2</a>
-            <a class="navbar-item" href="../../../versions/1.16.1/documentation.html">1.16.1</a>
-            <a class="navbar-item" href="../../../versions/1.16.0/documentation.html">1.16.0</a>
-            <a class="navbar-item" href="../../../versions/1.15.1/documentation.html">1.15.1</a>
-            <a class="navbar-item" href="../../../versions/1.15.0/documentation.html">1.15.0</a>
-            <a class="navbar-item" href="../../../versions/1.14.0/documentation.html">1.14.0</a>
-            <a class="navbar-item" href="../../../versions/1.13.2.1/documentation.html">1.13.2.1</a>
-            <a class="navbar-item" href="../../../versions/1.13.2/documentation.html">1.13.2</a>
-            <a class="navbar-item" href="../../../versions/1.13.1/documentation.html">1.13.1</a>
-            <a class="navbar-item" href="../../../versions/1.13.0/documentation.html">1.13.0</a>
-            <a class="navbar-item" href="../../../versions/1.12.2/documentation.html">1.12.2</a>
-            <a class="navbar-item" href="../../../versions/1.12.1/documentation.html">1.12.1</a>
-            <a class="navbar-item" href="../../../versions/1.12.0/documentation.html">1.12.0</a>
-            <a class="navbar-item" href="../../../versions/1.11.1/documentation.html">1.11.1</a>
-            <a class="navbar-item" href="../../../versions/1.11.0/documentation.html">1.11.0</a>
           </div>
         </div>
         <div class="navbar-item has-dropdown is-hoverable">
@@ -219,9 +198,6 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="Inject.html">Inject</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="MemberGroupLayout.html">MemberGroupLayout</a>
-  </li>
-  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="MemberOrder.html">MemberOrder</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -274,9 +250,6 @@ page.parent doesn't seem to be set...
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="ViewModel.html">ViewModel</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="ViewModelLayout.html">ViewModelLayout</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="XmlJavaTypeAdapter.html">XmlJavaTypeAdapter</a>
@@ -748,54 +721,47 @@ page.parent doesn't seem to be set...
 <div class="paragraph">
 <p>The <code>@DomainService</code> annotation indicates that the (concrete) class should be automatically instantiated as a domain service.</p>
 </div>
-<div class="paragraph">
-<p>Domain services with this annotation do NOT need to be registered explicitly in <code>isis.properties</code>; they will be
-discovered automatically on the CLASSPATH.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Inherited
+@Target({
+        ElementType.TYPE,
+        ElementType.ANNOTATION_TYPE
+})
+@Retention(RetentionPolicy.RUNTIME)
+@Service @Singleton
+public @interface DomainService {
+
+    NatureOfService nature()                    <i class="conum" data-value="1"></i><b>(1)</b>
+            default NatureOfService.VIEW;
+
+    String objectType()                         <i class="conum" data-value="2"></i><b>(2)</b>
+            default "";
+
+}</code></pre>
 </div>
-<div class="paragraph">
-<p>The table below summarizes the annotation&#8217;s attributes.</p>
 </div>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. <code>@DomainService</code> attributes</caption>
-<colgroup>
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
+<div class="colist arabic">
+<table>
 <tr>
-<th class="tableblock halign-left valign-top">Attribute</th>
-<th class="tableblock halign-left valign-top">Values (default)</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#nature"><code>nature()</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>VIEW</code>, <code>VIEW_MENU_ONLY</code>, <code>VIEW_CONTRIBUTIONS_ONLY</code>, <code>VIEW_REST_ONLY</code>, <code>DOMAIN</code> (<code>VIEW</code>)</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>the nature of this service: providing actions for menus, or as contributed actions, or for the <a href="../../../vro/latest/about.html" class="page">RestfulObjects REST API</a>, or neither</p>
-</div></div></td>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><a href="#nature"><code>nature()</code></a>
+<div class="paragraph">
+<p>Whether the actions of this domain service should be rendered in UI menus only, or the <a href="../../../vro/latest/about.html" class="page">RestfulObjects</a> REST API only, or both</p>
+</div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#objectType"><code>objectType()</code></a></p></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>equivalent to <a href="DomainObject.html#objectType" class="page"><code>@DomainObject#objectType()</code></a>, specifies the objectType of the service.</p>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><a href="#objecttype"><code>objectType()</code></a>
+<div class="paragraph">
+<p>Equivalent to <a href="DomainObject.html#objectType" class="page"><code>@DomainObject#objectType()</code></a>, specifies the objectType of the service.</p>
 </div>
 <div class="paragraph">
 <p>The instanceId for services is always "1".</p>
-</div></div></td>
+</div></td>
 </tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#repositoryFor"><code>repositoryFor()</code></a></p></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>if this domain service acts as a repository for an entity type, specify that entity type.  This is used to determine an icon to use for the service (eg as shown in action prompts).</p>
-</div></div></td>
-</tr>
-</tbody>
 </table>
+</div>
 <div class="paragraph">
 <p>For example:</p>
 </div>
@@ -1048,32 +1014,6 @@ An error message will be printed in the log to help you determine which classes 
 </div>
 </div>
 </div>
-<div class="sect1">
-<h2 id="repositoryfor"><a class="anchor" href="#repositoryfor"></a><code>repositoryFor</code></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The <code>repositoryFor</code> attribute is intended for domain services (probably with a <a href="#nature"><code>nature=DOMAIN</code></a>) that are intended to act as repositories for domain entities.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainService(
-    nature=NatureOfService.DOMAIN,
-    repositoryFor=Loan.class
-)
-public class LoanRepository {
-    @Programmatic
-    public List&lt;Loan&gt; findLoansFor(Borrower borrower) { /* ... */ }
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Currently the metadata is unused; one planned use is to infer the icon for the domain service from the icon of the nominated entity.</p>
-</div>
-</div>
-</div>
 </article>
 <aside class="article-aside toc" role="navigation">
     <p class="toc-title">On this page</p>
@@ -1091,7 +1031,7 @@ public class LoanRepository {
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200317-0401-36ebf196</p>
+            <p>Revision: 2.0.0-M2.20200318-0401-7b207f08</p>
         </div>
     </div>
 </footer>

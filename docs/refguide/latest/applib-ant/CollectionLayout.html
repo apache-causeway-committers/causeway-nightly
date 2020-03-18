@@ -102,33 +102,12 @@
             <span class="navbar-item navbar-heading">Releases</span>
             <a class="navbar-item" href="../../../docs/latest/downloads/how-to.html">Downloads</a>
             <a class="navbar-item" href="../../../relnotes/latest/about.html">Release Notes</a>
+            <a class="navbar-item" href="../../../docs/latest/archive/1-x.html">Archive (1.x)</a>
             <hr class="navbar-divider"/>
             <span class="navbar-item navbar-heading">Framework</span>
             <a class="navbar-item" href="../../../conguide/latest/about.html">Contributors' Guide</a>
             <a class="navbar-item" href="../../../comguide/latest/about.html">Committers' Guide</a>
             <a class="navbar-item" href="../../../core/latest/about.html">Core Design</a>
-          </div>
-        </div>
-        <div class="navbar-item has-dropdown is-hoverable">
-          <a class="navbar-link" href="#">Archive</a>
-          <div class="navbar-dropdown">
-            <span class="navbar-item navbar-heading">v1.x Docs</span>
-            <a class="navbar-item" href="../../../versions/1.17.0/documentation.html">1.17.0</a>
-            <a class="navbar-item" href="../../../versions/1.16.2/documentation.html">1.16.2</a>
-            <a class="navbar-item" href="../../../versions/1.16.1/documentation.html">1.16.1</a>
-            <a class="navbar-item" href="../../../versions/1.16.0/documentation.html">1.16.0</a>
-            <a class="navbar-item" href="../../../versions/1.15.1/documentation.html">1.15.1</a>
-            <a class="navbar-item" href="../../../versions/1.15.0/documentation.html">1.15.0</a>
-            <a class="navbar-item" href="../../../versions/1.14.0/documentation.html">1.14.0</a>
-            <a class="navbar-item" href="../../../versions/1.13.2.1/documentation.html">1.13.2.1</a>
-            <a class="navbar-item" href="../../../versions/1.13.2/documentation.html">1.13.2</a>
-            <a class="navbar-item" href="../../../versions/1.13.1/documentation.html">1.13.1</a>
-            <a class="navbar-item" href="../../../versions/1.13.0/documentation.html">1.13.0</a>
-            <a class="navbar-item" href="../../../versions/1.12.2/documentation.html">1.12.2</a>
-            <a class="navbar-item" href="../../../versions/1.12.1/documentation.html">1.12.1</a>
-            <a class="navbar-item" href="../../../versions/1.12.0/documentation.html">1.12.0</a>
-            <a class="navbar-item" href="../../../versions/1.11.1/documentation.html">1.11.1</a>
-            <a class="navbar-item" href="../../../versions/1.11.0/documentation.html">1.11.0</a>
           </div>
         </div>
         <div class="navbar-item has-dropdown is-hoverable">
@@ -219,9 +198,6 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="Inject.html">Inject</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="MemberGroupLayout.html">MemberGroupLayout</a>
-  </li>
-  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="MemberOrder.html">MemberOrder</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -274,9 +250,6 @@ page.parent doesn't seem to be set...
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="ViewModel.html">ViewModel</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="ViewModelLayout.html">ViewModelLayout</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="XmlJavaTypeAdapter.html">XmlJavaTypeAdapter</a>
@@ -746,92 +719,110 @@ page.parent doesn't seem to be set...
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>The <code>@CollectionLayout</code> annotation applies to collections, collecting together all UI hints within a single
-annotation.  It is also possible to apply the annotation to actions of domain services that are acting as contributed collections.</p>
+<p>The <code>@CollectionLayout</code> annotation applies to collections, collecting together all UI hints within a single annotation.
+It is also possible to apply the annotation to actions of domain services that are acting as contributed collections.</p>
 </div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Inherited
+@Target({
+        ElementType.METHOD,
+        ElementType.FIELD,
+        ElementType.TYPE,
+        ElementType.ANNOTATION_TYPE
+})
+@Retention(RetentionPolicy.RUNTIME)
+@Mixin(method = "coll")
+public @interface CollectionLayout {
+
+    String cssClass()                                   <i class="conum" data-value="1"></i><b>(1)</b>
+            default "";
+
+    String defaultView()                                <i class="conum" data-value="2"></i><b>(2)</b>
+            default "";
+
+    String describedAs()                                <i class="conum" data-value="3"></i><b>(3)</b>
+            default "";
+
+    Where hidden()                                      <i class="conum" data-value="4"></i><b>(4)</b>
+            default Where.NOT_SPECIFIED;
+
+    String named()                                      <i class="conum" data-value="5"></i><b>(5)</b>
+            default "";
+
+    boolean namedEscaped()                              <i class="conum" data-value="6"></i><b>(6)</b>
+            default true;
+
+    int paged()                                         <i class="conum" data-value="7"></i><b>(7)</b>
+            default -1;
+
+    Class sortedBy()                                    <i class="conum" data-value="8"></i><b>(8)</b>
+            default Comparator.class;
+
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><a href="#cssclass"><code>cssClass()</code></a>
 <div class="paragraph">
-<p>The table below summarizes the annotation&#8217;s attributes.</p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. <code>@CollectionLayout</code> attributes</caption>
-<colgroup>
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Attribute</th>
-<th class="tableblock halign-left valign-top">Values (default)</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#cssClass"><code>cssClass()</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Any string valid as a CSS class</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>the css class that a collection should have, to allow more targetted styling in <a href="#refguide:config:application-specific/application-css.adoc" class="page unresolved"><code>application.css</code></a></p>
-</div></div></td>
+<p>The css class that a collection should have, to allow more targetted styling in <a href="#refguide:config:application-specific/application-css.adoc" class="page unresolved"><code>application.css</code></a></p>
+</div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#defaultView"><code>defaultView()</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>table</code>, <code>excel</code>, <code>calendar</code>, <code>map</code>, &#8230;&#8203;</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><a href="#defaultview"><code>defaultView()</code></a>
+<div class="paragraph">
 <p>Which view is selected by default, if multiple views are available.</p>
-</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><a href="#describedas"><code>describedAs()</code></a>
 <div class="paragraph">
-<p>See the (non-ASF) <a href="https://platform.incode.org" target="_blank" rel="noopener">Incode Platform</a> for further Wicket components providing views.</p>
-</div></div></td>
+<p>Description of this collection, eg to be rendered in a tooltip.</p>
+</div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#describedAs"><code>describedAs()</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">String.</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>description of this collection, eg to be rendered in a tooltip.</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#hidden"><code>hidden()</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>EVERYWHERE</code>, <code>OBJECT_FORMS</code>, <code>NOWHERE</code><br>
-(<code>NOWHERE</code>)</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>indicates where (in the UI) the collection should be hidden from the user.</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#named"><code>named</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">String.</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>to override the name inferred from the collection&#8217;s name in code.<br></p>
-</div>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><a href="#hidden"><code>hidden()</code></a>
 <div class="paragraph">
-<p>A typical use case is if the desired name is a reserved Java keyword, such as <code>default</code> or <code>package</code>.</p>
-</div></div></td>
+<p>Indicates where (in the UI) the collection should be hidden from the user.</p>
+</div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">namedEscaped()</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code>,<code>false</code> (<code>true</code>)</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>whether to HTML escape the name of this property.</p>
-</div></div></td>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><a href="#named"><code>named()</code></a>
+<div class="paragraph">
+<p>To override the name inferred from the collection&#8217;s name in code.<br>
+A typical use case is if the desired name is a reserved Java keyword, such as <code>default</code> or <code>package</code>.</p>
+</div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#paged"><code>paged()</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Positive integer</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>the page size for instances of this class when rendered within a table.</p>
-</div></div></td>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td><code>namedEscaped()</code>
+<div class="paragraph">
+<p>Whether to HTML escape the name of this property.</p>
+</div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#sortedBy"><code>sortedBy()</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Subclass of <code>java.util.Comparator</code> for element type</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>indicates that the elements in the <code>java.util.SortedSet</code> collection should be sorted according to a specified <code>Comparator</code> rather than their natural sort order.</p>
-</div></div></td>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td><a href="#paged"><code>paged()</code></a>
+<div class="paragraph">
+<p>The page size for instances of this class when rendered within a table.</p>
+</div></td>
 </tr>
-</tbody>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td><a href="#sortedby"><code>sortedBy()</code></a>
+<div class="paragraph">
+<p>Indicates that the elements in the <code>java.util.SortedSet</code> collection should be sorted according to a specified <code>Comparator</code> rather than their natural sort order.</p>
+</div></td>
+</tr>
 </table>
+</div>
 <div class="paragraph">
 <p>For example:</p>
 </div>
@@ -872,8 +863,8 @@ annotation.  It is also possible to apply the annotation to actions of domain se
 </td>
 <td class="content">
 <div class="paragraph">
-<p>The annotation is one of a handful (others including <a href="Collection.html" class="page"><code>@Collection</code></a>, <a href="Property.html" class="page"><code>@Property</code></a> and <a href="PropertyLayout.html" class="page"><code>@PropertyLayout</code></a>) that can also be applied to the field, rather than the getter method.  This is specifically
-so that boilerplate-busting tools such as <a href="https://projectlombok.org/">Project Lombok</a> can be used.</p>
+<p>The annotation is one of a handful (others including <a href="Collection.html" class="page"><code>@Collection</code></a>, <a href="Property.html" class="page"><code>@Property</code></a> and <a href="PropertyLayout.html" class="page"><code>@PropertyLayout</code></a>) that can also be applied to the field, rather than the getter method.
+This is specifically so that boilerplate-busting tools such as <a href="https://projectlombok.org/">Project Lombok</a> can be used.</p>
 </div>
 </td>
 </tr>
@@ -916,9 +907,6 @@ so that boilerplate-busting tools such as <a href="https://projectlombok.org/">P
 <ul>
 <li>
 <p><a href="DomainObjectLayout.html#cssClass" class="page">domain objects</a></p>
-</li>
-<li>
-<p><a href="ViewModelLayout.html#cssClass" class="page">view models</a></p>
 </li>
 <li>
 <p><a href="ActionLayout.html#cssClass" class="page">actions</a></p>
@@ -988,7 +976,7 @@ If the objects to be rendered have the correct "shape", then the appropriate vie
 <p>The <code>describedAs</code> attribute is used to provide a short description of the collection to the user.  In the <a href="../../../vw/latest/about.html" class="page">Wicket viewer</a> it is displayed as a 'tool tip'.</p>
 </div>
 <div class="paragraph">
-<p>The <code>describedAs</code> attribute can also be specified for <a href="PropertyLayout.html#describedAs" class="page">properties</a>, <a href="ActionLayout.html#describedAs" class="page">actions</a>, <a href="ParameterLayout.html#describedAs" class="page">parameters</a>, <a href="DomainObjectLayout.html#describedAs" class="page">domain objects</a> and <a href="ViewModelLayout.html#describedAs" class="page">view models</a>.</p>
+<p>The <code>describedAs</code> attribute can also be specified for <a href="PropertyLayout.html#describedAs" class="page">properties</a>, <a href="ActionLayout.html#describedAs" class="page">actions</a>, <a href="ParameterLayout.html#describedAs" class="page">parameters</a> and <a href="DomainObjectLayout.html#describedAs" class="page">domain objects</a>.</p>
 </div>
 <div class="paragraph">
 <p>For example:</p>
@@ -1173,9 +1161,6 @@ To allow HTML markup, set the related <code>namedEscaped</code> attribute to <co
 <p><a href="DomainObjectLayout.html#named" class="page">domain objects</a></p>
 </li>
 <li>
-<p><a href="ViewModelLayout.html#named" class="page">view models</a></p>
-</li>
-<li>
 <p><a href="DomainServiceLayout.html#named" class="page">domain services</a>.</p>
 </li>
 </ul>
@@ -1236,9 +1221,6 @@ The <a href="../../../vw/latest/about.html" class="page">Wicket viewer</a> <em>d
 <ul>
 <li>
 <p><a href="DomainObjectLayout.html#paged" class="page">domain objects</a></p>
-</li>
-<li>
-<p><a href="ViewModelLayout.html#paged" class="page">view models</a>.</p>
 </li>
 </ul>
 </div>
@@ -1342,7 +1324,7 @@ The <a href="../../../vw/latest/about.html" class="page">Wicket viewer</a> <em>d
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200317-0401-36ebf196</p>
+            <p>Revision: 2.0.0-M2.20200318-0401-7b207f08</p>
         </div>
     </div>
 </footer>

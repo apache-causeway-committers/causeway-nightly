@@ -102,33 +102,12 @@
             <span class="navbar-item navbar-heading">Releases</span>
             <a class="navbar-item" href="../../../docs/latest/downloads/how-to.html">Downloads</a>
             <a class="navbar-item" href="../../../relnotes/latest/about.html">Release Notes</a>
+            <a class="navbar-item" href="../../../docs/latest/archive/1-x.html">Archive (1.x)</a>
             <hr class="navbar-divider"/>
             <span class="navbar-item navbar-heading">Framework</span>
             <a class="navbar-item" href="../../../conguide/latest/about.html">Contributors' Guide</a>
             <a class="navbar-item" href="../../../comguide/latest/about.html">Committers' Guide</a>
             <a class="navbar-item" href="../../../core/latest/about.html">Core Design</a>
-          </div>
-        </div>
-        <div class="navbar-item has-dropdown is-hoverable">
-          <a class="navbar-link" href="#">Archive</a>
-          <div class="navbar-dropdown">
-            <span class="navbar-item navbar-heading">v1.x Docs</span>
-            <a class="navbar-item" href="../../../versions/1.17.0/documentation.html">1.17.0</a>
-            <a class="navbar-item" href="../../../versions/1.16.2/documentation.html">1.16.2</a>
-            <a class="navbar-item" href="../../../versions/1.16.1/documentation.html">1.16.1</a>
-            <a class="navbar-item" href="../../../versions/1.16.0/documentation.html">1.16.0</a>
-            <a class="navbar-item" href="../../../versions/1.15.1/documentation.html">1.15.1</a>
-            <a class="navbar-item" href="../../../versions/1.15.0/documentation.html">1.15.0</a>
-            <a class="navbar-item" href="../../../versions/1.14.0/documentation.html">1.14.0</a>
-            <a class="navbar-item" href="../../../versions/1.13.2.1/documentation.html">1.13.2.1</a>
-            <a class="navbar-item" href="../../../versions/1.13.2/documentation.html">1.13.2</a>
-            <a class="navbar-item" href="../../../versions/1.13.1/documentation.html">1.13.1</a>
-            <a class="navbar-item" href="../../../versions/1.13.0/documentation.html">1.13.0</a>
-            <a class="navbar-item" href="../../../versions/1.12.2/documentation.html">1.12.2</a>
-            <a class="navbar-item" href="../../../versions/1.12.1/documentation.html">1.12.1</a>
-            <a class="navbar-item" href="../../../versions/1.12.0/documentation.html">1.12.0</a>
-            <a class="navbar-item" href="../../../versions/1.11.1/documentation.html">1.11.1</a>
-            <a class="navbar-item" href="../../../versions/1.11.0/documentation.html">1.11.0</a>
           </div>
         </div>
         <div class="navbar-item has-dropdown is-hoverable">
@@ -219,9 +198,6 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="Inject.html">Inject</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="MemberGroupLayout.html">MemberGroupLayout</a>
-  </li>
-  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="MemberOrder.html">MemberOrder</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -274,9 +250,6 @@ page.parent doesn't seem to be set...
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="ViewModel.html">ViewModel</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="ViewModelLayout.html">ViewModelLayout</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="XmlJavaTypeAdapter.html">XmlJavaTypeAdapter</a>
@@ -748,86 +721,86 @@ page.parent doesn't seem to be set...
 <div class="paragraph">
 <p>The <code>@Collection</code> annotation applies to collections collecting together all domain semantics within a single annotation.</p>
 </div>
-<div class="paragraph">
-<p>The table below summarizes the annotation&#8217;s attributes.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Inherited
+@Target({
+        ElementType.METHOD,
+        ElementType.FIELD,
+        ElementType.TYPE,
+        ElementType.ANNOTATION_TYPE
+})
+@Retention(RetentionPolicy.RUNTIME)
+@Mixin(method = "coll")
+public @interface Collection {
+
+    Class&lt;? extends CollectionDomainEvent&lt;?,?&gt;&gt; domainEvent()   <i class="conum" data-value="1"></i><b>(1)</b>
+            default CollectionDomainEvent.Default.class;
+
+    Editing editing()                                           <i class="conum" data-value="2"></i><b>(2)</b>
+            default Editing.NOT_SPECIFIED;
+
+    String editingDisabledReason()                              <i class="conum" data-value="3"></i><b>(3)</b>
+            default "";
+
+    Where hidden()                                              <i class="conum" data-value="4"></i><b>(4)</b>
+            default Where.NOT_SPECIFIED;
+
+    MementoSerialization mementoSerialization()                 <i class="conum" data-value="5"></i><b>(5)</b>
+            default MementoSerialization.NOT_SPECIFIED;
+
+    Class&lt;?&gt; typeOf()                                           <i class="conum" data-value="6"></i><b>(6)</b>
+            default Object.class;
+
+}</code></pre>
 </div>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. <code>@Collection</code> attributes</caption>
-<colgroup>
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Attribute</th>
-<th class="tableblock halign-left valign-top">Values (default)</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#domainEvent"><code>domainEvent</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">subtype of <code>CollectionDomainEvent</code><br>
-(<code>CollectionDomainEvent.Default</code>)</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>the event type to be posted to the <a href="../applib-svc/EventBusService.html" class="page"><code>EventBusService</code></a> to broadcast the collection&#8217;s business rule checking (hide, disable, validate) and its modification (before and after).</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#editing"><code>editing</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ENABLED</code>, <code>DISABLED</code>, <code>AS_CONFIGURED</code><br>
-(<code>AS_CONFIGURED</code>)</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>whether a collection can be added to or removed from within the UI</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>editingDisabledReason()</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">String value</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>if <code>editing()</code> is <code>DISABLED</code>, provides a reason as to why.</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#hidden"><code>hidden</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>EVERYWHERE</code>, <code>OBJECT_FORMS</code>, <code>NOWHERE</code><br>
-(<code>NOWHERE</code>)</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>indicates where (in the UI) the collection should be hidden from the user.</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#notPersisted"><code>notPersisted</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code>, <code>false</code><br>
-(<code>false</code>)</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>whether to exclude from snapshots.<br></p>
 </div>
-<div class="admonitionblock warning">
+<div class="colist arabic">
 <table>
 <tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><a href="#domainevent"><code>domainEvent()</code></a>
 <div class="paragraph">
-<p>Collection must also be annotated with <code>@javax.jdo.annotations.NotPersistent</code> in order to not be persisted.</p>
-</div>
-</td>
-</tr>
-</table>
-</div></div></td>
+<p>The event type to be posted to the <a href="../applib-svc/EventBusService.html" class="page"><code>EventBusService</code></a> to broadcast the collection&#8217;s business rule checking (hide, disable, validate) and its modification (before and after).</p>
+</div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#typeOf"><code>typeOf</code></a></p></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>hints as to the run-time type of the objects within that collection (as a fallback)</p>
-</div></div></td>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><a href="#editing"><code>editing()</code></a>
+<div class="paragraph">
+<p>Whether a collection can be added to or removed from within the UI</p>
+</div></td>
 </tr>
-</tbody>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><code>editingDisabledReason()</code>
+<div class="paragraph">
+<p>If <code>editing()</code> is <code>DISABLED</code>, provides a reason as to why.</p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><a href="#hidden"><code>hidden()</code></a>
+<div class="paragraph">
+<p>Indicates where (in the UI) the collection should be hidden from the user.</p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><a href="#mementoserialization"><code>memento()</code></a>
+<div class="paragraph">
+<p>Whether to include/exclude in snapshots.<br></p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td><a href="#typeof"><code>typeOf()</code></a>
+<div class="paragraph">
+<p>Hints as to the run-time type of the objects within that collection (as a fallback)</p>
+</div></td>
+</tr>
 </table>
+</div>
 <div class="paragraph">
 <p>For example:</p>
 </div>
@@ -1318,24 +1291,10 @@ Both options are provided with a view that in the future the view-layer semantic
 </div>
 </div>
 <div class="sect1">
-<h2 id="notpersisted"><a class="anchor" href="#notpersisted"></a><code>notPersisted</code></h2>
+<h2 id="mementoserialization"><a class="anchor" href="#mementoserialization"></a><code>mementoSerialization</code></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The (somewhat misnamed) <code>notPersisted</code> attribute indicates that the collection should be excluded from any snapshots generated by the <a href="../applib-svc/XmlSnapshotService.html" class="page"><code>XmlSnapshotService</code></a>.</p>
-</div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>This annotation does <em>not</em> specify that a collection is not persisted in the JDO/DataNucleus objectstore.  See below for details as to how to additionally annotate the collection for this.</p>
-</div>
-</td>
-</tr>
-</table>
+<p>The <code>mementoSerialization</code> attribute indicates that the collection should be included or excluded from any snapshots generated by the <a href="../applib-svc/XmlSnapshotService.html" class="page"><code>XmlSnapshotService</code></a>.</p>
 </div>
 <div class="paragraph">
 <p>For example:</p>
@@ -1343,41 +1302,12 @@ Both options are provided with a view that in the future the view-layer semantic
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Customer {
-    @Collection(notPersisted=true)
+    @Collection(mementoSerialization=EXCLUDED)
     public SortedSet&lt;Order&gt; getPreviousOrders() {...}
     public void setPreviousOrder(SortedSet&lt;Order&gt; previousOrders) {...}
     ...
 }</code></pre>
 </div>
-</div>
-<div class="paragraph">
-<p>Historically this annotation also hinted as to whether the collection&#8217;s contents should be persisted in the object store.  However, the JDO/DataNucleus objectstore does not recognize this annotation.  Thus, to ensure that a collection is actually not persisted, it should <strong>also</strong> be annotated with <code>@javax.jdo.annotations.NotPersistent</code>.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Customer {
-    @Collection(notPersisted=true)             <i class="conum" data-value="1"></i><b>(1)</b>
-    @javax.jdo.annotations.NotPersistent       <i class="conum" data-value="2"></i><b>(2)</b>
-    public SortedSet&lt;Order&gt; getPreviousOrders() {...}
-    public void setPreviousOrder(SortedSet&lt;Order&gt; previousOrders) {...}
-    ...
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>ignored by Apache Isis</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>ignored by JDO/DataNucleus</td>
-</tr>
-</table>
 </div>
 <div class="paragraph">
 <p>Alternatively, if the collection is derived, then providing only a "getter" will also work:</p>
@@ -1393,7 +1323,7 @@ Both options are provided with a view that in the future the view-layer semantic
 <div class="sect2">
 <h3 id="see-also-4"><a class="anchor" href="#see-also-4"></a>See also</h3>
 <div class="paragraph">
-<p>This attribute is also supported for <a href="Property.html#notPersisted" class="page">properties</a>.</p>
+<p>This attribute is also supported for <a href="Property.html#mementoSerialization" class="page">properties</a>.</p>
 </div>
 </div>
 </div>
@@ -1455,7 +1385,7 @@ Both options are provided with a view that in the future the view-layer semantic
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200317-0401-36ebf196</p>
+            <p>Revision: 2.0.0-M2.20200318-0401-7b207f08</p>
         </div>
     </div>
 </footer>

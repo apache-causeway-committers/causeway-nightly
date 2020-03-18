@@ -102,33 +102,12 @@
             <span class="navbar-item navbar-heading">Releases</span>
             <a class="navbar-item" href="../../../docs/latest/downloads/how-to.html">Downloads</a>
             <a class="navbar-item" href="../../../relnotes/latest/about.html">Release Notes</a>
+            <a class="navbar-item" href="../../../docs/latest/archive/1-x.html">Archive (1.x)</a>
             <hr class="navbar-divider"/>
             <span class="navbar-item navbar-heading">Framework</span>
             <a class="navbar-item" href="../../../conguide/latest/about.html">Contributors' Guide</a>
             <a class="navbar-item" href="../../../comguide/latest/about.html">Committers' Guide</a>
             <a class="navbar-item" href="../../../core/latest/about.html">Core Design</a>
-          </div>
-        </div>
-        <div class="navbar-item has-dropdown is-hoverable">
-          <a class="navbar-link" href="#">Archive</a>
-          <div class="navbar-dropdown">
-            <span class="navbar-item navbar-heading">v1.x Docs</span>
-            <a class="navbar-item" href="../../../versions/1.17.0/documentation.html">1.17.0</a>
-            <a class="navbar-item" href="../../../versions/1.16.2/documentation.html">1.16.2</a>
-            <a class="navbar-item" href="../../../versions/1.16.1/documentation.html">1.16.1</a>
-            <a class="navbar-item" href="../../../versions/1.16.0/documentation.html">1.16.0</a>
-            <a class="navbar-item" href="../../../versions/1.15.1/documentation.html">1.15.1</a>
-            <a class="navbar-item" href="../../../versions/1.15.0/documentation.html">1.15.0</a>
-            <a class="navbar-item" href="../../../versions/1.14.0/documentation.html">1.14.0</a>
-            <a class="navbar-item" href="../../../versions/1.13.2.1/documentation.html">1.13.2.1</a>
-            <a class="navbar-item" href="../../../versions/1.13.2/documentation.html">1.13.2</a>
-            <a class="navbar-item" href="../../../versions/1.13.1/documentation.html">1.13.1</a>
-            <a class="navbar-item" href="../../../versions/1.13.0/documentation.html">1.13.0</a>
-            <a class="navbar-item" href="../../../versions/1.12.2/documentation.html">1.12.2</a>
-            <a class="navbar-item" href="../../../versions/1.12.1/documentation.html">1.12.1</a>
-            <a class="navbar-item" href="../../../versions/1.12.0/documentation.html">1.12.0</a>
-            <a class="navbar-item" href="../../../versions/1.11.1/documentation.html">1.11.1</a>
-            <a class="navbar-item" href="../../../versions/1.11.0/documentation.html">1.11.0</a>
           </div>
         </div>
         <div class="navbar-item has-dropdown is-hoverable">
@@ -219,9 +198,6 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="Inject.html">Inject</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="MemberGroupLayout.html">MemberGroupLayout</a>
-  </li>
-  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="MemberOrder.html">MemberOrder</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -274,9 +250,6 @@ page.parent doesn't seem to be set...
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="ViewModel.html">ViewModel</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="ViewModelLayout.html">ViewModelLayout</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="XmlJavaTypeAdapter.html">XmlJavaTypeAdapter</a>
@@ -748,79 +721,97 @@ page.parent doesn't seem to be set...
 <div class="paragraph">
 <p>The <code>@Parameter</code> annotation applies to action parameters collecting together all domain semantics within a single annotation.</p>
 </div>
-<div class="paragraph">
-<p>The table below summarizes the annotation&#8217;s attributes.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Inherited
+@Target({
+        ElementType.PARAMETER,
+        ElementType.ANNOTATION_TYPE
+})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Parameter {
+
+    String fileAccept()                             <i class="conum" data-value="1"></i><b>(1)</b>
+            default "";
+
+    int maxLength()                                 <i class="conum" data-value="2"></i><b>(2)</b>
+            default -1;
+
+    Class&lt;? extends Specification&gt;[] mustSatisfy()  <i class="conum" data-value="3"></i><b>(3)</b>
+            default {};
+
+    Optionality optionality()                       <i class="conum" data-value="4"></i><b>(4)</b>
+            default Optionality.NOT_SPECIFIED;
+
+    String regexPattern()                           <i class="conum" data-value="5"></i><b>(5)</b>
+            default "";
+
+    int regexPatternFlags()                         <i class="conum" data-value="6"></i><b>(6)</b>
+            default 0;
+
+    String regexPatternReplacement()                <i class="conum" data-value="7"></i><b>(7)</b>
+            default "Doesn't match pattern";
+
+
+}</code></pre>
 </div>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. <code>@Paramter</code> attributes</caption>
-<colgroup>
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
+</div>
+<div class="colist arabic">
+<table>
 <tr>
-<th class="tableblock halign-left valign-top">Attribute</th>
-<th class="tableblock halign-left valign-top">Values (default)</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#fileAccept"><code>fileAccept()</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Media type or file extension</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Hints the file type to be uploaded for <a href="../applib-cm/classes/value-types.html#Blob" class="page"><code>Blob</code></a>
- or <a href="../applib-cm/classes/value-types.html#Clob" class="page"><code>Clob</code></a>.<br>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><a href="#fileaccept"><code>fileAccept()</code></a>
+<div class="paragraph">
+<p>Hints the file type (media type or file extension) to be uploaded for <a href="../applib-cm/classes/value-types.html#Blob" class="page"><code>Blob</code></a>
+or <a href="../applib-cm/classes/value-types.html#Clob" class="page"><code>Clob</code></a>.<br>
 <br>
- Note that this does not prevent the user from uploading some other file type; rather it merely defaults the file type in the file open dialog.</p>
-</div></div></td>
+Note that this does not prevent the user from uploading some other file type; rather it merely defaults the file type in the file open dialog.</p>
+</div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#maxLength"><code>maxLength()</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Positive integer</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>maximum number of characters for string parameters; ignored otherwise</p>
-</div></div></td>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><a href="#maxlength"><code>maxLength()</code></a>
+<div class="paragraph">
+<p>Maximum number of characters for string parameters; ignored otherwise</p>
+</div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#mustSatisfy"><code>mustSatisfy()</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">implementation of <code>o.a.i.applib.spec.Specification</code></p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>allows arbitrary validation to be applied</p>
-</div></div></td>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><a href="#mustsatisfy"><code>mustSatisfy()</code></a>
+<div class="paragraph">
+<p>Implementation of <code>o.a.i.applib.spec.Specification</code>, allowing arbitrary validation to be applied.</p>
+</div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#optionality"><code>optionality()</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>MANDATORY</code>, <code>OPTIONAL</code> (<code>MANDATORY</code>)</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>specifies a parameter is optional rather than mandatory</p>
-</div></div></td>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><a href="#optionality"><code>optionality()</code></a>
+<div class="paragraph">
+<p>Specifies a parameter is optional rather than mandatory</p>
+</div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#regexPattern">regexPattern</a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">regular expression</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>validates the contents of a string parameter against the regular expression pattern</p>
-</div></div></td>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><a href="#regexpattern">regexPattern()</a>
+<div class="paragraph">
+<p>Validates the contents of a string parameter against the regular expression pattern</p>
+</div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>regexPatternFlags()</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">value of flags as normally passed to <code>java.util.regex.</code><br>
-<code>Pattern#compile(&#8230;&#8203;)</code></p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>modifies the compilation of the regular expression</p>
-</div></div></td>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td><code>regexPatternFlags()</code>
+<div class="paragraph">
+<p>Value of flags as normally passed to <code>java.util.regex.Pattern#compile(&#8230;&#8203;)</code>, modifying the compilation of the regular expression</p>
+</div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>regexPatternReplacement()</code></p></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td><code>regexPatternReplacement()</code>
+<div class="paragraph">
 <p>Unused.</p>
-</div></div></td>
+</div></td>
 </tr>
-</tbody>
 </table>
+</div>
 <div class="paragraph">
 <p>For example:</p>
 </div>
@@ -859,7 +850,7 @@ page.parent doesn't seem to be set...
 </div>
 </div>
 <div class="sect1">
-<h2 id="fileAccept"><a class="anchor" href="#fileAccept"></a><code>fileAccept()</code></h2>
+<h2 id="fileaccept"><a class="anchor" href="#fileaccept"></a><code>fileAccept()</code></h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>The <code>fileAccept</code> attribute applies only to <a href="../applib-cm/classes/value-types.html#Blob" class="page"><code>Blob</code></a>
@@ -898,7 +889,7 @@ uploading a new value.   The attribute is also supported on <a href="Property.ht
 </div>
 </div>
 <div class="sect1">
-<h2 id="maxLength"><a class="anchor" href="#maxLength"></a><code>maxLength()</code></h2>
+<h2 id="maxlength"><a class="anchor" href="#maxlength"></a><code>maxLength()</code></h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>The <code>maxLength</code> attribute applies only to <code>String</code> parameters, indicating the maximum number of characters that the user may enter (for example in a text field in the UI).  It is ignored if applied to parameters of any other type.</p>
@@ -938,7 +929,7 @@ uploading a new value.   The attribute is also supported on <a href="Property.ht
 </div>
 </div>
 <div class="sect1">
-<h2 id="mustSatisfy"><a class="anchor" href="#mustSatisfy"></a><code>mustSatisfy()</code></h2>
+<h2 id="mustsatisfy"><a class="anchor" href="#mustsatisfy"></a><code>mustSatisfy()</code></h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>The <code>mustSatisfy</code> attribute allows arbitrary validation to be applied to parameters using an (implementation of a) <code>org.apache.isis.applib.spec.Specification</code> object.  The attribute is also supported on <a href="Property.html#mustSatisfy" class="page">properties</a>.</p>
@@ -1083,7 +1074,7 @@ public class CustomerRepository {
 </div>
 </div>
 <div class="sect1">
-<h2 id="regexPattern"><a class="anchor" href="#regexPattern"></a><code>regexPattern()</code></h2>
+<h2 id="regexpattern"><a class="anchor" href="#regexpattern"></a><code>regexPattern()</code></h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>There are three attributes related to enforcing regular expressions:</p>
@@ -1155,7 +1146,7 @@ the provided argument does not match the regex pattern.</p>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200317-0401-36ebf196</p>
+            <p>Revision: 2.0.0-M2.20200318-0401-7b207f08</p>
         </div>
     </div>
 </footer>

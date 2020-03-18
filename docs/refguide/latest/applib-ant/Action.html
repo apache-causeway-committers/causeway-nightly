@@ -102,33 +102,12 @@
             <span class="navbar-item navbar-heading">Releases</span>
             <a class="navbar-item" href="../../../docs/latest/downloads/how-to.html">Downloads</a>
             <a class="navbar-item" href="../../../relnotes/latest/about.html">Release Notes</a>
+            <a class="navbar-item" href="../../../docs/latest/archive/1-x.html">Archive (1.x)</a>
             <hr class="navbar-divider"/>
             <span class="navbar-item navbar-heading">Framework</span>
             <a class="navbar-item" href="../../../conguide/latest/about.html">Contributors' Guide</a>
             <a class="navbar-item" href="../../../comguide/latest/about.html">Committers' Guide</a>
             <a class="navbar-item" href="../../../core/latest/about.html">Core Design</a>
-          </div>
-        </div>
-        <div class="navbar-item has-dropdown is-hoverable">
-          <a class="navbar-link" href="#">Archive</a>
-          <div class="navbar-dropdown">
-            <span class="navbar-item navbar-heading">v1.x Docs</span>
-            <a class="navbar-item" href="../../../versions/1.17.0/documentation.html">1.17.0</a>
-            <a class="navbar-item" href="../../../versions/1.16.2/documentation.html">1.16.2</a>
-            <a class="navbar-item" href="../../../versions/1.16.1/documentation.html">1.16.1</a>
-            <a class="navbar-item" href="../../../versions/1.16.0/documentation.html">1.16.0</a>
-            <a class="navbar-item" href="../../../versions/1.15.1/documentation.html">1.15.1</a>
-            <a class="navbar-item" href="../../../versions/1.15.0/documentation.html">1.15.0</a>
-            <a class="navbar-item" href="../../../versions/1.14.0/documentation.html">1.14.0</a>
-            <a class="navbar-item" href="../../../versions/1.13.2.1/documentation.html">1.13.2.1</a>
-            <a class="navbar-item" href="../../../versions/1.13.2/documentation.html">1.13.2</a>
-            <a class="navbar-item" href="../../../versions/1.13.1/documentation.html">1.13.1</a>
-            <a class="navbar-item" href="../../../versions/1.13.0/documentation.html">1.13.0</a>
-            <a class="navbar-item" href="../../../versions/1.12.2/documentation.html">1.12.2</a>
-            <a class="navbar-item" href="../../../versions/1.12.1/documentation.html">1.12.1</a>
-            <a class="navbar-item" href="../../../versions/1.12.0/documentation.html">1.12.0</a>
-            <a class="navbar-item" href="../../../versions/1.11.1/documentation.html">1.11.1</a>
-            <a class="navbar-item" href="../../../versions/1.11.0/documentation.html">1.11.0</a>
           </div>
         </div>
         <div class="navbar-item has-dropdown is-hoverable">
@@ -219,9 +198,6 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="Inject.html">Inject</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="MemberGroupLayout.html">MemberGroupLayout</a>
-  </li>
-  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="MemberOrder.html">MemberOrder</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -274,9 +250,6 @@ page.parent doesn't seem to be set...
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="ViewModel.html">ViewModel</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="ViewModelLayout.html">ViewModelLayout</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="XmlJavaTypeAdapter.html">XmlJavaTypeAdapter</a>
@@ -748,143 +721,146 @@ page.parent doesn't seem to be set...
 <div class="paragraph">
 <p>The <code>@Action</code> annotation groups together all domain-specific metadata for an invokable action on a domain object or domain service.</p>
 </div>
-<div class="paragraph">
-<p>The table below summarizes the annotation&#8217;s attributes.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Inherited
+@Target({
+        ElementType.METHOD,
+        ElementType.TYPE,
+        ElementType.ANNOTATION_TYPE }
+)
+@Retention(RetentionPolicy.RUNTIME)
+@Mixin(method = "act")
+public @interface Action {
+
+    String associateWith()                                          <i class="conum" data-value="1"></i><b>(1)</b>
+            default "";
+
+    String associateWithSequence()                                  <i class="conum" data-value="2"></i><b>(2)</b>
+            default "1";
+
+    CommandReification command()                                    <i class="conum" data-value="3"></i><b>(3)</b>
+            default CommandReification.NOT_SPECIFIED;
+
+    CommandPersistence commandPersistence()                         <i class="conum" data-value="4"></i><b>(4)</b>
+            default CommandPersistence.PERSISTED;
+
+    CommandExecuteIn commandExecuteIn()                             <i class="conum" data-value="5"></i><b>(5)</b>
+            default CommandExecuteIn.FOREGROUND;
+
+    Class&lt;? extends CommandDtoProcessor&gt; commandDtoProcessor()      <i class="conum" data-value="6"></i><b>(6)</b>
+            default CommandDtoProcessor.class;
+
+    Class&lt;? extends ActionDomainEvent&lt;?&gt;&gt; domainEvent()             <i class="conum" data-value="7"></i><b>(7)</b>
+            default ActionDomainEvent.Default.class;
+
+    Where hidden()                                                  <i class="conum" data-value="8"></i><b>(8)</b>
+            default Where.NOT_SPECIFIED;
+
+    Publishing publishing()                                         <i class="conum" data-value="9"></i><b>(9)</b>
+            default Publishing.NOT_SPECIFIED;
+
+    RestrictTo restrictTo()                                         <i class="conum" data-value="10"></i><b>(10)</b>
+            default RestrictTo.NOT_SPECIFIED;
+
+    SemanticsOf semantics()                                         <i class="conum" data-value="11"></i><b>(11)</b>
+            default SemanticsOf.NOT_SPECIFIED;
+
+    Class&lt;?&gt; typeOf()                                               <i class="conum" data-value="12"></i><b>(12)</b>
+            default Object.class;
+
+}</code></pre>
 </div>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. <code>@Action</code> attributes</caption>
-<colgroup>
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
+</div>
+<div class="colist arabic">
+<table>
 <tr>
-<th class="tableblock halign-left valign-top">Attribute</th>
-<th class="tableblock halign-left valign-top">Values (default)</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#associateWith"><code>associateWith()</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><em>memberId</em><br>
-("")</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><a href="#associatewith"><code>associateWith()</code></a>
+<div class="paragraph">
 <p>associates an action with another property or collection of the action.</p>
-</div></div></td>
+</div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#associateWith"><code>associateWith-Sequence()</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><em>memberId</em><br>
-("")</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>associates an action with another property or collection of the action.</p>
-</div></div></td>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><code>associateWithSequence()</code>
+<div class="paragraph">
+<p>the ordering of multiple actions associated with another property/collection.</p>
+</div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#command"><code>command()</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>AS_CONFIGURED</code>, <code>ENABLED</code>, <code>DISABLED</code><br>
-(<code>AS_CONFIGURED</code>)</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>whether the action invocation should be reified into a <code>o.a.i.applib.</code><br>
-<code>services.command.Command</code> object through the <a href="../applib-svc/CommandContext.html" class="page"><code>CommandContext</code></a> service.</p>
-</div></div></td>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><a href="#command"><code>command()</code></a>
+whether the action invocation should be reified into a <code>Command</code> object using the <a href="../applib-svc/CommandContext.html" class="page"><code>CommandContext</code></a> service:</td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>commandExecuteIn()</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>FOREGROUND</code>,<code>BACKGROUND</code><br>
-(<code>FOREGROUND</code>)</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>whether to execute the command immediately, or to persist it (assuming that an appropriate implementation of <a href="../applib-svc/CommandService.html" class="page"><code>CommandService</code></a> has been configured) such that a background scheduler can execute the command asynchronously</p>
-</div></div></td>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><code>commandExecuteIn()</code>
+<div class="paragraph">
+<p>Whether to execute the command immediately, or to persist it (assuming that an appropriate implementation of <a href="../applib-svc/CommandService.html" class="page"><code>CommandService</code></a> has been configured) such that a background scheduler can execute the command asynchronously</p>
+</div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>commandPersistence()</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>PERSISTED</code>, <code>NOT_PERSISTED</code>, <code>IF_HINTED</code><br>
-(<code>PERSISTED</code>)</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>whether the reified <code>Command</code> (as provided by the <code>CommandContext</code> domain service) should actually be persisted (assuming an appropriate implementation of <a href="../applib-svc/CommandService.html" class="page"><code>CommandService</code></a> has been configured).</p>
-</div></div></td>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><code>commandPersistence()</code>
+<div class="paragraph">
+<p>Whether the reified <code>Command</code> (as provided by the <code>CommandContext</code> domain service) should actually be persisted (assuming an appropriate implementation of <a href="../applib-svc/CommandService.html" class="page"><code>CommandService</code></a> has been configured).</p>
+</div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>commandDtoProcessor()</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Implementation of <code>CommandDtoProcessor</code> interface<br>
-(null)</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td><code>commandDtoProcessor()</code>
+<div class="paragraph">
 <p>If the <code>Command</code> also implements <code>CommandWithDto</code> (meaning that it can return a <code>CommandDto</code>, in other words be converted into an XML memento), then optionally specifies a processor that can refine this XML.</p>
-</div></div></td>
+</div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#domainEvent"><code>domainEvent()</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">subtype of <code>ActionDomainEvent</code><br>
-(<code>ActionDomainEvent.Default</code>)</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>the event type to be posted to the <a href="../applib-svc/EventBusService.html" class="page"><code>EventBusService</code></a> to
-broadcast the action&#8217;s business rule checking (hide, disable, validate) and its invocation (pre-execute and
-post-execute).</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#hidden"><code>hidden()</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>EVERYWHERE</code>, <code>NOWHERE</code><br>
-(<code>NOWHERE</code>)</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>indicates where (in the UI) the action should be hidden from the user.</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#invokeOn"><code>invokeOn()</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OBJECT_ONLY</code>, <code>COLLECTION_ONLY</code>, <code>OBJECT_AND_COLLECTION</code><br>
-(<code>OBJECT_ONLY</code>)</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(deprecated - use view models and associated actions instead).</p>
-</div>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td><a href="#domainevent"><code>domainEvent()</code></a>
 <div class="paragraph">
-<p>whether an action can be invoked on a single object and/or on many objects in a collection.</p>
-</div>
+<p>The event type to be posted to the <a href="../applib-svc/EventBusService.html" class="page"><code>EventBusService</code></a> to broadcast the action&#8217;s business rule checking (hide, disable, validate) and its invocation (pre-execute and post-execute).</p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td><a href="#hidden"><code>hidden()</code></a>
 <div class="paragraph">
-<p>Currently this is only supported for no-arg actions.</p>
-</div></div></td>
+<p>Indicates where (in the UI) the action should be hidden from the user.</p>
+</div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#publishing"><code>publishing()</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>AS_CONFIGURED</code>, <code>ENABLED</code>, <code>DISABLED</code><br>
-(<code>AS_CONFIGURED</code>)</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>whether the action invocation should be published to the registered <a href="../applib-svc/PublisherService.html" class="page"><code>PublisherService</code></a>.</p>
-</div></div></td>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
+<td><a href="#publishing"><code>publishing()</code></a>
+<div class="paragraph">
+<p>Whether the action invocation should be published to the registered <a href="../applib-svc/PublisherService.html" class="page"><code>PublisherService</code></a>.</p>
+</div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#restrictTo"><code>restrictTo()</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NO_RESTRICTIONS</code>,<code>PROTOTYPING</code><br>
-(<code>NO_RESTRICTIONS</code>)</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>whether the action is only available in prototyping mode, or whether it is available also in production mode.</p>
-</div></div></td>
+<td><i class="conum" data-value="10"></i><b>10</b></td>
+<td><a href="#restrictto"><code>restrictTo()</code></a>
+<div class="paragraph">
+<p>Whether the action is only available in prototyping mode, or whether it is available also in production mode.</p>
+</div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#semantics"><code>semantics()</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SAFE_AND_REQUEST_CACHEABLE</code>, <code>SAFE</code>,<br>
-<code>IDEMPOTENT</code>, <code>IDEMPOTENT_ARE_YOU_SURE</code><br>
-<code>NON_IDEMPOTENT</code>, <code>NON_IDEMPOTENT_ARE_YOU_SURE</code> +<br>
-(<code>NON_IDEMPOTENT</code>)</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>the action&#8217;s semantics (ie whether objects are modified as the result of invoking this action, and if so whether reinvoking the action would result in no further change; if not whether the results can be cached for the remainder of the request).</p>
+<td><i class="conum" data-value="11"></i><b>11</b></td>
+<td><a href="#semantics"><code>semantics()</code></a>
+<div class="paragraph">
+<p>The action&#8217;s semantics (ie whether objects are modified as the result of invoking this action, and if so whether reinvoking the action would result in no further change; if not whether the results can be cached for the remainder of the request).</p>
 </div>
 <div class="paragraph">
 <p>The <code>&#8230;&#8203;ARE_YOU_SURE</code> variants cause a confirmation dialog to be displayed in the <a href="../../../vw/latest/about.html" class="page">Wicket viewer</a>.</p>
-</div></div></td>
+</div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#typeOf"><code>typeOf()</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">(none)</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>if the action returns a collection, hints as to the run-time type of the objects within that collection (as a fallback)</p>
-</div></div></td>
+<td><i class="conum" data-value="12"></i><b>12</b></td>
+<td><a href="#typeof"><code>typeOf()</code></a>
+<div class="paragraph">
+<p>If the action returns a collection, hints as to the run-time type of the objects within that collection (as a fallback)</p>
+</div></td>
 </tr>
-</tbody>
 </table>
+</div>
 <div class="paragraph">
 <p>For example:</p>
 </div>
@@ -1011,7 +987,7 @@ The user can use these checkboxes can be used to select the items of the action 
 </div>
 </div>
 <div class="sect1">
-<h2 id="command"><a class="anchor" href="#command"></a>Command Persistence and Processing</h2>
+<h2 id="command"><a class="anchor" href="#command"></a>Command Processing</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Every action invocation (and property edit for that matter) is automatically reified into a concrete <code>Command</code> object.
@@ -1045,7 +1021,8 @@ However, the (non-ASF) Incode Platform&#8217;s <a href="https://platform.incode.
 <p>Each action invocation is automatically reified by the <a href="../applib-svc/CommandContext.html" class="page"><code>CommandContext</code></a> service into a <code>Command</code> object, capturing details of the target object, the action, the parameter arguments, the user, a timestamp and so on.</p>
 </div>
 <div class="paragraph">
-<p>If an appropriate <code>CommandService</code> is configured (for example using (non-ASF) <a href="https://platform.incode.org/modules/spi/command/spi-command.html">Incode Platform&#8217;s command</a> module), then the <code>Command</code> itself is persisted.</p>
+<p>If an appropriate <code>CommandService</code> is configured
+then the <code>Command</code> itself is persisted.</p>
 </div>
 <div class="paragraph">
 <p>By default, actions are invoked in directly in the thread of the invocation.</p>
@@ -2532,7 +2509,7 @@ WrapperFactory wrapperFactory;</code></pre>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200317-0401-36ebf196</p>
+            <p>Revision: 2.0.0-M2.20200318-0401-7b207f08</p>
         </div>
     </div>
 </footer>

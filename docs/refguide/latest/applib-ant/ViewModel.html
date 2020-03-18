@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="../../../_/css/site-custom.css">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Raleway:300,400,500,700,800|Montserrat:300,400,700" rel="stylesheet">
 <link rel="home" href="../../.." title="Apache Isis">
-  <link rel="next" href="ViewModelLayout.html" title="ViewModelLayout">
+  <link rel="next" href="XmlJavaTypeAdapter.html" title="XmlJavaTypeAdapter">
   <link rel="prev" href="Title.html" title="Title">
   </head>
   <body class="article">
@@ -102,33 +102,12 @@
             <span class="navbar-item navbar-heading">Releases</span>
             <a class="navbar-item" href="../../../docs/latest/downloads/how-to.html">Downloads</a>
             <a class="navbar-item" href="../../../relnotes/latest/about.html">Release Notes</a>
+            <a class="navbar-item" href="../../../docs/latest/archive/1-x.html">Archive (1.x)</a>
             <hr class="navbar-divider"/>
             <span class="navbar-item navbar-heading">Framework</span>
             <a class="navbar-item" href="../../../conguide/latest/about.html">Contributors' Guide</a>
             <a class="navbar-item" href="../../../comguide/latest/about.html">Committers' Guide</a>
             <a class="navbar-item" href="../../../core/latest/about.html">Core Design</a>
-          </div>
-        </div>
-        <div class="navbar-item has-dropdown is-hoverable">
-          <a class="navbar-link" href="#">Archive</a>
-          <div class="navbar-dropdown">
-            <span class="navbar-item navbar-heading">v1.x Docs</span>
-            <a class="navbar-item" href="../../../versions/1.17.0/documentation.html">1.17.0</a>
-            <a class="navbar-item" href="../../../versions/1.16.2/documentation.html">1.16.2</a>
-            <a class="navbar-item" href="../../../versions/1.16.1/documentation.html">1.16.1</a>
-            <a class="navbar-item" href="../../../versions/1.16.0/documentation.html">1.16.0</a>
-            <a class="navbar-item" href="../../../versions/1.15.1/documentation.html">1.15.1</a>
-            <a class="navbar-item" href="../../../versions/1.15.0/documentation.html">1.15.0</a>
-            <a class="navbar-item" href="../../../versions/1.14.0/documentation.html">1.14.0</a>
-            <a class="navbar-item" href="../../../versions/1.13.2.1/documentation.html">1.13.2.1</a>
-            <a class="navbar-item" href="../../../versions/1.13.2/documentation.html">1.13.2</a>
-            <a class="navbar-item" href="../../../versions/1.13.1/documentation.html">1.13.1</a>
-            <a class="navbar-item" href="../../../versions/1.13.0/documentation.html">1.13.0</a>
-            <a class="navbar-item" href="../../../versions/1.12.2/documentation.html">1.12.2</a>
-            <a class="navbar-item" href="../../../versions/1.12.1/documentation.html">1.12.1</a>
-            <a class="navbar-item" href="../../../versions/1.12.0/documentation.html">1.12.0</a>
-            <a class="navbar-item" href="../../../versions/1.11.1/documentation.html">1.11.1</a>
-            <a class="navbar-item" href="../../../versions/1.11.0/documentation.html">1.11.0</a>
           </div>
         </div>
         <div class="navbar-item has-dropdown is-hoverable">
@@ -160,7 +139,7 @@
 <div class="nav-panel-pagination">
   <a class="page-previous" rel="prev" href="Title.html" title="Title"><span></span></a>
   <a class="page-next" rel="next"
-     href="ViewModelLayout.html" title="ViewModelLayout"><span></span></a>
+     href="XmlJavaTypeAdapter.html" title="XmlJavaTypeAdapter"><span></span></a>
 <!--
 page.parent doesn't seem to be set...
   <a class="page-parent" rel="prev" href="about.html" title="Title"><span></span></a>
@@ -219,9 +198,6 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="Inject.html">Inject</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="MemberGroupLayout.html">MemberGroupLayout</a>
-  </li>
-  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="MemberOrder.html">MemberOrder</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -274,9 +250,6 @@ page.parent doesn't seem to be set...
   </li>
   <li class="nav-item is-current-page" data-depth="2">
     <a class="nav-link" href="ViewModel.html">ViewModel</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="ViewModelLayout.html">ViewModelLayout</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="XmlJavaTypeAdapter.html">XmlJavaTypeAdapter</a>
@@ -764,6 +737,17 @@ It&#8217;s a synonym for using <code>@DomainObject(nature=VIEW_MODEL)</code>.</p
 <div class="paragraph">
 <p>View models are not persisted to the database, instead their state is encoded within their identity (ultimately represented in the URL).</p>
 </div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Inherited
+@Target({ ElementType.TYPE, ElementType.ANNOTATION_TYPE })
+@Retention(RetentionPolicy.RUNTIME)
+@Component @Scope("prototype")
+public @interface ViewModel {
+
+}</code></pre>
+</div>
+</div>
 <div class="paragraph">
 <p>For example:</p>
 </div>
@@ -811,7 +795,7 @@ serviceRegistry.injectServicesInto(vm);</code></pre>
 </div>
 <div class="paragraph">
 <p>The view model&#8217;s memento will be derived from the value of the view model object&#8217;s properties.
-Any <a href="Property.html#notPersisted" class="page"><code>@Property#notPersisted()</code></a> properties will be excluded from the memento, as will any properties excluded from the metamodel using <a href="Programmatic.html" class="page"><code>@Programmatic</code></a>.
+Any <a href="Property.html#mementoSerialization" class="page"><code>@Property#mementoSerialization</code></a> properties will be excluded from the memento, as will any properties excluded from the metamodel using <a href="Programmatic.html" class="page"><code>@Programmatic</code></a>.
 Properties that are merely <a href="Property.html#hidden" class="page">hidden</a> <em>are</em> included in the memento.</p>
 </div>
 <div class="paragraph">
@@ -984,7 +968,7 @@ An error message will be printed in the log to help you determine which classes 
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200317-0401-36ebf196</p>
+            <p>Revision: 2.0.0-M2.20200318-0401-7b207f08</p>
         </div>
     </div>
 </footer>

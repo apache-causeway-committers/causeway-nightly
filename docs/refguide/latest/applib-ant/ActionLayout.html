@@ -102,33 +102,12 @@
             <span class="navbar-item navbar-heading">Releases</span>
             <a class="navbar-item" href="../../../docs/latest/downloads/how-to.html">Downloads</a>
             <a class="navbar-item" href="../../../relnotes/latest/about.html">Release Notes</a>
+            <a class="navbar-item" href="../../../docs/latest/archive/1-x.html">Archive (1.x)</a>
             <hr class="navbar-divider"/>
             <span class="navbar-item navbar-heading">Framework</span>
             <a class="navbar-item" href="../../../conguide/latest/about.html">Contributors' Guide</a>
             <a class="navbar-item" href="../../../comguide/latest/about.html">Committers' Guide</a>
             <a class="navbar-item" href="../../../core/latest/about.html">Core Design</a>
-          </div>
-        </div>
-        <div class="navbar-item has-dropdown is-hoverable">
-          <a class="navbar-link" href="#">Archive</a>
-          <div class="navbar-dropdown">
-            <span class="navbar-item navbar-heading">v1.x Docs</span>
-            <a class="navbar-item" href="../../../versions/1.17.0/documentation.html">1.17.0</a>
-            <a class="navbar-item" href="../../../versions/1.16.2/documentation.html">1.16.2</a>
-            <a class="navbar-item" href="../../../versions/1.16.1/documentation.html">1.16.1</a>
-            <a class="navbar-item" href="../../../versions/1.16.0/documentation.html">1.16.0</a>
-            <a class="navbar-item" href="../../../versions/1.15.1/documentation.html">1.15.1</a>
-            <a class="navbar-item" href="../../../versions/1.15.0/documentation.html">1.15.0</a>
-            <a class="navbar-item" href="../../../versions/1.14.0/documentation.html">1.14.0</a>
-            <a class="navbar-item" href="../../../versions/1.13.2.1/documentation.html">1.13.2.1</a>
-            <a class="navbar-item" href="../../../versions/1.13.2/documentation.html">1.13.2</a>
-            <a class="navbar-item" href="../../../versions/1.13.1/documentation.html">1.13.1</a>
-            <a class="navbar-item" href="../../../versions/1.13.0/documentation.html">1.13.0</a>
-            <a class="navbar-item" href="../../../versions/1.12.2/documentation.html">1.12.2</a>
-            <a class="navbar-item" href="../../../versions/1.12.1/documentation.html">1.12.1</a>
-            <a class="navbar-item" href="../../../versions/1.12.0/documentation.html">1.12.0</a>
-            <a class="navbar-item" href="../../../versions/1.11.1/documentation.html">1.11.1</a>
-            <a class="navbar-item" href="../../../versions/1.11.0/documentation.html">1.11.0</a>
           </div>
         </div>
         <div class="navbar-item has-dropdown is-hoverable">
@@ -219,9 +198,6 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="Inject.html">Inject</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="MemberGroupLayout.html">MemberGroupLayout</a>
-  </li>
-  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="MemberOrder.html">MemberOrder</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -274,9 +250,6 @@ page.parent doesn't seem to be set...
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="ViewModel.html">ViewModel</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="ViewModelLayout.html">ViewModelLayout</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="XmlJavaTypeAdapter.html">XmlJavaTypeAdapter</a>
@@ -748,102 +721,129 @@ page.parent doesn't seem to be set...
 <div class="paragraph">
 <p>The <code>@ActionLayout</code> annotation applies to actions, collecting together all UI hints within a single annotation.</p>
 </div>
-<div class="paragraph">
-<p>The table below summarizes the annotation&#8217;s attributes.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Inherited
+@Target({
+        ElementType.METHOD,
+        ElementType.TYPE,
+        ElementType.ANNOTATION_TYPE
+})
+@Retention(RetentionPolicy.RUNTIME)
+@Mixin(method = "act")
+public @interface ActionLayout {
+
+    BookmarkPolicy bookmarking()                        <i class="conum" data-value="1"></i><b>(1)</b>
+            default BookmarkPolicy.NOT_SPECIFIED;
+
+    String cssClass()                                   <i class="conum" data-value="2"></i><b>(2)</b>
+            default "";
+
+    String cssClassFa()                                 <i class="conum" data-value="3"></i><b>(3)</b>
+            default "";
+
+    CssClassFaPosition cssClassFaPosition()             <i class="conum" data-value="4"></i><b>(4)</b>
+            default CssClassFaPosition.LEFT;
+
+    String describedAs()                                <i class="conum" data-value="5"></i><b>(5)</b>
+            default "";
+
+    Where hidden()                                      <i class="conum" data-value="6"></i><b>(6)</b>
+            default Where.NOT_SPECIFIED;
+
+    String named()                                      <i class="conum" data-value="7"></i><b>(7)</b>
+            default "";
+
+    Position position()                                 <i class="conum" data-value="8"></i><b>(8)</b>
+            default Position.NOT_SPECIFIED;
+
+    PromptStyle promptStyle()                           <i class="conum" data-value="9"></i><b>(9)</b>
+            default PromptStyle.AS_CONFIGURED;
+
+    Redirect redirectPolicy()                           <i class="conum" data-value="10"></i><b>(10)</b>
+            default Redirect.AS_CONFIGURED;
+
+}</code></pre>
 </div>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. <code>@ActionLayout</code> attributes</caption>
-<colgroup>
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Attribute</th>
-<th class="tableblock halign-left valign-top">Values (default)</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#bookmarking"><code>bookmarking</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>AS_ROOT</code>, <code>NEVER</code><br>
-(<code>NEVER</code>)</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>indicates if an action (with safe <a href="Action.html#semantics" class="page">action semantics</a>) is automatically bookmarked.</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#contributedAs"><code>contributedAs</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>AS_BOTH</code>, <code>AS_ACTION</code>, <code>AS_ASSOCIATION</code>, <code>AS_NEITHER</code><br>
-(<code>AS_BOTH</code>)</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>for a domain service action that can be contributed, whether to contribute as an action or as an association (ie a property or collection).<br></p>
 </div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><a href="#bookmarking"><code>bookmarking()</code></a>
 <div class="paragraph">
-<p>For a domain service action to be contributed, the domain services must have a <a href="DomainService.html#nature" class="page">nature</a> nature of either <code>VIEW</code> or <code>VIEW_CONTRIBUTIONS_ONLY</code>, and the action must have <a href="Action.html#semantics" class="page">safe action semantics</a>, and takes a single argument, namely the contributee domain object.</p>
-</div></div></td>
+<p>Indicates if an action (with safe <a href="Action.html#semantics" class="page">action semantics</a>) is automatically bookmarked.</p>
+</div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#cssClass"><code>cssClass</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Any string valid as a CSS class</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>an additional CSS class around the HTML that represents for the action, to allow targetted styling in <a href="#refguide:config:application-specific/application-css.adoc" class="page unresolved"><code>application.css</code></a>.<br></p>
-</div>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><a href="#cssclass"><code>cssClass()</code></a>
 <div class="paragraph">
-<p>Supported by the <a href="../../../vw/latest/about.html" class="page">Wicket viewer</a> but currently ignored by the <a href="../../../vro/latest/about.html" class="page">RestfulObjects viewer</a>.</p>
-</div></div></td>
+<p>An additional CSS class around the HTML that represents for the action, to allow targetted styling in <a href="#refguide:config:application-specific/application-css.adoc" class="page unresolved"><code>application.css</code></a>.<br></p>
+</div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#cssClassFa"><code>cssClassFa</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Any valid <a href="http://fortawesome.github.io/Font-Awesome/">Font awesome</a> icon name</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>specify a font awesome icon for the action&#8217;s menu link or icon.<br></p>
-</div></div></td>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><a href="#cssclassfa"><code>cssClassFa()</code></a>
+<div class="paragraph">
+<p>Specify a <a href="http://fortawesome.github.io/Font-Awesome/">Font awesome</a> icon name for the action&#8217;s menu link or icon.</p>
+</div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>cssClassFaPosition()</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>LEFT</code>, <code>RIGHT</code><br>
-(<code>LEFT</code>)</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><code>cssClassFaPosition()</code>
+<div class="paragraph">
 <p>Positioning of the icon on the button/menu item.</p>
-</div></div></td>
+</div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#describedAs"><code>describedAs</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">String.</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>provides a short description of the action, eg for rendering as a 'tool tip'.</p>
-</div></div></td>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><a href="#describedas"><code>describedAs()</code></a>
+<div class="paragraph">
+<p>Provides a short description of the action, eg for rendering as a 'tool tip'.</p>
+</div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#hidden"><code>hidden</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>EVERYWHERE</code>, <code>NOWHERE</code><br>
-(<code>NOWHERE</code>)</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>indicates where (in the UI) the action should be hidden from the user.</p>
-</div></div></td>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td><a href="#hidden"><code>hidden()</code></a>
+<div class="paragraph">
+<p>Indicates where (in the UI) the action should be hidden from the user.</p>
+</div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#named"><code>named</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">String.</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>to override the name inferred from the action&#8217;s name in code.<br></p>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td><a href="#named"><code>named()</code></a>
+<div class="paragraph">
+<p>To override the name inferred from the action&#8217;s name in code.<br>
+A typical use case is if the desired name is a reserved Java keyword, such as <code>default</code> or <code>package</code>.</p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td><a href="#position"><code>position()</code></a>
+<div class="paragraph">
+<p>For actions associated (using <a href="MemberOrder.html" class="page"><code>@MemberOrder#named</code></a>) with properties, the positioning of the action&#8217;s button with respect to the property</p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
+<td><code>promptStyle()</code>
+<div class="paragraph">
+<p>How to render the action prompt / property edit form : inline, dialog, sidebar etc.</p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="10"></i><b>10</b></td>
+<td><code>redirectPolicy()</code>
+<div class="paragraph">
+<p>For the <a href="../../../vw/latest/about.html" class="page">Wicket viewer</a>, whether to re-render the page after invoking this action, even if the result is the same.</p>
 </div>
 <div class="paragraph">
-<p>A typical use case is if the desired name is a reserved Java keyword, such as <code>default</code> or <code>package</code>.</p>
-</div></div></td>
+<p>Not re-rendering can provide a smoother UI experience.</p>
+</div></td>
 </tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#position"><code>position</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>BELOW</code>, <code>RIGHT</code>, <code>PANEL</code>, <code>PANEL_DROPDOWN</code> (<code>BELOW</code>)</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>for actions associated (using <a href="MemberOrder.html" class="page"><code>@MemberOrder#named</code></a>) with properties, the positioning of the action&#8217;s button with respect to the property</p>
-</div></div></td>
-</tr>
-</tbody>
 </table>
+</div>
 <div class="paragraph">
 <p>For example:</p>
 </div>
@@ -1103,9 +1103,6 @@ to apply CSS, specifically to add <a href="http://fortawesome.github.io/Font-Awe
 <p><a href="DomainObjectLayout.html#cssClass" class="page">domain objects</a></p>
 </li>
 <li>
-<p><a href="ViewModelLayout.html#cssClass" class="page">view models</a></p>
-</li>
-<li>
 <p><a href="PropertyLayout.html#cssClass" class="page">properties</a></p>
 </li>
 <li>
@@ -1126,7 +1123,7 @@ to apply CSS, specifically to add <a href="http://fortawesome.github.io/Font-Awe
 <p>The <code>cssClassFa</code> attribute is used to specify the name of a <a href="http://fortawesome.github.io/Font-Awesome/icons/">Font Awesome icon</a> name, to be rendered on the action&#8217;s representation as a button or menu item.    The related <code>cssClassFaPosition</code> attribute specifies the positioning of the icon, to the left or the right of the text.</p>
 </div>
 <div class="paragraph">
-<p>These attributes can also be applied to <a href="DomainObjectLayout.html#cssClassFa" class="page">domain objects</a> and to <a href="ViewModelLayout.html#cssClassFa" class="page">view models</a> to specify the object&#8217;s icon.</p>
+<p>These attributes can also be applied to <a href="DomainObjectLayout.html#cssClassFa" class="page">domain objects</a> to specify the object&#8217;s icon.</p>
 </div>
 <div class="paragraph">
 <p>For example:</p>
@@ -1213,9 +1210,6 @@ to apply CSS, specifically to add <a href="http://fortawesome.github.io/Font-Awe
 </li>
 <li>
 <p><a href="DomainObjectLayout.html#describedAs" class="page">domain objects</a></p>
-</li>
-<li>
-<p><a href="ViewModelLayout.html#describedAs" class="page">view models</a>.</p>
 </li>
 </ul>
 </div>
@@ -1368,9 +1362,6 @@ Examples of that include a name that would be a reserved Java keyword (eg "packa
 <p><a href="DomainObjectLayout.html#named" class="page">domain objects</a></p>
 </li>
 <li>
-<p><a href="ViewModelLayout.html#named" class="page">view models</a></p>
-</li>
-<li>
 <p><a href="DomainServiceLayout.html#named" class="page">domain services</a>.</p>
 </li>
 </ul>
@@ -1491,7 +1482,7 @@ Examples of that include a name that would be a reserved Java keyword (eg "packa
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200317-0401-36ebf196</p>
+            <p>Revision: 2.0.0-M2.20200318-0401-7b207f08</p>
         </div>
     </div>
 </footer>

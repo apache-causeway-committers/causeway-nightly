@@ -102,33 +102,12 @@
             <span class="navbar-item navbar-heading">Releases</span>
             <a class="navbar-item" href="../../../docs/latest/downloads/how-to.html">Downloads</a>
             <a class="navbar-item" href="../../../relnotes/latest/about.html">Release Notes</a>
+            <a class="navbar-item" href="../../../docs/latest/archive/1-x.html">Archive (1.x)</a>
             <hr class="navbar-divider"/>
             <span class="navbar-item navbar-heading">Framework</span>
             <a class="navbar-item" href="../../../conguide/latest/about.html">Contributors' Guide</a>
             <a class="navbar-item" href="../../../comguide/latest/about.html">Committers' Guide</a>
             <a class="navbar-item" href="../../../core/latest/about.html">Core Design</a>
-          </div>
-        </div>
-        <div class="navbar-item has-dropdown is-hoverable">
-          <a class="navbar-link" href="#">Archive</a>
-          <div class="navbar-dropdown">
-            <span class="navbar-item navbar-heading">v1.x Docs</span>
-            <a class="navbar-item" href="../../../versions/1.17.0/documentation.html">1.17.0</a>
-            <a class="navbar-item" href="../../../versions/1.16.2/documentation.html">1.16.2</a>
-            <a class="navbar-item" href="../../../versions/1.16.1/documentation.html">1.16.1</a>
-            <a class="navbar-item" href="../../../versions/1.16.0/documentation.html">1.16.0</a>
-            <a class="navbar-item" href="../../../versions/1.15.1/documentation.html">1.15.1</a>
-            <a class="navbar-item" href="../../../versions/1.15.0/documentation.html">1.15.0</a>
-            <a class="navbar-item" href="../../../versions/1.14.0/documentation.html">1.14.0</a>
-            <a class="navbar-item" href="../../../versions/1.13.2.1/documentation.html">1.13.2.1</a>
-            <a class="navbar-item" href="../../../versions/1.13.2/documentation.html">1.13.2</a>
-            <a class="navbar-item" href="../../../versions/1.13.1/documentation.html">1.13.1</a>
-            <a class="navbar-item" href="../../../versions/1.13.0/documentation.html">1.13.0</a>
-            <a class="navbar-item" href="../../../versions/1.12.2/documentation.html">1.12.2</a>
-            <a class="navbar-item" href="../../../versions/1.12.1/documentation.html">1.12.1</a>
-            <a class="navbar-item" href="../../../versions/1.12.0/documentation.html">1.12.0</a>
-            <a class="navbar-item" href="../../../versions/1.11.1/documentation.html">1.11.1</a>
-            <a class="navbar-item" href="../../../versions/1.11.0/documentation.html">1.11.0</a>
           </div>
         </div>
         <div class="navbar-item has-dropdown is-hoverable">
@@ -219,9 +198,6 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="Inject.html">Inject</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="MemberGroupLayout.html">MemberGroupLayout</a>
-  </li>
-  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="MemberOrder.html">MemberOrder</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -274,9 +250,6 @@ page.parent doesn't seem to be set...
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="ViewModel.html">ViewModel</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="ViewModelLayout.html">ViewModelLayout</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="XmlJavaTypeAdapter.html">XmlJavaTypeAdapter</a>
@@ -748,133 +721,112 @@ page.parent doesn't seem to be set...
 <div class="paragraph">
 <p>The <code>@DomainObjectLayout</code> annotation applies to domain classes, collecting together all UI hints within a single annotation.</p>
 </div>
-<div class="admonitionblock note">
+</div>
+</div>
+<div class="sect1">
+<h2 id="main-api"><a class="anchor" href="#main-api"></a>Main API</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Inherited
+@Target({
+        ElementType.TYPE,
+        ElementType.ANNOTATION_TYPE
+})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface DomainObjectLayout {
+
+    BookmarkPolicy bookmarking()                    <i class="conum" data-value="1"></i><b>(1)</b>
+            default BookmarkPolicy.NOT_SPECIFIED;
+
+    String cssClass()                               <i class="conum" data-value="2"></i><b>(2)</b>
+            default "";
+
+    String cssClassFa()                             <i class="conum" data-value="3"></i><b>(3)</b>
+            default "";
+
+    CssClassFaPosition cssClassFaPosition()         <i class="conum" data-value="4"></i><b>(4)</b>
+            default CssClassFaPosition.LEFT;
+
+    String describedAs()                            <i class="conum" data-value="5"></i><b>(5)</b>
+            default "";
+
+    String named()                                  <i class="conum" data-value="6"></i><b>(6)</b>
+            default "";
+
+    int paged()                                     <i class="conum" data-value="7"></i><b>(7)</b>
+            default -1;
+
+    String plural()                                 <i class="conum" data-value="8"></i><b>(8)</b>
+            default "";
+
+    // ...
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
 <table>
 <tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><a href="#bookmarking"><code>bookmarking</code></a>
 <div class="paragraph">
-<p>For view models that have been annotated with <code>@ViewModel</code> the equivalent <a href="ViewModelLayout.html" class="page"><code>@ViewModelLayout</code></a> can be used.</p>
-</div>
-</td>
+<p>Whether (and how) this domain object should be automatically bookmarked</p>
+</div></td>
 </tr>
-</table>
-</div>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><a href="#cssclass"><code>cssClass</code></a>
 <div class="paragraph">
-<p>The table below summarizes the annotation&#8217;s attributes.</p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. <code>@DomainObjectLayout</code> attributes</caption>
-<colgroup>
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Attribute</th>
-<th class="tableblock halign-left valign-top">Values (default)</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#bookmarking"><code>bookmarking</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>AS_ROOT</code>, <code>AS_CHILD</code>, <code>NEVER</code><br>
-(<code>NEVER</code>)</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>whether (and how) this domain object should be automatically bookmarked</p>
-</div></div></td>
+<p>The css class that a domain class (type) should have, to allow more targetted styling in <a href="#refguide:config:application-specific/application-css.adoc" class="page unresolved"><code>application.css</code></a></p>
+</div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#cssclass"><code>cssClass</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Any string valid as a CSS class</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>the css class that a domain class (type) should have, to allow more targetted styling in <a href="#refguide:config:application-specific/application-css.adoc" class="page unresolved"><code>application.css</code></a></p>
-</div></div></td>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><a href="#cssclassfa"><code>cssClassFa</code></a>
+<div class="paragraph">
+<p>Any valid <a href="http://fortawesome.github.io/Font-Awesome/">Font awesome</a> icon name for the domain object&#8217;s menu link or icon.<br></p>
+</div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#cssClassFa"><code>cssClassFa</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Any valid <a href="http://fortawesome.github.io/Font-Awesome/">Font awesome</a> icon name</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>specify a font awesome icon for the action&#8217;s menu link or icon.<br></p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>cssClassFaPosition()</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>LEFT</code>, <code>RIGHT</code><br>
-(<code>LEFT</code>)</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><code>cssClassFaPosition()</code>
+<div class="paragraph">
 <p>Currently unused.</p>
-</div></div></td>
+</div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#cssClassUiEvent"><code>cssClassUiEvent</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">subtype of <code>CssClassUiEvent</code><br>
-(<code>CssClassUiEvent.Default</code>)</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>the event type to be posted to the <a href="../applib-svc/EventBusService.html" class="page"><code>EventBusService</code></a> to obtain a CSS class for the domain object.</p>
-</div></div></td>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><a href="#describedas"><code>describedAs</code></a>
+<div class="paragraph">
+<p>Description of this class, eg to be rendered in a tooltip.</p>
+</div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#describedAs"><code>describedAs</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">String.</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>description of this class, eg to be rendered in a tooltip.</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#iconUiEvent"><code>iconUiEvent</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">subtype of <code>IconUiEvent</code><br>
-(<code>IconUiEvent.Default</code>)</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>the event type to be posted to the <a href="../applib-svc/EventBusService.html" class="page"><code>EventBusService</code></a> to obtain the icon (name) for the domain object.</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#layoutUiEvent"><code>layoutUiEvent</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">subtype of <code>LayoutUiEvent</code><br>
-(<code>LayoutUiEvent.Default</code>)</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>the event type to be posted to the <a href="../applib-svc/EventBusService.html" class="page"><code>EventBusService</code></a> to obtain the layout (name) for the domain object.</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#named"><code>named</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">String.</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>to override the name inferred from the action&#8217;s name in code.<br></p>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td><a href="#named"><code>named</code></a>
+<div class="paragraph">
+<p>To override the name inferred from the action&#8217;s name in code.<br></p>
 </div>
 <div class="paragraph">
 <p>A typical use case is if the desired name is a reserved Java keyword, such as <code>default</code> or <code>package</code>.</p>
-</div></div></td>
+</div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#paged"><code>paged</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Positive integer</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>the page size for instances of this class when rendered within a table (as returned from an action invocation)</p>
-</div></div></td>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td><a href="#paged"><code>paged</code></a>
+<div class="paragraph">
+<p>The page size for instances of this class when rendered within a table (as returned from an action invocation)</p>
+</div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#plural"><code>plural</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">String.</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>the plural name of the class</p>
-</div></div></td>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td><a href="#plural"><code>plural</code></a>
+<div class="paragraph">
+<p>The plural name of the class</p>
+</div></td>
 </tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#titleUiEvent"><code>titleUiEvent</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">subtype of <code>TitleUiEvent</code><br>
-(<code>TitleUiEvent.Default</code>)</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>the event type to be posted to the <a href="../applib-svc/EventBusService.html" class="page"><code>EventBusService</code></a> to obtain the title for the domain object.</p>
-</div></div></td>
-</tr>
-</tbody>
 </table>
+</div>
 <div class="paragraph">
 <p>For example:</p>
 </div>
@@ -904,6 +856,67 @@ public class ToDoItem {
 <p>Note that there is (currently) no support for specifying UI hints for domain objects through the dynamic <a href="../../../vw/latest/layout.html#file-based" class="page"><code>.layout.xml</code></a> file (only for properties, collections and actions are supported).</p>
 </div>
 </td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="ui-events-api"><a class="anchor" href="#ui-events-api"></a>UI Events API</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public @interface DomainObjectLayout {
+
+    // ...
+    Class&lt;? extends CssClassUiEvent&lt;?&gt;&gt;
+            cssClassUiEvent()                       <i class="conum" data-value="1"></i><b>(1)</b>
+            default CssClassUiEvent.Default.class;
+
+    Class&lt;? extends IconUiEvent&lt;?&gt;&gt;
+            iconUiEvent()                           <i class="conum" data-value="2"></i><b>(2)</b>
+            default IconUiEvent.Default.class;
+
+    Class&lt;? extends LayoutUiEvent&lt;?&gt;&gt;
+            layoutUiEvent()                         <i class="conum" data-value="3"></i><b>(3)</b>
+            default LayoutUiEvent.Default.class;
+
+    Class&lt;? extends TitleUiEvent&lt;?&gt;&gt;
+            titleUiEvent()                          <i class="conum" data-value="4"></i><b>(4)</b>
+            default TitleUiEvent.Default.class;
+
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><a href="#cssclassuievent"><code>cssClassUiEvent</code></a>
+<div class="paragraph">
+<p>The event type to be posted to the <a href="../applib-svc/EventBusService.html" class="page"><code>EventBusService</code></a> to obtain a CSS class for the domain object.</p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><a href="#iconuievent"><code>iconUiEvent</code></a>
+<div class="paragraph">
+<p>The event type to be posted to obtain the icon (name) for the domain object.</p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><a href="#layoutuievent"><code>layoutUiEvent</code></a>
+<div class="paragraph">
+<p>The event type to be posted to obtain the layout (name) for the domain object.</p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><a href="#titleuievent"><code>titleUiEvent</code></a>
+<div class="paragraph">
+<p>The event type to be posted to obtain the title for the domain object.</p>
+</div></td>
 </tr>
 </table>
 </div>
@@ -999,12 +1012,6 @@ public abstract class Unit { /* ... */ }</code></pre>
 <div class="paragraph">
 <p>The nesting can be done to any level; the Estatio screenshot also shows a bookmark nesting <code>Lease</code> &gt; <code>LeaseItem</code> &gt;  <code>LeaseTerm</code> (3 levels deep).</p>
 </div>
-<div class="sect2">
-<h3 id="see-also"><a class="anchor" href="#see-also"></a>See also</h3>
-<div class="paragraph">
-<p>This attribute can also be applied to <a href="ViewModelLayout.html#bookmarking" class="page">view models</a>.</p>
-</div>
-</div>
 </div>
 </div>
 <div class="sect1">
@@ -1041,15 +1048,12 @@ public class ToDoItem { /* ... */ }</code></pre>
 </table>
 </div>
 <div class="sect2">
-<h3 id="see-also-2"><a class="anchor" href="#see-also-2"></a>See also</h3>
+<h3 id="see-also"><a class="anchor" href="#see-also"></a>See also</h3>
 <div class="paragraph">
 <p>This attribute can also be applied to:</p>
 </div>
 <div class="ulist">
 <ul>
-<li>
-<p><a href="ViewModelLayout.html#cssClass" class="page">view models</a></p>
-</li>
 <li>
 <p><a href="ActionLayout.html#cssClass" class="page">actions</a></p>
 </li>
@@ -1110,15 +1114,12 @@ The <code>fa-</code> prefix can also be omitted from the class names; it will be
 </table>
 </div>
 <div class="sect2">
-<h3 id="see-also-3"><a class="anchor" href="#see-also-3"></a>See also</h3>
+<h3 id="see-also-2"><a class="anchor" href="#see-also-2"></a>See also</h3>
 <div class="paragraph">
 <p>These attributes can also be applied to:</p>
 </div>
 <div class="ulist">
 <ul>
-<li>
-<p><a href="ViewModelLayout.html#cssClassFa" class="page">view models</a> to specify the object&#8217;s icon, and</p>
-</li>
 <li>
 <p><a href="ActionLayout.html#cssClassFa" class="page">actions</a> to specify an icon for the action&#8217;s representation as a button or menu item.</p>
 </li>
@@ -1259,12 +1260,6 @@ The framework provides <code>CssClassUiEvent.Doop</code> as such a subclass, so 
 However, events can be raised programmatically either by calling the <a href="../applib-svc/EventBusService.html" class="page"><code>EventBusService</code></a> API directly.</p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="see-also-4"><a class="anchor" href="#see-also-4"></a>See also</h3>
-<div class="paragraph">
-<p>This attribute can also be applied to <a href="ViewModelLayout.html#cssClassUiEvent" class="page">view models</a>.</p>
-</div>
-</div>
 </div>
 </div>
 <div class="sect1">
@@ -1288,7 +1283,7 @@ public class ProspectiveSale {
 </div>
 </div>
 <div class="sect2">
-<h3 id="see-also-5"><a class="anchor" href="#see-also-5"></a>See also</h3>
+<h3 id="see-also-3"><a class="anchor" href="#see-also-3"></a>See also</h3>
 <div class="paragraph">
 <p>The attribute can also be specified for:</p>
 </div>
@@ -1305,9 +1300,6 @@ public class ProspectiveSale {
 </li>
 <li>
 <p><a href="ParameterLayout.html#describedAs" class="page">parameters</a> and</p>
-</li>
-<li>
-<p><a href="ViewModelLayout.html#describedAs" class="page">view models</a>.</p>
 </li>
 </ul>
 </div>
@@ -1444,12 +1436,6 @@ The framework provides <code>IconUiEvent.Doop</code> as such a subclass, so sett
 However, events can be raised programmatically by calling the <a href="../applib-svc/EventBusService.html" class="page"><code>EventBusService</code></a> API directly.</p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="see-also-6"><a class="anchor" href="#see-also-6"></a>See also</h3>
-<div class="paragraph">
-<p>This attribute can also be applied to <a href="ViewModelLayout.html#iconNameUiEvent" class="page">view models</a>.</p>
-</div>
-</div>
 </div>
 </div>
 <div class="sect1">
@@ -1567,12 +1553,6 @@ The framework provides <code>LayoutUiEvent.Doop</code> as such a subclass, so se
 However, events can be raised programmatically by calling the <a href="../applib-svc/EventBusService.html" class="page"><code>EventBusService</code></a> API directly.</p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="see-also-7"><a class="anchor" href="#see-also-7"></a>See also</h3>
-<div class="paragraph">
-<p>This attribute can also be applied to <a href="ViewModelLayout.html#layoutUiEvent" class="page">view models</a>.</p>
-</div>
-</div>
 </div>
 </div>
 <div class="sect1">
@@ -1627,7 +1607,7 @@ public class CustomerImpl implements Customer{
 </table>
 </div>
 <div class="sect2">
-<h3 id="see-also-8"><a class="anchor" href="#see-also-8"></a>See also</h3>
+<h3 id="see-also-4"><a class="anchor" href="#see-also-4"></a>See also</h3>
 <div class="paragraph">
 <p>The attribute can also be specified for:</p>
 </div>
@@ -1644,9 +1624,6 @@ public class CustomerImpl implements Customer{
 </li>
 <li>
 <p><a href="ParameterLayout.html#named" class="page">parameters</a></p>
-</li>
-<li>
-<p><a href="ViewModelLayout.html#named" class="page">view models</a></p>
 </li>
 <li>
 <p><a href="DomainServiceLayout.html#named" class="page">domain services</a>.</p>
@@ -1695,15 +1672,12 @@ public class Order {
 <p>It is also possible to specify a global default for the page size of standalone collections, using the <a href="#refguide:config:configuring-core.adoc" class="page unresolved">configuration property</a> <code>isis.viewer.paged.standalone</code>.</p>
 </div>
 <div class="sect2">
-<h3 id="see-also-9"><a class="anchor" href="#see-also-9"></a>See also</h3>
+<h3 id="see-also-5"><a class="anchor" href="#see-also-5"></a>See also</h3>
 <div class="paragraph">
 <p>This attribute can also be applied to:</p>
 </div>
 <div class="ulist">
 <ul>
-<li>
-<p><a href="ViewModelLayout.html#paged" class="page">view models</a>, and</p>
-</li>
 <li>
 <p><a href="CollectionLayout.html#paged" class="page">collections</a></p>
 </li>
@@ -1729,12 +1703,6 @@ The <code>plural</code> attribute allows the plural form of the class name to be
 public class Child {
     ...
 }</code></pre>
-</div>
-</div>
-<div class="sect2">
-<h3 id="see-also-10"><a class="anchor" href="#see-also-10"></a>See also</h3>
-<div class="paragraph">
-<p>This attribute is also supported for <a href="ViewModelLayout.html#plural" class="page">view models</a>.</p>
 </div>
 </div>
 </div>
@@ -1870,12 +1838,6 @@ The framework provides <code>TitleUiEvent.Doop</code> as such a subclass, so set
 However, events can be raised programmatically either by calling the <a href="../applib-svc/EventBusService.html" class="page"><code>EventBusService</code></a> API directly, or as a result of calling the <a href="../applib-svc/TitleService.html" class="page"><code>TitleService</code></a>'s <code>titleOf(&#8230;&#8203;)</code> method.</p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="see-also-11"><a class="anchor" href="#see-also-11"></a>See also</h3>
-<div class="paragraph">
-<p>This attribute can also be applied to <a href="ViewModelLayout.html#titleUiEvent" class="page">view models</a>.</p>
-</div>
-</div>
 </div>
 </div>
 </article>
@@ -1895,7 +1857,7 @@ However, events can be raised programmatically either by calling the <a href="..
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200317-0401-36ebf196</p>
+            <p>Revision: 2.0.0-M2.20200318-0401-7b207f08</p>
         </div>
     </div>
 </footer>

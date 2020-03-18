@@ -102,33 +102,12 @@
             <span class="navbar-item navbar-heading">Releases</span>
             <a class="navbar-item" href="../../../docs/latest/downloads/how-to.html">Downloads</a>
             <a class="navbar-item" href="../../../relnotes/latest/about.html">Release Notes</a>
+            <a class="navbar-item" href="../../../docs/latest/archive/1-x.html">Archive (1.x)</a>
             <hr class="navbar-divider"/>
             <span class="navbar-item navbar-heading">Framework</span>
             <a class="navbar-item" href="../../../conguide/latest/about.html">Contributors' Guide</a>
             <a class="navbar-item" href="../../../comguide/latest/about.html">Committers' Guide</a>
             <a class="navbar-item" href="../../../core/latest/about.html">Core Design</a>
-          </div>
-        </div>
-        <div class="navbar-item has-dropdown is-hoverable">
-          <a class="navbar-link" href="#">Archive</a>
-          <div class="navbar-dropdown">
-            <span class="navbar-item navbar-heading">v1.x Docs</span>
-            <a class="navbar-item" href="../../../versions/1.17.0/documentation.html">1.17.0</a>
-            <a class="navbar-item" href="../../../versions/1.16.2/documentation.html">1.16.2</a>
-            <a class="navbar-item" href="../../../versions/1.16.1/documentation.html">1.16.1</a>
-            <a class="navbar-item" href="../../../versions/1.16.0/documentation.html">1.16.0</a>
-            <a class="navbar-item" href="../../../versions/1.15.1/documentation.html">1.15.1</a>
-            <a class="navbar-item" href="../../../versions/1.15.0/documentation.html">1.15.0</a>
-            <a class="navbar-item" href="../../../versions/1.14.0/documentation.html">1.14.0</a>
-            <a class="navbar-item" href="../../../versions/1.13.2.1/documentation.html">1.13.2.1</a>
-            <a class="navbar-item" href="../../../versions/1.13.2/documentation.html">1.13.2</a>
-            <a class="navbar-item" href="../../../versions/1.13.1/documentation.html">1.13.1</a>
-            <a class="navbar-item" href="../../../versions/1.13.0/documentation.html">1.13.0</a>
-            <a class="navbar-item" href="../../../versions/1.12.2/documentation.html">1.12.2</a>
-            <a class="navbar-item" href="../../../versions/1.12.1/documentation.html">1.12.1</a>
-            <a class="navbar-item" href="../../../versions/1.12.0/documentation.html">1.12.0</a>
-            <a class="navbar-item" href="../../../versions/1.11.1/documentation.html">1.11.1</a>
-            <a class="navbar-item" href="../../../versions/1.11.0/documentation.html">1.11.0</a>
           </div>
         </div>
         <div class="navbar-item has-dropdown is-hoverable">
@@ -219,9 +198,6 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="Inject.html">Inject</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="MemberGroupLayout.html">MemberGroupLayout</a>
-  </li>
-  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="MemberOrder.html">MemberOrder</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -274,9 +250,6 @@ page.parent doesn't seem to be set...
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="ViewModel.html">ViewModel</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="ViewModelLayout.html">ViewModelLayout</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="XmlJavaTypeAdapter.html">XmlJavaTypeAdapter</a>
@@ -748,65 +721,80 @@ page.parent doesn't seem to be set...
 <div class="paragraph">
 <p>The <code>@ParameterLayout</code> annotation applies to action parameters, collecting together all UI hints within a single annotation.</p>
 </div>
-<div class="paragraph">
-<p>The table below summarizes the annotation&#8217;s attributes.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Inherited
+@Target({
+        ElementType.PARAMETER,
+        ElementType.ANNOTATION_TYPE
+})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface ParameterLayout {
+
+    String cssClass()                               <i class="conum" data-value="1"></i><b>(1)</b>
+            default "";
+
+    String describedAs()                            <i class="conum" data-value="2"></i><b>(2)</b>
+            default "";
+
+    LabelPosition labelPosition()                   <i class="conum" data-value="3"></i><b>(3)</b>
+            default LabelPosition.NOT_SPECIFIED;
+
+    String named()                                  <i class="conum" data-value="4"></i><b>(4)</b>
+            default "";
+
+    boolean namedEscaped()                          <i class="conum" data-value="5"></i><b>(5)</b>
+            default true;
+
+    int multiLine()                                 <i class="conum" data-value="6"></i><b>(6)</b>
+            default -1;
+
+    RenderDay renderDay()                           <i class="conum" data-value="7"></i><b>(7)</b>
+            default RenderDay.NOT_SPECIFIED;
+
+    int typicalLength()                             <i class="conum" data-value="8"></i><b>(8)</b>
+            default -1;
+
+}</code></pre>
 </div>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. <code>@ParameterLayout</code> attributes</caption>
-<colgroup>
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
+</div>
+<div class="colist arabic">
+<table>
 <tr>
-<th class="tableblock halign-left valign-top">Attribute</th>
-<th class="tableblock halign-left valign-top">Values (default)</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#cssClass"><code>cssClass()</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Any string valid as a CSS class</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>the css class that a parameter should have, to allow more targetted styling in <a href="#refguide:config:application-specific/application-css.adoc" class="page unresolved"><code>application.css</code></a></p>
-</div></div></td>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><a href="#cssclass"><code>cssClass()</code></a>
++The css class that a parameter should have, to allow more targetted styling in <a href="#refguide:config:application-specific/application-css.adoc" class="page unresolved"><code>application.css</code></a></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#describedAs"><code>describedAs()</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>description of this parameter, eg to be rendered in a tooltip.</p>
-</div></div></td>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><a href="#describedas"><code>describedAs()</code></a>
+<div class="paragraph">
+<p>Description of this parameter, eg to be rendered in a tooltip.</p>
+</div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#labelPosition"><code>labelPosition()</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>LEFT</code>, <code>TOP</code>, <code>RIGHT</code>, <code>NONE</code><br>
-(<code>LEFT</code>)</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>in forms, the positioning of the label relative to the property value.<br></p>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><a href="#labelposition"><code>labelPosition()</code></a>
+In forms, the positioning of the label relative to the property value.<br>
+=
+Default is <code>LEFT</code>, unless <a href="#multiline"><code>multiLine</code></a> in which case <code>TOP</code>.
+The value <code>RIGHT</code> is only supported for boolean parameters.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><a href="#multiline"><code>multiLine()</code></a>
+<div class="paragraph">
+<p>For string parameters, render as a text area over specified number of lines.</p>
 </div>
 <div class="paragraph">
-<p>Default is <code>LEFT</code>, unless <a href="#multiLine"><code>multiLine</code></a> in which case <code>TOP</code>.
-The value <code>RIGHT</code> is only supported for boolean parameters.</p>
-</div></div></td>
+<p>If set &gt; 1, then then <a href="#labelposition"><code>labelPosition</code></a> defaults to <code>TOP</code>.</p>
+</div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#multiLine"><code>multiLine()</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Positive integer</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>for string parameters, render as a text area over multiple lines.<br></p>
-</div>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><a href="#named"><code>named()</code></a>
 <div class="paragraph">
-<p>If set &gt; 1, then then <a href="#labelPosition"><code>labelPosition</code></a> defaults to <code>TOP</code>.</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#named"><code>named()</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>the name of this parameter.</p>
+<p>The name of this parameter.</p>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -824,31 +812,31 @@ The value <code>RIGHT</code> is only supported for boolean parameters.</p>
 </td>
 </tr>
 </table>
-</div></div></td>
+</div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>namedEscaped()</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code>, <code>false</code> (<code>true</code>)</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>whether to HTML escape the name of this parameter.</p>
-</div></div></td>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td><code>namedEscaped()</code>
+<div class="paragraph">
+<p>Whether to HTML escape the name of this parameter.</p>
+</div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#renderedAsDayBefore"><code>renderedAsDayBefore()</code></a></p></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>for date parameters only, render the date as one day prior to the actually stored date (eg the end date of an open interval into a closed interval)</p>
-</div></div></td>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td><a href="#renderedasdaybefore"><code>renderedAsDayBefore()</code></a>
+<div class="paragraph">
+<p>For date parameters only, render the date as one day prior to the actually stored date (eg the end date of an open interval into a closed interval)</p>
+</div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#typicalLength"><code>typicalLength()</code></a></p></td>
-<td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>the typical entry length of a field, use to determine the optimum width for display</p>
-</div></div></td>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td><a href="#typicallength"><code>typicalLength()</code></a>
+<div class="paragraph">
+<p>The typical entry length of a field, use to determine the optimum width for display</p>
+</div></td>
 </tr>
-</tbody>
 </table>
+</div>
 <div class="paragraph">
 <p>For example:</p>
 </div>
@@ -921,9 +909,6 @@ The value <code>RIGHT</code> is only supported for boolean parameters.</p>
 <p><a href="DomainObjectLayout.html#cssClass" class="page">domain objects</a></p>
 </li>
 <li>
-<p><a href="ViewModelLayout.html#cssClass" class="page">view models</a></p>
-</li>
-<li>
 <p><a href="ActionLayout.html#cssClass" class="page">actions</a></p>
 </li>
 <li>
@@ -944,7 +929,7 @@ The value <code>RIGHT</code> is only supported for boolean parameters.</p>
 <h2 id="describedas"><a class="anchor" href="#describedas"></a><code>describedAs</code></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The <code>describedAs</code> attribute is used to provide a short description of the action parameter to the user.  In the <a href="../../../vw/latest/about.html" class="page">Wicket viewer</a> it is displayed as a 'tool tip'.  The <code>describedAs</code> attribute can also be specified for <a href="CollectionLayout.html#describedAs" class="page">collections</a>,  <a href="PropertyLayout.html#describedAs" class="page">properties</a>, <a href="ActionLayout.html#describedAs" class="page">actions</a>, <a href="DomainObjectLayout.html#describedAs" class="page">domain objects</a> and <a href="ViewModelLayout.html#describedAs" class="page">view models</a>.</p>
+<p>The <code>describedAs</code> attribute is used to provide a short description of the action parameter to the user.  In the <a href="../../../vw/latest/about.html" class="page">Wicket viewer</a> it is displayed as a 'tool tip'.  The <code>describedAs</code> attribute can also be specified for <a href="CollectionLayout.html#describedAs" class="page">collections</a>,  <a href="PropertyLayout.html#describedAs" class="page">properties</a>, <a href="ActionLayout.html#describedAs" class="page">actions</a> and <a href="DomainObjectLayout.html#describedAs" class="page">domain objects</a>.</p>
 </div>
 <div class="paragraph">
 <p>Descriptions may be provided for objects, members (properties, collections and actions), and for individual parameters within an action method.</p>
@@ -1136,9 +1121,6 @@ To allow HTML markup, set the related <code>namedEscaped</code> attribute to <co
 <p><a href="DomainObjectLayout.html#named" class="page">domain objects</a></p>
 </li>
 <li>
-<p><a href="ViewModelLayout.html#named" class="page">view models</a></p>
-</li>
-<li>
 <p><a href="DomainServiceLayout.html#named" class="page">domain services</a>.</p>
 </li>
 </ul>
@@ -1247,7 +1229,7 @@ That said, note that the <a href="../../../vw/latest/about.html" class="page">Wi
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200317-0401-36ebf196</p>
+            <p>Revision: 2.0.0-M2.20200318-0401-7b207f08</p>
         </div>
     </div>
 </footer>

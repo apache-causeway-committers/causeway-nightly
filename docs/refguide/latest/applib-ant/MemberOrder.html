@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Raleway:300,400,500,700,800|Montserrat:300,400,700" rel="stylesheet">
 <link rel="home" href="../../.." title="Apache Isis">
   <link rel="next" href="Mixin.html" title="Mixin">
-  <link rel="prev" href="MemberGroupLayout.html" title="MemberGroupLayout">
+  <link rel="prev" href="Inject.html" title="Inject">
   </head>
   <body class="article">
 <header class="header">
@@ -102,33 +102,12 @@
             <span class="navbar-item navbar-heading">Releases</span>
             <a class="navbar-item" href="../../../docs/latest/downloads/how-to.html">Downloads</a>
             <a class="navbar-item" href="../../../relnotes/latest/about.html">Release Notes</a>
+            <a class="navbar-item" href="../../../docs/latest/archive/1-x.html">Archive (1.x)</a>
             <hr class="navbar-divider"/>
             <span class="navbar-item navbar-heading">Framework</span>
             <a class="navbar-item" href="../../../conguide/latest/about.html">Contributors' Guide</a>
             <a class="navbar-item" href="../../../comguide/latest/about.html">Committers' Guide</a>
             <a class="navbar-item" href="../../../core/latest/about.html">Core Design</a>
-          </div>
-        </div>
-        <div class="navbar-item has-dropdown is-hoverable">
-          <a class="navbar-link" href="#">Archive</a>
-          <div class="navbar-dropdown">
-            <span class="navbar-item navbar-heading">v1.x Docs</span>
-            <a class="navbar-item" href="../../../versions/1.17.0/documentation.html">1.17.0</a>
-            <a class="navbar-item" href="../../../versions/1.16.2/documentation.html">1.16.2</a>
-            <a class="navbar-item" href="../../../versions/1.16.1/documentation.html">1.16.1</a>
-            <a class="navbar-item" href="../../../versions/1.16.0/documentation.html">1.16.0</a>
-            <a class="navbar-item" href="../../../versions/1.15.1/documentation.html">1.15.1</a>
-            <a class="navbar-item" href="../../../versions/1.15.0/documentation.html">1.15.0</a>
-            <a class="navbar-item" href="../../../versions/1.14.0/documentation.html">1.14.0</a>
-            <a class="navbar-item" href="../../../versions/1.13.2.1/documentation.html">1.13.2.1</a>
-            <a class="navbar-item" href="../../../versions/1.13.2/documentation.html">1.13.2</a>
-            <a class="navbar-item" href="../../../versions/1.13.1/documentation.html">1.13.1</a>
-            <a class="navbar-item" href="../../../versions/1.13.0/documentation.html">1.13.0</a>
-            <a class="navbar-item" href="../../../versions/1.12.2/documentation.html">1.12.2</a>
-            <a class="navbar-item" href="../../../versions/1.12.1/documentation.html">1.12.1</a>
-            <a class="navbar-item" href="../../../versions/1.12.0/documentation.html">1.12.0</a>
-            <a class="navbar-item" href="../../../versions/1.11.1/documentation.html">1.11.1</a>
-            <a class="navbar-item" href="../../../versions/1.11.0/documentation.html">1.11.0</a>
           </div>
         </div>
         <div class="navbar-item has-dropdown is-hoverable">
@@ -158,12 +137,12 @@
   <aside class="nav">
     <div class="panels">
 <div class="nav-panel-pagination">
-  <a class="page-previous" rel="prev" href="MemberGroupLayout.html" title="MemberGroupLayout"><span></span></a>
+  <a class="page-previous" rel="prev" href="Inject.html" title="Inject"><span></span></a>
   <a class="page-next" rel="next"
      href="Mixin.html" title="Mixin"><span></span></a>
 <!--
 page.parent doesn't seem to be set...
-  <a class="page-parent" rel="prev" href="about.html" title="MemberGroupLayout"><span></span></a>
+  <a class="page-parent" rel="prev" href="about.html" title="Inject"><span></span></a>
 -->
 </div>
 <div class="nav-panel-menu is-active" data-panel="menu">
@@ -218,9 +197,6 @@ page.parent doesn't seem to be set...
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="Inject.html">Inject</a>
   </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="MemberGroupLayout.html">MemberGroupLayout</a>
-  </li>
   <li class="nav-item is-current-page" data-depth="2">
     <a class="nav-link" href="MemberOrder.html">MemberOrder</a>
   </li>
@@ -274,9 +250,6 @@ page.parent doesn't seem to be set...
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="ViewModel.html">ViewModel</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="ViewModelLayout.html">ViewModelLayout</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="XmlJavaTypeAdapter.html">XmlJavaTypeAdapter</a>
@@ -744,21 +717,41 @@ page.parent doesn't seem to be set...
     <a name="section-top"></a>
 <h1 class="page"><code>@MemberOrder</code></h1>
 <div class="paragraph">
-<p>The <code>@MemberOrder</code> annotation is used to specify the relative order of domain object members, that is: properties, collections and actions.
-It works in conjunction with the <a href="MemberGroupLayout.html" class="page"><code>@MemberGroupLayout</code></a> annotation.</p>
+<p>The <code>@MemberOrder</code> annotation is used to specify the relative order of domain object members, that is: properties, collections and actions.</p>
 </div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Inherited
+@Target({ ElementType.METHOD, ElementType.FIELD })
+@Retention(RetentionPolicy.RUNTIME)
+public @interface MemberOrder {
+
+    String name()           <i class="conum" data-value="1"></i><b>(1)</b>
+            default "";
+
+    String sequence();      <i class="conum" data-value="2"></i><b>(2)</b>
+
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><a href="#name"><code>name()</code></a>
 <div class="paragraph">
-<p>The annotation defines two attributes:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="#name"><code>name()</code></a></p>
-</li>
-<li>
-<p><a href="#sequence"><code>sequence()</code></a></p>
-</li>
-</ul>
+<p>Names a group of (property) members.
+All properties with this name will be grouped together.</p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><a href="#sequence"><code>sequence()</code></a>
+<div class="paragraph">
+<p>Defines an ordering for members, within their container.</p>
+</div></td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>As this is an important topic, there is a <a href="../../../vw/latest/layout.html" class="page">separate chapter</a> that discussed object layout in full.</p>
@@ -795,7 +788,7 @@ It works in conjunction with the <a href="MemberGroupLayout.html" class="page"><
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200317-0401-36ebf196</p>
+            <p>Revision: 2.0.0-M2.20200318-0401-7b207f08</p>
         </div>
     </div>
 </footer>

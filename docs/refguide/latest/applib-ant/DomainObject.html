@@ -102,33 +102,12 @@
             <span class="navbar-item navbar-heading">Releases</span>
             <a class="navbar-item" href="../../../docs/latest/downloads/how-to.html">Downloads</a>
             <a class="navbar-item" href="../../../relnotes/latest/about.html">Release Notes</a>
+            <a class="navbar-item" href="../../../docs/latest/archive/1-x.html">Archive (1.x)</a>
             <hr class="navbar-divider"/>
             <span class="navbar-item navbar-heading">Framework</span>
             <a class="navbar-item" href="../../../conguide/latest/about.html">Contributors' Guide</a>
             <a class="navbar-item" href="../../../comguide/latest/about.html">Committers' Guide</a>
             <a class="navbar-item" href="../../../core/latest/about.html">Core Design</a>
-          </div>
-        </div>
-        <div class="navbar-item has-dropdown is-hoverable">
-          <a class="navbar-link" href="#">Archive</a>
-          <div class="navbar-dropdown">
-            <span class="navbar-item navbar-heading">v1.x Docs</span>
-            <a class="navbar-item" href="../../../versions/1.17.0/documentation.html">1.17.0</a>
-            <a class="navbar-item" href="../../../versions/1.16.2/documentation.html">1.16.2</a>
-            <a class="navbar-item" href="../../../versions/1.16.1/documentation.html">1.16.1</a>
-            <a class="navbar-item" href="../../../versions/1.16.0/documentation.html">1.16.0</a>
-            <a class="navbar-item" href="../../../versions/1.15.1/documentation.html">1.15.1</a>
-            <a class="navbar-item" href="../../../versions/1.15.0/documentation.html">1.15.0</a>
-            <a class="navbar-item" href="../../../versions/1.14.0/documentation.html">1.14.0</a>
-            <a class="navbar-item" href="../../../versions/1.13.2.1/documentation.html">1.13.2.1</a>
-            <a class="navbar-item" href="../../../versions/1.13.2/documentation.html">1.13.2</a>
-            <a class="navbar-item" href="../../../versions/1.13.1/documentation.html">1.13.1</a>
-            <a class="navbar-item" href="../../../versions/1.13.0/documentation.html">1.13.0</a>
-            <a class="navbar-item" href="../../../versions/1.12.2/documentation.html">1.12.2</a>
-            <a class="navbar-item" href="../../../versions/1.12.1/documentation.html">1.12.1</a>
-            <a class="navbar-item" href="../../../versions/1.12.0/documentation.html">1.12.0</a>
-            <a class="navbar-item" href="../../../versions/1.11.1/documentation.html">1.11.1</a>
-            <a class="navbar-item" href="../../../versions/1.11.0/documentation.html">1.11.0</a>
           </div>
         </div>
         <div class="navbar-item has-dropdown is-hoverable">
@@ -219,9 +198,6 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="Inject.html">Inject</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="MemberGroupLayout.html">MemberGroupLayout</a>
-  </li>
-  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="MemberOrder.html">MemberOrder</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -274,9 +250,6 @@ page.parent doesn't seem to be set...
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="ViewModel.html">ViewModel</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="ViewModelLayout.html">ViewModelLayout</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="XmlJavaTypeAdapter.html">XmlJavaTypeAdapter</a>
@@ -748,152 +721,290 @@ page.parent doesn't seem to be set...
 <div class="paragraph">
 <p>The <code>@DomainObject</code> annotation applies to domain objects, collecting together all domain semantics within a single annotation.</p>
 </div>
-<div class="paragraph">
-<p>The table below summarizes the annotation&#8217;s attributes.</p>
 </div>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. <code>@DomainObject</code> attributes</caption>
-<colgroup>
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
+</div>
+<div class="sect1">
+<h2 id="main-api"><a class="anchor" href="#main-api"></a>Main API</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Inherited
+@Target({
+        ElementType.TYPE,
+        ElementType.ANNOTATION_TYPE
+})
+@Retention(RetentionPolicy.RUNTIME)
+@Component @Scope("prototype")
+public @interface DomainObject {
+
+    Auditing auditing()                             <i class="conum" data-value="1"></i><b>(1)</b>
+            default Auditing.NOT_SPECIFIED;
+
+    Class&lt;?&gt; autoCompleteRepository()               <i class="conum" data-value="2"></i><b>(2)</b>
+            default Object.class;
+
+    String autoCompleteAction()                     <i class="conum" data-value="3"></i><b>(3)</b>
+            default "autoComplete";
+
+    Bounding bounding()                             <i class="conum" data-value="4"></i><b>(4)</b>
+            default Bounding.NOT_SPECIFIED;
+
+    Editing editing()                               <i class="conum" data-value="5"></i><b>(5)</b>
+            default Editing.NOT_SPECIFIED;
+
+    String editingDisabledReason()                  <i class="conum" data-value="6"></i><b>(6)</b>
+            default "Disabled";
+
+    String mixinMethod()                            <i class="conum" data-value="7"></i><b>(7)</b>
+            default Mixin.DEFAULT_METHOD_NAME;
+
+    Nature nature()                                 <i class="conum" data-value="8"></i><b>(8)</b>
+            default Nature.NOT_SPECIFIED;
+
+    String objectType()                             <i class="conum" data-value="9"></i><b>(9)</b>
+            default "";
+
+    Publishing publishing()                         <i class="conum" data-value="10"></i><b>(10)</b>
+            default Publishing.NOT_SPECIFIED;
+
+    // ...
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
 <tr>
-<th class="tableblock halign-left valign-top">Attribute</th>
-<th class="tableblock halign-left valign-top">Values (default)</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#auditing"><code>auditing()</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>AS_CONFIGURED</code>, <code>ENABLED</code>, <code>DISABLED</code><br>
-(<code>AS_CONFIGURED</code>)</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>indicates whether each of the changed properties of an object should be submitted to the registered
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><a href="#auditing"><code>auditing()</code></a>
+<div class="paragraph">
+<p>Indicates whether each of the changed properties of an object should be submitted to the registered
 <a href="../applib-svc/AuditerService.html" class="page"><code>AuditerService</code></a>(s)</p>
-</div></div></td>
+</div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#autoCompleteRepository"><code>autoCompleteRepository()</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Domain service class</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>nominate a method on a domain service to be used for looking up instances of the domain object</p>
-</div></div></td>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><a href="#autocompleterepository"><code>autoCompleteRepository()</code></a>
+<div class="paragraph">
+<p>Nominate a method on a domain service to be used for looking up instances of the domain object</p>
+</div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>autoCompleteAction()</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Method name<br>
-(<code>autoComplete()</code>)</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>override the method name to use on the auto-complete repository</p>
-</div></div></td>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><a href="#autocompleteaction"><code>autoCompleteAction()</code></a>
+<div class="paragraph">
+<p>Override the method name to use on the auto-complete repository</p>
+</div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#bounding"><code>bounding()</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code>, <code>false</code><br>
-(<code>false</code>)</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><a href="#bounding"><code>bounding()</code></a>
+<div class="paragraph">
 <p>Whether the number of instances of this domain class is relatively small (a "bounded" set), such that instances could be selected from a drop-down list box or similar.</p>
-</div></div></td>
+</div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#createdLifecycleEvent"><code>created-</code><br>
-<code>LifecycleEvent()</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">subtype of <code>ObjectCreatedEvent</code><br>
-(<code>ObjectCreatedEvent.Default</code>)</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>the event type to be posted to the <a href="../applib-svc/EventBusService.html" class="page"><code>EventBusService</code></a> whenever an instance is created</p>
-</div></div></td>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><a href="#editing"><code>editing()</code></a>
+<div class="paragraph">
+<p>Whether the object&#8217;s properties and collections can be edited or not (ie whether the instance should be considered to be immutable)</p>
+</div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#editing"><code>editing()</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>AS_CONFIGURED</code>, <code>ENABLED</code>, <code>DISABLED</code><br>
-(<code>AS_CONFIGURED</code>)</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>whether the object&#8217;s properties and collections can be edited or not (ie whether the instance should be considered to be immutable)</p>
-</div></div></td>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td><code>editingDisabledReason()</code>
+<div class="paragraph">
+<p>The default reason why the object&#8217;s properties and collections cannot be edited.</p>
+</div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#mixinMethod"><code>mixinMethod()</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Method name within the mixin</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td><a href="#mixinmethod"><code>mixinMethod()</code></a>
+<div class="paragraph">
 <p>How to recognize the "reserved" method name, meaning that the mixin&#8217;s own name will be inferred from the mixin type.
 Typical examples are "exec", "execute", "invoke", "apply" and so on.
 The default "reserved" method name is <code>$$</code>.</p>
-</div></div></td>
+</div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#nature"><code>nature()</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NOT_SPECIFIED</code>, <code>JDO_ENTITY</code>, <code>EXTERNAL_ENTITY</code>, <code>INMEMORY_ENTITY</code>, <code>MIXIN</code>, <code>VIEW_MODEL</code> (<code>NOT_SPECIFIED</code>)</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>whether the domain object logically is an entity (part of the domain layer) or is a view model (part of the application layer); or is a mixin.
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td><a href="#nature"><code>nature()</code></a>
+<div class="paragraph">
+<p>Whether the domain object logically is an entity (part of the domain layer) or is a view model (part of the application layer); or is a mixin.
 If an entity, indicates how its persistence is managed.</p>
-</div></div></td>
+</div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#objectType"><code>objectType()</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">(none, which implies fully qualified class name)</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>specify an alias for the domain class used to uniquely identify the object both within the Apache Isis runtime and externally</p>
-</div></div></td>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
+<td><a href="#objecttype"><code>objectType()</code></a>
+<div class="paragraph">
+<p>Specify an alias for the domain class used to uniquely identify the object both within the Apache Isis runtime and externally</p>
+</div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#persistedLifecycleEvent"><code>persisted-</code><br>
-<code>LifecycleEvent()</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">subtype of <code>ObjectPersistedEvent</code><br>
-(<code>ObjectPersistedEvent.Default</code>)</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>the event type to be posted to the <a href="../applib-svc/EventBusService.html" class="page"><code>EventBusService</code></a> whenever an instance has just been persisted</p>
-</div></div></td>
+<td><i class="conum" data-value="10"></i><b>10</b></td>
+<td><a href="#publishing"><code>publishing()</code></a>
+<div class="paragraph">
+<p>Whether changes to the object should be published to the registered <a href="../applib-svc/PublisherService.html" class="page"><code>PublisherService</code></a>.</p>
+</div></td>
 </tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#persistingLifecycleEvent"><code>persisting-</code><br>
-<code>LifecycleEvent()</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">subtype of <code>ObjectPersistingEvent</code><br>
-(<code>ObjectPersistingEvent.Default</code>)</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>the event type to be posted to the <a href="../applib-svc/EventBusService.html" class="page"><code>EventBusService</code></a> whenever an instance is about to be persisted</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#publishing"><code>publishing()</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>AS_CONFIGURED</code>, <code>ENABLED</code>, <code>DISABLED</code><br>
-(<code>AS_CONFIGURED</code>)</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>whether changes to the object should be published to the registered <a href="../applib-svc/PublisherService.html" class="page"><code>PublisherService</code></a>.</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#removingLifecycleEvent"><code>removing-</code><br>
-<code>LifecycleEvent()</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">subtype of <code>ObjectRemovingEvent</code><br>
-(<code>ObjectRemovingEvent.Default</code>)</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>the event type to be posted to the <a href="../applib-svc/EventBusService.html" class="page"><code>EventBusService</code></a> whenever an instance is about to be deleted</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#updatedLifecycleEvent"><code>updated-</code><br>
-<code>LifecycleEvent()</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">subtype of <code>ObjectUpdatedEvent</code><br>
-(<code>ObjectUpdatedEvent.Default</code>)</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>the event type to be posted to the <a href="../applib-svc/EventBusService.html" class="page"><code>EventBusService</code></a> whenever an instance has just been updated</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#updatingLifecycleEvent"><code>updating-</code><br>
-<code>LifecycleEvent()</code></a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">subtype of <code>ObjectUpdatingEvent</code><br>
-(<code>ObjectUpdatingEvent.Default</code>)</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>the event type to be posted to the <a href="../applib-svc/EventBusService.html" class="page"><code>EventBusService</code></a> whenever an instance is about to be updated</p>
-</div></div></td>
-</tr>
-</tbody>
 </table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="entity-lifecycle-api"><a class="anchor" href="#entity-lifecycle-api"></a>Entity Lifecycle API</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>These attributes define the events to be fired throughout an the persistence lifecycle of a domain entity:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public @interface DomainObject {
+
+    // ...
+
+    Class&lt;? extends ObjectCreatedEvent&lt;?&gt;&gt;
+            createdLifecycleEvent()                         <i class="conum" data-value="1"></i><b>(1)</b>
+            default ObjectCreatedEvent.Default.class;
+
+    Class&lt;? extends ObjectPersistingEvent&lt;?&gt;&gt;
+            persistingLifecycleEvent()                      <i class="conum" data-value="2"></i><b>(2)</b>
+            default ObjectPersistingEvent.Default.class;
+
+    Class&lt;? extends ObjectPersistedEvent&lt;?&gt;&gt;
+            persistedLifecycleEvent()                       <i class="conum" data-value="3"></i><b>(3)</b>
+            default ObjectPersistedEvent.Default.class;
+
+    Class&lt;? extends ObjectLoadedEvent&lt;?&gt;&gt;
+            loadedLifecycleEvent()                          <i class="conum" data-value="4"></i><b>(4)</b>
+            default ObjectLoadedEvent.Default.class;
+
+    Class&lt;? extends ObjectUpdatingEvent&lt;?&gt;&gt;
+            updatingLifecycleEvent()                        <i class="conum" data-value="5"></i><b>(5)</b>
+            default ObjectUpdatingEvent.Default.class;
+
+    Class&lt;? extends ObjectUpdatedEvent&lt;?&gt;&gt;
+            updatedLifecycleEvent()                         <i class="conum" data-value="6"></i><b>(6)</b>
+            default ObjectUpdatedEvent.Default.class;
+
+    Class&lt;? extends ObjectRemovingEvent&lt;?&gt;&gt;
+            removingLifecycleEvent()                        <i class="conum" data-value="7"></i><b>(7)</b>
+            default ObjectRemovingEvent.Default.class;
+
+    // ...
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><a href="#createdLifecycleEvent"><code>createdLifecycleEvent()</code></a>
+<div class="paragraph">
+<p>The event type to be posted to the <a href="../applib-svc/EventBusService.html" class="page"><code>EventBusService</code></a> whenever an instance is created</p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><a href="#persistinglifecycleevent"><code>persistingLifecycleEvent()</code></a>
+<div class="paragraph">
+<p>The event type to be posted to whenever an instance is about to be persisted</p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><a href="#persistedlifecycleevent"><code>persistedLifecycleEvent()</code></a>
+<div class="paragraph">
+<p>The event type to be posted whenever an instance has just been persisted</p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><a href="#loadedlifecycleevent"><code>loadedLifecycleEvent()</code></a>
+<div class="paragraph">
+<p>The event type to be posted whenever an instance has just been loaded from the datastore</p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><a href="#removinglifecycleevent"><code>removingLifecycleEvent()</code></a>
+<div class="paragraph">
+<p>The event type to be posted whenever an instance is about to be deleted</p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td><a href="#updatedlifecycleevent"><code>updatedLifecycleEvent()</code></a>
+<div class="paragraph">
+<p>The event type to be posted whenever an instance has just been updated</p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td><a href="#updatinglifecycleevent"><code>updatingLifecycleEvent()</code></a>
+<div class="paragraph">
+<p>The event type to be posted whenever an instance is about to be updated</p>
+</div></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="domain-events-api"><a class="anchor" href="#domain-events-api"></a>Domain Events API</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>These attributes define the events to be fired when a domain object&#8217;s members (its actions, properties and collections) are interacted with.</p>
+</div>
+<div class="paragraph">
+<p>These attributes define the default event types; they can be overridden for each specific domain member.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public @interface DomainObject {
+
+    // ...
+
+    Class&lt;? extends ActionDomainEvent&lt;?&gt;&gt;
+            actionDomainEvent()                             <i class="conum" data-value="1"></i><b>(1)</b>
+            default ActionDomainEvent.Default.class;
+
+    Class&lt;? extends PropertyDomainEvent&lt;?,?&gt;&gt;
+            propertyDomainEvent()                           <i class="conum" data-value="2"></i><b>(2)</b>
+            default PropertyDomainEvent.Default.class;
+
+    Class&lt;? extends CollectionDomainEvent&lt;?,?&gt;&gt;
+            collectionDomainEvent()                         <i class="conum" data-value="3"></i><b>(3)</b>
+            default CollectionDomainEvent.Default.class;
+
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><code>actionDomainEvent()</code>
+<div class="paragraph">
+<p>The event type to be posted to the <a href="../applib-svc/EventBusService.html" class="page"><code>EventBusService</code></a> whenever an action of the domain object is interacted with (if not overridden using <a href="Action.html#domainevent" class="page"><code>@Action#domainEvent()</a></code>).</p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><code>propertyDomainEvent()</code>
+<div class="paragraph">
+<p>The event type to be posted to the <a href="../applib-svc/EventBusService.html" class="page"><code>EventBusService</code></a> whenever a property of the domain object is interacted with (if not overridden using <a href="Property.html#domainevent" class="page"><code>@Property#domainEvent()</a></code>).</p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><code>collectionDomainEvent()</code>
+<div class="paragraph">
+<p>The event type to be posted to the <a href="../applib-svc/EventBusService.html" class="page"><code>EventBusService</code></a> whenever a collection of the domain object is interacted with (if not overridden using <a href="Collection.html#domainevent" class="page"><code>@Collection#domainEvent()</a></code>).</p>
+</div></td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
 <p>For example:</p>
 </div>
@@ -2444,7 +2555,7 @@ The framework provides <code>ObjectUpdatedEvent.Doop</code> as such a subclass, 
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200317-0401-36ebf196</p>
+            <p>Revision: 2.0.0-M2.20200318-0401-7b207f08</p>
         </div>
     </div>
 </footer>
