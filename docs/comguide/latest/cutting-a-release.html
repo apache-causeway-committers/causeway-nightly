@@ -667,6 +667,7 @@ env | grep ISIS | sort</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mvn versions:set -DnewVersion=$ISISREL
+mvn install -o -DskipTests
 
 pushd ../starters
 mvn versions:set -DnewVersion=$ISISREL
@@ -694,7 +695,7 @@ git commit -m "$ISISJIRA: bumps version to $ISISREL"</code></pre>
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-After release, there is a <a href="#reset-revision">similar step at the end</a> to reset back to <code>2.0.0-SNAPSHOT</code>.
+After release, there is a <a href="#reset-revision-property">similar step at the end</a> to reset back to <code>2.0.0-SNAPSHOT</code>.
 </td>
 </tr>
 </table>
@@ -720,7 +721,18 @@ mvn clean install -o</code></pre>
 We activate the (inherited) <code>apache-release</code> profile to bring in the <code>gpg</code> plugin for code signing.</p>
 </div>
 <div class="paragraph">
-<p>To build and deploy and tag, we use:</p>
+<p>The build creates a zip of the directory, so before executing the release we remove any other files.
+Still in the <code>core-parent</code> directory:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">pushd ..
+git clean -dfx
+popd</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To deploy (upload the artifacts), we use:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -745,6 +757,9 @@ This requires <code>gpg</code> v2.1 or later.
 </tr>
 </table>
 </div>
+</div>
+<div class="sect2">
+<h3 id="tag-the-release"><a class="anchor" href="#tag-the-release"></a>Tag the Release</h3>
 <div class="paragraph">
 <p>Finally, tag the release:</p>
 </div>
@@ -755,11 +770,8 @@ git tag $ISISART-$ISISREL-$ISISRC</code></pre>
 </div>
 </div>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="checkclose-staging-repo"><a class="anchor" href="#checkclose-staging-repo"></a>Check/Close Staging Repo</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="checkclose-staging-repo"><a class="anchor" href="#checkclose-staging-repo"></a>Check/Close Staging Repo</h3>
 <div class="paragraph">
 <p>The <code>mvn deploy</code> commands will have uploaded all of the release artifacts into a newly created staging repository on the ASF Nexus repository server.</p>
 </div>
@@ -844,10 +856,8 @@ See <a href="key-generation.html" class="page">Key Generation</a> for more detai
 </table>
 </div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="reset-revision-property"><a class="anchor" href="#reset-revision-property"></a>Reset <code>revision</code> property</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="reset-revision-property"><a class="anchor" href="#reset-revision-property"></a>Reset <code>revision</code> property</h3>
 <div class="paragraph">
 <p>At the beginning of the release process we bumped the version to the release version, ie <code>$ISISREL</code>.
 With the release now deployed we now need to reset the revision back down to the base snapshot, ie <code>2.0.0-SNAPSHOT</code>.</p>
@@ -873,6 +883,7 @@ However, this approach doesn&#8217;t play well with CI/CD when Apache Isis is mo
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mvn versions:set -DnewVersion=2.0.0-SNAPSHOT
+mvn install -DskipTests -o
 
 pushd ../starters
 mvn versions:set -DnewVersion=2.0.0-SNAPSHOT
@@ -883,10 +894,8 @@ git commit -m "$ISISJIRA: resetting version"</code></pre>
 </div>
 </div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="push-branches"><a class="anchor" href="#push-branches"></a>Push branches</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="push-branch-tag"><a class="anchor" href="#push-branch-tag"></a>Push branch &amp; tag</h3>
 <div class="paragraph">
 <p>Push the release branch to origin:</p>
 </div>
@@ -896,7 +905,7 @@ git commit -m "$ISISJIRA: resetting version"</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>and also push tags:</p>
+<p>and also push tag:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -920,6 +929,7 @@ git fetch</code></pre>
 </div>
 </div>
 </div>
+</div>
 <div class="sect1">
 <h2 id="update-starter-apps"><a class="anchor" href="#update-starter-apps"></a>Update starter apps</h2>
 <div class="sectionbody">
@@ -937,12 +947,21 @@ git pull --ff-only
 
 git checkout -b $ISISBRANCH
 
-mvn versions:update-parent -DparentVersion=$ISISREL
+mvn versions:update-parent -DparentVersion=$ISISREL <i class="conum" data-value="1"></i><b>(1)</b>
 mvn versions:set -DnewVersion=$ISISREL
 
 mvn clean install -o
 mvn spring-boot:run</code></pre>
 </div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>requires the current parent to exist locally in <code>~/.m2/repository</code>.
+If this isn&#8217;t the case, then manually edit instead.</td>
+</tr>
+</table>
 </div>
 </li>
 <li>
@@ -954,31 +973,41 @@ git pull --ff-only
 
 git checkout -b $ISISBRANCH
 
-mvn versions:update-parent -DparentVersion=$ISISREL
+mvn versions:update-parent -DparentVersion=$ISISREL <i class="conum" data-value="1"></i><b>(1)</b>
 mvn versions:set -DnewVersion=$ISISREL
 
 mvn clean install -o -Dmetamodel.lockdown
 mvn -pl webapp test -o -Dmavendeps.lockdown</code></pre>
 </div>
 </div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>requires the current parent to exist locally in <code>~/.m2/repository</code>.
+If this isn&#8217;t the case, then manually edit instead.</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
-<p>Approve any failed lockdown tests (the mavendeps will fail first time arround because the dependencies on Apache Isis itself have just be bumped).
-Repeat, then run the app as a sanity check:</p>
+<p>Approve any failed lockdown tests (the mavendeps will fail first time around because the dependencies on Apache Isis itself have just be bumped).</p>
+</div>
+<div class="paragraph">
+<p>Repeat, then run the app as a sanity check:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mvn clean install -o -Dmetamodel.lockdown
-mvn -pl webapp test -o -Dmavendeps.lockdown
-
-mvn -pl webapp spring-boot:run</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mvn -pl webapp spring-boot:run</code></pre>
 </div>
 </div>
 </li>
 <li>
-<p>For both apps, push the release branch to origin once ok:</p>
+<p>For both apps, commit any changes and then push the release branch to origin once ok:</p>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git push -u origin $ISISBRANCH</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git add .
+git commit -m "$ISISJIRA - updates to $ISISREL"
+git push -u origin $ISISBRANCH</code></pre>
 </div>
 </div>
 </li>
@@ -1013,7 +1042,7 @@ mvn -pl webapp spring-boot:run</code></pre>
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd ../isis-site
 
 git checkout asf-staging
-git pull origin/asf-staging --ff-only</code></pre>
+git pull --ff-only</code></pre>
 </div>
 </div>
 </li>
@@ -1064,7 +1093,18 @@ sh preview.sh</code></pre>
 </div>
 </div>
 </li>
+<li>
+<p>If happy, then push the changes:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git push origin asf-staging -u</code></pre>
+</div>
+</div>
+</li>
 </ul>
+</div>
+<div class="paragraph">
+<p>Wait a minute or two; the site should be available at <a href="https://isis.staged.apache.org" class="bare">https://isis.staged.apache.org</a>  (nb: 'staged', not 'staging').</p>
 </div>
 </div>
 </div>
@@ -1099,31 +1139,38 @@ Adapt as required:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code>I've just cut a new release for Apache Isis Framework.
+<pre class="highlightjs highlight"><code>I've just cut a new release of the Apache Isis Framework.
 
-The source code artifacts have been uploaded to staging repositories on repository.apache.org.
-For each zip there is a corresponding signature file (append .asc to the zip's url).
+The source code zip artifact has been uploaded to a staging repository on
+https://repository.apache.org, along with its corresponding .asc signature.
 
-In the source code repo the code has been tagged as isis-2.0.0-M3-RC1; see https://github.com/apache/isis/tags
+In the source code repo the code has been tagged as isis-2.0.0-M3-RC1;
+see https://github.com/apache/isis/tags
 
-To verify the source code, you can use the following commands (in an empty directory):
+To verify the source code itself, you can use the following commands
+(in an empty directory):
 
-    VERSION=2.0.0-M3
-    NEXUSREPONUM=10xx
+----------------------------------------------------------------
+VERSION=2.0.0-M3
+RC=RC1
+NEXUSREPONUM=11xx
 
-    curl http://www.apache.org/dist/isis/KEYS &gt; /tmp/KEYS
-    gpg --import /tmp/KEYS
+curl https://downloads.apache.org/isis/KEYS &gt; /tmp/KEYS
+gpg --import /tmp/KEYS
 
-    rm -rf isis-$VERSION*
+rm -rf isis-$VERSION*
 
-    curl -O -L https://raw.githubusercontent.com/apache/isis/master/scripts/verify-isis-release.sh
+curl -O -L https://raw.githubusercontent.com/apache/isis/release-$VERSION-$RC/scripts/verify-isis-release.sh
 
-    chmod +x ./verify-isis-release.sh
-    ./verify-isis-release.sh $NEXUSREPONUM $VERSION
+chmod +x ./verify-isis-release.sh
+./verify-isis-release.sh $NEXUSREPONUM $VERSION
+----------------------------------------------------------------
 
-For more details, see https://isis.apache.org/comguide/verifying-releases.html
+You can then test the helloworld or simpleapp starter apps, see:
+https://isis.staged.apache.org/comguide/latest/verifying-releases.html.
 
-Please verify the release and cast your vote.  The vote will be open for a minimum of 72 hours.
+Please verify the release and cast your vote.
+The vote will be open for a minimum of 72 hours.
 
 [ ] +1
 [ ]  0
@@ -1142,7 +1189,7 @@ Please verify the release and cast your vote.  The vote will be open for a minim
 <p>the release candidate number (<code>RC1</code> or whatever)</p>
 </li>
 <li>
-<p>the <code>NEXUSREPONUM</code> to the repository id as provided by Nexus earlier (<code>10xx</code> or whatever)</p>
+<p>the <code>NEXUSREPONUM</code> to the repository id as provided by Nexus earlier (<code>11xx</code> or whatever)</p>
 </li>
 </ul>
 </div>
@@ -1169,7 +1216,7 @@ Please verify the release and cast your vote.  The vote will be open for a minim
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200318-0946-bc3429a2</p>
+            <p>Revision: 2.0.0-M2.20200319-0401-26723423</p>
         </div>
     </div>
 </footer>

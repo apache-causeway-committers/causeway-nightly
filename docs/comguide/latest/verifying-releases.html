@@ -386,7 +386,7 @@ page.parent doesn't seem to be set...
 </ul>
 </div>
 <div class="paragraph">
-<p>This section describes some guidance on what a voter (members of the Apache Isis PMC and anyone else who wishes) is expected to xref:comguide:ROOT:release-process.adocdo before casting their vote in order to verify a release.</p>
+<p>This section describes some guidance on what a voter (members of the Apache Isis PMC and anyone else who wishes) is expected to do before casting their vote in order to verify a release.</p>
 </div>
 </div>
 </div>
@@ -432,7 +432,7 @@ Details of how to do this are also documented below.</p>
 <p><code>bash</code> - to run shell script</p>
 </li>
 <li>
-<p><code>curl</code> or <code>wget</code> - to download the ZIP files</p>
+<p><code>curl</code> - to download the ZIP and ASC files</p>
 </li>
 <li>
 <p><code>gpg</code> - to verify signatures</p>
@@ -455,48 +455,36 @@ Details of how to do this are also documented below.</p>
 <div class="sectionbody">
 <div class="paragraph">
 <p>The easiest way to verify the source artifacts is to use a script that automates the steps.
-Run these commands (they should also be listed in the VOTE email):</p>
+Run these commands, with the environment variables set correctly.
+(The full details should also be in the VOTE email):</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">VERSION=2.0.0-M3
-NEXUSREPONUM=10xx                   <i class="conum" data-value="1"></i><b>(1)</b>
+RC=RC1
+NEXUSREPONUM=11xx
 
-curl http://www.apache.org/dist/isis/KEYS &gt; /tmp/KEYS
+curl https://downloads.apache.org/isis/KEYS &gt; /tmp/KEYS
 gpg --import /tmp/KEYS
 
 rm -rf isis-$VERSION*
 
-curl -O -L https://raw.githubusercontent.com/apache/isis/master/scripts/verify-isis-release.sh
+curl -O -L https://raw.githubusercontent.com/apache/isis/release-$VERSION-$RC/scripts/verify-isis-release.sh
 
 chmod +x ./verify-isis-release.sh
 ./verify-isis-release.sh $NEXUSREPONUM $VERSION</code></pre>
 </div>
 </div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Adjust as per VOTE email.</td>
-</tr>
-</table>
-</div>
 <div class="paragraph">
-<p>Just copy and paste these commands to your terminal, and run.</p>
-</div>
-<div class="paragraph">
-<p>The <code>verify-isis-release.sh</code> script:</p>
+<p>The <code>verify-isis-release.sh</code> script performs these steps:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>downloads artifacts (<code>.zip</code> files and <code>.asc</code> files from the staging repository hosted on the Apache (Nexus) repository server.</p>
-<div class="paragraph">
-<p>The location of this repository will be in the VOTE email.</p>
-</div>
+<p>downloads artifacts (<code>.zip</code> file and <code>.asc</code> file) from the staging repository hosted on <a href="https://repository.apache.org" class="bare">https://repository.apache.org</a>.</p>
 </li>
 <li>
-<p>verifies that the signatures are correct</p>
+<p>verifies that the <code>.asc</code> signature is correct</p>
 <div class="paragraph">
 <p>in other words, to confirm that the release was created by an Apache Isis committer</p>
 </div>
@@ -504,61 +492,44 @@ chmod +x ./verify-isis-release.sh
 <li>
 <p>builds the framework code from source</p>
 </li>
+<li>
+<p>downloads and builds the helloworld starter apps (from the correct release branch)</p>
+</li>
+<li>
+<p>ditto for the simpleapp starter app</p>
+</li>
 </ul>
 </div>
 <div class="paragraph">
-<p>Assuming this completes successfully, you can then test the two starter applications; adjust the version if required.</p>
+<p>Assuming this completes successfully, you can then test the two starter applications:</p>
 </div>
-<div class="paragraph">
-<p>You can if you wish perform some additional optional checks, listed in the sections below.
-Alternatively, you can <a href="#casting-a-vote">cast your vote</a>.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="optional-verifying-binary-artifacts"><a class="anchor" href="#optional-verifying-binary-artifacts"></a>(Optional) Verifying binary artifacts</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>You can verify the binary releases by configuring your local Maven install to point to the Maven staging repository (or repositories) and then using them, eg to run the <a href="../../docs/latest/starters/helloworld.html" class="page">HelloWorld starter app</a> or the <a href="../../docs/latest/starters/simpleapp.html" class="page">SimpleApp starter app</a> (adjust the parent version if required).</p>
-</div>
-<div class="paragraph">
-<p>Configuring your local Maven install amounts to updating the <code>~/.m2/settings.xml</code> file:</p>
-</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Test out helloworld using:</p>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;profiles&gt;
-    &lt;profile&gt;
-        &lt;id&gt;verify-isis&lt;/id&gt;
-        &lt;repositories&gt;
-            &lt;repository&gt;
-                &lt;id&gt;isis-core-staging&lt;/id&gt;
-                &lt;name&gt;Isis Core Staging&lt;/name&gt;
-                &lt;releases&gt;
-                    &lt;enabled&gt;true&lt;/enabled&gt;
-                    &lt;updatePolicy&gt;always&lt;/updatePolicy&gt;
-                    &lt;checksumPolicy&gt;warn&lt;/checksumPolicy&gt;
-                &lt;/releases&gt;
-                &lt;url&gt;http://repository.apache.org/content/repositories/orgapacheisis-10xx&lt;/url&gt;
-                &lt;layout&gt;default&lt;/layout&gt;
-            &lt;/repository&gt;
-            ...
-        &lt;/repositories&gt;
-    &lt;/profile&gt;
-    ...
-&lt;/profiles&gt;
-&lt;activeProfiles&gt;
-    &lt;activeProfile&gt;verify-isis&lt;/activeProfile&gt;
-    ...
-&lt;/activeProfiles&gt;</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">pushd test-helloworld/isis-app-helloworld
+mvn spring-boot:run
+popd</code></pre>
 </div>
+</div>
+</li>
+<li>
+<p>Test out simpleapp using:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">pushd test-simpleapp/isis-app-simpleapp
+mvn -pl webapp spring-boot:run
+popd</code></pre>
+</div>
+</div>
+</li>
+</ul>
 </div>
 <div class="paragraph">
-<p>where the repository URL is as provided in the VOTE email.
-If there is more than one repository (as is sometimes the case if multiple components have been released), then repeat the <code>&lt;repository&gt;</code> section for each.</p>
-</div>
-<div class="paragraph">
-<p>Once the vote has completed, the staging repositories will be removed and so you should deactive the profile (comment out the <code>&lt;activeProfile&gt;</code> element).
-If you forget to deactive the profile, there should be no adverse effects; Maven will just spend unnecessary cycles attempting to hit a non-existent repo.</p>
+<p>You can if you wish perform some additional optional checks, listed <a href="#optional-creadur-tools">below</a>.
+And/or, you can go ahead and <a href="#casting-a-vote">cast your vote</a>.</p>
 </div>
 </div>
 </div>
@@ -625,7 +596,7 @@ Things to check include:</p>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200318-0946-bc3429a2</p>
+            <p>Revision: 2.0.0-M2.20200319-0401-26723423</p>
         </div>
     </div>
 </footer>

@@ -603,7 +603,7 @@ page.parent doesn't seem to be set...
 <p>The quickest way to get started building an application "for real" is to use the <code>simpleapp</code> starter app.</p>
 </div>
 <div class="paragraph">
-<p>As with the <a href="helloworld.html" class="page">HelloWorld</a> startre app, this will download a very simple one-class domain model, namely the <code>SimpleObject</code> entity and a supporting <code>SimpleObjects</code> domain service.</p>
+<p>As with the <a href="helloworld.html" class="page">HelloWorld</a> starter app, this will download a very simple one-class domain model, namely the <code>SimpleObject</code> entity and a supporting <code>SimpleObjects</code> domain service.</p>
 </div>
 <div class="paragraph">
 <p>However, the app also provides more structure to assist you as your application grows, with multiple Maven modules, and examples of unit tests, integration tests and BDD (cucumber) specs.</p>
@@ -619,7 +619,7 @@ page.parent doesn't seem to be set...
 <div class="ulist">
 <ul>
 <li>
-<p>Java 8 JDK</p>
+<p>an LTS version of Java: either Java 8 JDK or Java 11 JDK</p>
 </li>
 <li>
 <p><a href="http://maven.apache.org">Apache Maven</a> 3.5+</p>
@@ -652,13 +652,8 @@ All is not lost, however; DataNucleus also has an implementation of the enhancer
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">APP=simpleapp
-BRANCH=master
-
-REPO=isis-app-$APP
-curl "https://codeload.github.com/apache/$REPO/zip/$BRANCH" | jar xv
-mv $REPO-$BRANCH $REPO
-cd $REPO
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl https://codeload.github.com/apache/isis-app-simpleapp/zip/master | jar xv
+cd isis-app-simpleapp-master
 
 mvn clean install
 mvn -pl webapp spring-boot:run</code></pre>
@@ -746,7 +741,7 @@ This can be done using fixture scripts, accessible from the <span class="menuseq
 </div>
 <div class="imageblock">
 <div class="content">
-<a class="image" href="_images/simpleapp/using/032-run-fixture-script-prompt.png"><img src="_images/simpleapp/using/032-run-fixture-script-prompt.png" alt="032 run fixture script prompt" width="px"></a>
+<a class="image" href="_images/simpleapp/using/032-run-fixture-script-prompt.png"><img src="_images/simpleapp/using/032-run-fixture-script-prompt.png" alt="032 run fixture script prompt" width="600px"></a>
 </div>
 </div>
 <div class="paragraph">
@@ -754,11 +749,11 @@ This can be done using fixture scripts, accessible from the <span class="menuseq
 </div>
 <div class="imageblock">
 <div class="content">
-<a class="image" href="_images/simpleapp/using/033-run-fixture-script-prompt.png"><img src="_images/simpleapp/using/033-run-fixture-script-prompt.png" alt="033 run fixture script prompt" width="px"></a>
+<a class="image" href="_images/simpleapp/using/033-run-fixture-script-prompt.png"><img src="_images/simpleapp/using/033-run-fixture-script-prompt.png" alt="033 run fixture script prompt" width="600px"></a>
 </div>
 </div>
 <div class="paragraph">
-<p>This surfaces this code:</p>
+<p>The "Domain App Demo" in the drop-down refers to this code:</p>
 </div>
 <div class="listingblock">
 <div class="title">DomainAppDemo.java</div>
@@ -783,7 +778,7 @@ This can be done using fixture scripts, accessible from the <span class="menuseq
 </div>
 <div class="imageblock">
 <div class="content">
-<a class="image" href="_images/simpleapp/using/034-run-fixture-script-result.png"><img src="_images/simpleapp/using/034-run-fixture-script-result.png" alt="034 run fixture script result" width="px"></a>
+<a class="image" href="_images/simpleapp/using/034-run-fixture-script-result.png"><img src="_images/simpleapp/using/034-run-fixture-script-result.png" alt="034 run fixture script result" width="600px"></a>
 </div>
 </div>
 <div class="paragraph">
@@ -837,44 +832,34 @@ This can be done using fixture scripts, accessible from the <span class="menuseq
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public static class CreateActionDomainEvent extends ActionDomainEvent {}
-@Action(semantics = SemanticsOf.NON_IDEMPOTENT, domainEvent = CreateActionDomainEvent.class)
-@ActionLayout(promptStyle = PromptStyle.DIALOG_SIDEBAR)
+@Action(semantics = SemanticsOf.NON_IDEMPOTENT,
+        domainEvent = CreateActionDomainEvent.class)                     <i class="conum" data-value="1"></i><b>(1)</b>
+@ActionLayout(promptStyle = PromptStyle.DIALOG_SIDEBAR)                  <i class="conum" data-value="2"></i><b>(2)</b>
 public SimpleObject create(
-        @Name final String name) {
+        @Name final String name) {                                       <i class="conum" data-value="3"></i><b>(3)</b>
     return repositoryService.persist(SimpleObject.ofName(name));
 }</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>The <code>@Name</code> annotation on the action parameter is actually a meta-annotation, meaning that a number of additional semantics (length, layout, validation etc.) are inferred.</p>
-</div>
-<div class="admonitionblock tip">
+<div class="colist arabic">
 <table>
 <tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-Policies such as modal or sidebar can be specified per action, or globally in <code>application.yml</code> file.
-</td>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Published on an in-memory event bus; this allows subscribers to veto or to react to the action invocation.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Policies such as modal or sidebar can be specified per action, or globally in <code>application.yml</code> file.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>The <code>@Name</code> annotation is actually a meta-annotation, meaning that a number of additional semantics (length, layout, validation etc.) are inferred.</td>
 </tr>
 </table>
 </div>
 </div>
 <div class="sect3">
 <h4 id="invoke-an-action"><a class="anchor" href="#invoke-an-action"></a>Invoke an action</h4>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-The <code>CreatedActionDomainEvent</code> is published on an in-memory event bus; this allows subscribers to veto or to react to the action invocation.
-</td>
-</tr>
-</table>
-</div>
 <div class="paragraph">
 <p>The <code>SimpleObject</code> contains a couple of properties, and a single action to update that property.</p>
 </div>
@@ -891,9 +876,10 @@ The <code>CreatedActionDomainEvent</code> is published on an in-memory event bus
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public static class UpdateNameActionDomainEvent extends SimpleObject.ActionDomainEvent {}
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public static class UpdateNameActionDomainEvent
+                      extends SimpleObject.ActionDomainEvent {}
 @Action(semantics = IDEMPOTENT,
-        publishing = Publishing.ENABLED,
+        publishing = Publishing.ENABLED,                    <i class="conum" data-value="1"></i><b>(1)</b>
         associateWith = "name",
         domainEvent = UpdateNameActionDomainEvent.class)
 public SimpleObject updateName(
@@ -906,10 +892,11 @@ public String default0UpdateName() {
 }</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>The <code>updateName</code> action is annotated with publishing enabled.
-This means that the action invocation is converted into XML and dispatched to all configured implementations of the <a href="../../../refguide/latest/applib-svc/PublisherService.html" class="page">PublisherService</a> SPI.</p>
-</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Publishing enabled means that the action invocation is converted into XML and dispatched to all configured implementations of the <a href="../../../refguide/latest/applib-svc/PublisherService.html" class="page">PublisherService</a> SPI.
 <div class="paragraph">
 <p>The framework provides a default implementation that just logs the interaction:</p>
 </div>
@@ -919,12 +906,15 @@ This means that the action invocation is converted into XML and dispatched to al
 </div>
 </div>
 <div class="paragraph">
-<p>In fact, it also logs the fact that the object itself was modified:</p>
+<p>It also logs the fact that the object itself was modified:</p>
 </div>
 <div class="imageblock">
 <div class="content">
 <a class="image" href="_images/simpleapp/using/076-publish-logging-2.png"><img src="_images/simpleapp/using/076-publish-logging-2.png" alt="076 publish logging 2" width="600px"></a>
 </div>
+</div></td>
+</tr>
+</table>
 </div>
 </div>
 <div class="sect3">
@@ -962,17 +952,24 @@ For example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public static class DeleteActionDomainEvent extends SimpleObject.ActionDomainEvent {}
-@Action(semantics = NON_IDEMPOTENT_ARE_YOU_SURE, domainEvent = DeleteActionDomainEvent.class)
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public static class DeleteActionDomainEvent
+                       extends SimpleObject.ActionDomainEvent {}
+@Action(semantics = NON_IDEMPOTENT_ARE_YOU_SURE,
+        domainEvent = DeleteActionDomainEvent.class)
 public void delete() {
-    final String title = titleService.titleOf(this);
+    final String title = titleService.titleOf(this);                 <i class="conum" data-value="1"></i><b>(1)</b>
     messageService.informUser(String.format("'%s' deleted", title));
     repositoryService.removeAndFlush(this);
 }</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>Note that this uses three services provided by the framework; these are injected into the domain object automatically.</p>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Note that this method uses three services provided by the framework; these are injected into the domain object automatically.</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -1080,7 +1077,7 @@ For example, you might have a <code>module-customer</code> holding a <code>Custo
 </div>
 <div class="paragraph">
 <p>We can use Maven dependency management to ensure that there are no cyclic dependencies (order "knows about" product but product does not know about orders) and ensure that the codebase remains decoupled.
-When Java9 modules are commonplace, we&#8217;ll also be able to restrict visibility of classes between modules.</p>
+If Java9 modules become commonplace, we&#8217;ll also be able to restrict visibility of classes between modules.</p>
 </div>
 </div>
 <div class="sect2">
@@ -1120,10 +1117,10 @@ There will be several of these app manifests, typically one for the webapp itsel
 <div class="content">
 <pre class="highlightjs highlight"><code>src/main/java/
   domainapp/                            <i class="conum" data-value="1"></i><b>(1)</b>
-    modules/                            <i class="conum" data-value="2"></i><b>(2)</b>
+    modules/
       simple/                           <i class="conum" data-value="2"></i><b>(2)</b>
         dom/                            <i class="conum" data-value="3"></i><b>(3)</b>
-          sp/                           <i class="conum" data-value="4"></i><b>(4)</b>
+          so/                           <i class="conum" data-value="4"></i><b>(4)</b>
             SimpleObject.java
             SimpleObject.layout.xml
             SimpleObject.png
@@ -1298,8 +1295,9 @@ This appears in the menu, and also acts as a repository for the <code>SimpleObje
 <li>
 <p>all entities.</p>
 <div class="paragraph">
-<p>These are entities that are annotated with <code>@javax.jdo.annotations.PersistenceCapable</code>.
-These are passed through to the JDO/DataNucleus object store, in order to create database mappings from the entities to relational tables</p>
+<p>These are entities that are annotated with both <a href="../../../refguide/latest/applib-ant/DomainObject.html" class="page"><code>@DomainObject</code></a> annotation and with <code>@javax.jdo.annotations.PersistenceCapable</code>.
+Because <code>@DomainObject</code> is meta-annotated as a <code>@Component</code>, these are found automatically by Spring.
+They are passed through to the JDO/DataNucleus object store, in order to create database mappings from the entities to relational tables.</p>
 </div>
 <div class="paragraph">
 <p>In the simpleapp starter app, the only entity is <code>SimpleObject</code>.</p>
@@ -2060,7 +2058,7 @@ This means:</p>
 <div class="paragraph">
 <p>Most of the time you&#8217;ll probably want to run the app from within your IDE.
 The mechanics of doing this will vary by IDE; see the <a href="../../../setupguide/latest/about.html" class="page">Setup Guide</a> for details.
-Basically, though, it amounts to running the <code>main()</code> method in the <code>SimpleApp</code>, but also (and this bit is important) ensuring that the <a href="../../../setupguide/latest/hints-and-tips/about.html#datanucleus-enhancer" class="page">DataNucleus enhancer</a> has properly processed all domain entities.</p>
+Basically, though, it amounts to running the <code>main()</code> method in the <code>SimpleApp</code>, but also (and this bit is important) ensuring that the <a href="#setupguide:hints-and-tips:about.adoc#datanucleus-enhancer" class="page unresolved">DataNucleus enhancer</a> has properly processed all domain entities.</p>
 </div>
 <div class="paragraph">
 <p>Here&#8217;s what the setup looks like in IntelliJ IDEA:</p>
@@ -2109,7 +2107,7 @@ There is plenty more guidance on this site; start with the <a href="../../../use
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200318-0946-bc3429a2</p>
+            <p>Revision: 2.0.0-M2.20200319-0401-26723423</p>
         </div>
     </div>
 </footer>

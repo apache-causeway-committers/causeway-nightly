@@ -603,7 +603,7 @@ page.parent doesn't seem to be set...
 <p>The quickest way to start learning about Apache Isis is to use the <code>helloworld</code> starter app.</p>
 </div>
 <div class="paragraph">
-<p>This will download a tiny Apache Isis app, consisting of a simple one-class domain model, namely the <code>HelloWorldObject</code> entity and a supporting <code>HelloWorldObjects</code> domain service.
+<p>This will download a tiny Apache Isis app, consisting of a simple one-class domain model, namely the <code>HelloWorldObject</code> entity and a supporting <code>HelloWorldObjects</code> repository domain service.
 Both the business logic and supporting bootstrapping classes are in a single Maven module (in different Java packages).</p>
 </div>
 <div class="admonitionblock tip">
@@ -633,7 +633,7 @@ It also creates a minimal application, but provides more structure and example t
 <div class="ulist">
 <ul>
 <li>
-<p>Java 8 JDK</p>
+<p>an LTS version of Java: either Java 8 JDK or Java 11 JDK</p>
 </li>
 <li>
 <p><a href="http://maven.apache.org">Apache Maven</a> 3.5+</p>
@@ -666,13 +666,8 @@ All is not lost, however; DataNucleus also has an implementation of the enhancer
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">APP=helloworld
-BRANCH=master
-
-REPO=isis-app-$APP
-curl "https://codeload.github.com/apache/$REPO/zip/$BRANCH" | jar xv
-mv $REPO-$BRANCH $REPO
-cd $REPO
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl https://codeload.github.com/apache/isis-app-helloworld/zip/master | jar xv
+cd isis-app-helloworld-master
 
 mvn clean install
 mvn spring-boot:run</code></pre>
@@ -790,7 +785,7 @@ public String default0Create() {
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Action(semantics = SemanticsOf.IDEMPOTENT,
-        publishing = Publishing.ENABLED,
+        publishing = Publishing.ENABLED,        <i class="conum" data-value="1"></i><b>(1)</b>
         associateWith = "name")
 public HelloWorldObject updateName(
         @Name final String name) {
@@ -802,17 +797,21 @@ public String default0UpdateName() {
 }</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>The <code>updateName</code> action is annotated with publishing enabled.
-This means that the action invocation is converted into XML and dispatched to all configured implementations of the <a href="../../../refguide/latest/applib-svc/PublisherService.html" class="page">PublisherService</a> SPI.</p>
-</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Publishing enabled means that the action invocation is converted into XML and dispatched to all configured implementations of the <a href="../../../refguide/latest/applib-svc/PublisherService.html" class="page">PublisherService</a> SPI.
 <div class="paragraph">
 <p>The framework provides a default implementation that just logs the interaction:</p>
 </div>
 <div class="imageblock">
 <div class="content">
-<a class="image" href="_imagesusing/075-logged-action.png.png"><img src="_images/helloworld/using/075-logged-action.png" alt="075 logged action" width="600px"></a>
+<a class="image" href="_imagesusing/075-logged-action.png"><img src="_images/helloworld/using/075-logged-action.png" alt="075 logged action" width="600px"></a>
 </div>
+</div></td>
+</tr>
+</table>
 </div>
 </div>
 <div class="sect3">
@@ -853,14 +852,19 @@ For example:</p>
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Action(semantics = SemanticsOf.NON_IDEMPOTENT_ARE_YOU_SURE)
 @ActionLayout(position = ActionLayout.Position.PANEL)
 public void delete() {
-    final String title = titleService.titleOf(this);
+    final String title = titleService.titleOf(this);                    <i class="conum" data-value="1"></i><b>(1)</b>
     messageService.informUser(String.format("'%s' deleted", title));
     repositoryService.removeAndFlush(this);
 }</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>Note that this uses three services provided by the framework; these are injected into the domain object automatically.</p>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Note that this method uses three services provided by the framework; these are injected into the domain object automatically.</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -997,18 +1001,18 @@ The associated <code>.layout.xml</code> and <code>.png</code> are optional but p
 <tr>
 <td><i class="conum" data-value="6"></i><b>6</b></td>
 <td><code>HelloWorldModule</code> is a Spring <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/annotation/Configuration.html">@Configuration</a> which allows the domain services and entities of the module to be located.<br>
-This is discussed in more detail below</td>
+This is discussed in more detail <a href="#helloworldmodule">below</a>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="7"></i><b>7</b></td>
 <td><code>AppManifest</code> is the top-level Spring <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/annotation/Configuration.html">@Configuration</a> that specifies the components of Apache Isis to use, along with the modules making up the application itself (ie <code>HelloWorldModule</code>).<br>
-This is discussed in more detail below</td>
+This is discussed in more detail <a href="#appmanifest">below</a>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="8"></i><b>8</b></td>
 <td><code>HelloWorldApp</code> is the <a href="https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/autoconfigure/SpringBootApplication.html">@SpringBootApplication</a> used to bootstrap the app.
 It&#8217;s pretty much boilerplate - the important piece is that it references <code>AppManifest</code>.<br>
-This is discussed in more detail below</td>
+This is discussed in more detail <a href="#helloworldapp">below</a>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="9"></i><b>9</b></td>
@@ -1052,15 +1056,15 @@ If there were, these would be expressed in terms of module classes (each being a
 <p>The scanning mechanism is leveraged by Apache Isis to pick up three types of classes:</p>
 </div>
 <div class="paragraph">
-<p>This will pick up the <code>HelloWorldObjects</code> repository because it is annotated with the framework&#8217;s <a href="../../../refguide/latest/applib-ant/DomainService.html" class="page">@DomainService</a> annotation; itself meta-annotated with <code>@Component</code>.</p>
+<p>This will pick up the <code>HelloWorldObjects</code> repository because it is annotated with the framework&#8217;s <a href="../../../refguide/latest/applib-ant/DomainService.html" class="page">@DomainService</a> annotation (in turn meta-annotated with <code>@Component</code>).</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
 <p>all domain services</p>
 <div class="paragraph">
-<p>These are classes that are annotated with the framework&#8217;s <a href="../../../refguide/latest/applib-ant/DomainService.html" class="page">@DomainService</a> annotation.
-Because <code>@DomainService</code> is meta-annotated as a <code>@Component</code>, these are found automatically and are managed by Spring (ie instantiated, injected etc).</p>
+<p>These are classes that are annotated with the framework&#8217;s <a href="../../../refguide/latest/applib-ant/DomainService.html" class="page"><code>@DomainService</code></a> annotation.
+Because <code>@DomainService</code> is meta-annotated as a <code>@Component</code>, these are found automatically and are managed by Spring.</p>
 </div>
 <div class="paragraph">
 <p>Depending on their nature, domain services are used to build up the menu, or are available to call programmatically, eg repositories, or sometimes both.</p>
@@ -1073,8 +1077,10 @@ This appears in the menu, and also acts as a repository for the <code>HelloWorld
 <li>
 <p>all entities.</p>
 <div class="paragraph">
-<p>These are entities that are annotated with <code>@javax.jdo.annotations.PersistenceCapable</code>.
-These are passed through to the JDO/DataNucleus object store, in order to create database mappings from the entities to relational tables</p>
+<p>These are entities that are annotated with both <a href="../../../refguide/latest/applib-ant/DomainObject.html" class="page"><code>@DomainObject</code></a> annotation and with <code>@javax.jdo.annotations.PersistenceCapable</code>.
+Because <code>@DomainObject</code> is meta-annotated as a <code>@Component</code>, these are found automatically by Spring.
+They are passed through to the JDO/DataNucleus object store, in order to create database mappings from the entities to relational tables.
+It is also annotated with <a href="../../../refguide/latest/applib-ant/DomainObject.html" class="page"><code>@DomainObject</code></a></p>
 </div>
 <div class="paragraph">
 <p>In the helloworld starter app, the only entity is <code>HelloWorldObject</code>.</p>
@@ -1198,7 +1204,12 @@ This enables actions marked for prototyping to become available, useful during t
 <i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-As an alternative to making this call, you can also just run with a system property <code>-DPROTOTYPING=true</code>
+<div class="paragraph">
+<p>As an alternative to making this call, you can also just run with a system property:</p>
+</div>
+<div class="paragraph">
+<p><code>-DPROTOTYPING=true</code></p>
+</div>
 </td>
 </tr>
 </table>
@@ -1215,7 +1226,7 @@ As an alternative to making this call, you can also just run with a system prope
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code>src/main/resources
+<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">src/main/resources
   config/
     application.properties      <i class="conum" data-value="1"></i><b>(1)</b>
   static/                       <i class="conum" data-value="2"></i><b>(2)</b>
@@ -1341,11 +1352,11 @@ This inherits from <code>isis-app-starter-parent</code>:</p>
 <div class="listingblock">
 <div class="title">pom.xml</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">	&lt;parent&gt;
-		&lt;groupId&gt;org.apache.isis.app&lt;/groupId&gt;
-		&lt;artifactId&gt;isis-app-starter-parent&lt;/artifactId&gt;
-		&lt;version&gt;XXX&lt;/version&gt;
-	&lt;/parent&gt;</code></pre>
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;parent&gt;
+  &lt;groupId&gt;org.apache.isis.app&lt;/groupId&gt;
+  &lt;artifactId&gt;isis-app-starter-parent&lt;/artifactId&gt;
+  &lt;version&gt;XXX&lt;/version&gt;
+&lt;/parent&gt;</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1374,7 +1385,7 @@ This means:</p>
 <div class="paragraph">
 <p>Most of the time you&#8217;ll probably want to run the app from within your IDE.
 The mechanics of doing this will vary by IDE; see the <a href="../../../setupguide/latest/about.html" class="page">Setup Guide</a> for details of setting up Eclipse or IntelliJ IDEA.
-Basically, though, it amounts to running the <code>main()</code> method in the <code>HelloWorldApp</code>, but also (and this bit is important) ensuring that the <a href="../../../setupguide/latest/hints-and-tips/about.html#datanucleus-enhancer" class="page">DataNucleus enhancer</a> has properly processed all domain entities.</p>
+Basically, though, it amounts to running the <code>main()</code> method in the <code>HelloWorldApp</code>, but also (and this bit is important) ensuring that the <a href="#setupguide:hints-and-tips:about.adoc#datanucleus-enhancer" class="page unresolved">DataNucleus enhancer</a> has properly processed all domain entities.</p>
 </div>
 <div class="paragraph">
 <p>Here&#8217;s what the setup looks like in IntelliJ IDEA:</p>
@@ -1385,7 +1396,7 @@ Basically, though, it amounts to running the <code>main()</code> method in the <
 </div>
 </div>
 <div class="paragraph">
-<p>which uses an IntelliJ feature to run a different run configuration to run DataNucleus enhancer beforehand:</p>
+<p>which uses an IntelliJ feature to execute a different <em>Run Configuration</em> for the DataNucleus enhancer beforehand:</p>
 </div>
 <div class="imageblock">
 <div class="content">
@@ -1435,7 +1446,7 @@ Although a little more complex, it provides more structure and example tests, al
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200318-0946-bc3429a2</p>
+            <p>Revision: 2.0.0-M2.20200319-0401-26723423</p>
         </div>
     </div>
 </footer>

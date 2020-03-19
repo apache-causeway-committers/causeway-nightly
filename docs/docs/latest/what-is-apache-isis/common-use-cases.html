@@ -625,11 +625,12 @@ page.parent doesn't seem to be set...
  The principal implementation is the <a href="../../../vw/latest/about.html" class="page">Wicket viewer</a>.</p>
 </div>
 <div class="paragraph">
-<p>This provides an appealing default user interface, with the ability to customize the user interface by writing new <a href="http://wicket.apache.org">Apache Wicket</a> components.</p>
+<p>This provides an appealing default user interface, with the ability to customize the user interface by writing new <a href="http://wicket.apache.org">Apache Wicket</a> components.
+The framework provides a number of <a href="../../../extensions/latest/about.html" class="page">Extensions</a>.</p>
 </div>
 <div class="paragraph">
 <p>Deploying on Apache Isis means that the framework also manages object persistence.
-Again this is pluggable, but the principal implementation is the JDO/DataNucleus objectstore.
+Again this is pluggable, but the principal implementation is the <a href="../../../pjdo/latest/about.html" class="page">JDO/DataNucleus object store</a>.
 Because JDO supports both SQL and NoSQL databases, you can then deploy on a variety of platforms, normally relational but also databases such as <a href="http://neo4j.com/">Neo4J</a>.</p>
 </div>
 </div>
@@ -642,34 +643,46 @@ Because JDO supports both SQL and NoSQL databases, you can then deploy on a vari
 Many commercial web APIs (twitter, facebook, Amazon) are implemented as either pure REST APIs or some approximation therein.</p>
 </div>
 <div class="paragraph">
-<p>The <a href="http://restfulobjects.org">Restful Objects specification</a> defines a means by a domain object model can be exposed as RESTful resources using JSON representations over HTTP.
-Apache Isis' <a href="../../../vro/latest/about.html" class="page">RestfulObjects viewer</a> is an implementation of that spec, making any Apache Isis domain object automatically available via REST.</p>
+<p>The <a href="http://restfulobjects.org">Restful Objects specification</a> defines a means by which a domain object model can be exposed as RESTful resources using JSON representations over HTTP.</p>
 </div>
 <div class="paragraph">
-<p>There are two main use cases for deploying Apache Isis as a RESTful web service are:</p>
+<p>Apache Isis' <a href="../../../vro/latest/about.html" class="page">RestfulObjects viewer</a> is an implementation of that spec, making any Apache Isis domain object automatically available via REST.
+The set of domain objects can also be optionally restricted to exclude domain entities (thereby avoiding leaking implementation details).</p>
+</div>
+<div class="paragraph">
+<p>There are three main use cases for deploying Apache Isis as a RESTful web service are:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
 <p>to allow a custom UI to be built against the RESTful API</p>
-</li>
-</ul>
-</div>
 <div class="paragraph">
-<p>For example, using Javascript/JQuery, or an RIA technology such as Flex, JavaFX, Silverlight</p>
+<p>For example, using a Javascript framework such as Angular/Ionic/ReactJs/Vue etc, or JavaFX</p>
 </div>
-<div class="ulist">
-<ul>
+</li>
 <li>
 <p>to enable integration between systems</p>
-</li>
-</ul>
-</div>
 <div class="paragraph">
 <p>REST is designed to be machine-readable, and so is an excellent choice for synchronous data interchange scenarios.</p>
 </div>
 <div class="paragraph">
-<p>As for the auto-generated webapps, the framework manages object persistence, for example using the JDO/DataNucleus objectstore.
+<p>The framework provides <a href="../../../refguide/latest/applib-svc/ContentMappingService.html" class="page">SPI</a>s to allow custom repreentations to be returned as required.</p>
+</div>
+</li>
+<li>
+<p>as the basis for a generic UI.</p>
+<div class="paragraph">
+<p>At the time of writing there are a couple being developed, <a href="https://github.com/joerg-rade/kroviz">Kroviz</a> (using Kotlin/JS), and <a href="https://github.com/sebastianslutzky/rob">Rob</a> (using <a href="https://dotnet.microsoft.com/apps/aspnet/web-apps/blazor">Microsoft&#8217;s Blazor</a>).</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Another framework that implements the RO spec is the <a href="https://github.com/NakedObjectsGroup/NakedObjectsFramework">Naked Objects Framework</a> (on .NET).
+It provides a complete generic UI tested against its own RO implementation.</p>
+</div>
+<div class="paragraph">
+<p>As for the human-usable generic UI discussed  <a href="#deploy-with-a-generic-ui">above</a>, the framework manages object persistence, for example using the JDO/DataNucleus objectstore.
 It is perfectly possible to deploy the RESTful API alongside an auto-generated webapp; both work from the same domain object model.</p>
 </div>
 </div>
@@ -679,15 +692,16 @@ It is perfectly possible to deploy the RESTful API alongside an auto-generated w
 <div class="sectionbody">
 <div class="paragraph">
 <p>The programming model defined by Apache Isis deliberately minimizes the dependencies on the rest of the framework.
-In fact, the only hard dependency that the domain model classes have on Apache Isis is through the <code>org.apache.isis.applib</code> classes, mostly to pick up annotations such as <code>@Action</code> and <code>@Property</code>.
-The idea is to make it easy to be able to write take a domain object prototyped and/or tested using Apache Isis, but to deploy on some other framework&#8217;s runtime.</p>
+In fact, the only hard dependency that the domain model classes have on Apache Isis is through the <code>org.apache.isis.applib</code> classes, mostly to pick up annotations such as <a href="../../../refguide/latest/applib-ant/Action.html" class="page"><code>@Action</code></a> and <a href="../../../refguide/latest/applib-ant/Property.html" class="page"><code>@Property</code></a>.
+It&#8217;s therefore relatively easy to take a domain object prototyped and/or tested using Apache Isis, but to deploy on some other framework&#8217;s runtime.</p>
 </div>
 <div class="paragraph">
 <p>If you are interested in taking this approach, then you will need to provide your own implementations of any framework-provided services used by your code.</p>
 </div>
 <div class="paragraph">
-<p>Apache Isis' own runtime injects an (implementation of this) interface into each and every domain object.
-You will likely need to do something similar within your own framework, (or come up with an equivalent mechanism, eg Service Locator pattern).</p>
+<p>Under the covers, Apache Isis itself runs on top of <a href="https://spring.io/projects/spring-boot">Spring Boot</a>.
+So an alternative option is to develop a custom UI using one of the regular Spring technologies and run that alongside Apache Isis.
+In other words, Apache Isis continues to manage the object lifecycle and persistence as a thin layer on top of Spring, but your custom UI renders the domain objects as you require.</p>
 </div>
 </div>
 </div>
@@ -708,7 +722,7 @@ You will likely need to do something similar within your own framework, (or come
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200318-0946-bc3429a2</p>
+            <p>Revision: 2.0.0-M2.20200319-0401-26723423</p>
         </div>
     </div>
 </footer>
