@@ -593,11 +593,10 @@ For example:</p>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">export ISISJIRA=ISIS-9999                           <i class="conum" data-value="1"></i><b>(1)</b>
 export ISISTMP=/c/tmp                               <i class="conum" data-value="2"></i><b>(2)</b>
-export ISISREL=2.0.0-M3                           <i class="conum" data-value="3"></i><b>(3)</b>
+export ISISREL=2.0.0-M3                             <i class="conum" data-value="3"></i><b>(3)</b>
 export ISISRC=RC1                                   <i class="conum" data-value="4"></i><b>(4)</b>
 export ISISBRANCH=release-$ISISREL-$ISISRC
 export ISISART=isis
-
 env | grep ISIS | sort</code></pre>
 </div>
 </div>
@@ -630,7 +629,7 @@ env | grep ISIS | sort</code></pre>
 </td>
 <td class="content">
 <div class="paragraph">
-<p>Note that the branch name is intentionally <strong>not</strong> the same as the eventual tag names (eg <code>isis-2.0.0-M3</code>).</p>
+<p>The branch name is intentionally <strong>not</strong> the same as the eventual tag names (eg <code>isis-2.0.0-M3</code>).</p>
 </div>
 </td>
 </tr>
@@ -638,25 +637,42 @@ env | grep ISIS | sort</code></pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="create-a-release-branch"><a class="anchor" href="#create-a-release-branch"></a>Create a release branch</h3>
+<h3 id="create-a-release-branch-and-worktree"><a class="anchor" href="#create-a-release-branch-and-worktree"></a>Create a release branch and worktree</h3>
 <div class="paragraph">
 <p>The release is performed on a branch; if we are successful, this branch will be merged back into master.</p>
 </div>
 <div class="paragraph">
-<p>The next step therefore is to create a release branch for the version number being released; eg:</p>
+<p>We also recommend performing this work in a separate git worktree.
+The original worktree can stay with the <code>master</code> branch and be used for documentation fixes, etc.</p>
 </div>
+<div class="ulist">
+<ul>
+<li>
+<p>create (but don&#8217;t checkout) a release branch for the version number being released; eg:</p>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git checkout -b $ISISBRANCH</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git branch $ISISBRANCH</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>If necessary, switch to the <code>core-parent</code> directory:</p>
-</div>
+</li>
+<li>
+<p>Create a worktree for this branch:</p>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd core-parent</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git worktree add ../isis-release $ISISBRANCH</code></pre>
 </div>
+</div>
+</li>
+<li>
+<p>Switch to the <code>core-parent</code> directory in the new worktree:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd ../isis-release
+cd core-parent</code></pre>
+</div>
+</div>
+</li>
+</ul>
 </div>
 </div>
 <div class="sect2">
@@ -1063,7 +1079,7 @@ popd</code></pre>
 </div>
 </li>
 <li>
-<p>Back in the <code>isis</code> repo, generate the Antora site (from the top-level directory):</p>
+<p>Back in the <code>isis</code> repo&#8217;s worktree for <code>master</code> (as opposed to the <code>release</code> worktree, that is), generate the Antora site (from the top-level directory):</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd ../isis
@@ -1163,11 +1179,14 @@ rm -rf isis-$VERSION*
 curl -O -L https://raw.githubusercontent.com/apache/isis/release-$VERSION-$RC/scripts/verify-isis-release.sh
 
 chmod +x ./verify-isis-release.sh
-./verify-isis-release.sh $NEXUSREPONUM $VERSION
+./verify-isis-release.sh $NEXUSREPONUM $VERSION $RC
 ----------------------------------------------------------------
 
 You can then test the helloworld or simpleapp starter apps, see:
 https://isis.staged.apache.org/comguide/latest/verifying-releases.html.
+
+You can also inspect the website in general, available at:
+https://isis.staged.apache.org.
 
 Please verify the release and cast your vote.
 The vote will be open for a minimum of 72 hours.
@@ -1216,7 +1235,7 @@ The vote will be open for a minimum of 72 hours.
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200320-0401-0cfb2aef</p>
+            <p>Revision: 2.0.0-M2.20200321-0401-6c585483</p>
         </div>
     </div>
 </footer>

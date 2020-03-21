@@ -392,24 +392,11 @@ page.parent doesn't seem to be set...
 <article class="doc">
     <a name="section-top"></a>
 <h1 class="page">Events</h1>
+<div id="preamble">
+<div class="sectionbody">
 <div class="paragraph">
 <p>When the framework renders a domain object, and as the end-user interacts with the domain object, the framework it emits multiple events using the intra-process <a href="../../../../refguide/latest/applib-svc/EventBusService.html" class="page">event bus</a>.
 These events enable other domain services (possibly in other modules) to influence how the domain object is rendered, or to perform side-effects or even veto an action invocation.</p>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>It is also possible to simulate the rendering of a domain object by way of the <a href="../../../../refguide/latest/applib-svc/WrapperFactory.html" class="page"><code>WrapperFactory</code></a>.
-This allows business rules to be enforced for programmatic interactions between objects.</p>
-</div>
-</td>
-</tr>
-</table>
 </div>
 <div class="paragraph">
 <p>To receive the events, the domain service should subscribe to the <a href="../../../../refguide/latest/applib-svc/EventBusService.html" class="page"><code>EventBusService</code></a>, and implement an appropriately annotated method to receive the events.</p>
@@ -417,6 +404,172 @@ This allows business rules to be enforced for programmatic interactions between 
 <div class="paragraph">
 <p>The framework has several categories of events: domain events, UI events and lifecycle events.
 These are explored in the sections below.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="domain-events"><a class="anchor" href="#domain-events"></a>Domain Events</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Domain events are fired&#8201;&#8212;&#8201;through the internal <a href="../../../../refguide/latest/applib-svc/EventBusService.html" class="page">event bus</a>&#8201;&#8212;&#8201;for every user interaction with each object member (property, collection or action).</p>
+</div>
+<div class="paragraph">
+<p>By default, rendering a property causes a <code>PropertyDomainEvent</code> to be fired, though the <a href="../../../../refguide/latest/applib-ant/Property.html#domainEvent" class="page"><code>@Property#domainEvent()</code></a> attribute allows a custom subclass to be specified if necessary.
+Similarly, rendering a collection causes a <code>CollectionDomainEvent</code> to be fired, and rendering an action causes an <code>ActionDomainEvent</code> to be fired.</p>
+</div>
+<div class="paragraph">
+<p>In fact, each event can be fired up to five times, with the event&#8217;s <code>getEventPhase()</code> method indicating to the subscriber the phase:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>hide</strong> phase allows the subscriber to hide the member</p>
+</li>
+<li>
+<p><strong>disable</strong> phase allows the subscriber to disable the member.</p>
+<div class="paragraph">
+<p>For a property this makes it read-only; for an action this makes it "greyed out".
+(Collections are implicitly read-only).</p>
+</div>
+</li>
+<li>
+<p><strong>validate</strong> phase allows the subscriber to validate the proposed change.</p>
+<div class="paragraph">
+<p>For a property this means validating the proposed new value of the property; for an action this means validating the action parameter arguments.
+For example, a referential integrity restrict could be implemented here.</p>
+</div>
+</li>
+<li>
+<p><strong>executing</strong> phase is prior to the actual property edit/action invocation, allowing the subscriber to perform side-effects.</p>
+<div class="paragraph">
+<p>For example, a cascade delete could be implemented here.</p>
+</div>
+</li>
+<li>
+<p><strong>executed</strong> phase is after the actual property edit/action invocation.</p>
+<div class="paragraph">
+<p>For example, a business audit event could be implemented here.</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>For more details on the actual domain event classes, see the <a href="../../../../refguide/latest/applib-cm/classes/domainevent.html" class="page">domain event</a> section of the relevant reference guide.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="ui-events"><a class="anchor" href="#ui-events"></a>UI Events</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>As explained <a href="../building-blocks.html#title-and-icon-and-css-class" class="page">earlier</a>, to allow the end-user to distinguish one domain object from another, it is rendered with a title and an icon.</p>
+</div>
+<div class="paragraph">
+<p><a href="../ui-hints.html#object-titles-and-icons" class="page">Normally</a> the code to return title and icon of an object is part of the domain object&#8217;s implementation.
+However, UI events allow this title and icon to be provided instead by a subscriber.
+UI events have higher precedence than the other mechanisms of supplying a title.</p>
+</div>
+<div class="paragraph">
+<p>If annotated with <a href="../../../../refguide/latest/applib-ant/DomainObjectLayout.html#titleuievent" class="page"><code>@DomainObjectLayout#titleUiEvent()</code></a>, the appropriate (subclass of) <code>TitleUiEvent</code> will be emitted.
+Similarly for <a href="../../../../refguide/latest/applib-ant/DomainObjectLayout.html#iconuievent" class="page"><code>#iconUiEvent()</code></a>.
+In addition, it is possible to use events to obtain a CSS class to render with the domain object, using <a href="../../../../refguide/latest/applib-ant/DomainObjectLayout.html#cssclassuievent" class="page"><code>#cssClassUiEvent()</code></a>, and to select an alternate <a href="../ui-hints.html#layout" class="page">layout file</a> using <a href="../../../../refguide/latest/applib-ant/DomainObjectLayout.html#layoutuievent" class="page"><code>#layoutUiEvent()</code></a>.</p>
+</div>
+<div class="paragraph">
+<p>There are two use cases where this feature is useful:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>the first is to override the title/icon/CSS class/layout of 3rd party library code, for example as provided by the <a href="../../../../security/latest/secman/about.html" class="page">SecMan</a> extension.</p>
+</li>
+<li>
+<p>the second is for <a href="../programming-model.html#jaxb" class="page">JAXB-style view models</a> which are code generated from XSDs and so cannot have any dependencies on the rest of the Apache Isis framework.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>In this second case a subscriber on the default events can provide a title and icon for such an object, with the behaviour provided using <a href="../building-blocks.html#mixins" class="page">mixins</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="lifecycle-events"><a class="anchor" href="#lifecycle-events"></a>Lifecycle Events</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Lifecycle events allow domain object subscribers to listen for changes to the persistence state of domain entities, and act accordingly.</p>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Lifecycle events are <em>not</em> fired for view models.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The lifecycle events supported are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>created</strong></p>
+<div class="paragraph">
+<p>Entity has just been instantiated.
+Note that this requires that the object is instantiated using the framework, see <a href="../crud.html#instantiating" class="page">here</a> for further discussion.</p>
+</div>
+</li>
+<li>
+<p><strong>loaded</strong></p>
+<div class="paragraph">
+<p>Entity has just retrieved/rehydrated from the database</p>
+</div>
+</li>
+<li>
+<p><strong>persisting</strong></p>
+<div class="paragraph">
+<p>Entity is about to be inserted/saved (ie for the first time) into the database</p>
+</div>
+</li>
+<li>
+<p><strong>persisted</strong></p>
+<div class="paragraph">
+<p>Entity has just been inserted/saved (ie for the first time) into the database</p>
+</div>
+</li>
+<li>
+<p><strong>updating</strong></p>
+<div class="paragraph">
+<p>The (already persistent) entity about to be flushed in the database</p>
+</div>
+</li>
+<li>
+<p><strong>updated</strong></p>
+<div class="paragraph">
+<p>The (already persistent) entity has just been flushed to the database</p>
+</div>
+</li>
+<li>
+<p><strong>removing</strong></p>
+<div class="paragraph">
+<p>The (already persistent) entity is about to be deleted from the database</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>For example, if annotated with <a href="../../../../refguide/latest/applib-ant/DomainObject.html#updatingLifecycleEvent" class="page"><code>@DomainObjectLayout#updatingLifecycleEvent</code></a>, the appropriate (subclass of) <code>ObjectUpdatingEvent</code> will be emitted.</p>
+</div>
+<div class="paragraph">
+<p>There is no lifecycle event for "entity creating" because (obviously) the framework doesn&#8217;t know about newly created objects until they have been created.
+Similarly, there is no lifecycle event for entities that have been removed because it is not valid to "touch" a domain entity once deleted.</p>
+</div>
+</div>
 </div>
 </article>
 <aside class="article-aside toc" role="navigation">
@@ -435,7 +588,7 @@ These are explored in the sections below.</p>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200320-0401-0cfb2aef</p>
+            <p>Revision: 2.0.0-M2.20200321-0401-6c585483</p>
         </div>
     </div>
 </footer>

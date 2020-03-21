@@ -392,12 +392,119 @@ page.parent doesn't seem to be set...
 <article class="doc">
     <a name="section-top"></a>
 <h1 class="page">Identifiers</h1>
+<div id="preamble">
+<div class="sectionbody">
 <div class="paragraph">
-<p>The Apache Isis framework actively tracks the identity of each domain object.
+<p>The Apache Isis framework tracks the identity of each domain object.
 This identity is represented to the end-user in human-readable form so that they know which object they are interacting with, and is also used and is available internally/for integrations.</p>
 </div>
 <div class="paragraph">
 <p>This section explores these two related concepts.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="title-and-icon-and-css-class"><a class="anchor" href="#title-and-icon-and-css-class"></a>Title, Icon etc.</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To allow the end-user to distinguish one domain object from another, it is rendered with a title and an icon.
+The icon informally identifies the type of the domain object, while the title identifies the instance.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Title</p>
+<div class="paragraph">
+<p>The title of a domain object is shown in several places: as the main heading for an object; as a link text or tooltip for an object referencing another object, and also in tables representing collections of objects.</p>
+</div>
+<div class="paragraph">
+<p>The title is not formally required to be a unique identify the object within its type, but it needs to be "unique enough" that a human user is able to distinguish one instance from another.</p>
+</div>
+<div class="paragraph">
+<p>The title is usually just a simple string, but the framework also allows for the title to be translated into different locales.</p>
+</div>
+</li>
+<li>
+<p>Icon</p>
+<div class="paragraph">
+<p>Sometimes it&#8217;s helpful for the icon to represent more than just the object&#8217;s type; it might also indicate the state of an object.
+For example, a shipped <code>Order</code> might have a slightly different icon to a yet-to-be-shipped <code>Order</code>; or a library book that is <code>loaned out</code> might be distinguished from one that is <code>available</code>.</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Details on how to actually write titles, icons and CSS classes can be found <a href="../ui-hints.html#object-titles-and-icons" class="page">here</a>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="oid"><a class="anchor" href="#oid"></a>OIDs</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>As well as defining a <a href="../building-blocks.html#metamodel" class="page">metamodel</a> of the structure (domain classes) of its domain objects, Apache Isis also manages the runtime instances of said domain objects.</p>
+</div>
+<div class="paragraph">
+<p>When a domain entity is recreated from the database, the framework keeps track of its identity through an "OID": an object identifier.
+Fundamentally this is a combination of its type (domain class), along with an identifier.
+You can think of it as its "primary key", except across all domain entity types.</p>
+</div>
+<div class="paragraph">
+<p>For portability and resilience, though, the object type is generally an alias for the actual domain class: thus "customers.CUS", say, rather than "com.mycompany.myapp.customers.Customer".
+This is derived from an annotation.
+The identifier meanwhile is always converted to a string.</p>
+</div>
+<div class="paragraph">
+<p>Although simple, the OID is an enormously powerful concept: it represents a URI to any domain object managed by a given Apache Isis application.
+With it, we have the ability to lookup any arbitrary domain objects.</p>
+</div>
+<div class="paragraph">
+<p>Some examples:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>an OID allows sharing of information between users, eg as a deep link to be pasted into an email.</p>
+</li>
+<li>
+<p>the information within an OID could be converted into a barcode, and stamped onto a PDF form.
+When the PDF is scanned by the mail room, the barcode could be read to attach the correspondence to the relevant domain object.</p>
+</li>
+<li>
+<p>as a handle to any object in an audit record, as used by <a href="../../../../refguide/latest/applib-svc/AuditerService.html" class="page"><code>AuditerService</code></a>;</p>
+</li>
+<li>
+<p>similarly within implementations of <a href="../../../../refguide/latest/applib-svc/CommandService.html" class="page"><code>CommandService</code></a> to persist <code>Command</code> objects</p>
+</li>
+<li>
+<p>similarly within implementations of <a href="../../../../refguide/latest/applib-svc/PublisherService.html" class="page"><code>PublisherService</code></a> to persist published action invocations</p>
+</li>
+<li>
+<p>and of course both the <a href="../../../../vro/latest/about.html" class="page">RestfulObjects viewer</a> and <a href="../../../../vw/latest/about.html" class="page">Wicket viewer</a> use the oid tuple to look up, render and allow the user to interact with domain objects.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Although the exact content of an OID should be considered opaque by domain objects, it is possible for domain objects to obtain OIDs.
+These are represented as <code>Bookmark</code>s, obtained from the <a href="../../../../refguide/latest/applib-svc/BookmarkService.html" class="page"><code>BookmarkService</code></a>.
+Deep links meanwhile can be obtained from the <a href="../../../../refguide/latest/applib-svc/DeepLinkService.html" class="page"><code>DeepLinkService</code></a>.</p>
+</div>
+<div class="paragraph">
+<p>OIDs can also be converted into XML format, useful for integration scenarios.
+The <a href="../../../../refguide/latest/schema/common.html" class="page">common schema</a> XSD defines the <code>oidDto</code> complex type for precisely this purpose.</p>
+</div>
+</div>
 </div>
 </article>
 <aside class="article-aside toc" role="navigation">
@@ -416,7 +523,7 @@ This identity is represented to the end-user in human-readable form so that they
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200320-0401-0cfb2aef</p>
+            <p>Revision: 2.0.0-M2.20200321-0401-6c585483</p>
         </div>
     </div>
 </footer>

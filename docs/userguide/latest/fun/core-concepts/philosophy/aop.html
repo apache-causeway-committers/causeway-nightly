@@ -395,15 +395,14 @@ page.parent doesn't seem to be set...
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>Although not a book about object modelling, Evans' "Domain Driven Design" does use object orientation as its primary modelling tool; while <a href="../../core-concepts.html#naked-objects-pattern" class="page">naked objects pattern</a> very much comes from an OO background (it even has 'object' in its name).
-Richard Pawson&#8201;&#8212;&#8201;the originator of Naked Objects pattern&#8201;&#8212;&#8201;lists Alan Kay as a key influence.</p>
+<p>Although not a book about object modelling, Evans' "Domain Driven Design" does use object orientation as its primary modelling tool; while <a href="../../core-concepts.html#naked-objects-pattern" class="page">naked objects pattern</a> very much comes from an OO background (it even has 'object' in its name).</p>
 </div>
 <div class="paragraph">
-<p>It&#8217;s certainly true that to develop an Apache Isis application you will need to have good object oriented modelling skills.
+<p>It&#8217;s certainly true that to develop an Apache Isis application you will reasonably good object oriented modelling skills.
 But given that all the mainstream languages for developing business systems are object oriented (Java, C#, Ruby), that&#8217;s not such a stretch.</p>
 </div>
 <div class="paragraph">
-<p>However, what you&#8217;ll also find as you write your applications is that in some ways an Apache Isis application is more aspect-oriented than it is object oriented.
+<p>However, what you&#8217;ll also discover is that in some ways an Apache Isis application is more aspect-oriented than it is object oriented.
 Given that aspect-orientation&#8201;&#8212;&#8201;as a programming paradigm at least&#8201;&#8212;&#8201;hasn&#8217;t caught on, that statement probably needs unpacking a little.</p>
 </div>
 </div>
@@ -431,7 +430,7 @@ In languages such as Scala these mix-ins are specified statically as part of the
 <h2 id="realization-within-apache-isis"><a class="anchor" href="#realization-within-apache-isis"></a>Realization within Apache Isis</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>What has all this to do with Apache Isis, then?</p>
+<p>What does all this have to do with Apache Isis?</p>
 </div>
 <div class="paragraph">
 <p>Well, a different way to think of the naked objects pattern is that the visualization of a domain object within a UI is a cross-cutting concern.
@@ -445,22 +444,25 @@ That is, if a user is not authorized to either view or perhaps modify an object,
 The <a href="../../../../../security/latest/about.html" class="page">SecMan extension</a> provides a rich user/role/permissions subdomain to use out of the box; but you can integrate with a different security mechanism if you have one already.</p>
 </div>
 <div class="paragraph">
-<p>Another example of interceptors are the (non-ASF) <a href="https://platform.incode.org" target="_blank" rel="noopener">Incode Platform</a>'s command and audit modules.
-The command module captures every user interaction that modifies the state of the system (the "cause" of a change) while the audit module captures every change to every object (the "effect" of a change).
+<p>Another example of interceptors are the <a href="../../../../../extensions/latest/command-log/about.html" class="page">Command Log</a> and <a href="../../../../../security/latest/audit-trail/about.html" class="page">Auditer</a> modules.
+The <em>Command Log</em> module captures every user interaction that modifies the state of the system (the "cause" of a change) while the <em>Auditer</em> module captures every change to every object (the "effect" of a change).
 Again, this is all transparent to the user.</p>
 </div>
 <div class="paragraph">
-<p>Apache Isis also has an internal event bus (you can switch between an underlying implementation of Gauva or Axon).
+<p>Apache Isis also leverages the Spring framework&#8217;s event bus.
 A domain event is fired whenever an object is interacted with, and this allows any subscribers to influence the operation (or even veto it).
-This is a key mechanism in ensuring that Apache Isis applications are maintainable, and we discuss it in depth in the section on  <a href="#userguide:btb:decoupling.adoc" class="page unresolved">Decoupling</a>.
-But fundamentally its relying on this AOP concept of interceptors.</p>
+This is a key mechanism in ensuring that Apache Isis applications are maintainable, by decoupling logic into separate modules.
+But fundamentally its relying on this AOP concept of interceptors, with event subscribers in one module potentially influencing or responding to interaction triggered in another.</p>
 </div>
 <div class="paragraph">
-<p>Finally, Isis also a feature that is akin to AOP mix-ins.
-A "contributed action" is one that is implemented on a domain service but that appears to be a behaviour of rendered domain object.
-In other words, we can dissociate behaviour from data.
-That&#8217;s not always the right thing to do of course.
-In Richard Pawson&#8217;s description of the <a href="../../core-concepts.html#naked-objects-pattern.adoc" class="page">naked objects pattern</a> he talks about "behaviourally rich" objects, in other words where the business functionality encapsulated the data.
+<p>Finally, Apache Isis also a feature that is akin to AOP traits.
+A "contributed action" is one that is implemented by a mixin class but that appears to be a behaviour of rendered domain object.
+Mixins can also contribute read-only properties or collections: effectively the result of running a query that returns a scalar or a vector.
+In other words, we can dissociate behaviour from data.</p>
+</div>
+<div class="paragraph">
+<p>That&#8217;s not always the right thing to do of course.
+In Richard Pawson&#8217;s description of the <a href="../../core-concepts.html#naked-objects-pattern.adoc" class="page">naked objects pattern</a> he talks about "behaviourally rich" objects, in other words where the business functionality encapsulates the data.
 But on the other hand sometimes the behaviour and data structures change at different rates.
 The <a href="http://en.wikipedia.org/wiki/Single_responsibility_principle">single responsibility principle</a> says we should only lump code together that changes at the same rate.
 Apache Isis' support for contributions (not only contributed actions, but also contributed properties and contributed collections) enables this.
@@ -468,7 +470,7 @@ And again, to loop back to the topic of this section, it&#8217;s an AOP concept 
 </div>
 <div class="paragraph">
 <p>The nice thing about aspect orientation is that for the most part you can ignore these cross-cutting concerns and - at least initially - just focus on implementing your domain object.
-Later when your app starts to grow and you start to break it out into smaller modules, you can leverage Apache Isis' AOP support for <a href="../../building-blocks.html#mixins" class="page">mixins</a> and interceptors (using the <a href="../../building-blocks.html#domain-events" class="page">event bus</a>) to ensure that your codebase remains maintainable.</p>
+Later when your app starts to grow and you start to break it out into smaller modules, you can leverage Apache Isis' AOP support for <a href="../../building-blocks.html#mixins" class="page">mixins</a> and interceptors (using the <a href="../../../../../refguide/latest/applib-svc/EventBusService.html" class="page">event bus</a>) to ensure that your codebase remains maintainable.</p>
 </div>
 </div>
 </div>
@@ -489,7 +491,7 @@ Later when your app starts to grow and you start to break it out into smaller mo
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200320-0401-0cfb2aef</p>
+            <p>Revision: 2.0.0-M2.20200321-0401-6c585483</p>
         </div>
     </div>
 </footer>

@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Apache Isis vs &#8230;&#8203; :: Apache Isis</title>
+    <title>Aligned with the Business :: Apache Isis</title>
     <meta name="generator" content="Antora 2.2.0">
     <link rel="stylesheet" href="../../../../_/css/site.css">
     <link rel="stylesheet" href="../../../../_/css/site-custom.css">
@@ -384,136 +384,191 @@ page.parent doesn't seem to be set...
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="../../about.html">User Guide</a></li>
-    <li><a href="apache-isis-vs.html">Apache Isis vs &#8230;&#8203;</a></li>
+    <li><a href="aligned-with-the-business.html">Aligned with the Business</a></li>
   </ul>
 </nav>
-  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/HEAD/api/adoc/userguide/modules/fun/pages/core-concepts/apache-isis-vs.adoc">Edit</a></div>
+  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/HEAD/api/adoc/userguide/modules/fun/pages/core-concepts/aligned-with-the-business.adoc">Edit</a></div>
 </div>
 <article class="doc">
     <a name="section-top"></a>
-<h1 class="page">Apache Isis vs &#8230;&#8203;</h1>
+<h1 class="page">Aligned with the Business</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>Many other frameworks promise rapid application development and provide automatically generated user interfaces, so how do they compare to Apache Isis?</p>
+<p>Apache Isis is primarily aimed at custom-built "enterprise" applications, with a UI provided by the <a href="../../../../vw/latest/about.html" class="page">Wicket viewer</a> is intended to be usable by domain experts, typically end-users within the organization.</p>
+</div>
+<div class="paragraph">
+<p>This section explores some of the considerations that organizations when deciding how to maintain their core business functions.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="mvc-server-side"><a class="anchor" href="#mvc-server-side"></a>Apache Isis vs MVC server-side</h2>
+<h2 id="why-build-instead-of-buy"><a class="anchor" href="#why-build-instead-of-buy"></a>Why Build instead of Buy?</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Some of most commonly used frameworks today are <a href="http://www.spring.io/">Spring MVC</a>, <a href="http://rubyonrails.org/">Ruby on Rails</a> and <a href="http://www.grails.org">Grails</a>, all of which implement one flavour or another of the server-side MVC pattern.
-The MVC 1.0 specification (originally scheduled for JavaEE 8 though since removed) is also similar.</p>
+<p>Buying packaged software makes sense for statutory requirements, such as payroll or general ledger, or document management/retrieval.
+But (we argue) it makes much less sense to buy packaged software for the systems that support the core business: the software should fit the business, not the other way around.</p>
 </div>
 <div class="paragraph">
-<p>These frameworks all use the classic  <strong>model-view-controller</strong> ( <em>MVC</em>) pattern for web applications, with scaffolding, code-generation, and/or metaprogramming tools for the controllers and views, as well as convention over configuration to define how these components interact.
-The views provided out of the box by these frameworks tend to be simple  <em>CRUD</em>-style interfaces.
-More sophisticated behavior is accomplished by customizing the generated controllers.</p>
+<p>Packaged software suffers from the problem of both having doing "too much" and "not enough":</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>it does "too much" because it will have features that are not required by your business.
+These extra unnecessary features make the system difficult to learn and use.;</p>
+</li>
+<li>
+<p>but it may also do "too little" because there may be crucial functionality not supported by the software.</p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
-<p>The most obvious difference when developing an Apache Isis application is its deliberate lack of an explicit controller layer; non- <em>CRUD</em> behavior is automatically made available in its generic object-oriented  <em>UI</em>s.
-More sophisticated UIs can be built either by <a href="../../../../vw/latest/extending.html" class="page">extending Apache Isis' Wicket viewer</a> or by writing a bespoke UI leveraging the REST (hypermedia) API automatically exposed by Apache Isis' <a href="../../../../vro/latest/about.html" class="page">Restful Objects</a> viewer.
-Other frameworks can also be used to implement REST APIs, of course, but generally they require a significant amount of development to get anywhere near the level of sophistication provided automatically by Apache Isis' REST API.</p>
+<p>The diagram below illustrates the dichotomy:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="../_images/core-concepts/philosophy/build-vs-buy.png"><img src="../_images/core-concepts/philosophy/build-vs-buy.png" alt="build vs buy" width="800px"></a>
+</div>
+<div class="title">Figure 1. build-vs-buy</div>
 </div>
 <div class="paragraph">
-<p>Although these frameworks all provide their own ecosystems of extensions, Apache Isis' equivalent <a href="https://platform.incode.org" target="_blank" rel="noopener">Incode Platform</a> modules (non-ASF) tend to work at a higher-level of abstraction.
-For example, each of these frameworks will integrate with various security mechanism, but the <a href="../../../../security/latest/about.html" class="page">SecMan extension</a> provides a full subdomain of users, roles, features and permissions that can be plugged into any Apache Isis application.
-Similarly, the <a href="https://platform.incode.org" target="_blank" rel="noopener">Incode Platform</a>'s command and audit modules in combination provide a support for auditing and traceability that can also be used for out of the box profiling.
-Again, these addons can be plugged into any Isis app.</p>
+<p>What happens in this case is that end-users&#8201;&#8212;&#8201;needing some sort of solution for their particular business problem&#8201;&#8212;&#8201;will end up using unused fields to store the information they need.
+We end up with no correlation between the fields definitions and the values stored therein, sometimes with the datatypes not even matching.
+Any business rules pertaining to this extra data have to be enforced manually by the users, rather than by the system.
+The end result is a system even more complicated to learn and use, with the quality of the data held within it degrading as end users inevitably make mistakes in using it.</p>
 </div>
 <div class="paragraph">
-<p>In terms of testing support, each of these other frameworks provide mechanisms to allow the webapp to be tested from within a JUnit test harness.
-Apache Isis' support is similar.
-Where Apache Isis differs though is that it enables end-to-end testing without the need for slow and fragile Selenium tests.
-Instead, Apache Isis provides a "<a href="../../../../testing/latest/integtestsupport/about.html#wrapper-factory" class="page">WrapperFactory</a>" domain service that allows the generic UI provided to in essence be simulated.
-On a more pragmatic level, the <a href="https://platform.incode.org" target="_blank" rel="noopener">Incode Platform</a>'s fakedata module does "what it says on the tin", allowing both unit- and integration-tests to focus on the salient data and fake out the rest.</p>
+<p>There are other benefits too for building rather than buying.
+Packaged software is almost always sold with a support package, the cover of which can vary enormously.
+At one end of the spectrum the support package ("bronze", say) will amount to little more than the ability to raise bug reports and to receive maintenance patches.
+At the other end (let&#8217;s call it "platinum"), the support package might provide the ability to influence the direction of the development of the product, perhaps specific features missing by the business.</p>
+</div>
+<div class="paragraph">
+<p>Even so, the more widely used is the software package, the less chance of getting it changed.
+Does anyone reading this think they could get a new feature added (or removed) from Microsoft Word, for example?</p>
+</div>
+<div class="paragraph">
+<p>Here&#8217;s another reason why you should build, and not buy, the software supporting your core business domain.
+Although most packaged software is customisable to a degree, there is always a limit to what can be customised.
+The consequence is that the business is forced to operate according to the way in which the software requires.</p>
+</div>
+<div class="paragraph">
+<p>This might be something as relatively innocuous as imposing its own terminology onto the business, meaning that the end-users must mentally translate concepts in order to use the software.
+But it might impose larger constraints on the business; some packaged software (we carefully mention no names) is quite notorious for this</p>
+</div>
+<div class="paragraph">
+<p>If your business is using the same software as your competitor, then obviously there&#8217;s no competitive advantage to be gained.
+And if your competitor has well-crafted custom software, then your business will be at a competitive <em>dis</em>advantage.</p>
+</div>
+<div class="paragraph">
+<p>So, our philosophy is that custom software&#8201;&#8212;&#8201;for your core business domain&#8201;&#8212;&#8201;is the way to go.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="cqrs"><a class="anchor" href="#cqrs"></a>Apache Isis vs CQRS</h2>
+<h2 id="maintainable"><a class="anchor" href="#maintainable"></a>Maintainable</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The <a href="https://martinfowler.com/bliki/CQRS.html">CQRS architectural pattern</a> (it stands for "Command Query Responsibility Separation") is the idea that the domain objects that mutate the state of the system - to which commands are sent and which then execute - should be separated from the mechanism by which the state of the system is queried (rendered).
-The former are sometimes called the "write (domain) model", the latter the "read model".</p>
+<p>Enterprise applications tend to stick around a long time; a business' core domains don&#8217;t tend to change all that often.
+What this means in turn is that the application needs to be maintainable, so that it is as easy to modify and extend when it&#8217;s 10 years old as when it was first written.</p>
 </div>
 <div class="paragraph">
-<p>In the canonical version of this pattern there are separate datastores.
-The commands act upon a command/write datastore.
-The data in this datastore is then replicated in some way to the query/read datastore, usually denormalized or otherwise such that it is easy to query.</p>
+<p>That&#8217;s a tall order for any application to meet, and realistically it <em>can</em> only be met if the application is modular.
+Any application that lacks a coherent internal structure will ultimately degrade into an unmaintable "big ball of mud", and the development team&#8217;s velocity/capacity to make changes will reduce accordingly.</p>
 </div>
 <div class="paragraph">
-<p>CQRS advocates recommend using very simple (almost naive) technology for the query/read model; it should be a simple projection of the query datastore.
-Complexity instead lives elsewhere: business logic in the command/write model, and in the transformation logic betweeen the command/write and read/query datastores.
-In particular, there is no requirement for the two datastores to use the same technology: one might be an RDBMS while the other a NoSQL datastore or even datawarehouse.</p>
+<p>Apache Isis' architecture allows the internal structure to be maintained in two distinct ways.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>first, the naked objects pattern acts as a "firewall", ensuring that any business logic in the domain layer doesn&#8217;t leak out into the presentation layer (it can&#8217;t, because the developer doesn&#8217;t write any controllers/views).</p>
+</li>
+<li>
+<p>second, the framework&#8217;s provides various features (discussed in more detail below) to allow the different modules <em>within</em> the domain layer to interact with each in a decoupled fashion.</p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
-<p>In most implementations the command and query datastores are <em>not</em> updated in the same transaction; instead there is some sort of replication mechanism.
-This also means that the query datastore is eventually consistent rather than always consistent; there could be a lag of a few seconds before it is updated.
-This means in turn that CQRS implementations require mechanisms to cater for offline query datastores; usually some sort of event bus.</p>
+<p>The diagram below illustrates this:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="../_images/core-concepts/philosophy/decoupled-applications.png"><img src="../_images/core-concepts/philosophy/decoupled-applications.png" alt="decoupled applications" width="800px"></a>
+</div>
+<div class="title">Figure 2. decoupled applications</div>
 </div>
 <div class="paragraph">
-<p>The CQRS architecture&#8217;s extreme separation of responsibilities can result in a lot of boilerplate.
-Any given domain concept, eg <code>Customer</code>, must be represented both in the command/write model and also in the query/read model.
-Each business operation upon the command model is reified as a command object, for example <code>PlaceOrderCommand</code>.</p>
+<p>Here, the presentation layer (<a href="../../../../vw/latest/about.html" class="page">Wicket UI</a> or <a href="../../../../vro/latest/about.html" class="page">REST API</a>) is handled by the framework, while the developer focusses on just the domain layer.
+The framework encourages splitting this functionality into modules; each such module has its counterpart (typically tables within a given RDBMS database schema) within the persistence layer.</p>
 </div>
 <div class="paragraph">
-<p>Comparing CQRS to Apache Isis, the most obvious difference is that Apache Isis does not separate out a command/write model from a query/read model, and there is usually just a single datastore.
-But then again, having a separate read model just so that the querying is very straightforward is pointless with Apache Isis because, of course, Isis provides the UI "for free".</p>
+<p>This architecture means that it&#8217;s impossible for business logic to leach out into the adjacent presentation layer because the developer doesn&#8217;t (can&#8217;t) write any code for presentation layer.
+We in effect have a "firewall" between the two layers.</p>
 </div>
 <div class="paragraph">
-<p>There are other reasons though why a separate read model might make sense, such as to precompute particular queries, or against denormalized data.
-In these cases Apache Isis can often provide a reasonable alternative, namely to map domain entities against RDBMS views, either materialized views or dynamic.
-In such cases there is still only a single physical datastore, and so transactional integrity is retained.</p>
+<p>To support the business domain being split into separate modules, the framework provides various features, the most important of which are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>dependency injection of services<br>
++ Both <a href="../../../../refguide/latest/applib-svc/about.html" class="page">framework-defined domain services</a> and application-defined services (eg repositories and factories) are injected everywhere, using the regular <a href="../../../../refguide/latest/applib-ant/Inject.html" class="page"><code>@javax.inject.Inject</code></a> annotation.</p>
+<div class="paragraph">
+<p>Note that this means dependencies are <em>also</em> injected into domain entities and view models, allowing for behaviourally complete functionality.</p>
+</div>
+</li>
+<li>
+<p>mixins allow functionality defined in one module to appear (in the UI) to be provided by some other module.<br>
++ For example, a <em>Document</em> module might allow <code>Document</code> objects to be attached to any arbitrary domain object (such as <code>Order</code> or <code>Customer</code>) in other modules.
+A mixin would allow the UI for a <code>Customer</code> to also display these attached <code>Document</code>s, even though the <em>Customer</em> module would have no knowledge of/dependency on the <em>Workflow</em> module.</p>
+<div class="paragraph">
+<p>Dependencies are also injected into mixins.
+A common technique is to factor out from domain objects into mixins and then generalise.</p>
+</div>
+</li>
+<li>
+<p>the internal <a href="../../../../refguide/latest/applib-svc/EventBusService.html" class="page">event bus</a> allows modules to influence other modules.</p>
+<div class="paragraph">
+<p>A good example is supporting what (in an RDBMS we would call) referential integrity.
+Suppose the <em>Customer</em> module has a <code>Customer</code> object and a <code>EmailAddress</code> object, with a customer having a collection of email addresses.
+A <em>Communications</em> module might then use those email addresses to create <code>EmailCommunication</code>s.<br>
+<br>
+If the <em>Customer</em> module wants to delete an <code>EmailAddress</code> then the <em>Communications</em> module will probably want to veto this because they are "in use" by those <code>EmailCommunication</code>s.
+Or, it might conceivably perform a cascade delete of all associated communications.
+Either way, the <em>Communications</em> module receives an internal event representing the intention to delete the <code>EmailAddress</code>.
+It can then act accordingly, either vetoing the interaction or performing the cascade delete.
+The <em>Customer</em> module for its part does not know anything about this other module.</p>
+</div>
+</li>
+</ul>
 </div>
 <div class="paragraph">
-<p>Or, the CQRS architecture can be more fully implemented with Apache Isis by introducing a separate read model, synchronized using the <a href="../../../../refguide/latest/applib-svc/PublisherService.html" class="page"><code>PublisherService</code></a>, or using subscribers on the <a href="../../../../refguide/latest/applib-svc/EventBusService.html" class="page"><code>EventBusService</code></a>.
-One can then use <a href="../building-blocks.html#view-models" class="page">view models</a> to surface the data in the external read datastore.</p>
+<p>For those cases where a module needs to interact with other modules but does not know about their implementations, the module can either define its own <a href="https://en.wikipedia.org/wiki/Service_provider_interface">SPI</a> domain services or it can define custom domain events and fire them.
+This technique is also used extensively by the framework itself.
+For example, the <a href="../../../../refguide/latest/applib-svc/AuditerService.html" class="page"><code>AuditerService</code></a> SPI enables custom auditing, and the <a href="../../../../refguide/latest/applib-svc/PublisherService.html" class="page"><code>PublisherService</code></a> SPI enables custom publishing.</p>
 </div>
 <div class="paragraph">
-<p>With respect to commands, Apache Isis does of course support the <a href="../../../../refguide/latest/applib-svc/CommandService.html" class="page"><code>CommandService</code></a> which allows each business action to be reified into a <code>Command</code>.
-However, names are misleading here: Apache Isis' commands are relatively passive, merely recording the intent of the user to invoke some operation.
-In a CQRS architecture, though, commands take a more active role, locating and acting upon the domain objects.
-More significantly, in CQRS each command has its own class, such as <code>PlaceOrderCommand</code>, instantiated by the client and then executed.
-With Apache Isis, though, the end-user merely invokes the <code>placeOrder(&#8230;&#8203;)</code> action upon the domain object; the framework itself creates the <code>Command</code> as a side-effect of this.</p>
+<p>When building a modular application, it&#8217;s important to consider the logical layering of the modules: we don&#8217;t need every module to be completely decoupled from every other.
+The most important requirement is that there are no cyclic dependencies, because otherwise we run the risk of the application degrading into a <a href="https://en.wikipedia.org/wiki/Big_ball_of_mud">"big ball of mud"</a>.
+(Proprietary) tools such as <a href="https://structure101.com/">Structure 101</a> help detect and visualize such cycles.
+OO design techniques such as the <a href="https://en.wikipedia.org/wiki/Dependency_inversion_principle">dependency inversion principle</a> can be used to remove cycles.
+(Open source) libraries such as <a href="https://www.archunit.org/">ArchUnit</a> or <a href="https://jqassistant.org/">jQAssistant</a> can help enforce architectural layering to prevent the issue arising in the first place.</p>
 </div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
 <div class="paragraph">
-<p>In CQRS the commands correspond to the business logic that mutates the system.
-Whether this logic is part of the command class (<code>PlaceOrderCommand</code>) or whether that command delegates to methods on the domain object is an implementation detail; but it certainly is common for the business logic to be wholly within the command object and for the domain object to be merely a data holder of the data within the command/write datastore.</p>
+<p>For further discussion on modular monoliths, check out Dan Haywood&#8217;s article on InfoQ, "In Defence of the Monolith" (<a href="https://www.infoq.com/articles/monolith-defense-part-1">part 1</a>, <a href="https://www.infoq.com/articles/monolith-defense-part-2">part 2</a>).</p>
 </div>
-<div class="paragraph">
-<p>In Apache Isis this same separation of business logic from the underlying data can be accomplished most straightforwardly using <a href="../building-blocks.html#mixins" class="page">mixins</a>.
-In the UI (surfaced by the <a href="../../../../vw/latest/about.html" class="page">Wicket viewer</a>) or in the REST API (surfaced by the <a href="../../../../vro/latest/about.html" class="page">RestfulObjects viewer</a>) the behaviour appears to reside on the domain object; however the behaviour actually resides on separate classes and is mixed in (like a trait) only at runtime.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="event-sourcing"><a class="anchor" href="#event-sourcing"></a>Apache Isis vs Event Sourcing</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The <a href="../core-concepts.html#cqrs" class="page">CQRS architecture</a> is often combined with <em>Event Sourcing</em> pattern, though they are separate ideas.</p>
-</div>
-<div class="paragraph">
-<p>With event sourcing, each business operation emits a domain event (or possibly events) that allow other objects in the system to act accordingly.
-For example, if a customer places an order then this might emit the <code>OrderPlacedEvent</code>.
-Most significantly, the subscribers to these events can include the datastore itself; the state of the system is in effect a transaction log of every event that has occurred since "the beginning of time": it is sometimes called an event store.
-With CQRS, this event datastore corresponds to the command/write datastore (the query/read datastore is of course derived from the command datastore).</p>
-</div>
-<div class="paragraph">
-<p>Although it might seem counter-intuitive to be able store persistent state in this way (as some kind of souped-up "transaction log"), the reality is that with modern compute capabilities make it quite feasible to replay many 10s or 100s of thousands of events in a second.
-And the architecture supports some interesting use cases; for example it becomes quite trivial to rewind the system back to some previous point in time.</p>
-</div>
-<div class="paragraph">
-<p>When combined with CQRS we see a command that triggers a business operation, and an event that results from it.
-So, a <code>PlaceOrderCommand</code> command can result in an <code>OrderPlacedEvent</code> event.  A subscriber to this event might then generate a further command to act upon some other system (eg to dispatch the system).
-Note that the event might be dispatched and consumed in-process or alternatively this might occur out-of-process.
-If the latter, then the subscriber will operate within a separate transaction, meaning the usual eventual consistency concerns and also compensating actions if a rollback is required.
-CQRS/event sourcing advocates point out&#8201;&#8212;&#8201;correctly&#8201;&#8212;&#8201;that this is just how things are in the "real world" too.</p>
-</div>
-<div class="paragraph">
-<p>In Apache Isis every business action (and indeed, property and collection) emits domain events through the <a href="../../../../refguide/latest/applib-svc/EventBusService.html" class="page"><code>EventBusService</code></a>, and can optionally also be published through the <a href="../../../../refguide/latest/applib-svc/PublisherService.html" class="page"><code>PublisherService</code></a>.
-The former are dispatched and consumed in-process and within the same transaction, and for this reason the subscribers can also veto the events.</p>
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -534,7 +589,7 @@ The former are dispatched and consumed in-process and within the same transactio
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200320-0401-0cfb2aef</p>
+            <p>Revision: 2.0.0-M2.20200321-0401-6c585483</p>
         </div>
     </div>
 </footer>

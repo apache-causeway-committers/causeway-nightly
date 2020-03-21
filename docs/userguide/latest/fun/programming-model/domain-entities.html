@@ -392,33 +392,40 @@ page.parent doesn't seem to be set...
 <article class="doc">
     <a name="section-top"></a>
 <h1 class="page">Domain Entities</h1>
+<div id="preamble">
+<div class="sectionbody">
 <div class="paragraph">
-<p>Entities are persistent domain objects, with their persistence handled by JDO/DataNucleus.
-As such, they are mapped to a persistent object store, typically an RDBMS, with DataNucleus taking care of both lazy loading and also the persisting of modified ("dirty") objects.</p>
+<p>Entities are persistent domain objects, with their persistence handled an ORM (such as <a href="../../../../pjdo/latest/about.html" class="page">JDO/DataNucleus</a>).
+As such, they are mapped to a persistent object store, typically an RDBMS, with the ORM taking care of both lazy loading and also the persisting of modified ("dirty") objects.</p>
 </div>
 <div class="paragraph">
-<p>Domain entities are generally decorated with both DataNucleus and Apache Isis annotations.
+<p>Domain entities are generally decorated with both ORM and Apache Isis annotations.
 Let&#8217;s look at some of the most commonly-used annotations.</p>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="persistencecapable"><a class="anchor" href="#persistencecapable"></a>PersistenceCapable</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>To start with, entities are flagged as being "persistence capable", indicating how JDO/DataNucleus should manage their identity:</p>
+<p>Focusing for now on the <a href="../../../../pjdo/latest/about.html" class="page">JDO API</a>, entities are flagged as being "persistence capable", indicating how the ORM should manage their identity:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@javax.jdo.annotations.PersistenceCapable(                                      <i class="conum" data-value="1"></i><b>(1)</b>
-        identityType=IdentityType.DATASTORE,                                    <i class="conum" data-value="2"></i><b>(2)</b>
-        schema = "simple",                                                      <i class="conum" data-value="3"></i><b>(3)</b>
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@javax.jdo.annotations.PersistenceCapable(                              <i class="conum" data-value="1"></i><b>(1)</b>
+        identityType=IdentityType.DATASTORE,                            <i class="conum" data-value="2"></i><b>(2)</b>
+        schema = "simple",                                              <i class="conum" data-value="3"></i><b>(3)</b>
         table = "SimpleObject"
 )
-@javax.jdo.annotations.DatastoreIdentity(                                       <i class="conum" data-value="4"></i><b>(4)</b>
+@javax.jdo.annotations.DatastoreIdentity(                               <i class="conum" data-value="4"></i><b>(4)</b>
         strategy=javax.jdo.annotations.IdGeneratorStrategy.IDENTITY,
         column="id"
 )
-@javax.jdo.annotations.Version(                                                 <i class="conum" data-value="5"></i><b>(5)</b>
+@javax.jdo.annotations.Version(                                         <i class="conum" data-value="5"></i><b>(5)</b>
         strategy= VersionStrategy.DATE_TIME,
         column="version"
 )
-@DomainObject(                                                                  <i class="conum" data-value="6"></i><b>(6)</b>
+@DomainObject(                                                          <i class="conum" data-value="6"></i><b>(6)</b>
         objectType = "simple.SimpleObject"
 )
 public class SimpleObject { /* ... */ }</code></pre>
@@ -460,32 +467,40 @@ In particular, its strongly recommended that the <code>objectType</code> (which 
 </tr>
 </table>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="key-properties"><a class="anchor" href="#key-properties"></a>Key Properties</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>All domain entities will have some sort of mandatory key properties.
-The example below is a very simple case, where the entity is identified by a <code>name</code> property:</p>
+The example below is a very simple case, where the entity is identified by a <code>name</code> property.
+This is often used in database unique indices, and in the <code>toString()</code> implementation:</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">...
-@javax.jdo.annotations.Unique(name="SimpleObject_name_UNQ", members = {"name"}) <i class="conum" data-value="1"></i><b>(1)</b>
+@javax.jdo.annotations.Unique(
+    name="SimpleObject_name_UNQ", members = {"name"})               <i class="conum" data-value="1"></i><b>(1)</b>
+@ToString(onlyExplicitlyIncluded = true)
 public class SimpleObject
-             implements Comparable&lt;SimpleObject&gt; {                              <i class="conum" data-value="2"></i><b>(2)</b>
+             implements Comparable&lt;SimpleObject&gt; {                  <i class="conum" data-value="2"></i><b>(2)</b>
 
-    public SimpleObject(final String name) {                                    <i class="conum" data-value="3"></i><b>(3)</b>
+    public SimpleObject(String name) {
         setName(name);
     }
 
-    @javax.jdo.annotations.Column(allowsNull="false", length=50)                <i class="conum" data-value="4"></i><b>(4)</b>
-    @lombok.Getter @lombok.Setter
+    @javax.jdo.annotations.Column(allowsNull="false", length=50)    <i class="conum" data-value="3"></i><b>(3)</b>
+    @lombok.Getter @lombok.Setter                                   <i class="conum" data-value="4"></i><b>(4)</b>
+    @lombok.ToString.Include                                        <i class="conum" data-value="5"></i><b>(5)</b>
     private String name;
 
-    @Override
-    public String toString() {
-        return ObjectContracts.toString(this, "name");                          <i class="conum" data-value="5"></i><b>(5)</b>
-    }
+    private final static Comparator&lt;SimpleObject&gt; comparator =
+            Comparator.comparing(SimpleObject::getName);
+
     @Override
     public int compareTo(final SimpleObject other) {
-        return ObjectContracts.compare(this, other, "name");                    <i class="conum" data-value="2"></i><b>(2)</b>
+        return comparator.compare(this, other);                     <i class="conum" data-value="6"></i><b>(6)</b>
     }
 }</code></pre>
 </div>
@@ -500,40 +515,52 @@ In the example above, the "name" property is assumed to be unique.</td>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
 <td>Although not required, we strongly recommend that all entities are naturally <code>Comparable</code>.
-This then allows parent/child relationships to be defined using <code>SortedSet</code>s; RDBMS after all are set-oriented.
-The <code>ObjectContracts</code> utility class provided by Apache Isis makes it easy to implement the <code>compareTo()</code> method, but you can also just use an IDE to generate an implementation or roll your own.</td>
+This then allows parent/child relationships to be defined using <code>SortedSet</code>s; RDBMS after all are set-oriented.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
 <td>Chances are that some of the properties of the entity will be mandatory, for example any properties that represent an alternate unique key to the entity.
-In regular Java programming we would represent this using a constructor that defines these mandatory properties, and in Apache Isis/DataNucleus we can likewise define such a constructor.
-When DataNucleus rehydrates domain entities from the database at runtime, it actually requires a no-arg constructor (it then sets all state reflectively).
-However, there is no need to provide such a no-arg constructor; it is added by the enhancer process.</td>
+The <code>@Column</code> annotation specifies the length of the column in the RDBMS, and whether it is mandatory.
+<div class="paragraph">
+<p>Given there is a unique index on <code>name</code>, we want this to be mandatory.</p>
+</div>
+<div class="paragraph">
+<p>We can also represent this using a constructor that defines these mandatory properties.
+The ORM will create a no-arg constructor to allow domain entity to be rehydrated from the database at runtime (it then sets all state reflectively).</p>
+</div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>The <code>name</code> property itself, using Lombok to generate the getter and setter.
-The <code>@Column</code> annotation specifies the length of the column in the RDBMS; this metadata is read by JDO/DataNucleus but Apache Isis itself also infers that the property is mandatory and its length from this annotation.</td>
+<td>Use Lombok to generate the getters and setters for the <code>name</code> property itself.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>The <code>ObjectContracts</code> utility class also provides assistance for <code>toString()</code>, useful when debugging in an IDE.</td>
+<td>Use Lombok to create a <code>toString()</code> implementation that includes the value of <code>name</code> property.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Use <code>java.util.Comparator#comparing()</code> to implement <code>Comparable</code> interface.</td>
 </tr>
 </table>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="queries"><a class="anchor" href="#queries"></a>Queries</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>It&#8217;s also common for domain entities to have queries annotated on them.
+<p>When using JDO, it&#8217;s also common for domain entities to have queries annotated on them.
 These are used by repository domain services to query for instances of the entity:</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">...
 @javax.jdo.annotations.Queries({
-    @javax.jdo.annotations.Query(                                           <i class="conum" data-value="1"></i><b>(1)</b>
-        name = "findByName",                                                <i class="conum" data-value="2"></i><b>(2)</b>
-        value = "SELECT "                                                   <i class="conum" data-value="3"></i><b>(3)</b>
-                + "FROM domainapp.modules.simple.dom.impl.SimpleObject "    <i class="conum" data-value="4"></i><b>(4)</b>
-                + "WHERE name.indexOf(:name) &gt;= 0 ")                        <i class="conum" data-value="5"></i><b>(5)</b>
+    @javax.jdo.annotations.Query(                                     <i class="conum" data-value="1"></i><b>(1)</b>
+      name = "findByName",                                            <i class="conum" data-value="2"></i><b>(2)</b>
+      value = "SELECT "                                               <i class="conum" data-value="3"></i><b>(3)</b>
+            + "FROM domainapp.modules.simple.dom.impl.SimpleObject "  <i class="conum" data-value="4"></i><b>(4)</b>
+            + "WHERE name.indexOf(:name) &gt;= 0 ")                      <i class="conum" data-value="5"></i><b>(5)</b>
 })
 ...
 public class SimpleObject { /* ... */ }</code></pre>
@@ -555,7 +582,7 @@ public class SimpleObject { /* ... */ }</code></pre>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>The fully-qualified class name.
+<td>The fully-qualified class name.<br>
 Must correspond to the class on which the annotation is defined (the framework checks this automatically on bootstrapping).</td>
 </tr>
 <tr>
@@ -565,7 +592,11 @@ Must correspond to the class on which the annotation is defined (the framework c
 </table>
 </div>
 <div class="paragraph">
-<p>DataNucleus provides several APIs for defining queries, including entirely programmatic and type-safe APIs; but JDOQL is very similar to SQL and so easily learnt.</p>
+<p>JDO/DataNucleus provides several APIs for defining queries, including entirely programmatic and type-safe APIs; but JDOQL is very similar to SQL and so easily learnt.</p>
+</div>
+<div class="paragraph">
+<p>To actually use the above definition, the framework provides the <a href="../../../../refguide/latest/applib-svc/RepositoryService.html" class="page"><code>RepositoryService</code></a>.
+This is a generic repository for any domain class.</p>
 </div>
 <div class="paragraph">
 <p>The corresponding repository method for the above query is:</p>
@@ -573,11 +604,11 @@ Must correspond to the class on which the annotation is defined (the framework c
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public List&lt;SimpleObject&gt; findByName(String name) {
-    return repositoryService.allMatches(                                    <i class="conum" data-value="1"></i><b>(1)</b>
-            new QueryDefault&lt;&gt;(SimpleObject.class,                          <i class="conum" data-value="2"></i><b>(2)</b>
-                        "findByName",                                       <i class="conum" data-value="3"></i><b>(3)</b>
-                        "name",                                             <i class="conum" data-value="4"></i><b>(4)</b>
-                        name);
+    return repositoryService.allMatches(              <i class="conum" data-value="1"></i><b>(1)</b>
+            new QueryDefault&lt;&gt;(SimpleObject.class,    <i class="conum" data-value="2"></i><b>(2)</b>
+                        "findByName",                 <i class="conum" data-value="3"></i><b>(3)</b>
+                        "name", name                  <i class="conum" data-value="4"></i><b>(4)</b>
+            );
 }
 
 @javax.inject.Inject
@@ -588,7 +619,7 @@ RepositoryService repositoryService;</code></pre>
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The <code>RepositoryService</code> is a generic facade over the JDO/DataNucleus API, provided by the Apache Isis framework.</td>
+<td>find all instances that match the query</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
@@ -612,11 +643,13 @@ RepositoryService repositoryService;</code></pre>
 </td>
 <td class="content">
 <div class="paragraph">
-<p>See the <a href="../../../../pjdo/latest/about.html" class="page">DataNucleus objectstore guide</a> for further information on annotating domain entities.</p>
+<p>See the <a href="../../../../pjdo/latest/about.html" class="page">JDO/DataNucleus object store</a> for further information on annotating domain entities.</p>
 </div>
 </td>
 </tr>
 </table>
+</div>
+</div>
 </div>
 </article>
 <aside class="article-aside toc" role="navigation">
@@ -635,7 +668,7 @@ RepositoryService repositoryService;</code></pre>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200320-0401-0cfb2aef</p>
+            <p>Revision: 2.0.0-M2.20200321-0401-6c585483</p>
         </div>
     </div>
 </footer>

@@ -409,8 +409,11 @@ page.parent doesn't seem to be set...
 <p>At its core, Apache Isis is a metamodel that is built at runtime from the domain classes (eg <code>Customer.java</code>), along with optional supporting metadata (eg <code>Customer.layout.xml</code>).</p>
 </div>
 <div class="paragraph">
-<p>The contents of this metamodel is inferred from the Java classes discovered on the classpath: the entities and supporting services, as well the members of those classes.
-The detail of the metamodel is generally explicit, usually represented by Java annotations such as <code>@Title</code> or <code>@Action</code>.
+<p>The contents of this metamodel are the entities and supporting services, as well the members of those classes.
+These are all meta-annotated with <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/stereotype/Component.html"><code>@Component</code></a> and are either registered explicitly (framework services) or dynamically discovered (entities and user-defined services) by Spring Boot on the classpath via <a href="https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/context/annotation/ComponentScan.html"><code>@ComponentScan</code></a>.</p>
+</div>
+<div class="paragraph">
+<p>The detail of the metamodel is generally explicit, usually represented by Java annotations such as <code>@Title</code> or <code>@Action</code>, though this is configurable.
 Notably the metamodel is <a href="../btb/programming-model.html" class="page">extensible</a>; it is possible to teach Apache Isis new programming conventions/rules (and conversely to remove those that are built in).</p>
 </div>
 <div class="paragraph">
@@ -419,29 +422,15 @@ For example the <code>@Title</code> annotation&#8201;&#8212;&#8201;which identif
 However the framework also recognizes certain other JEE annotations such as <code>@javax.inject.Inject</code> (used for dependency injection).</p>
 </div>
 <div class="paragraph">
-<p>The framework uses DataNucleus for its persistence mechanism.
-This is an ORM that implements the JDO and JPA APIs, and which can map domain objects either to an RDBMS or to various NoSQL objectstores such as MongoDB or Neo4J.
-Apache Isis recognizes a number of the JDO annotations such as <code>@javax.jdo.annotations.Column(allowsNull=&#8230;&#8203;)</code>.</p>
+<p>The framework integrates an ORM for persistence, specifically DataNucleus and the JDO API (there is a roadmap to also support JPA with other persistence implementations).
+Both JDO and JPA can map to both relational databases and also to various NoSQL objectstores such as MongoDB or Neo4J.
+Apache Isis recognizes a number of these persistence-specific annotations, for example <code>@javax.jdo.annotations.Column(allowsNull=&#8230;&#8203;)</code>.</p>
 </div>
 <div class="paragraph">
 <p>In addition, the framework builds up the metamodel for each domain object using
 <a href="../../../vw/latest/layout.html" class="page">layout hints</a>, such as <code>Customer.layout.xml</code>.
 These provide metadata such as grouping elements of the UI together, using multi-column layouts, and so on.
 The layout file can be modified while the application is still running, and are picked up automatically; a useful way to speed up feedback.</p>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>At the time of writing Apache Isis only recognizes and supports the JDO API, though we expect JPA to be supported in the future.</p>
-</div>
-</td>
-</tr>
-</table>
 </div>
 </div>
 </div>
@@ -474,13 +463,12 @@ The end-user can then inspect and modify its state, and navigate to related obje
 </div>
 <div class="paragraph">
 <p>Domain classes are generally recognized using annotations.
-Apache Isis defines its own set of annotations, while entities are annotated using JDO/DataNucleus (though XML can also be used if required).
-Apache Isis recognizes some of the JDO and JAXB annotations and infers domain semantics from these annotations.
-Similarly, JAXB annotations are typically used for view models.
-There is a smattering of other Java/JEE annotations that are also supported, such as <code>@javax.inject.Inject</code> and <code>@javax.annotation.Nullable</code>.</p>
+Apache Isis defines its own set of annotations, and recognises some annotations from the ORM layer (eg JDO/DataNucleus) and infers domain semantics from these annotations.
+Similarly, JAXB annotations are typically used for view models.</p>
 </div>
 <div class="paragraph">
-<p>The following subsections explain this in further detail.</p>
+<p>Apache Isis runs on top of Spring Boot, and relies on Spring Boot for dependency injection using <code>@javax.inject.Inject</code>.
+The Spring <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/core/annotation/Order.html"><code>@Order</code></a> annotation is used to prioritize multiple service implementations, effectively allowing any framework-provided domain service to be substituted out by a user-defined one with higher priority if required.</p>
 </div>
 <div class="sect2">
 <h3 id="domain-entities"><a class="anchor" href="#domain-entities"></a>Domain Entities</h3>
@@ -559,10 +547,8 @@ For this reason, in Apache Isis it&#8217;s therefore quite common to have a sing
 <p>to provide additional non-UI functionality; an example being to perform an address geocoding lookup against the google-maps API, or to perform some calculation, or attach a barcode, send an email etc</p>
 </li>
 <li>
-<p>to act as a subscribers to the event bus, potentially influencing events fired by some other module (a key technique for decoupling large applications)<br></p>
-<div class="paragraph">
-<p>This is discussed in more detail below, in the section on <a href="#events">events</a>.</p>
-</div>
+<p>to act as a subscribers to the event bus, potentially influencing events fired by some other module (a key technique for decoupling large applications)<br>
++ This is discussed in more detail below, in the section on <a href="#events">events</a>.</p>
 </li>
 <li>
 <p>to implement an <a href="https://en.wikipedia.org/wiki/Service_provider_interface">SPI</a> of the Apache Isis framework, most notably cross-cutting concerns such as security, command profiling, auditing and publishing.</p>
@@ -571,8 +557,7 @@ For this reason, in Apache Isis it&#8217;s therefore quite common to have a sing
 </div>
 <div class="paragraph">
 <p>Domain objects of any type (entities, other services, view models, mixins) can also delegate to domain services; domain services are automatically injected into every other domain object.
-This injection of domain services into entities is significant: it allows business logic to be implemented in the domain entities, rather than have it "leach away" into
-supporting service layers.
+This injection of domain services into entities is significant: it allows business logic to be implemented in the domain entities, rather than have it "leach away" into supporting service layers.
 Said another way: it is the means by which Apache Isis helps you avoid the anaemic domain model anti-pattern.</p>
 </div>
 <div class="paragraph">
@@ -676,7 +661,7 @@ This proxy would hold the reference to the externally-managed domain entity (eg 
 <p>As a variation on the above, sometimes there are domain objects that are, conceptually at least entities, but whose state is not actually persisted anywhere, merely held in-memory (eg in a hash).</p>
 </div>
 <div class="paragraph">
-<p>A simple example might be read-only configuration data that is read from a config file (eg log4j appender definitions) but thereafter is presented in the UI just like any other entity.</p>
+<p>A simple example is read-only configuration data that is read from a config file (eg log4j appender definitions) but thereafter is presented in the UI just like any other entity.</p>
 </div>
 </div>
 <div class="sect3">
@@ -687,22 +672,18 @@ Generally those domain entities will make sense to the business domain experts: 
 These domain entities are part of the domain layer.</p>
 </div>
 <div class="paragraph">
+<p>When developing an Apache Isis application you will most likely start off with the persistent domain entities: <code>Customer</code>, <code>Order</code>, <code>Product</code>, and so on.
+For some applications this may well suffice.</p>
+</div>
+<div class="paragraph">
 <p>That said, it may not always be practical to expect end-users of the application to interact solely with those domain entities.
-For example, it may be useful to show a dashboard of the most significant data in the system to a user, often pulling in and aggregating information from multiple points of the app.
-Obtaining this information by hand (by querying the respective services/repositories) would be tedious and slow; far better to have a dashboard do the job for the end user.</p>
+If the application needs to integrate with other systems, or if the application needs to support reasonably complex business processes, then you may need to look beyond just domain entities; view models are the tool of choice.</p>
 </div>
 <div class="paragraph">
-<p>A dashboard object is a model of the most relevant state to the end-user, in other words it is (quite literally) a view model.
-It is not a persisted entity, instead it belongs to the application layer.</p>
-</div>
-<div class="paragraph">
-<p>A view model need not merely aggregate data; it could also provide actions of its own.
-Most likely these actions will be queries and will always ultimately just delegate down to the appropriate domain-layer service/repository.
-But in some cases such view model actions might also modify state of underlying domain entities.</p>
-</div>
-<div class="paragraph">
-<p>Another common use for view models is to help co-ordinate complex business processes; for example to perform a quarterly invoicing run, or to upload annual interest rates from an Excel spreadsheet.
-In these cases the view model might have some state of its own, but in most cases that state does not need to be persisted per se.</p>
+<p>One such use case for view models is to help co-ordinate complex business processes; for example to perform a quarterly invoicing run, or to upload annual interest rates from an Excel spreadsheet, or prepare payment batches from incoming invoices, to be uploaded to an external payment system.
+In these cases the view model managing the business process might have some state of its own, but in most cases that state does not need to be persisted between user sessions.
+Many of the actions will be queries but in some cases such view model actions might also modify state of underlying domain entities.
+Either way, ultimately these actions just delegate down to the domain-layer.</p>
 </div>
 <div class="sidebarblock">
 <div class="content">
@@ -712,30 +693,28 @@ In these cases the view model might have some state of its own, but in most case
 </div>
 <div class="paragraph">
 <p>To explain: there are <a href="http://ask.metafilter.com/62599/Where-the-sidewalk-ends">documented</a> <a href="https://sivers.org/walkways">examples</a> <a href="http://www.softpanorama.org/People/Wall/larry_wall_articles_and_interviews.shtml">that</a> architects of university campus will only add in paths some while after the campus buildings are complete: let the pedestrians figure out the routes they want to take.
-The name we like best for this idea is "desire lines", though it has also been called a "desire path", "paving the path" or "paving the sidewalk".</p>
+One name for this idea is "desire lines".</p>
 </div>
 <div class="paragraph">
 <p>What that means is you should add view models <em>after</em> having built up the domain layer, rather than before.
 These view models pave that commonly-trod path, automating the steps that the end-user would otherwise have to do by hand.</p>
 </div>
 <div class="paragraph">
-<p>It takes a little practice though, because even when building the domain layer "first", you should still bear in mind what the use cases are that those domain entities are trying to support.
-You certainly <em>shouldn&#8217;t</em> try to build out a domain layer that could support every conceivable use case before starting to think about view models.</p>
-</div>
-<div class="paragraph">
-<p>Instead, you should iterate.
+<p>However, you <em>shouldn&#8217;t</em> try to build out a domain layer that could support every conceivable use case before starting to think about view models.
+Instead, iterate.
 Identify the use case/story/end-user objective that will deliver value to the business.
-Then build out the minimum domain entities to support that use case.
-Then, identify if there any view models that could be introduced which would simplify the end-user interactions with the system (perhaps automating several related use cases together).</p>
+Build out the minimum domain entities to support that use case.
+Then, introduce view models to simplify high-volume end-user interactions with the system (perhaps automating several related use cases together).</p>
 </div>
 </div>
 </div>
 <div class="paragraph">
-<p>When developing an Apache Isis application you will most likely start off with the persistent domain entities: <code>Customer</code>, <code>Order</code>, <code>Product</code>, and so on.
-For some applications this may well suffice.</p>
+<p>Another common requirement is to show a dashboard of the most significant data in the system to a user, often pulling in and aggregating information from multiple points of the app.
+Obtaining this information by hand (by querying the respective services/repositories) would be tedious and slow; far better to have a dashboard do the job for the end user.</p>
 </div>
 <div class="paragraph">
-<p>However, if the application needs to integrate with other systems, or if the application needs to support reasonably complex business processes, then you may need to look beyond just domain entities; view models are the tool of choice.</p>
+<p>A dashboard object is a model of the most relevant state to the end-user, in other words it is (quite literally) a view model.
+It is not a persisted entity, instead it belongs to the application layer.</p>
 </div>
 </div>
 <div class="sect3">
@@ -748,20 +727,13 @@ For some applications this may well suffice.</p>
 </div>
 <div class="paragraph">
 <p>On the other hand, if the client consuming the DTO is a different application&#8201;&#8212;&#8201;by which we mean developed/deployed by a different (possible third-party) team&#8201;&#8212;&#8201;then the DTOs act as a formal contract between the provider and the consumer.
-In such cases, exposing domain entities over <a href="../../../vro/latest/about.html" class="page">RestfulObjects</a> would be "A Bad Thing"&#8482; because the consumer would in effect have access to implementation details that could then not be easily changed by the producer.</p>
+In such cases, exposing domain entities over <a href="../../../vro/latest/about.html" class="page">RestfulObjects</a> would be "A Bad Thing"&#8482; because the consumer would in effect have access to implementation details that could then not be easily changed by the producer.
+There&#8217;s plenty of discussion on this topic (eg <a href="https://stackoverflow.com/questions/36174516/rest-api-dtos-or-not">here</a> and <a href="https://juristr.com/blog/2012/10/lessions-learned-dont-expose-ef-entities-to-the-client-directly/">here</a>).
+Almost all of these recommend exposing only DTOs (which is to say view models), not domain entities, in REST APIs.</p>
 </div>
 <div class="paragraph">
 <p>To support this use case, a view model can be defined such that it can act as a DTO.
-This is done by annotating the class using JAXB annotations; this allows the consumer to obtain the DTO in XML format along with a corresponding XSD schema describing the structure of that XML.
-A discussion of how that might be done using an ESB such as <a href="http://camel.apache.org">Apache Camel&#8482;</a> follows <a href="#view-models#dtos_consumers">below</a>.</p>
-</div>
-<div class="paragraph">
-<p>In case it&#8217;s not obvious, these DTOs are still usable as "regular" view models; they will render in the <a href="../../../vw/latest/about.html" class="page">Wicket viewer</a> just like any other.
-In fact (as the <a href="programming-model.html#jaxb" class="page">programming model</a> section below makes clear), these JAXB-annotated view models are in many regards the most powerful of all the alternative ways of writing view models.</p>
-</div>
-<div class="paragraph">
-<p>It&#8217;s also worth noting that it is also possible to download the XML (or XSD) straight from the UI, useful during development.
-The view model simply needs to implement the <a href="../../../refguide/latest/applib-cm/classes/mixins.html#Dto" class="page"><code>Dto</code></a> marker interface; the framework has <a href="../../../refguide/latest/applib-cm/classes/mixins.html#Dto" class="page">mixins</a> that contribute the download actions to the view model.</p>
+This is done by annotating the class using JAXB annotations; this allows the consumer to obtain the DTO in XML format along with a corresponding XSD schema describing the structure of that XML.</p>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -771,28 +743,27 @@ The view model simply needs to implement the <a href="../../../refguide/latest/a
 </td>
 <td class="content">
 <div class="paragraph">
-<p>Details of how to consume such DTOs can be found <a href="programming-model.html#dto-consumers" class="page">here</a>.</p>
+<p>Details of how to consume such DTOs, eg within an ESB such as <a href="http://camel.apache.org">Apache Camel&#8482;</a>, can be found <a href="programming-model.html#dto-consumers" class="page">here</a>.</p>
 </div>
 </td>
 </tr>
 </table>
+</div>
+<div class="paragraph">
+<p>These DTOs are still usable as "regular" view models; they will render in the <a href="../../../vw/latest/about.html" class="page">Wicket viewer</a> just like any other.
+In fact (as the <a href="programming-model.html#jaxb" class="page">programming model</a> section below makes clear), these JAXB-annotated view models are in many regards the most powerful of all the alternative ways of writing view models.</p>
+</div>
+<div class="paragraph">
+<p>It&#8217;s also worth noting that it is also possible to download the XML (or XSD) straight from the UI, useful during development.
+The view model simply needs to implement the <a href="../../../refguide/latest/applib-cm/classes/mixins.html#Dto" class="page"><code>Dto</code></a> marker interface; the framework has <a href="../../../refguide/latest/applib-cm/classes/mixins.html#Dto" class="page">mixins</a> that contribute the download actions to the view model.</p>
 </div>
 </div>
 <div class="sect3">
 <h4 id="for-rest-clients"><a class="anchor" href="#for-rest-clients"></a>For REST Clients</h4>
 <div class="paragraph">
 <p>The <a href="../../../vro/latest/about.html" class="page">Restful Objects</a> viewer automatically provides a REST API for both domain entities.
-Or, you can use it to only expose view models, taking care to map the state of the domain entity/ies into a view model.</p>
-</div>
-<div class="paragraph">
-<p>Which beckons the question: when is it safe to safe to expose domain entities directly as REST resources, and when should view models be exposed instead.</p>
-</div>
-<div class="paragraph">
-<p>If you go searching google you&#8217;ll find plenty of discussion on this topic (eg <a href="https://stackoverflow.com/questions/36174516/rest-api-dtos-or-not">here</a> and <a href="https://juristr.com/blog/2012/10/lessions-learned-dont-expose-ef-entities-to-the-client-directly/">here</a>).
-Almost all of these recommend exposing only DTOs (which is to say view models), not domain entities, in REST APIs.</p>
-</div>
-<div class="paragraph">
-<p>Not so fast, though: the real question is whether the REST API you are exposing is a public API or an internal private API.</p>
+Or, you can use it to only expose view models, taking care to map the state of the domain entity/ies into a view model.
+The question to consider is whether the REST API is a public API or an internal private API:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -831,7 +802,7 @@ This <a href="https://stackoverflow.com/questions/38874746/is-it-problematic-tha
 </table>
 </div>
 <div class="paragraph">
-<p>If your REST API is intended to be public (or you can&#8217;t be sure that it will remain private), the exposing view models will entail a lot of marshalling of state from domain entities into view models.
+<p>If your REST API is intended to be public (or you can&#8217;t be sure that it will remain private), then exposing view models will entail a lot of marshalling of state from domain entities into view models.
 There are numerous open source tools that can help with that, for example <a href="http://modelmapper.org/">Model Mapper</a>, <a href="http://dozer.sourceforge.net/">Dozer</a> and <a href="https://github.com/orika-mapper/orika">Orika</a>.</p>
 </div>
 <div class="paragraph">
@@ -840,7 +811,7 @@ There are numerous open source tools that can help with that, for example <a hre
 <div class="paragraph">
 <p>A third option is to define an RDBMS view, and then map a "non-durable" entity to that view.
 The RDBMS view then becomes the public API that must be preserved.
-The DataNucleus documents <a href="http://www.datanucleus.org:15080/products/accessplatform_5_1/jdo/mapping.html#schema_rdbms_views">describe</a> how to create non-durable views; a "real-world" example can also be found <a href="https://github.com/estatio/estatio/blob/rel/tag-1.20.20171025-1442/estatioapp/module/lease/dom/src/main/java/org/estatio/dom/lease/invoicing/viewmodel/InvoiceSummaryForInvoiceRun.java#L53">here</a> (in Estatio).</p>
+ORMs such as DataNucleus <a href="http://www.datanucleus.org:15080/products/accessplatform_5_1/jdo/mapping.html#schema_rdbms_views">support this</a>.</p>
 </div>
 </div>
 </div>
@@ -848,18 +819,39 @@ The DataNucleus documents <a href="http://www.datanucleus.org:15080/products/acc
 <h3 id="mixins"><a class="anchor" href="#mixins"></a>Mixins</h3>
 <div class="paragraph">
 <p>The final type of domain object is the <strong>mixin</strong>.
-These are similar to traits or extension methods in other programming languages, in that they contribute (or rather, mixin) both behaviour or (derived) state to entities/view models.</p>
+These are similar to traits or extension methods in other programming languages.
+A mixin object allows one class to contribute behaviour - actions, (derived) properties and (derived) collections - to another domain object, either a domain entity or view model.
+Or rather, the mixin <em>appears</em> to contribute the behaviour/state in the UI; the underlying domain class being "decorated" does not know this is happening.</p>
 </div>
 <div class="paragraph">
-<p>A mixin object allows one class to contribute behaviour - actions, (derived) properties and (derived) collections - to another domain object, either a domain entity or view model.</p>
-</div>
-<div class="paragraph">
-<p>This allows the app to stay decoupled, so that it doesn&#8217;t degrade into the proverbial <a href="http://www.laputan.org/mud/mud.html#BigBallOfMud">"big ball of mud"</a>.
+<p>This is therefore a key technique to allow the app to stay decoupled, so that it doesn&#8217;t degrade into the proverbial <a href="http://www.laputan.org/mud/mud.html#BigBallOfMud">"big ball of mud"</a>.
 Mixins allow dependencies to be inverted, so that the dependencies between modules can be kept acyclic and under control.</p>
 </div>
 <div class="paragraph">
-<p>For example, the contributee (eg <code>Customer</code>, being mixed into) is in one module, while the contributor mixin (<code>DocumentHolder_documents</code>) is in some other module.
-The <code>customer</code> module knows about the <code>document</code> module, but not vice versa.</p>
+<p>For example, suppose that we send out <code>Invoice</code>s to <code>Customer</code>s.
+We want the invoices to know about customers, but not vice versa.
+We could surface the set of invoices for a customer using a <code>Customer_invoices</code> mixin:</p>
+</div>
+<div class="imageblock plantuml">
+<div class="content">
+<img src="http://www.plantuml.com/plantuml/png/ZP9DQyCm38Rl_XKcby6WPUTIGbaEOx33RcEduTeY4V4Nbf8kZFttcJNfokQjyr5wtbUof1snIZmuApeq8C55dgG3juT4ukepve2xO4W8wj57bPIJsYeY-IPaVhTAzsqAWpTDi25jjmP8rxLi9kNBG8oSym_OTdoN07wX72xG8_g-pAHWOQ6UmTfmA7F4IJ6qKsQVEcGeKohYtm1T0j0p9A_isVUcCZagEy39hCo0P-Jf7wCQ4Guk6B2N9-Rm5VstaRqB4JEdMf3enu0QvjKUrzmCnC51UfcJ94ysPzJzh3mkBdl-bArMjQnkrjVL0c-MUlJLWPvbLEn1pjTJzb-dN669RsIbW-U4-u5paaCbTk1DFlKF" alt="diagram">
+</div>
+<div class="title">Figure 2. <code>invoices</code> module contributes to <code>customers</code></div>
+</div>
+<div class="paragraph">
+<p>In the UI, when rendering a <code>Customer</code>, we would also be presented with the associated set of <code>Invoice</code>s.</p>
+</div>
+<div class="paragraph">
+<p>We can also use mixins for dependencies that are in the other direction.
+For example, suppose we have a mechanism to attach <code>Document</code>s to arbitrary domain objects.
+The documents module does not depend on any other modules, but provides a <code>DocumentHolder</code> marker interface.
+We can therefore attach documents to a <code>Customer</code> by having <code>Customer</code> implement this marker interface:</p>
+</div>
+<div class="imageblock plantuml">
+<div class="content">
+<img src="http://www.plantuml.com/plantuml/png/ZPFBQiCm44Nt-WhXJQ5WqtK88JI5Tj55TwMRbeaqjONrCD8egIdzzuh4TXuuJhISEVEuLz8o47YAHhDAIUHe6cgvGRD67zZTBcQGAYS3Ow5MjW4FXWiD8V1VnjDv156NtaKhLquxFvzB36AnuAiMx3ZGD9JohwgiwDaZNg2Cwg4tPUjnnZkDFVM1MhljE1V80s7P9lQzKeJZ53Hg6WZN06K9lGLz9AyT9pUW8mxDnXcqfAYzmQgDmgrn4lLrnupwKVRCiZ_6ciH1YLmw4KsQsr_kJj0t2EHFNUR5QOcUzzxlgFrpE2M-3gs6gPTX809HzS792juzeBJsnOcvp1SyUoYA-soecnt4JHGMEbMUfcSy4ywIL-j863YvZ4rlVsEJmNGH0pcJFbnd-bxlgeiUwHr2UIpopxC9R8bMfe_y3m00" alt="diagram">
+</div>
+<div class="title">Figure 3. <code>customers</code> depends upon contributions of <code>documents</code></div>
 </div>
 <div class="paragraph">
 <p>Mixins are also a convenient mechanism for grouping functionality even for a concrete type, helping to rationalize about the dependency between the data and the behaviour.
@@ -881,7 +873,7 @@ Each mixin is in effect a single behavioural "responsibility" of the domain obje
 <div class="paragraph">
 <p>So, while Apache Isis allows you to put behaviour onto the underlying domain entities, it can often be better to treat the domain entities as immutable.
 Instead, use mixins to implement behaviour.
-When using agile development methodology, it&#8217;s common for a user story to correspond to a new mixin.</p>
+When using an agile development methodology, it&#8217;s common for a user story to correspond to a new mixin.</p>
 </div>
 <div class="paragraph">
 <p>There are also practical reasons for moving behaviour out of entities even within the same module, because structuring your application this way helps support hot-reloading of Java classes (so that you can modify and recompile your application without having to restart it).
@@ -890,7 +882,7 @@ This can provide substantial productivity gains.</p>
 <div class="paragraph">
 <p>The Hotspot JVM has limited support for hot reloading; generally you can change method implementations but you cannot introduce new methods.
 However, the <a href="https://dcevm.github.io/">DCEVM</a> open source project will patch the JVM to support much more complete hot reloading support.
-There are also, of course, commercial products such as JRebel.</p>
+There are also commercial products such as JRebel.</p>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -927,20 +919,22 @@ The mixin pattern is Apache Isis' straightforward take on the same basic concept
 <h2 id="identifiers"><a class="anchor" href="#identifiers"></a>Identifiers</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The Apache Isis framework actively tracks the identity of each domain object.
+<p>The Apache Isis framework tracks the identity of each domain object.
 This identity is represented to the end-user in human-readable form so that they know which object they are interacting with, and is also used and is available internally/for integrations.</p>
 </div>
 <div class="paragraph">
 <p>This section explores these two related concepts.</p>
 </div>
 <div class="sect2">
-<h3 id="title-and-icon-and-css-class"><a class="anchor" href="#title-and-icon-and-css-class"></a>Title, Icon and CSS Class</h3>
+<h3 id="title-and-icon-and-css-class"><a class="anchor" href="#title-and-icon-and-css-class"></a>Title, Icon etc.</h3>
 <div class="paragraph">
 <p>To allow the end-user to distinguish one domain object from another, it is rendered with a title and an icon.
 The icon informally identifies the type of the domain object, while the title identifies the instance.</p>
 </div>
-<div class="sect3">
-<h4 id="title"><a class="anchor" href="#title"></a>Title</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Title</p>
 <div class="paragraph">
 <p>The title of a domain object is shown in several places: as the main heading for an object; as a link text or tooltip for an object referencing another object, and also in tables representing collections of objects.</p>
 </div>
@@ -950,19 +944,15 @@ The icon informally identifies the type of the domain object, while the title id
 <div class="paragraph">
 <p>The title is usually just a simple string, but the framework also allows for the title to be translated into different locales.</p>
 </div>
-</div>
-<div class="sect3">
-<h4 id="icon"><a class="anchor" href="#icon"></a>Icon</h4>
+</li>
+<li>
+<p>Icon</p>
 <div class="paragraph">
 <p>Sometimes it&#8217;s helpful for the icon to represent more than just the object&#8217;s type; it might also indicate the state of an object.
 For example, a shipped <code>Order</code> might have a slightly different icon to a yet-to-be-shipped <code>Order</code>; or a library book that is <code>loaned out</code> might be distinguished from one that is <code>available</code>.</p>
 </div>
-</div>
-<div class="sect3">
-<h4 id="css-class"><a class="anchor" href="#css-class"></a>CSS Class</h4>
-<div class="paragraph">
-<p>In addition to the title and icon, it is also possible for a domain object to provide a CSS class hint.
-In conjunction with <a href="../../../vw/latest/customisation.html#tweaking-css-classes" class="page">customized CSS</a> this can be used to apply arbitrary styling; for example each object could be rendered in a page with a different background colour.</p>
+</li>
+</ul>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -972,13 +962,11 @@ In conjunction with <a href="../../../vw/latest/customisation.html#tweaking-css-
 </td>
 <td class="content">
 <div class="paragraph">
-<p>Details on how to actually write titles, icons and CSS classes can be found
-<a href="ui-hints/object-titles-and-icons.html" class="page">here</a>.</p>
+<p>Details on how to actually write titles, icons and CSS classes can be found <a href="ui-hints.html#object-titles-and-icons" class="page">here</a>.</p>
 </div>
 </td>
 </tr>
 </table>
-</div>
 </div>
 </div>
 <div class="sect2">
@@ -1028,42 +1016,12 @@ When the PDF is scanned by the mail room, the barcode could be read to attach th
 </div>
 <div class="paragraph">
 <p>Although the exact content of an OID should be considered opaque by domain objects, it is possible for domain objects to obtain OIDs.
-These are represented as <code>Bookmark</code>s, obtained from the <a href="../../../refguide/latest/applib-svc/BookmarkService.html" class="page"><code>BookmarkService`</a>.
-Deep links meanwhile can be obtained from the <a href="../../../refguide/latest/applib-svc/DeepLinkService.html" class="page"></code>DeepLinkService`</a>.</p>
+These are represented as <code>Bookmark</code>s, obtained from the <a href="../../../refguide/latest/applib-svc/BookmarkService.html" class="page"><code>BookmarkService</code></a>.
+Deep links meanwhile can be obtained from the <a href="../../../refguide/latest/applib-svc/DeepLinkService.html" class="page"><code>DeepLinkService</code></a>.</p>
 </div>
 <div class="paragraph">
 <p>OIDs can also be converted into XML format, useful for integration scenarios.
 The <a href="../../../refguide/latest/schema/common.html" class="page">common schema</a> XSD defines the <code>oidDto</code> complex type for precisely this purpose.</p>
-</div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-TODO: v2 - tidy up this following text (moved from the BookmarkService refguide):
-</td>
-</tr>
-</table>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>A <code>Bookmark</code> is little more than an API equivalent of Apache Isis' internal <code>Oid</code> (object identifier).
-Nevertheless, the ability to uniquely address <em>any</em> domain object within an Apache Isis system&#8201;&#8212;&#8201;to in effect provide a URN&#8201;&#8212;&#8201;is immensely useful.</p>
-</div>
-<div class="paragraph">
-<p>For example, a <code>Bookmark</code> could be converted into a barcode, and then this used for automated scanning of correspondence from a customer.</p>
-</div>
-</td>
-</tr>
-</table>
 </div>
 </div>
 </div>
@@ -1091,6 +1049,21 @@ Nevertheless, the ability to uniquely address <em>any</em> domain object within 
 <p>In addition, mixins act as contributors of behaviour to an underlying domain object.
 Typically the behaviour being contributed is an action, but it could also be a derived property or a derived collection.</p>
 </div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>What follows <em>is</em> a simplification; the Apache Isis programming model also recognizes a number of other supporting methods for domain object members, for associated business logic.
+This is covered in more detail in <a href="business-rules.html" class="page">business rules</a>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
 <div class="sect2">
 <h3 id="properties"><a class="anchor" href="#properties"></a>Properties</h3>
 <div class="paragraph">
@@ -1102,14 +1075,35 @@ Typically the behaviour being contributed is an action, but it could also be a d
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Customer
+    @Property                       <i class="conum" data-value="1"></i><b>(1)</b>
+    @PropertyLayout                 <i class="conum" data-value="2"></i><b>(2)</b>
     @Getter @Setter
     private String lastName;
     ...
 }</code></pre>
 </div>
 </div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The <a href="../../../refguide/latest/applib-ant/Property.html" class="page"><code>@Property</code></a> annotation defines additional domain-layer semantics</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The <a href="../../../refguide/latest/applib-ant/PropertyLayout.html" class="page"><code>@PropertyLayout</code></a> annotation defines additional presentation-layer hints</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
-<p>the framework infers the <code>Customer</code> domain entity, which in turn has a <code>firstName</code> string <em>property</em>.</p>
+<p>From this the framework infers the <code>Customer</code> domain entity, which in turn has a <code>firstName</code> string <em>property</em>.</p>
+</div>
+<div class="paragraph">
+<p><code>@Property</code> is not mandatory, though in many cases it will be present in order to specify additional semantics.</p>
+</div>
+<div class="paragraph">
+<p><code>@PropertyLayout</code> is not mandatory either.
+Whether it is present or not depends to some extent on your preferred style: the UI semantics can be specified either in code within this annotation, or can be specified through the companion <a href="ui-hints.html#layout" class="page">layout file</a>.</p>
 </div>
 </div>
 <div class="sect2">
@@ -1123,14 +1117,180 @@ Typically the behaviour being contributed is an action, but it could also be a d
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Customer
+    @Collection                                             <i class="conum" data-value="1"></i><b>(1)</b>
+    @CollectionLayout                                       <i class="conum" data-value="2"></i><b>(2)</b>
     @Getter @Setter
-    private SortedSet&lt;Order&gt; orders = new TreeSet&lt;Order&gt;();
+    private SortedSet&lt;Order&gt; orders = new TreeSet&lt;Order&gt;(); <i class="conum" data-value="3"></i><b>(3)</b>
     ...
 }</code></pre>
 </div>
 </div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The <a href="../../../refguide/latest/applib-ant/Collection.html" class="page"><code>@Collection</code></a> annotation defines additional domain-layer semantics</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The <a href="../../../refguide/latest/applib-ant/CollectionLayout.html" class="page"><code>@CollectionLayout</code></a> annotation defines additional presentation-layer hints</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>The most commonly a <code>java.util.SortedSet</code> for entities obtained from an RDBMS (with set semantics).
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+all entities should define a natural ordering so that when rendered in the UI they will be ordered "meaningfully" to the end-user.
+</td>
+</tr>
+</table>
+</div></td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
-<p>the framework infers the <code>orders</code> <em>collection</em>.</p>
+<p>From this the framework infers the <code>orders</code> <em>collection</em>.</p>
+</div>
+<div class="paragraph">
+<p>As with properties, the <code>@Collection</code> annotation is not mandatory, though in many cases it will be present in order to specify additional semantics.</p>
+</div>
+<div class="paragraph">
+<p>Similarly, <code>@CollectionLayout</code> is not mandatory either.
+Whether it is present or not depends to some extent on your preferred style: the UI semantics can be specified either in code within this annotation, or can be specified through the companion <a href="ui-hints.html#layout" class="page">layout file</a>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="actions"><a class="anchor" href="#actions"></a>Actions</h3>
+<div class="paragraph">
+<p>The third type of object member is actions.
+Broadly speaking, actions are those <code>public</code> methods that do not represent properties or collections.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Customer
+    @Action                                                 <i class="conum" data-value="1"></i><b>(1)</b>
+    @ActionLayout                                           <i class="conum" data-value="2"></i><b>(2)</b>
+    public Customer placeOrder(
+        @Parameter                                          <i class="conum" data-value="3"></i><b>(3)</b>
+        @ParameterLayout                                    <i class="conum" data-value="4"></i><b>(4)</b>
+        Product p,
+        @Parameter
+        @ParameterLayout
+        int quantity) {
+        /* ... */
+    }
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The <a href="../../../refguide/latest/applib-ant/Action.html" class="page"><code>@Action</code></a> annotation defines additional domain-layer semantics</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The <a href="../../../refguide/latest/applib-ant/ActionLayout.html" class="page"><code>@ActionLayout</code></a> annotation defines additional presentation-layer hints</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>The <a href="../../../refguide/latest/applib-ant/Parameter.html" class="page"><code>@Parameter</code></a> annotation defines additional domain-layer semantics</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>The <a href="../../../refguide/latest/applib-ant/ParameterLayout.html" class="page"><code>@ParameterLayout</code></a> annotation defines additional presentation-layer hints</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>From this the framework infers a the <code>placeOrder</code> <em>action</em>.</p>
+</div>
+<div class="paragraph">
+<p>Whether the <code>@Action</code> annotation is required to identify an action method is configurable; some teams prefer actions to be explicitly called out, others prefer that any "left over" public methods are identified as actions.</p>
+</div>
+<div class="paragraph">
+<p>The use of <code>@ActionLayout</code> is optional, the UI semantics can be specified either in code within this annotation, or can be specified through the companion <a href="ui-hints.html#layout" class="page">layout file</a>.</p>
+</div>
+<div class="paragraph">
+<p>As with properties, both <code>@Parameter</code> and <code>@ParameterLayout</code> are also optional.
+Note though that UI hints for parameters <em>cannot</em> be specified in the layout file.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="business-rules"><a class="anchor" href="#business-rules"></a>Business Rules</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When a domain object is rendered in the UI or the end-user interacts with the domain object through the UI, the framework applies a series of precondition business rules to each object member (property, collection or action).</p>
+</div>
+<div class="paragraph">
+<p>When the object is being rendered, the framework checks:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>is the object member visible?</p>
+<div class="paragraph">
+<p>Members that are not visible are simply omitted from the page.
+If all the members in a fieldset (property group) are hidden, then the fieldset is not shown.
+If all the members in a tab are hidden, then the tab is not shown.
+If all the members of the object are hidden, then a "404" style message ("no such object") is returned to the user.</p>
+</div>
+</li>
+<li>
+<p>if the object member is visible, is the object member enabled?</p>
+<div class="paragraph">
+<p>An enabled property can be edited (otherwise it is read-only), and an enabled action can be invoked (otherwise it&#8217;s button is "greyed-out").
+Note that collections are always read-only.</p>
+</div>
+</li>
+<li>
+<p>for enabled object members, if the user then interacts with that member, are the supplied values valid (can the user "do it").</p>
+<div class="paragraph">
+<p>For an editable property this means validating the proposed new value of the property.
+For an invokable action this means validating that arguments being used to invoke the action.</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>One way to remember this is: <strong>"see it, use it, do it"</strong></p>
+</div>
+<div class="paragraph">
+<p>The framework provides a multitude of ways to implement these business rules.
+The simplest approach is to just implement the business rules imperatively in the domain object, using a supporting method.
+For example,</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public Customer placeOrder(Product p, int quantity) {
+    // ...
+}
+public boolean hidePlaceOrder() {                       <i class="conum" data-value="1"></i><b>(1)</b>
+    return isBlacklisted();
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>supporting method, invoked before rendering the customer.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>In this example the "place order" action would not be visible for any customer that had been blacklisted.</p>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -1140,48 +1300,11 @@ Typically the behaviour being contributed is an action, but it could also be a d
 </td>
 <td class="content">
 <div class="paragraph">
-<p>The most commonly used collection type is <code>java.util.SortedSet</code>; entities are most commonly mapped to a relational database (ie a datastore with set semantics) and we recommend that all entities define a natural ordering so that when rendered in the UI they will be ordered "meaningfully" to the end-user.</p>
+<p>Details on how to actually write business rules can be found <a href="business-rules.html" class="page">here</a>.</p>
 </div>
 </td>
 </tr>
 </table>
-</div>
-</div>
-<div class="sect2">
-<h3 id="actions"><a class="anchor" href="#actions"></a>Actions</h3>
-<div class="paragraph">
-<p>The third type of object member is actions.
-(To a first approximation), actions are all public methods that do not represent properties or collections.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Customer
-    public Customer placeOrder(Product p, int quantity) { /* ... */ }
-    ...
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>corresponds to the <code>placeOrder</code> <em>action</em>.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>The above <em>is</em> a simplification; the Apache Isis programming model also recognizes a number of other supporting methods each of which has its own prefix such as <code>hide</code>, <code>disable</code> or <code>validate</code>.
-These can be considered as "reserved words" in Apache Isis, and do <em>not</em> correspond to actions even though they have public visibility.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
 </div>
 </div>
 </div>
@@ -1191,21 +1314,6 @@ These can be considered as "reserved words" in Apache Isis, and do <em>not</em> 
 <div class="paragraph">
 <p>When the framework renders a domain object, and as the end-user interacts with the domain object, the framework it emits multiple events using the intra-process <a href="../../../refguide/latest/applib-svc/EventBusService.html" class="page">event bus</a>.
 These events enable other domain services (possibly in other modules) to influence how the domain object is rendered, or to perform side-effects or even veto an action invocation.</p>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>It is also possible to simulate the rendering of a domain object by way of the <a href="../../../refguide/latest/applib-svc/WrapperFactory.html" class="page"><code>WrapperFactory</code></a>.
-This allows business rules to be enforced for programmatic interactions between objects.</p>
-</div>
-</td>
-</tr>
-</table>
 </div>
 <div class="paragraph">
 <p>To receive the events, the domain service should subscribe to the <a href="../../../refguide/latest/applib-svc/EventBusService.html" class="page"><code>EventBusService</code></a>, and implement an appropriately annotated method to receive the events.</p>
@@ -1269,22 +1377,30 @@ For example, a referential integrity restrict could be implemented here.</p>
 <p>As explained <a href="#title-and-icon-and-css-class">earlier</a>, to allow the end-user to distinguish one domain object from another, it is rendered with a title and an icon.</p>
 </div>
 <div class="paragraph">
-<p><a href="ui-hints/object-titles-and-icons.html" class="page">Normally</a> the code to return title and icon of an object is part of the domain object&#8217;s implementation.
+<p><a href="ui-hints.html#object-titles-and-icons" class="page">Normally</a> the code to return title and icon of an object is part of the domain object&#8217;s implementation.
 However, UI events allow this title and icon to be provided instead by a subscriber.
 UI events have higher precedence than the other mechanisms of supplying a title.</p>
 </div>
 <div class="paragraph">
-<p>If annotated with <a href="../../../refguide/latest/applib-ant/DomainObjectLayout.html#titleUiEvent" class="page"><code>@DomainObjectLayout#titleUiEvent()</code></a>, the appropriate (subclass of) <code>TitleUiEvent</code> will be emitted.
- Similarly for <a href="../../../refguide/latest/applib-ant/DomainObjectLayout.html#iconUiEvent" class="page"><code>iconUiEvent()</code></a> and <a href="../../../refguide/latest/applib-ant/DomainObjectLayout.html#cssClassUiEvent" class="page"><code>cssClassUiEvent()</code></a>.</p>
+<p>If annotated with <a href="../../../refguide/latest/applib-ant/DomainObjectLayout.html#titleuievent" class="page"><code>@DomainObjectLayout#titleUiEvent()</code></a>, the appropriate (subclass of) <code>TitleUiEvent</code> will be emitted.
+Similarly for <a href="../../../refguide/latest/applib-ant/DomainObjectLayout.html#iconuievent" class="page"><code>#iconUiEvent()</code></a>.
+In addition, it is possible to use events to obtain a CSS class to render with the domain object, using <a href="../../../refguide/latest/applib-ant/DomainObjectLayout.html#cssclassuievent" class="page"><code>#cssClassUiEvent()</code></a>, and to select an alternate <a href="ui-hints.html#layout" class="page">layout file</a> using <a href="../../../refguide/latest/applib-ant/DomainObjectLayout.html#layoutuievent" class="page"><code>#layoutUiEvent()</code></a>.</p>
 </div>
 <div class="paragraph">
-<p>This can be particularly useful for <a href="programming-model.html#jaxb" class="page">JAXB-style view models</a> which are code generated from XSDs and so cannot have any dependencies on the rest of the Apache Isis framework.
-Here a subscriber on the default events can provide a title and icon for such an object.
-Behaviour on such DTOs can also be provided using <a href="#mixins">mixins</a>.</p>
+<p>There are two use cases where this feature is useful:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>the first is to override the title/icon/CSS class/layout of 3rd party library code, for example as provided by the <a href="../../../security/latest/secman/about.html" class="page">SecMan</a> extension.</p>
+</li>
+<li>
+<p>the second is for <a href="programming-model.html#jaxb" class="page">JAXB-style view models</a> which are code generated from XSDs and so cannot have any dependencies on the rest of the Apache Isis framework.</p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
-<p>Events also allow one module to influence/fine-tune the title of entities provided by some other module.
-One such case is when reusing library modules, eg as provided by (non-ASF) <a href="https://platform.incode.org" target="_blank" rel="noopener">Incode Platform</a>.</p>
+<p>In this second case a subscriber on the default events can provide a title and icon for such an object, with the behaviour provided using <a href="#mixins">mixins</a>.</p>
 </div>
 </div>
 <div class="sect2">
@@ -1292,11 +1408,11 @@ One such case is when reusing library modules, eg as provided by (non-ASF) <a hr
 <div class="paragraph">
 <p>Lifecycle events allow domain object subscribers to listen for changes to the persistence state of domain entities, and act accordingly.</p>
 </div>
-<div class="admonitionblock note">
+<div class="admonitionblock warning">
 <table>
 <tr>
 <td class="icon">
-<i class="fa icon-note" title="Note"></i>
+<i class="fa icon-warning" title="Warning"></i>
 </td>
 <td class="content">
 <div class="paragraph">
@@ -1312,37 +1428,56 @@ One such case is when reusing library modules, eg as provided by (non-ASF) <a hr
 <div class="ulist">
 <ul>
 <li>
-<p>object created - just instantiated.<br></p>
+<p><strong>created</strong></p>
 <div class="paragraph">
-<p>Note that this requires that the object is instantiated using the framework, see <a href="crud/instantiating.html" class="page">here</a> for further discussion</p>
+<p>Entity has just been instantiated.
+Note that this requires that the object is instantiated using the framework, see <a href="crud.html#instantiating" class="page">here</a> for further discussion.</p>
 </div>
 </li>
 <li>
-<p>updated loaded - just retrieved from the database</p>
+<p><strong>loaded</strong></p>
+<div class="paragraph">
+<p>Entity has just retrieved/rehydrated from the database</p>
+</div>
 </li>
 <li>
-<p>object persisting - object about to be inserted into the database</p>
+<p><strong>persisting</strong></p>
+<div class="paragraph">
+<p>Entity is about to be inserted/saved (ie for the first time) into the database</p>
+</div>
 </li>
 <li>
-<p>object persisted - object just inserted into the database</p>
+<p><strong>persisted</strong></p>
+<div class="paragraph">
+<p>Entity has just been inserted/saved (ie for the first time) into the database</p>
+</div>
 </li>
 <li>
-<p>object updating - object about to be updated</p>
+<p><strong>updating</strong></p>
+<div class="paragraph">
+<p>The (already persistent) entity about to be flushed in the database</p>
+</div>
 </li>
 <li>
-<p>object updated - object just updated</p>
+<p><strong>updated</strong></p>
+<div class="paragraph">
+<p>The (already persistent) entity has just been flushed to the database</p>
+</div>
 </li>
 <li>
-<p>object removing - object about to be deleted from the database</p>
+<p><strong>removing</strong></p>
+<div class="paragraph">
+<p>The (already persistent) entity is about to be deleted from the database</p>
+</div>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>There is no lifecycle event for object creating because the framework doesn&#8217;t know about newly created objects until they have been created; and there is no lifecycle event for obejcts removed because it is not valid to "touch" a domain entity once deleted.</p>
+<p>For example, if annotated with <a href="../../../refguide/latest/applib-ant/DomainObject.html#updatingLifecycleEvent" class="page"><code>@DomainObjectLayout#updatingLifecycleEvent</code></a>, the appropriate (subclass of) <code>ObjectUpdatingEvent</code> will be emitted.</p>
 </div>
 <div class="paragraph">
-<p>For example, if annotated with <a href="../../../refguide/latest/applib-ant/DomainObject.html#updatingLifecycleEvent" class="page"><code>@DomainObjectLayout#updatingLifecycleEvent</code></a>, the appropriate (subclass of) <code>ObjectUpdatingEvent</code> will be emitted.
- Similarly for <a href="../../../refguide/latest/applib-ant/DomainObjectLayout.html#iconUiEvent" class="page"><code>iconUiEvent()</code></a> and <a href="../../../refguide/latest/applib-ant/DomainObjectLayout.html#cssClassUiEvent" class="page"><code>cssClassUiEvent()</code></a>.</p>
+<p>There is no lifecycle event for "entity creating" because (obviously) the framework doesn&#8217;t know about newly created objects until they have been created.
+Similarly, there is no lifecycle event for entities that have been removed because it is not valid to "touch" a domain entity once deleted.</p>
 </div>
 </div>
 </div>
@@ -1415,7 +1550,7 @@ public class CustomerModule {}</code></pre>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200320-0401-0cfb2aef</p>
+            <p>Revision: 2.0.0-M2.20200321-0401-6c585483</p>
         </div>
     </div>
 </footer>

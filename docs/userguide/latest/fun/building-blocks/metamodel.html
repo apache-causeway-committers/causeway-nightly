@@ -396,8 +396,11 @@ page.parent doesn't seem to be set...
 <p>At its core, Apache Isis is a metamodel that is built at runtime from the domain classes (eg <code>Customer.java</code>), along with optional supporting metadata (eg <code>Customer.layout.xml</code>).</p>
 </div>
 <div class="paragraph">
-<p>The contents of this metamodel is inferred from the Java classes discovered on the classpath: the entities and supporting services, as well the members of those classes.
-The detail of the metamodel is generally explicit, usually represented by Java annotations such as <code>@Title</code> or <code>@Action</code>.
+<p>The contents of this metamodel are the entities and supporting services, as well the members of those classes.
+These are all meta-annotated with <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/stereotype/Component.html"><code>@Component</code></a> and are either registered explicitly (framework services) or dynamically discovered (entities and user-defined services) by Spring Boot on the classpath via <a href="https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/context/annotation/ComponentScan.html"><code>@ComponentScan</code></a>.</p>
+</div>
+<div class="paragraph">
+<p>The detail of the metamodel is generally explicit, usually represented by Java annotations such as <code>@Title</code> or <code>@Action</code>, though this is configurable.
 Notably the metamodel is <a href="../../btb/programming-model.html" class="page">extensible</a>; it is possible to teach Apache Isis new programming conventions/rules (and conversely to remove those that are built in).</p>
 </div>
 <div class="paragraph">
@@ -406,29 +409,15 @@ For example the <code>@Title</code> annotation&#8201;&#8212;&#8201;which identif
 However the framework also recognizes certain other JEE annotations such as <code>@javax.inject.Inject</code> (used for dependency injection).</p>
 </div>
 <div class="paragraph">
-<p>The framework uses DataNucleus for its persistence mechanism.
-This is an ORM that implements the JDO and JPA APIs, and which can map domain objects either to an RDBMS or to various NoSQL objectstores such as MongoDB or Neo4J.
-Apache Isis recognizes a number of the JDO annotations such as <code>@javax.jdo.annotations.Column(allowsNull=&#8230;&#8203;)</code>.</p>
+<p>The framework integrates an ORM for persistence, specifically DataNucleus and the JDO API (there is a roadmap to also support JPA with other persistence implementations).
+Both JDO and JPA can map to both relational databases and also to various NoSQL objectstores such as MongoDB or Neo4J.
+Apache Isis recognizes a number of these persistence-specific annotations, for example <code>@javax.jdo.annotations.Column(allowsNull=&#8230;&#8203;)</code>.</p>
 </div>
 <div class="paragraph">
 <p>In addition, the framework builds up the metamodel for each domain object using
 <a href="../../../../vw/latest/layout.html" class="page">layout hints</a>, such as <code>Customer.layout.xml</code>.
 These provide metadata such as grouping elements of the UI together, using multi-column layouts, and so on.
 The layout file can be modified while the application is still running, and are picked up automatically; a useful way to speed up feedback.</p>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>At the time of writing Apache Isis only recognizes and supports the JDO API, though we expect JPA to be supported in the future.</p>
-</div>
-</td>
-</tr>
-</table>
 </div>
 </article>
 <aside class="article-aside toc" role="navigation">
@@ -447,7 +436,7 @@ The layout file can be modified while the application is still running, and are 
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200320-0401-0cfb2aef</p>
+            <p>Revision: 2.0.0-M2.20200321-0401-6c585483</p>
         </div>
     </div>
 </footer>
