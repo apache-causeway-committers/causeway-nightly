@@ -403,38 +403,6 @@ page.parent doesn't seem to be set...
 </div>
 </div>
 <div class="sect1">
-<h2 id="metamodel"><a class="anchor" href="#metamodel"></a>A MetaModel</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>At its core, Apache Isis is a metamodel that is built at runtime from the domain classes (eg <code>Customer.java</code>), along with optional supporting metadata (eg <code>Customer.layout.xml</code>).</p>
-</div>
-<div class="paragraph">
-<p>The contents of this metamodel are the entities and supporting services, as well the members of those classes.
-These are all meta-annotated with <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/stereotype/Component.html"><code>@Component</code></a> and are either registered explicitly (framework services) or dynamically discovered (entities and user-defined services) by Spring Boot on the classpath via <a href="https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/context/annotation/ComponentScan.html"><code>@ComponentScan</code></a>.</p>
-</div>
-<div class="paragraph">
-<p>The detail of the metamodel is generally explicit, usually represented by Java annotations such as <code>@Title</code> or <code>@Action</code>, though this is configurable.
-Notably the metamodel is <a href="../btb/programming-model.html" class="page">extensible</a>; it is possible to teach Apache Isis new programming conventions/rules (and conversely to remove those that are built in).</p>
-</div>
-<div class="paragraph">
-<p>Most of the annotations recognized by the framework are defined by the Apache Isis framework itself.
-For example the <code>@Title</code> annotation&#8201;&#8212;&#8201;which identifies how the framework should derive a human-readable label for each rendered domain object&#8201;&#8212;&#8201;is part of the <code>org.apache.isis.applib.annotations</code> package.
-However the framework also recognizes certain other JEE annotations such as <code>@javax.inject.Inject</code> (used for dependency injection).</p>
-</div>
-<div class="paragraph">
-<p>The framework integrates an ORM for persistence, specifically DataNucleus and the JDO API (there is a roadmap to also support JPA with other persistence implementations).
-Both JDO and JPA can map to both relational databases and also to various NoSQL objectstores such as MongoDB or Neo4J.
-Apache Isis recognizes a number of these persistence-specific annotations, for example <code>@javax.jdo.annotations.Column(allowsNull=&#8230;&#8203;)</code>.</p>
-</div>
-<div class="paragraph">
-<p>In addition, the framework builds up the metamodel for each domain object using
-<a href="../../../vw/latest/layout.html" class="page">layout hints</a>, such as <code>Customer.layout.xml</code>.
-These provide metadata such as grouping elements of the UI together, using multi-column layouts, and so on.
-The layout file can be modified while the application is still running, and are picked up automatically; a useful way to speed up feedback.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
 <h2 id="type-of-domain-objects"><a class="anchor" href="#type-of-domain-objects"></a>Type of Domain Objects</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -529,7 +497,7 @@ However, a service cannot have (persisted) properties, nor can it have (persiste
 For example, for the <code>Customer</code> entity there may be a <code>CustomerRepository</code>, while for <code>Order</code> entity there may be an <code>OrderRepository</code>.</p>
 </div>
 <div class="paragraph">
-<p>Similarly, entities might also have a corresponding factory service: a <code>CustomerFactory</code> or an <code>OrderFactory</code>; Evans' <a href="http://books.google.com/books/about/Domain_Driven_Design.html?id=hHBf4YxMnWMC">Domain Driven Design</a>, draws a clear distinction between a factory (that creates object) and a repository (that is used to find existing objects).</p>
+<p>Similarly, entities might also have a corresponding factory service: a <code>CustomerFactory</code> or an <code>OrderFactory</code>; Evans' <a href="http://books.google.com/books/about/Domain_Driven_Design.html?id=hHBf4YxMnWMC">Domain Driven Design</a>, draws a clear distinction between a factory (that creates object) and a repository (that is used to find existing objecpts).</p>
 </div>
 <div class="paragraph">
 <p>On the other hand, from an end-users' perspective the act of finding an existing object vs creating a new one are quite closely related.
@@ -825,33 +793,7 @@ Or rather, the mixin <em>appears</em> to contribute the behaviour/state in the U
 </div>
 <div class="paragraph">
 <p>This is therefore a key technique to allow the app to stay decoupled, so that it doesn&#8217;t degrade into the proverbial <a href="http://www.laputan.org/mud/mud.html#BigBallOfMud">"big ball of mud"</a>.
-Mixins allow dependencies to be inverted, so that the dependencies between modules can be kept acyclic and under control.</p>
-</div>
-<div class="paragraph">
-<p>For example, suppose that we send out <code>Invoice</code>s to <code>Customer</code>s.
-We want the invoices to know about customers, but not vice versa.
-We could surface the set of invoices for a customer using a <code>Customer_invoices</code> mixin:</p>
-</div>
-<div class="imageblock plantuml">
-<div class="content">
-<img src="http://www.plantuml.com/plantuml/png/ZP9DQyCm38Rl_XKcby6WPUTIGbaEOx33RcEduTeY4V4Nbf8kZFttcJNfokQjyr5wtbUof1snIZmuApeq8C55dgG3juT4ukepve2xO4W8wj57bPIJsYeY-IPaVhTAzsqAWpTDi25jjmP8rxLi9kNBG8oSym_OTdoN07wX72xG8_g-pAHWOQ6UmTfmA7F4IJ6qKsQVEcGeKohYtm1T0j0p9A_isVUcCZagEy39hCo0P-Jf7wCQ4Guk6B2N9-Rm5VstaRqB4JEdMf3enu0QvjKUrzmCnC51UfcJ94ysPzJzh3mkBdl-bArMjQnkrjVL0c-MUlJLWPvbLEn1pjTJzb-dN669RsIbW-U4-u5paaCbTk1DFlKF" alt="diagram">
-</div>
-<div class="title">Figure 2. <code>invoices</code> module contributes to <code>customers</code></div>
-</div>
-<div class="paragraph">
-<p>In the UI, when rendering a <code>Customer</code>, we would also be presented with the associated set of <code>Invoice</code>s.</p>
-</div>
-<div class="paragraph">
-<p>We can also use mixins for dependencies that are in the other direction.
-For example, suppose we have a mechanism to attach <code>Document</code>s to arbitrary domain objects.
-The documents module does not depend on any other modules, but provides a <code>DocumentHolder</code> marker interface.
-We can therefore attach documents to a <code>Customer</code> by having <code>Customer</code> implement this marker interface:</p>
-</div>
-<div class="imageblock plantuml">
-<div class="content">
-<img src="http://www.plantuml.com/plantuml/png/ZPFBQiCm44Nt-WhXJQ5WqtK88JI5Tj55TwMRbeaqjONrCD8egIdzzuh4TXuuJhISEVEuLz8o47YAHhDAIUHe6cgvGRD67zZTBcQGAYS3Ow5MjW4FXWiD8V1VnjDv156NtaKhLquxFvzB36AnuAiMx3ZGD9JohwgiwDaZNg2Cwg4tPUjnnZkDFVM1MhljE1V80s7P9lQzKeJZ53Hg6WZN06K9lGLz9AyT9pUW8mxDnXcqfAYzmQgDmgrn4lLrnupwKVRCiZ_6ciH1YLmw4KsQsr_kJj0t2EHFNUR5QOcUzzxlgFrpE2M-3gs6gPTX809HzS792juzeBJsnOcvp1SyUoYA-soecnt4JHGMEbMUfcSy4ywIL-j863YvZ4rlVsEJmNGH0pcJFbnd-bxlgeiUwHr2UIpopxC9R8bMfe_y3m00" alt="diagram">
-</div>
-<div class="title">Figure 3. <code>customers</code> depends upon contributions of <code>documents</code></div>
+There&#8217;s a lot more discussion on this topic in <a href="#modules">modules</a>, below.</p>
 </div>
 <div class="paragraph">
 <p>Mixins are also a convenient mechanism for grouping functionality even for a concrete type, helping to rationalize about the dependency between the data and the behaviour.
@@ -972,7 +914,7 @@ For example, a shipped <code>Order</code> might have a slightly different icon t
 <div class="sect2">
 <h3 id="oid"><a class="anchor" href="#oid"></a>OIDs</h3>
 <div class="paragraph">
-<p>As well as defining a <a href="#metamodel">metamodel</a> of the structure (domain classes) of its domain objects, Apache Isis also manages the runtime instances of said domain objects.</p>
+<p>As well as defining a <a href="core-concepts.html#metamodel" class="page">metamodel</a> of the structure (domain classes) of its domain objects, Apache Isis also manages the runtime instances of said domain objects.</p>
 </div>
 <div class="paragraph">
 <p>When a domain entity is recreated from the database, the framework keeps track of its identity through an "OID": an object identifier.
@@ -1486,50 +1428,194 @@ Similarly, there is no lifecycle event for entities that have been removed becau
 <h2 id="modules"><a class="anchor" href="#modules"></a>Modules</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>We tend to use Maven modules as a way to group related domain objects together; we can then reason about all the classes in that module as a single unit.</p>
+<p>As described <a href="core-concepts.html#modular" class="page">previously</a>, enabling and ensuring modularity is an key principle for Apache Isis frameworks.
+Modularity is the only way to ensure that a complex application domain does not overwhelm and result in unmaintainable software.</p>
 </div>
 <div class="paragraph">
-<p>There will be a single top-level package corresponding to the module, and this will be aligned with the <code>&lt;groupId&gt;</code> and <code>&lt;artifactId&gt;</code> of the Maven module in which it resides
-For example, the <a href="../../../subdomains/latest/excel/about.html" class="page">Excel subdomain</a> module has a top-level package of <code>org.apache.isis.subdomains.excel</code>.
-Within the module there may be various subpackages, but it&#8217;s the top-level package that defines the namespace.</p>
+<p>Modules chunk up the overall application into smaller pieces, usually a pacakge and subpackages.
+The smaller pieces can be either tiers (presentation / domain / persistence) or functional architectural layers (eg customer vs orders vs products vs invoice etc).
+Because Apache Isis takes care of the presentation and persistence tiers, modules for us focuses just on the important bit: considering how the functionality within the domain model should be broken up into modules, and determining the dependencies between those modules.</p>
+</div>
+<div class="sect2">
+<h3 id="rules-of-thumb"><a class="anchor" href="#rules-of-thumb"></a>Rules of Thumb</h3>
+<div class="paragraph">
+<p>The two main rule of thumbs for dependencies are:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>there should be no cyclic dependencies (the module dependencies should form an acyclic graph), and</p>
+</li>
+<li>
+<p>unstable modules should depend upon stable modules, rather than the other way around.</p>
+</li>
+</ol>
 </div>
 <div class="paragraph">
-<p>In this top-level package there will also be a class annotated with Spring&#8217;s <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/annotation/Configuration.html">@Configuration</a> annotation.
-The class is also often anntotated with <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/annotation/Import.html">@Import</a>, through which the dependencies of this module may appear.
-And there is one other annotation that often appears, namely <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/annotation/ComponentScan.html">@ComponentScan</a>.
-This indicates that the classpath should be scanned for domain services, entities and <a href="../../../testing/latest/fixtures/about.html" class="page">fixture scripts</a>.</p>
+<p>By "unstable" we don&#8217;t mean buggy, rather this relates to its likelihood to change its structure or behaviour over time: in other words its stability as a core set of concepts upon which other stuff can depend.
+Reference data (calendars, tax rates, lookups etc) are generally stable, as are "golden" concept such as counterparties / legal entities or financial accounts.
+Transactional concepts such as invoices or agreements is perhaps more likely to change.
+But this stuff is domain specific.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="decoupling"><a class="anchor" href="#decoupling"></a>Decoupling</h3>
+<div class="paragraph">
+<p>Having broken up a domain into multiple modules, there is still a need for higher level modules to use lower level modules, and the application must still appear as a coherent whole to the end-user.</p>
 </div>
 <div class="paragraph">
-<p>For example, if an application&#8217;s customer module needs to use the aforementioned Excel subdomain model (perhaps to generate a downloadable report), then this would be expressed using:</p>
+<p>The key features that Apache Isis provides to support this are:</p>
 </div>
-<div class="listingblock">
+<div class="ulist">
+<ul>
+<li>
+<p>dependency injection of services</p>
+<div class="paragraph">
+<p>Both <a href="../../../refguide/latest/applib-svc/about.html" class="page">framework-defined</a> domain services and application-defined services (eg repositories and factories) are injected everywhere, using the <code>@javax.inject.Inject</code> annotation (Spring&#8217;s <code>@Autowired</code> can also be used).</p>
+</div>
+<div class="paragraph">
+<p>By "everywhere", we mean not just into domain services, but <em>also</em> injected into domain entities and view models.
+This enables us to implement behaviourally complete domain objects (if we so wish).</p>
+</div>
+</li>
+<li>
+<p><a href="#mixins">mixins</a> that allow functionality defined in one module to appear (in the UI) to be provided by some other module.</p>
+<div class="paragraph">
+<p>For example, a <em>Document</em> module might allow <code>Document</code> objects to be attached to any arbitrary domain object (such as <code>Order</code> or <code>Customer</code>) in other modules.
+A mixin would allow the UI for a <code>Customer</code> to also display these attached <code>Document</code>s, even though the <em>Customer</em> module would have no knowledge of/dependency on the <em>Workflow</em> module.
+(More on this example <a href="#inverting-dependencies">below</a>).</p>
+</div>
+<div class="paragraph">
+<p>Dependencies are also injected into mixins.
+A common technique is to factor out from domain objects into mixins and then generalise.</p>
+</div>
+</li>
+<li>
+<p>the internal <a href="../../../refguide/latest/applib-svc/EventBusService.html" class="page">event bus</a> allows modules to influence other modules.</p>
+<div class="paragraph">
+<p>A subscriber in one module can subscribe to events emitted by domain objects in another module.
+These events can affect both the UI (eg hiding or disabling <a href="#object-members">object members</a>, or allowing or vetoing interactions).</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>A good example of this last is supporting (what in an RDBMS we would call) referential integrity.
+Suppose the <code>customers</code> module has a <code>Customer</code> object and a <code>EmailAddress</code> object, with a customer having a collection of email addresses.
+A <code>communications</code> module might then use those email addresses to create <code>EmailCommunication</code>s.</p>
+</div>
+<div class="paragraph">
+<p>If the <code>customers</code> module wants to delete an <code>EmailAddress</code> then the <code>communications</code> module will probably want to veto this because they are "in use" by those <code>EmailCommunication</code>s.
+Or, it might conceivably perform a cascade delete of all associated communications.
+Either way, the <code>communications</code> module receives an internal event representing the intention to delete the <code>EmailAddress</code>.
+It can then act accordingly, either vetoing the interaction or performing the cascade delete.
+The <code>customers</code> module for its part does not know anything about this other module.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="inverting-dependencies"><a class="anchor" href="#inverting-dependencies"></a>Inverting Dependencies</h3>
+<div class="paragraph">
+<p>If we get the dependencies wrong (that is, our initial guess on stability is proven incorrect over time) then there are a couple of techniques we can use:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>use the <a href="https://en.wikipedia.org/wiki/Dependency_inversion_principle">dependency inversion principle</a> to introduce an abstraction representing the dependency.</p>
+</li>
+<li>
+<p>move functionality, eg by factoring it out into <a href="#mixins">mixins</a> into the other module or into a third module which depends on the other modules that had a bidirectional relationship</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Mixins in particular allow dependencies to be inverted, so that the dependencies between modules can be kept acyclic and under control.</p>
+</div>
+<div class="paragraph">
+<p>For example, suppose that we send out <code>Invoice</code>s to <code>Customer</code>s.
+We want the invoices to know about customers, but not vice versa.
+We could surface the set of invoices for a customer using a <code>Customer_invoices</code> mixin:</p>
+</div>
+<div class="imageblock plantuml">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">package com.mycompany.modules.customer;
-...
-
-@Configuration                                  <i class="conum" data-value="1"></i><b>(1)</b>
-@Import({
-    IsisModuleSubdomainsExcelApplib.class       <i class="conum" data-value="2"></i><b>(2)</b>
-})
-@ComponentScan                                  <i class="conum" data-value="3"></i><b>(3)</b>
-public class CustomerModule {}</code></pre>
+<img src="http://www.plantuml.com/plantuml/png/ZP9DQyCm38Rl_XKcby6WPUTIGbaEOx33RcEduTeY4V4Nbf8kZFttcJNfokQjyr5wtbUof1snIZmuApeq8C55dgG3juT4ukepve2xO4W8wj57bPIJsYeY-IPaVhTAzsqAWpTDi25jjmP8rxLi9kNBG8oSym_OTdoN07wX72xG8_g-pAHWOQ6UmTfmA7F4IJ6qKsQVEcGeKohYtm1T0j0p9A_isVUcCZagEy39hCo0P-Jf7wCQ4Guk6B2N9-Rm5VstaRqB4JEdMf3enu0QvjKUrzmCnC51UfcJ94ysPzJzh3mkBdl-bArMjQnkrjVL0c-MUlJLWPvbLEn1pjTJzb-dN669RsIbW-U4-u5paaCbTk1DFlKF" alt="diagram">
+</div>
+<div class="title">Figure 2. <code>invoices</code> module contributes to <code>customers</code></div>
+</div>
+<div class="paragraph">
+<p>In the UI, when rendering a <code>Customer</code>, we would also be presented with the associated set of <code>Invoice</code>s.</p>
+</div>
+<div class="paragraph">
+<p>We can also use mixins for dependencies that are in the other direction.
+For example, suppose we have a mechanism to attach <code>Document</code>s to arbitrary domain objects.
+The documents module does not depend on any other modules, but provides a <code>DocumentHolder</code> marker interface.
+We can therefore attach documents to a <code>Customer</code> by having <code>Customer</code> implement this marker interface:</p>
+</div>
+<div class="imageblock plantuml">
+<div class="content">
+<img src="http://www.plantuml.com/plantuml/png/ZPFBQiCm44Nt-WhXJQ5WqtK88JI5Tj55TwMRbeaqjONrCD8egIdzzuh4TXuuJhISEVEuLz8o47YAHhDAIUHe6cgvGRD67zZTBcQGAYS3Ow5MjW4FXWiD8V1VnjDv156NtaKhLquxFvzB36AnuAiMx3ZGD9JohwgiwDaZNg2Cwg4tPUjnnZkDFVM1MhljE1V80s7P9lQzKeJZ53Hg6WZN06K9lGLz9AyT9pUW8mxDnXcqfAYzmQgDmgrn4lLrnupwKVRCiZ_6ciH1YLmw4KsQsr_kJj0t2EHFNUR5QOcUzzxlgFrpE2M-3gs6gPTX809HzS792juzeBJsnOcvp1SyUoYA-soecnt4JHGMEbMUfcSy4ywIL-j863YvZ4rlVsEJmNGH0pcJFbnd-bxlgeiUwHr2UIpopxC9R8bMfe_y3m00" alt="diagram">
+</div>
+<div class="title">Figure 3. <code>customers</code> depends upon contributions of <code>documents</code></div>
 </div>
 </div>
-<div class="colist arabic">
+<div class="sect2">
+<h3 id="defining-modules"><a class="anchor" href="#defining-modules"></a>Defining Modules</h3>
+<div class="paragraph">
+<p>In the context of Java applications, modularity is a rather overloaded term.
+We have Maven modules, Java 9 modules and we also have Spring <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/annotation/Configuration.html"><code>@Configuration</code></a>s, which define a set of domain services.</p>
+</div>
+<div class="paragraph">
+<p>In the context of Apache Isis, a module is actually the last of these, a Spring module.</p>
+</div>
+<div class="paragraph">
+<p>The <a href="../../../docs/latest/starters/simpleapp.html" class="page">simpleapp starter app</a> provide some structure and illustrates the idioms.
+To summarise:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>by convention, we have one <code>@Configuration</code> module per Maven module.</p>
+<div class="paragraph">
+<p>This is at the root package of the maven module.</p>
+</div>
+</li>
+<li>
+<p>all of the domain classes (domain objects and services) are part of that Maven module.</p>
+<div class="paragraph">
+<p>All are annotated or meta-annotated with Spring&#8217;s <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/stereotype/Component.html"><code>@Component</code></a> annotation, and Spring&#8217;s <a href="https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/context/annotation/ComponentScan.html"><code>@ComponentScan</code></a> is used to discover these from the classpath.</p>
+</div>
+</li>
+<li>
+<p>Spring&#8217;s <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/annotation/Import.html"><code>@Import</code></a> is used to express a dependency between each "configuration" module.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>By convention, we have just one Spring module to each Maven module.
+This means that the dependencies between Maven modules (using <code>&lt;dependency&gt;</code> are mirrored in the Spring module&#8217;s <code>@Import</code> statements).
+We can therefore rely on Maven to ensure there are no cyclic dependencies: the application simply won&#8217;t compile if we introduce a cycle.</p>
+</div>
+<div class="admonitionblock tip">
 <table>
 <tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>indicates that this is a module (so far as Spring Boot is concerned)</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>indicates a dependency on the Excel module (more precisely, its "applib")</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>indicates that the classpath be scanned to find domain services and entities etc under this package, eg a <code>Customer</code> entity or a <code>CustomerRepository</code> domain service.</td>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Details on how to actually define modules can be found <a href="programming-model.html#modules" class="page">here</a>.</p>
+</div>
+</td>
 </tr>
 </table>
+</div>
+<div class="paragraph">
+<p>If the above convention is too officious,then you could choose to have multiple Spring modules per Maven module, but you will need to watch out for cycles.</p>
+</div>
+<div class="paragraph">
+<p>In such cases (proprietary) tools such as <a href="https://structure101.com/">Structure 101</a> can be used to help detect and visualize such cycles.
+Or, (open source) libraries such as <a href="https://www.archunit.org/">ArchUnit</a> or <a href="https://jqassistant.org/">jQAssistant</a> can help enforce architectural layering to prevent the issue arising in the first place.
+(These tools can enforce other conventions, too, so are well worth exploring).</p>
+</div>
 </div>
 </div>
 </div>
@@ -1550,7 +1636,7 @@ public class CustomerModule {}</code></pre>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200321-0401-6c585483</p>
+            <p>Revision: 2.0.0-M2.20200322-0401-22384f96</p>
         </div>
     </div>
 </footer>

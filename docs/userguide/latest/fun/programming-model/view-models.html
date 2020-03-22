@@ -392,6 +392,8 @@ page.parent doesn't seem to be set...
 <article class="doc">
     <a name="section-top"></a>
 <h1 class="page">View Models</h1>
+<div id="preamble">
+<div class="sectionbody">
 <div class="paragraph">
 <p>As described in the <a href="../building-blocks.html#view-models" class="page">introduction</a>, view models are domain objects like domain entities, with behaviour and state.
 However, unlike domain entities, their state is <em>not</em> persisted to a database but is instead serialized into its identifier (in effect, its URL).</p>
@@ -422,6 +424,867 @@ This could be a factor for example in a dashboard/home page that references many
 <div class="paragraph">
 <p>In the sections below we consider JAXB view models both as "regular" view models, and also when using them to act as DTOs.</p>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="jaxb"><a class="anchor" href="#jaxb"></a>JAXB View Models</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Here&#8217;s a typical example of a JAXB view model, to allow (certain properties of) two <code>Customer</code>s to be compared:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@XmlRootElement(name = "compareCustomers")          <i class="conum" data-value="1"></i><b>(1)</b>
+@XmlType(
+        propOrder = {                               <i class="conum" data-value="2"></i><b>(2)</b>
+            "customer1",
+            "customer2"
+        }
+)
+@XmlAccessorType(XmlAccessType.FIELD)               <i class="conum" data-value="3"></i><b>(3)</b>
+public class CompareCustomers {
+
+    @XmlElement(required = true)                    <i class="conum" data-value="4"></i><b>(4)</b>
+    @Getter @Setter
+    Customer customer1;
+
+    @XmlElement(required = true)                    <i class="conum" data-value="4"></i><b>(4)</b>
+    @Getter @Setter
+    Customer customer2;
+
+    @XmlTransient                                   <i class="conum" data-value="5"></i><b>(5)</b>
+    public String getCustomer1Name() {
+        return getCustomer1().getName();
+    }
+
+    @XmlTransient                                   <i class="conum" data-value="5"></i><b>(5)</b>
+    public String getCustomer2Name() {
+        return getCustomer2().getName();
+    }
+
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The JAXB <code>@XmlRootElement</code> annotation indicates this is a view model to Apache Isis, which then uses JAXB to serialize the state of the view model between interactions</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Optionally, the properties of the view model can be listed using the <code>XmlType#propOrder</code> attribute.
+<div class="paragraph">
+<p>This is an all-or-nothing affair: either all properties must be listed, or else the annotation omitted.</p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Specifying field accessor type allows the Lombok <code>@Getter</code> and <code>@Setter</code> annotations to be used.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>The <code>@XmlElement</code> indicates the property is part of the view model&#8217;s state.
+For collections, the <code>@XmlElementWrapper</code> would also typically be used.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>The <code>@XmlTransient</code> indicates that the property is derived and should be ignored by JAXB.
+<div class="paragraph">
+<p>The derived properties could also have been implemented using <a href="../building-blocks.html#mixins" class="page">mixins</a>.</p>
+</div></td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Be aware that all the state will become the DTO&#8217;s memento, ultimately converted into a URL-safe form, by way of the <a href="../../../../refguide/latest/applib-svc/UrlEncodingService.html" class="page"><code>UrlEncodingService</code></a>.</p>
+</div>
+<div class="paragraph">
+<p>There are limits to the lengths of URLs, however.
+If the URL does exceed limits or contains invalid characters, then provide a custom implementation of <a href="../../../../refguide/latest/applib-svc/UrlEncodingService.html" class="page"><code>UrlEncodingService</code></a> to handle the memento string in some other fashion (eg substituting it with a GUID, with the memento cached somehow on the server).
+a URL.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="referencing-domain-entities"><a class="anchor" href="#referencing-domain-entities"></a>Referencing Domain Entities</h3>
+<div class="paragraph">
+<p>It&#8217;s quite common for view models to be "backed by" (be projections of) some underlying domain entity.
+For example, the <code>CompareCustomers</code> view model described <a href="../programming-model.html#jaxb" class="page">above</a> actually references two underlying <code>Customer</code> entities.</p>
+</div>
+<div class="paragraph">
+<p>It wouldn&#8217;t make sense to serialize out the state of a persistent entity.
+However, the identity of the underlying entity is well defined; Apache Isis defines the <a href="../../../../refguide/latest/schema/common.html" class="page">common schema</a> which defines the <code>&lt;oid-dto&gt;</code> element (and corresponding <code>OidDto</code> class): the object&#8217;s type and its identifier.
+This is basically a formal XML equivalent to the <code>Bookmark</code> object obtained from the <a href="../../../../refguide/latest/applib-svc/BookmarkService.html" class="page"><code>BookmarkService</code></a>.</p>
+</div>
+<div class="paragraph">
+<p>There is only one requirement to make this work: every referenced domain entity must be annotated with <a href="../../../../refguide/latest/applib-ant/XmlJavaTypeAdapter.html" class="page"><code>@XmlJavaTypeAdapter</code></a>, specifying the framework-provided <code>PersistentEntityAdapter</code>.
+And this class is similar to the <a href="../../../../refguide/latest/applib-svc/BookmarkService.html" class="page"><code>BookmarkService</code></a>: it knows how to create an <code>OidDto</code> from an object reference.</p>
+</div>
+<div class="paragraph">
+<p>Thus, in our view model we can legitimately write:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class CompareCustomers {
+
+    @XmlElement(required = true)
+    @Getter @Setter
+    Customer customer1;
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>All we need to do is remember to add that <code>@XmlJavaTypeAdapter</code> annotation to the referenced entity:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@XmlJavaTypeAdapter(PersistentEntityAdapter.class)
+public class Customer ...  {
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>It&#8217;s also possible for a DTO view models to hold collections of objects.
+These can be of any type, either simple properties, or references to other objects.
+The only bit of boilerplate that is required is the <code>@XmlElementWrapper</code> annotation.
+This instructs JAXB to create an XML element (based on the field name) to contain each of the elements.
+(If this is omitted then the contents of the collection are at the same level as the properties; almost certainly not what is required).</p>
+</div>
+<div class="paragraph">
+<p>For example, we could perhaps generalize the view model to hold a set of <code>Customer</code>s to be compared:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class CompareCustomers {
+    ...
+    @XmlElementWrapper
+    @XmlElement(name = "customers")
+    @Getter @Setter
+    protected List&lt;Customer&gt; customersToCompare = Lists.newArrayList();
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This capability is particularly useful when the JAXB view model is being used as a <a href="../programming-model.html#dto" class="page">DTO</a>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="joda-datatypes"><a class="anchor" href="#joda-datatypes"></a>JODA Time Datatypes</h3>
+<div class="paragraph">
+<p>If your JAXB view model contains fields using the JODA datatypes (<code>LocalDate</code> and so on), then <code>@XmlJavaTypeAdapter</code> additional annotations in order to "teach" JAXB how to serialize out the state.</p>
+</div>
+<div class="paragraph">
+<p>The Apache Isis applib provides a number of adapters to use out-of-the-box.
+For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@XmlRootElement(name = "categorizeIncomingInvoice")
+@XmlType(
+        propOrder = {
+                ...
+                "dateReceived",
+                ...
+        }
+)
+@XmlAccessorType(XmlAccessType.FIELD)
+public class IncomingInvoiceViewModel extends IncomingOrderAndInvoiceViewModel {
+
+    @XmlJavaTypeAdapter(JodaLocalDateStringAdapter.ForJaxb.class)
+    private LocalDate dateReceived;
+
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The full list of adapter classes are:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. JAXB adapters</caption>
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 66.6667%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">JODA datatype</th>
+<th class="tableblock halign-left valign-top">Adapter</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top" rowspan="2"><div class="content"><div class="paragraph">
+<p><code>org.joda.time.DateTime</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JodaDateTimeStringAdapter.ForJaxb</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JodaDateTimeXMLGregorianCalendarAdapter.ForJaxb</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" rowspan="2"><div class="content"><div class="paragraph">
+<p><code>org.joda.time.LocalDate</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JodaLocalDateStringAdapter.ForJaxb</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JodaLocalDateXMLGregorianCalendarAdapter.ForJaxb</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" rowspan="2"><div class="content"><div class="paragraph">
+<p><code>org.joda.time.LocalDateTime</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JodaLocalDateTimeStringAdapter.ForJaxb</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JodaLocalDateTimeXMLGregorianCalendarAdapter.ForJaxb</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" rowspan="2"><div class="content"><div class="paragraph">
+<p><code>org.joda.time.LocalTime</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JodaLocalTimeStringAdapter.ForJaxb</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JodaLocalTimeXMLGregorianCalendarAdapter.ForJaxb</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>java.sql.Timestamp</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>JavaSqlTimestampXmlGregorianCalendarAdapter.ForJaxb</code></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>If you want to roll-your-own, take a look at <a href="http://blog.bdoughan.com/2011/05/jaxb-and-joda-time-dates-and-times.html">this blog post</a>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="dto"><a class="anchor" href="#dto"></a>DTOs</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>JAXB view models can also be used as DTOs.
+The examples in this section uses the DTO for <code>ToDoItem</code>, taken from the <a href="http://github.com/apache/isis-app-todoapp">TodoApp</a>.</p>
+</div>
+<div class="paragraph">
+<p>This DTO is defined as follows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">package todoapp.app.viewmodels.todoitem.v1;                         <i class="conum" data-value="1"></i><b>(1)</b>
+@XmlRootElement(name = "toDoItemDto")                               <i class="conum" data-value="2"></i><b>(2)</b>
+@XmlType(
+        propOrder = {                                               <i class="conum" data-value="3"></i><b>(3)</b>
+            "majorVersion", "minorVersion",
+            "description", "category", ...
+            "toDoItem", "similarItems"
+        }
+)
+@DomainObjectLayout(
+        titleUiEvent = TitleUiEvent.Doop.class                      <i class="conum" data-value="4"></i><b>(4)</b>
+)
+public class ToDoItemV1_1 implements Dto {                          <i class="conum" data-value="5"></i><b>(5)</b>
+    @XmlElement(required = true, defaultValue = "1")                <i class="conum" data-value="6"></i><b>(6)</b>
+    public final String getMajorVersion() { return "1"; }
+    @XmlElement(required = true, defaultValue = "1")                <i class="conum" data-value="7"></i><b>(7)</b>
+    public String getMinorVersion() { return "1"; }
+
+    @XmlElement(required = true)                                    <i class="conum" data-value="8"></i><b>(8)</b>
+    @Getter @Setter
+    protected String description;
+    @XmlElement(required = true)
+    @Getter @Setter
+    protected String category;
+    ...
+
+    @Getter @Setter                                                 <i class="conum" data-value="9"></i><b>(9)</b>
+    protected ToDoItem toDoItem;
+    @XmlElementWrapper                                              <i class="conum" data-value="10"></i><b>(10)</b>
+    @XmlElement(name = "todoItem")
+    @Getter @Setter
+    protected List&lt;ToDoItem&gt; similarItems = Lists.newArrayList();
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>package name encodes major version; see discussion on <a href="../programming-model.html#versioning" class="page">versioning</a></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>identifies this class as a view model and defines the root element for JAXB serialization</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>all properties in the class must be listed; (they can be ignored using <code>@XmlTransient</code>)</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>demonstrating use of UI events for a subscriber to provide the DTO&#8217;s title; see <a href="../../../../refguide/latest/applib-ant/DomainObjectLayout.html#titleUiEvent" class="page"><code>@DomainObjectLayout#titleUiEvent()</code></a>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>class name encodes (major and) minor version; see discussion on <a href="../programming-model.html#versioning" class="page">versioning</a></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>again, see discussion on <a href="../programming-model.html#versioning" class="page">versioning</a></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>again, see discussion on <a href="../programming-model.html#versioning" class="page">versioning</a></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td>simple scalar properties</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
+<td>reference to a persistent entity; discussed <a href="../programming-model.html#referencing-domain-entities" class="page">here</a></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="10"></i><b>10</b></td>
+<td>reference to a collection of persistent entities; again discussed <a href="../programming-model.html#referencing-domain-entities" class="page">here</a></td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="versioning"><a class="anchor" href="#versioning"></a>Versioning</h3>
+<div class="paragraph">
+<p>The whole point of using DTOs (in Apache Isis, at least) is to define a formal contact between two inter-operating but independent applications.
+Since the only thing we can predicate about the future with any certainty is that it one or both of these applications will change, we should version DTOs from the get-go.
+This allows us to make changes going forward without unnecessarily breaking existing consumers of the data.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>There are several ways that versioning might be accomplished; we base our guidelines on this <a href="http://www.xfront.com/Versioning.pdf">article</a> taken from Roger Costello&#8217;s blog, well worth a read.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>We can distinguish two types of changes:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>backwardly compatible changes</p>
+</li>
+<li>
+<p>breaking changes.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>We can immediately say that the XSD namespace should change only when there is a major/breaking change.
+If following <a href="http://semver.org">semantic versioning</a> that means when we bump the major version number v1, v2, etc.</p>
+</div>
+<div class="paragraph">
+<p>XML namespaces correspond (when using JAXB) to Java packages.
+We should therefore place our DTOs in a package that contains only the major number; this package will eventually contain a range of DTOs that are intended to be backwardly compatible with one another.
+The package should also have a <code>package-info.java</code>; it is this that declares the XSD namespace:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@javax.xml.bind.annotation.XmlSchema(
+        namespace = "http://viewmodels.app.todoapp/todoitem/v1/Dto.xsd",        <i class="conum" data-value="1"></i><b>(1)</b>
+        xmlns = {
+                @javax.xml.bind.annotation.XmlNs(
+                        namespaceURI = "http://isis.apache.org/schema/common",
+                        prefix = "com"
+                )
+        },
+        elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED
+)
+package todoapp.app.viewmodels.todoitem.v1;                                     <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>the namespace URI, used by the DTO residing in this package.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>the package in which the DTO resides.  Note that this contains only the major version.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Although there is no requirement for the namespace URI to correspond to a physical URL, it should be unique.
+This usually means including a company domain name within the string.</p>
+</div>
+<div class="paragraph">
+<p>As noted above, this package will contain multiple DTO classes all with the same namespace; these represent a set of minor versions of the DTO, each subsequent one intended to be backwardly compatible with the previous.
+Since these DTO classes will all be in the same package (as per the advice above), the class should therefore include the minor version name:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">package todoapp.app.viewmodels.todoitem.v1;     <i class="conum" data-value="1"></i><b>(1)</b>
+...
+public class ToDoItemV1_1 implements Dto {      <i class="conum" data-value="2"></i><b>(2)</b>
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>package contains the major version only</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>DTO class contains the (major and) minor version</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>We also recommend that each DTO instance should also specify the version of the XSD schema that it is logically compatible with.
+Probably most consumers will not persist the DTOs; they will be processed and then discarded.
+However, it would be wrong to assume that is the case in all cases; some consumers might choose to persist the DTO (eg for replay at some later state).</p>
+</div>
+<div class="paragraph">
+<p>Thus:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class ToDoItemV1_1 implements Dto {
+    @XmlElement(required = true, defaultValue = "1")
+    public final String getMajorVersion() { return "1"; }   <i class="conum" data-value="1"></i><b>(1)</b>
+    @XmlElement(required = true, defaultValue = "1")
+    public String getMinorVersion() { return "1"; }         <i class="conum" data-value="2"></i><b>(2)</b>
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>returns the major version (in sync with the package)</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>returns the minor version (in sync with the class name)</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>These methods always return a hard-coded literal.
+Any instances serialized from these classes will implicitly "declare" the (major and) minor version of the schema with which they are compatible.
+If a consumer has a minimum version that it requires, it can therefore inspect the XML instance itself to determine if it is able to consume said XML.</p>
+</div>
+<div class="paragraph">
+<p>If a new (minor) version of a DTO is required, then we recommend copying-and-pasting the previous version, eg:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class ToDoItemV1_2 implements Dto {
+    @XmlElement(required = true, defaultValue = "1")
+    public final String getMajorVersion() { return "1"; }
+    @XmlElement(required = true, defaultValue = "2")
+    public String getMinorVersion() { return "2"; }
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Obviously, only changes made must be backward compatible, eg new members must be optional.</p>
+</div>
+<div class="paragraph">
+<p>Alternatively, you might also consider simply editing the source file, ie renaming the class and bumping up the value returned by <code>getMinorVersion()</code>.</p>
+</div>
+<div class="paragraph">
+<p>We also <em>don&#8217;t</em> recommend using inheritance (ie <code>ToDoItemV1_2</code> should not inherit from <code>ToDoItemV1_1</code>; this creates unnecessary complexity downstream if generating XSDs and DTOs for the downstream consumer.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="generating-xsds"><a class="anchor" href="#generating-xsds"></a>Generating XSDs and DTOs</h3>
+<div class="paragraph">
+<p>In the section <a href="../programming-model.html#referencing-domain-entities" class="page">above</a> it was explained how a view model DTO can transparently reference any "backing" entities; these references are converted to internal object identifiers.</p>
+</div>
+<div class="paragraph">
+<p>However, if the consumer of the XML is another Java process (eg running within an Apache Camel route), then you might be tempted/expect to be able to use the same DTO within that Java process.
+But of course you cannot; the consumer runs in a different process space, and will not have references to the entity types themselves.</p>
+</div>
+<div class="paragraph">
+<p>For integration scenarios you&#8217;ll therefore generally want to define a DTO in a technology independent fashion, for example using XSD schema.
+This can be generated as a DTO for use within Apache Isis, while still allowing XML instances of the schema to be consumed by any other client.</p>
+</div>
+<div class="paragraph">
+<p>The <a href="http://github.com/apache/isis-app-todoapp">TodoApp</a> demonstrates how use an XSD to generate a DTO; it&#8217;s mostly just boilerplate.
+In the todoapp it can be found in the <code>todoapp-xsd</code> Maven module, whose <code>pom.xml</code> is structured as two profiles:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;project ... &gt;
+    &lt;artifactId&gt;todoapp-xsd&lt;/artifactId&gt;
+    &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;${project.groupId}&lt;/groupId&gt;
+            &lt;artifactId&gt;todoapp-app&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+    &lt;profiles&gt;
+        &lt;profile&gt;
+            &lt;id&gt;isis-xsd&lt;/id&gt;
+            &lt;activation&gt;
+                &lt;property&gt;
+                    &lt;name&gt;!skip.isis-xsd&lt;/name&gt;
+                &lt;/property&gt;
+            &lt;/activation&gt;
+            ...
+        &lt;/profile&gt;
+        &lt;profile&gt;
+            &lt;id&gt;xjc&lt;/id&gt;
+            &lt;activation&gt;
+                &lt;property&gt;
+                    &lt;name&gt;!skip.xjc&lt;/name&gt;
+                &lt;/property&gt;
+            &lt;/activation&gt;
+            ...
+        &lt;/profile&gt;
+    &lt;/profiles&gt;
+&lt;/project&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>isis-xsd</code> profile generates the XSD using the <a href="#refguide:mvn:xsd.adoc" class="page unresolved"><code>xsd</code> goal</a> of Isis' maven plugin:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;build&gt;
+    &lt;plugins&gt;
+        &lt;plugin&gt;
+            &lt;groupId&gt;org.apache.isis.tool&lt;/groupId&gt;
+            &lt;artifactId&gt;isis-maven-plugin&lt;/artifactId&gt;
+            &lt;version&gt;${isis.version}&lt;/version&gt;
+            &lt;configuration&gt;
+                &lt;appManifest&gt;todoapp.dom.TodoAppDomManifest&lt;/appManifest&gt;
+                &lt;jaxbClasses&gt;
+                    &lt;jaxbClass&gt;todoapp.app.viewmodels.todoitem.v1.ToDoItemV1_1&lt;/jaxbClass&gt;
+                &lt;/jaxbClasses&gt;
+                &lt;separate&gt;false&lt;/separate&gt;
+                &lt;commonSchemas&gt;false&lt;/commonSchemas&gt;
+            &lt;/configuration&gt;
+            &lt;dependencies&gt;
+                &lt;dependency&gt;
+                    &lt;groupId&gt;${project.groupId}&lt;/groupId&gt;
+                    &lt;artifactId&gt;todoapp-dom&lt;/artifactId&gt;
+                    &lt;version&gt;${project.version}&lt;/version&gt;
+                &lt;/dependency&gt;
+                &lt;dependency&gt;
+                    &lt;groupId&gt;com.google.guava&lt;/groupId&gt;
+                    &lt;artifactId&gt;guava&lt;/artifactId&gt;
+                    &lt;version&gt;16.0.1&lt;/version&gt;
+                &lt;/dependency&gt;
+            &lt;/dependencies&gt;
+            &lt;executions&gt;
+                &lt;execution&gt;
+                    &lt;phase&gt;generate-sources&lt;/phase&gt;
+                    &lt;goals&gt;
+                        &lt;goal&gt;xsd&lt;/goal&gt;
+                    &lt;/goals&gt;
+                &lt;/execution&gt;
+            &lt;/executions&gt;
+        &lt;/plugin&gt;
+        &lt;plugin&gt;
+            &lt;artifactId&gt;maven-assembly-plugin&lt;/artifactId&gt;
+            &lt;version&gt;2.5.3&lt;/version&gt;
+            &lt;configuration&gt;
+                &lt;descriptor&gt;src/assembly/dep.xml&lt;/descriptor&gt;
+            &lt;/configuration&gt;
+            &lt;executions&gt;
+                &lt;execution&gt;
+                    &lt;id&gt;create-archive&lt;/id&gt;
+                    &lt;phase&gt;package&lt;/phase&gt;
+                    &lt;goals&gt;
+                        &lt;goal&gt;single&lt;/goal&gt;
+                    &lt;/goals&gt;
+                &lt;/execution&gt;
+            &lt;/executions&gt;
+        &lt;/plugin&gt;
+    &lt;/plugins&gt;
+&lt;/build&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>todoapp.dom.TodoAppDomManifest</code> is a cut-down version of the app manifest that identifies only the <code>dom</code> domain services.</p>
+</div>
+<div class="paragraph">
+<p>The <code>xjc</code> profile, meanwhile, uses the <code>maven-jaxb2-plugin</code> (a wrapper around the <code>schemagen</code> JDK tool) to generate a DTO from the XSD generated by the preceding profile:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;build&gt;
+    &lt;plugins&gt;
+        &lt;plugin&gt;
+            &lt;groupId&gt;org.jvnet.jaxb2.maven2&lt;/groupId&gt;
+            &lt;artifactId&gt;maven-jaxb2-plugin&lt;/artifactId&gt;
+            &lt;version&gt;0.12.3&lt;/version&gt;
+            &lt;executions&gt;
+                &lt;execution&gt;
+                    &lt;id&gt;xjc-generate&lt;/id&gt;
+                    &lt;phase&gt;generate-sources&lt;/phase&gt;
+                    &lt;goals&gt;
+                        &lt;goal&gt;generate&lt;/goal&gt;
+                    &lt;/goals&gt;
+                &lt;/execution&gt;
+            &lt;/executions&gt;
+            &lt;configuration&gt;
+                &lt;removeOldOutput&gt;true&lt;/removeOldOutput&gt;
+                &lt;schemaDirectory&gt;
+                    target/generated-resources/isis-xsd/viewmodels.app.todoapp
+                &lt;/schemaDirectory&gt;
+                &lt;schemaIncludes&gt;
+                    &lt;schemaInclude&gt;todoitem/v1/Dto.xsd&lt;/schemaInclude&gt;
+                &lt;/schemaIncludes&gt;
+                &lt;bindingDirectory&gt;src/main/resources&lt;/bindingDirectory&gt;
+                &lt;bindingIncludes&gt;
+                    &lt;bindingInclude&gt;binding.xml&lt;/bindingInclude&gt;
+                &lt;/bindingIncludes&gt;
+                &lt;catalog&gt;src/main/resources/catalog.xml&lt;/catalog&gt;
+            &lt;/configuration&gt;
+        &lt;/plugin&gt;
+        &lt;plugin&gt;
+            &lt;groupId&gt;org.codehaus.mojo&lt;/groupId&gt;
+            &lt;artifactId&gt;build-helper-maven-plugin&lt;/artifactId&gt;
+            &lt;version&gt;1.9.1&lt;/version&gt;
+            &lt;executions&gt;
+                &lt;execution&gt;
+                    &lt;id&gt;add-source&lt;/id&gt;
+                    &lt;phase&gt;generate-sources&lt;/phase&gt;
+                    &lt;goals&gt;
+                        &lt;goal&gt;add-source&lt;/goal&gt;
+                    &lt;/goals&gt;
+                    &lt;configuration&gt;
+                    &lt;sources&gt;
+                        &lt;source&gt;target/generated-sources/xjc&lt;/source&gt;
+                    &lt;/sources&gt;
+                    &lt;/configuration&gt;
+                &lt;/execution&gt;
+            &lt;/executions&gt;
+        &lt;/plugin&gt;
+    &lt;/plugins&gt;
+&lt;/build&gt;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="dto-consumers"><a class="anchor" href="#dto-consumers"></a>DTO Consumers</h3>
+<div class="paragraph">
+<p>The actual consumers of DTOs will generally obtain the XML of the view models either by requesting the XML directly, eg using the <a href="../../../../vro/latest/about.html" class="page">RestfulObjects viewer</a>, or may have the XML sent to them asynchronously using an ESB such as Apache Camel.</p>
+</div>
+<div class="paragraph">
+<p>In the former case, the consumer requests the DTO by calling the REST API with the appropriate HTTP <code>Accept</code> header.
+An appropriate implementation of <a href="../../../../refguide/latest/applib-svc/ContentMappingService.html" class="page"><code>ContentMappingService</code></a> can then be used to return the appropriate DTO (as XML).</p>
+</div>
+<div class="paragraph">
+<p>For the latter case, one design is simply for the application to instantiate the view model, then call the <a href="../../../../refguide/latest/applib-svc/JaxbService.html" class="page"><code>JaxbService</code></a> to obtain its corresponding XML.  This can then be published onto the ESB, for example using an <a href="http://activemq.apache.org">Apache ActiveMQ &#8482;</a> queue.</p>
+</div>
+<div class="paragraph">
+<p>However, rather than try to push all the data that might be needed by any of these external systems in a single XML event (which would require anticipating all the requirements, likely a hopeless task), a better design is to publish only the fact that something of note has changed - ie, that an action on a domain object has been invoked - and then let the consumers call back to obtain other information if required.
+This can once again be done by calling the REST API with an appropriate HTTP <code>Accept</code> header.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>This is an example of the <a href="https://leanpub.com/camel-design-patterns">VETRO pattern</a> (validate, enrich, transform, route, operate).
+In our case we focus on the validation (to determine the nature of the inbound message, ie which action was invoked), and the enrich (callback to obtain a DTO with additional information required by the consumer).</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The (non-ASF) <a href="https://platform.incode.org" target="_blank" rel="noopener">Incode Platform</a>'s publishmq module provides an out-of-the-box solution of this design.
+It provides an implementation of the <a href="../../../../refguide/latest/applib-svc/PublisherService.html" class="page"><code>PublisherService</code></a>, but which simply publishes instances of <a href="../../../../refguide/latest/schema/ixn.html" class="page"><code>InteractionDto</code></a> to an ActiveMQ queue.
+Camel (or similar) can then be hooked up to consume these events from this queue, and use a processor to parse the action memento to determine what has changed on the source system.
+Thereafter, a subsequent Camel processor can then call back to the source - via the <a href="../../../../vro/latest/about.html" class="page">Restful Objects viewer</a> - to enrich the message with additional details using a DTO.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="non-jaxb"><a class="anchor" href="#non-jaxb"></a>Non-JAXB View Models</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Instead of using JAXB to specify a view model, it is also possible to use Apache Isis-specific annotations.</p>
+</div>
+<div class="paragraph">
+<p>As was explained <a href="../programming-model.html#view-models" class="page">earlier</a>, the approach is described here is neither as flexible nor as powerful as using the JAXB-style of view models.
+It is however likely to be faster.</p>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+TODO: v2: I think we should only support programmatic API (ViewModel), and JAXB.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>While the underlying technique is the same irrespective of use case, the programming model provides various ways of defining a view model so that the original intent is not lost.
+They are:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 2. View model programming model</caption>
+<colgroup>
+<col style="width: 14.2857%;">
+<col style="width: 57.1428%;">
+<col style="width: 28.5715%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Use case</th>
+<th class="tableblock halign-left valign-top">Code</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>External entity</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(nature=Nature.EXTERNAL_ENTITY)
+public class CustomerRecordOnSAP { /* ... */ }</code></pre>
+</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Annotated with <a href="../../../../refguide/latest/applib-ant/DomainObject.html#nature" class="page"><code>@DomainObject#nature</code></a> and a nature of <code>EXTERNAL_ENTITY</code>, with memento derived automatically from the properties of the domain object.  Collections are ignored, as are any properties annotated as <a href="../../../../refguide/latest/applib-ant/Property.html#mementoSerialization" class="page">memento serialization</a>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>In-memory entity</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(nature=Nature.INMEMORY_ENTITY)
+public class Log4JAppender { /* ... */ }</code></pre>
+</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>As preceding, but using a nature of <code>INMEMORY_ENTITY</code>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Application view model</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(nature=Nature.VIEW_MODEL)
+public class Dashboard { /* ... */ }</code></pre>
+</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>As preceding, but using a nature of <code>VIEW_MODEL</code>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Application view model</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@ViewModel
+public class Dashboard { /* ... */ }</code></pre>
+</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Annotated with <a href="../../../../refguide/latest/applib-ant/ViewModel.html" class="page"><code>@ViewModel</code></a> annotation (effectively just an alias)' memento is as preceding: from "persisted" properties, collections ignored</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Application view model</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class ExcelUploadManager implements ViewModel {
+  public String viewModelMemento() { /* ... */ }
+  public void viewModelInit(String memento) { /* ... */ }
+}</code></pre>
+</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Implement <a href="../../../../refguide/latest/applib-cm/classes/super.html#ViewModel" class="page"><code>ViewModel</code></a> interface.  The memento is as defined by the
+interface&#8217;s methods: the programmer has full control (but also full responsibility) for the string memento.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </article>
 <aside class="article-aside toc" role="navigation">
     <p class="toc-title">On this page</p>
@@ -439,7 +1302,7 @@ This could be a factor for example in a dashboard/home page that references many
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200321-0401-6c585483</p>
+            <p>Revision: 2.0.0-M2.20200322-0401-22384f96</p>
         </div>
     </div>
 </footer>

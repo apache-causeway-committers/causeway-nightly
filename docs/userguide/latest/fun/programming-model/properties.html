@@ -395,7 +395,7 @@ page.parent doesn't seem to be set...
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>A property is an instance variable of a domain object, of a scalar type, that holds some state about either a <a href="../programming-model.html#view-models" class="page">view model</a>.</p>
+<p>A property is an instance variable of a domain object, of a scalar type, that holds some state in either a <a href="../programming-model.html#domain-entities" class="page">domain entity</a> or a <a href="../programming-model.html#view-models" class="page">view model</a>.</p>
 </div>
 <div class="paragraph">
 <p>For example, a <code>Customer</code>'s <code>firstName</code> would be a property, as would their <code>accountCreationDate</code> that they created their account.
@@ -410,21 +410,24 @@ And most properties will also have a number of annotations:</p>
 <div class="ulist">
 <ul>
 <li>
-<p>Apache Isis defines its own set own <code>@Property</code> annotation for capturing domain semantics.
-It also provides a <code>@PropertyLayout</code> for UI hints (though the information in this annotation may instead be provided by a supplementary <a href="../../../../vw/latest/layout.html" class="page"><code>.layout.xml</code></a> file)</p>
+<p>Apache Isis defines its own <a href="../../../../refguide/latest/applib-ant/Property.html" class="page"><code>@Property</code></a> annotation for capturing domain semantics.
+It also provides a <a href="../../../../refguide/latest/applib-ant/PropertyLayout.html" class="page"><code>@PropertyLayout</code></a> for UI hints (though the information in this annotation may instead be provided by a supplementary <a href="../../../../vw/latest/layout.html" class="page"><code>.layout.xml</code></a> file)</p>
 </li>
 <li>
-<p>the properties of domain entities are often annotated with the JDO/DataNucleus <code>@javax.jdo.annotations.Column</code> annotation.
+<p>the properties of domain entities are usually also annotated with an ORM annotation.</p>
+<div class="paragraph">
+<p>In the case of <a href="../../../../pjdo/latest/about.html" class="page">JDO/DataNucleus</a> this would be the <a href="http://www.datanucleus.org/products/datanucleus/jdo/annotations.html#Column"><code>@javax.jdo.annotations.Column</code></a> annotation.
 For property references, there may be other annotations to indicate whether the reference is bidirectional.
 It&#8217;s also possible (using annotations) to define a link table to hold foreign key columns.</p>
+</div>
 </li>
 <li>
-<p>for the properties of view models, then JAXB annotations such as <code>@javax.xml.bind.annotation.XmlElement</code> may be present</p>
+<p>for the properties of view models, then JAXB annotations such as  <a href="https://docs.oracle.com/javase/8/docs/api/javax/xml/bind/annotation/XmlElement.html"><code>@XmlElement</code></a> may be present</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>Apache Isis recognises some of these annotations for JDO/DataNucleus and JAXB and infers some domain semantics from them (for example, the maximum allowable length of a string property).</p>
+<p>Apache Isis recognises some of these annotations from the persistence layer and infers some domain semantics from them (for example, the maximum allowable length of a string property).</p>
 </div>
 <div class="paragraph">
 <p>Since writing getter and setter methods adds quite a bit of boilerplate, it&#8217;s common to use <a href="https://projectlombok.org/">Project Lombok</a> to code generate these methods at compile time (using Java&#8217;s annotation processor) simply by adding the <code>@lombok.Getter</code> and <code>@lombok.Setter</code> annotations to the field.
@@ -478,26 +481,39 @@ private Customer customer;</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>It&#8217;s ok for a <a href="../programming-model.html#view-models" class="page">view model</a> to reference both view model and domain entities.
-However, it isn&#8217;t valid for a domain entity to hold a persisted reference to view model (DataNucleus will not know how to persist that view model).</p>
+<p>It&#8217;s ok for a <a href="../programming-model.html#view-models" class="page">view model</a> to reference other view models and also to reference domain entities.
+However, it <em>isn&#8217;t</em> valid for a domain entity to hold a reference to view model, because the ORM will not know how to persist the view model object.</p>
 </div>
-<div class="admonitionblock note">
+<div class="admonitionblock tip">
 <table>
 <tr>
 <td class="icon">
-<i class="fa icon-note" title="Note"></i>
+<i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
 <div class="paragraph">
-<p>For further details on mapping associations, see the JDO/DataNucleus documentation for <a href="http://www.datanucleus.org/products/accessplatform_4_1/jdo/orm/one_to_many.html">one-to-many</a> associations, <a href="http://www.datanucleus.org/products/accessplatform_4_1/jdo/orm/many_to_one.html">many-to-one</a> associations, <a href="http://www.datanucleus.org/products/accessplatform_4_1/jdo/orm/many_to_many.html">many-to-many</a> associations, and so on.</p>
+<p>For further details on mapping associations using <a href="../../../../pjdo/latest/about.html" class="page">JDO/DataNucleus</a>, see their <a href="http://www.datanucleus.org:15080/products/accessplatform_5_2/jdo/mapping.html">mapping guide</a>.</p>
 </div>
 </td>
 </tr>
 </table>
 </div>
-<div class="paragraph">
-<p>For domain entities, the annotations for mapping value types tend to be different for properties vs action parameters, because JDO annotations are only valid on properties.
-The table in the <a href="../programming-model.html#properties-vs-parameters" class="page">Properties vs Parameters</a> section provides a handy reference of each.</p>
+</div>
+</div>
+<div class="sect1">
+<h2 id="meta-annotations"><a class="anchor" href="#meta-annotations"></a>Meta-annotations</h2>
+<div class="sectionbody">
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+TODO: v2
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -538,7 +554,7 @@ private LocalDate date;</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>The framework will search for any incompatibilities in optionality (whether specified explicitly or defaulted implicitly) between Isis' defaults and DataNucleus, and refuse to boot if any are found (fail fast).</p>
+<p>The framework will search for any incompatibilities in optionality (whether specified explicitly or defaulted implicitly) between Apache Isis' defaults and DataNucleus, and will refuse to boot if any are found.</p>
 </div>
 </div>
 </div>
@@ -560,7 +576,23 @@ private String notes;</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>If this is omitted then whether editing is enabled or disabled is defined globally, in the <code>isis.properties</code> configuration file; see <a href="#refguide:config:configuring-core.adoc#isis-objects-editing" class="page unresolved">reference configuration guide</a> for further details.</p>
+<p>If this is omitted then whether editing is enabled or disabled is inherited from the domain object level, <a href="../../../../refguide/latest/applib-ant/DomainObject.html#editing" class="page"><code>@DomainObject#editing()</code></a>.</p>
+</div>
+<div class="paragraph">
+<p>If that isn&#8217;t specified (or is set to "AS_CONFIGURED"), then the configuration is taken from the <code>application.properties</code> configuration file:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../../../../refguide/latest/config/sections/isis.applib.html#isis.applib.annotation.domain-object.editing" class="page"><code>isis.applib.annotation.domain-object.editing</code></a></p>
+<div class="paragraph">
+<p>for all properties in the domain object.</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>And, finally, if there is no configuration property set at all, then the default is for editing to be DISABLED.</p>
 </div>
 </div>
 </div>
@@ -569,15 +601,19 @@ private String notes;</code></pre>
 <div class="sectionbody">
 <div class="paragraph">
 <p>By default Apache Isis will automatically render all properties in the <a href="../../../../vw/latest/about.html" class="page">Wicket UI</a> or in the <a href="../../../../vro/latest/about.html" class="page">REST API</a>.
-To get Apache Isis to ignore a property (exclude it from its metamodel), annotate the getter using <code>@Programmatic</code>.</p>
+To get Apache Isis to ignore a property (exclude it from its metamodel), annotate the getter using <a href="../../../../refguide/latest/applib-ant/Programmatic.html" class="page"><code>@Programmatic</code></a>.</p>
 </div>
 <div class="paragraph">
-<p>Similarly, you can tell JDO/DataNucleus to ignore a property using the <code>@javax.jdo.annotations.NotPersistent</code> annotation.
+<p>Similarly, for the JDO/DataNucleus ORM, ignore a property using the <code>@javax.jdo.annotations.NotPersistent</code> annotation.
 This is independent of Apache Isis; in other words that property will still be rendered in the UI (unless also annotated with <code>@Programmatic</code>).</p>
 </div>
 <div class="paragraph">
 <p>For view models, you can tell JAXB to ignore a property using the <code>@javax.xml.bind.annotation.XmlTransient</code> annotation.
 Again, this is independent of Apache Isis.</p>
+</div>
+<div class="paragraph">
+<p>You can also suppress a property from the UI using <a href="../../../../refguide/latest/applib-ant/Property.html#hidden" class="page"><code>@Property#hidden()</code></a> or indeed <a href="../../../../refguide/latest/applib-ant/PropertyLayout.html#hidden" class="page"><code>@PropertyLayout#hidden()</code></a>.
+However, this doesn&#8217;t exclude the property from the metamodel.</p>
 </div>
 </div>
 </div>
@@ -586,12 +622,16 @@ Again, this is independent of Apache Isis.</p>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Derived properties are those with a getter but no setter.
-Provided that the property has not been annotated with <code>@Programmatic</code>, these will still be rendered in the UI, but they will be read-only (not editable) and their state will not be persisted.</p>
+These will still be rendered in the UI, but they will be read-only (not editable).</p>
 </div>
 <div class="paragraph">
-<p>Subtly different, it is also possible to have non-persisted but still editable properties.
-In this case you will need a getter and a setter, but with the getter annotated using <code>@NotPersistent</code>.
-The implementation of these getters and setters will most likely persist state using other properties (which might be hidden from view using <code>@Programmatic</code>).</p>
+<p>For entities these may or may not be persisted; that depends on whether the ORM annotations are specified on the field or on the property.</p>
+</div>
+<div class="paragraph">
+<p>It&#8217;s also possible to have non-persisted but still editable properties.
+The setter would not write to a field, but would mutate the object in some other way.
+In such a case you will need a getter and a setter, but with the field/property annotated for the ORM as non-persistent.
+If using JDO/DataNucleus, this is done using <code>@NotPersistent</code>.</p>
 </div>
 <div class="paragraph">
 <p>For example:</p>
@@ -607,11 +647,10 @@ public void setAddress(String address) {
     setLatLong(addressService.toLatLong(address));
 }
 
-@javax.jdo.annotations.Column
-private String latLong;
 @Programmatic
-public String getLatLong() { return latLong; }                      <i class="conum" data-value="2"></i><b>(2)</b>
-public void setLatLong(String latLong) { this.latLong = latLong; }
+@lombok.Getter @lombok.Setter
+@javax.jdo.annotations.Column
+private String latLong;                                             <i class="conum" data-value="2"></i><b>(2)</b>
 
 @javax.inject.Inject
 AddressService addressService;                                      <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
@@ -625,7 +664,8 @@ AddressService addressService;                                      <i class="co
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>the lat/long representation of the address, eg "51.503363;-0.127625"</td>
+<td>the lat/long representation of the address, eg "51.503363;-0.127625".
+Excluded from the Apache Isis metamodel.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
@@ -880,7 +920,7 @@ The difference is whether the binary data is held "on-row" or as a pointer "off-
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200321-0401-6c585483</p>
+            <p>Revision: 2.0.0-M2.20200322-0401-22384f96</p>
         </div>
     </div>
 </footer>

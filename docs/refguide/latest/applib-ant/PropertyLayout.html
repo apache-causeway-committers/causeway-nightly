@@ -195,9 +195,6 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="HomePage.html">HomePage</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="Inject.html">Inject</a>
-  </li>
-  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="MemberOrder.html">MemberOrder</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -223,12 +220,6 @@ page.parent doesn't seem to be set...
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="PersistenceCapable.html">PersistenceCapable</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="PostConstruct.html">PostConstruct</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="PreDestroy.html">PreDestroy</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="PrimaryKey.html">PrimaryKey</a>
@@ -1000,6 +991,132 @@ so that boilerplate-busting tools such as <a href="https://projectlombok.org/">P
 </div>
 </div>
 <div class="sect1">
+<h2 id="hidden"><a class="anchor" href="#hidden"></a><code>hidden</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>hidden</code> attribute indicates where (in the UI) the property should be hidden from the user.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>It is also possible to use <a href="#hidden"><code>@PropertyLayout#hidden</code></a> or a <a href="../../../vw/latest/layout.html#file-based" class="page">file-based layout</a> such that the property can be hidden at the view layer.
+Both options are provided with a view that in the future the view-layer semantics may be under the control of (expert) users, whereas domain-layer semantics should never be overridden or modified by the user.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Customer {
+    @PropertyLayout(
+        hidden=Where.ALL_TABLES
+    )
+    public int getInternalId() { /* ... */ }
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The acceptable values for the <code>where</code> parameter are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>Where.EVERYWHERE</code> or <code>Where.ANYWHERE</code></p>
+<div class="paragraph">
+<p>The property should be hidden everywhere.</p>
+</div>
+</li>
+<li>
+<p><code>Where.ANYWHERE</code></p>
+<div class="paragraph">
+<p>Synonym for everywhere.</p>
+</div>
+</li>
+<li>
+<p><code>Where.OBJECT_FORMS</code></p>
+<div class="paragraph">
+<p>The property should be hidden when displayed within an object form.</p>
+</div>
+</li>
+<li>
+<p><code>Where.PARENTED_TABLES</code></p>
+<div class="paragraph">
+<p>The property should be hidden when displayed as a column of a table within a parent object&#8217;s collection.</p>
+</div>
+</li>
+<li>
+<p><code>Where.STANDALONE_TABLES</code></p>
+<div class="paragraph">
+<p>The property should be hidden when displayed as a column of a table showing a standalone list of objects, for example as returned by a repository query.</p>
+</div>
+</li>
+<li>
+<p><code>Where.ALL_TABLES</code></p>
+<div class="paragraph">
+<p>The property should be hidden when displayed as a column of a table, either an object&#8217;s * collection or a standalone list. This combines <code>PARENTED_TABLES</code> and <code>STANDALONE_TABLES</code>.</p>
+</div>
+</li>
+<li>
+<p><code>Where.NOWHERE</code></p>
+<div class="paragraph">
+<p>The property should not be hidden, overriding any other metadata/conventions that would normally cause the property to be hidden.</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>For example, if a property is annotated with <a href="Title.html" class="page"><code>@Title</code></a>, then normally this should be hidden from all
+tables. Annotating with <code>@Property(where=Where.NOWHERE)</code> overrides this.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The <a href="../../../vro/latest/about.html" class="page">RestfulObjects viewer</a> has only partial support for these <code>Where</code> enums.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="alternatives-3"><a class="anchor" href="#alternatives-3"></a>Alternatives</h3>
+<div class="paragraph">
+<p>As an alternative to using the annotation, the dynamic <a href="../../../vw/latest/layout.html#file-based" class="page">file-based layout</a> can be used instead.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="see-also-2"><a class="anchor" href="#see-also-2"></a>See also</h3>
+<div class="paragraph">
+<p>This attribute can also be applied to:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="Action.html#hidden" class="page">actions</a></p>
+</li>
+<li>
+<p><a href="Collection.html#hidden" class="page">collections</a>.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="labelposition"><a class="anchor" href="#labelposition"></a><code>labelPosition</code></h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -1108,13 +1225,13 @@ The one exception is <a href="ParameterLayout.html#multiLine" class="page"><code
 </table>
 </div>
 <div class="sect2">
-<h3 id="alternatives-3"><a class="anchor" href="#alternatives-3"></a>Alternatives</h3>
+<h3 id="alternatives-4"><a class="anchor" href="#alternatives-4"></a>Alternatives</h3>
 <div class="paragraph">
 <p>As an alternative to using the annotation, the dynamic <a href="../../../vw/latest/layout.html#file-based" class="page">file-based layout</a> can be used instead.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="see-also-2"><a class="anchor" href="#see-also-2"></a>See also</h3>
+<h3 id="see-also-3"><a class="anchor" href="#see-also-3"></a>See also</h3>
 <div class="paragraph">
 <p>This attribute can also be specified for <a href="ParameterLayout.html#labelPosition" class="page">parameters</a>.</p>
 </div>
@@ -1160,7 +1277,7 @@ The one exception is <a href="ParameterLayout.html#multiLine" class="page"><code
 </table>
 </div>
 <div class="sect2">
-<h3 id="alternatives-4"><a class="anchor" href="#alternatives-4"></a>Alternatives</h3>
+<h3 id="alternatives-5"><a class="anchor" href="#alternatives-5"></a>Alternatives</h3>
 <div class="paragraph">
 <p>As an alternative to using the annotation, the dynamic <a href="../../../vw/latest/layout.html#file-based" class="page">file-based layout</a> can be used instead.</p>
 </div>
@@ -1208,7 +1325,7 @@ To allow HTML markup, set the related <code>namedEscaped</code> attribute to <co
 </div>
 </div>
 <div class="sect2">
-<h3 id="alternatives-5"><a class="anchor" href="#alternatives-5"></a>Alternatives</h3>
+<h3 id="alternatives-6"><a class="anchor" href="#alternatives-6"></a>Alternatives</h3>
 <div class="paragraph">
 <p>As an alternative to using the annotation, the dynamic <a href="../../../vw/latest/layout.html#file-based" class="page">file-based layout</a> can be used instead.</p>
 </div>
@@ -1217,7 +1334,7 @@ To allow HTML markup, set the related <code>namedEscaped</code> attribute to <co
 </div>
 </div>
 <div class="sect2">
-<h3 id="see-also-3"><a class="anchor" href="#see-also-3"></a>See also</h3>
+<h3 id="see-also-4"><a class="anchor" href="#see-also-4"></a>See also</h3>
 <div class="paragraph">
 <p>This attribute can also be specified for:</p>
 </div>
@@ -1344,13 +1461,13 @@ Storing this as a half-closed interval&#8201;&#8212;&#8201;eg <code>[1-Apr-2015,
 </div>
 </div>
 <div class="sect2">
-<h3 id="alternatives-6"><a class="anchor" href="#alternatives-6"></a>Alternatives</h3>
+<h3 id="alternatives-7"><a class="anchor" href="#alternatives-7"></a>Alternatives</h3>
 <div class="paragraph">
 <p>As an alternative to using the annotation, the dynamic <a href="../../../vw/latest/layout.html#file-based" class="page">file-based layout</a> can be used instead.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="see-also-4"><a class="anchor" href="#see-also-4"></a>See also</h3>
+<h3 id="see-also-5"><a class="anchor" href="#see-also-5"></a>See also</h3>
 <div class="paragraph">
 <p>This attribute is also supported for <a href="ParameterLayout.html#renderedAsDayBefore" class="page">parameters</a>.</p>
 </div>
@@ -1384,7 +1501,7 @@ That said, note that the <a href="../../../vw/latest/about.html" class="page">Wi
 </div>
 </div>
 <div class="sect2">
-<h3 id="alternatives-7"><a class="anchor" href="#alternatives-7"></a>Alternatives</h3>
+<h3 id="alternatives-8"><a class="anchor" href="#alternatives-8"></a>Alternatives</h3>
 <div class="paragraph">
 <p>As an alternative to using the annotation, the dynamic <a href="../../../vw/latest/layout.html#file-based" class="page">file-based layout</a> can be used instead.</p>
 </div>
@@ -1452,7 +1569,7 @@ However, we decided not to do that, on the basis that it might be interpreted as
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200321-0401-6c585483</p>
+            <p>Revision: 2.0.0-M2.20200322-0401-22384f96</p>
         </div>
     </div>
 </footer>

@@ -392,6 +392,8 @@ page.parent doesn't seem to be set...
 <article class="doc">
     <a name="section-top"></a>
 <h1 class="page">Mixins</h1>
+<div id="preamble">
+<div class="sectionbody">
 <div class="paragraph">
 <p>A <a href="../building-blocks.html#mixins" class="page">mixin</a> acts like a trait or extension method, allowing one module to contribute behaviour or derived state to another object.</p>
 </div>
@@ -454,6 +456,275 @@ This requires that the action has safe semantics, ie does not alter state/no sid
 </tr>
 </table>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="contributed-collection"><a class="anchor" href="#contributed-collection"></a>Contributed Collection</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The example below shows how to contribute a collection:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Mixin(method="coll")                                           <i class="conum" data-value="1"></i><b>(1)</b>
+public class DocumentHolder_documents {
+
+    private final DocumentHolder holder;
+    public DocumentHolderDocuments(DocumentHolder holder) { this.holder = holder; }
+
+    @Action(semantics=SemanticsOf.SAFE)                         <i class="conum" data-value="2"></i><b>(2)</b>
+    @ActionLayout(contributed = Contributed.AS_ASSOCIATION)     <i class="conum" data-value="3"></i><b>(3)</b>
+    @CollectionLayout(defaultView="table")
+    public List&lt;Document&gt; coll() {                              <i class="conum" data-value="4"></i><b>(4)</b>
+        ...
+    }
+    public boolean hideColl() { /* ... */ }                           <i class="conum" data-value="5"></i><b>(5)</b>
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>indicates this is a mixin, and in this case nominates the method name.
+The recommended name for collections is "coll" (if none is specified the default name is "$$").</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>required; actions that have side-effects cannot be contributed as collections</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>required; otherwise the mixin will default to being rendered as an action</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>method (which must match <code>@Mixin#method</code> above), must accept no arguments.
+The mixin is a collection rather than a property because the return type is a collection, not a scalar.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>supporting methods follow the usual naming conventions.
+(That said, in the case of collections, because the collection is derived/read-only, the only supporting method that is relevant is <code>hideColl()</code>).</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The above will result in a contributed collection "documents" for all types that implement/extend from <code>DocumentHolder</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="contributed-property"><a class="anchor" href="#contributed-property"></a>Contributed Property</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Contributed properties are defined similarly, for example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Mixin(method="prop")                                           <i class="conum" data-value="1"></i><b>(1)</b>
+public class DocumentHolder_mostRecentDocument {
+
+    private final DocumentHolder holder;
+    public DocumentHolderDocuments(DocumentHolder holder) { this.holder = holder; }
+
+    @Action(semantics=SemanticsOf.SAFE)                         <i class="conum" data-value="2"></i><b>(2)</b>
+    @ActionLayout(contributed = Contributed.AS_ASSOCIATION)     <i class="conum" data-value="3"></i><b>(3)</b>
+    public Document prop() {                                    <i class="conum" data-value="4"></i><b>(4)</b>
+        ...
+    }
+    public boolean hiderProp() { /* ... */ }                          <i class="conum" data-value="5"></i><b>(5)</b>
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>indicates this is a mixin, and in this case nominates the method name.
+The recommended name for properties is "prop" (if none is specified the default name is "$$").</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>required; actions that have side-effects cannot be contributed as collections</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>required; otherwise the mixin will default to being rendered as an action</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>method (which must match <code>@Mixin#method</code> above), must accept no arguments.
+The mixin is a property rather than a collection because the return type is a scalar.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>supporting methods follow the usual naming conventions.
+(That said, in the case of properties, because the property is derived/read-only, the only supporting method that is relevant is <code>hideProp()</code>).</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="contributed-action"><a class="anchor" href="#contributed-action"></a>Contributed Action</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Contributed actions are defined similarly, for example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Mixin(method="act")                                            <i class="conum" data-value="1"></i><b>(1)</b>
+public class DocumentHolder_addDocument {
+
+    private final DocumentHolder holder;
+    public DocumentHolderDocuments(DocumentHolder holder) { this.holder = holder; }
+
+    @Action()
+    @ActionLayout(contributed = Contributed.AS_ACTION)          <i class="conum" data-value="2"></i><b>(2)</b>
+    public Document&gt; act(Document doc) {                        <i class="conum" data-value="3"></i><b>(3)</b>
+        ...
+    }
+    public boolean hideAct() { /* ... */ }                            <i class="conum" data-value="4"></i><b>(4)</b>
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>indicates this is a mixin, and in this case nominates the method name.
+The recommended name for properties is "prop" (if none is specified the default name is "$$").</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>recommended</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>method must match <code>@Mixin#method</code> above.
+Unlike contributed properties and collections, contributed actions can accept parameters.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>supporting methods follow the usual naming conventions.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="inferred-name"><a class="anchor" href="#inferred-name"></a>Inferred Name</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Where the mixin follows the naming convention <code>SomeType_mixinName</code> then the method name can be abbreviated, and the name of the member being contributed is inferred from the name of the class itself, being everything after the last '_'.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Mixin(method="act")
+public class DocumentHolder_documents {
+
+    private final DocumentHolder holder;
+    public DocumentHolder_documents(DocumentHolder holder) { this.holder = holder; }
+
+    @Action(semantics=SemanticsOf.SAFE)
+    @ActionLayout(contributed = Contributed.AS_ASSOCIATION)
+    @CollectionLayout(defaultView="table")
+    public List&lt;Document&gt; act() {
+        ...
+    }
+    public boolean hideAct() { /* ... */ }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The examples above (for <a href="../programming-model.html#contributed-action" class="page">action</a>) demonstrate this.</p>
+</div>
+<div class="paragraph">
+<p>The character "$" is also recognized as a separator between the mixin type and mixin name.
+This is useful for mixins implemented as nested static types, discussed <a href="../programming-model.html#nested-static-classes" class="page">below</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="nested-static-classes"><a class="anchor" href="#nested-static-classes"></a>As Nested Static Classes</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>As noted in the introduction, while mixins were originally introduced as a means of allowing contributions from one module to the types of another module, they are also a convenient mechanism for grouping functionality/behaviour against a concrete type.
+All the methods and supporting methods end up in a single construct, and the dependency between that functionality and the rest of the object is made more explicit.</p>
+</div>
+<div class="paragraph">
+<p>When using mixins in this fashion, it is idiomatic to write the mixin as a nested static class, using the naming convention described above to reduce duplication.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Customer {
+
+    @Mixin(method="act")
+    public static class placeOrder {                                            <i class="conum" data-value="1"></i><b>(1)</b>
+
+        private final Customer customer;
+        public placeOrder(Customer customer) { this.customer = customer; }      <i class="conum" data-value="2"></i><b>(2)</b>
+
+        @Action
+        @ActionLayout(contributed = Contributed.AS_ACTION)
+        public List&lt;Order&gt; act(Product p, int quantity) {                        <i class="conum" data-value="3"></i><b>(3)</b>
+            ...
+        }
+        public boolean hideAct() { /* ... */ }                                         <i class="conum" data-value="4"></i><b>(4)</b>
+        public String validate0Act(Product p) { ...  }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>By convention, start with a lower case, though will also work fine if capitalized.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>typically contributed to concrete class, ie the outer class</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>implementation as usual</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>supporting methods as usual</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="programmatic-usage"><a class="anchor" href="#programmatic-usage"></a>Programmatic usage</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When a domain object is rendered, the framework will automatically instantiate all required mixins and delegate to them dynamically.
+If writing integration tests or fixtures, or (sometimes) just regular domain logic, then you may need to instantiate mixins directly.</p>
+</div>
+<div class="paragraph">
+<p>For this you can use the <a href="../../../../refguide/latest/applib-svc/FactoryService.html" class="page"><code>FactoryService#mixin(&#8230;&#8203;)</code></a> method.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">DocumentHolder_documents mixin = factoryService.mixin(DocumentHolder_documents.class, customer);</code></pre>
+</div>
+</div>
+</div>
+</div>
 </article>
 <aside class="article-aside toc" role="navigation">
     <p class="toc-title">On this page</p>
@@ -471,7 +742,7 @@ This requires that the action has safe semantics, ie does not alter state/no sid
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200321-0401-6c585483</p>
+            <p>Revision: 2.0.0-M2.20200322-0401-22384f96</p>
         </div>
     </div>
 </footer>

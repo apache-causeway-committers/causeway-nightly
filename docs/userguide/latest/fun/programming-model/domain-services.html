@@ -392,8 +392,453 @@ page.parent doesn't seem to be set...
 <article class="doc">
     <a name="section-top"></a>
 <h1 class="page">Domain Services</h1>
+<div id="preamble">
+<div class="sectionbody">
 <div class="paragraph">
 <p>This section looks at the programming model for writing your own domain services.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="nature-of-service"><a class="anchor" href="#nature-of-service"></a>Nature of Service</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Apache Isis uses Spring Boot to instantiate and manage the dependency injection of domain services.
+The vast majority of these are singleton (application) scoped; a smaller number are request scoped (using the <a href="../../../../refguide/latest/applib-ant/IsisSessionScope.html" class="page"><code>@IsisSessionScope</code></a> annotation).</p>
+</div>
+<div class="paragraph">
+<p>Accordingly, all domain services are annotated or meta-annotated using Spring&#8217;s <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/stereotype/Component.html"><code>@Component</code></a> annotation.</p>
+</div>
+<div class="paragraph">
+<p>For domain services to be visible in the Apache Isis UI, they must be annotated with <a href="../../../../refguide/latest/applib-ant/DomainService.html" class="page"><code>@DomainService</code></a>.
+Its <a href="../../../../refguide/latest/applib-ant/DomainService.html#nature" class="page"><code>#nature()</code></a> attribute is either:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>VIEW</code> (the default if not specified)</p>
+<div class="paragraph">
+<p>which indicates that the actions should appear on the menu of the <a href="../../../../vw/latest/about.html" class="page">Wicket viewer</a>, and as top-level actions for the REST API provided by the <a href="../../../../vro/latest/about.html" class="page">Restful Objects viewer</a>.</p>
+</div>
+</li>
+<li>
+<p><code>REST</code></p>
+<div class="paragraph">
+<p>which indicates that the actions should appear in the REST API provided by the <a href="../../../../vro/latest/about.html" class="page">Restful Objects viewer</a>, but not rendered by the <a href="../../../../vw/latest/about.html" class="page">Wicket viewer</a>.</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>It&#8217;s also possible to define a "programmatic" domain service, meaning one that is instantiated and injected by Spring Boot, but is not visible in the UI or REST API.
+For example, the <a href="../../../../subdomains/latest/docx/about.html" class="page">Docx Library</a> provides a domain service that performs mail merge using MS Word, but this domain service is not intended to appear in the UI.
+Such programmatic services are usually annotated with Spring&#8217;s <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/stereotype/Service.html"><code>@Service</code></a> annotation or <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/stereotype/Repository.html"><code>@Repository</code></a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="repository-and-factory"><a class="anchor" href="#repository-and-factory"></a>Repository and Factory</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The repository/factory uses an injected <a href="../../../../refguide/latest/applib-svc/RepositoryService.html" class="page"><code>RepositoryService</code></a> to both instantiate new objects and to query the database for existing objects of a given entity type.
+Generally these services are not visible in UI, and so are annotated with <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/stereotype/Repository.html"><code>@Repository</code></a></p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Repository                                                     <i class="conum" data-value="1"></i><b>(1)</b>
+@lombok.RequiredArgsConstructor(onConstructor_ = {@Inject} )    <i class="conum" data-value="2"></i><b>(2)</b>
+public CustomerRepository {
+
+    private final RepositoryService repositoryService;
+
+    public List&lt;Customer&gt; findByName(String name) {
+        return repositoryService.allMatches(                    <i class="conum" data-value="3"></i><b>(3)</b>
+                new QueryDefault&lt;&gt;(Customer.class,
+                            "findByName", "name", name);
+    }
+
+    public Customer newCustomer(...) {
+        Customer Customer =
+            repositoryService.detachedEntity(Customer.class);   <i class="conum" data-value="4"></i><b>(4)</b>
+        ...
+        return repositoryService.persistAndFlush(Customer);     <i class="conum" data-value="5"></i><b>(5)</b>
+    }
+
+    public List&lt;Customer&gt; allCustomers() {                      <i class="conum" data-value="6"></i><b>(6)</b>
+        return repositoryService.allInstances(Customer.class);
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Detected and managed by Spring Boot.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Lombok annotation for dependency injection of <a href="../../../../refguide/latest/applib-svc/RepositoryService.html" class="page"><code>RepositoryService</code></a> through generated constructor.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>uses injected <code>RepositoryService</code> to query via JDOQL.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>uses injected <code>RepositoryService</code> to instantiate a not-yet-persisted domain entity &#8230;&#8203;</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>... and then save into the database a new <code>Customer</code> instance.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Returns all instances (useful for prototyping, probably not for production).</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>There is no need to annotate the actions; they are implicitly hidden because of the domain service&#8217;s nature.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>JDO/Datanucleus also supports <a href="http://www.datanucleus.org:15080/products/accessplatform_5_2/jdo/query.html#jdoql_typed">type-safe queries</a>.
+These can be executed through the <a href="../../../../pjdo/latest/services/IsisJdoSupport.html" class="page"><code>IsisJdoSupport</code></a> domain service.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="menu"><a class="anchor" href="#menu"></a>Menu</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Menu services provide actions to be rendered on the menu.</p>
+</div>
+<div class="paragraph">
+<p>For the <a href="../../../../vw/latest/about.html" class="page">Wicket Viewer</a>, each service&#8217;s actions appear as a collection of menu items of a named menu, and this menu is on one of the three menu bars provided by the Wicket viewer.
+Although these can be organised using annotations, it&#8217;s usually easier to use a <a href="../../../../vw/latest/menubars-layout.html#file-based" class="page">file-based layout file</a> (<code>menubars.layout.xml</code>).</p>
+</div>
+<div class="paragraph">
+<p>For the <a href="../../../../vro/latest/about.html" class="page">Restful Objects Viewer</a>, all menu services are shown in the services representation.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainService(nature = NatureOfService.VIEW)                   <i class="conum" data-value="1"></i><b>(1)</b>
+@lombok.RequiredArgsConstructor(onConstructor_ = {@Inject} )    <i class="conum" data-value="2"></i><b>(2)</b>
+public class Customers {
+
+    @Inject
+    protected final CustomerRepository customerRepository;      <i class="conum" data-value="3"></i><b>(3)</b>
+
+    @Action(semantics = SemanticsOf.SAFE)
+    @ActionLayout(bookmarking = BookmarkPolicy.AS_ROOT)
+    public List&lt;Customer&gt; findByName(                           <i class="conum" data-value="4"></i><b>(4)</b>
+            @ParameterLayout(named="Name")                      <i class="conum" data-value="5"></i><b>(5)</b>
+            final String name ) {
+        return customerRepository.findByName(name);             <i class="conum" data-value="6"></i><b>(6)</b>
+    }
+
+    @Action(semantics = SemanticsOf.NON_IDEMPOTENT)
+    public Customer newCustomer(...) {
+        return customerRepository.newCustomer(...);
+    }
+
+    @Action( semantics = SemanticsOf.SAFE,
+             restrictTo = RestrictTo.PROTOTYPING )              <i class="conum" data-value="7"></i><b>(7)</b>
+    public List&lt;Customer&gt; listAll() {
+        return customerRepository.listAll();
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Identify the class as a domain service, to render in the menu.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Rendered in the UI as a "Find By Name" menu item underneath the "Customers" menu.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>The <a href="../../../../refguide/latest/applib-ant/ParameterLayout.html" class="page"><code>@ParameterLayout</code></a> provides metadata for the parameter itself, in this case its name.
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>There&#8217;s no need to name the action parameters if the code is compiled using the <code>-parameters</code> flag to the Java compiler (javac); the framework will then use the name of the parameter itself.</p>
+</div>
+</td>
+</tr>
+</table>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>the action implementation delegates to an injected repository.
+The framework can inject into not just other domain services but will also automatically into domain entities and view models.
+There is further discussion of service injection <a href="../programming-model.html#inject-services" class="page">below</a>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><a href="../../../../refguide/latest/applib-ant/Action.html#restrictTo" class="page">Prototype</a> actions are rendered only in prototyping mode.
+A "list all" action such as this can be useful when exploring the domain with a small dataset.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Menu services typically delegate to an underlying repository/ies specific to the domain (rather than use <code>RepositoryService</code> directly, for example).</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Whether you separate out menu services from repository services is to some extent a matter of style.
+One perspective is that these two closely related domain services nevertheless have different responsibilities, and so could be kept separate.
+An alternative perspective is that the duplication is just unnecessary boilerplate, and conflicts with the naked objects philosophy.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="event-subscribers"><a class="anchor" href="#event-subscribers"></a>Event Subscribers</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Domain services acting as event subscribers can subscribe to <a href="../building-blocks.html#lifecycle-events" class="page">lifecycle</a> events, influencing the rendering and behaviour of other objects.
+Behind the scenes this uses Spring&#8217;s (in-memory) <a href="https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/core.html#context-functionality-events-annotation">event bus</a>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.springframework.context.event.EventListener;
+
+@Service                                                        <i class="conum" data-value="1"></i><b>(1)</b>
+@lombok.RequiredArgsConstructor(onConstructor_ = {@Inject} )
+public class OnCustomerDeletedCascadeDeleteOrders {
+
+    @Inject
+    private final OrderRepository orderRepository;
+
+    @EventListener(Customer.DeletedEvent.class)                 <i class="conum" data-value="2"></i><b>(2)</b>
+    public void on(final Customer.DeletedEvent ev) {            <i class="conum" data-value="3"></i><b>(3)</b>
+        Customer customer = ev.getSource();
+        orderRepository.delete(customer);
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>subscriptions do not appear in the UI at all</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>use Spring Framework&#8217;s <a href="https://javadoc.io/doc/org.springframework/spring-context/latest/org/springframework/context/event/EventListener.html"><code>@EventListener</code></a></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>the parameter type of the method corresponds to the event emitted on the event bus.
+The actual method name does not matter (though it must have <code>public</code> visibility).</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="scoped-services"><a class="anchor" href="#scoped-services"></a>Scoped services</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>By default all domain services are application-scoped, in other words singletons.
+Such domain services are required to be thread-safe, usually satisfied by being intrinsically stateless.</p>
+</div>
+<div class="paragraph">
+<p>Sometimes though a service&#8217;s lifetime is applicable only to a single (http) request.
+The framework has a number of such services, including a <a href="../../../../refguide/latest/applib-svc/Scratchpad.html" class="page"><code>Scratchpad</code></a> service (to share adhoc data between methods), and <a href="../../../../refguide/latest/applib-svc/QueryResultsCache.html" class="page"><code>QueryResultsCache</code></a>, which as its name suggests will cache query results.
+Such services <em>do</em> hold state, but that state is scoped per (possibly concurrent) request and should be removed afterwards.</p>
+</div>
+<div class="paragraph">
+<p>The requirement for request-scoped services is supported using Apache Isis' own <a href="../../../../refguide/latest/applib-ant/IsisSessionScope.html" class="page"><code>@IsisSessionScope</code></a> annotation (named because a short-lived <code>IsisSession</code> is created for each request).
+This is used by the framework services and can also be used for user-defined services.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Service
+@IsisSessionScope
+public class MyService {
+    ...
+    public void doSomething() { ... }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Unlike application-scoped services, these request-scoped services must be injected using a slightly different idiom (borrowed from CDI), using a <code>javax.inject.Provider</code>.
+For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import javax.inject.Provider;
+
+public class SomeClient {
+    ...
+    @Inject
+    Provider&lt;MyService&gt; myServiceProvider;  <i class="conum" data-value="1"></i><b>(1)</b>
+
+    public void someMethod() {
+        myServiceProvider.get()             <i class="conum" data-value="2"></i><b>(2)</b>
+                         .doSomething();
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Inject using <code>Provider</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Obtain an instance using <code>Provider#get()</code></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="configuration"><a class="anchor" href="#configuration"></a>Configuration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Spring provides numerous mechanisms to configure domain services, both in terms of binding or passing in the configuration property to the service, and in terms of setting the value within some sort of configuration file.</p>
+</div>
+<div class="paragraph">
+<p>The mechanism prefered by Apache Isis itself, and which you are free to use for your own services, is the type-safe <a href="https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/context/properties/ConfigurationProperties.html"><code>ConfigurationProperties</code></a>, whereby the configuration properties are expressed in a series of nested static classes.</p>
+</div>
+<div class="paragraph">
+<p>The <a href="../../../../docs/latest/starters/simpleapp.html" class="page">simpleapp starter app</a> includes an example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.springframework.validation.annotation.Validated;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
+@ConfigurationProperties("app.simple-module")
+@lombok.Data
+@Validated
+public static class Configuration {
+    private final Types types = new Types();
+    @lombok.Data
+    public static class Types {
+        private final Name name = new Name();
+        @lombok.Data
+        public static class Name {
+            private final Validation validation = new Validation();
+            @lombok.Data
+            public static class Validation {
+                private char[] prohibitedCharacters =
+                    "!&amp;%$".toCharArray();
+                private String message =
+                    "Character '{character}' is not allowed";
+            }
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This configuration property can be injected, like any other component, and makes the configuration value available in a type-safe fashion:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">val prohibitedCharacters =
+  config.getTypes().getName().getValidation().getProhibitedCharacters();</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For this configuration property service to be discovered and managed by Spring, we need to use the <a href="https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/context/properties/EnableConfigurationProperties.html"><code>EnableConfigurationProperties</code></a> annotation.
+This normally would reside on the owning module (discussed in more detail <a href="../programming-model.html#modules" class="page">later</a>):</p>
+</div>
+<div class="listingblock">
+<div class="title">SimpleModule.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.springframework.context.annotation.Configuration
+
+@Configuration
+// ...
+@EnableConfigurationProperties({
+        SimpleModule.Configuration.class,
+})
+public class SimpleModule /* ... */ {
+    // ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>These configuration properties can then be specified using either Spring&#8217;s <code>application.yml</code> or <code>application.properties</code>.
+For example:</p>
+</div>
+<div class="listingblock">
+<div class="title">application.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yml hljs" data-lang="yml">app:
+  simple-module:
+    types:
+      name:
+        validation:
+          message: "'{character}' is invalid."
+          prohibited-characters: "&amp;%$"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Moreover, Spring is able to configure the IDE so that these configuration values can be specified using code completion.
+All that is required is this dependency:</p>
+</div>
+<div class="listingblock">
+<div class="title">pom.xml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;!-- IDE support  --&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-configuration-processor&lt;/artifactId&gt;
+    &lt;optional&gt;true&lt;/optional&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="initialization"><a class="anchor" href="#initialization"></a>Initialization</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Sometimes a domain service needs to perform initialization logic before it is ready to be used.</p>
+</div>
+<div class="paragraph">
+<p>In many cases, such initialization can be performed within the constructor.
+If the initialization has dependencies, then these can be injected using standard <a href="https://docs.spring.io/spring-boot/docs/current/reference/html/using-spring-boot.html#using-boot-spring-beans-and-dependency-injection">constructor injection</a>.</p>
+</div>
+<div class="paragraph">
+<p>Alternatively, initialization can be moved into a <code>@PostConstruct</code> <a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html#beans-postconstruct-and-predestroy-annotations">lifecycle callback</a>.
+Shutdown is similar; the framework will call any method annotated with <code>javax.annotation.PreDestroy</code>.</p>
+</div>
+</div>
 </div>
 </article>
 <aside class="article-aside toc" role="navigation">
@@ -412,7 +857,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200321-0401-6c585483</p>
+            <p>Revision: 2.0.0-M2.20200322-0401-22384f96</p>
         </div>
     </div>
 </footer>

@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Aligned with the Business :: Apache Isis</title>
+    <title>Core Values :: Apache Isis</title>
     <meta name="generator" content="Antora 2.2.0">
     <link rel="stylesheet" href="../../../../_/css/site.css">
     <link rel="stylesheet" href="../../../../_/css/site-custom.css">
@@ -384,30 +384,33 @@ page.parent doesn't seem to be set...
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="../../about.html">User Guide</a></li>
-    <li><a href="aligned-with-the-business.html">Aligned with the Business</a></li>
+    <li><a href="core-values.html">Core Values</a></li>
   </ul>
 </nav>
-  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/HEAD/api/adoc/userguide/modules/fun/pages/core-concepts/aligned-with-the-business.adoc">Edit</a></div>
+  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/HEAD/api/adoc/userguide/modules/fun/pages/core-concepts/core-values.adoc">Edit</a></div>
 </div>
 <article class="doc">
     <a name="section-top"></a>
-<h1 class="page">Aligned with the Business</h1>
+<h1 class="page">Core Values</h1>
 <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This section describes the core values that the the Apache Isis framework tries to uphold.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="aligned-with-the-business"><a class="anchor" href="#aligned-with-the-business"></a>Aligned with the Business</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Apache Isis is primarily aimed at custom-built "enterprise" applications, with a UI provided by the <a href="../../../../vw/latest/about.html" class="page">Wicket viewer</a> is intended to be usable by domain experts, typically end-users within the organization.</p>
 </div>
 <div class="paragraph">
-<p>This section explores some of the considerations that organizations when deciding how to maintain their core business functions.</p>
+<p>But why should an organisation build software, when it could just buy it?</p>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="why-build-instead-of-buy"><a class="anchor" href="#why-build-instead-of-buy"></a>Why Build instead of Buy?</h2>
-<div class="sectionbody">
 <div class="paragraph">
-<p>Buying packaged software makes sense for statutory requirements, such as payroll or general ledger, or document management/retrieval.
-But (we argue) it makes much less sense to buy packaged software for the systems that support the core business: the software should fit the business, not the other way around.</p>
+<p>To be clear, buying packaged software <em>does</em> make sense in many cases: for statutory requirements, such as payroll or general ledger, or document management/retrieval.
+But (we argue) it makes much less sense to buy packaged software for the systems that support the core business: <strong>the software should fit the business, not the other way around</strong>.</p>
 </div>
 <div class="paragraph">
 <p>Packaged software suffers from the problem of both having doing "too much" and "not enough":</p>
@@ -428,7 +431,7 @@ These extra unnecessary features make the system difficult to learn and use.;</p
 </div>
 <div class="imageblock">
 <div class="content">
-<a class="image" href="../_images/core-concepts/philosophy/build-vs-buy.png"><img src="../_images/core-concepts/philosophy/build-vs-buy.png" alt="build vs buy" width="800px"></a>
+<a class="image" href="../_images/core-concepts/philosophy/build-vs-buy.png"><img src="../_images/core-concepts/philosophy/build-vs-buy.png" alt="build vs buy" width="550px"></a>
 </div>
 <div class="title">Figure 1. build-vs-buy</div>
 </div>
@@ -467,7 +470,7 @@ And if your competitor has well-crafted custom software, then your business will
 </div>
 </div>
 <div class="sect1">
-<h2 id="maintainable"><a class="anchor" href="#maintainable"></a>Maintainable</h2>
+<h2 id="modular"><a class="anchor" href="#modular"></a>Modular</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Enterprise applications tend to stick around a long time; a business' core domains don&#8217;t tend to change all that often.
@@ -508,41 +511,7 @@ The framework encourages splitting this functionality into modules; each such mo
 We in effect have a "firewall" between the two layers.</p>
 </div>
 <div class="paragraph">
-<p>To support the business domain being split into separate modules, the framework provides various features, the most important of which are:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>dependency injection of services<br>
-+ Both <a href="../../../../refguide/latest/applib-svc/about.html" class="page">framework-defined domain services</a> and application-defined services (eg repositories and factories) are injected everywhere, using the regular <a href="../../../../refguide/latest/applib-ant/Inject.html" class="page"><code>@javax.inject.Inject</code></a> annotation.</p>
-<div class="paragraph">
-<p>Note that this means dependencies are <em>also</em> injected into domain entities and view models, allowing for behaviourally complete functionality.</p>
-</div>
-</li>
-<li>
-<p>mixins allow functionality defined in one module to appear (in the UI) to be provided by some other module.<br>
-+ For example, a <em>Document</em> module might allow <code>Document</code> objects to be attached to any arbitrary domain object (such as <code>Order</code> or <code>Customer</code>) in other modules.
-A mixin would allow the UI for a <code>Customer</code> to also display these attached <code>Document</code>s, even though the <em>Customer</em> module would have no knowledge of/dependency on the <em>Workflow</em> module.</p>
-<div class="paragraph">
-<p>Dependencies are also injected into mixins.
-A common technique is to factor out from domain objects into mixins and then generalise.</p>
-</div>
-</li>
-<li>
-<p>the internal <a href="../../../../refguide/latest/applib-svc/EventBusService.html" class="page">event bus</a> allows modules to influence other modules.</p>
-<div class="paragraph">
-<p>A good example is supporting what (in an RDBMS we would call) referential integrity.
-Suppose the <em>Customer</em> module has a <code>Customer</code> object and a <code>EmailAddress</code> object, with a customer having a collection of email addresses.
-A <em>Communications</em> module might then use those email addresses to create <code>EmailCommunication</code>s.<br>
-<br>
-If the <em>Customer</em> module wants to delete an <code>EmailAddress</code> then the <em>Communications</em> module will probably want to veto this because they are "in use" by those <code>EmailCommunication</code>s.
-Or, it might conceivably perform a cascade delete of all associated communications.
-Either way, the <em>Communications</em> module receives an internal event representing the intention to delete the <code>EmailAddress</code>.
-It can then act accordingly, either vetoing the interaction or performing the cascade delete.
-The <em>Customer</em> module for its part does not know anything about this other module.</p>
-</div>
-</li>
-</ul>
+<p>To support the business domain being split into separate modules, the framework provides various features, the most important of which are the dependency injection of <a href="../building-blocks.html#domain-services" class="page">domain services</a>, <a href="../building-blocks.html#mixins" class="page">mixins</a>, and in-memory <a href="../building-blocks.html#events" class="page">events</a>.</p>
 </div>
 <div class="paragraph">
 <p>For those cases where a module needs to interact with other modules but does not know about their implementations, the module can either define its own <a href="https://en.wikipedia.org/wiki/Service_provider_interface">SPI</a> domain services or it can define custom domain events and fire them.
@@ -551,10 +520,7 @@ For example, the <a href="../../../../refguide/latest/applib-svc/AuditerService.
 </div>
 <div class="paragraph">
 <p>When building a modular application, it&#8217;s important to consider the logical layering of the modules: we don&#8217;t need every module to be completely decoupled from every other.
-The most important requirement is that there are no cyclic dependencies, because otherwise we run the risk of the application degrading into a <a href="https://en.wikipedia.org/wiki/Big_ball_of_mud">"big ball of mud"</a>.
-(Proprietary) tools such as <a href="https://structure101.com/">Structure 101</a> help detect and visualize such cycles.
-OO design techniques such as the <a href="https://en.wikipedia.org/wiki/Dependency_inversion_principle">dependency inversion principle</a> can be used to remove cycles.
-(Open source) libraries such as <a href="https://www.archunit.org/">ArchUnit</a> or <a href="https://jqassistant.org/">jQAssistant</a> can help enforce architectural layering to prevent the issue arising in the first place.</p>
+The most important requirement is that there are no cyclic dependencies, because otherwise we run the risk of the application degrading into a <a href="https://en.wikipedia.org/wiki/Big_ball_of_mud">"big ball of mud"</a>.</p>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -569,6 +535,129 @@ OO design techniques such as the <a href="https://en.wikipedia.org/wiki/Dependen
 </td>
 </tr>
 </table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="easing-the-road-to-ddd"><a class="anchor" href="#easing-the-road-to-ddd"></a>Easing the road to DDD</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The case for <a href="../core-concepts.html#domain-driven-design" class="page">domain driven design</a>  might be compelling, but that doesn&#8217;t necessarily make it easy to do.
+Let&#8217;s take a look at some of the challenges that <em>DDD</em> throws up and see how Apache Isis (and its implementation of the naked objects pattern) helps address them.</p>
+</div>
+<div class="sect2">
+<h3 id="ddd-takes-a-conscious-effort"><a class="anchor" href="#ddd-takes-a-conscious-effort"></a>DDD takes a conscious effort</h3>
+<div class="paragraph">
+<p>Here&#8217;s what Eric Evans says about ubiquitous language:</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>With a conscious effort by the [development] team the domain model can provide the backbone for [the] common [ubiquitous] language&#8230;&#8203;connecting team communication to the software implementation.</p>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p>The word to pick up on here is <strong>conscious</strong>.
+It takes a <em>conscious</em> effort by the entire team to develop the ubiquitous language.
+Everyone in the team must challenge the use of new or unfamiliar terms, must clarify concepts when used in a new context, and in general must be on the lookout for sloppy thinking.
+This takes willingness on the part of all involved, not to mention some practice.</p>
+</div>
+<div class="paragraph">
+<p>With Apache Isis, though, the ubiquitous language evolves with scarcely any effort at all.
+For the business experts, the Apache Isis viewers show the domain concepts they identify and the relationships between those concepts in a straightforward fashion.
+Meanwhile, the developers can devote themselves to encoding those domain concepts directly as domain classes.
+There&#8217;s no technology to get distracted by; there is literally nothing else for the developers to be working on.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="ddd-must-be-grounded"><a class="anchor" href="#ddd-must-be-grounded"></a>DDD must be grounded</h3>
+<div class="paragraph">
+<p>Employing a model-driven design isn&#8217;t necessarily straightforward, and the development processes used by some organizations positively hinder it.
+It&#8217;s not sufficient for the business analysts or architects to come up with some idealized representation of the business domain and then chuck it over the wall for the programmers to do their best with.</p>
+</div>
+<div class="paragraph">
+<p>Instead, the concepts in the model must have a very literal representation in code.
+If we fail to do this, then we open up the communication divide, and our ubiquitous language is lost.
+There is literally no point having a domain model that cannot be represented in code.
+We cannot invent our ubiquitous language in a vacuum, and the developers must ensure that the model remains grounded in the doable.</p>
+</div>
+<div class="paragraph">
+<p>In Apache Isis, we have a very pure one-to-one correspondence between the domain concepts and its implementation.
+Domain concepts are represented as classes and interfaces, easily demonstrated back to the business.
+If the model is clumsy, then the application will be clumsy too, and so the team can work together to find a better implementable model.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="model-must-be-understandable"><a class="anchor" href="#model-must-be-understandable"></a>Model must be understandable</h3>
+<div class="paragraph">
+<p>If we are using code as the primary means of expressing the model, then we need to find a way to make this model understandable to the business.</p>
+</div>
+<div class="paragraph">
+<p>We could generate UML diagrams and the like from code.
+That will work for some members of the business community, but not for everyone.
+Or we could generate a PDF document from Javadoc comments, but comments aren&#8217;t code and so the document may be inaccurate.
+Anyway, even if we do create such a document, not everyone will read it.</p>
+</div>
+<div class="paragraph">
+<p>A better way to represent the model is to show it in action as a working prototype.
+As we show with the <a href="../../../../docs/latest/starters/helloworld.html" class="page">starter apps</a>, Apache Isis enables this with ease.
+Such prototypes bring the domain model to life, engaging the audience in a way that a piece of paper never can.</p>
+</div>
+<div class="paragraph">
+<p>Moreover, with Apache Isis prototypes, the domain model will come shining through.
+If there are mistakes or misunderstandings in the domain model (inevitable when building any complex system), they will be obvious to all.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="architecture-must-be-robust"><a class="anchor" href="#architecture-must-be-robust"></a>Architecture must be robust</h3>
+<div class="paragraph">
+<p><em>DDD</em> rightly requires that the domain model lives in its own layer within the architecture.
+The other layers of the application (usually presentation, application, and persistence) have their own responsibilities, and are completely separate.</p>
+</div>
+<div class="paragraph">
+<p>However, there are two immediate issues.
+The first is rather obvious: custom coding each of those other layers is an expensive proposition.
+Picking up on the previous point, this in itself can put the kibosh on using prototyping to represent the model, even if we wanted to do so.</p>
+</div>
+<div class="paragraph">
+<p>The second issue is more subtle.
+It takes real skill to ensure the correct separation of concerns between these layers, if indeed you can get an agreement as to what those concerns actually are.
+Even with the best intentions, it&#8217;s all too easy for custom-written layers to blur the boundaries and put (for example) validation in the user interface layer when it should belong to the domain layer.
+At the other extreme, it&#8217;s quite possible for custom layers to distort or completely subvert the underlying domain model.</p>
+</div>
+<div class="paragraph">
+<p>Because of Apache Isis' generic <em>OOUI</em>s, there&#8217;s no need to write the other layers of the architecture.
+Of course, this reduces the development cost.
+But more than that, there will be no leakage of concerns outside the domain model.
+All the validation logic <strong>must</strong> be in the domain model because there is nowhere else to put it.</p>
+</div>
+<div class="paragraph">
+<p>Moreover, although Apache Isis does provide a complete runtime framework, there is no direct coupling of your domain model to the framework.
+That means it is very possible to take your domain model prototyped in Apache Isis and then deploy it on some other <em>J(2)EE</em> architecture, with a custom <em>UI</em> if you want.
+This is discussed later on, in <a href="../core-concepts.html#deployment-options" class="page">deployment options</a>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="extending-the-reach-of-ddd"><a class="anchor" href="#extending-the-reach-of-ddd"></a>Extending the reach of DDD</h3>
+<div class="paragraph">
+<p>Domain-driven design is often positioned as being applicable only to complex domains; indeed, the subtitle of Evans book is "Tackling Complexity in the Heart of Software".
+The corollary is that DDD is overkill for simpler domains.
+The trouble is that we immediately have to make a choice: is the domain complex enough to warrant a domain-driven approach?</p>
+</div>
+<div class="paragraph">
+<p>This goes back to the previous point, building and maintaining a layered architecture.
+It doesn&#8217;t seem cost effective to go to all the effort of a DDD approach if the underlying domain model is simple.</p>
+</div>
+<div class="paragraph">
+<p>However, with Apache Isis, we don&#8217;t write these other layers, so we don&#8217;t have to make a call on how complex our domain is.
+We can start working solely on our domain, even if we suspect it will be simple.
+If it is indeed a simple domain, then there&#8217;s no hardship, but if unexpected subtleties arise, then we&#8217;re in a good position to handle them.</p>
+</div>
+<div class="paragraph">
+<p>If you&#8217;re just starting out writing domain-driven applications, then Apache Isis should significantly ease your journey into applying <em>DDD</em>.
+And if you <em>have</em> used <em>DDD</em> for a while, then you should find the framework a very useful new tool in your arsenal.</p>
+</div>
 </div>
 </div>
 </div>
@@ -589,7 +678,7 @@ OO design techniques such as the <a href="https://en.wikipedia.org/wiki/Dependen
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200321-0401-6c585483</p>
+            <p>Revision: 2.0.0-M2.20200322-0401-22384f96</p>
         </div>
     </div>
 </footer>
