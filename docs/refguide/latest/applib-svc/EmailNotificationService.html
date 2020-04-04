@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../../../_/css/site.css">
     <link rel="stylesheet" href="../../../_/css/site-custom.css">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Raleway:300,400,500,700,800|Montserrat:300,400,700" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css"/>
 <link rel="home" href="../../.." title="Apache Isis">
   <link rel="next" href="EmailService.html" title="EmailService">
   <link rel="prev" href="DeepLinkService.html" title="DeepLinkService">
@@ -30,6 +31,11 @@
     </div>
     <div id="topbar-nav" class="navbar-menu">
       <a class="navbar-end">
+        <div class="navbar-item hide-for-print">
+          <span>
+            <input id="algolia-search-input" placeholder="Search"></span>
+          </span>
+        </div>
         <div class="navbar-item has-dropdown is-hoverable">
           <a class="navbar-link" href="#">Quick Start</a>
           <div class="navbar-dropdown">
@@ -495,7 +501,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../config/sections/isis.core.meta-model.validator.html">MetaModel Validator</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../config/sections/isis.core.runtime.html">Core Runtime Services configurations</a>
+    <a class="nav-link" href="../config/sections/isis.core.runtime.html">Core Runtime configurations</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../config/sections/isis.core.runtime-services.html">Core Runtime Services configurations</a>
@@ -742,18 +748,6 @@ page.parent doesn't seem to be set...
 <h1 class="page"><code>EmailNotificationService</code></h1>
 <div id="preamble">
 <div class="sectionbody">
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-TODO: this content has not yet been reviewed/updated for v2.0
-</td>
-</tr>
-</table>
-</div>
 <div class="paragraph">
 <p>The <code>EmailNotificationService</code> supports the <a href="../../../vw/latest/features.html#user-registration" class="page">user registration</a> (self sign-up) features of the <a href="../../../vw/latest/about.html" class="page">Wicket viewer</a> whereby a user can sign-up to access an application by providing a valid email address.</p>
 </div>
@@ -815,35 +809,23 @@ The user then completes the registration process (choosing a user name, password
 <h2 id="implementation"><a class="anchor" href="#implementation"></a>Implementation</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The framework provides a default implementation, <code>o.a.i.core.runtime.services.userreg.EmailNotificationServiceDefault</code>
+<p>The framework provides a default implementation, <code>o.a.i.core.runtimeservices.userreg.EmailNotificationServiceDefault</code>
 that constructs the emails to send.</p>
 </div>
 <div class="sect2">
 <h3 id="alternatives"><a class="anchor" href="#alternatives"></a>Alternatives</h3>
 <div class="paragraph">
 <p>The text of these email templates is hard-coded as resources, in other words baked into the core jar files.
-If you need to use different text then you can of course always write and register your own implementation to be used instead of Isis' default.</p>
+If you need to use different text then you can of course always write and register your own implementation to be used instead of Apache Isis' default.</p>
 </div>
 <div class="paragraph">
 <p>If you have configured an alternative email service implementation, it should process the message body as HTML.</p>
 </div>
 <div class="paragraph">
-<p>If you wish to write an alternative implementation of this service, note that (unlike most Apache Isis domain services) the implementation is also instantiated and injected by Google Guice.
-This is because <code>EmailNotificationService</code> is used as part of the <a href="../../../vw/latest/features.html#user-registration" class="page">user registration</a> functionality and is used by Wicket pages that are accessed outside of the usual Apache Isis runtime.</p>
-</div>
-<div class="paragraph">
-<p>This implies a couple of additional constraints:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>first, implementation class should also be annotated with <code>@com.google.inject.Singleton</code></p>
-</li>
-<li>
-<p>second, there may not be any Apache Isis session running.
-(If necessary, one can be created on the fly using <code>IsisContext.doInSession(&#8230;&#8203;)</code>)</p>
-</li>
-</ul>
+<p>Be aware also that there may not be any Apache Isis session running when this service is called.
+If necessary, one can be created on the fly using
+<code>IsisSessionFactory#runAuthenticated(&#8230;&#8203;)</code>.
+.</p>
 </div>
 </div>
 </div>
@@ -852,16 +834,15 @@ This is because <code>EmailNotificationService</code> is used as part of the <a 
 <h2 id="related-services"><a class="anchor" href="#related-services"></a>Related Services</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>As noted elsewhere, the default implementation of this service uses <a href="EmailService.html" class="page"><code>EmailService</code></a>.
-This service has no specific configuration properties but does require that the <code>EmailService</code> has been configured.</p>
+<p>The default implementation of this service uses <a href="EmailService.html" class="page"><code>EmailService</code></a>, which must have been configured/initialized correctly.</p>
 </div>
 <div class="paragraph">
-<p>Conversely, this service is used by (Isis' default implementation of) <a href="UserRegistrationService.html" class="page"><code>UserRegistrationService</code></a>.</p>
+<p>This service is used by (Apache Isis' default implementation of) <a href="UserRegistrationService.html" class="page"><code>UserRegistrationService</code></a>.</p>
 </div>
 </div>
 </div>
 </article>
-<aside class="article-aside toc" role="navigation">
+<aside class="article-aside toc hide-for-print" role="navigation">
     <p class="toc-title">On this page</p>
     <div id="article-toc"></div>
 </aside>
@@ -877,7 +858,7 @@ This service has no specific configuration properties but does require that the 
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200403-0400-edffcc23</p>
+            <p>Revision: 2.0.0-M2.20200404-0401-2f111db4</p>
         </div>
     </div>
 </footer>
@@ -901,5 +882,30 @@ This service has no specific configuration properties but does require that the 
         } );
     });
 </script>
+
+<script src="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.js"></script>
+<script>
+  function focusSearchInput () { document.querySelector('#algolia-search-input').focus() }
+  var search = docsearch({
+    appId: '5ISP5TFAEN',
+    apiKey: '0fc51c28b4ad46e7318e96d4e97fab7c',
+    indexName: 'isis-apache-org',
+    inputSelector: '#algolia-search-input',
+    autocompleteOptions: { hint: false, keyboardShortcuts: ['s'] },
+    debug: false,
+  }).autocomplete
+  search.on('autocomplete:closed', function () { search.autocomplete.setVal() })
+  focusSearchInput()
+  window.addEventListener('load', focusSearchInput);
+</script>
+
+<!--
+  docsearch options:
+  https://docsearch.algolia.com/docs/behavior/
+-->
+<!--
+  https://www.algolia.com/doc/api-reference/api-parameters/
+  algoliaOptions: { hitsPerPage: 6 },
+-->
   </body>
 </html>

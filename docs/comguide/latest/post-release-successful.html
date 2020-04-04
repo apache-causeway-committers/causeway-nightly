@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../../_/css/site.css">
     <link rel="stylesheet" href="../../_/css/site-custom.css">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Raleway:300,400,500,700,800|Montserrat:300,400,700" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css"/>
 <link rel="home" href="../.." title="Apache Isis">
   <link rel="next" href="post-release-unsuccessful.html" title="Post Release (Unsuccessful)">
   <link rel="prev" href="verifying-releases.html" title="Verifying Releases">
@@ -30,6 +31,11 @@
     </div>
     <div id="topbar-nav" class="navbar-menu">
       <a class="navbar-end">
+        <div class="navbar-item hide-for-print">
+          <span>
+            <input id="algolia-search-input" placeholder="Search"></span>
+          </span>
+        </div>
         <div class="navbar-item has-dropdown is-hoverable">
           <a class="navbar-link" href="#">Quick Start</a>
           <div class="navbar-dropdown">
@@ -174,6 +180,9 @@ page.parent doesn't seem to be set...
   </li>
   <li class="nav-item" data-depth="1">
     <a class="nav-link" href="key-generation.html">Key Generation</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="algolia-search.html">Appendix: Algolia Search</a>
   </li>
   <li class="nav-item" data-depth="1">
     <a class="nav-link" href="release-process-prereqs.html">Appendix: Release Process Prereqs</a>
@@ -861,7 +870,7 @@ git push origin 2.0.0-M4</code></pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="update-index-html-site-yml-generate"><a class="anchor" href="#update-index-html-site-yml-generate"></a>Update <code>index.html</code> &amp; site.yml` &amp; generate</h3>
+<h3 id="update-index-html-site-yml-generate"><a class="anchor" href="#update-index-html-site-yml-generate"></a>Update <code>index.html</code> &amp; <code>site.yml</code> &amp; generate</h3>
 <div class="paragraph">
 <p>Lastly, we update <code>index.html</code> and then <code>site.yml</code></p>
 </div>
@@ -940,6 +949,63 @@ git commit -m "$ISISJIRA: adds tag to site.yml"</code></pre>
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git revert HEAD</code></pre>
 </div>
 </div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="update-the-algolia-search-index"><a class="anchor" href="#update-the-algolia-search-index"></a>Update the Algolia search index</h2>
+<div class="sectionbody">
+
+</div>
+</div>
+<div class="sect1">
+<h2 id="index-the-site"><a class="anchor" href="#index-the-site"></a>Index the site</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Create a <code>algolia.env</code> file holding the <code>APP_ID</code> and the admin <code>API_KEY</code>, in the root of <code>isis-site</code>:</p>
+</div>
+<div class="listingblock">
+<div class="title">algolia.env</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">APPLICATION_ID=...
+API_KEY=...</code></pre>
+</div>
+</div>
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-caution" title="Caution"></i>
+</td>
+<td class="content">
+This file should not be checked into the repo, because the API_KEY allows the index to be modified or deleted.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>We use the Algolia-provided <a href="https://hub.docker.com/r/algolia/docsearch-scraper">docker image</a> for the crawler to perform the search (as per the link:as per <a href="https://docsearch.algolia.com/docs/run-your-own/#run-the-crawl-from-the-docker-image">docs</a>):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd content
+docker run -it --env-file=../algolia.env -e "CONFIG=$(cat ../algolia-config.json | jq -r tostring)" algolia/docsearch-scraper</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This posts the index up to the <a href="https://algolia.com">Algolia</a> site.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Additional config options for the crawler can be found <a href="https://www.algolia.com/doc/api-reference/crawler/">here</a>.
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -1174,7 +1240,7 @@ Also, there may be new dependencies that you do not wish to move to, eg release 
 </div>
 </div>
 </article>
-<aside class="article-aside toc" role="navigation">
+<aside class="article-aside toc hide-for-print" role="navigation">
     <p class="toc-title">On this page</p>
     <div id="article-toc"></div>
 </aside>
@@ -1190,7 +1256,7 @@ Also, there may be new dependencies that you do not wish to move to, eg release 
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200403-0400-edffcc23</p>
+            <p>Revision: 2.0.0-M2.20200404-0401-2f111db4</p>
         </div>
     </div>
 </footer>
@@ -1214,5 +1280,30 @@ Also, there may be new dependencies that you do not wish to move to, eg release 
         } );
     });
 </script>
+
+<script src="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.js"></script>
+<script>
+  function focusSearchInput () { document.querySelector('#algolia-search-input').focus() }
+  var search = docsearch({
+    appId: '5ISP5TFAEN',
+    apiKey: '0fc51c28b4ad46e7318e96d4e97fab7c',
+    indexName: 'isis-apache-org',
+    inputSelector: '#algolia-search-input',
+    autocompleteOptions: { hint: false, keyboardShortcuts: ['s'] },
+    debug: false,
+  }).autocomplete
+  search.on('autocomplete:closed', function () { search.autocomplete.setVal() })
+  focusSearchInput()
+  window.addEventListener('load', focusSearchInput);
+</script>
+
+<!--
+  docsearch options:
+  https://docsearch.algolia.com/docs/behavior/
+-->
+<!--
+  https://www.algolia.com/doc/api-reference/api-parameters/
+  algoliaOptions: { hitsPerPage: 6 },
+-->
   </body>
 </html>

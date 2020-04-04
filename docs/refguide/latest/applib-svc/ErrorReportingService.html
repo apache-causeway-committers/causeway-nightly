@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../../../_/css/site.css">
     <link rel="stylesheet" href="../../../_/css/site-custom.css">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Raleway:300,400,500,700,800|Montserrat:300,400,700" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css"/>
 <link rel="home" href="../../.." title="Apache Isis">
   <link rel="next" href="EventBusService.html" title="EventBusService">
   <link rel="prev" href="EmailService.html" title="EmailService">
@@ -30,6 +31,11 @@
     </div>
     <div id="topbar-nav" class="navbar-menu">
       <a class="navbar-end">
+        <div class="navbar-item hide-for-print">
+          <span>
+            <input id="algolia-search-input" placeholder="Search"></span>
+          </span>
+        </div>
         <div class="navbar-item has-dropdown is-hoverable">
           <a class="navbar-link" href="#">Quick Start</a>
           <div class="navbar-dropdown">
@@ -495,7 +501,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../config/sections/isis.core.meta-model.validator.html">MetaModel Validator</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../config/sections/isis.core.runtime.html">Core Runtime Services configurations</a>
+    <a class="nav-link" href="../config/sections/isis.core.runtime.html">Core Runtime configurations</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../config/sections/isis.core.runtime-services.html">Core Runtime Services configurations</a>
@@ -742,23 +748,30 @@ page.parent doesn't seem to be set...
 <h1 class="page"><code>ErrorReportingService</code></h1>
 <div id="preamble">
 <div class="sectionbody">
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-TODO: this content has not yet been reviewed/updated for v2.0
-</td>
-</tr>
-</table>
+<div class="paragraph">
+<p><code>ErrorReportingService</code> is an optional SPI that provides the ability to record any errors/exceptions that might occur in the application into an external incident recording system (such as JIRA or Slack).</p>
 </div>
 <div class="paragraph">
-<p>The <code>ErrorReportingService</code> service is an optional SPI that provides the ability to record any errors/exceptions that might occur in the application into an external incident recording system (such as JIRA or Slack).
-The service also allows a user-friendly (jargon-free) error message to be returned and rendered to the end-user, along with an optional incident reference (eg a JIRA issue <code>XXX-1234</code>).
-The service can also return a URL for an external image.
-For example, this could be to a comic strip or (as a bit of fun) a picture of a random kitten.</p>
+<p>The <code>ErrorDetails</code> object returned by this service contains a number of elements;</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>a user-friendly (jargon-free) error message to be returned and rendered to the end-user</p>
+</li>
+<li>
+<p>an optional incident reference (eg a JIRA issue <code>XXX-1234</code>).</p>
+</li>
+<li>
+<p>a URL for an external image.</p>
+<div class="paragraph">
+<p>For example, this could be to a comic strip or (as a bit of fun) a picture of a random kitten.</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The information in this object is used by the <a href="../../../vw/latest/about.html" class="page">Wicket Viewer</a>, rendered whenever an error occurs.</p>
 </div>
 </div>
 </div>
@@ -923,7 +936,7 @@ public class DemoErrorReportingService implements ErrorReportingService {
 </div>
 </div>
 </article>
-<aside class="article-aside toc" role="navigation">
+<aside class="article-aside toc hide-for-print" role="navigation">
     <p class="toc-title">On this page</p>
     <div id="article-toc"></div>
 </aside>
@@ -939,7 +952,7 @@ public class DemoErrorReportingService implements ErrorReportingService {
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200403-0400-edffcc23</p>
+            <p>Revision: 2.0.0-M2.20200404-0401-2f111db4</p>
         </div>
     </div>
 </footer>
@@ -963,5 +976,30 @@ public class DemoErrorReportingService implements ErrorReportingService {
         } );
     });
 </script>
+
+<script src="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.js"></script>
+<script>
+  function focusSearchInput () { document.querySelector('#algolia-search-input').focus() }
+  var search = docsearch({
+    appId: '5ISP5TFAEN',
+    apiKey: '0fc51c28b4ad46e7318e96d4e97fab7c',
+    indexName: 'isis-apache-org',
+    inputSelector: '#algolia-search-input',
+    autocompleteOptions: { hint: false, keyboardShortcuts: ['s'] },
+    debug: false,
+  }).autocomplete
+  search.on('autocomplete:closed', function () { search.autocomplete.setVal() })
+  focusSearchInput()
+  window.addEventListener('load', focusSearchInput);
+</script>
+
+<!--
+  docsearch options:
+  https://docsearch.algolia.com/docs/behavior/
+-->
+<!--
+  https://www.algolia.com/doc/api-reference/api-parameters/
+  algoliaOptions: { hitsPerPage: 6 },
+-->
   </body>
 </html>
