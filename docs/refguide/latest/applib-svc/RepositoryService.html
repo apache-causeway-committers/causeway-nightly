@@ -792,37 +792,39 @@ It acts as an abstraction over the JDO/DataNucleus objectstore.</p>
 
     void removeAndFlush(Object domainObject);               <i class="conum" data-value="6"></i><b>(6)</b>
 
-    &lt;T&gt; List&lt;T&gt; allInstances(Class&lt;T&gt; ofType);              <i class="conum" data-value="7"></i><b>(7)</b>
+    &lt;T&gt; void removeAll(Class&lt;T&gt; cls);                       <i class="conum" data-value="7"></i><b>(7)</b>
 
-    &lt;T&gt; List&lt;T&gt; allInstances(                               <i class="conum" data-value="8"></i><b>(8)</b>
+    &lt;T&gt; List&lt;T&gt; allInstances(Class&lt;T&gt; ofType);              <i class="conum" data-value="8"></i><b>(8)</b>
+
+    &lt;T&gt; List&lt;T&gt; allInstances(                               <i class="conum" data-value="9"></i><b>(9)</b>
             Class&lt;T&gt; ofType,
             long start, long count);
 
-    &lt;T&gt; List&lt;T&gt; allMatches(                                 <i class="conum" data-value="9"></i><b>(9)</b>
+    &lt;T&gt; List&lt;T&gt; allMatches(                                 <i class="conum" data-value="10"></i><b>(10)</b>
             Class&lt;T&gt; ofType,
             Predicate&lt;? super T&gt; predicate);
 
-    &lt;T&gt; List&lt;T&gt; allMatches(                                 <i class="conum" data-value="10"></i><b>(10)</b>
+    &lt;T&gt; List&lt;T&gt; allMatches(                                 <i class="conum" data-value="11"></i><b>(11)</b>
             Class&lt;T&gt; ofType,
             Predicate&lt;? super T&gt; predicate,
             long start, long count);
 
-    &lt;T&gt; List&lt;T&gt; allMatches(Query&lt;T&gt; query);                 <i class="conum" data-value="11"></i><b>(11)</b>
+    &lt;T&gt; List&lt;T&gt; allMatches(Query&lt;T&gt; query);                 <i class="conum" data-value="12"></i><b>(12)</b>
 
-    &lt;T&gt; Optional&lt;T&gt; uniqueMatch(                            <i class="conum" data-value="12"></i><b>(12)</b>
+    &lt;T&gt; Optional&lt;T&gt; uniqueMatch(                            <i class="conum" data-value="13"></i><b>(13)</b>
             Class&lt;T&gt; ofType,
             Predicate&lt;T&gt; predicate);
 
-    &lt;T&gt; Optional&lt;T&gt; uniqueMatch(Query&lt;T&gt; query);            <i class="conum" data-value="13"></i><b>(13)</b>
+    &lt;T&gt; Optional&lt;T&gt; uniqueMatch(Query&lt;T&gt; query);            <i class="conum" data-value="14"></i><b>(14)</b>
 
-    &lt;T&gt; Optional&lt;T&gt; firstMatch(                             <i class="conum" data-value="14"></i><b>(14)</b>
+    &lt;T&gt; Optional&lt;T&gt; firstMatch(                             <i class="conum" data-value="15"></i><b>(15)</b>
             Class&lt;T&gt; ofType,
             Predicate&lt;T&gt; predicate);
 
-    &lt;T&gt; Optional&lt;T&gt; firstMatch(Query&lt;T&gt; query);             <i class="conum" data-value="15"></i><b>(15)</b>
-    &lt;T&gt; T refresh(T pojo);                                <i class="conum" data-value="16"></i><b>(16)</b>
+    &lt;T&gt; Optional&lt;T&gt; firstMatch(Query&lt;T&gt; query);             <i class="conum" data-value="16"></i><b>(16)</b>
+    &lt;T&gt; T refresh(T pojo);                                <i class="conum" data-value="17"></i><b>(17)</b>
 
-    &lt;T&gt; T detach(T entity);                            <i class="conum" data-value="17"></i><b>(17)</b>
+    &lt;T&gt; T detach(T entity);                            <i class="conum" data-value="18"></i><b>(18)</b>
 
 
 }</code></pre>
@@ -869,46 +871,51 @@ This is identical to
 </tr>
 <tr>
 <td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>removes all instances of the specified type.
+Intended primarily for testing purposes.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
 <td>return all persisted instances of specified type.
 Mostly for prototyping, though can be useful to obtain all instances of domain entities if the number is known to be small.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
 <td>as previous, with paging.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="9"></i><b>9</b></td>
+<td><i class="conum" data-value="10"></i><b>10</b></td>
 <td>all persisted instances matching the <code>Predicate</code>.
 Client-side filtering so only really intended for prototyping.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="10"></i><b>10</b></td>
+<td><i class="conum" data-value="11"></i><b>11</b></td>
 <td>as previous, with paging.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="11"></i><b>11</b></td>
+<td><i class="conum" data-value="12"></i><b>12</b></td>
 <td>all persisted instances matching the (server-side) <code>Query</code>.
 <strong>This is the primary API used for querying</strong></td>
 </tr>
 <tr>
-<td><i class="conum" data-value="12"></i><b>12</b></td>
+<td><i class="conum" data-value="13"></i><b>13</b></td>
 <td>returns the one-and-only match of an instance matching the <code>Predicate</code>.
 If there is more that one instances a run-time exception will be thrown.
 Client-side filtering so only really intended for prototyping.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="13"></i><b>13</b></td>
+<td><i class="conum" data-value="14"></i><b>14</b></td>
 <td>returns the one-and-only match of an instance matching the (server-side) <code>Query</code>
 Generally this method is preferred for looking up an object by its (primary or alternate) key.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="14"></i><b>14</b></td>
+<td><i class="conum" data-value="15"></i><b>15</b></td>
 <td>returns the first instance that matches the <code>Predicate</code>.
 No exception is thrown if more than one matches, so this is less strict that <code>uniqueMatch(&#8230;&#8203;)</code>.
 Client-side filtering so only really intended for prototyping.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="15"></i><b>15</b></td>
+<td><i class="conum" data-value="16"></i><b>16</b></td>
 <td>returns the first instance that matches the (server-side) <code>Query</code>.
 No exception is thrown if more than one matches, so this is less strict that <code>uniqueMatch(&#8230;&#8203;)</code>.</td>
 </tr>
@@ -1231,7 +1238,7 @@ TODO: v2 - discuss <code>EntityState</code>.
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200709-0401-d528a962</p>
+            <p>Revision: 2.0.0-M2.20200709-1211-906b2586</p>
         </div>
     </div>
 </footer>
