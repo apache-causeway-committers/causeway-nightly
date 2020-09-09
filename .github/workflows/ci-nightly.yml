@@ -48,7 +48,9 @@ jobs:
       with:
         repository: apache/isis
         ref: refs/heads/master
-        token: ${{ secrets.GitHub_PAT }}
+        persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
+        fetch-depth: 0 # otherwise, you will fail to push refs to dest repo
+        #token: ${{ secrets.GitHub_PAT }}
     
     - name: Set up JDK 11
       if: steps.revision.outputs.revision != 'skip'
