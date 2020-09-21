@@ -324,9 +324,6 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../applib-svc/ClockService.html">ClockService</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../applib-svc/CommandContext.html">CommandContext</a>
-  </li>
-  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../applib-svc/CommandDtoProcessorService.html">CommandDtoProcessorService</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -334,6 +331,9 @@ page.parent doesn't seem to be set...
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../applib-svc/CommandService.html">CommandService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../applib-svc/CommandServiceListener.html">CommandServiceListener</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../applib-svc/ConfigurationMenu.html">ConfigurationMenu</a>
@@ -501,7 +501,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../config/sections/isis.core.meta-model.validator.html">MetaModel Validator</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../config/sections/isis.core.runtime.html">Core Runtime Services configurations</a>
+    <a class="nav-link" href="../config/sections/isis.core.runtime.html">Core Runtime configurations</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../config/sections/isis.core.runtime-services.html">Core Runtime Services configurations</a>
@@ -780,31 +780,25 @@ public @interface Action {
     CommandReification command()                                    <i class="conum" data-value="3"></i><b>(3)</b>
             default CommandReification.NOT_SPECIFIED;
 
-    CommandPersistence commandPersistence()                         <i class="conum" data-value="4"></i><b>(4)</b>
-            default CommandPersistence.PERSISTED;
-
-    CommandExecuteIn commandExecuteIn()                             <i class="conum" data-value="5"></i><b>(5)</b>
-            default CommandExecuteIn.FOREGROUND;
-
-    Class&lt;? extends CommandDtoProcessor&gt; commandDtoProcessor()      <i class="conum" data-value="6"></i><b>(6)</b>
+    Class&lt;? extends CommandDtoProcessor&gt; commandDtoProcessor()      <i class="conum" data-value="4"></i><b>(4)</b>
             default CommandDtoProcessor.class;
 
-    Class&lt;? extends ActionDomainEvent&lt;?&gt;&gt; domainEvent()             <i class="conum" data-value="7"></i><b>(7)</b>
+    Class&lt;? extends ActionDomainEvent&lt;?&gt;&gt; domainEvent()             <i class="conum" data-value="5"></i><b>(5)</b>
             default ActionDomainEvent.Default.class;
 
-    Where hidden()                                                  <i class="conum" data-value="8"></i><b>(8)</b>
+    Where hidden()                                                  <i class="conum" data-value="6"></i><b>(6)</b>
             default Where.NOT_SPECIFIED;
 
-    Publishing publishing()                                         <i class="conum" data-value="9"></i><b>(9)</b>
+    Publishing publishing()                                         <i class="conum" data-value="7"></i><b>(7)</b>
             default Publishing.NOT_SPECIFIED;
 
-    RestrictTo restrictTo()                                         <i class="conum" data-value="10"></i><b>(10)</b>
+    RestrictTo restrictTo()                                         <i class="conum" data-value="8"></i><b>(8)</b>
             default RestrictTo.NOT_SPECIFIED;
 
-    SemanticsOf semantics()                                         <i class="conum" data-value="11"></i><b>(11)</b>
+    SemanticsOf semantics()                                         <i class="conum" data-value="9"></i><b>(9)</b>
             default SemanticsOf.NOT_SPECIFIED;
 
-    Class&lt;?&gt; typeOf()                                               <i class="conum" data-value="12"></i><b>(12)</b>
+    Class&lt;?&gt; typeOf()                                               <i class="conum" data-value="10"></i><b>(10)</b>
             default Object.class;
 
 }</code></pre>
@@ -829,59 +823,45 @@ public @interface Action {
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
 <td><a href="#command"><code>command()</code></a>
-whether the action invocation should be reified into a <code>Command</code> object using the <a href="../applib-svc/CommandContext.html" class="page"><code>CommandContext</code></a> service:</td>
+whether the action invocation should be reified into a <code>Command</code>, typically so it can be logged using the <a href="../../../extensions/latest/command-log/about.html" class="page">Command Log</a> extension  (for auditing or for regression testing using <a href="../../../extensions/latest/command-replay/about.html" class="page">Command Replay</a>).</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td><code>commandExecuteIn()</code>
+<td><code>commandDtoProcessor()</code>
 <div class="paragraph">
-<p>Whether to execute the command immediately, or to persist it (assuming that an appropriate implementation of <a href="../applib-svc/CommandService.html" class="page"><code>CommandService</code></a> has been configured) such that a background scheduler can execute the command asynchronously</p>
+<p>If the <a href="../../../extensions/latest/command-replay/about.html" class="page">Command Replay</a> extension is being used (for regression testing), provides a mechanism to process the <code>CommandDto</code> before being replicated from primary to secondary system</p>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
-<td><code>commandPersistence()</code>
-<div class="paragraph">
-<p>Whether the reified <code>Command</code> (as provided by the <code>CommandContext</code> domain service) should actually be persisted (assuming an appropriate implementation of <a href="../applib-svc/CommandService.html" class="page"><code>CommandService</code></a> has been configured).</p>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
-<td><code>commandDtoProcessor()</code>
-<div class="paragraph">
-<p>If the <code>Command</code> also implements <code>CommandWithDto</code> (meaning that it can return a <code>CommandDto</code>, in other words be converted into an XML memento), then optionally specifies a processor that can refine this XML.</p>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="7"></i><b>7</b></td>
 <td><a href="#domainEvent"><code>domainEvent()</code></a>
 <div class="paragraph">
 <p>The event type to be posted to the <a href="../applib-svc/EventBusService.html" class="page"><code>EventBusService</code></a> to broadcast the action&#8217;s business rule checking (hide, disable, validate) and its invocation (pre-execute and post-execute).</p>
 </div></td>
 </tr>
 <tr>
-<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
 <td><a href="#hidden"><code>hidden()</code></a>
 <div class="paragraph">
 <p>Indicates where (in the UI) the action should be hidden from the user.</p>
 </div></td>
 </tr>
 <tr>
-<td><i class="conum" data-value="9"></i><b>9</b></td>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
 <td><a href="#publishing"><code>publishing()</code></a>
 <div class="paragraph">
 <p>Whether the action invocation should be published to the registered <a href="../applib-svc/PublisherService.html" class="page"><code>PublisherService</code></a>.</p>
 </div></td>
 </tr>
 <tr>
-<td><i class="conum" data-value="10"></i><b>10</b></td>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
 <td><a href="#restrictTo"><code>restrictTo()</code></a>
 <div class="paragraph">
 <p>Whether the action is only available in prototyping mode, or whether it is available also in production mode.</p>
 </div></td>
 </tr>
 <tr>
-<td><i class="conum" data-value="11"></i><b>11</b></td>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
 <td><a href="#semantics"><code>semantics()</code></a>
 <div class="paragraph">
 <p>The action&#8217;s semantics (ie whether objects are modified as the result of invoking this action, and if so whether reinvoking the action would result in no further change; if not whether the results can be cached for the remainder of the request).</p>
@@ -891,7 +871,7 @@ whether the action invocation should be reified into a <code>Command</code> obje
 </div></td>
 </tr>
 <tr>
-<td><i class="conum" data-value="12"></i><b>12</b></td>
+<td><i class="conum" data-value="10"></i><b>10</b></td>
 <td><a href="#typeOf"><code>typeOf()</code></a>
 <div class="paragraph">
 <p>If the action returns a collection, hints as to the run-time type of the objects within that collection (as a fallback)</p>
@@ -1061,667 +1041,46 @@ public class Order {
 <h2 id="command"><a class="anchor" href="#command"></a>Command Processing</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Every action invocation (and property edit for that matter) is automatically reified into a concrete <code>Command</code> object.
-The <code>@Action(command=&#8230;&#8203;, commandXxx=&#8230;&#8203;)</code> attributes provide hints for the persistence of that <code>Command</code> object, and the subsequent processing of that persisted command.
-The primary use cases for this are to support the deferring the execution of the action such that it can be invoked in the background, and to replay commands in a master/slave configuration.</p>
+<p>Every action invocation (and <a href="Property.html#command" class="page">property edit</a> for that matter) is normally reified into a concrete <code>Command</code> object, basically a wrapper around the XML invocation <a href="../schema/cmd.html" class="page">Command</a> schema that also captures some timing metrics about the execution as well as the outcome.</p>
 </div>
 <div class="paragraph">
-<p>Note that for a <code>Command</code> to actually be persisted requires an appropriate implementation of <code>CommandService</code> SPI.
-The framework does <em>not</em> provide an implementation of this SPI "out-of-the-box".
-However, the <a href="../../../extensions/latest/command-log/about.html" class="page">Command Log</a> extension <em>does</em> provide such an implementation.</p>
-</div>
-<div class="sect2">
-<h3 id="design"><a class="anchor" href="#design"></a>Design</h3>
-<div class="paragraph">
-<p>The annotation works with (and is influenced by the behaviour of) a number of domain services:</p>
+<p>The main uses cases are:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p><a href="../applib-svc/CommandContext.html" class="page"><code>CommandContext</code></a></p>
+<p>as a means to allow asynchronous child commands to be executed, using the <a href="../applib-svc/WrapperFactory.html" class="page"><code>WrapperFactory</code></a> service;</p>
 </li>
 <li>
-<p><a href="../applib-svc/CommandService.html" class="page"><code>CommandService</code></a></p>
-</li>
-</ul>
-</div>
+<p>as a means to audit (persist) commands, by implementing the <a href="../applib-svc/CommandServiceListener.html" class="page"><code>CommandServiceListener</code></a> SPI.</p>
 <div class="paragraph">
-<p>Each action invocation is automatically reified by the <a href="../applib-svc/CommandContext.html" class="page"><code>CommandContext</code></a> service into a <code>Command</code> object, capturing details of the target object, the action, the parameter arguments, the user, a timestamp and so on.</p>
+<p>The <a href="../../../extensions/latest/command-log/about.html" class="page">Command Log</a> extension <em>does</em> provide such an implementation.</p>
 </div>
-<div class="paragraph">
-<p>If an appropriate <code>CommandService</code> is configured
-then the <code>Command</code> itself is persisted.</p>
-</div>
-<div class="paragraph">
-<p>By default, actions are invoked in directly in the thread of the invocation.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="command-and-commandpersistence"><a class="anchor" href="#command-and-commandpersistence"></a><code>command</code> and <code>commandPersistence</code></h3>
-<div class="paragraph">
-<p>The <code>command()</code> and `commandPersistence() attributes work together to determine whether a command will actually be persisted.
-There inter-relationship is somewhat complex, so is probably best explained by way of examples:</p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 14.2857%;">
-<col style="width: 14.2857%;">
-<col style="width: 14.2857%;">
-<col style="width: 14.2857%;">
-<col style="width: 14.2857%;">
-<col style="width: 28.5715%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top"><code>command()</code></th>
-<th class="tableblock halign-left valign-top"><code>isis.services.
-  command.actions</code> config property</th>
-<th class="tableblock halign-left valign-top">action&#8217;s declared <code>semantics()</code></th>
-<th class="tableblock halign-left valign-top"><code>command
-Persistence()</code></th>
-<th class="tableblock halign-left valign-top">action dirties objects?</th>
-<th class="tableblock halign-left valign-top">is command persisted?</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>ENABLED</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(any)</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(any)</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>PERSISTED</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(either)</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>yes</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>ENABLED</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(any)</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(any)</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>IF_HINTED</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>no</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>no</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>ENABLED</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(any)</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(any)</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>IF_HINTED</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>yes</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>yes</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>ENABLED</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(any)</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(any)</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>NOT_PERSISTED</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(any)</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>no</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>AS_CONFIGURED</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>all</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(any)</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>PERSISTED</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>no</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>yes</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>AS_CONFIGURED</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>all</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(any)</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>IF_HINTED</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>no</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>no</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>AS_CONFIGURED</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>all</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(any)</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>IF_HINTED</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>yes</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>yes</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>AS_CONFIGURED</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>all</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(any)</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>NOT_PERSISTED</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(any)</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>no</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>AS_CONFIGURED</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>ignoreSafe</code> or <code>ignoreQueryOnly</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>SAFE</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>PERSISTED</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>no</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>no (!)</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>AS_CONFIGURED</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>ignoreSafe</code> or <code>ignoreQueryOnly</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>SAFE</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>IF_HINTED</code> or <code>NOT_PERSISTED</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>no</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>no</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>AS_CONFIGURED</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>ignoreSafe</code> or <code>ignoreQueryOnly</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>SAFE</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>PERSISTED</code> or <code>IF_HINTED</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>yes</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>yes</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>AS_CONFIGURED</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>ignoreSafe</code> or <code>ignoreQueryOnly</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>SAFE</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>NOT_PERSISTED</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>yes</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>yes (!)</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>AS_CONFIGURED</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>ignoreSafe</code> or <code>ignoreQueryOnly</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>IDEMPOTENT</code> or <code>NON_IDEMPOTENT</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>PERSISTED</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(any)</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>yes</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>AS_CONFIGURED</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>ignoreSafe</code> or <code>ignoreQueryOnly</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>IDEMPOTENT</code> or <code>NON_IDEMPOTENT</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>IF_HINTED</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>no</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>no</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>AS_CONFIGURED</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>ignoreSafe</code> or <code>ignoreQueryOnly</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>IDEMPOTENT</code> or <code>NON_IDEMPOTENT</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>IF_HINTED</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>yes</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>yes</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>AS_CONFIGURED</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>ignoreSafe</code> or <code>ignoreQueryOnly</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>IDEMPOTENT</code> or <code>NON_IDEMPOTENT</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>NOT_PERSISTED</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(any)</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>no</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>AS_CONFIGURED</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>none</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(any)</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>PERSISTED</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>no</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>no (!)</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>AS_CONFIGURED</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>none</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(any)</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>PERSISTED</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>yes</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>yes</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>AS_CONFIGURED</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>none</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(any)</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>IF_HINTED</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>no</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>no</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>AS_CONFIGURED</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>none</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(any)</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>IF_HINTED</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>yes</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>yes</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>AS_CONFIGURED</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>none</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(any)</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>NOT_PERSISTED</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>no</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>no</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>AS_CONFIGURED</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>none</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(any)</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>NOT_PERSISTED</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>yes</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>yes (!)</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>DISABLED</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(any)</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(any)</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>PERSISTED</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>no</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>no (!)</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>DISABLED</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(any)</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(any)</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>PERSISTED</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>yes</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>yes</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>DISABLED</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(any)</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(any)</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>IF_HINTED</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>no</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>no</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>DISABLED</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(any)</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(any)</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>IF_HINTED</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>yes</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>yes</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>DISABLED</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(any)</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(any)</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>NOT_PERSISTED</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>no</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>no</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>DISABLED</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(any)</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(any)</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>NOT_PERSISTED</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>yes</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>yes (!)</p>
-</div></div></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Order {
-    @Action(
-        command=CommandReification.ENABLED,
-        commandPersistence=CommandPersistence.PERSISTED
-    )
-    public Invoice generateInvoice( /* ... */ ) { /* ... */ }
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>As can be seen, whether a command is actually persisted does not always follow the value of the <code>commandPersistence</code> attribute.
-This is because the <code>command</code> attribute actually determines whether any command metadata for the action is captured within the framework&#8217;s internal metamodel.
-If <code>command</code> is <code>DISABLED</code> or does not otherwise apply due to the action&#8217;s declared semantics, then the framework decides to persist a command based solely on whether the action dirtied any objects (as if <code>commandPersistence()</code> was set to <code>IF_HINTED</code>).</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="commandexecutein"><a class="anchor" href="#commandexecutein"></a><code>commandExecuteIn</code></h3>
-<div class="paragraph">
-<p>For persisted commands, the <code>commandExecuteIn</code> attribute determines whether the <code>Command</code> should be executed in the foreground (the default) or executed in the background.</p>
-</div>
-<div class="admonitionblock warning">
+<div class="admonitionblock tip">
 <table>
 <tr>
 <td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
+<i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-TODO: v2 - background execution has temporarily been removed, will be reinstated for v2.0.
+Another option to achieve this is to use the <a href="../applib-svc/PublisherService.html" class="page"><code>PublisherService</code></a> SPI.
 </td>
 </tr>
 </table>
+</div>
+</li>
+<li>
+<p>to replay commands onto a secondary system, for regression testing.</p>
+<div class="paragraph">
+<p>This is implemented by the <a href="../../../extensions/latest/command-replay/about.html" class="page">Command Replay</a> extension, working in conjunction with the <a href="../../../extensions/latest/command-log/about.html" class="page">Command Log</a> extension.</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="sect2">
+<h3 id="command-2"><a class="anchor" href="#command-2"></a><code>command</code></h3>
+<div class="paragraph">
+<p>The <code>command()</code> attribute can be used to explicitly enable or disable command reification for the action.</p>
 </div>
 </div>
 <div class="sect2">
@@ -1734,8 +1093,7 @@ This interface has the following API:</p>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public interface CommandDtoProcessor {
     CommandDto process(             <i class="conum" data-value="1"></i><b>(1)</b>
-            Command command,        <i class="conum" data-value="2"></i><b>(2)</b>
-            CommandDto dto);        <i class="conum" data-value="3"></i><b>(3)</b>
+            CommandDto dto);        <i class="conum" data-value="2"></i><b>(2)</b>
 }</code></pre>
 </div>
 </div>
@@ -1744,15 +1102,11 @@ This interface has the following API:</p>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
 <td>The returned <code>CommandDto</code>.
-This will typically be the <code>CommandDto</code> passed in, but supplemented in some way.</td>
+This will typically be the <code>CommandDto</code> passed in, but may be supplemented in some way.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>The <code>Command</code> being processed</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>The <code>CommandDto</code> (XML) obtained already from the <code>Command</code> (by virtue of it also implementing <code>CommandWithDto</code>, see discussion below).</td>
+<td>The <code>CommandDto</code> obtained already from the <code>Command</code>.</td>
 </tr>
 </table>
 </div>
@@ -2498,7 +1852,7 @@ Note though that the results of this caching will only be apparent if the action
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200920-0402-6022e8e6</p>
+            <p>Revision: 2.0.0-M2.20200921-0402-c601ba98</p>
         </div>
     </div>
 </footer>

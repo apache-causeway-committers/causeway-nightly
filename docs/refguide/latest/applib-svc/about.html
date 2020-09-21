@@ -324,9 +324,6 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="ClockService.html">ClockService</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="CommandContext.html">CommandContext</a>
-  </li>
-  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="CommandDtoProcessorService.html">CommandDtoProcessorService</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -334,6 +331,9 @@ page.parent doesn't seem to be set...
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="CommandService.html">CommandService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="CommandServiceListener.html">CommandServiceListener</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="ConfigurationMenu.html">ConfigurationMenu</a>
@@ -501,7 +501,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../config/sections/isis.core.meta-model.validator.html">MetaModel Validator</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../config/sections/isis.core.runtime.html">Core Runtime Services configurations</a>
+    <a class="nav-link" href="../config/sections/isis.core.runtime.html">Core Runtime configurations</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../config/sections/isis.core.runtime-services.html">Core Runtime Services configurations</a>
@@ -1099,19 +1099,6 @@ Used to convert view models mementos into usable URL form.</p>
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="CommandContext.html" class="page">CommandContext</a></code></p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Request-scoped access to capture the users&#8217;s <em>intention</em> to invoke an action or to edit a property.</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="ulist">
-<ul>
-<li>
-<p>API is also the implementation (concrete class).</p>
-</li>
-</ul>
-</div></div></td>
-</tr>
-<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="CommandExecutorService.html" class="page">CommandExecutorService</a></code></p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>Executes the specified <code>Command</code>.</p>
@@ -1537,7 +1524,22 @@ see also the <a href="../../../mappings/latest/about.html" class="page">Bounded 
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="#refguide:applib-svc:CommandExecutorService.adoc.adoc" class="page unresolved">CommandExecutorService</a></code></p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>Internal service used to execute commands.
-One use case is to replay commands on master/slave; another is in support of background commands.</p>
+One use case is to replay commands from a primary onto a secondary (see <a href="../../../extensions/latest/command-replay/about.html" class="page">Command Replay</a> ; another is in support of async commands (using
+<a href="WrapperFactory.html" class="page"><code>WrapperFactory</code></a> ).</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="ulist">
+<ul>
+<li>
+<p><a href="../../../core/latest/runtime-services/about.html" class="page">Core Runtime Services</a></p>
+</li>
+</ul>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="#refguide:applib-svc:CommandServiceListener.adoc.adoc" class="page unresolved">CommandServiceListener</a></code></p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>SPI to allow commands to be processed on completion.
+The <a href="../../../extensions/latest/command-log/about.html" class="page">Command Log</a> extension implements the SPI in order to persists commands for audit or replay.</p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="ulist">
 <ul>
@@ -2113,18 +2115,13 @@ The outline boxes are services while the coloured boxes represent data structure
 <div class="ulist">
 <ul>
 <li>
-<p>the (request-scoped) <a href="CommandContext.html" class="page"><code>CommandContext</code></a> captures the user&#8217;s intention to invoke an action or edit a property; this is held by the <code>Command</code> object.</p>
-</li>
-<li>
-<p>if a <a href="CommandService.html" class="page"><code>CommandService</code></a> has been configured, then this will be used to create the <code>Command</code> object implementation, generally so that it can then also be persisted.</p>
+<p>the (request-scoped) <a href="InteractionContext.html" class="page"><code>InteractionContext</code></a> domain service acts as a factory for the <code>Interaction</code> object, which keeps track of the call-graph of executions (<code>Interaction.Execution</code>) of either action invocations or property edits.</p>
 <div class="paragraph">
-<p>If the action or property is annotated to be invoked in the background (using <a href="../applib-ant/Action.html#command" class="page"><code>@Action#command&#8230;&#8203;()</code></a> or <a href="../applib-ant/Property.html#command" class="page"><code>@Property#command&#8230;&#8203;()</code></a>) then no further work is done.
-But, if the action/property is to be executed in the foreground, then the interaction continues.</p>
+<p>In the majority of cases there is likely to be just a single top-level node of this graph, but for applications that use the <a href="WrapperFactory.html" class="page"><code>WrapperFactory</code></a> extensively each successive call results in a new child execution.</p>
 </div>
 </li>
 <li>
-<p>the (request-scoped) <a href="InteractionContext.html" class="page"><code>InteractionContext</code></a> domain service acts as a factory for the <code>Interaction</code> object, which keeps track of the call-graph of executions (<code>Interaction.Execution</code>) of either action invocations or property edits.
-In the majority of cases there is likely to be just a single top-level node of this graph, but for applications that use the <a href="WrapperFactory.html" class="page"><code>WrapperFactory</code></a> extensively each successive call results in a new child execution.</p>
+<p>the <code>Interaction</code> also holds a reference to the <code>Command</code>, which represents the top-level intention to invoke the action / edit the property.</p>
 </li>
 <li>
 <p>before and after each action invocation/property edit, a <a href="../applib-classes/events/domainevent.html" class="page">domain event</a> is may be broadcast to all subscribers.
@@ -2166,6 +2163,13 @@ Only domain objects specified to be published with <a href="../applib-ant/Domain
 <li>
 <p>Also at the end of each transaction, details of all changed properties are passed to any registered <a href="AuditerService.html" class="page"><code>AuditerService</code></a>(s) by way of the (internal) <a href="../../../core/latest/runtime-services/AuditerDispatchService.html" class="page"><code>AuditerDispatchService</code></a> domain service.</p>
 </li>
+<li>
+<p>At the end of the entire interaction <sup class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup>, details of the top-level <code>Command</code> are sent to each <a href="CommandServiceListener.html" class="page"><code>CommandServiceListener</code></a>.
+This captures whether the command succeeded or failed.</p>
+<div class="paragraph">
+<p>The <a href="../../../extensions/latest/command-log/about.html" class="page">Command Log</a> extension uses this to persist a log of commands, for auditing or to support regression testing with the <a href="../../../extensions/latest/command-replay/about.html" class="page">Command Replay</a> extension.</p>
+</div>
+</li>
 </ul>
 </div>
 <div class="paragraph">
@@ -2189,6 +2193,12 @@ The framework provides a default <code>PublisherServiceLogging</code> implementa
 </div>
 </div>
 </div>
+<div id="footnotes">
+<hr>
+<div class="footnote" id="_footnotedef_1">
+<a href="#_footnoteref_1">1</a>. although rare, there can be multiple transactions in a single interaction
+</div>
+</div>
 </article>
 <aside class="article-aside toc hide-for-print" role="navigation">
     <p class="toc-title">On this page</p>
@@ -2206,7 +2216,7 @@ The framework provides a default <code>PublisherServiceLogging</code> implementa
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200920-0402-6022e8e6</p>
+            <p>Revision: 2.0.0-M2.20200921-0402-c601ba98</p>
         </div>
     </div>
 </footer>

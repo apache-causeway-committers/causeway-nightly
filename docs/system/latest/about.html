@@ -460,16 +460,6 @@ page.parent doesn't seem to be set...
 <p>Isis library, defining utilities (potentially) required by the entire Apache Isis ecosystem.</p>
 </div>
 <div class="paragraph">
-<p><em>Components</em></p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>org.apache.isis.core.commons.internal.environment.IsisSystemEnvironment</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
 <p><em>Dependencies</em></p>
 </div>
 <div class="ulist">
@@ -592,16 +582,19 @@ page.parent doesn't seem to be set...
 <p>org.apache.isis.applib.services.clock.ClockService</p>
 </li>
 <li>
-<p>org.apache.isis.applib.services.command.CommandContext</p>
+<p>org.apache.isis.applib.services.command.CommandService</p>
 </li>
 <li>
-<p>org.apache.isis.applib.services.conmap.command.ContentMappingServiceForCommandDto</p>
+<p>org.apache.isis.applib.services.command.spi.CommandServiceListener$Null</p>
 </li>
 <li>
-<p>org.apache.isis.applib.services.conmap.command.ContentMappingServiceForCommandDto$CopyOverFromCommand</p>
+<p>org.apache.isis.applib.services.commanddto.conmap.ContentMappingServiceForCommandDto</p>
 </li>
 <li>
-<p>org.apache.isis.applib.services.conmap.command.ContentMappingServiceForCommandsDto</p>
+<p>org.apache.isis.applib.services.commanddto.conmap.ContentMappingServiceForCommandsDto</p>
+</li>
+<li>
+<p>org.apache.isis.applib.services.commanddto.processor.spi.CommandDtoProcessorServiceIdentity</p>
 </li>
 <li>
 <p>org.apache.isis.applib.services.iactn.InteractionContext</p>
@@ -614,9 +607,6 @@ page.parent doesn't seem to be set...
 </li>
 <li>
 <p>org.apache.isis.applib.services.session.SessionLoggingServiceLogging</p>
-</li>
-<li>
-<p>org.apache.isis.applib.services.wrapper.control.AsyncControlService</p>
 </li>
 </ul>
 </div>
@@ -707,6 +697,9 @@ page.parent doesn't seem to be set...
 </li>
 <li>
 <p>org.apache.isis.core.config.converters.PatternsConverter</p>
+</li>
+<li>
+<p>org.apache.isis.core.config.environment.IsisSystemEnvironment</p>
 </li>
 <li>
 <p>org.apache.isis.core.config.validators.PatternOptionalStringConstraintValidator</p>
@@ -994,9 +987,6 @@ page.parent doesn't seem to be set...
 </li>
 <li>
 <p>org.apache.isis.core.runtimeservices.command.CommandExecutorServiceDefault</p>
-</li>
-<li>
-<p>org.apache.isis.core.runtimeservices.command.CommandServiceDefault</p>
 </li>
 <li>
 <p>org.apache.isis.core.runtimeservices.confmenu.ConfigurationViewServiceDefault</p>
@@ -1517,17 +1507,37 @@ page.parent doesn't seem to be set...
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.apache.isis.mappings</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis-mappings-jaxrsclient-api</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis-mappings-jaxrsclient-applib</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>jar</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>\mappings\jaxrsclient\api</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Apache Isis Map - JaxRS Client (api)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>\mappings\jaxrsclient\applib</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Apache Isis Map - JaxRS Client (applib)</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p><em>Dependencies</em></p>
 </div>
 <div class="ulist">
 <ul>
 <li>
+<p>javax:javaee-api:jar:&lt;managed&gt;</p>
+</li>
+<li>
 <p>org.springframework:spring-context:jar:&lt;managed&gt;</p>
+</li>
+</ul>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.apache.isis.mappings</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis-mappings-jaxrsclient-impl</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>jar</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>\mappings\jaxrsclient\testlib</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Apache Isis Map - JaxRS Client (impl)</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><em>Dependencies</em></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>org.apache.isis.mappings:isis-mappings-jaxrsclient-applib:jar:&lt;managed&gt;</p>
 </li>
 </ul>
 </div></div></td>
@@ -1544,10 +1554,10 @@ page.parent doesn't seem to be set...
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.apache.isis.mappings</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis-mappings-restclient-api</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis-mappings-restclient-applib</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>jar</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>\mappings\restclient\api</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Apache Isis Ext - REST Client</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>\mappings\restclient\applib</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Apache Isis Ext - REST Client (applib)</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>A client for the Restful Objects Viewer</p>
 </div>
@@ -2168,6 +2178,24 @@ page.parent doesn't seem to be set...
 </li>
 <li>
 <p>org.apache.isis.valuetypes.asciidoc.ui.wkt.components.AsciiDocPanelFactoriesWkt$Standalone</p>
+</li>
+<li>
+<p>org.apache.isis.valuetypes.asciidoc.ui.wkt.components.schema.chg.v2.ChangesDtoPanelFactoriesWkt$Parented</p>
+</li>
+<li>
+<p>org.apache.isis.valuetypes.asciidoc.ui.wkt.components.schema.chg.v2.ChangesDtoPanelFactoriesWkt$Standalone</p>
+</li>
+<li>
+<p>org.apache.isis.valuetypes.asciidoc.ui.wkt.components.schema.cmd.v2.CommandDtoPanelFactoriesWkt$Parented</p>
+</li>
+<li>
+<p>org.apache.isis.valuetypes.asciidoc.ui.wkt.components.schema.cmd.v2.CommandDtoPanelFactoriesWkt$Standalone</p>
+</li>
+<li>
+<p>org.apache.isis.valuetypes.asciidoc.ui.wkt.components.schema.ixn.v2.InteractionDtoPanelFactoriesWkt$Parented</p>
+</li>
+<li>
+<p>org.apache.isis.valuetypes.asciidoc.ui.wkt.components.schema.ixn.v2.InteractionDtoPanelFactoriesWkt$Standalone</p>
 </li>
 </ul>
 </div>
@@ -3276,7 +3304,7 @@ page.parent doesn't seem to be set...
 <div class="ulist">
 <ul>
 <li>
-<p>org.apache.isis.testing.integtestsupport.applib.IsisIntegrationTestAbstract$CommandSupport</p>
+<p>org.apache.isis.testing.integtestsupport.applib.IsisIntegrationTestAbstract$InteractionSupport</p>
 </li>
 </ul>
 </div>
@@ -3467,7 +3495,7 @@ page.parent doesn't seem to be set...
 <div class="ulist">
 <ul>
 <li>
-<p>org.apache.directory.server:apacheds-test-framework:jar:2.0.0.AM25</p>
+<p>org.apache.directory.server:apacheds-test-framework:jar:2.0.0.AM26</p>
 </li>
 <li>
 <p>org.apache.isis.extensions:isis-extensions-modelannotation:jar:&lt;managed&gt;</p>
@@ -3488,7 +3516,7 @@ page.parent doesn't seem to be set...
 <p>org.apache.isis.extensions:isis-extensions-shiro-realm-ldap-impl:jar:&lt;managed&gt;</p>
 </li>
 <li>
-<p>org.apache.isis.mappings:isis-mappings-restclient-api:jar:&lt;managed&gt;</p>
+<p>org.apache.isis.mappings:isis-mappings-restclient-applib:jar:&lt;managed&gt;</p>
 </li>
 <li>
 <p>org.apache.isis.mavendeps:isis-mavendeps-integtests:pom:&lt;managed&gt;</p>
@@ -3607,6 +3635,195 @@ page.parent doesn't seem to be set...
 <ul>
 <li>
 <p>org.projectlombok:lombok:jar:&lt;managed&gt;</p>
+</li>
+</ul>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.apache.isis.extensions</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis-extensions-command-log</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>pom</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>\extensions\core\command-log</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Apache Isis Ext - Command Log</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Logs commands</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.apache.isis.extensions</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis-extensions-command-log-impl</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>jar</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>\extensions\core\command-log\impl</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Apache Isis Ext - Command Log Implementation</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><em>Components</em></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>org.apache.isis.extensions.commandlog.impl.CommandServiceListenerForJdo</p>
+</li>
+<li>
+<p>org.apache.isis.extensions.commandlog.impl.jdo.CommandJdo$TableColumnOrderDefault</p>
+</li>
+<li>
+<p>org.apache.isis.extensions.commandlog.impl.jdo.CommandJdo$TitleProvider</p>
+</li>
+<li>
+<p>org.apache.isis.extensions.commandlog.impl.jdo.CommandJdoRepository</p>
+</li>
+<li>
+<p>org.apache.isis.extensions.commandlog.impl.ui.CommandServiceMenu</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><em>Dependencies</em></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>org.apache.isis.core:isis-applib:jar:&lt;managed&gt;</p>
+</li>
+<li>
+<p>org.apache.isis.core:isis-core-config:jar:&lt;managed&gt;</p>
+</li>
+<li>
+<p>org.apache.isis.core:isis-core-runtimeservices:jar:&lt;managed&gt;</p>
+</li>
+<li>
+<p>org.apache.isis.persistence:isis-persistence-jdo-applib:jar:&lt;managed&gt;</p>
+</li>
+<li>
+<p>org.apache.isis.testing:isis-testing-fixtures-applib:jar:&lt;managed&gt;</p>
+</li>
+</ul>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.apache.isis.extensions</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis-extensions-command-replay</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>pom</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>\extensions\core\command-replay</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Apache Isis Ext - Command Replay</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Replays commands to secondary system</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.apache.isis.extensions</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis-extensions-command-replay-primary</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>jar</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>\extensions\core\command-replay\primary</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Apache Isis Ext - Command Replay for Primary</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>A module for obtaining commands from a primary</p>
+</div>
+<div class="paragraph">
+<p><em>Components</em></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>org.apache.isis.extensions.commandreplay.primary.spiimpl.CaptureResultOfCommand</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><em>Dependencies</em></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>org.apache.isis.core:isis-core-config:jar:&lt;managed&gt;</p>
+</li>
+<li>
+<p>org.apache.isis.core:isis-core-runtime:jar:&lt;managed&gt;</p>
+</li>
+<li>
+<p>org.apache.isis.core:isis-schema:jar:&lt;managed&gt;</p>
+</li>
+<li>
+<p>org.apache.isis.extensions:isis-extensions-command-log-impl:jar:&lt;managed&gt;</p>
+</li>
+<li>
+<p>org.apache.isis.mappings:isis-mappings-jaxrsclient-applib:jar:&lt;managed&gt;</p>
+</li>
+<li>
+<p>org.apache.isis.mappings:isis-mappings-jaxrsclient-impl:jar:&lt;managed&gt;</p>
+</li>
+<li>
+<p>org.apache.isis.testing:isis-testing-fixtures-applib:jar:&lt;managed&gt;</p>
+</li>
+</ul>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.apache.isis.extensions</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis-extensions-command-replay-secondary</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>jar</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>\extensions\core\command-replay\secondary</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Apache Isis Ext - Command Replay for Secondary</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>A module providing a Quartz Job to run on a secondary system,
+		for obtaining commands from a primary and saving them so that they are replayed.</p>
+</div>
+<div class="paragraph">
+<p><em>Components</em></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>org.apache.isis.extensions.commandreplay.secondary.analyser.CommandReplayAnalyserException</p>
+</li>
+<li>
+<p>org.apache.isis.extensions.commandreplay.secondary.analyser.CommandReplayAnalyserResult</p>
+</li>
+<li>
+<p>org.apache.isis.extensions.commandreplay.secondary.analysis.CommandReplayAnalysisService</p>
+</li>
+<li>
+<p>org.apache.isis.extensions.commandreplay.secondary.clock.TickingClockService</p>
+</li>
+<li>
+<p>org.apache.isis.extensions.commandreplay.secondary.config.SecondaryConfig</p>
+</li>
+<li>
+<p>org.apache.isis.extensions.commandreplay.secondary.executor.CommandExecutorServiceWithTime</p>
+</li>
+<li>
+<p>org.apache.isis.extensions.commandreplay.secondary.fetch.CommandFetcher</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><em>Dependencies</em></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>org.apache.isis.core:isis-core-config:jar:&lt;managed&gt;</p>
+</li>
+<li>
+<p>org.apache.isis.core:isis-core-runtime:jar:&lt;managed&gt;</p>
+</li>
+<li>
+<p>org.apache.isis.core:isis-schema:jar:&lt;managed&gt;</p>
+</li>
+<li>
+<p>org.apache.isis.extensions:isis-extensions-command-log-impl:jar:&lt;managed&gt;</p>
+</li>
+<li>
+<p>org.apache.isis.extensions:isis-extensions-quartz-impl:jar:&lt;managed&gt;</p>
+</li>
+<li>
+<p>org.apache.isis.mappings:isis-mappings-jaxrsclient-applib:jar:&lt;managed&gt;</p>
+</li>
+<li>
+<p>org.apache.isis.mappings:isis-mappings-jaxrsclient-impl:jar:&lt;managed&gt;</p>
+</li>
+<li>
+<p>org.apache.isis.testing:isis-testing-fixtures-applib:jar:&lt;managed&gt;</p>
 </li>
 </ul>
 </div></div></td>
@@ -3904,6 +4121,45 @@ page.parent doesn't seem to be set...
 </li>
 <li>
 <p>org.apache.isis.viewer:isis-viewer-wicket-ui:jar:&lt;managed&gt;</p>
+</li>
+</ul>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.apache.isis.extensions</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis-extensions-quartz</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>pom</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>\extensions\core\quartz</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Apache Isis Ext - Quartz</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Integrates Quartz</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.apache.isis.extensions</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis-extensions-quartz-impl</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>jar</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>\extensions\core\quartz\impl</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Apache Isis Ext - Quartz Impl</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><em>Dependencies</em></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>com.google.guava:guava:jar:&lt;managed&gt;</p>
+</li>
+<li>
+<p>org.apache.isis.core:isis-core-config:jar:&lt;managed&gt;</p>
+</li>
+<li>
+<p>org.apache.isis.core:isis-core-security:jar:&lt;managed&gt;</p>
+</li>
+<li>
+<p>org.apache.isis.extensions:isis-extensions-command-log-impl:jar:&lt;managed&gt;</p>
+</li>
+<li>
+<p>org.springframework.boot:spring-boot-starter-quartz:jar:&lt;managed&gt;</p>
 </li>
 </ul>
 </div></div></td>
@@ -4901,16 +5157,10 @@ AsciiDoc Working Group) is willing to take over.</pre>
 <p>demoapp.dom.annotDomain.Action.command.ActionCommandJdoSeedService</p>
 </li>
 <li>
-<p>demoapp.dom.annotDomain.Action.command.spiimpl.CommandServiceSpiForActions</p>
-</li>
-<li>
 <p>demoapp.dom.annotDomain.Action.publishing.ActionPublishingJdoEntities</p>
 </li>
 <li>
 <p>demoapp.dom.annotDomain.Action.publishing.ActionPublishingJdoSeedService</p>
-</li>
-<li>
-<p>demoapp.dom.annotDomain.Action.publishing.spiimpl.PublisherServiceSpiForActions</p>
 </li>
 <li>
 <p>demoapp.dom.annotDomain.DomainObject.publishing.annotated.disabled.DomainObjectPublishingDisabledJdoEntities</p>
@@ -4937,16 +5187,19 @@ AsciiDoc Working Group) is willing to take over.</pre>
 <p>demoapp.dom.annotDomain.DomainObject.publishing.metaAnnotOverridden.enabled.DomainObjectPublishingEnabledMetaAnnotOverriddenJdoSeedService</p>
 </li>
 <li>
-<p>demoapp.dom.annotDomain.DomainObject.publishing.spiimpl.PublisherServiceSpiForDomainObject</p>
-</li>
-<li>
 <p>demoapp.dom.annotDomain.Property.publishing.PropertyPublishingJdoEntities</p>
 </li>
 <li>
 <p>demoapp.dom.annotDomain.Property.publishing.PropertyPublishingJdoSeedService</p>
 </li>
 <li>
-<p>demoapp.dom.annotDomain.Property.publishing.spiimpl.PublisherServiceSpiForProperties</p>
+<p>demoapp.dom.annotDomain._changes.PublisherServiceToCaptureChangesInMemory</p>
+</li>
+<li>
+<p>demoapp.dom.annotDomain._commands.ExposePersistedCommands$TableColumnOrderDefault</p>
+</li>
+<li>
+<p>demoapp.dom.annotDomain._interactions.PublisherServiceToCaptureInteractionsInMemory</p>
 </li>
 <li>
 <p>demoapp.dom.annotLayout.PropertyLayout.navigable.FileTreeNodeService</p>
@@ -4977,6 +5230,12 @@ AsciiDoc Working Group) is willing to take over.</pre>
 </li>
 <li>
 <p>demoapp.dom.jee.JeeDemoService</p>
+</li>
+<li>
+<p>demoapp.dom.services.wrapperFactory.WrapperFactoryJdoEntities</p>
+</li>
+<li>
+<p>demoapp.dom.services.wrapperFactory.WrapperFactoryJdoSeedService</p>
 </li>
 <li>
 <p>demoapp.dom.types.isis.blobs.jdo.IsisBlobJdoEntities</p>
@@ -5346,6 +5605,9 @@ AsciiDoc Working Group) is willing to take over.</pre>
 <p>com.h2database:h2:jar:&lt;managed&gt;</p>
 </li>
 <li>
+<p>org.apache.isis.extensions:isis-extensions-command-log-impl:jar:&lt;managed&gt;</p>
+</li>
+<li>
 <p>org.apache.isis.extensions:isis-extensions-exceldownload-ui:jar:&lt;managed&gt;</p>
 </li>
 <li>
@@ -5498,6 +5760,12 @@ AsciiDoc Working Group) is willing to take over.</pre>
 <ul>
 <li>
 <p>org.apache.isis.examples.apps:demo-domain:jar:${project.version}</p>
+</li>
+<li>
+<p>org.apache.isis.extensions:isis-extensions-command-replay-primary:jar:&lt;managed&gt;</p>
+</li>
+<li>
+<p>org.apache.isis.extensions:isis-extensions-command-replay-secondary:jar:&lt;managed&gt;</p>
 </li>
 <li>
 <p>org.apache.isis.extensions:isis-extensions-cors-impl:jar:&lt;managed&gt;</p>
@@ -6129,7 +6397,7 @@ AsciiDoc Working Group) is willing to take over.</pre>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200920-0402-6022e8e6</p>
+            <p>Revision: 2.0.0-M2.20200921-0402-c601ba98</p>
         </div>
     </div>
 </footer>

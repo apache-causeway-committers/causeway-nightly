@@ -324,9 +324,6 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="ClockService.html">ClockService</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="CommandContext.html">CommandContext</a>
-  </li>
-  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="CommandDtoProcessorService.html">CommandDtoProcessorService</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -334,6 +331,9 @@ page.parent doesn't seem to be set...
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="CommandService.html">CommandService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="CommandServiceListener.html">CommandServiceListener</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="ConfigurationMenu.html">ConfigurationMenu</a>
@@ -501,7 +501,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../config/sections/isis.core.meta-model.validator.html">MetaModel Validator</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../config/sections/isis.core.runtime.html">Core Runtime Services configurations</a>
+    <a class="nav-link" href="../config/sections/isis.core.runtime.html">Core Runtime configurations</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../config/sections/isis.core.runtime-services.html">Core Runtime Services configurations</a>
@@ -756,18 +756,6 @@ page.parent doesn't seem to be set...
 <h1 class="page"><code>InteractionContext</code></h1>
 <div id="preamble">
 <div class="sectionbody">
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-TODO: this content has not yet been reviewed/updated for v2.0
-</td>
-</tr>
-</table>
-</div>
 <div class="paragraph">
 <p>The <code>InteractionContext</code> is a request-scoped domain service that is used to obtain the current
 <code>Interaction</code>.</p>
@@ -810,6 +798,9 @@ Persistent<code>Interaction</code>s support several use cases:</p>
 </li>
 <li>
 <p><code>Interaction</code> class, obtainable from the <code>InteractionContext</code></p>
+<div class="paragraph">
+<p>The <code>Interaction</code> can be used to obtain the <code>Command</code> object representing the top-level invocation action/property edit.</p>
+</div>
 </li>
 <li>
 <p><code>Execution</code> class, obtainable from the <code>Interaction</code>.</p>
@@ -828,15 +819,17 @@ Persistent<code>Interaction</code>s support several use cases:</p>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Service
 @Named("isisApplib.InteractionContext")
-@Order(OrderPrecedence.MIDPOINT)
+@Order(OrderPrecedence.EARLY - 10) // before ChangedObjectService
 @Primary
 @Qualifier("Default")
 @IsisInteractionScope
+@RequiredArgsConstructor(onConstructor_ = {@Inject})
 @Log4j2
-public class InteractionContext {
+public class InteractionContext implements TransactionScopeListener, DisposableBean {
 
     @Getter
     private Interaction interaction;    <i class="conum" data-value="1"></i><b>(1)</b>
+    // ...
 }</code></pre>
 </div>
 </div>
@@ -862,20 +855,29 @@ public class InteractionContext {
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Log4j2
 public class Interaction implements HasUniqueId {
 
-    @Getter @Setter
-    private UUID uniqueId;                          <i class="conum" data-value="1"></i><b>(1)</b>
+    public Interaction(final Command command) {
+        this.command = command;
+    }
 
-    public List&lt;Execution&lt;?,?&gt;&gt; getExecutions() {   <i class="conum" data-value="2"></i><b>(2)</b>
+    @Getter
+    private Command command;                        <i class="conum" data-value="1"></i><b>(1)</b>
+
+    @Override
+    public UUID getUniqueId() {                     <i class="conum" data-value="2"></i><b>(2)</b>
+        return command.getUniqueId();
+    }
+
+    public List&lt;Execution&lt;?,?&gt;&gt; getExecutions() {   <i class="conum" data-value="3"></i><b>(3)</b>
         // ...
     }
 
     @Getter
-    private Execution&lt;?,?&gt; currentExecution;        <i class="conum" data-value="3"></i><b>(3)</b>
+    private Execution&lt;?,?&gt; currentExecution;        <i class="conum" data-value="4"></i><b>(4)</b>
 
     @Getter
-    private Execution&lt;?,?&gt; priorExecution;          <i class="conum" data-value="4"></i><b>(4)</b>
+    private Execution&lt;?,?&gt; priorExecution;          <i class="conum" data-value="5"></i><b>(5)</b>
 
-    public int next(final String sequenceId) {      <i class="conum" data-value="5"></i><b>(5)</b>
+    public int next(final String sequenceId) {      <i class="conum" data-value="6"></i><b>(6)</b>
         // ...
     }
 }</code></pre>
@@ -890,8 +892,7 @@ public class Interaction implements HasUniqueId {
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
 <td>Returns a (list of) execution}s in the order that they were pushed.
-Generally there will be just one entry in this list, but additional entries may arise from the use of mixins/contributions when re-rendering a modified object.
-This will be the same value as held in <code>Command</code> (obtainable from <a href="CommandContext.html" class="page"><code>CommandContext</code></a>).</td>
+Generally there will be just one entry in this list, but additional entries may arise from the use of mixins/contributions when re-rendering a modified object.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
@@ -994,24 +995,6 @@ For <code>void</code> methods and for actions returning collections, the value w
 </tr>
 </table>
 </div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>Unlike the similar <a href="CommandContext.html" class="page"><code>CommandContext</code></a> domain service (discussed <a href="#Related-Classes">below</a>) there is no domain service to different implementations of <code>Interaction</code> to be used.
-That said, the framework simply instantiates the <code>Interaction</code> using the
-<a href="FactoryService.html" class="page"><code>FactoryService</code></a>.
-If a different implementation of <code>Interaction</code> was required, then a custom implementation of
-<a href="FactoryService.html" class="page"><code>FactoryService</code></a> could always be supplied.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
 <div class="paragraph">
 <p>There are two concrete subclasses of <code>Execution</code>.</p>
 </div>
@@ -1075,15 +1058,6 @@ The services are used within the framework however, primarily to support the
 </div>
 </div>
 </div>
-<div class="sect1">
-<h2 id="related-classes"><a class="anchor" href="#related-classes"></a>Related Classes</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>This service is very similar in nature to <a href="CommandContext.html" class="page"><code>CommandContext</code></a>, in that the <code>Interaction</code> object accessed through it is very similar to the <code>Command</code> object obtained from the <code>CommandContext</code>.
-The principle distinction is that while <code>Command</code> represents the <em>intention</em> to invoke an action or edit a property, the <code>Interaction</code> (and contained <code>Execution</code>s) represents the actual execution.</p>
-</div>
-</div>
-</div>
 </article>
 <aside class="article-aside toc hide-for-print" role="navigation">
     <p class="toc-title">On this page</p>
@@ -1101,7 +1075,7 @@ The principle distinction is that while <code>Command</code> represents the <em>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200920-0402-6022e8e6</p>
+            <p>Revision: 2.0.0-M2.20200921-0402-c601ba98</p>
         </div>
     </div>
 </footer>

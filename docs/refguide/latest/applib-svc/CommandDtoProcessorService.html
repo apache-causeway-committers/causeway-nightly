@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css"/>
 <link rel="home" href="../../.." title="Apache Isis">
   <link rel="next" href="CommandExecutorService.html" title="CommandExecutorService">
-  <link rel="prev" href="CommandContext.html" title="CommandContext">
+  <link rel="prev" href="ClockService.html" title="ClockService">
   </head>
   <body class="article">
 <header class="header">
@@ -143,12 +143,12 @@
   <aside class="nav">
     <div class="panels">
 <div class="nav-panel-pagination">
-  <a class="page-previous" rel="prev" href="CommandContext.html" title="CommandContext"><span></span></a>
+  <a class="page-previous" rel="prev" href="ClockService.html" title="ClockService"><span></span></a>
   <a class="page-next" rel="next"
      href="CommandExecutorService.html" title="CommandExecutorService"><span></span></a>
 <!--
 page.parent doesn't seem to be set...
-  <a class="page-parent" rel="prev" href="about.html" title="CommandContext"><span></span></a>
+  <a class="page-parent" rel="prev" href="about.html" title="ClockService"><span></span></a>
 -->
 </div>
 <div class="nav-panel-menu is-active" data-panel="menu">
@@ -323,9 +323,6 @@ page.parent doesn't seem to be set...
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="ClockService.html">ClockService</a>
   </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="CommandContext.html">CommandContext</a>
-  </li>
   <li class="nav-item is-current-page" data-depth="2">
     <a class="nav-link" href="CommandDtoProcessorService.html">CommandDtoProcessorService</a>
   </li>
@@ -334,6 +331,9 @@ page.parent doesn't seem to be set...
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="CommandService.html">CommandService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="CommandServiceListener.html">CommandServiceListener</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="ConfigurationMenu.html">ConfigurationMenu</a>
@@ -501,7 +501,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../config/sections/isis.core.meta-model.validator.html">MetaModel Validator</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../config/sections/isis.core.runtime.html">Core Runtime Services configurations</a>
+    <a class="nav-link" href="../config/sections/isis.core.runtime.html">Core Runtime configurations</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../config/sections/isis.core.runtime-services.html">Core Runtime Services configurations</a>
@@ -795,7 +795,15 @@ TODO: v2 - perhaps this should just be merged into <code>CommandService</code>? 
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public interface CommandDtoProcessorService {
 
-    CommandDto process(final Command command, CommandDto commandDto);
+    /**
+     * @param domainObject - is the target that acts as the source of the
+     *                       {@link CommandDto}.
+     * @param commandDto - is either &lt;code&gt;null&lt;/code&gt;, or is passed from a
+     *                     previous implementation for further refinement.
+     * @return
+     */
+    CommandDto process(final Object domainObject, @Nullable final CommandDto commandDto);
+
 
 }</code></pre>
 </div>
@@ -822,7 +830,7 @@ The main use case is to allow certain actions to be ignored.</p>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public interface CommandDtoProcessor {
 
-    CommandDto process(final Command command, CommandDto commandDto);   <i class="conum" data-value="1"></i><b>(1)</b>
+    CommandDto process(CommandDto commandDto);   <i class="conum" data-value="1"></i><b>(1)</b>
 
 }</code></pre>
 </div>
@@ -870,7 +878,7 @@ All implementations are used.</p>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200920-0402-6022e8e6</p>
+            <p>Revision: 2.0.0-M2.20200921-0402-c601ba98</p>
         </div>
     </div>
 </footer>

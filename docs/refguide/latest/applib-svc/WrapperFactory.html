@@ -324,9 +324,6 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="ClockService.html">ClockService</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="CommandContext.html">CommandContext</a>
-  </li>
-  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="CommandDtoProcessorService.html">CommandDtoProcessorService</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -334,6 +331,9 @@ page.parent doesn't seem to be set...
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="CommandService.html">CommandService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="CommandServiceListener.html">CommandServiceListener</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="ConfigurationMenu.html">ConfigurationMenu</a>
@@ -501,7 +501,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../config/sections/isis.core.meta-model.validator.html">MetaModel Validator</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../config/sections/isis.core.runtime.html">Core Runtime Services configurations</a>
+    <a class="nav-link" href="../config/sections/isis.core.runtime.html">Core Runtime configurations</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../config/sections/isis.core.runtime-services.html">Core Runtime Services configurations</a>
@@ -918,8 +918,12 @@ Its superclass <code>ControlAbstract</code> is:</p>
         // ...
     }
 
-    @Getter @NonNull
-    private ExceptionHandler exceptionHandler;                  <i class="conum" data-value="2"></i><b>(2)</b>
+    private ExceptionHandler exceptionHandler;
+
+    public Optional&lt;ExceptionHandler&gt; getExceptionHandler() { <i class="conum" data-value="2"></i><b>(2)</b>
+        return Optional.ofNullable(exceptionHandler);
+    }
+
     public T with(ExceptionHandler exceptionHandler) {
         // ...
     }
@@ -1049,35 +1053,39 @@ It extends with the following behaviour:</p>
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Log4j2
 public class AsyncControl&lt;R&gt; extends ControlAbstract&lt;AsyncControl&lt;R&gt;&gt; {
 
-    public static AsyncControl&lt;Void&gt; control() {                        <i class="conum" data-value="1"></i><b>(1)</b>
-        return new AsyncControl&lt;&gt;();
+    public static AsyncControl&lt;Void&gt; returningVoid() {                        <i class="conum" data-value="1"></i><b>(1)</b>
+        return new AsyncControl&lt;&gt;(Void.class);
     }
-    public static &lt;X&gt; AsyncControl&lt;X&gt; control(final Class&lt;X&gt; clazz) {   <i class="conum" data-value="2"></i><b>(2)</b>
-        return new AsyncControl&lt;&gt;();
+    public static &lt;X&gt; AsyncControl&lt;X&gt; returning(final Class&lt;X&gt; cls) {     <i class="conum" data-value="2"></i><b>(2)</b>
+        return new AsyncControl&lt;X&gt;(cls);
     }
 
-    private AsyncControl() {
-        with(exception -&gt; {                                             <i class="conum" data-value="3"></i><b>(3)</b>
+    @Getter
+    private final Class&lt;R&gt; returnType;                                  <i class="conum" data-value="3"></i><b>(3)</b>
+
+    private AsyncControl(final Class&lt;R&gt; returnType) {
+        this.returnType = returnType;
+        with(exception -&gt; {                                             <i class="conum" data-value="4"></i><b>(4)</b>
             log.error(logMessage(), exception);
             return null;
         });
     }
 
     @Getter @NonNull
-    private ExecutorService executorService =                           <i class="conum" data-value="4"></i><b>(4)</b>
+    private ExecutorService executorService =                           <i class="conum" data-value="5"></i><b>(5)</b>
                             ForkJoinPool.commonPool();
     public AsyncControl&lt;R&gt; with(ExecutorService executorService) {
         // ...
     }
 
     @Getter
-    private String user;                                                <i class="conum" data-value="5"></i><b>(5)</b>
+    private String user;                                                <i class="conum" data-value="6"></i><b>(6)</b>
     public AsyncControl&lt;R&gt; withUser(final String user) {
         // ...
     }
 
     @Getter
-    private List&lt;String&gt; roles;                                         <i class="conum" data-value="6"></i><b>(6)</b>
+    private List&lt;String&gt; roles;                                         <i class="conum" data-value="7"></i><b>(7)</b>
     public AsyncControl&lt;R&gt; withRoles(final List&lt;String&gt; roles) {
         // ...
     }
@@ -1085,8 +1093,8 @@ public class AsyncControl&lt;R&gt; extends ControlAbstract&lt;AsyncControl&lt;R&
         // ...
     }
 
-    @Getter
-    private Future&lt;R&gt; future;                                           <i class="conum" data-value="7"></i><b>(7)</b>
+    @Getter @Setter
+    private Future&lt;R&gt; future;                                           <i class="conum" data-value="8"></i><b>(8)</b>
 
     // ...
 }</code></pre>
@@ -1294,7 +1302,7 @@ Such a feature would probably also use <a href="InteractionContext.html" class="
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200920-0402-6022e8e6</p>
+            <p>Revision: 2.0.0-M2.20200921-0402-c601ba98</p>
         </div>
     </div>
 </footer>

@@ -3,13 +3,14 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>@Model Support :: Apache Isis</title>
+    <title>Quartz :: Apache Isis</title>
     <meta name="generator" content="Antora 2.3.3">
     <link rel="stylesheet" href="../../../_/css/site.css">
     <link rel="stylesheet" href="../../../_/css/site-custom.css">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Raleway:300,400,500,700,800|Montserrat:300,400,700" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css"/>
 <link rel="home" href="../../.." title="Apache Isis">
+  <link rel="prev" href="../flyway/about.html" title="Flyway">
   </head>
   <body class="article">
 <header class="header">
@@ -141,12 +142,12 @@
   <aside class="nav">
     <div class="panels">
 <div class="nav-panel-pagination">
-  <a class="page-previous disabled" rel="prev" href="" title=""><span></span></a>
+  <a class="page-previous" rel="prev" href="../flyway/about.html" title="Flyway"><span></span></a>
   <a class="page-next disabled" rel="next"
      href="" title=""><span></span></a>
 <!--
 page.parent doesn't seem to be set...
-  <a class="page-parent disabled" rel="prev" href="" title=""><span></span></a>
+  <a class="page-parent disabled" rel="prev" href="" title="Flyway"><span></span></a>
 -->
 </div>
 <div class="nav-panel-menu is-active" data-panel="menu">
@@ -212,6 +213,9 @@ page.parent doesn't seem to be set...
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../flyway/about.html">Flyway</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="about.html">Quartz</a>
   </li>
 </ul>
   </li>
@@ -398,25 +402,128 @@ page.parent doesn't seem to be set...
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="../about.html">User Guide</a></li>
-    <li><a href="about.html">@Model Support</a></li>
+    <li>Extensions</li>
+    <li><a href="about.html">Quartz</a></li>
   </ul>
 </nav>
-  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/HEAD/extensions/core/model-annotation/adoc/modules/model/pages/about.adoc">Edit</a></div>
+  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/HEAD/extensions/core/quartz/adoc/modules/quartz/pages/about.adoc">Edit</a></div>
 </div>
 <article class="doc">
     <a name="section-top"></a>
-<h1 class="page">@Model Support</h1>
-<div class="admonitionblock warning">
+<h1 class="page">Quartz</h1>
+<div class="admonitionblock caution">
 <table>
 <tr>
 <td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
+<i class="fa icon-caution" title="Caution"></i>
 </td>
 <td class="content">
-TODO
+TODO v2 - to document.  AbstractIsisInteractionTemplate has been removed.
 </td>
 </tr>
 </table>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Implementation of a Quartz <code>Job</code> interface:</p>
+<div class="listingblock">
+<div class="title">DemoJob.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Log4j2
+public class DemoJob implements Job {
+
+    public void execute(final JobExecutionContext context) {
+
+        final AuthenticationSession authSession = newAuthSession(context);
+        new DemoIsisInteractionTemplate().execute(authSession, null);
+
+    }
+
+    protected AuthenticationSession newAuthSession(JobExecutionContext context) {
+        return new SimpleSession("isisModuleExtQuartzDemoUser", Arrays.asList("isisModuleExtQuartzDemoRole"));
+    }
+
+    @Inject IsisConfiguration isisConfiguration;
+
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Domain services (such as <code>IsisConfiguration</code>) can be injected into this class.</p>
+</div>
+</li>
+<li>
+<p>The job calls a subclass of <code>AbstractIsisInteractionTemplate</code> to perform the work.
+This runs within a transactionm under the user and role specified by <code>DemoJob</code>, above:</p>
+<div class="listingblock">
+<div class="title">DemoIsisInteractionTemplate.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Log4j2
+class DemoIsisInteractionTemplate extends AbstractIsisInteractionTemplate {
+    @Override
+    protected void doExecuteWithTransaction(Object context) {
+        log.debug("Running session via quartz as '{}'", userService.getUser().getName());
+    }
+    @Inject UserService userService;
+}</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Finally, the job is configured to run using Spring:</p>
+<div class="listingblock">
+<div class="title">DemoJobQuartzConfigurerModule.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Configuration
+@Log4j2
+public class DemoJobQuartzConfigurerModule {
+
+    @Bean
+    public JobDetailFactoryBean jobDetail() {
+        val jobDetailFactory = new JobDetailFactoryBean();
+        jobDetailFactory.setJobClass(DemoJob.class);
+        jobDetailFactory.setDescription("Run demo job");
+        jobDetailFactory.setDurability(true);
+        return jobDetailFactory;
+    }
+
+    @Bean
+    public SimpleTriggerFactoryBean trigger(JobDetail job) {
+        val triggerFactory = new SimpleTriggerFactoryBean();
+        triggerFactory.setJobDetail(job);
+        triggerFactory.setRepeatInterval(10000); // 10seconds
+        triggerFactory.setStartDelay(15000);     // 15 seconds approx boot up time
+        triggerFactory.setRepeatCount(SimpleTrigger.REPEAT_INDEFINITELY);
+        return triggerFactory;
+    }
+
+    @Bean
+    public SchedulerFactoryBean scheduler(Trigger trigger, JobDetail job, SpringBeanJobFactory springBeanJobFactory) {
+        val schedulerFactory = new SchedulerFactoryBean();
+        // schedulerFactory.setConfigLocation(new ClassPathResource("quartz.properties"));
+
+        schedulerFactory.setJobFactory(springBeanJobFactory);
+        schedulerFactory.setJobDetails(job);
+
+        schedulerFactory.setTriggers(trigger);
+
+        return schedulerFactory;
+    }
+
+    @Bean
+    public SpringBeanJobFactory springBeanJobFactory() {
+        val jobFactory = new AutowiringSpringBeanJobFactory();
+        jobFactory.setApplicationContext(applicationContext);
+        return jobFactory;
+    }
+
+    @Inject ApplicationContext applicationContext;
+}</code></pre>
+</div>
+</div>
+</li>
+</ul>
 </div>
 </article>
 <aside class="article-aside toc hide-for-print" role="navigation">
@@ -435,7 +542,7 @@ TODO
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200920-0402-6022e8e6</p>
+            <p>Revision: 2.0.0-M2.20200921-0402-c601ba98</p>
         </div>
     </div>
 </footer>

@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Raleway:300,400,500,700,800|Montserrat:300,400,700" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css"/>
 <link rel="home" href="../../.." title="Apache Isis">
-  <link rel="next" href="ConfigurationMenu.html" title="ConfigurationMenu">
+  <link rel="next" href="CommandServiceListener.html" title="CommandServiceListener">
   <link rel="prev" href="CommandExecutorService.html" title="CommandExecutorService">
   </head>
   <body class="article">
@@ -145,7 +145,7 @@
 <div class="nav-panel-pagination">
   <a class="page-previous" rel="prev" href="CommandExecutorService.html" title="CommandExecutorService"><span></span></a>
   <a class="page-next" rel="next"
-     href="ConfigurationMenu.html" title="ConfigurationMenu"><span></span></a>
+     href="CommandServiceListener.html" title="CommandServiceListener"><span></span></a>
 <!--
 page.parent doesn't seem to be set...
   <a class="page-parent" rel="prev" href="about.html" title="CommandExecutorService"><span></span></a>
@@ -324,9 +324,6 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="ClockService.html">ClockService</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="CommandContext.html">CommandContext</a>
-  </li>
-  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="CommandDtoProcessorService.html">CommandDtoProcessorService</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -334,6 +331,9 @@ page.parent doesn't seem to be set...
   </li>
   <li class="nav-item is-current-page" data-depth="2">
     <a class="nav-link" href="CommandService.html">CommandService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="CommandServiceListener.html">CommandServiceListener</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="ConfigurationMenu.html">ConfigurationMenu</a>
@@ -501,7 +501,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../config/sections/isis.core.meta-model.validator.html">MetaModel Validator</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../config/sections/isis.core.runtime.html">Core Runtime Services configurations</a>
+    <a class="nav-link" href="../config/sections/isis.core.runtime.html">Core Runtime configurations</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../config/sections/isis.core.runtime-services.html">Core Runtime Services configurations</a>
@@ -754,92 +754,8 @@ page.parent doesn't seem to be set...
 <article class="doc">
     <a name="section-top"></a>
 <h1 class="page"><code>CommandService</code></h1>
-<div id="preamble">
-<div class="sectionbody">
 <div class="paragraph">
-<p>The <code>CommandService</code> service supports the <a href="CommandContext.html" class="page"><code>CommandContext</code></a> service such that <a href="CommandContext.html#command" class="page"><code>Command</code></a> objects (that reify the invocation of an action/edit of a property on a domain object) can be persisted.</p>
-</div>
-<div class="paragraph">
-<p><code>Command</code>s
-support the ability to replicate from a master to a slave instance of an application.
-One use case for this is for regression testing, allowing a production usages to be replayed against a new release candidate, eg after upgrading that application to a new version of Apache Isis itself (or some other dependency).</p>
-</div>
-<div class="paragraph">
-<p>There are a number of related use cases:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>they enable profiling of the running application (which actions are invoked then most often, what is their response time)</p>
-</li>
-<li>
-<p>if <a href="PublisherService.html" class="page"><code>PublisherService</code></a> is configured, they provide better traceability as the <code>Command</code> is also correlated with any published events, again through the unique <code>transactionId</code> GUID</p>
-</li>
-<li>
-<p>if <a href="AuditerService.html" class="page"><code>AuditerService</code></a>(s) are configured, they provide better audit information, since the <code>Command</code> (the 'cause' of an action) can be correlated to the audit records (the "effect" of the action) through the <code>transactionId</code> GUID</p>
-</li>
-</ul>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="spi"><a class="anchor" href="#spi"></a>SPI</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The <code>CommandService</code> service defines the following very simple API:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public interface CommandService {
-
-    Command create();                               <i class="conum" data-value="1"></i><b>(1)</b>
-    boolean persistIfPossible(Command command);     <i class="conum" data-value="2"></i><b>(2)</b>
-    void complete(final Command command);           <i class="conum" data-value="3"></i><b>(3)</b>
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Instantiate the appropriate instance of the <a href="CommandContext.html#command" class="page"><code>Command</code></a> (as defined by the
-<a href="CommandContext.html" class="page"><code>CommandContext</code></a> service).
-Its members will be populated automatically by the framework.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Set the hint that the <code>Command</code> should be persisted if possible (when completed, see below).</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>"Complete" the command, typically meaning that the command should be persisted it if its <code>Command#getPersistence()</code> flag and persistence hint (<code>Command#isPersistHint()</code>) indicate that it should be. <br>
-+ The framework will automatically have set the <code>completedAt</code> property of the <code>Command</code>.</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="implementation"><a class="anchor" href="#implementation"></a>Implementation</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The <a href="../../../extensions/latest/command-log/about.html" class="page">Command Log</a> extension provides an implementation of this service that persists commands to a database table.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="related-services"><a class="anchor" href="#related-services"></a>Related Services</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>As discussed above, this service supports the <a href="CommandContext.html" class="page"><code>CommandContext</code></a>, providing the ability for <code>Command</code> objects to be persisted.</p>
-</div>
-<div class="paragraph">
-<p>The services provided by this module combines very well with the <a href="AuditerService.html" class="page"><code>AuditerService</code></a>.
-The <code>CommandService</code> captures the <em>cause</em> of an interaction (an action was invoked, a property was edited), while the <code>AuditerService</code> captures the <em>effect</em> of that interaction in terms of changed state.
-You may also want to configure the <a href="PublisherService.html" class="page"><code>PublisherService</code></a>, which also captures the effect of the interaction but as an event.
-All three of these services collaborate implicitly by way of the <a href="../applib-classes/roles-mixins-contributees/contributee.html#HasUniqueId" class="page"><code>HasUniqueId</code></a> interface.</p>
-</div>
-</div>
+<p>The <code>CommandService</code> service is an internal service whose responsibility is simply to notify all known <a href="CommandServiceListener.html" class="page"><code>CommandServiceListener</code></a> when the <code>Command</code> has completed.</p>
 </div>
 </article>
 <aside class="article-aside toc hide-for-print" role="navigation">
@@ -858,7 +774,7 @@ All three of these services collaborate implicitly by way of the <a href="../app
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200920-0402-6022e8e6</p>
+            <p>Revision: 2.0.0-M2.20200921-0402-c601ba98</p>
         </div>
     </div>
 </footer>
