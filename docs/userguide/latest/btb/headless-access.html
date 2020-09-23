@@ -412,19 +412,14 @@ page.parent doesn't seem to be set...
 <article class="doc">
     <a name="section-top"></a>
 <h1 class="page">Headless access</h1>
-<div id="preamble">
-<div class="sectionbody">
 <div class="paragraph">
 <p>This section tackles the topic of enabling access to an Apache Isis application directly, or at least, not through either the <a href="../../../vw/latest/about.html" class="page">Wicket</a> or <a href="../../../vro/latest/about.html" class="page">Restful</a> viewers.</p>
 </div>
 <div class="paragraph">
-<p>There are several main use-cases:</p>
+<p>There are a number of use-cases:</p>
 </div>
 <div class="ulist">
 <ul>
-<li>
-<p>enabling background execution, eg of a thread managed by Quartz scheduler and running within the webapp</p>
-</li>
 <li>
 <p>integration from other systems, eg for a subscriber on a pub/sub mechanism such as Camel, pushing changes through an Apache Isis domain model.</p>
 </li>
@@ -434,81 +429,36 @@ page.parent doesn't seem to be set...
 </ul>
 </div>
 <div class="paragraph">
-<p>Note that the calling thread runs in the same process space as the Apache Isis domain object model (must be physically linked to the JAR files containing the domain classes).  For use cases where the calling thread runs in some other process space (eg migrating data from a legacy system), then the <a href="../../../vro/latest/about.html" class="page">Restful Objects viewer</a> is usually the way to go.</p>
+<p>Note that the calling thread runs in the same process space as the Apache Isis domain object model (must be physically linked to the JAR files containing the domain classes).
+For use cases where the calling thread runs in some other process space (eg migrating data from a legacy system), then the <a href="../../../vro/latest/about.html" class="page">Restful Objects viewer</a> is usually the way to go.</p>
 </div>
 <div class="paragraph">
-<p>The API described in this chapter is reasonably low-level, allowing code to interact very directly with the Apache Isis metamodel and runtime.  Such callers should be considered trusted: they do not (by default) honour any business rules eg implicit in the Isis annotations or hide/disable/validate methods.  However the <a href="../../../refguide/latest/applib-svc/WrapperFactory.html" class="page"><code>WrapperFactory</code></a> service could be used to enforce such business rules if required.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="AbstractIsisSessionTemplate"><a class="anchor" href="#AbstractIsisSessionTemplate"></a>AbstractIsisSessionTemplate</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The <code>AbstractIsisSessionTemplate</code> class (whose name is inspired by the Spring framework&#8217;s naming convention for similar classes that query <a href="http://docs.spring.io/spring/docs/2.5.x/reference/jdbc.html#jdbc-JdbcTemplate">JDBC</a>, <a href="http://docs.spring.io/spring/docs/2.5.x/reference/jms.html#jms-jmstemplate">JMS</a>, <a href="http://docs.spring.io/spring/docs/2.5.x/reference/orm.html#orm-jpa-template">JPA</a> etc.) provides the mechanism to open up a 'session' within the Apache Isis framework, in order to resolve and interact with entities.</p>
-</div>
-<div class="paragraph">
-<p>The class itself is intended to be subclassed:</p>
+<p>The key to headless access is the <code>IsisInteractionFactory</code> service, a singleton managed by Spring.
+Use it as follows:</p>
 </div>
 <div class="listingblock">
-<div class="title">AbstractIsisSessionTemplate.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public abstract class AbstractIsisSessionTemplate {
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Service
+@lombok.RequiredArgsConstructor(onConstructor_ = { @Inject })
+private static class HeadlessAccess {
 
-    public void execute(                                              <i class="conum" data-value="1"></i><b>(1)</b>
-            final AuthenticationSession authSession,
-            final Object context) {
-        // ...
-    }
+    final IsisInteractionFactory isisInteractionFactory;
+    final TransactionService transactionService;
 
-    protected void doExecute(final Object context) {                  <i class="conum" data-value="2"></i><b>(2)</b>
-        transactionService.executeWithinTransaction(()-&gt;{
-            doExecuteWithTransaction(context);
+    @Override
+    public R call(AuthenticationSession session, Supplier&lt;R&gt; supplier) {
+        return isisInteractionFactory.callAuthenticated(session, () -&gt; {
+            return transactionService.executeWithinTransaction(() -&gt; {
+                    return supplier.get();
+                });
         });
     }
-
-    protected void doExecuteWithTransaction(final Object context) {}  <i class="conum" data-value="3"></i><b>(3)</b>
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><code>execute(&#8230;&#8203;)</code> sets up the <code>IsisSession</code> and delegates to &#8230;&#8203;</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><code>doExecute(&#8230;&#8203;)</code>, a hook method for subclasses to implement.
-The passed object represents passes a context from the caller (eg the scheduler, cron job, JMS etc) that instantiated and executed the class.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Alternatively, override the <code>doExecuteWithTransaction()</code>.</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>In fact, the initial <code>execute(&#8230;&#8203;)</code> method implementation is simply:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public void execute(final AuthenticationSession authSession, final Object context) {
-    isisSessionFactory.runAuthenticated(authSession, ()-&gt;{
-        serviceInjector.injectServicesInto(this);
-        doExecute(context);
-    });
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>So, as an alternative to using <code>AbstractIsisSessionTemplate</code>, you could instead just use <code>IsisSessionFactory</code>.</p>
-</div>
-<div class="paragraph">
-<p>If you <em>do</em> use <code>AbstractIsisSessionTemplate</code>, note that it automatically inject any domain services into itself.
-Thus, it is relatively easy for the subclass to "reach into" the domain, through injected services.</p>
-</div>
-</div>
+<p>The API described here is reasonably low-level, allowing code to interact very directly with the Apache Isis metamodel and runtime.
+Such callers should be considered trusted: they do not (by default) honour any business rules eg implicit in the Isis annotations or hide/disable/validate methods.</p>
 </div>
 </article>
 <aside class="article-aside toc hide-for-print" role="navigation">
@@ -527,7 +477,7 @@ Thus, it is relatively easy for the subclass to "reach into" the domain, through
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200923-0402-c386d5bc</p>
+            <p>Revision: 2.0.0-M2.20200923-1720-122c8cdb</p>
         </div>
     </div>
 </footer>

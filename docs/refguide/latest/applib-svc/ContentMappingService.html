@@ -330,7 +330,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="CommandExecutorService.html">CommandExecutorService</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="CommandService.html">CommandService</a>
+    <a class="nav-link" href="#refguide:applib-svc:CommandServiceInternal.adoc">CommandService</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="CommandServiceListener.html">CommandServiceListener</a>
@@ -801,23 +801,19 @@ The mapped object used will be the first non-<code>null</code> result returned b
 <h2 id="implementations"><a class="anchor" href="#implementations"></a>Implementations</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The framework provides two implementations of this service, both in support of the <a href="CommandService.html" class="page"><code>CommandService</code></a> SPI.</p>
+<p>The framework provides two implementations of this service, both to allow objects implementing <code>HasCommandDto</code> to be converted into serializable <code>CommandDto</code>s, in other words XML.
+This is used by the <a href="../../../extensions/latest/command-log/about.html" class="page">Command Log</a> and <a href="../../../extensions/latest/command-replay/about.html" class="page">Command Replay</a> extensions to allow commands to be replicated from a primary to secondary system, for regression testing.</p>
 </div>
 <div class="paragraph">
-<p>By way of background: implementations of the SPI <code>CommandService</code> work with custom implementations of the <code>Command</code> interface, typically being persisted to a datastore.
-The <code>CommandWithDto</code> interface is a subtype of <code>Command</code> for implementations that can be reified into <a href="../schema/cmd.html" class="page"><code>CommandDto</code></a> XML instances.
-One implementation that does this is the <a href="../../../extensions/latest/command-log/about.html" class="page">Command Log</a> extension module.</p>
-</div>
-<div class="paragraph">
-<p>For framework implementations of <code>ContentMappingService</code> allow domain service actions that return <code>CommandDto</code>s (either singularly or in a list) to be converted into XML documents:</p>
+<p>The implementations are:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p><code>o.a.i.applib.services.conmap.ContentMappingServiceForCommandDto</code> will map any single instance of a <code>CommandWithDto</code> into a <code>CommandDto</code> XML document</p>
+<p><code>o.a.i.applib.services.commanddto.conmap.ContentMappingServiceForCommandDto</code> will map any single instance of a <code>HasCommandDto</code> into a <code>CommandDto</code> XML document</p>
 </li>
 <li>
-<p><code>o.a.i.applib.services.conmap.ContentMappingServiceForCommandsDto</code> will map list of <code>CommandWithDto</code>s into a <code>CommandsDto</code> XML document, and will wrap any single instance of a <code>CommandWithDto</code> into a singleton list and thence into a <code>CommandsDto</code> XML document.</p>
+<p><code>o.a.i.applib.services.commanddto.conmap.ContentMappingServiceForCommandsDto</code> will map a list of <code>HasCommandDto</code>s into a <code>CommandsDto</code> XML document, and will wrap any single instance of a <code>CommandWithDto</code> into a singleton list and thence into a <code>CommandsDto</code> XML document.</p>
 </li>
 </ul>
 </div>
@@ -869,7 +865,7 @@ A typical use case for this is to dynamically add in serialized <code>Blob</code
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200923-0402-c386d5bc</p>
+            <p>Revision: 2.0.0-M2.20200923-1720-122c8cdb</p>
         </div>
     </div>
 </footer>

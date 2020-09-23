@@ -1083,11 +1083,18 @@ The location of this class is used for classpath scanning.</p>
 <p>In a larger application there would likely be many more modules containing these domain object modules.
 For example, you might have a <code>module-customer</code> holding a <code>Customer</code> entity and related entities/services, a <code>module-product</code> holding a <code>Product</code> catalog, and a <code>module-order</code> to hold the <code>Order</code>s placed by <code>Customer</code>s:</p>
 </div>
-<div class="imageblock kroki">
+<div class="listingblock kroki-error">
+<div class="title">Typical application dependencies</div>
 <div class="content">
-<img src="_images/diag-e93d5135146b237a9132afa0c6e25e5ebc58358e.svg" alt="Typical application dependencies">
+<pre>[webapp] &lt;&lt;maven module&gt;&gt;
+[module-order]  &lt;&lt;maven module&gt;&gt;
+[module-customer]  &lt;&lt;maven module&gt;&gt;
+[module-product]  &lt;&lt;maven module&gt;&gt;
+
+[webapp] .-&gt; [module-order]
+[module-order] .-&gt; [module-customer]
+[module-order] .-&gt; [module-product]</pre>
 </div>
-<div class="title">Figure 2. Typical application dependencies</div>
 </div>
 <div class="paragraph">
 <p>We can use Maven dependency management to ensure that there are no cyclic dependencies (order "knows about" product but product does not know about orders) and ensure that the codebase remains decoupled.
@@ -1116,7 +1123,7 @@ There will be several of these app manifests, typically one for the webapp itsel
 <div class="content">
 <a class="image" href="_images/simpleapp/simpleapp-modules-dependencies.png"><img src="_images/simpleapp/simpleapp-modules-dependencies.png" alt="simpleapp modules dependencies" width="800px"></a>
 </div>
-<div class="title">Figure 3. Module Dependencies</div>
+<div class="title">Figure 2. Module Dependencies</div>
 </div>
 <div class="paragraph">
 <p>Let&#8217;s now review the contents of each of the modules in the simpleapp starter app.</p>
@@ -2121,7 +2128,7 @@ There is plenty more guidance on this site; start with the <a href="../../../use
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200923-0402-c386d5bc</p>
+            <p>Revision: 2.0.0-M2.20200923-1720-122c8cdb</p>
         </div>
     </div>
 </footer>
