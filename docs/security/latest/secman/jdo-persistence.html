@@ -408,8 +408,78 @@ page.parent doesn't seem to be set...
 <article class="doc">
     <a name="section-top"></a>
 <h1 class="page">JDO Persistence</h1>
+<div id="preamble">
+<div class="sectionbody">
 <div class="paragraph">
-<p>TODO: to document</p>
+<p>TODO: (more) to document</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="overriding-jdo-annotations-schema-and-table"><a class="anchor" href="#overriding-jdo-annotations-schema-and-table"></a>Overriding JDO Annotations (Schema and Table)</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>JDO entity classes for <em>SecMan</em> come preconfigured with <strong>schema</strong> and <strong>table</strong> names.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@javax.jdo.annotations.PersistenceCapable( ...
+        schema = "isisExtensionsSecman",
+        table = "ApplicationUser")
+public class ApplicationUser ... { /* ... */ }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We can override these with custom values by specifying a <strong>.orm</strong> file.</p>
+</div>
+<div class="paragraph">
+<p>For example, overriding the destination database name to be <strong>'secman'</strong>:</p>
+</div>
+<div class="listingblock">
+<div class="title">META-INF/package-secman.orm</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;?xml version="1.0" encoding="UTF-8" ?&gt;
+&lt;orm xmlns="http://xmlns.jcp.org/xml/ns/jdo/orm"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/jdo/orm http://xmlns.jcp.org/xml/ns/jdo/orm_3_0.xsd"&gt;
+
+	&lt;package name="org.apache.isis.extensions.secman.jdo.dom.permission"&gt;
+		&lt;class name="ApplicationPermission" schema="secman"/&gt;
+	&lt;/package&gt;
+
+	&lt;package name="org.apache.isis.extensions.secman.jdo.dom.role"&gt;
+		&lt;class name="ApplicationRole" schema="secman"/&gt;
+	&lt;/package&gt;
+
+	&lt;package name="org.apache.isis.extensions.secman.jdo.dom.tenancy"&gt;
+		&lt;class name="ApplicationTenancy" schema="secman"/&gt;
+	&lt;/package&gt;
+
+	&lt;package name="org.apache.isis.extensions.secman.jdo.dom.user"&gt;
+		&lt;class name="ApplicationUser" schema="secman"/&gt;
+	&lt;/package&gt;
+
+&lt;/orm&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This <strong>.orm</strong> file can then be activated with a DataNucleus configuration entry:</p>
+</div>
+<div class="listingblock">
+<div class="title">application.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yml hljs" data-lang="yml">isis:
+  persistence:
+    jdo-datanucleus:
+      impl:
+        datanucleus:
+          mapping: secman</code></pre>
+</div>
+</div>
+</div>
 </div>
 </article>
 <aside class="article-aside toc hide-for-print" role="navigation">
@@ -428,7 +498,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20200929-0401-8278f229</p>
+            <p>Revision: 2.0.0-M2.20200930-0402-d11d21a6</p>
         </div>
     </div>
 </footer>
