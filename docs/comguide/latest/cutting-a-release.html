@@ -450,18 +450,7 @@ git pull --ff-only</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Check that there are no snapshot dependencies:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">grep SNAPSHOT $(/bin/find . -name pom.xml | grep -v target  sort)</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The only mention of <code>SNAPSHOT</code> should be in the <code>revision</code> property of the root <code>core-prent/pom.xml</code> file.</p>
-</div>
-<div class="paragraph">
-<p>Finally, switch to the <code>isis-parent</code> directory:</p>
+<p>Switch to the <code>isis-parent</code> directory:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -481,16 +470,53 @@ The parent <code>pom.xml</code> of each releasable module specifies the RAT Mave
 <div class="listingblock">
 <div class="title">find unapproved/missing licenses</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mvn org.apache.rat:apache-rat-plugin:check -D rat.numUnapprovedLicenses=100
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mvn clean
 
-for a in `/bin/find .. -name rat.txt -print`; do grep '!???' $a; done
-for a in `/bin/find .. -name rat.txt -print`; do grep '!AL' $a; done</code></pre>
+pushd isis-parent
+mvn org.apache.rat:apache-rat-plugin:check -D rat.numUnapprovedLicenses=1000 -Dreleased
+popd
+
+pushd antora
+mvn org.apache.rat:apache-rat-plugin:check -D rat.numUnapprovedLicenses=100
+popd
+
+pushd examples/demo
+mvn org.apache.rat:apache-rat-plugin:check -D rat.numUnapprovedLicenses=100
+popd
+
+pushd incubator
+mvn org.apache.rat:apache-rat-plugin:check -D rat.numUnapprovedLicenses=100
+popd
+
+pushd regressiontests
+mvn org.apache.rat:apache-rat-plugin:check -D rat.numUnapprovedLicenses=100
+popd
+
+pushd tooling
+mvn org.apache.rat:apache-rat-plugin:check -D rat.numUnapprovedLicenses=100
+popd
+
+for a in `/bin/find .. -name rat.txt -print`; do grep '!???' $a; done &gt; /tmp/rat-qn.txt
+for a in `/bin/find .. -name rat.txt -print`; do grep '!AL' $a; done &gt; /tmp/rat-al.txt</code></pre>
 </div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+the parent <code>pom.xml</code> in each of these locations has the <code>apache-rat-plugin</code> appropriately configured.
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
-<p>where <code>rat.numUnapprovedLicenses</code> property is set to a high figure, temporarily overriding the default value of 0.
-This will allow the command to run over all submodules, rather than failing after the first one.
-The command writes out a <code>target\rat.txt</code> for each submodule. missing license notes are indicated using the key <code>!???</code>.
+<p>This script runs over all submodules, including non-released modules.</p>
+</div>
+<div class="paragraph">
+<p>The command writes out a <code>target\rat.txt</code> for each submodule. missing license notes are indicated using the key <code>!???</code>.
 The <code>for</code> command collates all the errors.</p>
 </div>
 <div class="paragraph">
@@ -510,15 +536,7 @@ The <code>for</code> command collates all the errors.</p>
 </ul>
 </div>
 <div class="paragraph">
-<p>Once you&#8217;ve fixed all issues, confirm once more that <code>apache-rat-plugin</code> no longer reports any license violations, this time leaving the <code>rat.numUnapprovedLicenses</code> property to its default, 0:</p>
-</div>
-<div class="listingblock">
-<div class="title">verify no unapproved/missing licenses</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mvn org.apache.rat:apache-rat-plugin:check -D rat.numUnapprovedLicenses=0
-
-for a in `/bin/find .. -name rat.txt -print`; do grep '!???' $a; done</code></pre>
-</div>
+<p>Once you&#8217;ve fixed all issues, run the script again to confirm that all license violations have been fixed.</p>
 </div>
 </div>
 <div class="sect2">
@@ -536,7 +554,8 @@ This is stored in the <code>src/main/appended-resources/supplemental-models.xml<
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mvn clean install -o</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd isis-parent
+mvn clean install -o</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1252,7 +1271,7 @@ The vote will be open for a minimum of 72 hours.
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20201004-0402-e69baf12</p>
+            <p>Revision: 2.0.0-M2.20201005-0402-88871bb8</p>
         </div>
     </div>
 </footer>
