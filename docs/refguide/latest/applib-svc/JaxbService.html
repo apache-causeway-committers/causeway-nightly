@@ -783,36 +783,42 @@ TODO: this content has not yet been reviewed/updated for v2.0
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public interface JaxbService {
 
-    Object fromXml(                                     <i class="conum" data-value="1"></i><b>(1)</b>
+    default Object fromXml(                             <i class="conum" data-value="1"></i><b>(1)</b>
             JAXBContext jaxbContext,
-            String xml);
+            String xml) {
+        return fromXml(jaxbContext, xml, null);
+    }
 
     Object fromXml(                                     <i class="conum" data-value="2"></i><b>(2)</b>
             JAXBContext jaxbContext,
             String xml,
-            Map&lt;String,Object&gt; unmarshallerProperties);
+            @Nullable Map&lt;String,Object&gt; unmarshallerProperties);
 
-    &lt;T&gt; T fromXml(Class&lt;T&gt; domainClass, String xml);    <i class="conum" data-value="3"></i><b>(3)</b>
+    default &lt;T&gt; T fromXml(Class&lt;T&gt; domainClass, String xml) { <i class="conum" data-value="3"></i><b>(3)</b>
+        return fromXml(domainClass, xml, null);
+    }
 
     &lt;T&gt; T fromXml(                                      <i class="conum" data-value="4"></i><b>(4)</b>
             Class&lt;T&gt; domainClass,
             String xml,
-            Map&lt;String,Object&gt; unmarshallerProperties);
+            @Nullable Map&lt;String,Object&gt; unmarshallerProperties);
 
-    String toXml(final Object domainObject);            <i class="conum" data-value="5"></i><b>(5)</b>
+    default String toXml(Object domainObject) {         <i class="conum" data-value="5"></i><b>(5)</b>
+        return toXml(domainObject, null);
+    }
 
     String toXml(                                       <i class="conum" data-value="6"></i><b>(6)</b>
-            final Object domainObject,
-            Map&lt;String,Object&gt; marshallerProperties);
+            Object domainObject,
+            @Nullable Map&lt;String,Object&gt; marshallerProperties);
 
     enum IsisSchemas {
         INCLUDE,
         IGNORE;
     }
 
-    Map&lt;String, String&gt; toXsd(                          <i class="conum" data-value="7"></i><b>(7)</b>
-            final Object domainObject,
-            final IsisSchemas isisSchemas);
+    Map&lt;String, String&gt; toXsd(                 <i class="conum" data-value="7"></i><b>(7)</b>
+            Object domainObject,
+            IsisSchemas isisSchemas);
 
 }</code></pre>
 </div>
@@ -894,7 +900,7 @@ The functionality to download XML and XSD schemas is also exposed in the UI thro
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20201009-0402-4bedfc96</p>
+            <p>Revision: 2.0.0-M2.20201010-0402-e11740f5</p>
         </div>
     </div>
 </footer>
