@@ -449,14 +449,6 @@ This will usually be the tip of the origin&#8217;s <code>master</code> branch:</
 git pull --ff-only</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>Switch to the <code>isis-parent</code> directory:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd isis-parent</code></pre>
-</div>
-</div>
 </div>
 <div class="sect2">
 <h3 id="license-headers"><a class="anchor" href="#license-headers"></a>License headers</h3>
@@ -721,10 +713,6 @@ cd isis-parent</code></pre>
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mvn versions:set -DnewVersion=$ISISREL
 mvn install -o -DskipTests
 
-pushd ../starters
-mvn versions:set -DnewVersion=$ISISREL
-popd
-
 git add ..
 git commit -m "$ISISJIRA: bumps version to $ISISREL"</code></pre>
 </div>
@@ -762,8 +750,27 @@ Delete all Isis artifacts from your local Maven repo, then build using the <code
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">rm -rf ~/.m2/repository/org/apache/isis
-mvn clean install -o</code></pre>
+mvn clean install \
+        -Papache-release \
+    -o</code></pre>
 </div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The <code>apache-release</code> profile is set to only check the modules actually to be released (ignores the incubator modules).</p>
+</div>
+<div class="paragraph">
+<p>Partly that&#8217;s because there&#8217;s no need to check the inubator modules, it&#8217;s also because the incubator modules require Java 11 (Java 8 is used for everything else)</p>
+</div>
+</td>
+</tr>
+</table>
 </div>
 </div>
 <div class="sect2">
@@ -1271,7 +1278,7 @@ The vote will be open for a minimum of 72 hours.
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20201011-0401-e11740f5</p>
+            <p>Revision: 2.0.0-M2.20201012-0850-3d76414b</p>
         </div>
     </div>
 </footer>
