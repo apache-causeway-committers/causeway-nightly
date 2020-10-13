@@ -433,7 +433,7 @@ As a byproduct the BDD frameworks generate readable output of some form; this is
 This readable output is a form of "living documentation"; it captures the actual behaviour of the system, and so is guaranteed to be accurate.</p>
 </div>
 <div class="paragraph">
-<p>There are many BDD tools out there; Apache Isis provides an integration with <a href="https://cucumber.io/docs/reference/jvm#java">Cucumber JVM</a> (see also the <a href="https://github.com/cucumber/cucumber-jvm">github site</a>):</p>
+<p>There are many BDD tools out there; Apache Isis provides an integration with <a href="https://cucumber.io/docs/installation/java/">Cucumber JVM</a> (see also the <a href="https://github.com/cucumber/cucumber-jvm">github site</a>):</p>
 </div>
 </div>
 </div>
@@ -535,9 +535,31 @@ public class RunCucumberSpecs {
 <div class="listingblock">
 <div class="title">junit-platform.properties</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">cucumber.filter.tags=not @backlog and not @ignore
-cucumber.glue=domainapp.webapp.bdd.stepdefs</code></pre>
+<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">cucumber.publish.quiet=true                                                <i class="conum" data-value="1"></i><b>(1)</b>
+cucumber.filter.tags=not @backlog and not @ignore                          <i class="conum" data-value="2"></i><b>(2)</b>
+cucumber.glue=domainapp.webapp.bdd                                         <i class="conum" data-value="3"></i><b>(3)</b>
+cucumber.plugin=pretty, html:target/cucumber-reports/cucumber-html.json    <i class="conum" data-value="4"></i><b>(4)</b></code></pre>
 </div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>disable verbose cucumber report publishing information</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>tag based test filtering</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>restrict classpath search for <em>@Cucumber</em> annotated classes</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>activate built-in reporting plugins: <em>pretty</em> to console and <em>html</em> to filesystem</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>We also use two "infrastructure" step definitions to bootstrap and configure Spring.
@@ -598,10 +620,14 @@ public class TransactionalStepDef {                         <i class="conum" dat
 
     @Before(order = OrderPrecedence.EARLY)
     public void beforeScenario(){
+        //open InteractionSession to be closed after scenario (see below)
+        isisInteractionFactory.openInteraction(new InitialisationSession());
+
         val txTemplate = new TransactionTemplate(txMan);    <i class="conum" data-value="3"></i><b>(3)</b>
         val status = txTemplate.getTransactionManager().getTransaction(null);
         afterScenario = () -&gt; {
             txTemplate.getTransactionManager().rollback(status);
+            isisInteractionFactory.closeSessionStack();
         };
 
         status.flush();
@@ -917,9 +943,6 @@ As a workaround, we use the Antrun plugin to execute the Cucumber CLI.</p>
                 classpathref="maven.test.classpath"&gt;
             &lt;arg value="--plugin" /&gt;
             &lt;arg value="json:${project.build.directory}/cucumber-no-clobber.json" /&gt;
-            &lt;arg value="--glue" /&gt;
-            &lt;arg value="domainapp.webapp.bdd.stepdefs" /&gt;
-            &lt;arg value="${project.build.directory}/test-classes/domainapp/webapp/bdd/specs" /&gt;
           &lt;/java&gt;
         &lt;/target&gt;
       &lt;/configuration&gt;
@@ -1017,7 +1040,7 @@ see <a href="https://github.com/cucumber/cucumber-jvm/blob/master/core/src/main/
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M2.20201012-0850-3d76414b</p>
+            <p>Revision: 2.0.0-M2.20201013-0402-785513d0</p>
         </div>
     </div>
 </footer>
