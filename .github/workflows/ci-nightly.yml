@@ -112,14 +112,16 @@ jobs:
       shell: bash
       working-directory: ${{ env.PROJECT_ROOT_PATH }}
       run: |
-        bash $CI_SCRIPTS_PATH/build-core.sh \
-        -Denforcer.failFast=true        
+        bash $CI_SCRIPTS_PATH/build-core.sh      
       env:
         REVISION: ${{ steps.revision.outputs.revision }}
         ## GCP App Engine: repo.incode.work
         GCPAPPENGINEREPO_USERNAME: ${{ secrets.GCPAPPENGINEREPO_USERNAME }}
         GCPAPPENGINEREPO_PASSWORD: ${{ secrets.GCPAPPENGINEREPO_PASSWORD }}
-        MVN_ADDITIONAL_OPTS: '-DaltReleaseDeploymentRepository=gcpappenginerepo::default::https://repo.incode.work'
+        MVN_ADDITIONAL_OPTS: |
+           -DaltReleaseDeploymentRepository=gcpappenginerepo::default::https://repo.incode.work \
+           -Dmaven.source.skip=true \
+           -Denforcer.failFast=true
         SETTINGS_XML: ${{ env.PROJECT_ROOT_PATH }}/.m2/settings.xml
         
     - name: Code Quality Analysis
