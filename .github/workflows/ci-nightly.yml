@@ -88,9 +88,11 @@ jobs:
         echo NIGHTLY_SCRIPTS_PATH\: $NIGHTLY_SCRIPTS_PATH
         echo MVN_STAGES          \: $MVN_STAGES
         echo REVISION            \: $REVISION
+        echo DEPLOY_TARGET       \: $DEPLOY_TARGET
         echo ======================================
       env:
         REVISION: ${{ steps.revision.outputs.revision }}
+        DEPLOY_TARGET: 'gcpappenginerepo::default::https://repo.incode.work'
 
 #     ## gh-packages: does not work consistently as of 2019-11-12, maybe try again after beta phase
 #    - name: Build and Push Core (github packages)
@@ -114,9 +116,7 @@ jobs:
       run: |
         bash $CI_SCRIPTS_PATH/build-core.sh      
       env:
-        REVISION: ${{ steps.revision.outputs.revision }}
         ## GCP App Engine: repo.incode.work
-        DEPLOY_TARGET: 'gcpappenginerepo::default::https://repo.incode.work'
         GCPAPPENGINEREPO_USERNAME: ${{ secrets.GCPAPPENGINEREPO_USERNAME }}
         GCPAPPENGINEREPO_PASSWORD: ${{ secrets.GCPAPPENGINEREPO_PASSWORD }}
         MVN_ADDITIONAL_OPTS: '-DaltReleaseDeploymentRepository=${{ env.DEPLOY_TARGET }} -Dmaven.source.skip=true -Denforcer.failFast=true'
