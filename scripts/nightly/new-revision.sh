@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-## isis master commit hash, using REST API that in this cse requires no credentials
+## isis master commit hash, using REST API that in this case requires no credentials
 MASTER_SHA=`curl -s --request GET \
         --url https://api.github.com/repos/apache/isis/git/ref/heads/master \
         --header 'content-type: application/json' \
