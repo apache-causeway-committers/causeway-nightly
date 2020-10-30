@@ -43,6 +43,9 @@ jobs:
       id: revision
       run: bash $NIGHTLY_SCRIPTS_PATH/new-revision.sh
     
+    - name: Share new Revision as Environemnt Variable
+      run: echo "REVISION=${{ steps.revision.outputs.revision }}" >> $GITHUB_ENV
+    
     - name: Checkout Apache Isis
       if: steps.revision.outputs.revision != 'skip'
       uses: actions/checkout@v1
@@ -78,10 +81,8 @@ jobs:
     - name: Setup Script Environment
       if: steps.revision.outputs.revision != 'skip'
       shell: bash
-      # exports REVISION, so can share with other steps
       # prints all the (non-secret) variables as used by the build scripts to the console
       run: |
-        echo ::set-env name=REVISION::${{ steps.revision.outputs.revision }}
         echo ==============  ENV  =================
         echo BASELINE            \: $BASELINE
         echo TIMESTAMP           \: $TIMESTAMP
