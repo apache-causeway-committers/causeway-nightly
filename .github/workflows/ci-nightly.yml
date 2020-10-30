@@ -20,6 +20,10 @@ jobs:
       # to be shared among all steps of this job
       BASELINE: 2.0.0-M4
       DEPLOY_TARGET: 'gcpappenginerepo::default::https://repo.incode.work'
+      
+      # push docker images to dockerhub
+      JIB_PUSH_FLAG: on
+      
       PROJECT_ROOT_PATH: /home/runner/work/isis-nightly/isis
       CI_SCRIPTS_PATH: /home/runner/work/isis-nightly/isis/scripts/ci
       
@@ -224,16 +228,16 @@ jobs:
     # -- now make docker images
     # -------------------------
     
-    - name: Build and Push Docker Images (Docker Hub)
-      if: steps.revision.outputs.revision != 'skip'
-      shell: bash
-      run: |
-        bash $CI_SCRIPTS_PATH/build-docker-images.sh
-      env:
-        ## DOCKER HUB
-        DOCKER_REGISTRY_USERNAME: apacheisiscommitters
-        DOCKER_REGISTRY_PASSWORD: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
-        DOCKER_REGISTRY_URL: 'https://index.docker.io/v2/'
+#   - name: Build and Push Docker Images (Docker Hub)
+#      if: steps.revision.outputs.revision != 'skip'
+#      shell: bash
+#      run: |
+#        bash $CI_SCRIPTS_PATH/build-docker-images.sh
+#      env:
+#        ## DOCKER HUB
+#        DOCKER_REGISTRY_USERNAME: apacheisiscommitters
+#        DOCKER_REGISTRY_PASSWORD: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
+#        DOCKER_REGISTRY_URL: 'https://index.docker.io/v2/'
  
 # FOR DEBUG USE
 #   - name: Dump Env context 
