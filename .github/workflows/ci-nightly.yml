@@ -67,6 +67,7 @@ jobs:
       run: mvn --version
       
     - name: Activate Cache for Maven Downloads
+      if: steps.revision.outputs.revision != 'skip'
       uses: actions/cache@v2
       env:
         cache-name: cache-maven-modules
@@ -102,7 +103,7 @@ jobs:
 #      shell: bash
 #      working-directory: ${{ env.PROJECT_ROOT_PATH }}
 #      run: |
-#        bash $CI_SCRIPTS_PATH/build-core.sh
+#        bash $CI_SCRIPTS_PATH/build-artifacts.sh
 #      env:
 #        REVISION: ${{ steps.revision.outputs.revision }}
 #        ## github packages
@@ -116,7 +117,7 @@ jobs:
       shell: bash
       working-directory: ${{ env.PROJECT_ROOT_PATH }}
       run: |
-        bash $CI_SCRIPTS_PATH/build-core.sh      
+        bash $CI_SCRIPTS_PATH/build-artifacts.sh      
       env:
         ## GCP App Engine: repo.incode.work
         GCPAPPENGINEREPO_USERNAME: ${{ secrets.GCPAPPENGINEREPO_USERNAME }}
@@ -220,10 +221,10 @@ jobs:
         github_token: ${{ secrets.PUBLISH_TOKEN }}
     
     # -------------------------
-    # -- now make demo (docker)
+    # -- now make docker images
     # -------------------------
     
-    - name: Build and Push Demo-App (Docker Hub)
+    - name: Build and Push Docker Images (Docker Hub)
       if: steps.revision.outputs.revision != 'skip'
       shell: bash
       run: |
