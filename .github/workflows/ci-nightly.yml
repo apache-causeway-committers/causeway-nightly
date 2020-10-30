@@ -19,6 +19,7 @@ jobs:
     env:
       # to be shared among all steps of this job
       BASELINE: 2.0.0-M4
+      DEPLOY_TARGET: 'gcpappenginerepo::default::https://repo.incode.work'
       PROJECT_ROOT_PATH: /home/runner/work/isis-nightly/isis
       CI_SCRIPTS_PATH: /home/runner/work/isis-nightly/isis/scripts/ci
       
@@ -77,8 +78,10 @@ jobs:
     - name: Setup Script Environment
       if: steps.revision.outputs.revision != 'skip'
       shell: bash
+      # exports REVISION, so can share with other steps
       # prints all the (non-secret) variables as used by the build scripts to the console
       run: |
+        echo ::set-env name=REVISION::${{ steps.revision.outputs.revision }}
         echo ==============  ENV  =================
         echo BASELINE            \: $BASELINE
         echo TIMESTAMP           \: $TIMESTAMP
@@ -90,9 +93,7 @@ jobs:
         echo REVISION            \: $REVISION
         echo DEPLOY_TARGET       \: $DEPLOY_TARGET
         echo ======================================
-      env:
-        REVISION: ${{ steps.revision.outputs.revision }}
-        DEPLOY_TARGET: 'gcpappenginerepo::default::https://repo.incode.work'
+
 
 #     ## gh-packages: does not work consistently as of 2019-11-12, maybe try again after beta phase
 #    - name: Build and Push Core (github packages)
