@@ -19,8 +19,7 @@ jobs:
     env:
       # to be shared among all steps of this job
       BASELINE: 2.0.0-M4
-      #DEPLOY_TARGET: 'gcpappenginerepo::default::https://repo.incode.work'
-      DEPLOY_TARGET: 'nexusincodework::default::https://nexus.incode.work/repository/nightly-builds/'
+      DEPLOY_TARGET: 'nexus_incode_work::default::https://nexus.incode.work/repository/nightly-builds/'
 
       # push docker images to dockerhub
       JIB_MODE: push
@@ -124,12 +123,9 @@ jobs:
       run: |
         bash $CI_SCRIPTS_PATH/build-artifacts.sh
       env:
-        ## GCP App Engine: repo.incode.work
-        GCPAPPENGINEREPO_USERNAME: ${{ secrets.GCPAPPENGINEREPO_USERNAME }}
-        GCPAPPENGINEREPO_PASSWORD: ${{ secrets.GCPAPPENGINEREPO_PASSWORD }}
         ## nexus.incode.work
-        NEXUSINCODEWORK_USERNAME: ${{ secrets.NEXUSINCODEWORK_USERNAME }}
-        NEXUSINCODEWORK_PASSWORD: ${{ secrets.NEXUSINCODEWORK_PASSWORD }}
+        NEXUS_INCODE_WORK_USERNAME: ${{ secrets.NEXUS_INCODE_WORK_USERNAME }}
+        NEXUS_INCODE_WORK_PASSWORD: ${{ secrets.NEXUS_INCODE_WORK_PASSWORD }}
         MVN_ADDITIONAL_OPTS: '-DaltReleaseDeploymentRepository=${{ env.DEPLOY_TARGET }} -Dmaven.source.skip=true -Denforcer.failFast=true'
         SETTINGS_XML: ${{ env.PROJECT_ROOT_PATH }}/.m2/settings.xml
 
