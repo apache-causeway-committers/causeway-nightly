@@ -1,0 +1,23 @@
+name: Nightly
+
+on:
+  # https://stackoverflow.com/questions/58933155/manual-workflow-triggers-in-github-actions/58965362#58965362
+  # https://help.github.com/en/actions/automating-your-workflow-with-github-actions/events-that-trigger-workflows#watch-event-watch
+  # just 'star' or 'unstar' the repo
+  watch:
+    types: [started]
+
+# https://github.com/marketplace/actions/kubernetes-cli-kubectl
+jobs:
+  deploy:
+    name: deploy demo-wicket to k8s
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: deploy to cluster
+        uses: steebchen/kubectl@master
+        env:
+          KUBE_CONFIG_DATA: ${{ secrets.INCODE_WORK_KUBE_CONFIG }}
+          KUBECTL_VERSION: "1.18"
+        with:
+          args: apply -f k8s/demo-wicket/deployment.yaml
