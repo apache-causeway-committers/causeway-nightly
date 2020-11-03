@@ -1,0 +1,19 @@
+name: Demo Wicket (Undeploy)
+
+on:
+  workflow_dispatch
+
+# https://github.com/marketplace/actions/kubernetes-cli-kubectl
+jobs:
+  deploy:
+    name: undeploy demo-wicket from k8s
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: deploy to cluster
+        uses: steebchen/kubectl@master
+        env:
+          KUBE_CONFIG_DATA: ${{ secrets.INCODE_WORK_KUBE_CONFIG }}
+          KUBECTL_VERSION: "1.18"
+        with:
+          args: delete -f k8s/demo-wicket/deployment.yaml
