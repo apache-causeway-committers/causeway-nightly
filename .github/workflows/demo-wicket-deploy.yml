@@ -10,16 +10,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: multiple command
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.K3D_SSH_HOST }}
-          username: ${{ secrets.K3D_SSH_USERNAME }}
-          key: ${{ secrets.K3D_SSH_KEY }}
-          port: ${{ secrets.K3D_SSH_PORT }}
-          script: |
-            whoami
-            ls -al
+      - name: ssh deploy
+        uses: easingthemes/ssh-deploy@v2.1.4
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.K3D_SSH_KEY }}
+          REMOTE_HOST: ${{ secrets.K3D_SSH_HOST }}
+          REMOTE_USER: ${{ secrets.K3D_SSH_USERNAME }}
+          REMOTE_PORT: ${{ secrets.K3D_SSH_PORT }}
+          SOURCE: "k8s/demo-wicket/deployment.yaml"
+          TARGET: "k8s/demo-wicket/deployment.yaml"
+#      - name: multiple command
+#        uses: appleboy/ssh-action@master
+#        with:
+#          host: ${{ secrets.K3D_SSH_HOST }}
+#          username: ${{ secrets.K3D_SSH_USERNAME }}
+#          key: ${{ secrets.K3D_SSH_KEY }}
+#          port: ${{ secrets.K3D_SSH_PORT }}
+#          script: |
+#            whoami
+#            ls -al
 #      - name: deploy to cluster
 #        uses: steebchen/kubectl@master
 #        env:
