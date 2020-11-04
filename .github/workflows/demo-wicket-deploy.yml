@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: ssh deploy
+      - name: ssh upload deployment.yaml
         uses: easingthemes/ssh-deploy@v2.1.4
         env:
           SSH_PRIVATE_KEY: ${{ secrets.K3D_SSH_KEY }}
@@ -19,20 +19,12 @@ jobs:
           REMOTE_PORT: ${{ secrets.K3D_SSH_PORT }}
           SOURCE: "k8s/demo-wicket/deployment.yaml"
           TARGET: "k8s/demo-wicket/deployment.yaml"
-#      - name: multiple command
-#        uses: appleboy/ssh-action@master
-#        with:
-#          host: ${{ secrets.K3D_SSH_HOST }}
-#          username: ${{ secrets.K3D_SSH_USERNAME }}
-#          key: ${{ secrets.K3D_SSH_KEY }}
-#          port: ${{ secrets.K3D_SSH_PORT }}
-#          script: |
-#            whoami
-#            ls -al
-#      - name: deploy to cluster
-#        uses: steebchen/kubectl@master
-#        env:
-#          KUBE_CONFIG_DATA: ${{ secrets.INCODE_WORK_KUBE_CONFIG }}
-#          KUBECTL_VERSION: "1.18"
-#        with:
-#          args: apply -f k8s/demo-wicket/deployment.yaml
+      - name: ssh kubectl apply -f deployment.yaml
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.K3D_SSH_HOST }}
+          username: ${{ secrets.K3D_SSH_USERNAME }}
+          key: ${{ secrets.K3D_SSH_KEY }}
+          port: ${{ secrets.K3D_SSH_PORT }}
+          script: |
+            kubectl apply -f k8s/demo-wicket/deployment.yaml
