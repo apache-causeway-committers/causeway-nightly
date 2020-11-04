@@ -10,22 +10,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: ssh upload deployment.yaml
-        uses: easingthemes/ssh-deploy@v2.1.4
+      - name: deploy to cluster
+        uses: actions-hub/kubectl@master
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.K3D_SSH_KEY }}
-          REMOTE_HOST: ${{ secrets.K3D_SSH_HOST }}
-          REMOTE_USER: ${{ secrets.K3D_SSH_USERNAME }}
-          REMOTE_PORT: ${{ secrets.K3D_SSH_PORT }}
-          SOURCE: "k8s/demo-wicket/deployment.yaml"
-          TARGET: "k8s/demo-wicket/deployment.yaml"
-      - name: ssh kubectl apply -f deployment.yaml
-        uses: appleboy/ssh-action@master
+          KUBE_CONFIG: ${{ secrets.K3D_INCODE_WORK_KUBE_CONFIG }}
         with:
-          host: ${{ secrets.K3D_SSH_HOST }}
-          username: ${{ secrets.K3D_SSH_USERNAME }}
-          key: ${{ secrets.K3D_SSH_KEY }}
-          port: ${{ secrets.K3D_SSH_PORT }}
-          script: |
-            whoami
-
+          args: apply -f k8s/demo-wicket/deployment.yaml
