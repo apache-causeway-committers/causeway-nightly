@@ -483,7 +483,52 @@ For Eclipse IDE this requires an <a href="https://projectlombok.org/setup/eclips
 </div>
 </div>
 <div class="paragraph">
-<p>Eclipse should automatically add this directory as a source path; at this point all remaining compiler errors should disappear.</p>
+<p>If your eclipse version also requires you to enter a generated test source directory, specify the following directory: <code>target/generated-test-sources/test-annotations</code>.</p>
+</div>
+<div class="paragraph">
+<p>Then under <em>Java Compiler &gt; Annotation Processing &gt; Factory Path</em> add the following external JARs (for instance from your local <code>.m2</code> maven repository)</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>datanucleus-jdo-query-5.0.9.jar</code> (under <code>.m2/repository/org/datanucleus/datanucleus-jdo-query/5.0.9</code>)</p>
+</li>
+<li>
+<p><code>javax.jdo-3.2.0-m13.jar</code> (under <code>.m2/repository/org/datanucleus/javax.jdo/3.2.0-m13</code>)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The specific versions depend on the DataNucleus version used in your project. You can easily check this in the Dependency Hierarchy tab of the POM.xml viewer in eclipse.</p>
+</div>
+<div class="paragraph">
+<p>Eclipse should automatically add these directories as a source path; at this point all remaining compiler errors should disappear.</p>
+</div>
+<div class="paragraph">
+<p>If the JDO Q-files are not generated automatically into the specified source directory then check the <code>.log</code> file in your eclipse workspace to see if there are any `ClassNotFoundException`s that could indicate why the DataNucleus annotation processor is failing.</p>
+</div>
+<div class="paragraph">
+<p>A healthy DataNucleus Annotation Process execution in your eclipse <code>.log</code> file should look like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code>!ENTRY org.eclipse.jdt.apt.pluggable.core 1 1 2020-11-06 19:28:41.948
+!MESSAGE DataNucleus JDO AnnotationProcessor for generating JDOQLTypedQuery Q classes</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>An error might look like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code>!ENTRY org.eclipse.jdt.apt.pluggable.core 4 1 2020-11-06 18:52:30.688
+!MESSAGE Exception thrown by Java annotation processor org.datanucleus.jdo.query.JDOQueryProcessor@60e3ac5d
+!STACK 0
+java.lang.Exception: java.lang.NoClassDefFoundError: javax/jdo/query/PersistableExpression</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If you see this specific error message then check that you added the <code>javax.jdo</code> JAR that matches the version of DataNucleus used in your project (see <em>Factory Path</em> configuration above).</p>
 </div>
 </div>
 </div>
@@ -665,7 +710,7 @@ You may find that adding actions will work, but adding new properties or collect
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20201106-0407-49086aa2</p>
+            <p>Revision: 2.0.0-M4.20201107-0407-a0a0b3b9</p>
         </div>
     </div>
 </footer>
