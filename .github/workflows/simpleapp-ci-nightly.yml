@@ -1,4 +1,4 @@
-name: Nightly
+name: SimpleApp CI Nightly
 
 on:
   workflow_dispatch:
@@ -63,45 +63,45 @@ jobs:
     - name: Print Maven Version
       run: mvn --version
 
-    - name: Activate Cache for Maven Downloads
-      uses: actions/cache@v2
-      env:
-        cache-name: cache-maven-modules
-      with:
-        path: ~/.m2/repository
-        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/pom.xml') }}
-        restore-keys: |
-          ${{ runner.os }}-build-${{ env.cache-name }}-
-          ${{ runner.os }}-build-
-          ${{ runner.os }}-
-
-    - name: Setup Script Environment
-      shell: bash
-      # prints all the (non-secret) variables as used by the build scripts to the console
-      run: |
-        echo ==============  ENV  =================
-        echo BASELINE            \: $BASELINE
-        echo TIMESTAMP           \: $TIMESTAMP
-        echo PROJECT_ROOT_PATH   \: $PROJECT_ROOT_PATH
-        echo NIGHTLY_ROOT_PATH   \: $NIGHTLY_ROOT_PATH
-        echo NIGHTLY_SCRIPTS_PATH\: $NIGHTLY_SCRIPTS_PATH
-        echo MVN_STAGES          \: $MVN_STAGES
-        echo REVISION            \: $REVISION
-        echo DEPLOY_TARGET       \: $DEPLOY_TARGET
-        echo ======================================
-
-    - name: Print pom.xml
-      shell: bash
-      run: |
-        cat pom.xml
-
-    - name: Build with Maven
-      shell: bash
-      run: |
-        mvn install
-
-# uncomment and provide credentials to push to Docker registry
-#    - name: Build and Push Docker Image
+#    - name: Activate Cache for Maven Downloads
+#      uses: actions/cache@v2
+#      env:
+#        cache-name: cache-maven-modules
+#      with:
+#        path: ~/.m2/repository
+#        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/pom.xml') }}
+#        restore-keys: |
+#          ${{ runner.os }}-build-${{ env.cache-name }}-
+#          ${{ runner.os }}-build-
+#          ${{ runner.os }}-
+#
+#    - name: Setup Script Environment
+#      shell: bash
+#      # prints all the (non-secret) variables as used by the build scripts to the console
+#      run: |
+#        echo ==============  ENV  =================
+#        echo BASELINE            \: $BASELINE
+#        echo TIMESTAMP           \: $TIMESTAMP
+#        echo PROJECT_ROOT_PATH   \: $PROJECT_ROOT_PATH
+#        echo NIGHTLY_ROOT_PATH   \: $NIGHTLY_ROOT_PATH
+#        echo NIGHTLY_SCRIPTS_PATH\: $NIGHTLY_SCRIPTS_PATH
+#        echo MVN_STAGES          \: $MVN_STAGES
+#        echo REVISION            \: $REVISION
+#        echo DEPLOY_TARGET       \: $DEPLOY_TARGET
+#        echo ======================================
+#
+#    - name: Print pom.xml
 #      shell: bash
 #      run: |
-#        mvn -pl webapp -Ddocker jib:build
+#        cat pom.xml
+#
+#    - name: Build with Maven
+#      shell: bash
+#      run: |
+#        mvn install
+#
+## uncomment and provide credentials to push to Docker registry
+##    - name: Build and Push Docker Image
+##      shell: bash
+##      run: |
+##        mvn -pl webapp -Ddocker jib:build
