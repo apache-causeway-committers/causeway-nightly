@@ -7,15 +7,15 @@ MASTER_SHA=`curl -s --request GET \
         --header 'content-type: application/json' \
         | grep sha | cut -d\: -f2 | cut -d\" -f2`
 
-## latest published revision: eg. 2.0.0-M2.20191113-0401-ce4b5827 
+## latest published revision: eg. 2.0.0-M2.20191113-0401-ce4b5827
 ## grepping the maven-metadata.xml this way is fragile
 PUBLISHED_REV=`curl -s GET \
-        https://repo.incode.work/org/apache/isis/core/isis/maven-metadata.xml \
+        https://nexus.incode.work/repository/nightly-builds/org/apache/isis/isis-parent/maven-metadata.xml \
         | grep release | cut -d\> -f2 | cut -d\< -f1`
-   
 
-MASTER_SHA8=${MASTER_SHA: 0:8}        
-PUBLISHED_SHA8=${PUBLISHED_REV: -8}  
+
+MASTER_SHA8=${MASTER_SHA: 0:8}
+PUBLISHED_SHA8=${PUBLISHED_REV: -8}
 
 REVISION=${BASELINE}.$(date +%Y%m%d-%H%M)-${MASTER_SHA8}
 
@@ -27,7 +27,7 @@ echo "-> REVISION:       ${REVISION}"
 echo ""
 
 ## either output a valid 'revision' to be used by consecutive workflow jobs
-## or set 'revision=skip' in case the hashes are equal 
+## or set 'revision=skip' in case the hashes are equal
 if [ "$MASTER_SHA8" = "$PUBLISHED_SHA8" ]; then
   echo "Skipping update, because (shortened) hashes are equal:"
   echo "- MASTER_SHA8:    ${MASTER_SHA8}"
@@ -36,4 +36,4 @@ if [ "$MASTER_SHA8" = "$PUBLISHED_SHA8" ]; then
 else
   echo "##[set-output name=revision;]${REVISION}"
 fi
-  
+

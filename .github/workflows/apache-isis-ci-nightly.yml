@@ -1,0 +1,110 @@
+name: Nightly
+
+on:
+  workflow_dispatch:
+  schedule:
+    ## daily 04:00 (UTC) in the morning
+    - cron: '0 4 * * *'
+
+env:
+  BASELINE: 2.0.0-M4
+
+  NIGHTLY_ROOT_PATH: ${{ github.workspace }}
+  NIGHTLY_SCRIPTS_PATH: ${{ github.workspace }}/scripts/nightly
+
+  # used for printing
+  TIMESTAMP: ${{ github.event.head_commit.timestamp }}
+
+
+jobs:
+  build:
+    name: all-in-one
+    runs-on: ubuntu-latest
+    env:
+      # to be shared among all steps of this job
+      BASELINE: 2.0.0-M4
+      DEPLOY_TARGET: 'nexus_incode_work::default::https://nexus.incode.work/repository/nightly-builds/'
+
+      # possible modes are
+      # push ... push docker images to dockerhub
+      # tar  ... build docker images and save them locally as tar files
+      # skip ... skip docker image build steps
+      JIB_MODE: push
+
+      PROJECT_ROOT_PATH: /home/runner/work/isis-nightly/isis
+      CI_SCRIPTS_PATH: /home/runner/work/isis-nightly/isis/scripts/ci
+
+      NIGHTLY_ROOT_PATH: ${{ github.workspace }}
+      NIGHTLY_SCRIPTS_PATH: ${{ github.workspace }}/scripts/nightly
+
+      # used for printing
+      TIMESTAMP: ${{ github.event.head_commit.timestamp }}
+
+      # 'deploy' to push to repo, 'install' otherwise
+      MVN_STAGES: deploy
+
+    steps:
+    - name: Checkout current repo
+      uses: actions/checkout@v2.3.3
+      with:
+        persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
+        fetch-depth: 0 # otherwise, you will fail to push refs to dest repo
+
+    - name: Calculate new Revision (if changed since last published, else skip)
+      id: revision
+      run: bash $NIGHTLY_SCRIPTS_PATH/new-revision.sh
+
+    - name: Share new Revision as Environment Variable
+      run: echo "REVISION=${{ steps.revision.outputs.revision }}" >> $GITHUB_ENV
+
+    - name: Checkout apache/isis repo
+      if: steps.revision.outputs.revision != 'skip'
+      uses: actions/checkout@v2.3.3
+      with:
+        repository: apache/isis-app-simpleapp
+        ref: refs/heads/master
+        #persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
+        #fetch-depth: 0 # otherwise, you will fail to push refs to dest repo
+        token: ${{ secrets.GitHub_PAT }}
+
+
+    - name: Checkout current repo
+        uses: actions/checkout@v2.3.3
+
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+
+      - name: Print Maven Version
+        run: mvn --version
+
+      - name: Activate Cache for Maven Downloads
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-maven-modules
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
+      - name: Prepare Build Versions
+        shell: bash
+        run: |
+          BASELINE=$(cat pom.xml | grep "<version>" | head -1 | awk -F'>' '{print $2}' | awk -F'<' '{print $1}')
+          SHA_ID=$(echo $GITHUB_SHA | cut -c1-8)
+          export REVISION=${BASELINE}.$(date +%Y%m%d-%H%M)-${SHA_ID}
+          mvn versions:set -DnewVersion=$REVISION
+
+      - name: Print pom.xml
+        shell: bash
+        run: |
+          cat pom.xml
+
+      - name: Build with Maven
+        shell: bash
+        run: |
+          mvn install
