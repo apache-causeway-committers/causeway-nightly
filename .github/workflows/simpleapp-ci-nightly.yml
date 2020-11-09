@@ -10,7 +10,7 @@ on:
 
 jobs:
   build:
-    name: all-in-one
+    name: Build, Test, Docker Image, Push
     runs-on: ubuntu-latest
     env:
       # to be shared among all steps of this job
@@ -89,3 +89,7 @@ jobs:
       shell: bash
       run: |
         mvn -pl webapp -Ddocker jib:build
+      env:
+        DOCKER_REGISTRY_USERNAME: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
+        DOCKER_REGISTRY_PASSWORD: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
+        DOCKER_REGISTRY_URL: 'https://index.docker.io/v2/'
