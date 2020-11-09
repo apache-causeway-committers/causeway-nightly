@@ -87,3 +87,10 @@ jobs:
         DOCKER_REGISTRY_USERNAME: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
         DOCKER_REGISTRY_PASSWORD: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
         DOCKER_REGISTRY_URL: 'https://index.docker.io/v2/'
+
+    - name: Deploy to cluster (simpleapp.isis.incode.work)
+      uses: actions-hub/kubectl@master
+      env:
+        KUBE_CONFIG: ${{ secrets.K3D_INCODE_WORK_KUBE_CONFIG }}
+      with:
+        args: apply -f k8s/simpleapp/deployment.yaml
