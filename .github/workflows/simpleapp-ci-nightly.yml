@@ -9,6 +9,7 @@ on:
 env:
   NIGHTLY_ROOT_PATH: ${{ github.workspace }}
   APP: isis-app-simpleapp
+  BASELINE=2.0.0-M4
 
   # used for printing
   TIMESTAMP: ${{ github.event.head_commit.timestamp }}
@@ -32,7 +33,7 @@ jobs:
     - name: Calculate new Revision
       id: revision
       run: |
-        BASELINE=$(cat $PROJECT_ROOT_PATH/pom.xml | grep "<version>" | head -1 | awk -F'>' '{print $2}' | awk -F'<' '{print $1}')
+        #BASELINE=$(cat $PROJECT_ROOT_PATH/pom.xml | grep "<version>" | head -1 | awk -F'>' '{print $2}' | awk -F'<' '{print $1}')
         SHA_ID=$(curl -s --request GET \
                  --url https://api.github.com/repos/apache/$APP/git/ref/heads/master \
                  --header 'content-type: application/json' \
