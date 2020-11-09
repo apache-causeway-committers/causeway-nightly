@@ -7,10 +7,7 @@ on:
 #    - cron: '0 4 * * *'
 
 env:
-  BASELINE: 2.0.0-M4
-
   NIGHTLY_ROOT_PATH: ${{ github.workspace }}
-  NIGHTLY_SCRIPTS_PATH: ${{ github.workspace }}/scripts/nightly
 
   # used for printing
   TIMESTAMP: ${{ github.event.head_commit.timestamp }}
@@ -22,11 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       PROJECT_ROOT_PATH: /home/runner/work/isis-nightly/isis-app-simpleapp
-
       NIGHTLY_ROOT_PATH: ${{ github.workspace }}
-
-      # used for printing
-      TIMESTAMP: ${{ github.event.head_commit.timestamp }}
 
     steps:
     - name: Checkout current repo
@@ -38,8 +31,11 @@ jobs:
     - name: Calculate new Revision
       id: revision
       run: |
-        #BASELINE=$(cat pom.xml | grep "<version>" | head -1 | awk -F'>' '{print $2}' | awk -F'<' '{print $1}')
-        SHA_ID=$(echo $GITHUB_SHA | cut -c1-8)
+        BASELINE=$(cat $PROJECT_ROOT_PATH/pom.xml | grep "<version>" | head -1 | awk -F'>' '{print $2}' | awk -F'<' '{print $1}')
+        SHA_ID=$(curl -s --request GET \
+                 --url https://api.github.com/repos/apache/isis/git/ref/heads/master \
+                 --header 'content-type: application/json' \
+                 | grep sha | cut -d\: -f2 | cut -d\" -f2 | cut -c1-8)
         REVISION=${BASELINE}.$(date +%Y%m%d-%H%M)-${SHA_ID}
         echo "##[set-output name=revision;]${REVISION}"
 
@@ -81,27 +77,17 @@ jobs:
       run: |
         echo ==============  ENV  =================
         echo BASELINE            \: $BASELINE
-        echo TIMESTAMP           \: $TIMESTAMP
         echo PROJECT_ROOT_PATH   \: $PROJECT_ROOT_PATH
         echo NIGHTLY_ROOT_PATH   \: $NIGHTLY_ROOT_PATH
-        echo NIGHTLY_SCRIPTS_PATH\: $NIGHTLY_SCRIPTS_PATH
-        echo MVN_STAGES          \: $MVN_STAGES
         echo REVISION            \: $REVISION
-        echo DEPLOY_TARGET       \: $DEPLOY_TARGET
         echo ======================================
-
-    - name: Print pom.xml
-      shell: bash
-      run: |
-        cat pom.xml
 
     - name: Build with Maven
       shell: bash
       run: |
         mvn install
 
-# uncomment and provide credentials to push to Docker registry
-#    - name: Build and Push Docker Image
-#      shell: bash
-#      run: |
-#        mvn -pl webapp -Ddocker jib:build
+    - name: Build and Push Docker Image
+      shell: bash
+      run: |
+        mvn -pl webapp -Ddocker jib:build
