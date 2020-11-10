@@ -6,32 +6,30 @@ on:
     ## daily 03:10 (UTC) in the morning
     - cron: '10 3 * * *'
 
-env:
-  BASELINE: 2.0.0-M4
-
-  NIGHTLY_ROOT_PATH: ${{ github.workspace }}
-
-
 
 jobs:
   build:
-    name: Build, Test, Docker Image, Push
+    name: Build, Test, Docker Image, Push, Redeploy
     runs-on: ubuntu-latest
     env:
-      # to be shared among all steps of this job
-      PROJECT_ROOT_PATH: /home/runner/work/isis-nightly/isis-app-simpleapp
-      NIGHTLY_ROOT_PATH: ${{ github.workspace }}
-      BASELINE: 2.0.0-M4
       APP: isis-app-simpleapp
 
     steps:
-    - name: Checkout current repo
+    - name: Checkout apache/isis-app-simpleapp repo
       uses: actions/checkout@v2.3.3
+      with:
+        repository: apache/isis-app-simpleapp
+        ref: refs/heads/master
 
-    - name: Calculate new Revision
+#    - name: Dump filesystem after checkout isis-app-helloworld repo
+#      shell: bash
+#      run: |
+#        find . -print | grep -v ".git"
+
+    - name: Calculate $REVISION
       id: revision
       run: |
-        #BASELINE=$(cat $PROJECT_ROOT_PATH/pom.xml | grep "<version>" | head -1 | awk -F'>' '{print $2}' | awk -F'<' '{print $1}')
+        BASELINE=$(cat pom.xml | grep "<version>" | head -1 | awk -F'>' '{print $2}' | awk -F'<' '{print $1}')
         SHA_ID=$(curl -s --request GET \
                  --url https://api.github.com/repos/apache/$APP/git/ref/heads/master \
                  --header 'content-type: application/json' \
@@ -39,14 +37,15 @@ jobs:
         REVISION=${BASELINE}.$(date +%Y%m%d-%H%M)-${SHA_ID}
         echo "##[set-output name=revision;]${REVISION}"
 
-    - name: Share new Revision as Environment Variable
+    - name: Share $REVISION as Environment Variable
       run: echo "REVISION=${{ steps.revision.outputs.revision }}" >> $GITHUB_ENV
 
-    - name: Checkout apache/isis-app-simpleapp repo
-      uses: actions/checkout@v2.3.3
-      with:
-        repository: apache/isis-app-simpleapp
-        ref: refs/heads/master
+    - name: Print $REVISION
+      shell: bash
+      run: |
+        echo ==============  ENV  =================
+        echo REVISION            \: $REVISION
+        echo ======================================
 
     - name: Set up JDK 11
       uses: actions/setup-java@v1
@@ -68,26 +67,15 @@ jobs:
           ${{ runner.os }}-build-
           ${{ runner.os }}-
 
-    - name: Setup Script Environment
-      shell: bash
-      # prints all the (non-secret) variables as used by the build scripts to the console
-      run: |
-        echo ==============  ENV  =================
-        echo BASELINE            \: $BASELINE
-        echo PROJECT_ROOT_PATH   \: $PROJECT_ROOT_PATH
-        echo NIGHTLY_ROOT_PATH   \: $NIGHTLY_ROOT_PATH
-        echo REVISION            \: $REVISION
-        echo ======================================
-
     - name: Update Maven version
       shell: bash
       run: |
         mvn versions:set -DnewVersion=$REVISION
 
-    - name: Print pom.xml
-      shell: bash
-      run: |
-        cat pom.xml
+#    - name: Print pom.xml
+#      shell: bash
+#      run: |
+#        cat pom.xml
 
     - name: Build with Maven
       shell: bash
@@ -101,11 +89,25 @@ jobs:
       env:
         DOCKER_REGISTRY_USERNAME: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
         DOCKER_REGISTRY_PASSWORD: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
-        DOCKER_REGISTRY_URL: 'https://index.docker.io/v2/'
 
-    - name: Deploy to cluster (simpleapp.isis.incode.work)
+    - name: Checkout current repo
+      uses: actions/checkout@v2.3.3
+
+#    - name: Dump filesystem after checkout current repo
+#      shell: bash
+#      run: |
+#        find . -print | grep -v ".git"
+
+    - name: Undeploy from cluster (simpleapp.isis.incode.work)
       uses: actions-hub/kubectl@master
       env:
         KUBE_CONFIG: ${{ secrets.K3D_INCODE_WORK_KUBE_CONFIG }}
       with:
-        args: apply -f $NIGHTLY_ROOT_PATH/k8s/simpleapp/deployment.yaml
+        args: delete -f k8s/simpleapp/deployment.yaml
+
+    - name: (Re)deploy to cluster (simpleapp.isis.incode.work)
+      uses: actions-hub/kubectl@master
+      env:
+        KUBE_CONFIG: ${{ secrets.K3D_INCODE_WORK_KUBE_CONFIG }}
+      with:
+        args: apply -f k8s/simpleapp/deployment.yaml

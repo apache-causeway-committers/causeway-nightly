@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    name: all-in-one
+    name: Build, Test, Docker Image, Push, Redeploy
     runs-on: ubuntu-latest
     env:
       APP: isis-app-helloworld
@@ -89,7 +89,6 @@ jobs:
       env:
         DOCKER_REGISTRY_USERNAME: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
         DOCKER_REGISTRY_PASSWORD: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
-#        DOCKER_REGISTRY_URL: 'https://index.docker.io/v2/'
 
     - name: Checkout current repo
       uses: actions/checkout@v2.3.3
@@ -99,7 +98,14 @@ jobs:
 #      run: |
 #        find . -print | grep -v ".git"
 
-    - name: Deploy to cluster (helloworld.isis.incode.work)
+    - name: Undeploy from cluster (helloworld.isis.incode.work)
+      uses: actions-hub/kubectl@master
+      env:
+        KUBE_CONFIG: ${{ secrets.K3D_INCODE_WORK_KUBE_CONFIG }}
+      with:
+        args: delete -f k8s/helloworld/deployment.yaml
+
+    - name: (Re)deploy to cluster (helloworld.isis.incode.work)
       uses: actions-hub/kubectl@master
       env:
         KUBE_CONFIG: ${{ secrets.K3D_INCODE_WORK_KUBE_CONFIG }}

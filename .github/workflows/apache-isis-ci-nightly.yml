@@ -220,29 +220,19 @@ jobs:
         with:
           github_token: ${{ secrets.PUBLISH_TOKEN }}
 
-      - name: Deploy demo-wicket to demo-wicket.isis.incode.work
+      - name: Undeploy demo-wicket from demo-wicket.isis.incode.work
+        uses: actions-hub/kubectl@master
+        env:
+          KUBE_CONFIG: ${{ secrets.K3D_INCODE_WORK_KUBE_CONFIG }}
+        with:
+          args: delete -f k8s/demo-wicket/deployment.yaml
+
+      - name: (Re)deploy demo-wicket to demo-wicket.isis.incode.work
         uses: actions-hub/kubectl@master
         env:
           KUBE_CONFIG: ${{ secrets.K3D_INCODE_WORK_KUBE_CONFIG }}
         with:
           args: apply -f k8s/demo-wicket/deployment.yaml
-
-#
-# TODO: need to extend to build these apps first, probably in their own jobs; use needs to pick up the computed REVISION
-#
-#    - name: Deploy helloworld to helloworld.isis.incode.work
-#      uses: actions-hub/kubectl@master
-#      env:
-#        KUBE_CONFIG: ${{ secrets.K3D_INCODE_WORK_KUBE_CONFIG }}
-#      with:
-#        args: apply -f k8s/helloworld/deployment.yaml
-#
-#    - name: Deploy simpleapp to simpleapp.isis.incode.work
-#      uses: actions-hub/kubectl@master
-#      env:
-#        KUBE_CONFIG: ${{ secrets.K3D_INCODE_WORK_KUBE_CONFIG }}
-#      with:
-#        args: apply -f k8s/simpleapp/deployment.yaml
 
 
 
