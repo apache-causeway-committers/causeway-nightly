@@ -34,12 +34,12 @@ jobs:
     - name: Dump filesystem after checkout isis-app-helloworld repo
       shell: bash
       run: |
-        find . -print
+        find . -print | grep -v ".git"
 
     - name: Calculate new Revision
       id: revision
       run: |
-        BASELINE=$(cat $PROJECT_ROOT_PATH/pom.xml | grep "<version>" | head -1 | awk -F'>' '{print $2}' | awk -F'<' '{print $1}')
+        BASELINE=$(cat pom.xml | grep "<version>" | head -1 | awk -F'>' '{print $2}' | awk -F'<' '{print $1}')
         SHA_ID=$(curl -s --request GET \
                  --url https://api.github.com/repos/apache/$APP/git/ref/heads/master \
                  --header 'content-type: application/json' \
@@ -110,7 +110,7 @@ jobs:
     - name: Dump filesystem after checkout current repo
       shell: bash
       run: |
-        find . -print
+        find . -print | grep -v ".git"
 
     - name: Deploy to cluster (helloworld.isis.incode.work)
       uses: actions-hub/kubectl@master
