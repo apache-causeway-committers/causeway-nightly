@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    name: artifacts-and-site
+    name: build, site, publish and redeploy demo app
     runs-on: ubuntu-latest
     env:
       # to be shared among all steps of this job
@@ -83,6 +83,7 @@ jobs:
 
       - name: Print Software Versions
         if: steps.revision.outputs.revision != 'skip'
+        working-directory: ${{ env.PROJECT_ROOT_PATH }}
         shell: bash
         run: |
           echo ==============  Software versions  =================
@@ -177,11 +178,13 @@ jobs:
       - name: Rsync Site Content to Nightly Working Tree
         if: steps.revision.outputs.revision != 'skip'
         shell: bash
-        run: bash $NIGHTLY_SCRIPTS_PATH/rsync-site.sh
+        working-directory: ${{ env.NIGHTLY_ROOT_PATH }}
+        run: bash scripts/rsync-site.sh
 
       - name: Commit Site Update
         if: steps.revision.outputs.revision != 'skip'
         shell: bash
+        working-directory: ${{ env.PROJECT_ROOT_PATH }}
         # will noop if git tree has not changed (see diff commands below)
         run: |
           git config --local user.email "action@github.com"
@@ -191,6 +194,7 @@ jobs:
 
       - name: Push Site Update
         # uses a predefined action that does exactly this; will noop if git tree has not changed
+        working-directory: ${{ env.PROJECT_ROOT_PATH }}
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.PUBLISH_TOKEN }}
@@ -201,6 +205,7 @@ jobs:
 
       - name: Undeploy demo-wicket from demo-wicket.isis.incode.work
         uses: actions-hub/kubectl@master
+        working-directory: ${{ env.NIGHTLY_ROOT_PATH }}
         env:
           KUBE_CONFIG: ${{ secrets.K3D_INCODE_WORK_KUBE_CONFIG }}
         with:
@@ -208,6 +213,7 @@ jobs:
 
       - name: (Re)deploy demo-wicket to demo-wicket.isis.incode.work
         uses: actions-hub/kubectl@master
+        working-directory: ${{ env.NIGHTLY_ROOT_PATH }}
         env:
           KUBE_CONFIG: ${{ secrets.K3D_INCODE_WORK_KUBE_CONFIG }}
         with:
