@@ -25,6 +25,10 @@ jobs:
       FRAMEWORK_ROOT_PATH: ${{ github.workspace }}/isis
 
     steps:
+      # ------------------------
+      # -- check out repos    --
+      # ------------------------
+
       - name: Checkout current repo
         uses: actions/checkout@v2.3.3
         with:
@@ -37,6 +41,10 @@ jobs:
           repository: apache/isis
           ref: refs/heads/master
           path: isis
+
+      # ------------------------
+      # -- install software   --
+      # ------------------------
 
       - name: Set up JDK 11
         if: steps.revision.outputs.revision != 'skip'
@@ -75,6 +83,10 @@ jobs:
       - name: Share $REVISION as Environment Variable
         run: echo "REVISION=${{ steps.revision.outputs.revision }}" >> $GITHUB_ENV
 
+      # ------------------------
+      # -- print out env      --
+      # ------------------------
+
       - name: Print Software Versions
         if: steps.revision.outputs.revision != 'skip'
         working-directory: ${{ env.FRAMEWORK_ROOT_PATH }}
@@ -101,6 +113,10 @@ jobs:
           echo REVISION            \: $REVISION
           echo DEPLOY_TARGET       \: $DEPLOY_TARGET
           echo ======================================
+
+      # ------------------------
+      # -- build software     --
+      # ------------------------
 
       - name: Activate Cache for Maven Downloads
         if: steps.revision.outputs.revision != 'skip'
@@ -132,62 +148,62 @@ jobs:
           DOCKER_REGISTRY_PASSWORD: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
           DOCKER_REGISTRY_URL: 'https://index.docker.io/v2/'
 
-#      - name: Code Quality Analysis
-#        if: steps.revision.outputs.revision != 'skip'
-#        shell: bash
-#        working-directory: ${{ env.FRAMEWORK_ROOT_PATH }}
-#        run: |
-#          mvn verify sonar:sonar \
-#          -Dsonar.projectKey=apache_isis \
-#          -Dsonar.organization=apache \
-#          -Dsonar.host.url=https://sonarcloud.io \
-#          -Dsonar.login=$SONAR_TOKEN \
-#          -Dsonar.branch.name=master \
-#          -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml \
-#          -DskipTests \
-#          -Denforcer.skip
-#        env:
-#          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-#
-#      # ------------------------
-#      # -- build the site --
-#      # ------------------------
-#
-#      - name: Build Apache Isis Site
-#        if: steps.revision.outputs.revision != 'skip'
-#        shell: bash
-#        working-directory: ${{ env.FRAMEWORK_ROOT_PATH }}
-#        # builds static web content into ${FRAMEWORK_ROOT_PATH}/antora/target/site,
-#        # as specified in the site.yml file
-#        run: |
-#          bash $NIGHTLY_ROOT_PATH/scripts/nightlypatch-site-config.sh $FRAMEWORK_ROOT_PATH/antora/playbooks/site.yml
-#          bash -x scripts/ci/build-site.sh $FRAMEWORK_ROOT_PATH/antora/playbooks/site.yml
-#        env:
-#          REVISION: ${{ steps.revision.outputs.revision }}
-#
-#      - name: Rsync Site Content to Nightly Working Tree
-#        if: steps.revision.outputs.revision != 'skip'
-#        shell: bash
-#        working-directory: ${{ env.NIGHTLY_ROOT_PATH }}
-#        run: bash scripts/rsync-site.sh
-#
-#      - name: Commit Site Update
-#        if: steps.revision.outputs.revision != 'skip'
-#        shell: bash
-#        working-directory: ${{ env.FRAMEWORK_ROOT_PATH }}
-#        # will noop if git tree has not changed (see diff commands below)
-#        run: |
-#          git config --local user.email "action@github.com"
-#          git config --local user.name "Apache Isis Committers (Bot)"
-#          git add ./docs
-#          git diff --quiet && git diff --staged --quiet || git commit -m "CI automated site update" -a
-#
-#      - name: Push Site Update
-#        # uses a predefined action that does exactly this; will noop if git tree has not changed
-#        uses: ad-m/github-push-action@master
-#        with:
-#          directory: ${{ env.NIGHTLY_ROOT_PATH }}
-#          github_token: ${{ secrets.PUBLISH_TOKEN }}
+      - name: Code Quality Analysis
+        if: steps.revision.outputs.revision != 'skip'
+        shell: bash
+        working-directory: ${{ env.FRAMEWORK_ROOT_PATH }}
+        run: |
+          mvn verify sonar:sonar \
+          -Dsonar.projectKey=apache_isis \
+          -Dsonar.organization=apache \
+          -Dsonar.host.url=https://sonarcloud.io \
+          -Dsonar.login=$SONAR_TOKEN \
+          -Dsonar.branch.name=master \
+          -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml \
+          -DskipTests \
+          -Denforcer.skip
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      # ------------------------
+      # -- build the site     --
+      # ------------------------
+
+      - name: Build Apache Isis Site
+        if: steps.revision.outputs.revision != 'skip'
+        shell: bash
+        working-directory: ${{ env.FRAMEWORK_ROOT_PATH }}
+        # builds static web content into ${FRAMEWORK_ROOT_PATH}/antora/target/site,
+        # as specified in the site.yml file
+        run: |
+          bash $NIGHTLY_ROOT_PATH/scripts/nightlypatch-site-config.sh $FRAMEWORK_ROOT_PATH/antora/playbooks/site.yml
+          bash -x scripts/ci/build-site.sh $FRAMEWORK_ROOT_PATH/antora/playbooks/site.yml
+        env:
+          REVISION: ${{ steps.revision.outputs.revision }}
+
+      - name: Rsync Site Content to Nightly Working Tree
+        if: steps.revision.outputs.revision != 'skip'
+        shell: bash
+        working-directory: ${{ env.NIGHTLY_ROOT_PATH }}
+        run: bash scripts/rsync-site.sh
+
+      - name: Commit Site Update
+        if: steps.revision.outputs.revision != 'skip'
+        shell: bash
+        working-directory: ${{ env.FRAMEWORK_ROOT_PATH }}
+        # will noop if git tree has not changed (see diff commands below)
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "Apache Isis Committers (Bot)"
+          git add ./docs
+          git diff --quiet && git diff --staged --quiet || git commit -m "CI automated site update" -a
+
+      - name: Push Site Update
+        # uses a predefined action that does exactly this; will noop if git tree has not changed
+        uses: ad-m/github-push-action@master
+        with:
+          directory: ${{ env.NIGHTLY_ROOT_PATH }}
+          github_token: ${{ secrets.PUBLISH_TOKEN }}
 
       # -----------------------------
       # -- (re)deploy the demo app --
