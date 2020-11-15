@@ -22,10 +22,7 @@ jobs:
       JIB_MODE: push
 
       NIGHTLY_ROOT_PATH: ${{ github.workspace }}/isis-nightly
-      NIGHTLY_SCRIPTS_PATH: ${{ github.workspace }}/isis-nightly/scripts/nightly
-
-      PROJECT_ROOT_PATH: ${{ github.workspace }}/isis
-      CI_SCRIPTS_PATH: ${{ github.workspace }}/isis/scripts/ci
+      FRAMEWORK_ROOT_PATH: ${{ github.workspace }}/isis
 
       # used for printing
       TIMESTAMP: ${{ github.event.head_commit.timestamp }}
@@ -56,12 +53,13 @@ jobs:
       - name: Install NVM
         if: steps.revision.outputs.revision != 'skip'
         shell: bash
-        run: bash $CI_SCRIPTS_PATH/install-nvm.sh
+        working-directory: ${{ env.FRAMEWORK_ROOT_PATH }}
+        run: bash scripts/ci/install-nvm.sh
 
       - name: Install Antora
         if: steps.revision.outputs.revision != 'skip'
         shell: bash
-        working-directory: ${{ env.PROJECT_ROOT_PATH }}
+        working-directory: ${{ env.FRAMEWORK_ROOT_PATH }}
         # we install the 'node' modules into the project root under 'node_modules',
         # because we have no privileges to install them globally with -g option
         run: npm i npm i @antora/cli@2.3.3 @antora/site-generator-default@2.3.3 @asciidoctor/core@2.2.0 asciidoctor-kroki
@@ -76,14 +74,16 @@ jobs:
 
       - name: Calculate new $REVISION (if changed since last published, else skip)
         id: revision
-        run: bash $NIGHTLY_SCRIPTS_PATH/new-revision.sh
+        working-directory: ${{ env.NIGHTLY_ROOT_PATH }}
+        shell: bash
+        run: scripts/nightly/new-revision.sh
 
       - name: Share $REVISION as Environment Variable
         run: echo "REVISION=${{ steps.revision.outputs.revision }}" >> $GITHUB_ENV
 
       - name: Print Software Versions
         if: steps.revision.outputs.revision != 'skip'
-        working-directory: ${{ env.PROJECT_ROOT_PATH }}
+        working-directory: ${{ env.FRAMEWORK_ROOT_PATH }}
         shell: bash
         run: |
           echo ==============  Software versions  =================
@@ -103,10 +103,8 @@ jobs:
           echo ==============  ENV  =================
           echo BASELINE            \: $BASELINE
           echo TIMESTAMP           \: $TIMESTAMP
-          echo PROJECT_ROOT_PATH   \: $PROJECT_ROOT_PATH
-          echo CI_SCRIPTS_PATH     \: $CI_SCRIPTS_PATH
+          echo FRAMEWORK_ROOT_PATH \: $FRAMEWORK_ROOT_PATH
           echo NIGHTLY_ROOT_PATH   \: $NIGHTLY_ROOT_PATH
-          echo NIGHTLY_SCRIPTS_PATH\: $NIGHTLY_SCRIPTS_PATH
           echo MVN_STAGES          \: $MVN_STAGES
           echo REVISION            \: $REVISION
           echo DEPLOY_TARGET       \: $DEPLOY_TARGET
@@ -128,15 +126,15 @@ jobs:
       - name: Build and Push Artifacts (nexus.incode.work)
         if: steps.revision.outputs.revision != 'skip'
         shell: bash
-        working-directory: ${{ env.PROJECT_ROOT_PATH }}
+        working-directory: ${{ env.FRAMEWORK_ROOT_PATH }}
         run: |
-          bash $CI_SCRIPTS_PATH/build-artifacts.sh
+          bash scripts/ci/build-artifacts.sh
         env:
           ## nexus.incode.work
           NEXUS_INCODE_WORK_USERNAME: ${{ secrets.NEXUS_INCODE_WORK_USERNAME }}
           NEXUS_INCODE_WORK_PASSWORD: ${{ secrets.NEXUS_INCODE_WORK_PASSWORD }}
           MVN_ADDITIONAL_OPTS: '-DaltReleaseDeploymentRepository=${{ env.DEPLOY_TARGET }} -Dmaven.source.skip=true -Denforcer.failFast=true'
-          SETTINGS_XML: ${{ env.PROJECT_ROOT_PATH }}/.m2/settings.xml
+          SETTINGS_XML: ${{ env.FRAMEWORK_ROOT_PATH }}/.m2/settings.xml
           ## hub.docker.com
           DOCKER_REGISTRY_USERNAME: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
           DOCKER_REGISTRY_PASSWORD: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
@@ -145,7 +143,7 @@ jobs:
       - name: Code Quality Analysis
         if: steps.revision.outputs.revision != 'skip'
         shell: bash
-        working-directory: ${{ env.PROJECT_ROOT_PATH }}
+        working-directory: ${{ env.FRAMEWORK_ROOT_PATH }}
         run: |
           mvn verify sonar:sonar \
           -Dsonar.projectKey=apache_isis \
@@ -166,12 +164,12 @@ jobs:
       - name: Build Apache Isis Site
         if: steps.revision.outputs.revision != 'skip'
         shell: bash
-        working-directory: ${{ env.PROJECT_ROOT_PATH }}
-        # builds static web content into ${PROJECT_ROOT_PATH}/antora/target/site,
+        working-directory: ${{ env.FRAMEWORK_ROOT_PATH }}
+        # builds static web content into ${FRAMEWORK_ROOT_PATH}/antora/target/site,
         # as specified in the site.yml file
         run: |
-          bash $NIGHTLY_SCRIPTS_PATH/patch-site-config.sh $PROJECT_ROOT_PATH/antora/playbooks/site.yml
-          bash -x $CI_SCRIPTS_PATH/build-site.sh $PROJECT_ROOT_PATH/antora/playbooks/site.yml
+          bash $NIGHTLY_ROOT_PATH/scripts/nightlypatch-site-config.sh $FRAMEWORK_ROOT_PATH/antora/playbooks/site.yml
+          bash -x scripts/ci/build-site.sh $FRAMEWORK_ROOT_PATH/antora/playbooks/site.yml
         env:
           REVISION: ${{ steps.revision.outputs.revision }}
 
@@ -184,7 +182,7 @@ jobs:
       - name: Commit Site Update
         if: steps.revision.outputs.revision != 'skip'
         shell: bash
-        working-directory: ${{ env.PROJECT_ROOT_PATH }}
+        working-directory: ${{ env.FRAMEWORK_ROOT_PATH }}
         # will noop if git tree has not changed (see diff commands below)
         run: |
           git config --local user.email "action@github.com"
@@ -195,8 +193,8 @@ jobs:
       - name: Push Site Update
         # uses a predefined action that does exactly this; will noop if git tree has not changed
         uses: ad-m/github-push-action@master
-        working-directory: ${{ env.PROJECT_ROOT_PATH }}
         with:
+          directory: ${{ env.NIGHTLY_ROOT_PATH }}
           github_token: ${{ secrets.PUBLISH_TOKEN }}
 
       # -----------------------------
