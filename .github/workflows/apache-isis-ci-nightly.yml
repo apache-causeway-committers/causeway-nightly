@@ -42,6 +42,9 @@ jobs:
           ref: refs/heads/master
           path: isis
 
+      - name: Dump workshape
+        run: find /home/runner/work/isis-nightly -print
+
       # ------------------------
       # -- install software   --
       # ------------------------
@@ -176,7 +179,7 @@ jobs:
         # builds static web content into ${FRAMEWORK_ROOT_PATH}/antora/target/site,
         # as specified in the site.yml file
         run: |
-          bash $NIGHTLY_ROOT_PATH/scripts/nightlypatch-site-config.sh $FRAMEWORK_ROOT_PATH/antora/playbooks/site.yml
+          bash $NIGHTLY_ROOT_PATH/scripts/nightly/patch-site-config.sh $FRAMEWORK_ROOT_PATH/antora/playbooks/site.yml
           bash -x scripts/ci/build-site.sh $FRAMEWORK_ROOT_PATH/antora/playbooks/site.yml
         env:
           REVISION: ${{ steps.revision.outputs.revision }}
