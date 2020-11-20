@@ -694,7 +694,7 @@ page.parent doesn't seem to be set...
       <span class="title">System Overview</span>
       <ul class="versions">
         <li class="version is-latest">
-          <a href="../../../system/latest/about.html">latest</a>
+          <a href="../../../system/latest/system-overview.html">latest</a>
         </li>
       </ul>
     </li>
@@ -799,9 +799,6 @@ public @interface DomainObject {
     String objectType()                             <i class="conum" data-value="9"></i><b>(9)</b>
             default "";
 
-    Publishing publishing()                         <i class="conum" data-value="10"></i><b>(10)</b>
-            default Publishing.NOT_SPECIFIED;
-
     // ...
 }</code></pre>
 </div>
@@ -813,7 +810,8 @@ public @interface DomainObject {
 <td><a href="#auditing"><code>auditing()</code></a>
 <div class="paragraph">
 <p>Indicates whether each of the changed properties of an object should be submitted to the registered
-<a href="../applib-svc/AuditerService.html" class="page"><code>AuditerService</code></a>(s)</p>
+<a href="../applib-svc/AuditerService.html" class="page"><code>AuditerService</code></a>(s) and
+whether entity changes, captured as <code>ChangingEntities</code> should be dispatched to <a href="#refguide:applib-svc:ChangingEntitiesListener.adoc" class="page unresolved"><code>ChangingEntitiesListener</code></a>(s). (Does only apply to entity objects.)</p>
 </div></td>
 </tr>
 <tr>
@@ -873,13 +871,6 @@ If an entity, indicates how its persistence is managed.</p>
 <td><a href="#objectType"><code>objectType()</code></a>
 <div class="paragraph">
 <p>Specify an alias for the domain class used to uniquely identify the object both within the Apache Isis runtime and externally</p>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="10"></i><b>10</b></td>
-<td><a href="#publishing"><code>publishing()</code></a>
-<div class="paragraph">
-<p>Whether changes to the object should be published to the registered <a href="../applib-svc/PublisherService.html" class="page"><code>PublisherService</code></a>.</p>
 </div></td>
 </tr>
 </table>
@@ -2114,91 +2105,14 @@ An error message will be printed in the log to help you determine which classes 
 </tr>
 </table>
 </div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="publishing"><a class="anchor" href="#publishing"></a><code>publishing()</code></h2>
-<div class="sectionbody">
 <div class="paragraph">
-<p>The <code>publishing</code> attribute determines whether and how a modified object instance is published via the registered implementation of <a href="../applib-svc/PublisherService.html" class="page"><code>PublisherService</code></a>.</p>
-</div>
-<div class="paragraph">
-<p>A common use case is to notify external "downstream" systems of changes in the state of the Apache Isis application.</p>
-</div>
-<div class="paragraph">
-<p>The default value for the attribute is <code>AS_CONFIGURED</code>, meaning that the <a href="../config/sections/isis.applib.html#isis.applib.annotation.domain-object.publishing" class="page"><code>isis.applib.annotation.domain-object.publishing</code></a> configuration property is used to determine the whether the domain object&#8217;s changes are published:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>all</code></p>
-<div class="paragraph">
-<p>all changed objects are published</p>
-</div>
-</li>
-<li>
-<p><code>none</code></p>
-<div class="paragraph">
-<p>no changed objects are published</p>
-</div>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>If there is no configuration property in <code>application.properties</code> then publishing is automatically disabled for domain objects.</p>
-</div>
-<div class="paragraph">
-<p>This default can be overridden on an object-by-object basis; if <code>publishing()</code> is set to <code>ENABLED</code> then changed instances of the domain class are published irrespective of the configured value; if set to <code>DISABLED</code> then the changed instances are <em>not</em> published, again irrespective of the configured value.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(
-    publishing=Publishing.ENABLED   <i class="conum" data-value="1"></i><b>(1)</b>
-)
-public class InterestRate {
-    ...
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>because set to enabled, will be published irrespective of the configured value.</td>
-</tr>
-</table>
-</div>
-<div class="sect2">
-<h3 id="see-also"><a class="anchor" href="#see-also"></a>See also</h3>
-<div class="paragraph">
-<p>This attribute is also supported for:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="Action.html#publishing" class="page">actions</a></p>
-<div class="paragraph">
-<p>where it controls whether action invocations are published as events, and for</p>
-</div>
-</li>
-<li>
-<p><a href="Property.html#publishing" class="page">properties</a></p>
-<div class="paragraph">
-<p>where it controls whether property edits are published as events.</p>
-</div>
-</li>
-</ul>
+<p>Unresolved include directive in modules/applib-ant/pages/DomainObject.adoc - include::DomainObject/publishing.adoc[]
+:leveloffset: +1</p>
 </div>
 </div>
 </div>
 </div>
-<div class="sect1">
-<h2 id="removingLifecycleEvent"><a class="anchor" href="#removingLifecycleEvent"></a><code>removingLifecycleEvent()</code></h2>
-<div class="sectionbody">
+<h1 id="removingLifecycleEvent" class="sect0"><a class="anchor" href="#removingLifecycleEvent"></a><code>removingLifecycleEvent()</code></h1>
 <div class="paragraph">
 <p>r
 :Notice: Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements. See the NOTICE file distributed with this work for additional information regarding copyright ownership. The ASF licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at. <a href="http://www.apache.org/licenses/LICENSE-2.0" class="bare">http://www.apache.org/licenses/LICENSE-2.0</a> . Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR  CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
@@ -2263,8 +2177,9 @@ public class ToDoItem {
 <div class="paragraph">
 <p>The benefit is that subscribers can be more targeted as to the events that they subscribe to.</p>
 </div>
-<div class="sect2">
-<h3 id="subscribers-5"><a class="anchor" href="#subscribers-5"></a>Subscribers</h3>
+<div class="sect1">
+<h2 id="subscribers-5"><a class="anchor" href="#subscribers-5"></a>Subscribers</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>Subscribers (which must be domain services) subscribe to events posted through the <a href="../applib-svc/EventBusService.html" class="page"><code>EventBusService</code></a>.</p>
 </div>
@@ -2305,8 +2220,10 @@ public class SomeSubscriber {
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="default-doop-and-noop-events-5"><a class="anchor" href="#default-doop-and-noop-events-5"></a>Default, Doop and Noop events</h3>
+</div>
+<div class="sect1">
+<h2 id="default-doop-and-noop-events-5"><a class="anchor" href="#default-doop-and-noop-events-5"></a>Default, Doop and Noop events</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>If the <code>removingLifecycleEvent</code> attribute is not explicitly specified (is left as its default value, <code>ObjectRemovingEvent.Default</code>), then the framework will, by default, post an event.</p>
 </div>
@@ -2319,7 +2236,6 @@ The framework provides <code>ObjectRemovingEvent.Doop</code> as such a subclass,
 </div>
 <div class="paragraph">
 <p>And, conversely, the framework also provides <code>ObjectRemovingEvent.Noop</code>; if <code>removingLifecycleEvent</code> attribute is set to this class, then no event will be posted.</p>
-</div>
 </div>
 </div>
 </div>
@@ -2582,7 +2498,7 @@ The framework provides <code>ObjectUpdatedEvent.Doop</code> as such a subclass, 
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20201119-0418-6f9ede56</p>
+            <p>Revision: 2.0.0-M4.20201120-0418-97309cf4</p>
         </div>
     </div>
 </footer>

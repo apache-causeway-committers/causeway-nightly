@@ -694,7 +694,7 @@ page.parent doesn't seem to be set...
       <span class="title">System Overview</span>
       <ul class="versions">
         <li class="version is-latest">
-          <a href="../../../system/latest/about.html">latest</a>
+          <a href="../../../system/latest/system-overview.html">latest</a>
         </li>
       </ul>
     </li>
@@ -774,8 +774,8 @@ public @interface Action {
     String associateWithSequence()                                  <i class="conum" data-value="2"></i><b>(2)</b>
             default "1";
 
-    CommandReification command()                                    <i class="conum" data-value="3"></i><b>(3)</b>
-            default CommandReification.NOT_SPECIFIED;
+    Dispatching commandDispatch()                               <i class="conum" data-value="3"></i><b>(3)</b>
+            default Dispatching.NOT_SPECIFIED;
 
     Class&lt;? extends CommandDtoProcessor&gt; commandDtoProcessor()      <i class="conum" data-value="4"></i><b>(4)</b>
             default CommandDtoProcessor.class;
@@ -783,11 +783,11 @@ public @interface Action {
     Class&lt;? extends ActionDomainEvent&lt;?&gt;&gt; domainEvent()             <i class="conum" data-value="5"></i><b>(5)</b>
             default ActionDomainEvent.Default.class;
 
-    Where hidden()                                                  <i class="conum" data-value="6"></i><b>(6)</b>
-            default Where.NOT_SPECIFIED;
+    Dispatching executionDispatch()                           <i class="conum" data-value="6"></i><b>(6)</b>
+            default Dispatching.NOT_SPECIFIED;
 
-    Publishing publishing()                                         <i class="conum" data-value="7"></i><b>(7)</b>
-            default Publishing.NOT_SPECIFIED;
+    Where hidden()                                                  <i class="conum" data-value="7"></i><b>(7)</b>
+            default Where.NOT_SPECIFIED;
 
     RestrictTo restrictTo()                                         <i class="conum" data-value="8"></i><b>(8)</b>
             default RestrictTo.NOT_SPECIFIED;
@@ -819,8 +819,10 @@ public @interface Action {
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td><a href="#command"><code>command()</code></a>
-whether the action invocation should be reified into a <code>Command</code>, typically so it can be logged using the <a href="../../../extensions/latest/command-log/about.html" class="page">Command Log</a> extension  (for auditing or for regression testing using <a href="../../../extensions/latest/command-replay/about.html" class="page">Command Replay</a>).</td>
+<td><a href="#commandDispatch"><code>commandDispatch()</code></a>
+<div class="paragraph">
+<p>Whether the action invocation should be dispatched to registered <a href="#refguide:applib-svc:ExecutionListener.adoc" class="page unresolved"><code>CommandListener</code></a>s as a <code>Command</code> object, that captures the details of this invocation. Typically so it can be logged using the <a href="../../../extensions/latest/command-log/about.html" class="page">Command Log</a> extension (for auditing or for regression testing using <a href="../../../extensions/latest/command-replay/about.html" class="page">Command Replay</a>).</p>
+</div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
@@ -838,16 +840,16 @@ whether the action invocation should be reified into a <code>Command</code>, typ
 </tr>
 <tr>
 <td><i class="conum" data-value="6"></i><b>6</b></td>
-<td><a href="#hidden"><code>hidden()</code></a>
+<td><a href="#executionDispach"><code>executionDispach()</code></a>
 <div class="paragraph">
-<p>Indicates where (in the UI) the action should be hidden from the user.</p>
+<p>Whether the action invocation should be dispatched to registered <a href="#refguide:applib-svc:ExecutionListener.adoc" class="page unresolved"><code>ExecutionListener</code></a>s as an <code>Execution</code> object, that captures the details of this invocation.</p>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="7"></i><b>7</b></td>
-<td><a href="#publishing"><code>publishing()</code></a>
+<td><a href="#hidden"><code>hidden()</code></a>
 <div class="paragraph">
-<p>Whether the action invocation should be published to the registered <a href="../applib-svc/PublisherService.html" class="page"><code>PublisherService</code></a>.</p>
+<p>Indicates where (in the UI) the action should be hidden from the user.</p>
 </div></td>
 </tr>
 <tr>
@@ -1035,7 +1037,7 @@ public class Order {
 </div>
 </div>
 <div class="sect1">
-<h2 id="command"><a class="anchor" href="#command"></a>Command Processing</h2>
+<h2 id="commandDispatch"><a class="anchor" href="#commandDispatch"></a>Command Processing</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Every action invocation (and <a href="Property.html#command" class="page">property edit</a> for that matter) is normally reified into a concrete <code>Command</code> object, basically a wrapper around the XML invocation <a href="../schema/cmd.html" class="page">Command</a> schema that also captures some timing metrics about the execution as well as the outcome.</p>
@@ -1075,9 +1077,9 @@ Another option to achieve this is to use the <a href="../applib-svc/PublisherSer
 </ul>
 </div>
 <div class="sect2">
-<h3 id="command-2"><a class="anchor" href="#command-2"></a><code>command</code></h3>
+<h3 id="commanddispatch"><a class="anchor" href="#commanddispatch"></a><code>commandDispatch</code></h3>
 <div class="paragraph">
-<p>The <code>command()</code> attribute can be used to explicitly enable or disable command reification for the action.</p>
+<p>The <code>commandDispatch()</code> attribute can be used to explicitly enable or disable command reification for the action.</p>
 </div>
 </div>
 <div class="sect2">
@@ -1152,7 +1154,7 @@ The <code>CommandDtoProcessor.Null</code> class provides a convenience implement
 </td>
 <td class="content">
 <div class="paragraph">
-<p>If <code>commandDtoProcessor()</code> is specified, then <code>command()</code> is assumed to be ENABLED.</p>
+<p>If <code>commandDtoProcessor()</code> is specified, then <code>commandDispatch()</code> is assumed to be ENABLED.</p>
 </div>
 </td>
 </tr>
@@ -1496,6 +1498,87 @@ However, events can be raised programmatically either by calling the <a href="..
 </div>
 </div>
 <div class="sect1">
+<h2 id="executionDispatch"><a class="anchor" href="#executionDispatch"></a><code>executionDispatch()</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>executionDispatch</code> attribute determines whether and how an action invocation is published via the registered implementation of <a href="../applib-svc/PublisherService.html" class="page"><code>PublisherService</code></a>.</p>
+</div>
+<div class="paragraph">
+<p>A common use case is to notify external "downstream" systems of changes in the state of the Apache Isis application.
+The <a href="../config/sections/isis.applib.html#isis.applib.annotation.action.publishing" class="page"><code>isis.applib.annotation.action.publishing</code></a> configuration property is used to determine the whetherthe action is published:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>all</code></p>
+<div class="paragraph">
+<p>all action invocations are published</p>
+</div>
+</li>
+<li>
+<p><code>ignoreSafe</code> (or <code>ignoreQueryOnly</code>)</p>
+<div class="paragraph">
+<p>invocations of actions with safe (read-only) semantics are ignored, but actions which may modify data are not ignored</p>
+</div>
+</li>
+<li>
+<p><code>none</code></p>
+<div class="paragraph">
+<p>no action invocations are published</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>If there is no configuration property in <code>application.properties</code> then publishing is automatically enabled.</p>
+</div>
+<div class="paragraph">
+<p>This default can be overridden on an action-by-action basis; if <code>executionDispatch()</code> is set to <code>ENABLED</code> then the action invocation is published irrespective of the configured value; if set to <code>DISABLED</code> then the action invocation is <em>not</em> published, again irrespective of the configured value.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Order {
+    @Action(executionDispatch=Dispatching.ENABLED)    <i class="conum" data-value="1"></i><b>(1)</b>
+    public Invoice generateInvoice(...) {
+        // ...
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>because set to enabled, will be published irrespective of the configured value.</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="see-also-2"><a class="anchor" href="#see-also-2"></a>See also</h3>
+<div class="paragraph">
+<p>This attribute is also supported for:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="DomainObject.html#executionDispatch" class="page">domain objects</a>
++ where it controls whether changed objects are published as events, and for</p>
+</li>
+<li>
+<p><a href="Property.html#executionDispatch" class="page">properties</a></p>
+<div class="paragraph">
+<p>where it controls whether property edits are published as events.</p>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="hidden"><a class="anchor" href="#hidden"></a><code>hidden()</code></h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -1555,7 +1638,7 @@ Both options are provided with a view that in the future the view-layer semantic
 <p>The other values of the <code>Where</code> enum have no meaning for a collection.</p>
 </div>
 <div class="sect2">
-<h3 id="see-also-2"><a class="anchor" href="#see-also-2"></a>See also</h3>
+<h3 id="see-also-3"><a class="anchor" href="#see-also-3"></a>See also</h3>
 <div class="paragraph">
 <p>This attribute can also be applied to:</p>
 </div>
@@ -1566,87 +1649,6 @@ Both options are provided with a view that in the future the view-layer semantic
 </li>
 <li>
 <p><a href="Collection.html#hidden" class="page">collections</a>.</p>
-</li>
-</ul>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="publishing"><a class="anchor" href="#publishing"></a><code>publishing()</code></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The <code>publishing</code> attribute determines whether and how an action invocation is published via the registered implementation of <a href="../applib-svc/PublisherService.html" class="page"><code>PublisherService</code></a>.</p>
-</div>
-<div class="paragraph">
-<p>A common use case is to notify external "downstream" systems of changes in the state of the Apache Isis application.
-The <a href="../config/sections/isis.applib.html#isis.applib.annotation.action.publishing" class="page"><code>isis.applib.annotation.action.publishing</code></a> configuration property is used to determine the whetherthe action is published:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>all</code></p>
-<div class="paragraph">
-<p>all action invocations are published</p>
-</div>
-</li>
-<li>
-<p><code>ignoreSafe</code> (or <code>ignoreQueryOnly</code>)</p>
-<div class="paragraph">
-<p>invocations of actions with safe (read-only) semantics are ignored, but actions which may modify data are not ignored</p>
-</div>
-</li>
-<li>
-<p><code>none</code></p>
-<div class="paragraph">
-<p>no action invocations are published</p>
-</div>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>If there is no configuration property in <code>application.properties</code> then publishing is automatically enabled.</p>
-</div>
-<div class="paragraph">
-<p>This default can be overridden on an action-by-action basis; if <code>publishing()</code> is set to <code>ENABLED</code> then the action invocation is published irrespective of the configured value; if set to <code>DISABLED</code> then the action invocation is <em>not</em> published, again irrespective of the configured value.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Order {
-    @Action(publishing=Publishing.ENABLED)    <i class="conum" data-value="1"></i><b>(1)</b>
-    public Invoice generateInvoice(...) {
-        // ...
-    }
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>because set to enabled, will be published irrespective of the configured value.</td>
-</tr>
-</table>
-</div>
-<div class="sect2">
-<h3 id="see-also-3"><a class="anchor" href="#see-also-3"></a>See also</h3>
-<div class="paragraph">
-<p>This attribute is also supported for:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="DomainObject.html#publishing" class="page">domain objects</a>
-+ where it controls whether changed objects are published as events, and for</p>
-</li>
-<li>
-<p><a href="Property.html#publishing" class="page">properties</a></p>
-<div class="paragraph">
-<p>where it controls whether property edits are published as events.</p>
-</div>
 </li>
 </ul>
 </div>
@@ -1849,7 +1851,7 @@ Note though that the results of this caching will only be apparent if the action
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20201119-0418-6f9ede56</p>
+            <p>Revision: 2.0.0-M4.20201120-0418-97309cf4</p>
         </div>
     </div>
 </footer>

@@ -694,7 +694,7 @@ page.parent doesn't seem to be set...
       <span class="title">System Overview</span>
       <ul class="versions">
         <li class="version is-latest">
-          <a href="../../../system/latest/about.html">latest</a>
+          <a href="../../../system/latest/system-overview.html">latest</a>
         </li>
       </ul>
     </li>
@@ -784,8 +784,8 @@ TODO: v2 - command annotations are out-of-date
 @Mixin(method = "prop")
 public @interface Property {
 
-    CommandReification command()                                <i class="conum" data-value="1"></i><b>(1)</b>
-            default CommandReification.NOT_SPECIFIED;
+    Dispatching commandDispatch()                               <i class="conum" data-value="1"></i><b>(1)</b>
+            default Dispatching.NOT_SPECIFIED;
 
     Class&lt;? extends CommandDtoProcessor&gt; commandDtoProcessor()  <i class="conum" data-value="2"></i><b>(2)</b>
             default CommandDtoProcessor.class;
@@ -799,29 +799,29 @@ public @interface Property {
     String editingDisabledReason()                              <i class="conum" data-value="5"></i><b>(5)</b>
             default "";
 
-    String fileAccept()                                         <i class="conum" data-value="6"></i><b>(6)</b>
+    Dispatching executionDispatch()                             <i class="conum" data-value="6"></i><b>(6)</b>
+            default Dispatching.NOT_SPECIFIED;
+
+    String fileAccept()                                         <i class="conum" data-value="7"></i><b>(7)</b>
             default "";
 
-    Where hidden()                                              <i class="conum" data-value="7"></i><b>(7)</b>
+    Where hidden()                                              <i class="conum" data-value="8"></i><b>(8)</b>
             default Where.NOT_SPECIFIED;
 
-    int maxLength()                                             <i class="conum" data-value="8"></i><b>(8)</b>
+    int maxLength()                                             <i class="conum" data-value="9"></i><b>(9)</b>
             default -1;
 
-    MementoSerialization mementoSerialization()                 <i class="conum" data-value="9"></i><b>(9)</b>
+    MementoSerialization mementoSerialization()                 <i class="conum" data-value="10"></i><b>(10)</b>
             default MementoSerialization.NOT_SPECIFIED;
 
-    Class&lt;? extends Specification&gt;[] mustSatisfy()              <i class="conum" data-value="10"></i><b>(10)</b>
+    Class&lt;? extends Specification&gt;[] mustSatisfy()              <i class="conum" data-value="11"></i><b>(11)</b>
             default {};
 
-    Optionality optionality()                                   <i class="conum" data-value="11"></i><b>(11)</b>
+    Optionality optionality()                                   <i class="conum" data-value="12"></i><b>(12)</b>
             default Optionality.NOT_SPECIFIED;
 
-    Projecting projecting()                                     <i class="conum" data-value="12"></i><b>(12)</b>
+    Projecting projecting()                                     <i class="conum" data-value="13"></i><b>(13)</b>
             default Projecting.NOT_SPECIFIED;
-
-    Publishing publishing()                                     <i class="conum" data-value="13"></i><b>(13)</b>
-            default Publishing.NOT_SPECIFIED;
 
     String regexPattern()                                       <i class="conum" data-value="14"></i><b>(14)</b>
             default "";
@@ -839,9 +839,9 @@ public @interface Property {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><a href="#command"><code>command()</code></a>
+<td><a href="#commandDispatch"><code>commandDispatch()</code></a>
 <div class="paragraph">
-<p>Whether the property edit should be reified into a <code>Command</code>, typically so it can be logged using the <a href="../../../extensions/latest/command-log/about.html" class="page">Command Log</a> extension  (for auditing or for regression testing using <a href="../../../extensions/latest/command-replay/about.html" class="page">Command Replay</a>).</p>
+<p>Whether the editing of a property should be dispatched to registered <a href="#refguide:applib-svc:ExecutionListener.adoc" class="page unresolved"><code>CommandListener</code></a>s as a <code>Command</code> object, that captures the details of this edit. Typically so it can be logged using the <a href="../../../extensions/latest/command-log/about.html" class="page">Command Log</a> extension (for auditing or for regression testing using <a href="../../../extensions/latest/command-replay/about.html" class="page">Command Replay</a>).</p>
 </div></td>
 </tr>
 <tr>
@@ -874,6 +874,13 @@ public @interface Property {
 </tr>
 <tr>
 <td><i class="conum" data-value="6"></i><b>6</b></td>
+<td><a href="#executionDispatch"><code>executionDispatch()</code></a>
+<div class="paragraph">
+<p>Whether the editing of a property should be dispatched to registered <a href="#refguide:applib-svc:ExecutionListener.adoc" class="page unresolved"><code>ExecutionListener</code></a>s as an <code>Execution</code> object, that captures the details of this edit.</p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
 <td><a href="#fileAccept"><code>fileAccept()</code></a>
 <div class="paragraph">
 <p>Hints the file type (media type or file extension) to be uploaded to a <a href="../applib-classes/value-types.html#Blob" class="page"><code>Blob</code></a>
@@ -884,14 +891,14 @@ public @interface Property {
 </div></td>
 </tr>
 <tr>
-<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
 <td><a href="#hidden"><code>hidden()</code></a>
 <div class="paragraph">
 <p>Indicates where (in the UI) the property should be hidden from the user.</p>
 </div></td>
 </tr>
 <tr>
-<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
 <td><a href="#maxLength"><code>maxLength()</code></a>
 <div class="paragraph">
 <p>Maximum number of characters for string parameters; ignored otherwise<br></p>
@@ -910,21 +917,21 @@ In many/most cases you should however use <a href="Column.html" class="page"><co
 </div></td>
 </tr>
 <tr>
-<td><i class="conum" data-value="9"></i><b>9</b></td>
+<td><i class="conum" data-value="10"></i><b>10</b></td>
 <td><a href="#mementoSerialization"><code>mementoSerialization()</code></a>
 <div class="paragraph">
 <p>Whether to exclude from snapshots.<br></p>
 </div></td>
 </tr>
 <tr>
-<td><i class="conum" data-value="10"></i><b>10</b></td>
+<td><i class="conum" data-value="11"></i><b>11</b></td>
 <td><a href="#mustSatisfy"><code>mustSatisfy()</code></a>
 <div class="paragraph">
 <p>Implementation of <code>o.a.i.applib.spec.Specification</code> that allows arbitrary validation to be applied.</p>
 </div></td>
 </tr>
 <tr>
-<td><i class="conum" data-value="11"></i><b>11</b></td>
+<td><i class="conum" data-value="12"></i><b>12</b></td>
 <td><a href="#optionality"><code>optionality()</code></a>
 <div class="paragraph">
 <p>Specifies a property is optional rather than mandatory</p>
@@ -943,17 +950,10 @@ In many/most cases you should however use <a href="Column.html" class="page"><co
 </div></td>
 </tr>
 <tr>
-<td><i class="conum" data-value="12"></i><b>12</b></td>
+<td><i class="conum" data-value="13"></i><b>13</b></td>
 <td><a href="#projecting"><code>projecting()</code></a>
 <div class="paragraph">
 <p>Indicates that owning object is a view model that is acting as a projection of the underlying entity referenced by this property.</p>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="13"></i><b>13</b></td>
-<td><a href="#publishing"><code>publishing()</code></a>
-<div class="paragraph">
-<p>Determines whether the editing of a property should be published.</p>
 </div></td>
 </tr>
 <tr>
@@ -1035,7 +1035,7 @@ so that boilerplate-busting tools such as <a href="https://projectlombok.org/">P
 </div>
 </div>
 <div class="sect1">
-<h2 id="command"><a class="anchor" href="#command"></a>Command Persistence and Processing</h2>
+<h2 id="commandDispatch"><a class="anchor" href="#commandDispatch"></a>Command Persistence and Processing</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Every property edit (and <a href="Action.html#command" class="page">action invocation</a> for tht matter) is normally reified into a concrete <code>Command</code> object, basically a wrapper around the XML invocation <a href="../schema/cmd.html" class="page">Command</a> schema that also captures some timing metrics about the execution as well as the outcome.</p>
@@ -1075,9 +1075,9 @@ Another option to achieve this is to use the <a href="../applib-svc/PublisherSer
 </ul>
 </div>
 <div class="sect2">
-<h3 id="command-2"><a class="anchor" href="#command-2"></a><code>command</code></h3>
+<h3 id="commanddispatch"><a class="anchor" href="#commanddispatch"></a><code>commandDispatch</code></h3>
 <div class="paragraph">
-<p>The <code>command()</code> attribute can be used to explicitly enable or disable command reification for the property edit.</p>
+<p>The <code>commandDispatch()</code> attribute can be used to explicitly enable or disable command reification for the property edit.</p>
 </div>
 </div>
 <div class="sect2">
@@ -1152,7 +1152,7 @@ The <code>CommandDtoProcessor.Null</code> class provides a convenience implement
 </td>
 <td class="content">
 <div class="paragraph">
-<p>If <code>commandDtoProcessor()</code> is specified, then <code>command()</code> is assumed to be ENABLED.</p>
+<p>If <code>commandDtoProcessor()</code> is specified, then <code>commandDispatch()</code> is assumed to be ENABLED.</p>
 </div>
 </td>
 </tr>
@@ -1485,6 +1485,88 @@ public class Customer {
 </div>
 </div>
 <div class="sect1">
+<h2 id="executionDispatch"><a class="anchor" href="#executionDispatch"></a><code>executionDispatch()</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>executionDispatch</code> attribute determines whether and how a property edit is published via the registered implementation of <a href="../applib-svc/PublisherService.html" class="page"><code>PublisherService</code></a>.</p>
+</div>
+<div class="paragraph">
+<p>A common use case is to notify external "downstream" systems of changes in the state of the Apache Isis application.
+The default value for the attribute is <code>AS_CONFIGURED</code>, meaning that the <a href="../config/sections/isis.applib.html#isis.applib.annotation.property.publishing" class="page"><code>isis.applib.annotation.property.publishing</code></a> configuration property is used to determine the whether the property edits are published:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>all</code></p>
+<div class="paragraph">
+<p>all property edits are published</p>
+</div>
+</li>
+<li>
+<p><code>none</code></p>
+<div class="paragraph">
+<p>no property edits are published</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>If there is no configuration property in <code>application.properties</code> then publishing is automatically enabled.</p>
+</div>
+<div class="paragraph">
+<p>This default can be overridden on an property-by-property basis; if <code>publishing()</code> is set to <code>ENABLED</code> then the property edit is published irrespective of the configured value; if set to <code>DISABLED</code> then the property edit is <em>not</em> published, again irrespective of the configured value.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
+import lombok.Setter;
+
+public class Order {
+
+    @Property(executionDispatch=Dispatch.ENABLED)    <i class="conum" data-value="1"></i><b>(1)</b>
+    @Getter @Setter
+    private int quantity;
+
+    // ...
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>because set to enabled, will be published irrespective of the configured value.</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="see-also-3"><a class="anchor" href="#see-also-3"></a>See also</h3>
+<div class="paragraph">
+<p>This attribute can also be specified for:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="DomainObject.html#publishing" class="page">domain objects</a></p>
+<div class="paragraph">
+<p>where it controls whether changed objects are published as events, and for</p>
+</div>
+</li>
+<li>
+<p><a href="Action.html#publishing" class="page">actions</a></p>
+<div class="paragraph">
+<p>where it controls whether action invocations are published as events.</p>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="fileAccept"><a class="anchor" href="#fileAccept"></a><code>fileAccept()</code></h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -1623,7 +1705,7 @@ Annotating with <code>@Property(where=Where.NOWHERE)</code> overrides this.</p>
 </table>
 </div>
 <div class="sect2">
-<h3 id="see-also-3"><a class="anchor" href="#see-also-3"></a>See also</h3>
+<h3 id="see-also-4"><a class="anchor" href="#see-also-4"></a>See also</h3>
 <div class="paragraph">
 <p>This attribute can also be applied to:</p>
 </div>
@@ -1711,7 +1793,7 @@ For these non persistable properties the <code>maxLength</code> attribute is sti
 </div>
 </div>
 <div class="sect2">
-<h3 id="see-also-4"><a class="anchor" href="#see-also-4"></a>See also</h3>
+<h3 id="see-also-5"><a class="anchor" href="#see-also-5"></a>See also</h3>
 <div class="paragraph">
 <p>This attribute can also be applied to <a href="Parameter.html#maxLength" class="page">parameters</a>.</p>
 </div>
@@ -1846,7 +1928,7 @@ public class Order {
 </div>
 </div>
 <div class="sect2">
-<h3 id="see-also-5"><a class="anchor" href="#see-also-5"></a>See also</h3>
+<h3 id="see-also-6"><a class="anchor" href="#see-also-6"></a>See also</h3>
 <div class="paragraph">
 <p>This attribute is also supported for <a href="Collection.html#mementoSerialization" class="page">collections</a>.</p>
 </div>
@@ -2085,88 +2167,6 @@ public InvoiceSummary {
 </div>
 </div>
 <div class="sect1">
-<h2 id="publishing"><a class="anchor" href="#publishing"></a><code>publishing()</code></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The <code>publishing</code> attribute determines whether and how a property edit is published via the registered implementation of <a href="../applib-svc/PublisherService.html" class="page"><code>PublisherService</code></a>.</p>
-</div>
-<div class="paragraph">
-<p>A common use case is to notify external "downstream" systems of changes in the state of the Apache Isis application.
-The default value for the attribute is <code>AS_CONFIGURED</code>, meaning that the <a href="../config/sections/isis.applib.html#isis.applib.annotation.property.publishing" class="page"><code>isis.applib.annotation.property.publishing</code></a> configuration property is used to determine the whether the property edits are published:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>all</code></p>
-<div class="paragraph">
-<p>all property edits are published</p>
-</div>
-</li>
-<li>
-<p><code>none</code></p>
-<div class="paragraph">
-<p>no property edits are published</p>
-</div>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>If there is no configuration property in <code>application.properties</code> then publishing is automatically enabled.</p>
-</div>
-<div class="paragraph">
-<p>This default can be overridden on an property-by-property basis; if <code>publishing()</code> is set to <code>ENABLED</code> then the property edit is published irrespective of the configured value; if set to <code>DISABLED</code> then the property edit is <em>not</em> published, again irrespective of the configured value.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
-import lombok.Setter;
-
-public class Order {
-
-    @Property(publishing=Publishing.ENABLED)    <i class="conum" data-value="1"></i><b>(1)</b>
-    @Getter @Setter
-    private int quantity;
-
-    // ...
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>because set to enabled, will be published irrespective of the configured value.</td>
-</tr>
-</table>
-</div>
-<div class="sect2">
-<h3 id="see-also-6"><a class="anchor" href="#see-also-6"></a>See also</h3>
-<div class="paragraph">
-<p>This attribute can also be specified for:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="DomainObject.html#publishing" class="page">domain objects</a></p>
-<div class="paragraph">
-<p>where it controls whether changed objects are published as events, and for</p>
-</div>
-</li>
-<li>
-<p><a href="Action.html#publishing" class="page">actions</a></p>
-<div class="paragraph">
-<p>where it controls whether action invocations are published as events.</p>
-</div>
-</li>
-</ul>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
 <h2 id="regexPattern"><a class="anchor" href="#regexPattern"></a><code>regexPattern()</code></h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -2241,7 +2241,7 @@ public class Customer {
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20201119-0418-6f9ede56</p>
+            <p>Revision: 2.0.0-M4.20201120-0418-97309cf4</p>
         </div>
     </div>
 </footer>

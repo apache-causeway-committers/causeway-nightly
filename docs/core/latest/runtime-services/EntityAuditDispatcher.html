@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>CommandService :: Apache Isis</title>
+    <title>EntityAuditDispatcher :: Apache Isis</title>
     <meta name="generator" content="Antora 2.3.3">
     <link rel="stylesheet" href="../../../_/css/site.css">
     <link rel="stylesheet" href="../../../_/css/site-custom.css">
@@ -184,7 +184,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="ApplicationFeatureFactory.html">ApplicationFeatureFactory</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="AuditerDispatchService.html">AuditerDispatchService</a>
+    <a class="nav-link" href="#core:runtime-services:AuditerDispatchService.adoc">AuditerDispatchService</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="AuthenticationSessionProvider.html">AuthenticationSessionProvider</a>
@@ -208,7 +208,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="PersistenceSessionServiceInternal.html">PersistenceSessionServiceInternal</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="PublisherDispatchService.html">PublisherDispatchService</a>
+    <a class="nav-link" href="#core:runtime-services:PublisherDispatchService.adoc">PublisherDispatchService</a>
   </li>
 </ul>
   </li>
@@ -359,7 +359,7 @@ page.parent doesn't seem to be set...
       <span class="title">System Overview</span>
       <ul class="versions">
         <li class="version is-latest">
-          <a href="../../../system/latest/about.html">latest</a>
+          <a href="../../../system/latest/system-overview.html">latest</a>
         </li>
       </ul>
     </li>
@@ -407,16 +407,76 @@ page.parent doesn't seem to be set...
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="../about.html">Design Docs</a></li>
-    <li><a href="CommandServiceInternal.html"><code>CommandService</code></a></li>
+    <li><a href="EntityAuditDispatcher.html"><code>EntityAuditDispatcher</code></a></li>
   </ul>
 </nav>
-  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/master/core/runtimeservices/src/main/adoc/modules/runtime-services/pages/CommandServiceInternal.adoc">Edit</a></div>
+  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/master/core/runtimeservices/src/main/adoc/modules/runtime-services/pages/EntityAuditDispatcher.adoc">Edit</a></div>
 </div>
 <article class="doc">
     <a name="section-top"></a>
-<h1 class="page"><code>CommandService</code></h1>
+<h1 class="page"><code>EntityAuditDispatcher</code></h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+TODO: this content has not yet been reviewed/updated for v2.0
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
-<p>The <code>CommandServiceInternal</code> service is an internal service whose responsibility is simply to notify all known <a href="../../../refguide/latest/applib-svc/CommandServiceListener.html" class="page"><code>CommandServiceListener</code></a> when the <code>Command</code> has completed.</p>
+<p>The (internal) <code>EntityAuditDispatcher</code> service acts as an internal facade to any registered <a href="#refguide:applib-svc:EntityAuditListener.adoc" class="page unresolved"><code>EntityAuditListener</code></a> service(s).
+It is responsible for obtaining the details of all changes to domain objects within an interaction, and then to call the configured <code>EntityAuditListener</code>(s) to actually create audit entries of those changes.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="spi-and-implementation"><a class="anchor" href="#spi-and-implementation"></a>SPI and Implementation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The SPI of the service is:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class EntityAuditDispatcher {
+    public void dispatchEntityAudits(...);  <i class="conum" data-value="1"></i><b>(1)</b>
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>uses the <a href="ChangedObjectsService.html" class="page"><code>ChangedObjectsServiceInternal</code></a> to obtain details of the changed properties, then call the configured <a href="../../../refguide/latest/applib-svc/AuditerService.html" class="page"><code>AuditerService</code></a>(s).</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="registering-the-service"><a class="anchor" href="#registering-the-service"></a>Registering the Service</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Apache Isis' default implementation of <code>EntityAuditDispatcher</code> class is automatically registered (it is annotated with <code>@DomainService</code>) so no further configuration is required.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="related-classes"><a class="anchor" href="#related-classes"></a>Related Classes</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In total there are 4 sorts of data the framework has dispatchers for &#8230;&#8203;
+. <strong>EntityAudit</strong>: dispatched via <code>EntityAuditDispatcher</code> and subscribed to via <code>EntityAuditListener</code> (SPI)
+. <strong>ChangingEntities</strong>: dispatched via <code>ChangingEntitiesDispatcher</code> and subscribed to via <code>ChangingEntitiesListener</code> (SPI)
+. <strong>Execution</strong>: dispatched via <code>ExecutionDispatcher</code> and subscribed to via <code>ExecutionListener</code> (SPI)
+. <strong>Command</strong>: dispatched via <code>CommandDispatcher</code> and subscribed to via <code>CommandListener</code> (SPI)</p>
+</div>
+</div>
 </div>
 </article>
 <aside class="article-aside toc hide-for-print" role="navigation">
@@ -435,7 +495,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20201119-0418-6f9ede56</p>
+            <p>Revision: 2.0.0-M4.20201120-0418-97309cf4</p>
         </div>
     </div>
 </footer>

@@ -3,15 +3,13 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>PublisherDispatchService :: Apache Isis</title>
+    <title>ExecutionDispatcher :: Apache Isis</title>
     <meta name="generator" content="Antora 2.3.3">
     <link rel="stylesheet" href="../../../_/css/site.css">
     <link rel="stylesheet" href="../../../_/css/site-custom.css">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Raleway:300,400,500,700,800|Montserrat:300,400,700" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css"/>
 <link rel="home" href="../../.." title="Apache Isis">
-  <link rel="next" href="../webapp/about.html" title="Webapp">
-  <link rel="prev" href="PersistenceSessionServiceInternal.html" title="PersistenceSessionServiceInternal">
   </head>
   <body class="article">
 <header class="header">
@@ -143,12 +141,12 @@
   <aside class="nav">
     <div class="panels">
 <div class="nav-panel-pagination">
-  <a class="page-previous" rel="prev" href="PersistenceSessionServiceInternal.html" title="PersistenceSessionServiceInternal"><span></span></a>
-  <a class="page-next" rel="next"
-     href="../webapp/about.html" title="Webapp"><span></span></a>
+  <a class="page-previous disabled" rel="prev" href="" title=""><span></span></a>
+  <a class="page-next disabled" rel="next"
+     href="" title=""><span></span></a>
 <!--
 page.parent doesn't seem to be set...
-  <a class="page-parent" rel="prev" href="about.html" title="PersistenceSessionServiceInternal"><span></span></a>
+  <a class="page-parent disabled" rel="prev" href="" title=""><span></span></a>
 -->
 </div>
 <div class="nav-panel-menu is-active" data-panel="menu">
@@ -186,7 +184,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="ApplicationFeatureFactory.html">ApplicationFeatureFactory</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="AuditerDispatchService.html">AuditerDispatchService</a>
+    <a class="nav-link" href="#core:runtime-services:AuditerDispatchService.adoc">AuditerDispatchService</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="AuthenticationSessionProvider.html">AuthenticationSessionProvider</a>
@@ -209,8 +207,8 @@ page.parent doesn't seem to be set...
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="PersistenceSessionServiceInternal.html">PersistenceSessionServiceInternal</a>
   </li>
-  <li class="nav-item is-current-page" data-depth="2">
-    <a class="nav-link" href="PublisherDispatchService.html">PublisherDispatchService</a>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#core:runtime-services:PublisherDispatchService.adoc">PublisherDispatchService</a>
   </li>
 </ul>
   </li>
@@ -361,7 +359,7 @@ page.parent doesn't seem to be set...
       <span class="title">System Overview</span>
       <ul class="versions">
         <li class="version is-latest">
-          <a href="../../../system/latest/about.html">latest</a>
+          <a href="../../../system/latest/system-overview.html">latest</a>
         </li>
       </ul>
     </li>
@@ -409,15 +407,14 @@ page.parent doesn't seem to be set...
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="../about.html">Design Docs</a></li>
-    <li><a href="about.html">Runtime Services</a></li>
-    <li><a href="PublisherDispatchService.html">PublisherDispatchService</a></li>
+    <li><a href="ExecutionDispatcher.html"><code>ExecutionDispatcher</code></a></li>
   </ul>
 </nav>
-  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/master/core/runtimeservices/src/main/adoc/modules/runtime-services/pages/PublisherDispatchService.adoc">Edit</a></div>
+  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/master/core/runtimeservices/src/main/adoc/modules/runtime-services/pages/ExecutionDispatcher.adoc">Edit</a></div>
 </div>
 <article class="doc">
     <a name="section-top"></a>
-<h1 class="page"><code>PublisherDispatchService</code></h1>
+<h1 class="page"><code>ExecutionDispatcher</code></h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="admonitionblock warning">
@@ -433,7 +430,7 @@ TODO: this content has not yet been reviewed/updated for v2.0
 </table>
 </div>
 <div class="paragraph">
-<p>The (internal) <code>PublisherDispatchService</code> domain service acts as an internal facade to any configured <a href="../../../refguide/latest/applib-svc/PublisherService.html" class="page"><code>PublisherService</code></a> domain service(s).</p>
+<p>The (internal) <code>ExecutionDispatcher</code> domain service acts as an internal facade to any configured <a href="../../../refguide/latest/applib-svc/PublisherService.html" class="page"><code>PublisherService</code></a> domain service(s).</p>
 </div>
 <div class="paragraph">
 <p>For published action invocations/ property edits, it provides an API for those member executions to call.</p>
@@ -451,12 +448,12 @@ TODO: this content has not yet been reviewed/updated for v2.0
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class PublisherDispatchService {
-    void publishAction(                             <i class="conum" data-value="1"></i><b>(1)</b>
-            Interaction.Execution execution);
-    void publishProperty(                           <i class="conum" data-value="2"></i><b>(2)</b>
-            Interaction.Execution execution);
-    void publishObjects();                          <i class="conum" data-value="3"></i><b>(3)</b>
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class ExecutionDispatcher {
+
+	void dispatchActionInvoking(Execution execution);   <i class="conum" data-value="1"></i><b>(1)</b>
+
+    void dispatchPropertyChanging(Execution execution); <i class="conum" data-value="2"></i><b>(2)</b>
+
 }</code></pre>
 </div>
 </div>
@@ -464,33 +461,15 @@ TODO: this content has not yet been reviewed/updated for v2.0
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>to publish an action invocation, as represented by the specified member <code>Execution</code> parameter and with the <a href="../../../refguide/latest/applib-ant/Action.html#publishing" class="page"><code>@Action#publishing</code></a> annotation attribute or equivalent, to any configured <a href="../../../refguide/latest/applib-svc/PublisherService.html" class="page"><code>PublisherService</code></a>.
+<td>to publish an action invocation, as represented by the specified member <code>Execution</code> parameter and with the <a href="../../../refguide/latest/applib-ant/Action.html#publishing" class="page"><code>@Action#executionDispatch</code></a> annotation attribute or equivalent, to any configured <a href="../../../refguide/latest/applib-svc/PublisherService.html" class="page"><code>PublisherService</code></a>.
 The <code>Execution</code> object will be an instance of <code>ActionInvocation</code> (see <a href="../../../refguide/latest/applib-svc/InteractionContext.html" class="page"><code>InteractionContext</code></a> for details).</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>to publish a property edit, as as represented by the specified member <code>Execution</code> parameter and with the <a href="../../../refguide/latest/applib-ant/Property.html#publishing" class="page"><code>@Property#publishing</code></a> annotation attribute or equivalent, to any configured <a href="../../../refguide/latest/applib-svc/PublisherService.html" class="page"><code>PublisherService</code></a>.
+<td>to publish a property edit, as as represented by the specified member <code>Execution</code> parameter and with the <a href="../../../refguide/latest/applib-ant/Property.html#publishing" class="page"><code>@Property#executionDispatch</code></a> annotation attribute or equivalent, to any configured <a href="../../../refguide/latest/applib-svc/PublisherService.html" class="page"><code>PublisherService</code></a>.
 The <code>Execution</code> object will be an instance of <code>PropertyEdit</code> (see <a href="../../../refguide/latest/applib-svc/InteractionContext.html" class="page"><code>InteractionContext</code></a> for details).</td>
 </tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>to publish all changed objects that are to be published (with the <a href="../../../refguide/latest/applib-ant/DomainObject.html#publishing" class="page"><code>@DomainObject#publishing</code></a> annotation attribute or equivalent).</td>
-</tr>
 </table>
-</div>
-<div class="paragraph">
-<p>The service implementation is <code>o.a.i.c.m.s.publishing.PublisherDispatchService</code>.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="registering-the-service"><a class="anchor" href="#registering-the-service"></a>Registering the Service</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Apache Isis' default implementation of <code>PublisherDispatchService</code> class is automatically registered (it is annotated with <code>@DomainService</code>) so no further configuration is required.</p>
-</div>
-<div class="paragraph">
-<p>To use an alternative implementation, use Spring&#8217;s <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/core/annotation/Order.html"><code>@Order</code></a> annotation (as explained in the <a href="../../../refguide/latest/applib-svc/about.html#overriding-the-services" class="page">introduction</a> to this guide).</p>
 </div>
 </div>
 </div>
@@ -498,10 +477,11 @@ The <code>Execution</code> object will be an instance of <code>PropertyEdit</cod
 <h2 id="related-classes"><a class="anchor" href="#related-classes"></a>Related Classes</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The service delegates between the (internal) <a href="ChangedObjectsService.html" class="page"><code>ChangedObjectsServiceInternal</code></a> domain service to the configured <a href="../../../refguide/latest/applib-svc/PublisherService.html" class="page"><code>PublisherService</code></a>.</p>
-</div>
-<div class="paragraph">
-<p>The (internal) <a href="AuditerDispatchService.html" class="page"><code>AuditerDispatchService</code></a> performs a similar function for the <a href="../../../refguide/latest/applib-svc/PublisherService.html" class="page"><code>PublisherService</code></a>, also collating details of the changed objects from <code>ChangedObjectsServiceInternal</code>.</p>
+<p>In total there are 4 sorts of data the framework has dispatchers for &#8230;&#8203;
+. <strong>EntityAudit</strong>: dispatched via <code>EntityAuditDispatcher</code> and subscribed to via <code>EntityAuditListener</code> (SPI)
+. <strong>ChangingEntities</strong>: dispatched via <code>ChangingEntitiesDispatcher</code> and subscribed to via <code>ChangingEntitiesListener</code> (SPI)
+. <strong>Execution</strong>: dispatched via <code>ExecutionDispatcher</code> and subscribed to via <code>ExecutionListener</code> (SPI)
+. <strong>Command</strong>: dispatched via <code>CommandDispatcher</code> and subscribed to via <code>CommandListener</code> (SPI)</p>
 </div>
 </div>
 </div>
@@ -522,7 +502,7 @@ The <code>Execution</code> object will be an instance of <code>PropertyEdit</cod
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20201119-0418-6f9ede56</p>
+            <p>Revision: 2.0.0-M4.20201120-0418-97309cf4</p>
         </div>
     </div>
 </footer>
