@@ -330,7 +330,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../applib-svc/CommandExecutorService.html">CommandExecutorService</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../applib-svc/CommandServiceListener.html">CommandServiceListener</a>
+    <a class="nav-link" href="../applib-svc/CommandSubscriber.html">CommandServiceListener</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../applib-svc/ConfigurationMenu.html">ConfigurationMenu</a>
@@ -414,7 +414,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../applib-svc/MetricsService.html">MetricsService</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../applib-svc/PublisherService.html">PublisherService</a>
+    <a class="nav-link" href="../applib-svc/ExecutionSubscriber.html">PublisherService</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../applib-svc/QueryResultsCache.html">QueryResultsCache</a>
@@ -774,17 +774,17 @@ public @interface Action {
     String associateWithSequence()                                  <i class="conum" data-value="2"></i><b>(2)</b>
             default "1";
 
-    Dispatching commandDispatch()                               <i class="conum" data-value="3"></i><b>(3)</b>
-            default Dispatching.NOT_SPECIFIED;
-
-    Class&lt;? extends CommandDtoProcessor&gt; commandDtoProcessor()      <i class="conum" data-value="4"></i><b>(4)</b>
+    Class&lt;? extends CommandDtoProcessor&gt; commandDtoProcessor()      <i class="conum" data-value="3"></i><b>(3)</b>
             default CommandDtoProcessor.class;
+
+    Publishing commandPublishing()                                  <i class="conum" data-value="4"></i><b>(4)</b>
+            default Publishing.NOT_SPECIFIED;
 
     Class&lt;? extends ActionDomainEvent&lt;?&gt;&gt; domainEvent()             <i class="conum" data-value="5"></i><b>(5)</b>
             default ActionDomainEvent.Default.class;
 
-    Dispatching executionDispatch()                           <i class="conum" data-value="6"></i><b>(6)</b>
-            default Dispatching.NOT_SPECIFIED;
+    Publishing executionPublishing()                                <i class="conum" data-value="6"></i><b>(6)</b>
+            default Publishing.NOT_SPECIFIED;
 
     Where hidden()                                                  <i class="conum" data-value="7"></i><b>(7)</b>
             default Where.NOT_SPECIFIED;
@@ -819,16 +819,16 @@ public @interface Action {
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td><a href="#commandDispatch"><code>commandDispatch()</code></a>
+<td><code>commandDtoProcessor()</code>
 <div class="paragraph">
-<p>Whether the action invocation should be dispatched to registered <a href="#refguide:applib-svc:ExecutionListener.adoc" class="page unresolved"><code>CommandListener</code></a>s as a <code>Command</code> object, that captures the details of this invocation. Typically so it can be logged using the <a href="../../../extensions/latest/command-log/about.html" class="page">Command Log</a> extension (for auditing or for regression testing using <a href="../../../extensions/latest/command-replay/about.html" class="page">Command Replay</a>).</p>
+<p>If the <a href="../../../extensions/latest/command-replay/about.html" class="page">Command Replay</a> extension is being used (for regression testing), provides a mechanism to process the <code>CommandDto</code> before being replicated from primary to secondary system</p>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td><code>commandDtoProcessor()</code>
+<td><a href="#commandPublishing"><code>commandPublishing()</code></a>
 <div class="paragraph">
-<p>If the <a href="../../../extensions/latest/command-replay/about.html" class="page">Command Replay</a> extension is being used (for regression testing), provides a mechanism to process the <code>CommandDto</code> before being replicated from primary to secondary system</p>
+<p>Whether the action invocation should be published to registered <a href="../applib-svc/CommandSubscriber.html" class="page"><code>CommandSubscriber</code></a>s as a <code>Command</code> object, that captures the details of this invocation. Typically so it can be logged using the <a href="../../../extensions/latest/command-log/about.html" class="page">Command Log</a> extension (for auditing or for regression testing using <a href="../../../extensions/latest/command-replay/about.html" class="page">Command Replay</a>).</p>
 </div></td>
 </tr>
 <tr>
@@ -840,9 +840,9 @@ public @interface Action {
 </tr>
 <tr>
 <td><i class="conum" data-value="6"></i><b>6</b></td>
-<td><a href="#executionDispach"><code>executionDispach()</code></a>
+<td><a href="#executionPublishing"><code>executionPublishing()</code></a>
 <div class="paragraph">
-<p>Whether the action invocation should be dispatched to registered <a href="#refguide:applib-svc:ExecutionListener.adoc" class="page unresolved"><code>ExecutionListener</code></a>s as an <code>Execution</code> object, that captures the details of this invocation.</p>
+<p>Whether the action invocation should be published to registered <a href="../applib-svc/ExecutionSubscriber.html" class="page"><code>ExecutionSubscriber</code></a>s as an <code>Execution</code> object, that captures the details of this invocation.</p>
 </div></td>
 </tr>
 <tr>
@@ -886,12 +886,12 @@ public @interface Action {
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class ToDoItem {
     public static class CompletedEvent extends ActionDomainEvent&lt;ToDoItem&gt; { }
     @Action(
-        command=CommandReification.ENABLED,
+        commandPublishing=Publishing.ENABLED,
         commandExecuteIn=CommandExecuteIn.FOREGROUND,          <i class="conum" data-value="1"></i><b>(1)</b>
         commandPersistence=CommandPersistence.NOT_PERSISTED,   <i class="conum" data-value="2"></i><b>(2)</b>
         domainEvent=CompletedEvent.class,
         hidden = Where.NOWHERE,                                <i class="conum" data-value="3"></i><b>(3)</b>
-        publishing = Publishing.ENABLED,
+        executionPublishing = Publishing.ENABLED,
         semantics = SemanticsOf.IDEMPOTENT
     )
     public ToDoItem completed() { /* ... */ }
@@ -1037,8 +1037,20 @@ public class Order {
 </div>
 </div>
 <div class="sect1">
-<h2 id="commandDispatch"><a class="anchor" href="#commandDispatch"></a>Command Processing</h2>
+<h2 id="command-processing"><a class="anchor" href="#command-processing"></a>Command Processing</h2>
 <div class="sectionbody">
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-caution" title="Caution"></i>
+</td>
+<td class="content">
+TODO: v2 - publishing/auditing got a complete overhaul
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
 <p>Every action invocation (and <a href="Property.html#command" class="page">property edit</a> for that matter) is normally reified into a concrete <code>Command</code> object, basically a wrapper around the XML invocation <a href="../schema/cmd.html" class="page">Command</a> schema that also captures some timing metrics about the execution as well as the outcome.</p>
 </div>
@@ -1051,7 +1063,7 @@ public class Order {
 <p>as a means to allow asynchronous child commands to be executed, using the <a href="../applib-svc/WrapperFactory.html" class="page"><code>WrapperFactory</code></a> service;</p>
 </li>
 <li>
-<p>as a means to audit (persist) commands, by implementing the <a href="../applib-svc/CommandServiceListener.html" class="page"><code>CommandServiceListener</code></a> SPI.</p>
+<p>as a means to audit (persist) commands, by implementing the <a href="../applib-svc/CommandSubscriber.html" class="page"><code>CommandServiceListener</code></a> SPI.</p>
 <div class="paragraph">
 <p>The <a href="../../../extensions/latest/command-log/about.html" class="page">Command Log</a> extension <em>does</em> provide such an implementation.</p>
 </div>
@@ -1062,7 +1074,7 @@ public class Order {
 <i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-Another option to achieve this is to use the <a href="../applib-svc/PublisherService.html" class="page"><code>PublisherService</code></a> SPI.
+Another option to achieve this is to use the <a href="../applib-svc/ExecutionSubscriber.html" class="page"><code>PublisherService</code></a> SPI.
 </td>
 </tr>
 </table>
@@ -1077,9 +1089,9 @@ Another option to achieve this is to use the <a href="../applib-svc/PublisherSer
 </ul>
 </div>
 <div class="sect2">
-<h3 id="commanddispatch"><a class="anchor" href="#commanddispatch"></a><code>commandDispatch</code></h3>
+<h3 id="commandPublishing"><a class="anchor" href="#commandPublishing"></a><code>commandPublishing</code></h3>
 <div class="paragraph">
-<p>The <code>commandDispatch()</code> attribute can be used to explicitly enable or disable command reification for the action.</p>
+<p>The <code>commandPublishing()</code> attribute can be used to explicitly enable or disable command publishing for the action.</p>
 </div>
 </div>
 <div class="sect2">
@@ -1154,7 +1166,7 @@ The <code>CommandDtoProcessor.Null</code> class provides a convenience implement
 </td>
 <td class="content">
 <div class="paragraph">
-<p>If <code>commandDtoProcessor()</code> is specified, then <code>commandDispatch()</code> is assumed to be ENABLED.</p>
+<p>If <code>commandDtoProcessor()</code> is specified, then <code>commandPublishing()</code> is assumed to be ENABLED.</p>
 </div>
 </td>
 </tr>
@@ -1498,14 +1510,26 @@ However, events can be raised programmatically either by calling the <a href="..
 </div>
 </div>
 <div class="sect1">
-<h2 id="executionDispatch"><a class="anchor" href="#executionDispatch"></a><code>executionDispatch()</code></h2>
+<h2 id="executionPublishing"><a class="anchor" href="#executionPublishing"></a><code>executionPublishing()</code></h2>
 <div class="sectionbody">
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-caution" title="Caution"></i>
+</td>
+<td class="content">
+TODO: v2 - publishing/auditing got a complete overhaul
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
-<p>The <code>executionDispatch</code> attribute determines whether and how an action invocation is published via the registered implementation of <a href="../applib-svc/PublisherService.html" class="page"><code>PublisherService</code></a>.</p>
+<p>The <code>executionPublishing</code> attribute determines whether and how an action invocation is published via the registered implementation of <a href="../applib-svc/ExecutionSubscriber.html" class="page"><code>ExecutionSubscriber</code></a>.</p>
 </div>
 <div class="paragraph">
 <p>A common use case is to notify external "downstream" systems of changes in the state of the Apache Isis application.
-The <a href="../config/sections/isis.applib.html#isis.applib.annotation.action.publishing" class="page"><code>isis.applib.annotation.action.publishing</code></a> configuration property is used to determine the whetherthe action is published:</p>
+The <a href="../config/sections/isis.applib.html#isis.applib.annotation.action.publishing" class="page"><code>isis.applib.annotation.action.executionPublishing</code></a> configuration property is used to determine the whether the action is published:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -1533,7 +1557,7 @@ The <a href="../config/sections/isis.applib.html#isis.applib.annotation.action.p
 <p>If there is no configuration property in <code>application.properties</code> then publishing is automatically enabled.</p>
 </div>
 <div class="paragraph">
-<p>This default can be overridden on an action-by-action basis; if <code>executionDispatch()</code> is set to <code>ENABLED</code> then the action invocation is published irrespective of the configured value; if set to <code>DISABLED</code> then the action invocation is <em>not</em> published, again irrespective of the configured value.</p>
+<p>This default can be overridden on an action-by-action basis; if <code>executionPublishing()</code> is set to <code>ENABLED</code> then the action invocation is published irrespective of the configured value; if set to <code>DISABLED</code> then the action invocation is <em>not</em> published, again irrespective of the configured value.</p>
 </div>
 <div class="paragraph">
 <p>For example:</p>
@@ -1541,7 +1565,7 @@ The <a href="../config/sections/isis.applib.html#isis.applib.annotation.action.p
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Order {
-    @Action(executionDispatch=Dispatching.ENABLED)    <i class="conum" data-value="1"></i><b>(1)</b>
+    @Action(executionPublishing=Publishing.ENABLED)    <i class="conum" data-value="1"></i><b>(1)</b>
     public Invoice generateInvoice(...) {
         // ...
     }
@@ -1564,11 +1588,11 @@ The <a href="../config/sections/isis.applib.html#isis.applib.annotation.action.p
 <div class="ulist">
 <ul>
 <li>
-<p><a href="DomainObject.html#executionDispatch" class="page">domain objects</a>
+<p><a href="DomainObject.html#entityChangePublishing" class="page">domain objects</a>
 + where it controls whether changed objects are published as events, and for</p>
 </li>
 <li>
-<p><a href="Property.html#executionDispatch" class="page">properties</a></p>
+<p><a href="Property.html#executionPublishing" class="page">properties</a></p>
 <div class="paragraph">
 <p>where it controls whether property edits are published as events.</p>
 </div>
@@ -1851,7 +1875,7 @@ Note though that the results of this caching will only be apparent if the action
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20201120-0418-97309cf4</p>
+            <p>Revision: 2.0.0-M4.20201121-0419-8b14848c</p>
         </div>
     </div>
 </footer>

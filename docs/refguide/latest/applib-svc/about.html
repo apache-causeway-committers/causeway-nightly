@@ -330,7 +330,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="CommandExecutorService.html">CommandExecutorService</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="CommandServiceListener.html">CommandServiceListener</a>
+    <a class="nav-link" href="CommandSubscriber.html">CommandServiceListener</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="ConfigurationMenu.html">ConfigurationMenu</a>
@@ -414,7 +414,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="MetricsService.html">MetricsService</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="PublisherService.html">PublisherService</a>
+    <a class="nav-link" href="ExecutionSubscriber.html">PublisherService</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="QueryResultsCache.html">QueryResultsCache</a>
@@ -1547,7 +1547,7 @@ The <a href="../../../extensions/latest/command-log/about.html" class="page">Com
 </div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="PublisherService.html" class="page">PublisherService</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="ExecutionSubscriber.html" class="page">PublisherService</a></code></p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>Publish any action invocations/property edits and changed objects, typically for interchange with an external system in a different bounded context.</p>
 </div></div></td>
@@ -2128,20 +2128,21 @@ Whether this occurs depends on whether the action/property has been annotated (u
 </div>
 </li>
 <li>
-<p>As each execution progresses, and objects that are modified are "enlisted" into the (internal) <a href="../../../core/latest/runtime-services/ChangedObjectsService.html" class="page"><code>ChangedObjectsServiceInternal</code></a> domain service.
+<p>As each execution progresses, and objects that are modified are "enlisted" into the (internal) <a href="#core:runtime-services:ChangedObjectsService.adoc" class="page unresolved"><code>ChangedObjectsServiceInternal</code></a> domain service.
 Metrics as to which objects are merely loaded into memory are also captured using the <a href="MetricsService.html" class="page"><code>MetricsService</code></a> (not shown on the diagram).</p>
 </li>
 <li>
 <p>At the end of each execution, details of that execution are published through the (internal)
-<a href="#core:runtime-services:PublisherDispatchService.adoc" class="page unresolved"><code>PublisherDispatchService</code></a> domain service.
-This is only done for actions/properties annotated appropriate (with <a href="../applib-ant/Action.html#publishing" class="page"><code>@Action#publishing()</code></a> or <a href="../applib-ant/Property.html#publishing" class="page"><code>@Property#publishing()</code></a>).</p>
+<a href="../../../core/latest/runtime-services/ExecutionPublisher.html" class="page"><code>ExecutionPublisher</code></a> domain service.
+This is only done for actions/properties annotated appropriate (with <a href="../applib-ant/Action.html#exectionPublishing" class="page"><code>@Action#exectionPublishing()</code></a> or <a href="../applib-ant/Property.html#exectionPublishing" class="page"><code>@Property#exectionPublishing()</code></a>).</p>
 <div class="paragraph">
-<p>The internal service delegates in turn to any registered <a href="PublisherService.html" class="page"><code>PublisherService</code></a>s (there may be more than one).</p>
+<p>The internal service delegates in turn to any registered <a href="ExecutionSubscriber.html" class="page"><code>PublisherService</code></a>s (there may be more than one).</p>
 </div>
 </li>
 <li>
-<p>At the end of each transaction, details of all changed objects are published, again through the (internal) <a href="#core:runtime-services:PublisherDispatchService.adoc" class="page unresolved"><code>PublisherServiceInternal</code></a> to any registered <code>PublisherService</code> implementations.
-Only domain objects specified to be published with <a href="../applib-ant/DomainObject.html#publishing" class="page"><code>@DomainObject#publishing()</code></a> are published.<br></p>
+<p>At the end of each transaction, details of all changed objects are published, through the (internal) <a href="../../../core/latest/runtime-services/EntityChangesPublisher.html" class="page"><code>EntityChangesPublisher</code></a> to any registered <code>EntityChangesSubscriber</code> implementations and
+through the (internal) <a href="../../../core/latest/runtime-services/EntityPropertyChangePublisher.html" class="page"><code>EntityPropertyChangePublisher</code></a> to any registered <code>EntityPropertyChangeSubscriber</code> implementations.
+Only domain objects specified to be published with <a href="../applib-ant/DomainObject.html#entityChangePublishing" class="page"><code>@DomainObject#entityChangePublishing()</code></a> are published.<br></p>
 <div class="admonitionblock note">
 <table>
 <tr>
@@ -2158,10 +2159,7 @@ Only domain objects specified to be published with <a href="../applib-ant/Domain
 </div>
 </li>
 <li>
-<p>Also at the end of each transaction, details of all changed properties are passed to any registered <a href="AuditerService.html" class="page"><code>AuditerService</code></a>(s) by way of the (internal) <a href="../../../core/latest/runtime-services/EntityAuditDispatcher.html" class="page"><code>EntityAuditDispatcher</code></a> domain service.</p>
-</li>
-<li>
-<p>At the end of the entire interaction <sup class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup>, details of the top-level <code>Command</code> are sent to each <a href="CommandServiceListener.html" class="page"><code>CommandServiceListener</code></a>.
+<p>At the end of the entire interaction <sup class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup>, details of the top-level <code>Command</code> are sent to each <a href="CommandSubscriber.html" class="page"><code>CommandServiceListener</code></a>.
 This captures whether the command succeeded or failed.</p>
 <div class="paragraph">
 <p>The <a href="../../../extensions/latest/command-log/about.html" class="page">Command Log</a> extension uses this to persist a log of commands, for auditing or to support regression testing with the <a href="../../../extensions/latest/command-replay/about.html" class="page">Command Replay</a> extension.</p>
@@ -2174,7 +2172,7 @@ This captures whether the command succeeded or failed.</p>
 This can be converted back into a <code>CommandDto</code> using the <code>CommandDtoUtils</code> utility class (part of the applib).</p>
 </div>
 <div class="paragraph">
-<p>Similarly, implementations of <a href="PublisherService.html" class="page"><code>PublisherService</code></a> can use the <code>InteractionDtoUtils</code> utility class to obtain a <code>InteractionDto</code> representing the interaction, either just for a single execution or for the entire call-graph.
+<p>Similarly, implementations of <a href="ExecutionSubscriber.html" class="page"><code>PublisherService</code></a> can use the <code>InteractionDtoUtils</code> utility class to obtain a <code>InteractionDto</code> representing the interaction, either just for a single execution or for the entire call-graph.
 This can be converted into XML in a similar fashion.</p>
 </div>
 <div class="paragraph">
@@ -2182,7 +2180,7 @@ This can be converted into XML in a similar fashion.</p>
 This can be converted into XML using the <code>ChangesDtoUtils</code> utility class.</p>
 </div>
 <div class="paragraph">
-<p>One final point: multiple <a href="PublisherService.html" class="page"><code>PublisherService</code></a> implementations are supported because different implementations may have different responsibilities.</p>
+<p>One final point: multiple <a href="ExecutionSubscriber.html" class="page"><code>PublisherService</code></a> implementations are supported because different implementations may have different responsibilities.</p>
 </div>
 <div class="paragraph">
 <p>However, the SPI can also be used for profiling; each execution within the call-graph contains metrics of the number of objects loaded or modified as a result of that execution, and thus could be used for application profiling.
@@ -2213,7 +2211,7 @@ The framework provides a default <code>PublisherServiceLogging</code> implementa
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20201120-0418-97309cf4</p>
+            <p>Revision: 2.0.0-M4.20201121-0419-8b14848c</p>
         </div>
     </div>
 </footer>

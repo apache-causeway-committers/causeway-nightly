@@ -3,15 +3,13 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>ChangedObjectsServiceInternal :: Apache Isis</title>
+    <title>EntityChangeTracker :: Apache Isis</title>
     <meta name="generator" content="Antora 2.3.3">
     <link rel="stylesheet" href="../../../_/css/site.css">
     <link rel="stylesheet" href="../../../_/css/site-custom.css">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Raleway:300,400,500,700,800|Montserrat:300,400,700" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css"/>
 <link rel="home" href="../../.." title="Apache Isis">
-  <link rel="next" href="CommandDtoServiceInternal.html" title="CommandDtoServiceInternal">
-  <link rel="prev" href="AuthenticationSessionProvider.html" title="AuthenticationSessionProvider">
   </head>
   <body class="article">
 <header class="header">
@@ -143,12 +141,12 @@
   <aside class="nav">
     <div class="panels">
 <div class="nav-panel-pagination">
-  <a class="page-previous" rel="prev" href="AuthenticationSessionProvider.html" title="AuthenticationSessionProvider"><span></span></a>
-  <a class="page-next" rel="next"
-     href="CommandDtoServiceInternal.html" title="CommandDtoServiceInternal"><span></span></a>
+  <a class="page-previous disabled" rel="prev" href="" title=""><span></span></a>
+  <a class="page-next disabled" rel="next"
+     href="" title=""><span></span></a>
 <!--
 page.parent doesn't seem to be set...
-  <a class="page-parent" rel="prev" href="about.html" title="AuthenticationSessionProvider"><span></span></a>
+  <a class="page-parent disabled" rel="prev" href="" title=""><span></span></a>
 -->
 </div>
 <div class="nav-panel-menu is-active" data-panel="menu">
@@ -191,8 +189,8 @@ page.parent doesn't seem to be set...
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="AuthenticationSessionProvider.html">AuthenticationSessionProvider</a>
   </li>
-  <li class="nav-item is-current-page" data-depth="2">
-    <a class="nav-link" href="ChangedObjectsService.html">ChangedObjectsService</a>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#core:runtime-services:ChangedObjectsService.adoc">ChangedObjectsService</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="CommandDtoServiceInternal.html">CommandDtoServiceInternal</a>
@@ -409,15 +407,14 @@ page.parent doesn't seem to be set...
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="../about.html">Design Docs</a></li>
-    <li><a href="about.html">Runtime Services</a></li>
-    <li><a href="ChangedObjectsService.html">ChangedObjectsService</a></li>
+    <li><a href="EntityChangeTracker.html"><code>EntityChangeTracker</code></a></li>
   </ul>
 </nav>
-  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/master/core/runtimeservices/src/main/adoc/modules/runtime-services/pages/ChangedObjectsService.adoc">Edit</a></div>
+  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/master/core/runtimeservices/src/main/adoc/modules/runtime-services/pages/EntityChangeTracker.adoc">Edit</a></div>
 </div>
 <article class="doc">
     <a name="section-top"></a>
-<h1 class="page"><code>ChangedObjectsServiceInternal</code></h1>
+<h1 class="page"><code>EntityChangeTracker</code></h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="admonitionblock warning">
@@ -433,7 +430,7 @@ TODO: this content has not yet been reviewed/updated for v2.0
 </table>
 </div>
 <div class="paragraph">
-<p>The <code>ChangedObjectsServiceInternal</code> class is an (internal) request-scoped domain service that is responsible for collecting the details of all changes to domain objects within an interaction.
+<p>The <code>EntityChangeTracker</code> class is an (internal) request-scoped domain service that is responsible for collecting the details of all changes to domain objects within an interaction.
 This is then used by various other  (internal) domain services, notably <a href="#core:runtime-services:AuditerDispatchService.adoc" class="page unresolved"><code>AuditerDispatchService</code></a> and <a href="#core:runtime-services:PublisherDispatchService.adoc" class="page unresolved"><code>PublisherDispatchService</code></a>.</p>
 </div>
 </div>
@@ -472,7 +469,7 @@ public class ChangedObjectsService {
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Used by the framework to determine whether to send the completed <code>Command</code> to <a href="../../../refguide/latest/applib-svc/CommandServiceListener.html" class="page"><code>CommandServiceListener</code></a>, for example so that it can be persisted).</td>
+<td>Used by the framework to determine whether to send the completed <code>Command</code> to <a href="../../../refguide/latest/applib-svc/CommandSubscriber.html" class="page"><code>CommandServiceListener</code></a>, for example so that it can be persisted).</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
@@ -504,7 +501,7 @@ properties are captured when the transaction commits.</p>
 <h2 id="registering-the-service"><a class="anchor" href="#registering-the-service"></a>Registering the Service</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Apache Isis' default implementation of <code>ChangedObjectsServiceInternal</code> class is automatically registered (it is annotated with <code>@DomainService</code>) so no further configuration is required.</p>
+<p>Apache Isis' default implementation of <code>EntityChangeTracker</code> class is automatically registered (it is annotated with <code>@DomainService</code>) so no further configuration is required.</p>
 </div>
 </div>
 </div>
@@ -533,7 +530,7 @@ properties are captured when the transaction commits.</p>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20201120-0418-97309cf4</p>
+            <p>Revision: 2.0.0-M4.20201121-0419-8b14848c</p>
         </div>
     </div>
 </footer>

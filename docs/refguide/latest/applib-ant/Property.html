@@ -330,7 +330,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../applib-svc/CommandExecutorService.html">CommandExecutorService</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../applib-svc/CommandServiceListener.html">CommandServiceListener</a>
+    <a class="nav-link" href="../applib-svc/CommandSubscriber.html">CommandServiceListener</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../applib-svc/ConfigurationMenu.html">ConfigurationMenu</a>
@@ -414,7 +414,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../applib-svc/MetricsService.html">MetricsService</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../applib-svc/PublisherService.html">PublisherService</a>
+    <a class="nav-link" href="../applib-svc/ExecutionSubscriber.html">PublisherService</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../applib-svc/QueryResultsCache.html">QueryResultsCache</a>
@@ -784,8 +784,8 @@ TODO: v2 - command annotations are out-of-date
 @Mixin(method = "prop")
 public @interface Property {
 
-    Dispatching commandDispatch()                               <i class="conum" data-value="1"></i><b>(1)</b>
-            default Dispatching.NOT_SPECIFIED;
+    Publishing commandPublishing()                               <i class="conum" data-value="1"></i><b>(1)</b>
+            default Publishing.NOT_SPECIFIED;
 
     Class&lt;? extends CommandDtoProcessor&gt; commandDtoProcessor()  <i class="conum" data-value="2"></i><b>(2)</b>
             default CommandDtoProcessor.class;
@@ -799,8 +799,8 @@ public @interface Property {
     String editingDisabledReason()                              <i class="conum" data-value="5"></i><b>(5)</b>
             default "";
 
-    Dispatching executionDispatch()                             <i class="conum" data-value="6"></i><b>(6)</b>
-            default Dispatching.NOT_SPECIFIED;
+    Publishing executionPublishing()                             <i class="conum" data-value="6"></i><b>(6)</b>
+            default Publishing.NOT_SPECIFIED;
 
     String fileAccept()                                         <i class="conum" data-value="7"></i><b>(7)</b>
             default "";
@@ -839,16 +839,16 @@ public @interface Property {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><a href="#commandDispatch"><code>commandDispatch()</code></a>
+<td><code>commandDtoProcessor()</code>
 <div class="paragraph">
-<p>Whether the editing of a property should be dispatched to registered <a href="#refguide:applib-svc:ExecutionListener.adoc" class="page unresolved"><code>CommandListener</code></a>s as a <code>Command</code> object, that captures the details of this edit. Typically so it can be logged using the <a href="../../../extensions/latest/command-log/about.html" class="page">Command Log</a> extension (for auditing or for regression testing using <a href="../../../extensions/latest/command-replay/about.html" class="page">Command Replay</a>).</p>
+<p>If the <a href="../../../extensions/latest/command-replay/about.html" class="page">Command Replay</a> extension is being used (for regression testing), provides a mechanism to process the <code>CommandDto</code> before being replicated from primary to secondary system</p>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><code>commandDtoProcessor()</code>
+<td><a href="#commandPublishing"><code>commandPublishing()</code></a>
 <div class="paragraph">
-<p>If the <a href="../../../extensions/latest/command-replay/about.html" class="page">Command Replay</a> extension is being used (for regression testing), provides a mechanism to process the <code>CommandDto</code> before being replicated from primary to secondary system</p>
+<p>Whether the editing of a property should be published to registered <a href="../applib-svc/CommandSubscriber.html" class="page"><code>CommandSubscriber</code></a>s as a <code>Command</code> object, that captures the details of this edit. Typically so it can be logged using the <a href="../../../extensions/latest/command-log/about.html" class="page">Command Log</a> extension (for auditing or for regression testing using <a href="../../../extensions/latest/command-replay/about.html" class="page">Command Replay</a>).</p>
 </div></td>
 </tr>
 <tr>
@@ -874,9 +874,9 @@ public @interface Property {
 </tr>
 <tr>
 <td><i class="conum" data-value="6"></i><b>6</b></td>
-<td><a href="#executionDispatch"><code>executionDispatch()</code></a>
+<td><a href="#executionPublishing"><code>executionPublishing()</code></a>
 <div class="paragraph">
-<p>Whether the editing of a property should be dispatched to registered <a href="#refguide:applib-svc:ExecutionListener.adoc" class="page unresolved"><code>ExecutionListener</code></a>s as an <code>Execution</code> object, that captures the details of this edit.</p>
+<p>Whether the editing of a property should be published to registered <a href="../applib-svc/ExecutionSubscriber.html" class="page"><code>ExecutionSubscriber</code></a>s as an <code>Execution</code> object, that captures the details of this edit.</p>
 </div></td>
 </tr>
 <tr>
@@ -1035,10 +1035,22 @@ so that boilerplate-busting tools such as <a href="https://projectlombok.org/">P
 </div>
 </div>
 <div class="sect1">
-<h2 id="commandDispatch"><a class="anchor" href="#commandDispatch"></a>Command Persistence and Processing</h2>
+<h2 id="commandPublishing"><a class="anchor" href="#commandPublishing"></a>Command Persistence and Processing</h2>
 <div class="sectionbody">
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-caution" title="Caution"></i>
+</td>
+<td class="content">
+TODO: v2 - publishing/auditing got a complete overhaul
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
-<p>Every property edit (and <a href="Action.html#command" class="page">action invocation</a> for tht matter) is normally reified into a concrete <code>Command</code> object, basically a wrapper around the XML invocation <a href="../schema/cmd.html" class="page">Command</a> schema that also captures some timing metrics about the execution as well as the outcome.</p>
+<p>Every property edit (and <a href="Action.html#commandPublishing" class="page">action invocation</a> for that matter) is normally reified into a concrete <code>Command</code> object, basically a wrapper around the XML invocation <a href="../schema/cmd.html" class="page">Command</a> schema that also captures some timing metrics about the execution as well as the outcome.</p>
 </div>
 <div class="paragraph">
 <p>The main uses cases are:</p>
@@ -1049,7 +1061,7 @@ so that boilerplate-busting tools such as <a href="https://projectlombok.org/">P
 <p>as a means to allow asynchronous child commands to be executed, using the <a href="../applib-svc/WrapperFactory.html" class="page"><code>WrapperFactory</code></a> service;</p>
 </li>
 <li>
-<p>as a means to audit (persist) commands, by implementing the <a href="../applib-svc/CommandServiceListener.html" class="page"><code>CommandServiceListener</code></a> SPI.</p>
+<p>as a means to audit (persist) commands, by implementing the <a href="../applib-svc/CommandSubscriber.html" class="page"><code>CommandServiceListener</code></a> SPI.</p>
 <div class="paragraph">
 <p>The <a href="../../../extensions/latest/command-log/about.html" class="page">Command Log</a> extension <em>does</em> provide such an implementation.</p>
 </div>
@@ -1060,7 +1072,7 @@ so that boilerplate-busting tools such as <a href="https://projectlombok.org/">P
 <i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-Another option to achieve this is to use the <a href="../applib-svc/PublisherService.html" class="page"><code>PublisherService</code></a> SPI.
+Another option to achieve this is to use the <a href="../applib-svc/ExecutionSubscriber.html" class="page"><code>PublisherService</code></a> SPI.
 </td>
 </tr>
 </table>
@@ -1075,9 +1087,9 @@ Another option to achieve this is to use the <a href="../applib-svc/PublisherSer
 </ul>
 </div>
 <div class="sect2">
-<h3 id="commanddispatch"><a class="anchor" href="#commanddispatch"></a><code>commandDispatch</code></h3>
+<h3 id="commandpublishing"><a class="anchor" href="#commandpublishing"></a><code>commandPublishing</code></h3>
 <div class="paragraph">
-<p>The <code>commandDispatch()</code> attribute can be used to explicitly enable or disable command reification for the property edit.</p>
+<p>The <code>commandPublishing()</code> attribute can be used to explicitly enable or disable command publishing for the property edit.</p>
 </div>
 </div>
 <div class="sect2">
@@ -1152,7 +1164,7 @@ The <code>CommandDtoProcessor.Null</code> class provides a convenience implement
 </td>
 <td class="content">
 <div class="paragraph">
-<p>If <code>commandDtoProcessor()</code> is specified, then <code>commandDispatch()</code> is assumed to be ENABLED.</p>
+<p>If <code>commandDtoProcessor()</code> is specified, then <code>commandPublishing()</code> is assumed to be ENABLED.</p>
 </div>
 </td>
 </tr>
@@ -1485,14 +1497,26 @@ public class Customer {
 </div>
 </div>
 <div class="sect1">
-<h2 id="executionDispatch"><a class="anchor" href="#executionDispatch"></a><code>executionDispatch()</code></h2>
+<h2 id="executionPublishing"><a class="anchor" href="#executionPublishing"></a><code>executionPublishing()</code></h2>
 <div class="sectionbody">
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-caution" title="Caution"></i>
+</td>
+<td class="content">
+TODO: v2 - publishing/auditing got a complete overhaul
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
-<p>The <code>executionDispatch</code> attribute determines whether and how a property edit is published via the registered implementation of <a href="../applib-svc/PublisherService.html" class="page"><code>PublisherService</code></a>.</p>
+<p>The <code>executionPublishing</code> attribute determines whether and how a property edit is published via the registered implementation of <a href="../applib-svc/ExecutionSubscriber.html" class="page"><code>ExecutionSubscriber</code></a>.</p>
 </div>
 <div class="paragraph">
 <p>A common use case is to notify external "downstream" systems of changes in the state of the Apache Isis application.
-The default value for the attribute is <code>AS_CONFIGURED</code>, meaning that the <a href="../config/sections/isis.applib.html#isis.applib.annotation.property.publishing" class="page"><code>isis.applib.annotation.property.publishing</code></a> configuration property is used to determine the whether the property edits are published:</p>
+The default value for the attribute is <code>AS_CONFIGURED</code>, meaning that the <a href="../config/sections/isis.applib.html#isis.applib.annotation.property.executionPublishing" class="page"><code>isis.applib.annotation.property.executionPublishing</code></a> configuration property is used to determine the whether the property edits are published:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -1514,7 +1538,7 @@ The default value for the attribute is <code>AS_CONFIGURED</code>, meaning that 
 <p>If there is no configuration property in <code>application.properties</code> then publishing is automatically enabled.</p>
 </div>
 <div class="paragraph">
-<p>This default can be overridden on an property-by-property basis; if <code>publishing()</code> is set to <code>ENABLED</code> then the property edit is published irrespective of the configured value; if set to <code>DISABLED</code> then the property edit is <em>not</em> published, again irrespective of the configured value.</p>
+<p>This default can be overridden on an property-by-property basis; if <code>executionPublishing()</code> is set to <code>ENABLED</code> then the property edit is published irrespective of the configured value; if set to <code>DISABLED</code> then the property edit is <em>not</em> published, again irrespective of the configured value.</p>
 </div>
 <div class="paragraph">
 <p>For example:</p>
@@ -1526,7 +1550,7 @@ import lombok.Setter;
 
 public class Order {
 
-    @Property(executionDispatch=Dispatch.ENABLED)    <i class="conum" data-value="1"></i><b>(1)</b>
+    @Property(executionPublishing=Publishing.ENABLED)    <i class="conum" data-value="1"></i><b>(1)</b>
     @Getter @Setter
     private int quantity;
 
@@ -2241,7 +2265,7 @@ public class Customer {
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20201120-0418-97309cf4</p>
+            <p>Revision: 2.0.0-M4.20201121-0419-8b14848c</p>
         </div>
     </div>
 </footer>

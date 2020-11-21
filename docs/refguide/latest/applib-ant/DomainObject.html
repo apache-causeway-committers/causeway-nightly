@@ -330,7 +330,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../applib-svc/CommandExecutorService.html">CommandExecutorService</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../applib-svc/CommandServiceListener.html">CommandServiceListener</a>
+    <a class="nav-link" href="../applib-svc/CommandSubscriber.html">CommandServiceListener</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../applib-svc/ConfigurationMenu.html">ConfigurationMenu</a>
@@ -414,7 +414,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../applib-svc/MetricsService.html">MetricsService</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../applib-svc/PublisherService.html">PublisherService</a>
+    <a class="nav-link" href="../applib-svc/ExecutionSubscriber.html">PublisherService</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../applib-svc/QueryResultsCache.html">QueryResultsCache</a>
@@ -753,6 +753,18 @@ page.parent doesn't seem to be set...
 <h1 class="page"><code>@DomainObject</code></h1>
 <div id="preamble">
 <div class="sectionbody">
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-caution" title="Caution"></i>
+</td>
+<td class="content">
+TODO: v2 - publishing/auditing got a complete overhaul
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
 <p>The <code>@DomainObject</code> annotation applies to domain objects, collecting together all domain semantics within a single annotation.</p>
 </div>
@@ -772,23 +784,23 @@ page.parent doesn't seem to be set...
 @Component @Scope("prototype")
 public @interface DomainObject {
 
-    Auditing auditing()                             <i class="conum" data-value="1"></i><b>(1)</b>
-            default Auditing.NOT_SPECIFIED;
-
-    Class&lt;?&gt; autoCompleteRepository()               <i class="conum" data-value="2"></i><b>(2)</b>
+    Class&lt;?&gt; autoCompleteRepository()               <i class="conum" data-value="1"></i><b>(1)</b>
             default Object.class;
 
-    String autoCompleteAction()                     <i class="conum" data-value="3"></i><b>(3)</b>
+    String autoCompleteAction()                     <i class="conum" data-value="2"></i><b>(2)</b>
             default "autoComplete";
 
-    Bounding bounding()                             <i class="conum" data-value="4"></i><b>(4)</b>
+    Bounding bounding()                             <i class="conum" data-value="3"></i><b>(3)</b>
             default Bounding.NOT_SPECIFIED;
 
-    Editing editing()                               <i class="conum" data-value="5"></i><b>(5)</b>
+    Editing editing()                               <i class="conum" data-value="4"></i><b>(4)</b>
             default Editing.NOT_SPECIFIED;
 
-    String editingDisabledReason()                  <i class="conum" data-value="6"></i><b>(6)</b>
+    String editingDisabledReason()                  <i class="conum" data-value="5"></i><b>(5)</b>
             default "Disabled";
+
+    Publishing entityChangePublishing()             <i class="conum" data-value="6"></i><b>(6)</b>
+            default Publishing.NOT_SPECIFIED;
 
     String mixinMethod()                            <i class="conum" data-value="7"></i><b>(7)</b>
             default Mixin.DEFAULT_METHOD_NAME;
@@ -807,46 +819,46 @@ public @interface DomainObject {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><a href="#auditing"><code>auditing()</code></a>
-<div class="paragraph">
-<p>Indicates whether each of the changed properties of an object should be submitted to the registered
-<a href="../applib-svc/AuditerService.html" class="page"><code>AuditerService</code></a>(s) and
-whether entity changes, captured as <code>ChangingEntities</code> should be dispatched to <a href="#refguide:applib-svc:ChangingEntitiesListener.adoc" class="page unresolved"><code>ChangingEntitiesListener</code></a>(s). (Does only apply to entity objects.)</p>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
 <td><a href="#autoCompleteRepository"><code>autoCompleteRepository()</code></a>
 <div class="paragraph">
 <p>Nominate a method on a domain service to be used for looking up instances of the domain object</p>
 </div></td>
 </tr>
 <tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
 <td><a href="#autoCompleteAction"><code>autoCompleteAction()</code></a>
 <div class="paragraph">
 <p>Override the method name to use on the auto-complete repository</p>
 </div></td>
 </tr>
 <tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
 <td><a href="#bounding"><code>bounding()</code></a>
 <div class="paragraph">
 <p>Whether the number of instances of this domain class is relatively small (a "bounded" set), such that instances could be selected from a drop-down list box or similar.</p>
 </div></td>
 </tr>
 <tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
 <td><a href="#editing"><code>editing()</code></a>
 <div class="paragraph">
 <p>Whether the object&#8217;s properties and collections can be edited or not (ie whether the instance should be considered to be immutable)</p>
 </div></td>
 </tr>
 <tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
 <td><code>editingDisabledReason()</code>
 <div class="paragraph">
 <p>The default reason why the object&#8217;s properties and collections cannot be edited.</p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td><a href="#entityChangePublishing"><code>entityChangePublishing()</code></a>
+<div class="paragraph">
+<p>Indicates whether each of the changed properties of an object should be submitted to the registered
+<a href="../applib-svc/AuditerService.html" class="page"><code>AuditerService</code></a>(s) and
+whether entity changes, captured as <code>ChangingEntities</code> should be published to <a href="#refguide:applib-svc:EntityChangesSubscriber.adoc" class="page unresolved"><code>EntityChangesSubscriber</code></a>(s). (Does only apply to entity objects.)</p>
 </div></td>
 </tr>
 <tr>
@@ -1056,65 +1068,13 @@ public class Customer {
 </tr>
 </table>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="auditing"><a class="anchor" href="#auditing"></a><code>auditing()</code></h2>
-<div class="sectionbody">
 <div class="paragraph">
-<p>The <code>auditing</code> attribute indicates that if the object is modified, then each of its changed properties should be submitted to the registered <a href="../applib-svc/AuditerService.html" class="page"><code>AuditerService</code></a>(s).</p>
-</div>
-<div class="paragraph">
-<p>The default value for the attribute is <code>AS_CONFIGURED</code>, meaning that the <a href="../config/sections/isis.applib.html#isis.applib.annotation.domain-object.auditing" class="page"><code>isis.applib.annotation.domain-object.auditing</code></a> configuration property is used to determine the whether the action is audited:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>all</code><br></p>
-<div class="paragraph">
-<p>all changed properties of objects are audited</p>
-</div>
-</li>
-<li>
-<p><code>none</code><br></p>
-<div class="paragraph">
-<p>no changed properties of objects are audited</p>
-</div>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>If there is no configuration property in <code>application.properties</code> then auditing is automatically enabled for domain objects.</p>
-</div>
-<div class="paragraph">
-<p>This default can be overridden on an object-by-object basis; if <code>auditing()</code> is set to <code>ENABLED</code> then changed properties of instances of the domain class are audited irrespective of the configured value; if set to <code>DISABLED</code> then the changed properties of instances are <em>not</em> audited, again irrespective of the configured value.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(
-    auditing=Auditing.ENABLED  <i class="conum" data-value="1"></i><b>(1)</b>
-)
-public class Customer {
-    ...
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>because set to enabled, will be audited irrespective of the configured value.</td>
-</tr>
-</table>
+<p>Unresolved include directive in modules/applib-ant/pages/DomainObject.adoc - include::DomainObject/auditing.adoc[]
+:leveloffset: +1</p>
 </div>
 </div>
 </div>
-<div class="sect1">
-<h2 id="autoCompleteRepository"><a class="anchor" href="#autoCompleteRepository"></a><code>autoCompleteRepository()</code></h2>
-<div class="sectionbody">
+<h1 id="autoCompleteRepository" class="sect0"><a class="anchor" href="#autoCompleteRepository"></a><code>autoCompleteRepository()</code></h1>
 <div class="paragraph">
 <p>The <code>autoCompleteRepository</code> attribute nominates a single method on a domain service as the fallback means for looking up instances of the domain object using a simple string.</p>
 </div>
@@ -1169,8 +1129,9 @@ public class CustomerRepository {
 </tr>
 </table>
 </div>
-<div class="sect2">
-<h3 id="autoCompleteAction"><a class="anchor" href="#autoCompleteAction"></a><code>autoCompleteAction()</code></h3>
+<div class="sect1">
+<h2 id="autoCompleteAction"><a class="anchor" href="#autoCompleteAction"></a><code>autoCompleteAction()</code></h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>As noted above, by default the method invoked on the repository is assumed to be called "autoComplete".
 The optional <code>autoCompleteAction</code> attribute allows the method on the repository to be overridden.</p>
@@ -1228,7 +1189,6 @@ public class Customers {
         String name);
     ...
 }</code></pre>
-</div>
 </div>
 </div>
 </div>
@@ -2498,7 +2458,7 @@ The framework provides <code>ObjectUpdatedEvent.Doop</code> as such a subclass, 
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20201120-0418-97309cf4</p>
+            <p>Revision: 2.0.0-M4.20201121-0419-8b14848c</p>
         </div>
     </div>
 </footer>

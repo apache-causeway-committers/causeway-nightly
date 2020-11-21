@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>auditing() :: Apache Isis</title>
+    <title>entityChangePublishing() :: Apache Isis</title>
     <meta name="generator" content="Antora 2.3.3">
     <link rel="stylesheet" href="../../../../_/css/site.css">
     <link rel="stylesheet" href="../../../../_/css/site-custom.css">
@@ -328,7 +328,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../../applib-svc/CommandExecutorService.html">CommandExecutorService</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../../applib-svc/CommandServiceListener.html">CommandServiceListener</a>
+    <a class="nav-link" href="../../applib-svc/CommandSubscriber.html">CommandServiceListener</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../../applib-svc/ConfigurationMenu.html">ConfigurationMenu</a>
@@ -412,7 +412,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../../applib-svc/MetricsService.html">MetricsService</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../../applib-svc/PublisherService.html">PublisherService</a>
+    <a class="nav-link" href="../../applib-svc/ExecutionSubscriber.html">PublisherService</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../../applib-svc/QueryResultsCache.html">QueryResultsCache</a>
@@ -740,19 +740,31 @@ page.parent doesn't seem to be set...
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="../../about.html">Reference Guide</a></li>
-    <li><a href="auditing.html"><code>auditing()</code></a></li>
+    <li><a href="entityChangePublishing.html"><code>entityChangePublishing()</code></a></li>
   </ul>
 </nav>
-  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/master/api/applib/src/main/adoc/modules/applib-ant/pages/DomainObject/auditing.adoc">Edit</a></div>
+  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/master/api/applib/src/main/adoc/modules/applib-ant/pages/DomainObject/entityChangePublishing.adoc">Edit</a></div>
 </div>
 <article class="doc">
     <a name="section-top"></a>
-<h1 class="page"><code>auditing()</code></h1>
-<div class="paragraph">
-<p>The <code>auditing</code> attribute indicates that if the object is modified, then each of its changed properties should be submitted to the registered <a href="../../applib-svc/AuditerService.html" class="page"><code>AuditerService</code></a>(s).</p>
+<h1 class="page"><code>entityChangePublishing()</code></h1>
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-caution" title="Caution"></i>
+</td>
+<td class="content">
+TODO: v2 - publishing/auditing got a complete overhaul
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
-<p>The default value for the attribute is <code>AS_CONFIGURED</code>, meaning that the <a href="../../config/sections/isis.applib.html#isis.applib.annotation.domain-object.auditing" class="page"><code>isis.applib.annotation.domain-object.auditing</code></a> configuration property is used to determine the whether the action is audited:</p>
+<p>The <code>entityChangePublishing</code> attribute indicates that if the object is modified, then each of its changed properties should be submitted to the registered <a href="#refguide:applib-svc:EntityPropertyChangeSubscriber.adoc" class="page unresolved"><code>EntityPropertyChangeSubscriber</code></a>(s).</p>
+</div>
+<div class="paragraph">
+<p>The default value for the attribute is <code>AS_CONFIGURED</code>, meaning that the <a href="../../config/sections/isis.applib.html#isis.applib.annotation.domain-object.propertyChangePublishing" class="page"><code>isis.applib.annotation.domain-object.propertyChangePublishing</code></a> configuration property is used to determine the whether the action is audited:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -774,7 +786,7 @@ page.parent doesn't seem to be set...
 <p>If there is no configuration property in <code>application.properties</code> then auditing is automatically enabled for domain objects.</p>
 </div>
 <div class="paragraph">
-<p>This default can be overridden on an object-by-object basis; if <code>auditing()</code> is set to <code>ENABLED</code> then changed properties of instances of the domain class are audited irrespective of the configured value; if set to <code>DISABLED</code> then the changed properties of instances are <em>not</em> audited, again irrespective of the configured value.</p>
+<p>This default can be overridden on an object-by-object basis; if <code>entityChangePublishing()</code> is set to <code>ENABLED</code> then changed properties of instances of the domain class are audited irrespective of the configured value; if set to <code>DISABLED</code> then the changed properties of instances are <em>not</em> audited, again irrespective of the configured value.</p>
 </div>
 <div class="paragraph">
 <p>For example:</p>
@@ -782,7 +794,7 @@ page.parent doesn't seem to be set...
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(
-    auditing=Auditing.ENABLED  <i class="conum" data-value="1"></i><b>(1)</b>
+    entityChangePublishing=Publishing.ENABLED  <i class="conum" data-value="1"></i><b>(1)</b>
 )
 public class Customer {
     ...
@@ -814,7 +826,7 @@ public class Customer {
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20201120-0418-97309cf4</p>
+            <p>Revision: 2.0.0-M4.20201121-0419-8b14848c</p>
         </div>
     </div>
 </footer>

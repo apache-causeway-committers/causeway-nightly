@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>executionDispatch() :: Apache Isis</title>
+    <title>Command Persistence and Processing :: Apache Isis</title>
     <meta name="generator" content="Antora 2.3.3">
     <link rel="stylesheet" href="../../../../_/css/site.css">
     <link rel="stylesheet" href="../../../../_/css/site-custom.css">
@@ -328,7 +328,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../../applib-svc/CommandExecutorService.html">CommandExecutorService</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../../applib-svc/CommandServiceListener.html">CommandServiceListener</a>
+    <a class="nav-link" href="../../applib-svc/CommandSubscriber.html">CommandServiceListener</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../../applib-svc/ConfigurationMenu.html">ConfigurationMenu</a>
@@ -412,7 +412,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../../applib-svc/MetricsService.html">MetricsService</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../../applib-svc/PublisherService.html">PublisherService</a>
+    <a class="nav-link" href="../../applib-svc/ExecutionSubscriber.html">PublisherService</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../../applib-svc/QueryResultsCache.html">QueryResultsCache</a>
@@ -740,60 +740,87 @@ page.parent doesn't seem to be set...
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="../../about.html">Reference Guide</a></li>
-    <li><a href="executionDispatch.html"><code>executionDispatch()</code></a></li>
+    <li><a href="commandPublishing.html">Command Persistence and Processing</a></li>
   </ul>
 </nav>
-  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/master/api/applib/src/main/adoc/modules/applib-ant/pages/Property/executionDispatch.adoc">Edit</a></div>
+  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/master/api/applib/src/main/adoc/modules/applib-ant/pages/Property/commandPublishing.adoc">Edit</a></div>
 </div>
 <article class="doc">
     <a name="section-top"></a>
-<h1 class="page"><code>executionDispatch()</code></h1>
+<h1 class="page">Command Persistence and Processing</h1>
 <div id="preamble">
 <div class="sectionbody">
-<div class="paragraph">
-<p>The <code>executionDispatch</code> attribute determines whether and how a property edit is published via the registered implementation of <a href="../../applib-svc/PublisherService.html" class="page"><code>PublisherService</code></a>.</p>
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-caution" title="Caution"></i>
+</td>
+<td class="content">
+TODO: v2 - publishing/auditing got a complete overhaul
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
-<p>A common use case is to notify external "downstream" systems of changes in the state of the Apache Isis application.
-The default value for the attribute is <code>AS_CONFIGURED</code>, meaning that the <a href="../../config/sections/isis.applib.html#isis.applib.annotation.property.publishing" class="page"><code>isis.applib.annotation.property.publishing</code></a> configuration property is used to determine the whether the property edits are published:</p>
+<p>Every property edit (and <a href="../Action.html#commandPublishing" class="page">action invocation</a> for that matter) is normally reified into a concrete <code>Command</code> object, basically a wrapper around the XML invocation <a href="../../schema/cmd.html" class="page">Command</a> schema that also captures some timing metrics about the execution as well as the outcome.</p>
+</div>
+<div class="paragraph">
+<p>The main uses cases are:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p><code>all</code></p>
+<p>as a means to allow asynchronous child commands to be executed, using the <a href="../../applib-svc/WrapperFactory.html" class="page"><code>WrapperFactory</code></a> service;</p>
+</li>
+<li>
+<p>as a means to audit (persist) commands, by implementing the <a href="../../applib-svc/CommandSubscriber.html" class="page"><code>CommandServiceListener</code></a> SPI.</p>
 <div class="paragraph">
-<p>all property edits are published</p>
+<p>The <a href="../../../../extensions/latest/command-log/about.html" class="page">Command Log</a> extension <em>does</em> provide such an implementation.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+Another option to achieve this is to use the <a href="../../applib-svc/ExecutionSubscriber.html" class="page"><code>PublisherService</code></a> SPI.
+</td>
+</tr>
+</table>
 </div>
 </li>
 <li>
-<p><code>none</code></p>
+<p>to replay commands onto a secondary system, for regression testing.</p>
 <div class="paragraph">
-<p>no property edits are published</p>
+<p>This is implemented by the <a href="../../../../extensions/latest/command-replay/about.html" class="page">Command Replay</a> extension, working in conjunction with the <a href="../../../../extensions/latest/command-log/about.html" class="page">Command Log</a> extension.</p>
 </div>
 </li>
 </ul>
 </div>
-<div class="paragraph">
-<p>If there is no configuration property in <code>application.properties</code> then publishing is automatically enabled.</p>
 </div>
-<div class="paragraph">
-<p>This default can be overridden on an property-by-property basis; if <code>publishing()</code> is set to <code>ENABLED</code> then the property edit is published irrespective of the configured value; if set to <code>DISABLED</code> then the property edit is <em>not</em> published, again irrespective of the configured value.</p>
 </div>
+<div class="sect1">
+<h2 id="commandpublishing"><a class="anchor" href="#commandpublishing"></a><code>commandPublishing</code></h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>For example:</p>
+<p>The <code>commandPublishing()</code> attribute can be used to explicitly enable or disable command publishing for the property edit.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="commanddtoprocessor"><a class="anchor" href="#commanddtoprocessor"></a><code>commandDtoProcessor()</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>commandDtoProcessor</code> attribute allows an implementation of <code>CommandDtoProcessor</code> to be specified.
+This interface has the following API:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
-import lombok.Setter;
-
-public class Order {
-
-    @Property(executionDispatch=Dispatch.ENABLED)    <i class="conum" data-value="1"></i><b>(1)</b>
-    @Getter @Setter
-    private int quantity;
-
-    // ...
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public interface CommandDtoProcessor {
+    CommandDto process(             <i class="conum" data-value="1"></i><b>(1)</b>
+            CommandDto dto);        <i class="conum" data-value="2"></i><b>(2)</b>
 }</code></pre>
 </div>
 </div>
@@ -801,33 +828,68 @@ public class Order {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>because set to enabled, will be published irrespective of the configured value.</td>
+<td>The returned <code>CommandDto</code>.
+This will typically be the <code>CommandDto</code> passed in, but may be supplemented in some way.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The <code>CommandDto</code> obtained already from the <code>Command</code>.</td>
 </tr>
 </table>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-<div class="sectionbody">
 <div class="paragraph">
-<p>This attribute can also be specified for:</p>
+<p>This interface is used by the framework-provided implementations of <code>ContentMappingService</code> for the REST API, allowing <code>Command</code>s implementations that also implement <code>CommandWithDto</code> to be further customised as they are serialized out.
+The primary use case for this capability is in support of master/slave replication.</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p><a href="../DomainObject.html#publishing" class="page">domain objects</a></p>
+<p>on the master, <code>Command</code>s are serialized to XML.
+This includes the identity of the target object and the intended new value of the property.</p>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
 <div class="paragraph">
-<p>where it controls whether changed objects are published as events, and for</p>
+<p>However, any <code>Blob</code>s and <code>Clob</code>s are deliberately excluded from this XML (they are instead stored as references).
+This is to prevent the storage requirements for <code>Command</code> from becoming excessive.
+A <code>CommandDtoProcessor</code> can be provided to re-attach blob information if required.</p>
+</div>
+</td>
+</tr>
+</table>
 </div>
 </li>
 <li>
-<p><a href="../Action.html#publishing" class="page">actions</a></p>
-<div class="paragraph">
-<p>where it controls whether action invocations are published as events.</p>
-</div>
+<p>replaying <code>Command</code>s requires this missing parameter information to be reinstated.
+The <code>CommandDtoProcessor</code> therefore offers a hook to dynamically re-attach the missing <code>Blob</code> or <code>Clob</code> argument.</p>
 </li>
 </ul>
+</div>
+<div class="paragraph">
+<p>As a special case, returning <code>null</code> means that the command&#8217;s DTO is effectively excluded when retrieving the list of commands.
+If replicating from master to slave, this effectively allows certain commands to be ignored.
+The <code>CommandDtoProcessor.Null</code> class provides a convenience implementation for this requirement.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>If <code>commandDtoProcessor()</code> is specified, then <code>commandPublishing()</code> is assumed to be ENABLED.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>For an example application, see <a href="../Action.html#command" class="page"><code>Action#command()</code></a>.</p>
 </div>
 </div>
 </div>
@@ -848,7 +910,7 @@ public class Order {
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20201120-0418-97309cf4</p>
+            <p>Revision: 2.0.0-M4.20201121-0419-8b14848c</p>
         </div>
     </div>
 </footer>

@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>PublisherService :: Apache Isis</title>
+    <title>ExecutionSubscriber :: Apache Isis</title>
     <meta name="generator" content="Antora 2.3.3">
     <link rel="stylesheet" href="../../../_/css/site.css">
     <link rel="stylesheet" href="../../../_/css/site-custom.css">
@@ -330,7 +330,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="CommandExecutorService.html">CommandExecutorService</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="CommandServiceListener.html">CommandServiceListener</a>
+    <a class="nav-link" href="CommandSubscriber.html">CommandServiceListener</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="ConfigurationMenu.html">ConfigurationMenu</a>
@@ -414,7 +414,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="MetricsService.html">MetricsService</a>
   </li>
   <li class="nav-item is-current-page" data-depth="2">
-    <a class="nav-link" href="PublisherService.html">PublisherService</a>
+    <a class="nav-link" href="ExecutionSubscriber.html">PublisherService</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="QueryResultsCache.html">QueryResultsCache</a>
@@ -743,14 +743,14 @@ page.parent doesn't seem to be set...
   <ul>
     <li><a href="../about.html">Reference Guide</a></li>
     <li><a href="about.html">Domain Services</a></li>
-    <li><a href="PublisherService.html">PublisherService</a></li>
+    <li><a href="ExecutionSubscriber.html">PublisherService</a></li>
   </ul>
 </nav>
-  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/master/api/applib/src/main/adoc/modules/applib-svc/pages/PublisherService.adoc">Edit</a></div>
+  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/master/api/applib/src/main/adoc/modules/applib-svc/pages/ExecutionSubscriber.adoc">Edit</a></div>
 </div>
 <article class="doc">
     <a name="section-top"></a>
-<h1 class="page"><code>PublisherService</code></h1>
+<h1 class="page"><code>ExecutionSubscriber</code></h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="admonitionblock warning">
@@ -788,7 +788,7 @@ The framework provides a default implementation, <code>PublisherServiceLogging</
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Unresolved include directive in modules/applib-svc/pages/PublisherService.adoc - include::refguide:applib-svc:example$services/publish/PublisherService.java[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Unresolved include directive in modules/applib-svc/pages/ExecutionSubscriber.adoc - include::refguide:applib-svc:example$services/publish/PublisherService.java[]</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -808,7 +808,7 @@ The framework provides a default implementation, <code>PublisherServiceLogging</
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Unresolved include directive in modules/applib-svc/pages/PublisherService.adoc - include::refguide:applib-svc:example$services/publish/PublishedObjects.java[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Unresolved include directive in modules/applib-svc/pages/ExecutionSubscriber.adoc - include::refguide:applib-svc:example$services/publish/PublishedObjects.java[]</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -968,10 +968,10 @@ If contributions are not required in the UI, these can be suppressed either usin
 <p>the <a href="InteractionContext.html" class="page"><code>InteractionContext</code></a> is used to obtain the <code>Interaction</code> from which the member executions are published.</p>
 </li>
 <li>
-<p>the (internal) <a href="../../../core/latest/runtime-services/ChangedObjectsService.html" class="page"><code>ChangedObjectsService</code></a> domain service is used to obtain the set of objects modified throughout the transaction</p>
+<p>the (internal) <a href="#core:runtime-services:ChangedObjectsService.adoc" class="page unresolved"><code>ChangedObjectsService</code></a> domain service is used to obtain the set of objects modified throughout the transaction</p>
 </li>
 <li>
-<p>the (internal) <a href="#core:runtime-services:PublisherDispatchService.adoc" class="page unresolved"><code>PublisherDispatchService</code></a> domain service filters these down to those changed objects that are also published (as per <a href="../applib-ant/DomainObject.html#publishing" class="page"><code>@DomainObject#publishing()</code></a>) and delegates to the <code>PublisherService</code>.</p>
+<p>the (internal) <a href="../../../core/latest/runtime-services/EntityChangesPublisher.html" class="page"><code>EntityChangesPublisher</code></a> domain service filters these down to those changed entities that have <code>entityChangePublishing</code> enabled (as per <a href="../applib-ant/DomainObject.html#entityChangePublishing" class="page"><code>@DomainObject#entityChangePublishing()</code></a>) and publishes to any <code>EntityChangesSubscriber</code>.</p>
 </li>
 <li>
 <p>the <a href="MetricsService.html" class="page"><code>MetricsService</code></a> is used to obtain the objects that are loaded throughout the transaction; this info is used in order to instantiate the <code>PublishedObjects</code> object passed through to the <code>PublisherService</code>.</p>
@@ -979,9 +979,9 @@ If contributions are not required in the UI, these can be suppressed either usin
 </ul>
 </div>
 <div class="paragraph">
-<p>The services provided by this module combine very well with the <a href="CommandServiceListener.html" class="page"><code>CommandServiceListener</code></a> and with <a href="AuditerService.html" class="page"><code>AuditerService</code></a>.
+<p>The services provided by this module combine very well with the <a href="CommandSubscriber.html" class="page"><code>CommandServiceListener</code></a> and with <a href="AuditerService.html" class="page"><code>AuditerService</code></a>.
 The <code>Command</code> captures the <em>cause</em> of an interaction (an action was invoked, a property was edited), while the <code>PublisherService</code> captures the <em>effect</em> of that interaction in terms of events, and the <code>AuditerService</code> captures the effect of the interaction in terms of changed state.
-You may also want to configure the <a href="PublisherService.html" class="page"><code>PublisherService</code></a>, which also captures the effect of the interaction but as an event.
+You may also want to configure the <a href="ExecutionSubscriber.html" class="page"><code>PublisherService</code></a>, which also captures the effect of the interaction but as an event.
 All three of these services collaborate implicitly by way of the <a href="../applib-classes/roles-mixins-contributees/contributee.html#HasUniqueId" class="page"><code>HasUniqueId</code></a> interface.</p>
 </div>
 <div class="paragraph">
@@ -1008,7 +1008,7 @@ That said, it is possible to obtain a serialization of the action invocation/pro
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20201120-0418-97309cf4</p>
+            <p>Revision: 2.0.0-M4.20201121-0419-8b14848c</p>
         </div>
     </div>
 </footer>

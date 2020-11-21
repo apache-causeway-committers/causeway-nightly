@@ -149,21 +149,7 @@ page.parent doesn't seem to be set...
   <a class="page-parent disabled" rel="prev" href="" title=""><span></span></a>
 -->
 </div>
-<div class="nav-panel-menu is-active" data-panel="menu">
-  <nav class="nav-menu">
-    <h3 class="title"><a href="system-overview.html">System Overview</a></h3>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="0">
-<ul class="nav-list">
-  <li class="nav-item is-current-page" data-depth="1">
-    <a class="nav-link" href="system-overview.html">System Overview</a>
-  </li>
-</ul>
-  </li>
-</ul>
-  </nav>
-</div>
-<div class="nav-panel-explore" data-panel="explore">
+<div class="nav-panel-explore is-active" data-panel="explore">
   <div class="context">
     <span class="title">System Overview</span>
     <span class="version">latest</span>
@@ -339,9 +325,6 @@ page.parent doesn't seem to be set...
 <button class="nav-toggle"></button>
   <a href="../../docs/latest/about.html" class="home-link"></a>
 <nav class="breadcrumbs" aria-label="breadcrumbs">
-  <ul>
-    <li><a href="system-overview.html">System Overview</a></li>
-  </ul>
 </nav>
   <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/master/antora/components/system/modules/ROOT/pages/system-overview.adoc">Edit</a></div>
 </div>
@@ -598,16 +581,7 @@ page.parent doesn't seem to be set...
 <p>org.apache.isis.applib.annotation.ViewModel</p>
 </li>
 <li>
-<p>org.apache.isis.applib.services.audit.AuditerServiceLogging</p>
-</li>
-<li>
 <p>org.apache.isis.applib.services.clock.ClockService</p>
-</li>
-<li>
-<p>org.apache.isis.applib.services.command.CommandService</p>
-</li>
-<li>
-<p>org.apache.isis.applib.services.command.spi.CommandServiceListener$Null</p>
 </li>
 <li>
 <p>org.apache.isis.applib.services.commanddto.conmap.ContentMappingServiceForCommandDto</p>
@@ -619,13 +593,16 @@ page.parent doesn't seem to be set...
 <p>org.apache.isis.applib.services.commanddto.processor.spi.CommandDtoProcessorServiceIdentity</p>
 </li>
 <li>
-<p>org.apache.isis.applib.services.iactn.InteractionContext</p>
+<p>org.apache.isis.applib.services.publishing.log.CommandLogger</p>
 </li>
 <li>
-<p>org.apache.isis.applib.services.jaxb.JaxbServiceDefault</p>
+<p>org.apache.isis.applib.services.publishing.log.EntityChangesLogger</p>
 </li>
 <li>
-<p>org.apache.isis.applib.services.publish.PublisherServiceLogging</p>
+<p>org.apache.isis.applib.services.publishing.log.EntityPropertyChangeLogger</p>
+</li>
+<li>
+<p>org.apache.isis.applib.services.publishing.log.ExecutionLogger</p>
 </li>
 <li>
 <p>org.apache.isis.applib.services.session.SessionLoggingServiceLogging</p>
@@ -840,6 +817,9 @@ page.parent doesn't seem to be set...
 <p>org.apache.isis.core.metamodel.progmodel.ProgrammingModelInitFilterDefault</p>
 </li>
 <li>
+<p>org.apache.isis.core.metamodel.registry.IsisBeanTypeRegistryDefault</p>
+</li>
+<li>
 <p>org.apache.isis.core.metamodel.services.ServiceInjectorDefault</p>
 </li>
 <li>
@@ -963,10 +943,7 @@ page.parent doesn't seem to be set...
 <p>org.apache.isis.core.runtime.events.persistence.TimestampService</p>
 </li>
 <li>
-<p>org.apache.isis.core.runtime.persistence.transaction.AuditerDispatchService</p>
-</li>
-<li>
-<p>org.apache.isis.core.runtime.persistence.transaction.ChangedObjectsService</p>
+<p>org.apache.isis.core.runtime.persistence.changetracking.EntityChangeTrackerDefault</p>
 </li>
 </ul>
 </div>
@@ -1032,6 +1009,9 @@ page.parent doesn't seem to be set...
 <p>org.apache.isis.core.runtimeservices.ixn.InteractionDtoServiceInternalDefault</p>
 </li>
 <li>
+<p>org.apache.isis.core.runtimeservices.jaxb.JaxbServiceDefault</p>
+</li>
+<li>
 <p>org.apache.isis.core.runtimeservices.menubars.MenuBarsLoaderServiceDefault</p>
 </li>
 <li>
@@ -1041,7 +1021,16 @@ page.parent doesn't seem to be set...
 <p>org.apache.isis.core.runtimeservices.message.MessageServiceDefault</p>
 </li>
 <li>
-<p>org.apache.isis.core.runtimeservices.publish.PublisherDispatchServiceDefault</p>
+<p>org.apache.isis.core.runtimeservices.publish.CommandPublisherDefault</p>
+</li>
+<li>
+<p>org.apache.isis.core.runtimeservices.publish.EntityChangesPublisherDefault</p>
+</li>
+<li>
+<p>org.apache.isis.core.runtimeservices.publish.EntityPropertyChangePublisherDefault</p>
+</li>
+<li>
+<p>org.apache.isis.core.runtimeservices.publish.ExecutionPublisherDefault</p>
 </li>
 <li>
 <p>org.apache.isis.core.runtimeservices.queryresultscache.QueryResultsCacheDefault</p>
@@ -1715,9 +1704,6 @@ page.parent doesn't seem to be set...
 </li>
 <li>
 <p>org.apache.isis.persistence.jdo.datanucleus5.metamodel.JdoProgrammingModelPlugin</p>
-</li>
-<li>
-<p>org.apache.isis.persistence.jdo.datanucleus5.metrics.MetricsServiceDefault</p>
 </li>
 <li>
 <p>org.apache.isis.persistence.jdo.datanucleus5.persistence.IsisPlatformTransactionManagerForJdo</p>
@@ -2714,6 +2700,9 @@ page.parent doesn't seem to be set...
 <p>org.apache.isis.viewer.restfulobjects.rendering.service.conneg.ContentNegotiationServiceOrgApacheIsisV1</p>
 </li>
 <li>
+<p>org.apache.isis.viewer.restfulobjects.rendering.service.conneg.ContentNegotiationServiceOrgApacheIsisV2</p>
+</li>
+<li>
 <p>org.apache.isis.viewer.restfulobjects.rendering.service.conneg.ContentNegotiationServiceXRoDomainType</p>
 </li>
 <li>
@@ -3621,10 +3610,10 @@ page.parent doesn't seem to be set...
 <p>org.apache.isis.testdomain.applayer.ApplicationLayerTestFactory$PreAuditHook</p>
 </li>
 <li>
-<p>org.apache.isis.testdomain.applayer.auditing.EntityAuditListenerForTesting</p>
+<p>org.apache.isis.testdomain.applayer.publishing.EntityChangesSubscriberForTesting</p>
 </li>
 <li>
-<p>org.apache.isis.testdomain.applayer.publishing.PublisherServiceForTesting</p>
+<p>org.apache.isis.testdomain.applayer.publishing.EntityPropertyChangeSubscriberForTesting</p>
 </li>
 <li>
 <p>org.apache.isis.testdomain.conf.Configuration_headless$HeadlessCommandSupport</p>
@@ -3727,7 +3716,7 @@ page.parent doesn't seem to be set...
 <div class="ulist">
 <ul>
 <li>
-<p>org.apache.isis.extensions.commandlog.impl.CommandServiceListenerForJdo</p>
+<p>org.apache.isis.extensions.commandlog.impl.CommandSubscriberForJdo</p>
 </li>
 <li>
 <p>org.apache.isis.extensions.commandlog.impl.jdo.CommandJdo$TableColumnOrderDefault</p>
@@ -3790,6 +3779,9 @@ page.parent doesn't seem to be set...
 </div>
 <div class="ulist">
 <ul>
+<li>
+<p>org.apache.isis.extensions.commandreplay.primary.config.PrimaryConfig</p>
+</li>
 <li>
 <p>org.apache.isis.extensions.commandreplay.primary.spiimpl.CaptureResultOfCommand</p>
 </li>
@@ -5283,55 +5275,55 @@ AsciiDoc Working Group) is willing to take over.</pre>
 <p>demoapp.dom._infra.urlencoding.UrlEncodingServiceNaiveInMemory</p>
 </li>
 <li>
-<p>demoapp.dom.annotDomain.Action.command.ActionCommandJdoEntities</p>
+<p>demoapp.dom.annotDomain.Action.commandPublishing.ActionCommandPublishingJdoEntities</p>
 </li>
 <li>
-<p>demoapp.dom.annotDomain.Action.command.ActionCommandJdoSeedService</p>
+<p>demoapp.dom.annotDomain.Action.commandPublishing.ActionCommandPublishingJdoSeedService</p>
 </li>
 <li>
-<p>demoapp.dom.annotDomain.Action.publishing.ActionPublishingJdoEntities</p>
+<p>demoapp.dom.annotDomain.Action.executionPublishing.ActionExecutionPublishingJdoEntities</p>
 </li>
 <li>
-<p>demoapp.dom.annotDomain.Action.publishing.ActionPublishingJdoSeedService</p>
+<p>demoapp.dom.annotDomain.Action.executionPublishing.ActionExecutionPublishingJdoSeedService</p>
 </li>
 <li>
-<p>demoapp.dom.annotDomain.DomainObject.publishing.annotated.disabled.DomainObjectPublishingDisabledJdoEntities</p>
+<p>demoapp.dom.annotDomain.DomainObject.entityChangePublishing.annotated.disabled.DomainObjectAuditingDisabledJdoEntities</p>
 </li>
 <li>
-<p>demoapp.dom.annotDomain.DomainObject.publishing.annotated.disabled.DomainObjectPublishingDisabledJdoSeedService</p>
+<p>demoapp.dom.annotDomain.DomainObject.entityChangePublishing.annotated.disabled.DomainObjectAuditingDisabledJdoSeedService</p>
 </li>
 <li>
-<p>demoapp.dom.annotDomain.DomainObject.publishing.annotated.enabled.DomainObjectPublishingEnabledJdoEntities</p>
+<p>demoapp.dom.annotDomain.DomainObject.entityChangePublishing.annotated.enabled.DomainObjectAuditingEnabledJdoEntities</p>
 </li>
 <li>
-<p>demoapp.dom.annotDomain.DomainObject.publishing.annotated.enabled.DomainObjectPublishingEnabledJdoSeedService</p>
+<p>demoapp.dom.annotDomain.DomainObject.entityChangePublishing.annotated.enabled.DomainObjectAuditingEnabledJdoSeedService</p>
 </li>
 <li>
-<p>demoapp.dom.annotDomain.DomainObject.publishing.metaAnnot.enabled.DomainObjectPublishingEnabledMetaAnnotatedJdoEntities</p>
+<p>demoapp.dom.annotDomain.DomainObject.entityChangePublishing.metaAnnot.enabled.DomainObjectAuditingEnabledMetaAnnotatedJdoEntities</p>
 </li>
 <li>
-<p>demoapp.dom.annotDomain.DomainObject.publishing.metaAnnot.enabled.DomainObjectPublishingEnabledMetaAnnotatedJdoSeedService</p>
+<p>demoapp.dom.annotDomain.DomainObject.entityChangePublishing.metaAnnot.enabled.DomainObjectAuditingEnabledMetaAnnotatedJdoSeedService</p>
 </li>
 <li>
-<p>demoapp.dom.annotDomain.DomainObject.publishing.metaAnnotOverridden.enabled.DomainObjectPublishingEnabledMetaAnnotOverriddenJdoEntities</p>
+<p>demoapp.dom.annotDomain.DomainObject.entityChangePublishing.metaAnnotOverridden.enabled.DomainObjectAuditingEnabledMetaAnnotOverriddenJdoEntities</p>
 </li>
 <li>
-<p>demoapp.dom.annotDomain.DomainObject.publishing.metaAnnotOverridden.enabled.DomainObjectPublishingEnabledMetaAnnotOverriddenJdoSeedService</p>
+<p>demoapp.dom.annotDomain.DomainObject.entityChangePublishing.metaAnnotOverridden.enabled.DomainObjectAuditingEnabledMetaAnnotOverriddenJdoSeedService</p>
 </li>
 <li>
-<p>demoapp.dom.annotDomain.Property.command.PropertyCommandJdoEntities</p>
+<p>demoapp.dom.annotDomain.Property.commandPublishing.PropertyCommandPublishingJdoEntities</p>
 </li>
 <li>
-<p>demoapp.dom.annotDomain.Property.command.PropertyCommandJdoSeedService</p>
+<p>demoapp.dom.annotDomain.Property.commandPublishing.PropertyCommandPublishingJdoSeedService</p>
 </li>
 <li>
-<p>demoapp.dom.annotDomain.Property.publishing.PropertyPublishingJdoEntities</p>
+<p>demoapp.dom.annotDomain.Property.executionPublishing.PropertyExecutionPublishingJdoEntities</p>
 </li>
 <li>
-<p>demoapp.dom.annotDomain.Property.publishing.PropertyPublishingJdoSeedService</p>
+<p>demoapp.dom.annotDomain.Property.executionPublishing.PropertyExecutionPublishingJdoSeedService</p>
 </li>
 <li>
-<p>demoapp.dom.annotDomain._changes.ChangingEntitiesListenerToCaptureChangesInMemory</p>
+<p>demoapp.dom.annotDomain._changes.EntityChangesSubscriberToCaptureChangesInMemory</p>
 </li>
 <li>
 <p>demoapp.dom.annotDomain._commands.ExposePersistedCommands$TableColumnOrderDefault</p>
@@ -6545,7 +6537,7 @@ AsciiDoc Working Group) is willing to take over.</pre>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20201120-0418-97309cf4</p>
+            <p>Revision: 2.0.0-M4.20201121-0419-8b14848c</p>
         </div>
     </div>
 </footer>
