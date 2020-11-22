@@ -15,14 +15,19 @@ jobs:
       BASELINE: 2.0.0-M4
       DEPLOY_TARGET: 'nexus_incode_work::default::https://nexus.incode.work/repository/nightly-builds/'
 
+      # (used by build-artifacts.sh)
+      MVN_STAGES: deploy
+
       # possible modes are
       # push ... push docker images to dockerhub
       # tar  ... build docker images and save them locally as tar files
       # skip ... skip docker image build steps
       JIB_MODE: push
 
+      # (used by build-artifacts.sh)
+      PROJECT_ROOT_PATH: ${{ github.workspace }}/isis
       NIGHTLY_ROOT_PATH: ${{ github.workspace }}/isis-nightly
-      FRAMEWORK_ROOT_PATH: ${{ github.workspace }}/isis
+
 
     steps:
       # ------------------------
@@ -58,13 +63,13 @@ jobs:
       - name: Install NVM
         if: steps.revision.outputs.revision != 'skip'
         shell: bash
-        working-directory: ${{ env.FRAMEWORK_ROOT_PATH }}
+        working-directory: ${{ env.PROJECT_ROOT_PATH }}
         run: bash scripts/ci/install-nvm.sh
 
       - name: Install Antora
         if: steps.revision.outputs.revision != 'skip'
         shell: bash
-        working-directory: ${{ env.FRAMEWORK_ROOT_PATH }}
+        working-directory: ${{ env.PROJECT_ROOT_PATH }}
         # we install the 'node' modules into the project root under 'node_modules',
         # because we have no privileges to install them globally with -g option
         run: npm i npm i @antora/cli@2.3.3 @antora/site-generator-default@2.3.3 @asciidoctor/core@2.2.0 asciidoctor-kroki
@@ -92,7 +97,7 @@ jobs:
 
       - name: Print Software Versions
         if: steps.revision.outputs.revision != 'skip'
-        working-directory: ${{ env.FRAMEWORK_ROOT_PATH }}
+        working-directory: ${{ env.PROJECT_ROOT_PATH }}
         shell: bash
         run: |
           echo ==============  Software versions  =================
@@ -111,7 +116,7 @@ jobs:
         run: |
           echo ==============  ENV  =================
           echo BASELINE            \: $BASELINE
-          echo FRAMEWORK_ROOT_PATH \: $FRAMEWORK_ROOT_PATH
+          echo PROJECT_ROOT_PATH \: $PROJECT_ROOT_PATH
           echo NIGHTLY_ROOT_PATH   \: $NIGHTLY_ROOT_PATH
           echo REVISION            \: $REVISION
           echo DEPLOY_TARGET       \: $DEPLOY_TARGET
@@ -137,7 +142,7 @@ jobs:
       - name: Build and Push Artifacts (nexus.incode.work)
         if: steps.revision.outputs.revision != 'skip'
         shell: bash
-        working-directory: ${{ env.FRAMEWORK_ROOT_PATH }}
+        working-directory: ${{ env.PROJECT_ROOT_PATH }}
         run: |
           bash scripts/ci/build-artifacts.sh
         env:
@@ -145,7 +150,7 @@ jobs:
           NEXUS_INCODE_WORK_USERNAME: ${{ secrets.NEXUS_INCODE_WORK_USERNAME }}
           NEXUS_INCODE_WORK_PASSWORD: ${{ secrets.NEXUS_INCODE_WORK_PASSWORD }}
           MVN_ADDITIONAL_OPTS: '-DaltReleaseDeploymentRepository=${{ env.DEPLOY_TARGET }} -Dmaven.source.skip=true -Denforcer.failFast=true -DskipTests=true'
-          SETTINGS_XML: ${{ env.FRAMEWORK_ROOT_PATH }}/.m2/settings.xml
+          SETTINGS_XML: ${{ env.PROJECT_ROOT_PATH }}/.m2/settings.xml
           ## hub.docker.com
           DOCKER_REGISTRY_USERNAME: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
           DOCKER_REGISTRY_PASSWORD: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
@@ -154,7 +159,7 @@ jobs:
       - name: Code Quality Analysis
         if: steps.revision.outputs.revision != 'skip'
         shell: bash
-        working-directory: ${{ env.FRAMEWORK_ROOT_PATH }}
+        working-directory: ${{ env.PROJECT_ROOT_PATH }}
         run: |
           mvn verify sonar:sonar \
           -Dsonar.projectKey=apache_isis \
@@ -175,12 +180,12 @@ jobs:
       - name: Build Apache Isis Site
         if: steps.revision.outputs.revision != 'skip'
         shell: bash
-        working-directory: ${{ env.FRAMEWORK_ROOT_PATH }}
-        # builds static web content into ${FRAMEWORK_ROOT_PATH}/antora/target/site,
+        working-directory: ${{ env.PROJECT_ROOT_PATH }}
+        # builds static web content into ${PROJECT_ROOT_PATH}/antora/target/site,
         # as specified in the site.yml file
         run: |
-          bash $NIGHTLY_ROOT_PATH/scripts/nightly/patch-site-config.sh $FRAMEWORK_ROOT_PATH/antora/playbooks/site.yml
-          bash -x scripts/ci/build-site.sh $FRAMEWORK_ROOT_PATH/antora/playbooks/site.yml
+          bash $NIGHTLY_ROOT_PATH/scripts/nightly/patch-site-config.sh $PROJECT_ROOT_PATH/antora/playbooks/site.yml
+          bash -x scripts/ci/build-site.sh $PROJECT_ROOT_PATH/antora/playbooks/site.yml
         env:
           REVISION: ${{ steps.revision.outputs.revision }}
 
