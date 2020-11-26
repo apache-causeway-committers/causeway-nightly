@@ -394,7 +394,7 @@ Not released yet.
 </div>
 </div>
 <div class="sect1">
-<h2 id="java"><a class="anchor" href="#java"></a>Java</h2>
+<h2 id="removal-of-image-value-type"><a class="anchor" href="#removal-of-image-value-type"></a>Removal of Image Value Type</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Some Java classes and/or packages have been renamed/moved:</p>
@@ -416,6 +416,198 @@ org.apache.isis.legacy.applib.value.Image <i class="conum" data-value="1"></i><b
 </div>
 </div>
 </div>
+<div class="sect1">
+<h2 id="removal-of-deprecated-contributees"><a class="anchor" href="#removal-of-deprecated-contributees"></a>Removal of deprecated Contributees</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="title">Config</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">isis.core.metaModel.validator.serviceActionsOnly=true <i class="conum" data-value="1"></i><b>(1)</b>
+isis.core.metaModel.validator.mixins-only=true        <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><code>@DomainService(natureOfService=VIEW/REST)</code> is now solely used for UI menu action providers and REST end-points.
+There is no longer the need to validate uses of <code>natureOfService=DOMAIN</code> as this option was removed.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Support for services that contribute members to other <code>DomainObjects</code> was removed. Use <code>Mixins</code> instead.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>See the former java-doc for hints on how to migrate the previous options.</p>
+</div>
+<div class="listingblock">
+<div class="title">@DomainService(natureOfService=&#8230;&#8203;)</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">/**
+ * A &lt;em&gt;programmatic&lt;/em&gt; service.
+ * &lt;p&gt;
+ * The service's actions do not appear on any viewer and are not visible in the REST API. In other words
+ * these are not contributed to the domain-model. However, the service is injectable into domain objects.
+ * &lt;/p&gt;
+ *
+ * @deprecated will be removed with 2.0.0 release! use Spring's {@link org.springframework.stereotype.Service @Service} instead;
+ * @apiNote For now, used as synonym for {@link #REST}
+ */
+@Deprecated
+DOMAIN,
+
+/**
+ * @deprecated will be removed with 2.0.0 release! use {@link #REST} instead;
+ * @apiNote For now, used as synonym for {@link #REST}
+ */
+@Deprecated
+VIEW_REST_ONLY,
+
+/**
+ * @deprecated will be removed with 2.0.0 release! use {@link #VIEW} instead
+ * @apiNote For now, used as synonym for {@link #VIEW}
+ */
+@Deprecated
+VIEW_MENU_ONLY,
+
+/**
+ * @deprecated will be removed with 2.0.0 release!
+ * &lt;p&gt;
+ * For now, contributing actions will be gathered to show up in the 'others' menu to ease migration.
+ * These will likely not work.
+ * &lt;p&gt;
+ * Migration Note: For each {@code Action} write a new mixin class.
+ * see {@link Mixin}
+ * @apiNote For now, used as synonym for {@link #VIEW}
+ */
+@Deprecated
+VIEW_CONTRIBUTIONS_ONLY,</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="changes-to-the-programming-model"><a class="anchor" href="#changes-to-the-programming-model"></a>Changes to the Programming Model</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="removed"><a class="anchor" href="#removed"></a>Removed</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Action/@Property(command=...)    <i class="conum" data-value="1"></i><b>(1)</b>
+@Action/@Property(publish=...)    <i class="conum" data-value="2"></i><b>(2)</b>
+@DomainObject(audit=...)          <i class="conum" data-value="3"></i><b>(3)</b>
+@DomainObject(publish=...)        <i class="conum" data-value="4"></i><b>(4)</b>
+@DomainService(repositoryFor=...) <i class="conum" data-value="5"></i><b>(5)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>replaced with <code>commandPublishing</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>replaced with <code>executionPublishing</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>replaced with <code>entityChangePublishing</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>replaced with <code>entityChangePublishing</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>if this domain service acts as a repository for an entity type,
+specify that entity type (was never implemented)</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="added"><a class="anchor" href="#added"></a>Added</h3>
+<div class="listingblock">
+<div class="title">Command/Execution Publishing (Member Level Annotations)</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Action/@Property(commandPublishing=ENABLED/DISABLED)   <i class="conum" data-value="1"></i><b>(1)</b>
+@Action/@Property(executionPublishing=ENABLED/DISABLED) <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>affects Command publishing</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>affects Execution publishing</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">Entity Change Publishing (Class Level Annotations)</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(entityChangePublishing=ENABLED/DISABLED) <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>affects EntityChange publishing (effective only for entity types)</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="renamed"><a class="anchor" href="#renamed"></a>Renamed</h3>
+<div class="listingblock">
+<div class="title">Publishing API/SPI</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">AuditerService -&gt; EntityPropertyChangeSubscriber                  <i class="conum" data-value="1"></i><b>(1)</b>
+PublisherService -&gt; ExecutionSubscriber &amp; EntityChangesSubscriber <i class="conum" data-value="2"></i><b>(2)</b>
+CommandServiceListener -&gt; CommandSubscriber
+
+PublishedObjects -&gt; ChangingEntities</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><code>EntityPropertyChangeSubscriber</code> receives pre-post property values for each changed entity</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><code>EntityChangesSubscriber</code> receives the entire set of changed entities, serializable as <code>ChangesDto</code></td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">Loggers - each to be activated by enabling debug logging for the corresponding Logger class</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">AuditerServiceLogging -&gt; EntityPropertyChangeLogger
+PublisherServiceLogging -&gt; ExecutionLogger &amp; EntityChangesLogger
+CommandLogger (NEW)</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Internal Services</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">AuditerDispatchService -&gt; EntityPropertyChangePublisher
+PublisherDispatchService -&gt; ExecutionPublisher &amp; EntityChangesPublisher
+PublisherDispatchServiceDefault -&gt; ExecutionPublisherDefault &amp; EntityChangesPublisherDefault
+CommandServiceInternal -&gt; CommandPublisher</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
 </article>
 <aside class="article-aside toc hide-for-print" role="navigation">
     <p class="toc-title">On this page</p>
@@ -433,7 +625,7 @@ org.apache.isis.legacy.applib.value.Image <i class="conum" data-value="1"></i><b
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20201125-0420-775bdc9a</p>
+            <p>Revision: 2.0.0-M4.20201126-0419-ec621c39</p>
         </div>
     </div>
 </footer>
