@@ -204,7 +204,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="MemberOrder.html">MemberOrder</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="Mixin.html">Mixin</a>
+    <a class="nav-link" href="#refguide:applib-ant:Mixin.adoc">Mixin</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="NotPersistent.html">NotPersistent.</a>
@@ -246,7 +246,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="Title.html">Title</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="ViewModel.html">ViewModel</a>
+    <a class="nav-link" href="#refguide:applib-ant:ViewModel.adoc">ViewModel</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="XmlJavaTypeAdapter.html">XmlJavaTypeAdapter</a>
@@ -803,7 +803,7 @@ public @interface DomainObject {
             default Publishing.NOT_SPECIFIED;
 
     String mixinMethod()                            <i class="conum" data-value="7"></i><b>(7)</b>
-            default Mixin.DEFAULT_METHOD_NAME;
+            default "$$";
 
     Nature nature()                                 <i class="conum" data-value="8"></i><b>(8)</b>
             default Nature.NOT_SPECIFIED;
@@ -1068,13 +1068,11 @@ public class Customer {
 </tr>
 </table>
 </div>
-<div class="paragraph">
-<p>Unresolved include directive in modules/applib-ant/pages/DomainObject.adoc - include::DomainObject/auditing.adoc[]
-:leveloffset: +1</p>
 </div>
 </div>
-</div>
-<h1 id="autoCompleteRepository" class="sect0"><a class="anchor" href="#autoCompleteRepository"></a><code>autoCompleteRepository()</code></h1>
+<div class="sect1">
+<h2 id="autoCompleteRepository"><a class="anchor" href="#autoCompleteRepository"></a><code>autoCompleteRepository()</code></h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>The <code>autoCompleteRepository</code> attribute nominates a single method on a domain service as the fallback means for looking up instances of the domain object using a simple string.</p>
 </div>
@@ -1129,9 +1127,8 @@ public class CustomerRepository {
 </tr>
 </table>
 </div>
-<div class="sect1">
-<h2 id="autoCompleteAction"><a class="anchor" href="#autoCompleteAction"></a><code>autoCompleteAction()</code></h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="autoCompleteAction"><a class="anchor" href="#autoCompleteAction"></a><code>autoCompleteAction()</code></h3>
 <div class="paragraph">
 <p>As noted above, by default the method invoked on the repository is assumed to be called "autoComplete".
 The optional <code>autoCompleteAction</code> attribute allows the method on the repository to be overridden.</p>
@@ -1189,6 +1186,7 @@ public class Customers {
         String name);
     ...
 }</code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -1434,6 +1432,72 @@ public class Country {
 </div>
 </div>
 <div class="sect1">
+<h2 id="entityChangePublishing"><a class="anchor" href="#entityChangePublishing"></a><code>entityChangePublishing()</code></h2>
+<div class="sectionbody">
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-caution" title="Caution"></i>
+</td>
+<td class="content">
+TODO: v2 - publishing/auditing got a complete overhaul
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The <code>entityChangePublishing</code> attribute indicates that if the object is modified, then each of its changed properties should be submitted to the registered <a href="#refguide:applib-svc:EntityPropertyChangeSubscriber.adoc" class="page unresolved"><code>EntityPropertyChangeSubscriber</code></a>(s).</p>
+</div>
+<div class="paragraph">
+<p>The default value for the attribute is <code>AS_CONFIGURED</code>, meaning that the <a href="../config/sections/isis.applib.html#isis.applib.annotation.domain-object.propertyChangePublishing" class="page"><code>isis.applib.annotation.domain-object.propertyChangePublishing</code></a> configuration property is used to determine the whether the action is audited:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>all</code><br></p>
+<div class="paragraph">
+<p>all changed properties of objects are audited</p>
+</div>
+</li>
+<li>
+<p><code>none</code><br></p>
+<div class="paragraph">
+<p>no changed properties of objects are audited</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>If there is no configuration property in <code>application.properties</code> then auditing is automatically enabled for domain objects.</p>
+</div>
+<div class="paragraph">
+<p>This default can be overridden on an object-by-object basis; if <code>entityChangePublishing()</code> is set to <code>ENABLED</code> then changed properties of instances of the domain class are audited irrespective of the configured value; if set to <code>DISABLED</code> then the changed properties of instances are <em>not</em> audited, again irrespective of the configured value.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(
+    entityChangePublishing=Publishing.ENABLED  <i class="conum" data-value="1"></i><b>(1)</b>
+)
+public class Customer {
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>because set to enabled, will be audited irrespective of the configured value.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="loadedLifecycleEvent"><a class="anchor" href="#loadedLifecycleEvent"></a><code>loadedLifecycleEvent()</code></h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -1576,16 +1640,16 @@ public class Customer {
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
 <td>This is a mixin.<br>
-Alternatively, could have used <a href="Mixin.html" class="page"><code>@Mixin</code></a>.</td>
+Alternatively, could have used <a href="Action.html" class="page"><code>@Action</code></a>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>This mixin is using a non-standard method.<br>
-Alternatively, could have used <a href="Mixin.html#method" class="page"><code>@Mixin#method()</code></a>.</td>
+<td>This mixin is using a non-standard method.<br></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Same name as the specified mixinMethod.</td>
+<td>Same name as the specified mixinMethod.
+Alternatively, when using <a href="Action.html" class="page"><code>@Action</code></a> then method&#8217;s name defaults to <code>act</code>.</td>
 </tr>
 </table>
 </div>
@@ -1638,40 +1702,39 @@ public class PieChartAnalysis {
 </div>
 </li>
 <li>
-<p><code>EXTERNAL_ENTITY</code></p>
-<div class="paragraph">
-<p>indicates that the domain objecct is a wrapper/proxy/stub (choose your term) to an entity that is managed by some related external system.
-For example, the domain object may hold just the URI to a RESTful resource of some third party REST service, or the id of some system accessible over SOAP.</p>
-</div>
-<div class="paragraph">
-<p>The identity of an external entity is determined solely by the state of entity&#8217;s properties.
-The framework will automatically recreate the domain object each time it is interacted with.</p>
-</div>
-</li>
-<li>
-<p><code>INMEMORY_ENTITY</code></p>
-<div class="paragraph">
-<p>indicates that the domain object is a wrapper/proxy/stub to a "synthetic" entity, for example one that is constructed from some sort of internal memory data structure.</p>
-</div>
-<div class="paragraph">
-<p>The identity of an inmemory entity is determined solely by the state of entity&#8217;s properties.
-The framework will automatically recreate the domain object each time it is interacted with.</p>
-</div>
-</li>
-<li>
 <p><code>MIXIN</code></p>
 <div class="paragraph">
 <p>indicates that the domain object is part of the domain layer, and is contributing behaviour to objects of some other type as a mixin (also known as a trait).</p>
 </div>
 <div class="paragraph">
-<p>Equivalent to annotating with <a href="Mixin.html" class="page"><code>@Mixin</code></a>.
-For further discussion on using mixins, see <a href="../../../userguide/latest/fun/overview.html#mixins" class="page">mixins</a> in the user guide.</p>
+<p>For further discussion on using mixins, see <a href="../../../userguide/latest/fun/overview.html#mixins" class="page">mixins</a> in the user guide.</p>
 </div>
 </li>
 <li>
 <p><code>VIEW_MODEL</code></p>
 <div class="paragraph">
 <p>indicates that the domain object is conceptually part of the application layer, and exists to surfaces behaviour and/or state that is aggregate of one or more domain entities.</p>
+</div>
+<div class="paragraph">
+<p><em>Variant: External Entity</em></p>
+</div>
+<div class="paragraph">
+<p>Or indicates that the domain object is a wrapper/proxy/stub (choose your term) to an entity that is managed by some related external system.
+For example, the domain object may hold just the URI to a RESTful resource of some third party REST service, or the id of some system accessible over SOAP.</p>
+</div>
+<div class="paragraph">
+<p>The identity of an external entity is determined solely by the state of entity&#8217;s properties.
+The framework will automatically recreate the domain object each time it is interacted with.</p>
+</div>
+<div class="paragraph">
+<p><em>Variant: In-Memory Entity</em></p>
+</div>
+<div class="paragraph">
+<p>Or indicates that the domain object is a wrapper/proxy/stub to a "synthetic" entity, for example one that is constructed from some sort of internal memory data structure.</p>
+</div>
+<div class="paragraph">
+<p>The identity of an in-memory entity is determined solely by the state of entity&#8217;s properties.
+The framework will automatically recreate the domain object each time it is interacted with.</p>
 </div>
 </li>
 </ul>
@@ -1687,10 +1750,10 @@ For further discussion on using mixins, see <a href="../../../userguide/latest/f
 </td>
 <td class="content">
 <div class="paragraph">
-<p>Under the covers Apache Isis' support for <code>VIEW_MODEL</code>, <code>EXTERNAL_ENTITY</code> and <code>INMEMORY_ENTITY</code> domain objects is identical; the state of the object is encoded into its internal OID (represented ultimately as its URL), and is recreated directly from that URL.</p>
+<p>For <code>VIEW_MODEL</code> domain objects the state of the object is encoded into its internal OID (represented ultimately as its URL), and is recreated directly from that URL.</p>
 </div>
 <div class="paragraph">
-<p>Because this particular implementation was originally added to Apache Isis in support of view models, the term was also used for the logically different external entities and inmemory entities.</p>
+<p>Because this particular implementation was originally added to Apache Isis in support of view models, the term was also used for the logically different external entities and in-memory entities.</p>
 </div>
 <div class="paragraph">
 <p>The benefit of <code>nature()</code> is that it allows the developer to properly characterize the layer (domain vs application) that an entity lives, thus avoiding confusion as "view model" (the implementation technique) and "view model" (the application layer concept).</p>
@@ -1707,7 +1770,7 @@ For further discussion on using mixins, see <a href="../../../userguide/latest/f
 </td>
 <td class="content">
 <div class="paragraph">
-<p>On the other hand, view models defined in this way do have some limitations; see <a href="ViewModel.html" class="page"><code>@ViewModel</code></a> for further discussion.</p>
+<p>On the other hand, view models defined in this way do have some limitations; see <a href="view-models.html" class="page"><code>View Model</code></a> for further discussion.</p>
 </div>
 <div class="paragraph">
 <p>These limitations do <em>not</em> apply to <a href="../../../userguide/latest/fun/view-models.html#jaxb" class="page">JAXB</a> view models.
@@ -2065,14 +2128,12 @@ An error message will be printed in the log to help you determine which classes 
 </tr>
 </table>
 </div>
-<div class="paragraph">
-<p>Unresolved include directive in modules/applib-ant/pages/DomainObject.adoc - include::DomainObject/publishing.adoc[]
-:leveloffset: +1</p>
 </div>
 </div>
 </div>
-</div>
-<h1 id="removingLifecycleEvent" class="sect0"><a class="anchor" href="#removingLifecycleEvent"></a><code>removingLifecycleEvent()</code></h1>
+<div class="sect1">
+<h2 id="removingLifecycleEvent"><a class="anchor" href="#removingLifecycleEvent"></a><code>removingLifecycleEvent()</code></h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>r
 :Notice: Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements. See the NOTICE file distributed with this work for additional information regarding copyright ownership. The ASF licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at. <a href="http://www.apache.org/licenses/LICENSE-2.0" class="bare">http://www.apache.org/licenses/LICENSE-2.0</a> . Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR  CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
@@ -2137,9 +2198,8 @@ public class ToDoItem {
 <div class="paragraph">
 <p>The benefit is that subscribers can be more targeted as to the events that they subscribe to.</p>
 </div>
-<div class="sect1">
-<h2 id="subscribers-5"><a class="anchor" href="#subscribers-5"></a>Subscribers</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="subscribers-5"><a class="anchor" href="#subscribers-5"></a>Subscribers</h3>
 <div class="paragraph">
 <p>Subscribers (which must be domain services) subscribe to events posted through the <a href="../applib-svc/EventBusService.html" class="page"><code>EventBusService</code></a>.</p>
 </div>
@@ -2180,10 +2240,8 @@ public class SomeSubscriber {
 </div>
 </div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="default-doop-and-noop-events-5"><a class="anchor" href="#default-doop-and-noop-events-5"></a>Default, Doop and Noop events</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="default-doop-and-noop-events-5"><a class="anchor" href="#default-doop-and-noop-events-5"></a>Default, Doop and Noop events</h3>
 <div class="paragraph">
 <p>If the <code>removingLifecycleEvent</code> attribute is not explicitly specified (is left as its default value, <code>ObjectRemovingEvent.Default</code>), then the framework will, by default, post an event.</p>
 </div>
@@ -2196,6 +2254,7 @@ The framework provides <code>ObjectRemovingEvent.Doop</code> as such a subclass,
 </div>
 <div class="paragraph">
 <p>And, conversely, the framework also provides <code>ObjectRemovingEvent.Noop</code>; if <code>removingLifecycleEvent</code> attribute is set to this class, then no event will be posted.</p>
+</div>
 </div>
 </div>
 </div>
@@ -2458,7 +2517,7 @@ The framework provides <code>ObjectUpdatedEvent.Doop</code> as such a subclass, 
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20201126-0419-ec621c39</p>
+            <p>Revision: 2.0.0-M4.20201128-0421-322d1a77</p>
         </div>
     </div>
 </footer>

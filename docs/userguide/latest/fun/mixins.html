@@ -446,8 +446,7 @@ page.parent doesn't seem to be set...
 <p>Accordingly, a mixin can be defined using the <a href="../../../refguide/latest/applib-ant/Action.html" class="page"><code>@Action</code></a>, <a href="../../../refguide/latest/applib-ant/Property.html" class="page"><code>@Property</code></a> or <a href="../../../refguide/latest/applib-ant/Collection.html" class="page"><code>@Collection</code></a> annotations, but defined at the domain class level rather than at the method level.</p>
 </div>
 <div class="paragraph">
-<p>The older way of declaring a mixin is to use defined using the <a href="../../../refguide/latest/applib-ant/Mixin.html" class="page"><code>@Mixin</code></a> annotation for the domain class (in fact, <code>@Action</code> et al are meta-annotated with <code>@Mixin</code>).
-Equivalently, it can be defined using <a href="../../../refguide/latest/applib-ant/DomainObject.html#nature" class="page"><code>@DomainObject#nature</code></a> attribute (specifying a nature of <code>Nature.MIXIN</code>).</p>
+<p>Using <a href="../../../refguide/latest/applib-ant/DomainObject.html#nature" class="page"><code>@DomainObject#nature</code></a> attribute (specifying a nature of <code>Nature.MIXIN</code>), in combination with the above allows for more fine grained control, eg. nominating the mixin&#8217;s method name.</p>
 </div>
 <div class="paragraph">
 <p>When the mixin follows the naming convention <code>SomeType_mixinName</code> then the method name can be abbreviated, and the name of the member being contributed is inferred from the name of the class itself, being everything after the last '_'.</p>
@@ -463,12 +462,10 @@ Equivalently, it can be defined using <a href="../../../refguide/latest/applib-a
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Collection                                                     <i class="conum" data-value="1"></i><b>(1)</b>
+@RequiredArgsConstructor                                        <i class="conum" data-value="2"></i><b>(2)</b>
 public class DocumentHolder_documents {
 
     private final DocumentHolder holder;
-    public DocumentHolderDocuments(DocumentHolder holder) {     <i class="conum" data-value="2"></i><b>(2)</b>
-        this.holder = holder;
-    }
 
     public List&lt;Document&gt; coll() {                              <i class="conum" data-value="3"></i><b>(3)</b>
         ...
@@ -481,7 +478,7 @@ public class DocumentHolder_documents {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>indicates this is a collection mixin.</td>
+<td>indicates this is a collection mixin (that contributes its method as an association) with method name 'coll'</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
@@ -489,11 +486,11 @@ public class DocumentHolder_documents {
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>method (which must be called "coll") must accept no arguments, be query-only, and return a collection.</td>
+<td>method (which must be called "coll") must accept no arguments, be query-only, and return a collection</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>supporting methods (discussed in <a href="business-rules.html" class="page">business rules</a>) follow the usual naming conventions.<br>
+<td>supporting methods (discussed in <a href="business-rules.html" class="page">business rules</a>) follow the usual naming conventions
 (Because the collection is derived/read-only, the only supporting method that is relevant is <code>hideColl()</code>).</td>
 </tr>
 </table>
@@ -502,25 +499,21 @@ public class DocumentHolder_documents {
 <p>The above will result in a contributed collection "documents" for all types that implement/extend from <code>DocumentHolder</code>.</p>
 </div>
 <div class="paragraph">
-<p>The following does the same thing, but using the (more flexible but more verbose) <a href="../../../refguide/latest/applib-ant/Mixin.html" class="page"><code>@Mixin</code></a> annotation:</p>
+<p>The following does the same thing, but using the <a href="../../../refguide/latest/applib-ant/DomainObject.html" class="page"><code>@DomainObject</code></a> annotation, to explicitly specify the method name:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Mixin(method="coll")                                           <i class="conum" data-value="1"></i><b>(1)</b>
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Collection                                                     <i class="conum" data-value="1"></i><b>(1)</b>
+@DomainObject(nature=MIXIN, mixinMethod="coll")                 <i class="conum" data-value="2"></i><b>(2)</b>
+@RequiredArgsConstructor                                        <i class="conum" data-value="3"></i><b>(3)</b>
 public class DocumentHolder_documents {
 
     private final DocumentHolder holder;
-    public DocumentHolderDocuments(DocumentHolder holder) {     <i class="conum" data-value="2"></i><b>(2)</b>
-        this.holder = holder;
-    }
 
-    @Action(semantics=SemanticsOf.SAFE)                         <i class="conum" data-value="3"></i><b>(3)</b>
-    @ActionLayout(contributed = Contributed.AS_ASSOCIATION)     <i class="conum" data-value="4"></i><b>(4)</b>
-    @CollectionLayout(defaultView="table")
-    public List&lt;Document&gt; coll() {                              <i class="conum" data-value="5"></i><b>(5)</b>
+    public List&lt;Document&gt; coll() {                              <i class="conum" data-value="4"></i><b>(4)</b>
         ...
     }
-    public boolean hideColl() { /* ... */ }                     <i class="conum" data-value="6"></i><b>(6)</b>
+    public boolean hideColl() { /* ... */ }                     <i class="conum" data-value="5"></i><b>(5)</b>
 }</code></pre>
 </div>
 </div>
@@ -528,28 +521,24 @@ public class DocumentHolder_documents {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>indicates this is a mixin, and in this case nominates the method name.
-The recommended name for collections is "coll" (if none is specified the default name is "$$").</td>
+<td>indicates this is a collection mixin (that contributes its method as an association)</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>mixee is injected into the mixin</td>
+<td>nominates the method name
+The recommended name for collections is "coll" (if none is specified the default name is "$$").</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>required; actions that have side-effects cannot be contributed as collections</td>
+<td>mixee is injected into the mixin</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>required; otherwise the mixin will default to being rendered as an action</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>method (which must match <code>@Mixin#method</code> above), must accept no arguments.
+<td>method has no side-effects, must match <code>@DomainObject(mixinMethod=&#8230;&#8203;)</code> above and accept no arguments
 The mixin is a collection rather than a property because the return type is a collection, not a scalar.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
 <td>supporting methods (discussed in <a href="business-rules.html" class="page">business rules</a>) follow the usual naming conventions.</td>
 </tr>
 </table>
@@ -565,12 +554,10 @@ The mixin is a collection rather than a property because the return type is a co
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Property                                                       <i class="conum" data-value="1"></i><b>(1)</b>
+@RequiredArgsConstructor                                        <i class="conum" data-value="2"></i><b>(2)</b>
 public class DocumentHolder_mostRecentDocument {
 
     private final DocumentHolder holder;
-    public DocumentHolderDocuments(DocumentHolder holder) {     <i class="conum" data-value="2"></i><b>(2)</b>
-        this.holder = holder;
-    }
 
     public Document prop() {                                    <i class="conum" data-value="3"></i><b>(3)</b>
         ...
@@ -583,7 +570,7 @@ public class DocumentHolder_mostRecentDocument {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>indicates this is a property mixin</td>
+<td>indicates this is a property mixin (that contributes its method as an association) with method name 'prop'</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
@@ -591,11 +578,11 @@ public class DocumentHolder_mostRecentDocument {
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>method (which must be called "prop") must accept no arguments, be query-only, and return a scalar value.</td>
+<td>method (which must be called "prop") must accept no arguments, be query-only, and return a scalar value</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>supporting methods (discussed in <a href="business-rules.html" class="page">business rules</a>) follow the usual naming conventions.<br>
+<td>supporting methods (discussed in <a href="business-rules.html" class="page">business rules</a>) follow the usual naming conventions
 (Because the property is derived/read-only, the only supporting method that is relevant is <code>hideProp()</code>).</td>
 </tr>
 </table>
@@ -604,20 +591,17 @@ public class DocumentHolder_mostRecentDocument {
 <p>This contributes a property called "mostRecentDocument".</p>
 </div>
 <div class="paragraph">
-<p>The following does the same thing, but using the (more flexible but more verbose) <a href="../../../refguide/latest/applib-ant/Mixin.html" class="page"><code>@Mixin</code></a> annotation:</p>
+<p>The following does the same thing, but using the <a href="../../../refguide/latest/applib-ant/DomainObject.html" class="page"><code>@DomainObject</code></a> annotation, to explicitly specify the method name:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Mixin(method="prop")                                           <i class="conum" data-value="1"></i><b>(1)</b>
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Property                                                       <i class="conum" data-value="1"></i><b>(1)</b>
+@DomainObject(nature=MIXIN, mixinMethod="prop")                 <i class="conum" data-value="2"></i><b>(2)</b>
+@RequiredArgsConstructor                                        <i class="conum" data-value="3"></i><b>(3)</b>
 public class DocumentHolder_mostRecentDocument {
 
     private final DocumentHolder holder;
-    public DocumentHolderDocuments(DocumentHolder holder) {     <i class="conum" data-value="1"></i><b>(1)</b>
-        this.holder = holder;
-    }
 
-    @Action(semantics=SemanticsOf.SAFE)                         <i class="conum" data-value="2"></i><b>(2)</b>
-    @ActionLayout(contributed = Contributed.AS_ASSOCIATION)     <i class="conum" data-value="3"></i><b>(3)</b>
     public Document prop() {                                    <i class="conum" data-value="4"></i><b>(4)</b>
         ...
     }
@@ -629,20 +613,20 @@ public class DocumentHolder_mostRecentDocument {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>indicates this is a mixin, and in this case nominates the method name.<br>
-The recommended name for properties is "prop" (if none is specified the default name is "$$").</td>
+<td>indicates this is a property mixin (that contributes its method as an association)</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>mixee is injected into the mixin</td>
+<td>nominates the method name
+The recommended name for properties is "prop" (if none is specified the default name is "$$").</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>action has no side-effects, and must match <code>@Mixin#method</code> above and accept no arguments</td>
+<td>mixee is injected into the mixin</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>and should be rendered as an association.
+<td>method has no side-effects, must match <code>@DomainObject(mixinMethod=&#8230;&#8203;)</code> above and accept no arguments
 The mixin is a property rather than a collection because the return type is a scalar.</td>
 </tr>
 <tr>
@@ -665,12 +649,10 @@ The mixin is a property rather than a collection because the return type is a sc
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Action                                                         <i class="conum" data-value="1"></i><b>(1)</b>
+@RequiredArgsConstructor                                        <i class="conum" data-value="2"></i><b>(2)</b>
 public class DocumentHolder_addDocument {
 
     private final DocumentHolder holder;
-    public DocumentHolderDocuments(DocumentHolder holder) {     <i class="conum" data-value="2"></i><b>(2)</b>
-        this.holder = holder;
-    }
 
     public Document&gt; act(Document doc) {                        <i class="conum" data-value="3"></i><b>(3)</b>
         ...
@@ -683,7 +665,7 @@ public class DocumentHolder_addDocument {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>indicates this is an action mixin.</td>
+<td>indicates this is an action mixin (that contributes its method as an action) with method name 'act'</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
@@ -691,12 +673,12 @@ public class DocumentHolder_addDocument {
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>method must be called "act".<br>
+<td>method must be called "act"
 Unlike contributed properties and collections, contributed actions can accept parameters, and have any semantics.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td><a href="business-rules.html" class="page">supporting methods</a> follow the usual naming conventions.</td>
+<td><a href="business-rules.html" class="page">supporting methods</a> follow the usual naming conventions</td>
 </tr>
 </table>
 </div>
@@ -704,20 +686,17 @@ Unlike contributed properties and collections, contributed actions can accept pa
 <p>This contributes an action called "addDocument".</p>
 </div>
 <div class="paragraph">
-<p>The following does the same thing, but using the (more flexible but more verbose) <a href="../../../refguide/latest/applib-ant/Mixin.html" class="page"><code>@Mixin</code></a> annotation:</p>
+<p>The following does the same thing, but using the <a href="../../../refguide/latest/applib-ant/DomainObject.html" class="page"><code>@DomainObject</code></a> annotation, to explicitly specify the method name:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Mixin(method="act")                                            <i class="conum" data-value="1"></i><b>(1)</b>
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Action                                                         <i class="conum" data-value="1"></i><b>(1)</b>
+@DomainObject(nature=MIXIN, mixinMethod="act")                  <i class="conum" data-value="2"></i><b>(2)</b>
+@RequiredArgsConstructor                                        <i class="conum" data-value="3"></i><b>(3)</b>
 public class DocumentHolder_addDocument {
 
     private final DocumentHolder holder;
-    public DocumentHolderDocuments(DocumentHolder holder) {     <i class="conum" data-value="2"></i><b>(2)</b>
-        this.holder = holder;
-    }
 
-    @Action()
-    @ActionLayout(contributed = Contributed.AS_ACTION)          <i class="conum" data-value="3"></i><b>(3)</b>
     public Document&gt; act(Document doc) {                        <i class="conum" data-value="4"></i><b>(4)</b>
         ...
     }
@@ -729,25 +708,24 @@ public class DocumentHolder_addDocument {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>indicates this is a mixin, and in this case nominates the method name.<br>
-The recommended name for properties is "prop" (if none is specified the default name is "$$").</td>
+<td>indicates this is an action mixin (that contributes its method as an action)</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>mixee is injected into the mixin</td>
+<td>nominates the method name</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>recommended</td>
+<td>mixee is injected into the mixin</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>method must match <code>@Mixin#method</code> above.
+<td>method must match <code>@DomainObject(mixinMethod=&#8230;&#8203;)</code> above
 Unlike contributed properties and collections, contributed actions can accept parameters.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
-<td><a href="business-rules.html" class="page">supporting methods</a> follow the usual naming conventions.</td>
+<td><a href="business-rules.html" class="page">supporting methods</a> follow the usual naming conventions</td>
 </tr>
 </table>
 </div>
@@ -872,7 +850,7 @@ You&#8217;ll need to use this method if using nested non-static mixins:</p>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20201126-0419-ec621c39</p>
+            <p>Revision: 2.0.0-M4.20201128-0421-322d1a77</p>
         </div>
     </div>
 </footer>
