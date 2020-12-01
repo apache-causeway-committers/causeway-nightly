@@ -411,6 +411,28 @@ page.parent doesn't seem to be set...
 <h1 class="page">View Model Instantiation</h1>
 <div id="preamble">
 <div class="sectionbody">
+<div class="paragraph">
+<p>The <a href="../../../../refguide/latest/applib-svc/FactoryService.html" class="page"><code>FactoryService</code></a> service
+covers all use-cases for programmatic view model creation and takes care,
+that all injection points are resolved for the resulting view model instance.</p>
+</div>
+<div class="listingblock">
+<div class="title">Simple Case (using the public no-arg constructor)</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">CustomerViewModel viewModel = factoryService.viewModel(CustomerViewModel.class);</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Advanced Case (using a custom constructor)</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">CustomerViewModel viewModel = factoryService.viewModel(new CustomerViewModel("Joe", "Bloggs"));</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="todo-outdated-docs-likely-to-just-be-removed"><a class="anchor" href="#todo-outdated-docs-likely-to-just-be-removed"></a>TODO outdated docs (likely to just be removed) &#8230;&#8203;</h2>
+<div class="sectionbody">
 <div class="admonitionblock warning">
 <table>
 <tr>
@@ -434,7 +456,7 @@ Specifically, it&#8217;s important that the framework doesn&#8217;t "know" about
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">CustomerViewModel viewModel = new CustomerViewModel("Joe", "Bloggs");
-serviceRegistry.injectServicesInto(viewModel);</code></pre>
+serviceInjector.injectServicesInto(viewModel);</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -447,7 +469,7 @@ CustomerViewModel viewModel = factoryService.instantiate(CustomerViewModel.class
 
 viewModel.setFirstName("Joe");
 viewModel.setLastName("Bloggs");
-serviceRegistry.injectServicesInto(viewModel);</code></pre>
+serviceInjector.injectServicesInto(viewModel);</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -475,13 +497,13 @@ public class YearSummary {                                                  <i c
         List&lt;OfficeOptionViewModel&gt; amountsPerOffice = new ArrayList&lt;&gt;();
 
         OfficeOptionViewModel office1 =                                     <i class="conum" data-value="2"></i><b>(2)</b>
-            factoryService.instantiate(OfficeOptionViewModel.class);
+            factoryService.viewModel(OfficeOptionViewModel.class);
         office1.setOffice("Amsterdam");                                     <i class="conum" data-value="3"></i><b>(3)</b>
         office1.setAmount(200);
         amountsPerOffice.add(office1);
 
         OfficeOptionViewModel office2 =                                     <i class="conum" data-value="2"></i><b>(2)</b>
-            factoryService.instantiate(OfficeOptionViewModel.class);
+            factoryService.viewModel(OfficeOptionViewModel.class);
         office2.setOffice("London");                                        <i class="conum" data-value="3"></i><b>(3)</b>
         office2.setAmount(100);
         amountsPerOffice.add(office2);
@@ -535,11 +557,11 @@ public class YearSummary {
         List&lt;OfficeOptionViewModel&gt; amountsPerOffice = new ArrayList&lt;&gt;();
 
 		OfficeOptionViewModel office1 = new OfficeOptionViewModel("Amsterdam", 200);    <i class="conum" data-value="1"></i><b>(1)</b>
-		serviceRegistry.injectServicesInto(office1);
+		serviceInjector.injectServicesInto(office1);
 		amountsPerOffice.add(office1);
 
 		OfficeOptionViewModel office2 = new OfficeOptionViewModel("London", 100);       <i class="conum" data-value="1"></i><b>(1)</b>
-		serviceRegistry.injectServicesInto(office2);
+		serviceInjector.injectServicesInto(office2);
 		amountsPerOffice.add(office2);
 
         return amountsPerOffice;
@@ -590,13 +612,13 @@ public class YearSummary {
     public List&lt;OfficeOptionViewModel&gt; calculateAmountsPerOffice() {
         List&lt;OfficeOptionViewModel&gt; amountsPerOffice = new ArrayList&lt;&gt;();
 
-		OfficeOptionViewModel office1 = factoryService.instantiate(OfficeOptionViewModel.class);
+		OfficeOptionViewModel office1 = factoryService.viewModel(OfficeOptionViewModel.class);
 		office1.setOffice("Amsterdam");
 		office1.setAmount(200);
 
 		amountsPerOffice.add(office1);
 
-		OfficeOptionViewModel office2 = factoryService.instantiate(OfficeOptionViewModel.class);
+		OfficeOptionViewModel office2 = factoryService.viewModel(OfficeOptionViewModel.class);
 		office2.setOffice("London");
 		office2.setAmount(100);
 
@@ -637,7 +659,7 @@ public class YearSummary {
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20201128-0421-322d1a77</p>
+            <p>Revision: 2.0.0-M4.20201201-0422-b881d020</p>
         </div>
     </div>
 </footer>

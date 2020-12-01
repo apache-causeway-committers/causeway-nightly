@@ -780,21 +780,25 @@ TODO: this content has not yet been reviewed/updated for v2.0
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public interface FactoryService {
 
-    &lt;T&gt; T getOrCreate(Class&lt;T&gt; requiredType);                               <i class="conum" data-value="1"></i><b>(1)</b>
+    &lt;T&gt; T getOrCreate(@NonNull Class&lt;T&gt; requiredType); <i class="conum" data-value="1"></i><b>(1)</b>
 
-    &lt;T&gt; T get(Class&lt;T&gt; requiredType);                                       <i class="conum" data-value="2"></i><b>(2)</b>
+    &lt;T&gt; T get(@NonNull Class&lt;T&gt; requiredType); <i class="conum" data-value="2"></i><b>(2)</b>
 
-    &lt;T&gt; T detachedEntity(Class&lt;T&gt; domainClass);                             <i class="conum" data-value="3"></i><b>(3)</b>
+    &lt;T&gt; T detachedEntity(@NonNull Class&lt;T&gt; domainClass); <i class="conum" data-value="3"></i><b>(3)</b>
 
-    &lt;T&gt; T mixin(Class&lt;T&gt; mixinClass, Object mixedIn);                       <i class="conum" data-value="4"></i><b>(4)</b>
+    &lt;T&gt; T detachedEntity(@NonNull T entity); <i class="conum" data-value="4"></i><b>(4)</b>
 
-    &lt;T&gt; T viewModel(Class&lt;T&gt; viewModelClass, @Nullable String mementoStr);  <i class="conum" data-value="5"></i><b>(5)</b>
+    &lt;T&gt; T mixin(@NonNull Class&lt;T&gt; mixinClass, @NonNull Object mixedIn); <i class="conum" data-value="5"></i><b>(5)</b>
 
-    default &lt;T&gt; T viewModel(Class&lt;T&gt; viewModelClass) {                      <i class="conum" data-value="6"></i><b>(6)</b>
+    &lt;T&gt; T viewModel(@NonNull Class&lt;T&gt; viewModelClass, @Nullable String mementoStr);  <i class="conum" data-value="6"></i><b>(6)</b>
+
+    default &lt;T&gt; T viewModel(@NonNull Class&lt;T&gt; viewModelClass) {                      <i class="conum" data-value="7"></i><b>(7)</b>
         return viewModel(viewModelClass, /*mementoStr*/null);
     }
 
-    &lt;T&gt; T create(Class&lt;T&gt; domainClass);                                 <i class="conum" data-value="7"></i><b>(7)</b>
+    &lt;T&gt; T viewModel(@NonNull T viewModel); <i class="conum" data-value="8"></i><b>(8)</b>
+
+    &lt;T&gt; T create(@NonNull Class&lt;T&gt; domainClass); <i class="conum" data-value="9"></i><b>(9)</b>
 }</code></pre>
 </div>
 </div>
@@ -816,19 +820,27 @@ The class must have a no-arg constructor (for <a href="../../../pjdo/latest/abou
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Resolves injection points for given entity.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
 <td>Creates a new Mixin instance, with injection points resolved.
 The class must have a 1-arg constructor of the appropriate type.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
 <td>Creates a new ViewModel instance, with injection points resolved, and initialized according to the given memento string.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
 <td>Creates a new ViewModel instance, with injection points resolved and defaults applied.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td>Resolves injection points for given ViewModel instance.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
 <td>Creates a new instance of the specified class, with injection points resolved and defaults applied.</td>
 </tr>
 </table>
@@ -905,7 +917,7 @@ repositoryService.persist(cust);</code></pre>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20201128-0421-322d1a77</p>
+            <p>Revision: 2.0.0-M4.20201201-0422-b881d020</p>
         </div>
     </div>
 </footer>
