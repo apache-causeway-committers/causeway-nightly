@@ -781,24 +781,21 @@ This is useful both for <a href="../../../testing/latest/integtestsupport/about.
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public interface SudoService {
 
-    String ACCESS_ALL_ROLE =                                <i class="conum" data-value="1"></i><b>(1)</b>
-            SudoService.class.getName() + "#accessAll";
+    RoleMemento ACCESS_ALL_ROLE =                                <i class="conum" data-value="1"></i><b>(1)</b>
+            new RoleMemento(
+                    SudoService.class.getName() + "#accessAll",
+                    "Sudo, can view and use all object members.");
 
-    void sudo(                                              <i class="conum" data-value="2"></i><b>(2)</b>
-            String username,
-            final Runnable runnable);
 
-    &lt;T&gt; T sudo(                                             <i class="conum" data-value="3"></i><b>(3)</b>
-            String username,
-            final Supplier&lt;T&gt; supplier);
+    &lt;T&gt; T call(                                             <i class="conum" data-value="2"></i><b>(2)</b>
+            @NonNull UnaryOperator&lt;ExecutionContext&gt; sudoMapper,
+            @NonNull Callable&lt;T&gt; supplier);
 
-    void sudo(                                              <i class="conum" data-value="4"></i><b>(4)</b>
-            String username, List&lt;String&gt; roles,
-            final Runnable runnable);
-
-    &lt;T&gt; T sudo(                                             <i class="conum" data-value="5"></i><b>(5)</b>
-            String username, List&lt;String&gt; roles,
-            final Supplier&lt;T&gt; supplier);
+    default void run(                                        <i class="conum" data-value="3"></i><b>(3)</b>
+            final @NonNull UnaryOperator&lt;ExecutionContext&gt; sudoMapper,
+            final @NonNull Runnable runnable) {
+        call(sudoMapper, ()-&gt;{runnable.run(); return null;});
+    }
 
 
 }</code></pre>
@@ -935,14 +932,11 @@ The default implementation of <a href="UserService.html" class="page"><code>User
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">/**
- * Allows the {@link SudoService} to notify other services/components that the effective user has been changed.
- */
-interface Spi {
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">interface Listener {
 
-    void runAs(String username, List&lt;String&gt; roles);    <i class="conum" data-value="1"></i><b>(1)</b>
+    void beforeCall(@NonNull ExecutionContext before, @NonNull ExecutionContext after);          <i class="conum" data-value="1"></i><b>(1)</b>
 
-    void releaseRunAs();                                <i class="conum" data-value="2"></i><b>(2)</b>
+    void afterCall(@NonNull ExecutionContext before, @NonNull ExecutionContext after);          <i class="conum" data-value="2"></i><b>(2)</b>
 }</code></pre>
 </div>
 </div>
@@ -989,7 +983,7 @@ It provides the <code>IsisSessionFactory#runAuthenticated(&#8230;&#8203;)</code>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20201205-0422-5b7ba8b3</p>
+            <p>Revision: 2.0.0-M4.20201206-0423-aea4499d</p>
         </div>
     </div>
 </footer>

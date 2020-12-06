@@ -692,6 +692,81 @@ CommandServiceInternal -&gt; CommandPublisher</code></pre>
 </div>
 </div>
 <div class="sect1">
+<h2 id="changes-to-applib-and-services"><a class="anchor" href="#changes-to-applib-and-services"></a>Changes to Applib and Services</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">was</th>
+<th class="tableblock halign-left valign-top">new</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>AuthenticationSession</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Authentication (no longer holds MessageBroker or session attributes, is now immutable)</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>AuthenticationSessionStrategy</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>AuthenticationStrategy</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>AuthenticationSessionStrategyBasicAuth (<strong>1</strong>)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>AuthenticationStrategyBasicAuth</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>AuthenticationSessionStrategyDefault (<strong>1</strong>)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>AuthenticationStrategyDefault</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Clock (moved from applib module to fixture-applib module)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>VirtualClock (introduced)</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>TestClock (removed)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>use factories of VirtualClock.frozenTestClock() instead</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>IsisInteractionFactory</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>InteractionFactory</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>InteractionClosure</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>AuthenticationLayer</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>IsisInteractionTracker</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>InteractionTracker</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>MessageBroker is held by Authentication(Session)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>MessageBroker is held by InteractionSession</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>UserMemento UserService.getUser();</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong>Optional</strong>&lt;UserMemento&gt; UserService.getUser();</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SudoService</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>redefined, see java doc for details</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>These might be in use with configuration files, check yours!</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="deprecations"><a class="anchor" href="#deprecations"></a>Deprecations</h2>
 <div class="sectionbody">
 <div class="listingblock">
@@ -729,7 +804,7 @@ validity of the used constructor rather than doing construction reflective at ru
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20201205-0422-5b7ba8b3</p>
+            <p>Revision: 2.0.0-M4.20201206-0423-aea4499d</p>
         </div>
     </div>
 </footer>

@@ -840,34 +840,16 @@ Persistent<code>Interaction</code>s support several use cases:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Log4j2
-public class Interaction implements HasUniqueId {
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public interface Interaction extends HasUniqueId {
 
-    public Interaction(final @NonNull UUID uniqueId) {
-        this.command = new Command(uniqueId);
-    }
+    Command getCommand();                  <i class="conum" data-value="1"></i><b>(1)</b>
 
-    @Getter
-    private final Command command;                  <i class="conum" data-value="1"></i><b>(1)</b>
+    Execution&lt;?,?&gt; getCurrentExecution();        <i class="conum" data-value="2"></i><b>(2)</b>
 
-    @Override
-    public UUID getUniqueId() {                     <i class="conum" data-value="2"></i><b>(2)</b>
-        return command.getUniqueId();
-    }
+    Execution&lt;?,?&gt; getPriorExecution();          <i class="conum" data-value="3"></i><b>(3)</b>
 
-    public List&lt;Execution&lt;?,?&gt;&gt; getExecutions() {   <i class="conum" data-value="3"></i><b>(3)</b>
-        // ...
-    }
+    int next(final String sequenceId);      <i class="conum" data-value="4"></i><b>(4)</b>
 
-    @Getter
-    private Execution&lt;?,?&gt; currentExecution;        <i class="conum" data-value="4"></i><b>(4)</b>
-
-    @Getter
-    private Execution&lt;?,?&gt; priorExecution;          <i class="conum" data-value="5"></i><b>(5)</b>
-
-    public int next(final String sequenceId) {      <i class="conum" data-value="6"></i><b>(6)</b>
-        // ...
-    }
 }</code></pre>
 </div>
 </div>
@@ -1063,7 +1045,7 @@ The services are used within the framework however, primarily to support the
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20201205-0422-5b7ba8b3</p>
+            <p>Revision: 2.0.0-M4.20201206-0423-aea4499d</p>
         </div>
     </div>
 </footer>

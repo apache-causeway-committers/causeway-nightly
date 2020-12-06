@@ -435,13 +435,18 @@ public class DemoJob implements Job {
 
     public void execute(final JobExecutionContext context) {
 
-        final AuthenticationSession authSession = newAuthSession(context);
-        new DemoIsisInteractionTemplate().execute(authSession, null);
+        final Authentication authentication = newAuthentication(context);
+        new DemoIsisInteractionTemplate().execute(authentication, null);
 
     }
 
-    protected AuthenticationSession newAuthSession(JobExecutionContext context) {
-        return new SimpleSession("isisModuleExtQuartzDemoUser", Arrays.asList("isisModuleExtQuartzDemoRole"));
+    protected Authentication newAuthentication(JobExecutionContext context) {
+
+        val user = UserMemento.ofNameAndRoleNames(
+                "isisModuleExtQuartzDemoUser",
+                Stream.of("isisModuleExtQuartzDemoRole"));
+
+        return SimpleAuthentication.ofValid(user);
     }
 
     @Inject IsisConfiguration isisConfiguration;
@@ -542,7 +547,7 @@ public class DemoJobQuartzConfigurerModule {
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20201205-0422-5b7ba8b3</p>
+            <p>Revision: 2.0.0-M4.20201206-0423-aea4499d</p>
         </div>
     </div>
 </footer>
