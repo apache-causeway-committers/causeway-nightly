@@ -772,8 +772,127 @@ These messages can either be simple strings, or can be translated.</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="api-and-usage"><a class="anchor" href="#api-and-usage"></a>API and Usage</h2>
+<h2 id="api"><a class="anchor" href="#api"></a>API</h2>
 <div class="sectionbody">
+<div class="sect2">
+<h3 id="messageservice-interface"><a class="anchor" href="#messageservice-interface"></a>MessageService : <em>interface</em></h3>
+<div class="ulist">
+<ul>
+<li>
+<p><code><span class="teal"><strong>informUser</strong></span>(String message)</code> : <code>void</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Make the specified message available to the user. Note this will probably be displayed in transitory fashion, so is only suitable for useful but optional information.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code><span class="teal"><strong>informUser</strong></span>(<a href="../../../system/latest/generated/index/TranslatableString.html" class="page">TranslatableString</a> message, Class&lt;?&gt; contextClass, String contextMethod)</code> : <code>String</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Make the specified message available to the user, translated (if possible) to user&#8217;s locale.</p>
+</div>
+<div class="paragraph">
+<p>More precisely, the locale is as provided by the configured <em>org.apache.isis.applib.services.i18n.LocaleProvider</em> service. This will most commonly be the locale of the current request (ie the current user&#8217;s locale).</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code><span class="teal"><strong>informUser</strong></span>(<a href="../../../system/latest/generated/index/TranslatableString.html" class="page">TranslatableString</a> message, String translationContext)</code> : <code>String</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Override of <em>MessageService#informUser(TranslatableString, Class, String)</em> , but with last two parameters combined into a context string.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code><span class="teal"><strong>warnUser</strong></span>(String message)</code> : <code>void</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Warn the user about a situation with the specified message. The container should guarantee to display this warning to the user, and will typically require acknowledgement.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code><span class="teal"><strong>warnUser</strong></span>(<a href="../../../system/latest/generated/index/TranslatableString.html" class="page">TranslatableString</a> message, Class&lt;?&gt; contextClass, String contextMethod)</code> : <code>String</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Warn the user about a situation with the specified message, translated (if possible) to user&#8217;s locale.</p>
+</div>
+<div class="paragraph">
+<p>More precisely, the locale is as provided by the configured <em>org.apache.isis.applib.services.i18n.LocaleProvider</em> service. This will most commonly be the locale of the current request (ie the current user&#8217;s locale).</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code><span class="teal"><strong>warnUser</strong></span>(<a href="../../../system/latest/generated/index/TranslatableString.html" class="page">TranslatableString</a> message, String translationContext)</code> : <code>String</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Override of <em>MessageService#warnUser(TranslatableString, Class, String)</em> , but with last two parameters combined into a context string.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code><span class="teal"><strong>raiseError</strong></span>(String message)</code> : <code>void</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Notify the user of an application error with the specified message. Note this will probably be displayed in an alarming fashion, so is only suitable for errors. The user will typically be required to perform additional steps after the error (eg to inform the helpdesk).</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code><span class="teal"><strong>raiseError</strong></span>(<a href="../../../system/latest/generated/index/TranslatableString.html" class="page">TranslatableString</a> message, Class&lt;?&gt; contextClass, String contextMethod)</code> : <code>String</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Notify the user of an application error with the specified message, translated (if possible) to user&#8217;s locale.</p>
+</div>
+<div class="paragraph">
+<p>More precisely, the locale is as provided by the configured <em>org.apache.isis.applib.services.i18n.LocaleProvider</em> service. This will most commonly be the locale of the current request (ie the current user&#8217;s locale).</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code><span class="teal"><strong>raiseError</strong></span>(<a href="../../../system/latest/generated/index/TranslatableString.html" class="page">TranslatableString</a> message, String translationContext)</code> : <code>String</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Override of <em>MessageService#raiseError(TranslatableString, Class, String)</em> , but with last two parameters combined into a context string.</p>
+</div>
+</div>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>TODO example migration</p>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="title">Deprecated Docs</div>
+<div class="paragraph">
+<p>== API and Usage</p>
+</div>
 <div class="paragraph">
 <p>The API of <code>MessageService</code> is:</p>
 </div>
@@ -860,6 +979,11 @@ These messages can either be simple strings, or can be translated.</p>
 <div class="paragraph">
 <p>The i18n versions of these methods that take <code>contextClass</code> and <code>contextMethod</code> parameters use this to create a context string, eg "com.mycompany.Customer#placeOrder".</p>
 </div>
+</td>
+</tr>
+</table>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -906,7 +1030,7 @@ These messages can either be simple strings, or can be translated.</p>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20201211-0424-1b7d5007</p>
+            <p>Revision: 2.0.0-M4.20201212-0424-541da530</p>
         </div>
     </div>
 </footer>

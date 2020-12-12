@@ -790,8 +790,127 @@ Dynamic reloading is disabled in production mode.</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="spi"><a class="anchor" href="#spi"></a>SPI</h2>
+<h2 id="api"><a class="anchor" href="#api"></a>API</h2>
 <div class="sectionbody">
+<div class="sect2">
+<h3 id="gridservice-interface"><a class="anchor" href="#gridservice-interface"></a>GridService : <em>interface</em></h3>
+<div class="ulist">
+<ul>
+<li>
+<p><code><span class="teal"><strong>supportsReloading</strong></span>()</code> : <code>boolean</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Whether dynamic reloading of layouts is enabled.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code><span class="teal"><strong>remove</strong></span>(Class&lt;?&gt; domainClass)</code> : <code>void</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>To support metamodel invalidation/rebuilding of spec.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code><span class="teal"><strong>existsFor</strong></span>(Class&lt;?&gt; domainClass)</code> : <code>boolean</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Whether any persisted layout metadata (eg a.layout.xmlfile) exists for this domain class.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code><span class="teal"><strong>load</strong></span>(Class&lt;?&gt; domainClass)</code> : <code>Grid</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Returns a new instance of a <em>Grid</em> for the specified domain class, eg from alayout.xmlfile, elsenull.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code><span class="teal"><strong>load</strong></span>(Class&lt;?&gt; domainClass, String layout)</code> : <code>Grid</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Returns a new instance of a <em>Grid</em> for the specified domain class, eg from a[domainClass].layout.[layout].xmlfile, elsenull.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code><span class="teal"><strong>defaultGridFor</strong></span>(Class&lt;?&gt; domainClass)</code> : <code>Grid</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Returns a default grid; eg where none can be loaded using <em>#load(Class)</em> .</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code><span class="teal"><strong>normalize</strong></span>(Grid grid)</code> : <code>Grid</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Returns a normalized grid for the domain class obtained previously using <em>#load(Class)</em> .</p>
+</div>
+<div class="paragraph">
+<p>If a "normalized" grid is persisted as thelayout.xml, then the expectation is that the <em>MemberOrder</em> annotation can be removed from the domain class because the binding of properties/collections/actions will be within the XML. However, the layout annotations ( <em>DomainObjectLayout</em> , <em>ActionLayout</em> , <em>PropertyLayout</em> and <em>CollectionLayout</em> ) (if present) will continue to be used to provide additional layout metadata. Of course, there is nothing to prevent the developer from extending the layout XML to also include the layout XML (in other words moving towards a <em>#complete(Grid) complete</em> grid. Metadata within thelayout.xmlfile takes precedence over any annotations.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code><span class="teal"><strong>complete</strong></span>(Grid grid)</code> : <code>Grid</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Modifies the provided <em>Grid</em> with additional metadata, broadly speaking corresponding to the <em>DomainObjectLayout</em> , <em>ActionLayout</em> , <em>PropertyLayout</em> and <em>CollectionLayout</em> .</p>
+</div>
+<div class="paragraph">
+<p>If a "completed" grid is persisted as thelayout.xml, then there should be no need for any of the layout annotations, nor the <em>MemberOrder</em> annotations, to be required in the domain class itself.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code><span class="teal"><strong>minimal</strong></span>(Grid grid)</code> : <code>Grid</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Modifies the provided <em>Grid</em> , removing all metadata except the basic grid structure.</p>
+</div>
+<div class="paragraph">
+<p>If a "minimal" grid is persisted as thelayout.xml, then the expectation is that most of the layout annotations ( <em>DomainObjectLayout</em> , <em>ActionLayout</em> , <em>PropertyLayout</em> , <em>CollectionLayout</em> , but also <em>MemberOrder</em> ) will still be retained in the domain class code.</p>
+</div>
+</div>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>TODO example migration</p>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="title">Deprecated Docs</div>
+<div class="paragraph">
+<p>== SPI</p>
+</div>
 <div class="paragraph">
 <p>The SPI defined by this service is:</p>
 </div>
@@ -872,6 +991,11 @@ Such a grid, if persisted as the layout XML file for the domain class, requires 
 <p>The first five methods just delegate to the corresponding methods in <a href="GridSystemService.html" class="page"><code>GridSystemService</code></a>, while the last four delegate to the  corresponding method in <a href="GridSystemService.html" class="page"><code>GridSystemService</code></a>.
 The service inspects the <code>Grid</code>'s concrete class to determine which actual <code>GridSystemService</code> instance to delegate to.</p>
 </div>
+</td>
+</tr>
+</table>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -911,7 +1035,7 @@ object).</p>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20201211-0424-1b7d5007</p>
+            <p>Revision: 2.0.0-M4.20201212-0424-541da530</p>
         </div>
     </div>
 </footer>

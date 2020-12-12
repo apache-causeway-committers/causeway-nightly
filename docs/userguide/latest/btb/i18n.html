@@ -512,6 +512,131 @@ In fact, it isn&#8217;t even necessary for there to be any <code>.po</code> file
 </div>
 </div>
 <div class="sect1">
+<h2 id="api"><a class="anchor" href="#api"></a>API</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="translationservice-interface"><a class="anchor" href="#translationservice-interface"></a>TranslationService : <em>interface</em></h3>
+<div class="ulist">
+<ul>
+<li>
+<p><code><span class="teal"><strong>translate</strong></span>(String context, String text)</code> : <code>String</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Return a translation of the text, in the locale of the "current user".</p>
+</div>
+<div class="paragraph">
+<p>The mechanism to determine the locale is implementation-specific.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code><span class="teal"><strong>translate</strong></span>(String context, String singularText, String pluralText, int num)</code> : <code>String</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Return a translation of either the singular or the plural text, dependent on the <code>num</code> parameter, in the locale of the "current user".</p>
+</div>
+<div class="paragraph">
+<p>The mechanism to determine the locale is implementation-specific.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code><span class="teal"><strong>getMode</strong></span>()</code> : <code>Mode</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Whether this implementation is operating in read or in write mode.</p>
+</div>
+<div class="paragraph">
+<p>If in read mode, then the translations are expected to be present. In such cases, the <em>#translate(String, String) translate</em> <em>#translate(String, String, String, int) method</em> s should be <em>lazily</em> called, if only because there will (most likely) need to be a session in progress (such that the locale of the current user can be determined).</p>
+</div>
+<div class="paragraph">
+<p>If in write mode, then the implementation is saving translation keys, and will always return the untranslated translation. In such cases, the <em>#translate(String, String) translate</em> <em>#translate(String, String, String, int) method</em> s should be <em>eagerly</em> called such that all pathways are exercised..</p>
+</div>
+</div>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>TODO example migration</p>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="title">Deprecated Docs</div>
+<div class="paragraph">
+<p>== API</p>
+</div>
+<div class="paragraph">
+<p>= TranslationService : <em>interface</em>
+:Notice: Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements. See the NOTICE file distributed with this work for additional information regarding copyright ownership. The ASF licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at. <a href="http://www.apache.org/licenses/LICENSE-2.0" class="bare">http://www.apache.org/licenses/LICENSE-2.0</a> . Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR  CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code><span class="teal"><strong>translate</strong></span>(String context, String text)</code> : <code>String</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Return a translation of the text, in the locale of the "current user".</p>
+</div>
+<div class="paragraph">
+<p>The mechanism to determine the locale is implementation-specific.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code><span class="teal"><strong>translate</strong></span>(String context, String singularText, String pluralText, int num)</code> : <code>String</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Return a translation of either the singular or the plural text, dependent on the <code>num</code> parameter, in the locale of the "current user".</p>
+</div>
+<div class="paragraph">
+<p>The mechanism to determine the locale is implementation-specific.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code><span class="teal"><strong>getMode</strong></span>()</code> : <code>Mode</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Whether this implementation is operating in read or in write mode.</p>
+</div>
+<div class="paragraph">
+<p>If in read mode, then the translations are expected to be present. In such cases, the <em>#translate(String, String) translate</em> <em>#translate(String, String, String, int) method</em> s should be <em>lazily</em> called, if only because there will (most likely) need to be a session in progress (such that the locale of the current user can be determined).</p>
+</div>
+<div class="paragraph">
+<p>If in write mode, then the implementation is saving translation keys, and will always return the untranslated translation. In such cases, the <em>#translate(String, String) translate</em> <em>#translate(String, String, String, int) method</em> s should be <em>eagerly</em> called such that all pathways are exercised..</p>
+</div>
+</div>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>TODO example migration</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="translationservice"><a class="anchor" href="#translationservice"></a><code>TranslationService</code></h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -575,793 +700,9 @@ In both cases the <code>context</code> parameter provides some contextual inform
 <p>The mode meanwhile determines the behaviour of the service.
 More on this below.</p>
 </div>
-<div class="sect2">
-<h3 id="translationservicepo"><a class="anchor" href="#translationservicepo"></a><code>TranslationServicePo</code></h3>
-<div class="paragraph">
-<p>Isis provides a default implementation of <code>TranslationService</code>, namely <code>TranslationServicePo</code>.</p>
-</div>
-<div class="paragraph">
-<p>If the service is running in the normal read mode, then it simply provides translations for the locale of the current user.
-This means locates the appropriate <code>.po</code> file (based on the requesting user&#8217;s locale), finds the translation and returns it.</p>
-</div>
-<div class="paragraph">
-<p>If however the service is configured to run in write mode, then it instead records the fact that the message was requested to be translated (a little like a spy/mock in unit testing mock), and returns the original message.
-The service can then be queried to discover which messages need to be translated.
-All requested translations are written into the <code>.pot</code> file.</p>
-</div>
-<div class="paragraph">
-<p>To make the service as convenient as possible to use, the service configures itself as follows:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>if running in prototype mode <a href="../../../refguide/latest/config/about.html#deployment-types" class="page">deployment type</a> or during integration tests, then the service runs in <strong>write</strong> mode, in which case it records all translations into the <code>.pot</code> file.
-The <code>.pot</code> file is written out when the system is shutdown.</p>
-</li>
-<li>
-<p>if running in server (production) mode a<a href="../../../refguide/latest/config/about.html#deployment-types" class="page">deployment type</a>, then the service runs in <strong>read</strong> mode.
-It is also possible to set a configuration setting in <code>application.properties</code> to force read mode even if running in prototype mode (useful to manually test/demo the translations).</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>When running in write mode the original text is returned to the caller untranslated.
-If in read mode, then the translated <code>.po</code> files are read and translations provided as required.</p>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="imperative-messages"><a class="anchor" href="#imperative-messages"></a>Imperative messages</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The <code>TranslationService</code> is used internally by Apache Isis when building up the metamodel; the name and description of every class, property, collection, action and action parameter is automatically translated.
-Thus the simple act of bootstrapping Apache Isis will cause most of the messages requiring translation (that is: those for the Apache Isis metamodel) to be captured by the <code>TranslationService</code>.</p>
-</div>
-<div class="paragraph">
-<p>However, for an application to be fully internationalized, any validation messages (from either <code>disableXxx()</code> or <code>validateXxx()</code> supporting methods) and also possibly an object&#8217;s title (from the <code>title()</code> method) will also require translation.
-Moreover, these messages must be captured in the <code>.pot</code> file such that they can be translated.</p>
-</div>
-<div class="sect2">
-<h3 id="translatablestring"><a class="anchor" href="#translatablestring"></a><code>TranslatableString</code></h3>
-<div class="paragraph">
-<p>The first part of the puzzle is tackled by an extension to Apache Isis' programming model.
-Whereas previously the <code>disableXxx()</code> / <code>validateXxx()</code> / <code>title()</code> methods could only return a <code>java.lang.String</code>, they may now optionally return a <code>TranslatableString</code> (defined in Isis applib) instead.</p>
-</div>
-<div class="paragraph">
-<p>For example (based on similar code in the <a href="../../../docs/latest/starters/simpleapp.html" class="page">SimpleApp</a> starter app):</p>
-</div>
-<div class="listingblock">
+<div class="exampleblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public TranslatableString validateUpdateName(final String name) {
-    return name.contains("!")
-                ? TranslatableString.tr("Exclamation mark is not allowed")
-                : null;
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>This corresponds to the following entry in the <code>.pot</code> file:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">#: dom.simple.SimpleObject#updateName()
-msgid "Exclamation mark is not allowed"
-msgstr ""</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The full API of <code>TranslatableString</code> is modelled on the design of GNU gettext (in particular the <a href="https://code.google.com/p/gettext-commons/wiki/Tutorial">gettext-commons</a> library):</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public final class TranslatableString {
-    public static TranslatableString tr(                    <i class="conum" data-value="1"></i><b>(1)</b>
-            final String pattern,
-            final Object... paramArgs) {
-        // ...
-    }
-    public static TranslatableString trn(                   <i class="conum" data-value="2"></i><b>(2)</b>
-            final String singularPattern,
-            final String pluralPattern,
-            final int number,
-            final Object... paramArgs) {
-        // ...
-    }
-    public String translate(                                <i class="conum" data-value="3"></i><b>(3)</b>
-            final TranslationService translationService,
-            final String context) {
-        // ...
-    }
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>returns a translatable string with a single pattern for both singular and plural forms.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>returns a translatable string with different patterns for singular and plural forms; the one to use is determined by the 'number' argument</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>translates the string using the provided <code>TranslationService</code>, using the appropriate singular/regular or plural form, and interpolating any arguments.</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>The interpolation uses the format <code>{xxx}</code>, where the placeholder can occur multiple times.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">final TranslatableString ts = TranslatableString.tr(
-    "My name is {lastName}, {firstName} {lastName}.",
-    "lastName", "Bond", "firstName", "James");</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>would interpolate (for the English locale) as "My name is Bond, James Bond".</p>
-</div>
-<div class="paragraph">
-<p>For a German user, on the other hand, if the translation in the corresponding <code>.po</code> file was:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">#: xxx.yyy.Whatever#context()
-msgid "My name is {lastName}, {firstName} {lastName}."
-msgstr "Ich heisse {firstName} {lastName}."</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>then the translation would be: "Ich heisse James Bond".</p>
-</div>
-<div class="paragraph">
-<p>The same class is used in <a href="../../../refguide/latest/applib-svc/MessageService.html" class="page"><code>MessageService</code></a> so that you can raise translatable info, warning and error messages; each of the relevant methods are overloaded.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public interface MessageService {
-    void informUser(String message);
-    void informUser(
-        TranslatableMessage message,
-        final Class&lt;?&gt; contextClass, final String contextMethod); <i class="conum" data-value="1"></i><b>(1)</b>
-    ...
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>concatenated together to form the context for the <code>.pot</code> file.</td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect2">
-<h3 id="translatableexception"><a class="anchor" href="#translatableexception"></a><code>TranslatableException</code></h3>
-<div class="paragraph">
-<p>Another mechanism by which messages can be rendered to the user are as the result of exception messages thrown and recognized by an <a href="../../../refguide/latest/applib-svc/ExceptionRecognizerService.html" class="page"><code>ExceptionRecognizer</code></a>.</p>
-</div>
-<div class="paragraph">
-<p>In this case, if the exception implements <code>TranslatableException</code>, then the message will automatically be translated before being rendered.
-The <code>TranslatableException</code> itself takes the form:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public interface TranslatableException {
-    TranslatableString getTranslatableMessage(); <i class="conum" data-value="1"></i><b>(1)</b>
-    String getTranslationContext();              <i class="conum" data-value="2"></i><b>(2)</b>
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>the message to translate.<br>
-If returns <code>null</code>, then the <code>Exception#getMessage()</code> is used as a fallback</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>the context to use when translating the message</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="wicket-viewer"><a class="anchor" href="#wicket-viewer"></a>Wicket Viewer</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The <a href="../../../vw/latest/about.html" class="page">Wicket viewer</a> (its labels and messages) is also internationalized using the <code>TranslationService</code>.
-This is done through an Isis-specific implementation of the Wicket framework&#8217;s <code>org.apache.wicket.Localizer</code> class, namely <code>LocalizerForIsis</code>.</p>
-</div>
-<div class="paragraph">
-<p>The Wicket <code>Localizer</code> defines the following API:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public String getString(
-        final String key,               <i class="conum" data-value="1"></i><b>(1)</b>
-        final Component component,      <i class="conum" data-value="2"></i><b>(2)</b>
-        final IModel&lt;?&gt; model,
-        final Locale locale,
-        final String style,
-        final String defaultValue)
-    throws MissingResourceException { /* ... */ }</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The key to obtain the resource for</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>The component to get the resource for (if any)</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>For example, <code>key</code> might be a value such as "okLabel", while <code>component</code> an internal class of the Wicket viewer, such as <code>EntityPropertiesForm</code>.</p>
-</div>
-<div class="paragraph">
-<p>The <code>LocalizerForIsis</code> implementation uses the <code>key</code> as the <code>msgId</code>, while the fully qualified class name of the <code>component</code> is used as a context.
-There is one exception to this: if the component is the third-party select2 component (used for drop-downs), then that class name is used directly.</p>
-</div>
-<div class="paragraph">
-<p>In the main, using Isis' i18n support means simply adding the appropriate translations to the <code>translation.po</code> file, for each locale that you require.
-If the translations are missing then the original translations from the Wicket resource bundles will be used instead.</p>
-</div>
-<div class="sect2">
-<h3 id="commonly-used"><a class="anchor" href="#commonly-used"></a>Commonly used</h3>
-<div class="paragraph">
-<p>Most of the translation requirements can be covered by adding in the following <code>msgId</code>s:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">#: org.apache.isis.viewer.wicket.ui.pages.entity.EntityPage
-msgid "CollectionContentsAsAjaxTablePanelFactory.Table"
-msgstr "Table"
 
-#: org.apache.isis.viewer.wicket.ui.pages.entity.EntityPage
-msgid "CollectionContentsAsUnresolvedPanel.Hide"
-msgstr "Hide"
-
-#: org.apache.isis.viewer.wicket.ui.pages.entity.EntityPage
-msgid "aboutLabel"
-msgstr "About"
-
-#: org.apache.isis.viewer.wicket.ui.pages.entity.EntityPage
-msgid "cancelLabel"
-msgstr "Cancel"
-
-#: org.apache.isis.viewer.wicket.ui.pages.entity.EntityPage
-msgid "datatable.no-records-found"
-msgstr "No Records Found"
-
-#: org.apache.isis.viewer.wicket.ui.pages.entity.EntityPage
-msgid "editLabel"
-msgstr "Edit"
-
-#: org.wicketstuff.select2.Select2Choice
-msgid "inputTooShortPlural"
-msgstr "Please enter {number} more characters"
-
-#: org.wicketstuff.select2.Select2Choice
-msgid "inputTooShortSingular"
-msgstr "Please enter 1 more character"
-
-#: org.wicketstuff.select2.Select2Choice
-msgid "loadMore"
-msgstr "Load more"
-
-#: org.apache.isis.viewer.wicket.ui.pages.entity.EntityPage
-msgid "logoutLabel"
-msgstr "Logout"
-
-#: org.wicketstuff.select2.Select2Choice
-msgid "noMatches"
-msgstr "No matches"
-
-#: org.apache.isis.viewer.wicket.ui.pages.entity.EntityPage
-msgid "okLabel"
-msgstr "OK"
-
-#: org.wicketstuff.select2.Select2Choice
-msgid "searching"
-msgstr "Searching..."
-
-#: org.wicketstuff.select2.Select2Choice
-msgid "selectionTooBigPlural"
-msgstr "You can only select {limit} items"
-
-#: org.wicketstuff.select2.Select2Choice
-msgid "selectionTooBigSingular"
-msgstr "You can only select 1 item"</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="loginself-sign-up"><a class="anchor" href="#loginself-sign-up"></a>Login/self-sign-up</h3>
-<div class="paragraph">
-<p>In addition, there are a reasonably large number of messages that are used for both login and the
-<a href="../../../vw/latest/features.html#user-registration" class="page">user registration</a> (self sign-up) and password reset features.</p>
-</div>
-<div class="paragraph">
-<p>These are:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">#: org.apache.isis.viewer.wicket.ui.pages.login.WicketSignInPage
-msgid "AutoLabel.CSS.required"
-msgstr "Required"
-
-#: org.apache.isis.viewer.wicket.ui.pages.accmngt.signup.RegistrationFormPage
-#: org.apache.isis.viewer.wicket.ui.pages.accmngt.register.RegisterPage
-#: org.apache.isis.viewer.wicket.ui.pages.accmngt.password_reset.PasswordResetPage
-msgid "confirmPasswordLabel"
-msgstr "Confirm password"
-
-#: org.apache.isis.viewer.wicket.ui.pages.accmngt.signup.RegistrationFormPage
-#: org.apache.isis.viewer.wicket.ui.pages.accmngt.register.RegisterPage
-msgid "emailIsNotAvailable"
-msgstr "The given email is already in use"
-
-#: org.apache.isis.viewer.wicket.ui.pages.accmngt.password_reset.PasswordResetPage
-msgid "emailPlaceholder"
-msgstr "Enter your email"
-
-#: org.apache.isis.viewer.wicket.ui.pages.accmngt.signup.RegistrationFormPage
-#: org.apache.isis.viewer.wicket.ui.pages.accmngt.register.RegisterPage
-msgid "emailPlaceholder"
-msgstr "Enter an email for the new account"
-
-#: org.apache.isis.viewer.wicket.ui.pages.accmngt.signup.RegistrationFormPage
-#: org.apache.isis.viewer.wicket.ui.pages.accmngt.register.RegisterPage
-#: org.apache.isis.viewer.wicket.ui.pages.accmngt.password_reset.PasswordResetPage
-msgid "emailLabel"
-msgstr "Email"
-
-#: org.apache.isis.viewer.wicket.ui.pages.accmngt.signup.RegistrationFormPage
-#: org.apache.isis.viewer.wicket.ui.pages.accmngt.register.RegisterPage
-#: org.apache.isis.viewer.wicket.ui.pages.accmngt.password_reset.PasswordResetPage
-msgid "emailSentMessage"
-msgstr "An email has been sent to '${email}' for verification."
-
-#: org.apache.isis.viewer.wicket.ui.pages.login.WicketSignInPage
-msgid "forgotPasswordLinkLabel"
-msgstr "Forgot your password?"
-
-#: org.apache.isis.viewer.wicket.ui.pages.login.WicketSignInPage
-msgid "loginHeader"
-msgstr "Login"
-
-#: org.apache.isis.viewer.wicket.ui.pages.accmngt.password_reset.PasswordResetPage
-msgid "noSuchUserByEmail"
-msgstr "There is no account with this email"
-
-#: org.apache.isis.viewer.wicket.ui.pages.accmngt.password_reset.PasswordResetPage
-msgid "noUserForAnEmailValidToken"
-msgstr "The account seems to be either already deleted or has changed its email address. Please try again."
-
-#: org.apache.isis.viewer.wicket.ui.pages.accmngt.password_reset.PasswordResetPage
-msgid "passwordChangeSuccessful"
-msgstr "The password has been changed successfully. You can &lt;a class=\"alert-success\" style=\"text-decoration:underline;\" href=\"${signInUrl}\"&gt;login&lt;/a&gt; now."
-
-#: org.apache.isis.viewer.wicket.ui.pages.accmngt.password_reset.PasswordResetPage
-msgid "passwordChangeUnsuccessful"
-msgstr "There was a problem while updating the password. Please try again."
-
-#: org.apache.isis.viewer.wicket.ui.pages.accmngt.signup.RegistrationFormPage
-#: org.apache.isis.viewer.wicket.ui.pages.accmngt.register.RegisterPage
-#: org.apache.isis.viewer.wicket.ui.pages.login.WicketSignInPage
-#: org.apache.isis.viewer.wicket.ui.pages.accmngt.password_reset.PasswordResetPage
-msgid "passwordLabel"
-msgstr "Password"
-
-#: org.apache.isis.viewer.wicket.ui.pages.accmngt.signup.RegistrationFormPage
-#: org.apache.isis.viewer.wicket.ui.pages.accmngt.register.RegisterPage
-#: org.apache.isis.viewer.wicket.ui.pages.login.WicketSignInPage
-#: org.apache.isis.viewer.wicket.ui.pages.accmngt.password_reset.PasswordResetPage
-msgid "passwordPlaceholder"
-msgstr "Enter password"
-
-#: org.apache.isis.viewer.wicket.ui.pages.accmngt.password_reset.PasswordResetPage
-msgid "passwordResetExpiredOrInvalidToken"
-msgstr "You are trying to reset the password for an expired or invalid token"
-
-#: org.apache.isis.viewer.wicket.ui.pages.accmngt.password_reset.PasswordResetPage
-msgid "passwordResetHeader"
-msgstr "Forgot password"
-
-#: org.apache.isis.viewer.wicket.ui.pages.accmngt.password_reset.PasswordResetPage
-msgid "passwordResetSubmitLabel"
-msgstr "Submit"
-
-#: org.apache.isis.viewer.wicket.ui.pages.login.WicketSignInPage
-msgid "registerButtonLabel"
-msgstr "Register"
-
-#: org.apache.isis.viewer.wicket.ui.pages.accmngt.register.RegisterPage
-msgid "registerHeader"
-msgstr "Register"
-
-#: org.apache.isis.viewer.wicket.ui.pages.login.WicketSignInPage
-msgid "rememberMeLabel"
-msgstr "Remember Me"
-
-#: org.apache.isis.viewer.wicket.ui.pages.login.WicketSignInPage
-msgid "resetButtonLabel"
-msgstr "Reset"
-
-#: org.apache.isis.viewer.wicket.ui.pages.login.WicketSignInPage
-msgid "signInButtonLabel"
-msgstr "Sign in"
-
-#: org.apache.isis.viewer.wicket.ui.pages.login.WicketSignInPage
-msgid "signUpButtonLabel"
-msgstr "Don't have an account? Sign up now."
-
-#: org.apache.isis.viewer.wicket.ui.pages.accmngt.signup.RegistrationFormPage
-#: org.apache.isis.viewer.wicket.ui.pages.accmngt.register.RegisterPage
-#: org.apache.isis.viewer.wicket.ui.pages.accmngt.password_reset.PasswordResetPage
-msgid "signUpButtonLabel"
-msgstr "Verify email"
-
-#: org.apache.isis.viewer.wicket.ui.pages.accmngt.signup.RegistrationFormPage
-msgid "signUpHeader"
-msgstr "Sign Up"
-
-#: org.apache.isis.viewer.wicket.ui.pages.accmngt.signup.RegistrationFormPage
-#: org.apache.isis.viewer.wicket.ui.pages.accmngt.register.RegisterPage
-#: org.apache.isis.viewer.wicket.ui.pages.accmngt.password_reset.PasswordResetPage
-msgid "usernameIsNotAvailable"
-msgstr "The provided username is already in use"
-
-#: org.apache.isis.viewer.wicket.ui.pages.accmngt.signup.RegistrationFormPage
-#: org.apache.isis.viewer.wicket.ui.pages.accmngt.register.RegisterPage
-#: org.apache.isis.viewer.wicket.ui.pages.login.WicketSignInPage
-#: org.apache.isis.viewer.wicket.ui.pages.accmngt.password_reset.PasswordResetPage
-msgid "usernameLabel"
-msgstr "Username"
-
-#: org.apache.isis.viewer.wicket.ui.pages.accmngt.signup.RegistrationFormPage
-#: org.apache.isis.viewer.wicket.ui.pages.accmngt.register.RegisterPage
-#: org.apache.isis.viewer.wicket.ui.pages.login.WicketSignInPage
-#: org.apache.isis.viewer.wicket.ui.pages.accmngt.password_reset.PasswordResetPage
-msgid "usernamePlaceholder"
-msgstr "Username"</code></pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="integration-testing"><a class="anchor" href="#integration-testing"></a>Integration Testing</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>So much for the API; but as noted, it is also necessary to ensure that the required translations are recorded (by the <code>TranslationService</code>) into the <code>.pot</code> file.</p>
-</div>
-<div class="paragraph">
-<p>For this, we recommend that you ensure that all such methods are tested through an <a href="../../../testing/latest/integtestsupport/about.html" class="page">integration test</a> (not unit test).</p>
-</div>
-<div class="paragraph">
-<p>For example, here&#8217;s the corresponding integration test for the "Exclamation mark" example from the simpleapp (above):</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@BeforeEach
-public void setUp() {
-    // given
-    simpleObject = fixtureScripts.runPersona(SimpleObject_persona.FOO);
-}
-
-@Test
-public void fails_validation() {
-
-    // expect
-    InvalidException cause = assertThrows(InvalidException.class, ()-&gt;{
-
-        // when
-        wrap(simpleObject).updateName("new name!");
-    });
-
-    // then
-    assertThat(cause.getMessage(), containsString("Character '!' is not allowed"));
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Running this test will result in the framework calling the <code>validateUpdateName(&#8230;&#8203;)</code> method, and thus to record that a translation is required in the <code>.pot</code> file.</p>
-</div>
-<div class="paragraph">
-<p>When the integration tests are complete (that is, when Apache Isis is shutdown), the <code>TranslationServicePo</code> will write out all captured translations to its log (more on this below).
-This will include all the translations captured from the Apache Isis metamodel, along with all translations as exercised by the integration tests.</p>
-</div>
-<div class="paragraph">
-<p>To ensure your app is fully internationalized app, you must therefore:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>use <code>TranslatableString</code> rather than <code>String</code> for all validation/disable and title methods.</p>
-</li>
-<li>
-<p>ensure that (at a minimum) all validation messages and title methods are integration tested.</p>
-</li>
-</ul>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>We make no apologies for this requirement: one of the reasons that we decided to implement Apache Isis' i18n support in this way is because it encourages/requires the app to be properly tested.</p>
-</div>
-<div class="paragraph">
-<p>Behind the scenes Apache Isis uses a JUnit 5 extension (<code>ExceptionRecognizerTranslate</code>) to intercept any exceptions that are thrown.
-These are simply passed through to the <a href="../../../refguide/latest/applib-svc/ExceptionRecognizerService.html" class="page"><code>ExceptionRecognizerService</code></a>s so that any messages are recorded as requiring translation.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="escaped-strings"><a class="anchor" href="#escaped-strings"></a>Escaped strings</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Translated messages can be escaped if required, eg to include embedded markup.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">#: com.mycompany.myapp.OrderItem#quantity
-msgid "&lt;i&gt;Quantity&lt;/i&gt;"
-msgstr "&lt;i&gt;Quantité&lt;/i&gt;"</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>For this to work, the <code>namedEscaped</code> attribute must be specified using either the <a href="../fun/ui.html#object-layout" class="page">layout file</a>, or using an annotation such as <a href="../../../refguide/latest/applib-ant/PropertyLayout.html" class="page"><code>@PropertyLayout</code></a> or <a href="../../../refguide/latest/applib-ant/ParameterLayout.html" class="page"><code>@ParameterLayout</code></a>.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
-import lombok.Setter;
-
-@PropertyLayout(
-    named="&lt;i&gt;Quantity&lt;/i&gt;",      <i class="conum" data-value="1"></i><b>(1)</b>
-    namedEscaped=false
-)
-@Getter @Setter
-private Integer quantity;</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>required (even though it won&#8217;t be used when a translation is read; otherwise the escaped flag is ignored)</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="configuration"><a class="anchor" href="#configuration"></a>Configuration</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>There are several different aspects of the translation service that can be configured.</p>
-</div>
-<div class="sect2">
-<h3 id="logging"><a class="anchor" href="#logging"></a>Logging</h3>
-<div class="paragraph">
-<p>To configure the <code>TranslationServicePo</code> to write to out the <code>translations.pot</code> file, add the following to the <em>integtests</em> <code>log4j-test.xml</code> file:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
-&lt;Configuration status="WARN"&gt;
-    &lt;!-- ... --&gt;
-    &lt;Appenders&gt;
-        &lt;Console name="Console" target="SYSTEM_OUT" follow="true"&gt;
-            &lt;PatternLayout pattern="${sys:CONSOLE_LOG_PATTERN}" /&gt;
-        &lt;/Console&gt;
-        &lt;File name="TranslationsPoFile" fileName="translations.po"
-              append="false" immediateFlush="true"&gt;
-            &lt;PatternLayout&gt;
-                &lt;Pattern&gt;%m%n&lt;/Pattern&gt;
-            &lt;/PatternLayout&gt;
-        &lt;/File&gt;
-    &lt;/Appenders&gt;
-    &lt;Loggers&gt;
-        &lt;!-- ... --&gt;
-        &lt;logger
-            name="org.apache.isis.core.runtimeservices.i18n.po.PoWriter"
-            level="info"&gt;
-            &lt;AppenderRef ref="TranslationsPoFile"/&gt;
-        &lt;/logger&gt;
-    &lt;/Loggers&gt;
-&lt;/Configuration&gt;</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="location-of-the-po-files"><a class="anchor" href="#location-of-the-po-files"></a>Location of the <code>.po</code> files</h3>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-TODO - v2 - need to verify this.
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>The default location of the translated <code>.po</code> files is in the <code>WEB-INF</code> directory.
-These are named and searched for similarly to regular Java resource bundles.</p>
-</div>
-<div class="paragraph">
-<p>For example, assuming these translations:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">/WEB-INF/translations-en-US.po
-        /translations-en.po
-        /translations-fr-FR.po
-        /translations.po</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>then:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>a user with <code>en-US</code> locale will use <code>translations-en-US.po</code></p>
-</li>
-<li>
-<p>a user with <code>en-GB</code> locale will use <code>translations-en.po</code></p>
-</li>
-<li>
-<p>a user with <code>fr-FR</code> locale will use <code>translations-fr-FR.po</code></p>
-</li>
-<li>
-<p>a user with <code>fr-CA</code> locale will use <code>translations.po</code></p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>The basename for translation files is always <code>translations</code>; this cannot be altered.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="externalized-translation-files"><a class="anchor" href="#externalized-translation-files"></a>Externalized translation files</h3>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-TODO - v2 - need to figure out how to configure Spring Boot so that these resources can be read from an external location.
-</td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect2">
-<h3 id="force-read-mode-or-disable"><a class="anchor" href="#force-read-mode-or-disable"></a>Force read mode, or disable</h3>
-<div class="paragraph">
-<p>As noted above, if running in prototype mode then <code>TranslationServicePo</code> will be in write mode, if in production mode then will be in read mode.
-To force read mode (ie use translations) even if in prototype mode, add the <a href="../../../refguide/latest/config/sections/isis.core.runtime-services.html#isis.core.runtime-services.translation.po.mode" class="page"><code>isis.core.runtime-services.translation.po.mode</code></a> configuration property:</p>
-</div>
-<div class="listingblock">
-<div class="title">application.properties</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">isis.core.runtime-services.translation.po.mode=read</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>It&#8217;s also possible to disable the service completely.
-This can sometimes be useful in integration tests.</p>
-</div>
-<div class="listingblock">
-<div class="title">application.properties</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">isis.core.runtime-services.translation.po.mode=disabled</code></pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="supporting-services"><a class="anchor" href="#supporting-services"></a>Supporting services</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The <code>TranslationServicePo</code> has a number of supporting/related services.</p>
-</div>
-<div class="sect2">
-<h3 id="localeprovider"><a class="anchor" href="#localeprovider"></a><code>LocaleProvider</code></h3>
-<div class="paragraph">
-<p>The <a href="../../../refguide/latest/applib-svc/LocaleProvider.html" class="page"><code>LocaleProvider</code></a> API is used by the <code>TranslationServicePo</code> implementation to obtain the locale of the "current user".</p>
-</div>
-<div class="paragraph">
-<p>An implementation is provided by the Wicket viewer.</p>
-</div>
-<div class="admonitionblock caution">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-caution" title="Caution"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>There is no equivalent implementation of <code>LocaleProvider</code> for Restful Objects viewer; requests through Restful Objects are not translated.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect2">
-<h3 id="translationsresolver"><a class="anchor" href="#translationsresolver"></a><code>TranslationsResolver</code></h3>
-<div class="paragraph">
-<p>The <code>TranslationResolver</code> is used by the <code>TranslationService</code> implementation to lookup translations for a specified locale.
-It is this service that reads from the <code>WEB-INF/</code> (or externalized directory).</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="translationservicepomenu"><a class="anchor" href="#translationservicepomenu"></a><code>TranslationServicePoMenu</code></h3>
-<div class="paragraph">
-<p>The <code>TranslationServicePoMenu</code> provides a couple of menu actions in the UI (prototype mode only) that interacts with the underlying <code>TranslationServicePo</code>:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>the <code>downloadTranslationsFile()</code> action - available only in write mode - allows the current <code>.pot</code> file to be downloaded.<br></p>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>While this will contain all the translations from the metamodel, it will not necessarily contain all translations for all imperative methods returning <code>TranslatableString</code> instances; which are present and which are missing will depend on which imperative methods have been called (recorded by the service) prior to downloading.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-</li>
-<li>
-<p>the <code>clearTranslationsCache()</code> action - available only in read mode - will clear the cache so that new translations can be loaded.<br>
-+ This allows a translator to edit the appropriate <code>translations-xx-XX.po</code> file and check the translation is correct without having to restart the app.</p>
-</li>
-</ul>
 </div>
 </div>
 </div>
@@ -1383,7 +724,7 @@ It is this service that reads from the <code>WEB-INF/</code> (or externalized di
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20201211-0424-1b7d5007</p>
+            <p>Revision: 2.0.0-M4.20201212-0424-541da530</p>
         </div>
     </div>
 </footer>

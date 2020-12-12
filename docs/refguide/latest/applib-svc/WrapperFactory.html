@@ -791,8 +791,264 @@ If there is a (lack of) trust boundary between the caller and callee&#8201;&#821
 <div class="paragraph">
 <p>The API breaks into four parts, along with a number of supporting control classes.</p>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="api-2"><a class="anchor" href="#api-2"></a>API</h2>
+<div class="sectionbody">
 <div class="sect2">
-<h3 id="synchronous-api"><a class="anchor" href="#synchronous-api"></a>Synchronous API</h3>
+<h3 id="wrapperfactory-interface"><a class="anchor" href="#wrapperfactory-interface"></a>WrapperFactory : <em>interface</em></h3>
+<div class="paragraph">
+<p>Provides the ability to "wrap" of a domain object such that it can be interacted with while enforcing the hide/disable/validate rules implied by the Apache Isis programming model.</p>
+</div>
+<div class="paragraph">
+<p>The wrapper can alternatively also be used to execute the action asynchronously, through an <em>java.util.concurrent.ExecutorService</em> . Any business rules will be invoked synchronously beforehand, however. hand</p>
+</div>
+<div class="paragraph">
+<p>The 'wrap' is a runtime-code-generated proxy that wraps the underlying domain object. The wrapper can then be interacted with as follows:</p>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>a <code>get</code> method for properties or collections</p>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>a <code>set</code> method for properties</p>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>any action</p>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Calling any of the above methods may result in a (subclass of) <em>InteractionException</em> if the object disallows it. For example, if a property is annotated as hidden then a <a href="../../../system/latest/generated/index/HiddenException.html" class="page">HiddenException</a> will be thrown. Similarly if an action has a <code>validate</code> method and the supplied arguments are invalid then a <a href="../../../system/latest/generated/index/InvalidException.html" class="page">InvalidException</a> will be thrown.</p>
+</div>
+<div class="paragraph">
+<p>In addition, the following methods may also be called:</p>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>the <code>title</code> method</p>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>any <code>defaultXxx</code> or <code>choicesXxx</code> method</p>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>If the object has (see <em>#isWrapper(Object)</em> already been wrapped), then should just return the object back unchanged.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code><span class="teal"><strong>wrap</strong></span>&lt;T&gt;(T domainObject, <a href="../../../system/latest/generated/index/SyncControl.html" class="page">SyncControl</a> syncControl)</code> : <code>T</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Provides the "wrapper" of a domain object against which to invoke the action.</p>
+</div>
+<div class="paragraph">
+<p>The provided <a href="../../../system/latest/generated/index/SyncControl.html" class="page">SyncControl</a> determines whether business rules are checked first, and conversely whether the action is executed. There are therefore three typical cases:</p>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>check rules, execute action</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>+</p>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>skip rules, execute action</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>+</p>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>check rules, skip action</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>The last logical option (skip rules, skip action) is valid but doesn&#8217;t make sense, as it&#8217;s basically a no-op.</p>
+</div>
+<div class="paragraph">
+<p>Otherwise, will do all the validations (raise exceptions as required etc.), but doesn&#8217;t modify the model.</p>
+</div>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code><span class="teal"><strong>wrap</strong></span>&lt;T&gt;(T domainObject)</code> : <code>T</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>A convenience overload for <em>#wrap(Object, SyncControl)</em> , returning a wrapper to invoke the action synchronously, enforcing business rules. Any exceptions will be propagated, not swallowed.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code><span class="teal"><strong>wrapMixin</strong></span>&lt;T&gt;(Class&lt;T&gt; mixinClass, Object mixedIn, <a href="../../../system/latest/generated/index/SyncControl.html" class="page">SyncControl</a> syncControl)</code> : <code>T</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Provides the wrapper for a <em>FactoryService#mixin(Class, Object) mixin</em> , against which to invoke the action.</p>
+</div>
+<div class="paragraph">
+<p>The provided <a href="../../../system/latest/generated/index/SyncControl.html" class="page">SyncControl</a> determines whether business rules are checked first, and conversely whether the action is executed. See <em>#wrap(Object, SyncControl)</em> for more details on this.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code><span class="teal"><strong>wrapMixin</strong></span>&lt;T&gt;(Class&lt;T&gt; mixinClass, Object mixedIn)</code> : <code>T</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>A convenience overload for <em>#wrapMixin(Class, Object, SyncControl)</em> , returning a wrapper to invoke the action synchronously, enforcing business rules. Any exceptions will be propagated, not swallowed.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code><span class="teal"><strong>unwrap</strong></span>&lt;T&gt;(T possibleWrappedDomainObject)</code> : <code>T</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Obtains the underlying domain object, if wrapped.</p>
+</div>
+<div class="paragraph">
+<p>If the object <em>#isWrapper(Object) is not wrapped</em> , then should just return the object back unchanged.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code><span class="teal"><strong>isWrapper</strong></span>&lt;T&gt;(T possibleWrappedDomainObject)</code> : <code>boolean</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Whether the supplied object is a wrapper around a domain object.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code><span class="teal"><strong>asyncWrap</strong></span>&lt;T, R&gt;(T domainObject, <a href="../../../system/latest/generated/index/AsyncControl.html" class="page">AsyncControl</a>&lt;R&gt; asyncControl)</code> : <code>T</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Returns a proxy object for the provided <em>domainObject</em> , through which can execute the action asynchronously.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code><span class="teal"><strong>asyncWrapMixin</strong></span>&lt;T, R&gt;(Class&lt;T&gt; mixinClass, Object mixedIn, <a href="../../../system/latest/generated/index/AsyncControl.html" class="page">AsyncControl</a>&lt;R&gt; asyncControl)</code> : <code>T</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Returns a proxy object for the provided <em>mixinClass</em> , through which can execute the action asynchronously.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code><span class="teal"><strong>getListeners</strong></span>()</code> : <code>List&lt;<a href="../../../system/latest/generated/index/InteractionListener.html" class="page">InteractionListener</a>&gt;</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>All <a href="../../../system/latest/generated/index/InteractionListener.html" class="page">InteractionListener</a> s that have been registered using <em>#addInteractionListener(InteractionListener)</em> .</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code><span class="teal"><strong>addInteractionListener</strong></span>(<a href="../../../system/latest/generated/index/InteractionListener.html" class="page">InteractionListener</a> listener)</code> : <code>boolean</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Registers an <a href="../../../system/latest/generated/index/InteractionListener.html" class="page">InteractionListener</a> , to be notified of interactions on all wrappers.</p>
+</div>
+<div class="paragraph">
+<p>This is retrospective: the listener will be notified of interactions even on wrappers created before the listener was installed. (From an implementation perspective this is because the wrappers delegate back to the container to fire the events).</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code><span class="teal"><strong>removeInteractionListener</strong></span>(<a href="../../../system/latest/generated/index/InteractionListener.html" class="page">InteractionListener</a> listener)</code> : <code>boolean</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Remove an <a href="../../../system/latest/generated/index/InteractionListener.html" class="page">InteractionListener</a> , to no longer be notified of interactions on wrappers.</p>
+</div>
+<div class="paragraph">
+<p>This is retrospective: the listener will no longer be notified of any interactions created on any wrappers, not just on those wrappers created subsequently. (From an implementation perspective this is because the wrappers delegate back to the container to fire the events).</p>
+</div>
+</div>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>TODO example migration</p>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="title">Deprecated Docs</div>
+<div class="paragraph">
+<p>=== Synchronous API</p>
+</div>
 <div class="paragraph">
 <p>The synchronous API provided by the service is:</p>
 </div>
@@ -841,6 +1097,10 @@ Again <code>SyncControl</code> modifies the way in which the wrapper interacts w
 </div>
 <div class="paragraph">
 <p>The service works by returning a "wrapper" around a supplied domain object (using <a href="https://bytebuddy.net/">byte buddy</a>), and it is this wrapper that ensures that the hide/disable/validate rules implies by the Apache Isis programming model are enforced.</p>
+</div>
+</td>
+</tr>
+</table>
 </div>
 <div class="sect3">
 <h4 id="domain-objects"><a class="anchor" href="#domain-objects"></a>Domain Objects</h4>
@@ -896,8 +1156,42 @@ Mixin wrappers only apply to actions, and so the wrapper will enforce the hidden
 In addition, any <a href="../applib-methods/prefixes.html#default" class="page"><code>default&#8230;&#8203;()</code></a>, <a href="../applib-methods/prefixes.html#choices" class="page"><code>choices&#8230;&#8203;()</code></a> or <a href="../applib-methods/prefixes.html#autoComplete" class="page"><code>autoComplete&#8230;&#8203;()</code></a> methods can be called.</p>
 </div>
 </div>
-<div class="sect3">
-<h4 id="synccontrol"><a class="anchor" href="#synccontrol"></a><code>SyncControl</code></h4>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="synccontrol"><a class="anchor" href="#synccontrol"></a>API</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="synccontrol-class"><a class="anchor" href="#synccontrol-class"></a>SyncControl : <em>class</em></h3>
+<div class="ulist">
+<ul>
+<li>
+<p><code><span class="teal"><strong>getExecutionModes</strong></span>()</code> : <code>ImmutableEnumSet&lt;<a href="../../../system/latest/generated/index/ExecutionMode.html" class="page">ExecutionMode</a>&gt;</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Not API.</p>
+</div>
+</div>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>TODO example migration</p>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="title">Deprecated Docs</div>
+<div class="paragraph">
+<p>==== <code>SyncControl</code></p>
+</div>
 <div class="paragraph">
 <p>The <code>SyncControl</code> class controls the way that a (synchronous) wrapper works.
 Its superclass <code>ControlAbstract</code> is:</p>
@@ -996,10 +1290,269 @@ If ignored, the handler can instead return a value; this must be compatible with
 </tr>
 </table>
 </div>
+</td>
+</tr>
+</table>
 </div>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="api-3"><a class="anchor" href="#api-3"></a>API</h2>
+<div class="sectionbody">
 <div class="sect2">
-<h3 id="asynchronous-api"><a class="anchor" href="#asynchronous-api"></a>Asynchronous API</h3>
+<h3 id="wrapperfactory-interface-2"><a class="anchor" href="#wrapperfactory-interface-2"></a>WrapperFactory : <em>interface</em></h3>
+<div class="paragraph">
+<p>Provides the ability to "wrap" of a domain object such that it can be interacted with while enforcing the hide/disable/validate rules implied by the Apache Isis programming model.</p>
+</div>
+<div class="paragraph">
+<p>The wrapper can alternatively also be used to execute the action asynchronously, through an <em>java.util.concurrent.ExecutorService</em> . Any business rules will be invoked synchronously beforehand, however. hand</p>
+</div>
+<div class="paragraph">
+<p>The 'wrap' is a runtime-code-generated proxy that wraps the underlying domain object. The wrapper can then be interacted with as follows:</p>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>a <code>get</code> method for properties or collections</p>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>a <code>set</code> method for properties</p>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>any action</p>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Calling any of the above methods may result in a (subclass of) <em>InteractionException</em> if the object disallows it. For example, if a property is annotated as hidden then a <a href="../../../system/latest/generated/index/HiddenException.html" class="page">HiddenException</a> will be thrown. Similarly if an action has a <code>validate</code> method and the supplied arguments are invalid then a <a href="../../../system/latest/generated/index/InvalidException.html" class="page">InvalidException</a> will be thrown.</p>
+</div>
+<div class="paragraph">
+<p>In addition, the following methods may also be called:</p>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>the <code>title</code> method</p>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>any <code>defaultXxx</code> or <code>choicesXxx</code> method</p>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>If the object has (see <em>#isWrapper(Object)</em> already been wrapped), then should just return the object back unchanged.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code><span class="teal"><strong>wrap</strong></span>&lt;T&gt;(T domainObject, <a href="../../../system/latest/generated/index/SyncControl.html" class="page">SyncControl</a> syncControl)</code> : <code>T</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Provides the "wrapper" of a domain object against which to invoke the action.</p>
+</div>
+<div class="paragraph">
+<p>The provided <a href="../../../system/latest/generated/index/SyncControl.html" class="page">SyncControl</a> determines whether business rules are checked first, and conversely whether the action is executed. There are therefore three typical cases:</p>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>check rules, execute action</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>+</p>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>skip rules, execute action</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>+</p>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>check rules, skip action</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>The last logical option (skip rules, skip action) is valid but doesn&#8217;t make sense, as it&#8217;s basically a no-op.</p>
+</div>
+<div class="paragraph">
+<p>Otherwise, will do all the validations (raise exceptions as required etc.), but doesn&#8217;t modify the model.</p>
+</div>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code><span class="teal"><strong>wrap</strong></span>&lt;T&gt;(T domainObject)</code> : <code>T</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>A convenience overload for <em>#wrap(Object, SyncControl)</em> , returning a wrapper to invoke the action synchronously, enforcing business rules. Any exceptions will be propagated, not swallowed.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code><span class="teal"><strong>wrapMixin</strong></span>&lt;T&gt;(Class&lt;T&gt; mixinClass, Object mixedIn, <a href="../../../system/latest/generated/index/SyncControl.html" class="page">SyncControl</a> syncControl)</code> : <code>T</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Provides the wrapper for a <em>FactoryService#mixin(Class, Object) mixin</em> , against which to invoke the action.</p>
+</div>
+<div class="paragraph">
+<p>The provided <a href="../../../system/latest/generated/index/SyncControl.html" class="page">SyncControl</a> determines whether business rules are checked first, and conversely whether the action is executed. See <em>#wrap(Object, SyncControl)</em> for more details on this.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code><span class="teal"><strong>wrapMixin</strong></span>&lt;T&gt;(Class&lt;T&gt; mixinClass, Object mixedIn)</code> : <code>T</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>A convenience overload for <em>#wrapMixin(Class, Object, SyncControl)</em> , returning a wrapper to invoke the action synchronously, enforcing business rules. Any exceptions will be propagated, not swallowed.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code><span class="teal"><strong>unwrap</strong></span>&lt;T&gt;(T possibleWrappedDomainObject)</code> : <code>T</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Obtains the underlying domain object, if wrapped.</p>
+</div>
+<div class="paragraph">
+<p>If the object <em>#isWrapper(Object) is not wrapped</em> , then should just return the object back unchanged.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code><span class="teal"><strong>isWrapper</strong></span>&lt;T&gt;(T possibleWrappedDomainObject)</code> : <code>boolean</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Whether the supplied object is a wrapper around a domain object.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code><span class="teal"><strong>asyncWrap</strong></span>&lt;T, R&gt;(T domainObject, <a href="../../../system/latest/generated/index/AsyncControl.html" class="page">AsyncControl</a>&lt;R&gt; asyncControl)</code> : <code>T</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Returns a proxy object for the provided <em>domainObject</em> , through which can execute the action asynchronously.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code><span class="teal"><strong>asyncWrapMixin</strong></span>&lt;T, R&gt;(Class&lt;T&gt; mixinClass, Object mixedIn, <a href="../../../system/latest/generated/index/AsyncControl.html" class="page">AsyncControl</a>&lt;R&gt; asyncControl)</code> : <code>T</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Returns a proxy object for the provided <em>mixinClass</em> , through which can execute the action asynchronously.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code><span class="teal"><strong>getListeners</strong></span>()</code> : <code>List&lt;<a href="../../../system/latest/generated/index/InteractionListener.html" class="page">InteractionListener</a>&gt;</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>All <a href="../../../system/latest/generated/index/InteractionListener.html" class="page">InteractionListener</a> s that have been registered using <em>#addInteractionListener(InteractionListener)</em> .</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code><span class="teal"><strong>addInteractionListener</strong></span>(<a href="../../../system/latest/generated/index/InteractionListener.html" class="page">InteractionListener</a> listener)</code> : <code>boolean</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Registers an <a href="../../../system/latest/generated/index/InteractionListener.html" class="page">InteractionListener</a> , to be notified of interactions on all wrappers.</p>
+</div>
+<div class="paragraph">
+<p>This is retrospective: the listener will be notified of interactions even on wrappers created before the listener was installed. (From an implementation perspective this is because the wrappers delegate back to the container to fire the events).</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code><span class="teal"><strong>removeInteractionListener</strong></span>(<a href="../../../system/latest/generated/index/InteractionListener.html" class="page">InteractionListener</a> listener)</code> : <code>boolean</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Remove an <a href="../../../system/latest/generated/index/InteractionListener.html" class="page">InteractionListener</a> , to no longer be notified of interactions on wrappers.</p>
+</div>
+<div class="paragraph">
+<p>This is retrospective: the listener will no longer be notified of any interactions created on any wrappers, not just on those wrappers created subsequently. (From an implementation perspective this is because the wrappers delegate back to the container to fire the events).</p>
+</div>
+</div>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>TODO example migration</p>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="title">Deprecated Docs</div>
+<div class="paragraph">
+<p>=== Asynchronous API</p>
+</div>
 <div class="paragraph">
 <p>The <code>WrapperFactory</code> also allows domain objects to be interacted with in an asynchronous fashion, in other words executed in a separate thread:</p>
 </div>
@@ -1037,8 +1590,32 @@ Again <code>AsyncControl</code> modifies the way this is done.</td>
 <p>Executing in a separate thread means that the target and arguments are used in a new session.
 If any of these are entities, they are retrieved from the database afresh; it isn&#8217;t possible to pass domain entity references from the foreground calling thread to the background threads.</p>
 </div>
-<div class="sect3">
-<h4 id="asynccontrol"><a class="anchor" href="#asynccontrol"></a><code>AsyncControl</code></h4>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="api-4"><a class="anchor" href="#api-4"></a>API</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="asynccontrol-class"><a class="anchor" href="#asynccontrol-class"></a>AsyncControl : <em>class</em></h3>
+<div class="paragraph">
+<p>TODO example migration</p>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="title">Deprecated Docs</div>
+<div class="paragraph">
+<p>==== <code>AsyncControl</code></p>
+</div>
 <div class="paragraph">
 <p>The <code>AsyncControl</code> class controls the way that an asynchronous wrapper&#8201;&#8212;&#8201;as obtained by <code>asyncWrapXxx(&#8230;&#8203;)</code>&#8201;&#8212;&#8201;works.
 The class inherits from <code>ControlAbstract</code> (see above), to allow the rules checking to be skipped and to configure the <code>ExceptionHandler</code>.
@@ -1145,10 +1722,269 @@ This may or may not hold a value.</td>
 <p>The <code>AsyncControl</code> can therefore be used to check business rules or to skip them.
 If business rules are checked, note that they are performed in the context of the <em>foreground</em> session.</p>
 </div>
+</td>
+</tr>
+</table>
 </div>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="api-5"><a class="anchor" href="#api-5"></a>API</h2>
+<div class="sectionbody">
 <div class="sect2">
-<h3 id="unwrap-api"><a class="anchor" href="#unwrap-api"></a>Unwrap API</h3>
+<h3 id="wrapperfactory-interface-3"><a class="anchor" href="#wrapperfactory-interface-3"></a>WrapperFactory : <em>interface</em></h3>
+<div class="paragraph">
+<p>Provides the ability to "wrap" of a domain object such that it can be interacted with while enforcing the hide/disable/validate rules implied by the Apache Isis programming model.</p>
+</div>
+<div class="paragraph">
+<p>The wrapper can alternatively also be used to execute the action asynchronously, through an <em>java.util.concurrent.ExecutorService</em> . Any business rules will be invoked synchronously beforehand, however. hand</p>
+</div>
+<div class="paragraph">
+<p>The 'wrap' is a runtime-code-generated proxy that wraps the underlying domain object. The wrapper can then be interacted with as follows:</p>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>a <code>get</code> method for properties or collections</p>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>a <code>set</code> method for properties</p>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>any action</p>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Calling any of the above methods may result in a (subclass of) <em>InteractionException</em> if the object disallows it. For example, if a property is annotated as hidden then a <a href="../../../system/latest/generated/index/HiddenException.html" class="page">HiddenException</a> will be thrown. Similarly if an action has a <code>validate</code> method and the supplied arguments are invalid then a <a href="../../../system/latest/generated/index/InvalidException.html" class="page">InvalidException</a> will be thrown.</p>
+</div>
+<div class="paragraph">
+<p>In addition, the following methods may also be called:</p>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>the <code>title</code> method</p>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>any <code>defaultXxx</code> or <code>choicesXxx</code> method</p>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>If the object has (see <em>#isWrapper(Object)</em> already been wrapped), then should just return the object back unchanged.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code><span class="teal"><strong>wrap</strong></span>&lt;T&gt;(T domainObject, <a href="../../../system/latest/generated/index/SyncControl.html" class="page">SyncControl</a> syncControl)</code> : <code>T</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Provides the "wrapper" of a domain object against which to invoke the action.</p>
+</div>
+<div class="paragraph">
+<p>The provided <a href="../../../system/latest/generated/index/SyncControl.html" class="page">SyncControl</a> determines whether business rules are checked first, and conversely whether the action is executed. There are therefore three typical cases:</p>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>check rules, execute action</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>+</p>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>skip rules, execute action</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>+</p>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>check rules, skip action</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>The last logical option (skip rules, skip action) is valid but doesn&#8217;t make sense, as it&#8217;s basically a no-op.</p>
+</div>
+<div class="paragraph">
+<p>Otherwise, will do all the validations (raise exceptions as required etc.), but doesn&#8217;t modify the model.</p>
+</div>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code><span class="teal"><strong>wrap</strong></span>&lt;T&gt;(T domainObject)</code> : <code>T</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>A convenience overload for <em>#wrap(Object, SyncControl)</em> , returning a wrapper to invoke the action synchronously, enforcing business rules. Any exceptions will be propagated, not swallowed.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code><span class="teal"><strong>wrapMixin</strong></span>&lt;T&gt;(Class&lt;T&gt; mixinClass, Object mixedIn, <a href="../../../system/latest/generated/index/SyncControl.html" class="page">SyncControl</a> syncControl)</code> : <code>T</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Provides the wrapper for a <em>FactoryService#mixin(Class, Object) mixin</em> , against which to invoke the action.</p>
+</div>
+<div class="paragraph">
+<p>The provided <a href="../../../system/latest/generated/index/SyncControl.html" class="page">SyncControl</a> determines whether business rules are checked first, and conversely whether the action is executed. See <em>#wrap(Object, SyncControl)</em> for more details on this.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code><span class="teal"><strong>wrapMixin</strong></span>&lt;T&gt;(Class&lt;T&gt; mixinClass, Object mixedIn)</code> : <code>T</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>A convenience overload for <em>#wrapMixin(Class, Object, SyncControl)</em> , returning a wrapper to invoke the action synchronously, enforcing business rules. Any exceptions will be propagated, not swallowed.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code><span class="teal"><strong>unwrap</strong></span>&lt;T&gt;(T possibleWrappedDomainObject)</code> : <code>T</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Obtains the underlying domain object, if wrapped.</p>
+</div>
+<div class="paragraph">
+<p>If the object <em>#isWrapper(Object) is not wrapped</em> , then should just return the object back unchanged.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code><span class="teal"><strong>isWrapper</strong></span>&lt;T&gt;(T possibleWrappedDomainObject)</code> : <code>boolean</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Whether the supplied object is a wrapper around a domain object.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code><span class="teal"><strong>asyncWrap</strong></span>&lt;T, R&gt;(T domainObject, <a href="../../../system/latest/generated/index/AsyncControl.html" class="page">AsyncControl</a>&lt;R&gt; asyncControl)</code> : <code>T</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Returns a proxy object for the provided <em>domainObject</em> , through which can execute the action asynchronously.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code><span class="teal"><strong>asyncWrapMixin</strong></span>&lt;T, R&gt;(Class&lt;T&gt; mixinClass, Object mixedIn, <a href="../../../system/latest/generated/index/AsyncControl.html" class="page">AsyncControl</a>&lt;R&gt; asyncControl)</code> : <code>T</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Returns a proxy object for the provided <em>mixinClass</em> , through which can execute the action asynchronously.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code><span class="teal"><strong>getListeners</strong></span>()</code> : <code>List&lt;<a href="../../../system/latest/generated/index/InteractionListener.html" class="page">InteractionListener</a>&gt;</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>All <a href="../../../system/latest/generated/index/InteractionListener.html" class="page">InteractionListener</a> s that have been registered using <em>#addInteractionListener(InteractionListener)</em> .</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code><span class="teal"><strong>addInteractionListener</strong></span>(<a href="../../../system/latest/generated/index/InteractionListener.html" class="page">InteractionListener</a> listener)</code> : <code>boolean</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Registers an <a href="../../../system/latest/generated/index/InteractionListener.html" class="page">InteractionListener</a> , to be notified of interactions on all wrappers.</p>
+</div>
+<div class="paragraph">
+<p>This is retrospective: the listener will be notified of interactions even on wrappers created before the listener was installed. (From an implementation perspective this is because the wrappers delegate back to the container to fire the events).</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code><span class="teal"><strong>removeInteractionListener</strong></span>(<a href="../../../system/latest/generated/index/InteractionListener.html" class="page">InteractionListener</a> listener)</code> : <code>boolean</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Remove an <a href="../../../system/latest/generated/index/InteractionListener.html" class="page">InteractionListener</a> , to no longer be notified of interactions on wrappers.</p>
+</div>
+<div class="paragraph">
+<p>This is retrospective: the listener will no longer be notified of any interactions created on any wrappers, not just on those wrappers created subsequently. (From an implementation perspective this is because the wrappers delegate back to the container to fire the events).</p>
+</div>
+</div>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>TODO example migration</p>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="title">Deprecated Docs</div>
+<div class="paragraph">
+<p>=== Unwrap API</p>
+</div>
 <div class="paragraph">
 <p>The unwrap API provided by the service is:</p>
 </div>
@@ -1180,9 +2016,269 @@ If business rules are checked, note that they are performed in the context of th
 </tr>
 </table>
 </div>
+</td>
+</tr>
+</table>
 </div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="api-6"><a class="anchor" href="#api-6"></a>API</h2>
+<div class="sectionbody">
 <div class="sect2">
-<h3 id="listener-api"><a class="anchor" href="#listener-api"></a>Listener API</h3>
+<h3 id="wrapperfactory-interface-4"><a class="anchor" href="#wrapperfactory-interface-4"></a>WrapperFactory : <em>interface</em></h3>
+<div class="paragraph">
+<p>Provides the ability to "wrap" of a domain object such that it can be interacted with while enforcing the hide/disable/validate rules implied by the Apache Isis programming model.</p>
+</div>
+<div class="paragraph">
+<p>The wrapper can alternatively also be used to execute the action asynchronously, through an <em>java.util.concurrent.ExecutorService</em> . Any business rules will be invoked synchronously beforehand, however. hand</p>
+</div>
+<div class="paragraph">
+<p>The 'wrap' is a runtime-code-generated proxy that wraps the underlying domain object. The wrapper can then be interacted with as follows:</p>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>a <code>get</code> method for properties or collections</p>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>a <code>set</code> method for properties</p>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>any action</p>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Calling any of the above methods may result in a (subclass of) <em>InteractionException</em> if the object disallows it. For example, if a property is annotated as hidden then a <a href="../../../system/latest/generated/index/HiddenException.html" class="page">HiddenException</a> will be thrown. Similarly if an action has a <code>validate</code> method and the supplied arguments are invalid then a <a href="../../../system/latest/generated/index/InvalidException.html" class="page">InvalidException</a> will be thrown.</p>
+</div>
+<div class="paragraph">
+<p>In addition, the following methods may also be called:</p>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>the <code>title</code> method</p>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>any <code>defaultXxx</code> or <code>choicesXxx</code> method</p>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>If the object has (see <em>#isWrapper(Object)</em> already been wrapped), then should just return the object back unchanged.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code><span class="teal"><strong>wrap</strong></span>&lt;T&gt;(T domainObject, <a href="../../../system/latest/generated/index/SyncControl.html" class="page">SyncControl</a> syncControl)</code> : <code>T</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Provides the "wrapper" of a domain object against which to invoke the action.</p>
+</div>
+<div class="paragraph">
+<p>The provided <a href="../../../system/latest/generated/index/SyncControl.html" class="page">SyncControl</a> determines whether business rules are checked first, and conversely whether the action is executed. There are therefore three typical cases:</p>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>check rules, execute action</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>+</p>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>skip rules, execute action</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>+</p>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>check rules, skip action</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>The last logical option (skip rules, skip action) is valid but doesn&#8217;t make sense, as it&#8217;s basically a no-op.</p>
+</div>
+<div class="paragraph">
+<p>Otherwise, will do all the validations (raise exceptions as required etc.), but doesn&#8217;t modify the model.</p>
+</div>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code><span class="teal"><strong>wrap</strong></span>&lt;T&gt;(T domainObject)</code> : <code>T</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>A convenience overload for <em>#wrap(Object, SyncControl)</em> , returning a wrapper to invoke the action synchronously, enforcing business rules. Any exceptions will be propagated, not swallowed.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code><span class="teal"><strong>wrapMixin</strong></span>&lt;T&gt;(Class&lt;T&gt; mixinClass, Object mixedIn, <a href="../../../system/latest/generated/index/SyncControl.html" class="page">SyncControl</a> syncControl)</code> : <code>T</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Provides the wrapper for a <em>FactoryService#mixin(Class, Object) mixin</em> , against which to invoke the action.</p>
+</div>
+<div class="paragraph">
+<p>The provided <a href="../../../system/latest/generated/index/SyncControl.html" class="page">SyncControl</a> determines whether business rules are checked first, and conversely whether the action is executed. See <em>#wrap(Object, SyncControl)</em> for more details on this.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code><span class="teal"><strong>wrapMixin</strong></span>&lt;T&gt;(Class&lt;T&gt; mixinClass, Object mixedIn)</code> : <code>T</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>A convenience overload for <em>#wrapMixin(Class, Object, SyncControl)</em> , returning a wrapper to invoke the action synchronously, enforcing business rules. Any exceptions will be propagated, not swallowed.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code><span class="teal"><strong>unwrap</strong></span>&lt;T&gt;(T possibleWrappedDomainObject)</code> : <code>T</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Obtains the underlying domain object, if wrapped.</p>
+</div>
+<div class="paragraph">
+<p>If the object <em>#isWrapper(Object) is not wrapped</em> , then should just return the object back unchanged.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code><span class="teal"><strong>isWrapper</strong></span>&lt;T&gt;(T possibleWrappedDomainObject)</code> : <code>boolean</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Whether the supplied object is a wrapper around a domain object.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code><span class="teal"><strong>asyncWrap</strong></span>&lt;T, R&gt;(T domainObject, <a href="../../../system/latest/generated/index/AsyncControl.html" class="page">AsyncControl</a>&lt;R&gt; asyncControl)</code> : <code>T</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Returns a proxy object for the provided <em>domainObject</em> , through which can execute the action asynchronously.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code><span class="teal"><strong>asyncWrapMixin</strong></span>&lt;T, R&gt;(Class&lt;T&gt; mixinClass, Object mixedIn, <a href="../../../system/latest/generated/index/AsyncControl.html" class="page">AsyncControl</a>&lt;R&gt; asyncControl)</code> : <code>T</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Returns a proxy object for the provided <em>mixinClass</em> , through which can execute the action asynchronously.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code><span class="teal"><strong>getListeners</strong></span>()</code> : <code>List&lt;<a href="../../../system/latest/generated/index/InteractionListener.html" class="page">InteractionListener</a>&gt;</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>All <a href="../../../system/latest/generated/index/InteractionListener.html" class="page">InteractionListener</a> s that have been registered using <em>#addInteractionListener(InteractionListener)</em> .</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code><span class="teal"><strong>addInteractionListener</strong></span>(<a href="../../../system/latest/generated/index/InteractionListener.html" class="page">InteractionListener</a> listener)</code> : <code>boolean</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Registers an <a href="../../../system/latest/generated/index/InteractionListener.html" class="page">InteractionListener</a> , to be notified of interactions on all wrappers.</p>
+</div>
+<div class="paragraph">
+<p>This is retrospective: the listener will be notified of interactions even on wrappers created before the listener was installed. (From an implementation perspective this is because the wrappers delegate back to the container to fire the events).</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p><code><span class="teal"><strong>removeInteractionListener</strong></span>(<a href="../../../system/latest/generated/index/InteractionListener.html" class="page">InteractionListener</a> listener)</code> : <code>boolean</code></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Remove an <a href="../../../system/latest/generated/index/InteractionListener.html" class="page">InteractionListener</a> , to no longer be notified of interactions on wrappers.</p>
+</div>
+<div class="paragraph">
+<p>This is retrospective: the listener will no longer be notified of any interactions created on any wrappers, not just on those wrappers created subsequently. (From an implementation perspective this is because the wrappers delegate back to the container to fire the events).</p>
+</div>
+</div>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>TODO example migration</p>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="title">Deprecated Docs</div>
+<div class="paragraph">
+<p>=== Listener API</p>
+</div>
 <div class="paragraph">
 <p>The listener API allows the interactions between the wrapper and the underlying domain object to be observed:</p>
 </div>
@@ -1239,6 +2335,10 @@ The listener will be notified of interactions even on wrappers created before th
 <div class="paragraph">
 <p>One possible use case would be to autogenerate documentation, for example a sequence diagram from tests.
 Such a feature would probably also use <a href="InteractionContext.html" class="page"><code>InteractionContext</code></a>, which builds up an execution call graph of interactions between (wrapped) objects.</p>
+</div>
+</td>
+</tr>
+</table>
 </div>
 </td>
 </tr>
@@ -1308,7 +2408,7 @@ Such a feature would probably also use <a href="InteractionContext.html" class="
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20201211-0424-1b7d5007</p>
+            <p>Revision: 2.0.0-M4.20201212-0424-541da530</p>
         </div>
     </div>
 </footer>
