@@ -775,20 +775,80 @@ TODO: this content has not yet been reviewed/updated for v2.0
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="transactionstate-enum"><a class="anchor" href="#transactionstate-enum"></a>TransactionState : <em>enum</em></h3>
-<div class="ulist">
-<ul>
-<li>
-<p><code><span class="teal"><strong><em>NONE</em></strong></span></code></p>
+<div class="listingblock">
+<div class="title">Java Sources</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">enum TransactionState {
+
+  /**
+ * No transaction exists.
+ */
+NONE <i class="conum" data-value="1"></i><b>(1)</b>
+
+  /**
+ * Started, still in progress.
+ * &lt;p/&gt;
+ * &lt;p/&gt;
+ * May flush, commit or abort.
+ */
+IN_PROGRESS <i class="conum" data-value="2"></i><b>(2)</b>
+
+  /**
+ * Started, but has hit an exception.
+ * &lt;p/&gt;
+ * &lt;p/&gt;
+ * May not flush or commit (will throw an {@link IllegalStateException}),
+ * can only abort.
+ * &lt;p/&gt;
+ * &lt;p/&gt;
+ * Similar to &lt;tt&gt;setRollbackOnly&lt;/tt&gt; in EJBs.
+ */
+MUST_ABORT <i class="conum" data-value="3"></i><b>(3)</b>
+
+  /**
+ * Completed, having successfully committed.
+ * &lt;p/&gt;
+ * &lt;p/&gt;
+ * May not flush or abort or commit (will throw {@link IllegalStateException}).
+ */
+COMMITTED <i class="conum" data-value="4"></i><b>(4)</b>
+
+  /**
+ * Completed, having aborted.
+ * &lt;p/&gt;
+ * &lt;p/&gt;
+ * May not flush, commit or abort (will throw {@link IllegalStateException}).
+ */
+ABORTED <i class="conum" data-value="5"></i><b>(5)</b>
+
+  boolean canFlush() <i class="conum" data-value="6"></i><b>(6)</b>
+
+  boolean canCommit() <i class="conum" data-value="7"></i><b>(7)</b>
+
+  boolean canAbort() <i class="conum" data-value="8"></i><b>(8)</b>
+
+  boolean isComplete() <i class="conum" data-value="9"></i><b>(9)</b>
+
+  boolean mustAbort()
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><code><span class="teal"><strong><em>NONE</em></strong></span></code>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
 <p>No transaction exists.</p>
 </div>
 </div>
-</div>
-</li>
-<li>
-<p><code><span class="teal"><strong><em>IN_PROGRESS</em></strong></span></code></p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><code><span class="teal"><strong><em>IN_PROGRESS</em></strong></span></code>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
@@ -798,10 +858,11 @@ TODO: this content has not yet been reviewed/updated for v2.0
 <p>May flush, commit or abort.</p>
 </div>
 </div>
-</div>
-</li>
-<li>
-<p><code><span class="teal"><strong><em>MUST_ABORT</em></strong></span></code></p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><code><span class="teal"><strong><em>MUST_ABORT</em></strong></span></code>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
@@ -814,10 +875,11 @@ TODO: this content has not yet been reviewed/updated for v2.0
 <p>Similar to <code>setRollbackOnly</code> in EJBs.</p>
 </div>
 </div>
-</div>
-</li>
-<li>
-<p><code><span class="teal"><strong><em>COMMITTED</em></strong></span></code></p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><code><span class="teal"><strong><em>COMMITTED</em></strong></span></code>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
@@ -827,10 +889,11 @@ TODO: this content has not yet been reviewed/updated for v2.0
 <p>May not flush or abort or commit (will throw <em>IllegalStateException</em> ).</p>
 </div>
 </div>
-</div>
-</li>
-<li>
-<p><code><span class="teal"><strong><em>ABORTED</em></strong></span></code></p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><code><span class="teal"><strong><em>ABORTED</em></strong></span></code>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
@@ -840,49 +903,53 @@ TODO: this content has not yet been reviewed/updated for v2.0
 <p>May not flush, commit or abort (will throw <em>IllegalStateException</em> ).</p>
 </div>
 </div>
-</div>
-</li>
-<li>
-<p><code><span class="teal"><strong>canFlush</strong></span>()</code> : <code>boolean</code></p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td><code><span class="teal"><strong>canFlush</strong></span>()</code> : <code>boolean</code>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
 <p>Whether it is valid to flush the transaction.</p>
 </div>
 </div>
-</div>
-</li>
-<li>
-<p><code><span class="teal"><strong>canCommit</strong></span>()</code> : <code>boolean</code></p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td><code><span class="teal"><strong>canCommit</strong></span>()</code> : <code>boolean</code>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
 <p>Whether it is valid to commit the transaction.</p>
 </div>
 </div>
-</div>
-</li>
-<li>
-<p><code><span class="teal"><strong>canAbort</strong></span>()</code> : <code>boolean</code></p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td><code><span class="teal"><strong>canAbort</strong></span>()</code> : <code>boolean</code>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
 <p>Whether it is valid to mark as aborted this transaction}.</p>
 </div>
 </div>
-</div>
-</li>
-<li>
-<p><code><span class="teal"><strong>isComplete</strong></span>()</code> : <code>boolean</code></p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
+<td><code><span class="teal"><strong>isComplete</strong></span>()</code> : <code>boolean</code>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
 <p>Whether the transaction is complete (and so a new one can be started).</p>
 </div>
 </div>
-</div>
-</li>
-</ul>
+</div></td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>TODO example migration</p>
@@ -1006,7 +1073,7 @@ Under certain circumstances (eg actions used to perform data migration, say, or 
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20201212-0424-541da530</p>
+            <p>Revision: 2.0.0-M4.20201213-0424-23816900</p>
         </div>
     </div>
 </footer>

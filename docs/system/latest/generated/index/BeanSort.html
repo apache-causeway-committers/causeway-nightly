@@ -334,10 +334,92 @@ page.parent doesn't seem to be set...
 <div class="paragraph">
 <p>Top level object classification.</p>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p><code><span class="teal"><strong><em>VIEW_MODEL</em></strong></span></code></p>
+<div class="listingblock">
+<div class="title">Java Sources</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">enum BeanSort {
+
+  /**
+ * Stateful object, with a state that can be marshaled and unmarshaled.
+ * &lt;p&gt;
+ * Includes classes annotated with {@code @DomainObject}, when *not* associated
+ * with a persistence layer. &lt;p&gt;  see also {@link #ENTITY}
+ */
+VIEW_MODEL <i class="conum" data-value="1"></i><b>(1)</b>
+
+  /**
+ * Persistable object, associated with a persistence layer/context.
+ * &lt;p&gt;
+ * Includes classes annotated with {@code @DomainObject}, when associated
+ * with a persistence layer. &lt;p&gt;  see also {@link #VIEW_MODEL}
+ */
+ENTITY_JDO <i class="conum" data-value="2"></i><b>(2)</b>
+
+  ENTITY_JPA
+
+  /**
+ * Injectable object, associated with a lifecycle context
+ * (application-scoped, request-scoped, ...).
+ * &lt;p&gt;
+ * to be introspected: YES
+ */
+MANAGED_BEAN_CONTRIBUTING <i class="conum" data-value="3"></i><b>(3)</b>
+
+  /**
+ * Injectable object, associated with a lifecycle context
+ * (application-scoped, request-scoped, ...).
+ * &lt;p&gt;
+ * to be introspected: NO
+ */
+MANAGED_BEAN_NOT_CONTRIBUTING <i class="conum" data-value="4"></i><b>(4)</b>
+
+  /**
+ * Object associated with an 'entity' or 'bean' to act as contributer of
+ * domain actions or properties. Might also be stateful similar to VIEW_MODEL.
+ */
+MIXIN <i class="conum" data-value="5"></i><b>(5)</b>
+
+  /**
+ * Immutable, serializable object.
+ */
+VALUE <i class="conum" data-value="6"></i><b>(6)</b>
+
+  /**
+ * Container of objects.
+ */
+COLLECTION <i class="conum" data-value="7"></i><b>(7)</b>
+
+  UNKNOWN
+
+  boolean isManagedBean()
+
+  boolean isMixin()
+
+  boolean isViewModel()
+
+  boolean isValue()
+
+  boolean isCollection()
+
+  boolean isEntityJdo()
+
+  boolean isEntityJpa()
+
+  boolean isUnknown()
+
+  boolean isToBeIntrospected()
+
+  boolean isEntity()
+
+  boolean isWrappingSupported()
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><code><span class="teal"><strong><em>VIEW_MODEL</em></strong></span></code>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
@@ -350,10 +432,11 @@ page.parent doesn't seem to be set...
 <p>see also <em>#ENTITY</em></p>
 </div>
 </div>
-</div>
-</li>
-<li>
-<p><code><span class="teal"><strong><em>ENTITY_JDO</em></strong></span></code></p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><code><span class="teal"><strong><em>ENTITY_JDO</em></strong></span></code>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
@@ -366,10 +449,11 @@ page.parent doesn't seem to be set...
 <p>see also <em>#VIEW_MODEL</em></p>
 </div>
 </div>
-</div>
-</li>
-<li>
-<p><code><span class="teal"><strong><em>MANAGED_BEAN_CONTRIBUTING</em></strong></span></code></p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><code><span class="teal"><strong><em>MANAGED_BEAN_CONTRIBUTING</em></strong></span></code>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
@@ -379,10 +463,11 @@ page.parent doesn't seem to be set...
 <p>to be introspected: YES</p>
 </div>
 </div>
-</div>
-</li>
-<li>
-<p><code><span class="teal"><strong><em>MANAGED_BEAN_NOT_CONTRIBUTING</em></strong></span></code></p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><code><span class="teal"><strong><em>MANAGED_BEAN_NOT_CONTRIBUTING</em></strong></span></code>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
@@ -392,39 +477,42 @@ page.parent doesn't seem to be set...
 <p>to be introspected: NO</p>
 </div>
 </div>
-</div>
-</li>
-<li>
-<p><code><span class="teal"><strong><em>MIXIN</em></strong></span></code></p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><code><span class="teal"><strong><em>MIXIN</em></strong></span></code>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
 <p>Object associated with an 'entity' or 'bean' to act as contributer of domain actions or properties. Might also be stateful similar to VIEW_MODEL.</p>
 </div>
 </div>
-</div>
-</li>
-<li>
-<p><code><span class="teal"><strong><em>VALUE</em></strong></span></code></p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td><code><span class="teal"><strong><em>VALUE</em></strong></span></code>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
 <p>Immutable, serializable object.</p>
 </div>
 </div>
-</div>
-</li>
-<li>
-<p><code><span class="teal"><strong><em>COLLECTION</em></strong></span></code></p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td><code><span class="teal"><strong><em>COLLECTION</em></strong></span></code>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
 <p>Container of objects.</p>
 </div>
 </div>
-</div>
-</li>
-</ul>
+</div></td>
+</tr>
+</table>
 </div>
 </article>
 <aside class="article-aside toc hide-for-print" role="navigation">
@@ -443,7 +531,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20201212-0424-541da530</p>
+            <p>Revision: 2.0.0-M4.20201213-0424-23816900</p>
         </div>
     </div>
 </footer>

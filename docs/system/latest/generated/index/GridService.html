@@ -331,70 +331,102 @@ page.parent doesn't seem to be set...
 <article class="doc">
     <a name="section-top"></a>
 <h1 class="page">GridService : <em>interface</em></h1>
-<div class="ulist">
-<ul>
-<li>
-<p><code><span class="teal"><strong>supportsReloading</strong></span>()</code> : <code>boolean</code></p>
+<div class="listingblock">
+<div class="title">Java Sources</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">interface GridService {
+
+  boolean supportsReloading() <i class="conum" data-value="1"></i><b>(1)</b>
+
+  void remove(Class&lt;?&gt; domainClass) <i class="conum" data-value="2"></i><b>(2)</b>
+
+  boolean existsFor(Class&lt;?&gt; domainClass) <i class="conum" data-value="3"></i><b>(3)</b>
+
+  Grid load(final Class&lt;?&gt; domainClass) <i class="conum" data-value="4"></i><b>(4)</b>
+
+  Grid load(Class&lt;?&gt; domainClass, String layout) <i class="conum" data-value="5"></i><b>(5)</b>
+
+  Grid defaultGridFor(Class&lt;?&gt; domainClass) <i class="conum" data-value="6"></i><b>(6)</b>
+
+  Grid normalize(final Grid grid) <i class="conum" data-value="7"></i><b>(7)</b>
+
+  Grid complete(Grid grid) <i class="conum" data-value="8"></i><b>(8)</b>
+
+  Grid minimal(Grid grid) <i class="conum" data-value="9"></i><b>(9)</b>
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><code><span class="teal"><strong>supportsReloading</strong></span>()</code> : <code>boolean</code>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
 <p>Whether dynamic reloading of layouts is enabled.</p>
 </div>
 </div>
-</div>
-</li>
-<li>
-<p><code><span class="teal"><strong>remove</strong></span>(Class&lt;?&gt; domainClass)</code> : <code>void</code></p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><code><span class="teal"><strong>remove</strong></span>(Class&lt;?&gt; domainClass)</code> : <code>void</code>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
 <p>To support metamodel invalidation/rebuilding of spec.</p>
 </div>
 </div>
-</div>
-</li>
-<li>
-<p><code><span class="teal"><strong>existsFor</strong></span>(Class&lt;?&gt; domainClass)</code> : <code>boolean</code></p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><code><span class="teal"><strong>existsFor</strong></span>(Class&lt;?&gt; domainClass)</code> : <code>boolean</code>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
 <p>Whether any persisted layout metadata (eg a.layout.xmlfile) exists for this domain class.</p>
 </div>
 </div>
-</div>
-</li>
-<li>
-<p><code><span class="teal"><strong>load</strong></span>(Class&lt;?&gt; domainClass)</code> : <code>Grid</code></p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><code><span class="teal"><strong>load</strong></span>(Class&lt;?&gt; domainClass)</code> : <code>Grid</code>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
 <p>Returns a new instance of a <em>Grid</em> for the specified domain class, eg from alayout.xmlfile, elsenull.</p>
 </div>
 </div>
-</div>
-</li>
-<li>
-<p><code><span class="teal"><strong>load</strong></span>(Class&lt;?&gt; domainClass, String layout)</code> : <code>Grid</code></p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><code><span class="teal"><strong>load</strong></span>(Class&lt;?&gt; domainClass, String layout)</code> : <code>Grid</code>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
 <p>Returns a new instance of a <em>Grid</em> for the specified domain class, eg from a[domainClass].layout.[layout].xmlfile, elsenull.</p>
 </div>
 </div>
-</div>
-</li>
-<li>
-<p><code><span class="teal"><strong>defaultGridFor</strong></span>(Class&lt;?&gt; domainClass)</code> : <code>Grid</code></p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td><code><span class="teal"><strong>defaultGridFor</strong></span>(Class&lt;?&gt; domainClass)</code> : <code>Grid</code>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
 <p>Returns a default grid; eg where none can be loaded using <em>#load(Class)</em> .</p>
 </div>
 </div>
-</div>
-</li>
-<li>
-<p><code><span class="teal"><strong>normalize</strong></span>(Grid grid)</code> : <code>Grid</code></p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td><code><span class="teal"><strong>normalize</strong></span>(Grid grid)</code> : <code>Grid</code>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
@@ -404,10 +436,11 @@ page.parent doesn't seem to be set...
 <p>If a "normalized" grid is persisted as thelayout.xml, then the expectation is that the <em>MemberOrder</em> annotation can be removed from the domain class because the binding of properties/collections/actions will be within the XML. However, the layout annotations ( <em>DomainObjectLayout</em> , <em>ActionLayout</em> , <em>PropertyLayout</em> and <em>CollectionLayout</em> ) (if present) will continue to be used to provide additional layout metadata. Of course, there is nothing to prevent the developer from extending the layout XML to also include the layout XML (in other words moving towards a <em>#complete(Grid) complete</em> grid. Metadata within thelayout.xmlfile takes precedence over any annotations.</p>
 </div>
 </div>
-</div>
-</li>
-<li>
-<p><code><span class="teal"><strong>complete</strong></span>(Grid grid)</code> : <code>Grid</code></p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td><code><span class="teal"><strong>complete</strong></span>(Grid grid)</code> : <code>Grid</code>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
@@ -417,10 +450,11 @@ page.parent doesn't seem to be set...
 <p>If a "completed" grid is persisted as thelayout.xml, then there should be no need for any of the layout annotations, nor the <em>MemberOrder</em> annotations, to be required in the domain class itself.</p>
 </div>
 </div>
-</div>
-</li>
-<li>
-<p><code><span class="teal"><strong>minimal</strong></span>(Grid grid)</code> : <code>Grid</code></p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
+<td><code><span class="teal"><strong>minimal</strong></span>(Grid grid)</code> : <code>Grid</code>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
@@ -430,9 +464,9 @@ page.parent doesn't seem to be set...
 <p>If a "minimal" grid is persisted as thelayout.xml, then the expectation is that most of the layout annotations ( <em>DomainObjectLayout</em> , <em>ActionLayout</em> , <em>PropertyLayout</em> , <em>CollectionLayout</em> , but also <em>MemberOrder</em> ) will still be retained in the domain class code.</p>
 </div>
 </div>
-</div>
-</li>
-</ul>
+</div></td>
+</tr>
+</table>
 </div>
 </article>
 <aside class="article-aside toc hide-for-print" role="navigation">
@@ -451,7 +485,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20201212-0424-541da530</p>
+            <p>Revision: 2.0.0-M4.20201213-0424-23816900</p>
         </div>
     </div>
 </footer>

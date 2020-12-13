@@ -817,19 +817,31 @@ Persistent<code>Interaction</code>s support several use cases:</p>
 <div class="paragraph">
 <p>Provides the current thread&#8217;s <a href="../../../system/latest/generated/index/Interaction.html" class="page">Interaction</a> .</p>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p><code><span class="teal"><strong>currentInteraction</strong></span>()</code> : <code>Optional&lt;<a href="../../../system/latest/generated/index/Interaction.html" class="page">Interaction</a>&gt;</code></p>
+<div class="listingblock">
+<div class="title">Java Sources</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">interface InteractionContext {
+
+  Optional&lt;Interaction&gt; currentInteraction() <i class="conum" data-value="1"></i><b>(1)</b>
+
+  Interaction currentInteractionElseFail()
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><code><span class="teal"><strong>currentInteraction</strong></span>()</code> : <code>Optional&lt;<a href="../../../system/latest/generated/index/Interaction.html" class="page">Interaction</a>&gt;</code>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
 <p>Optionally, the currently active <a href="../../../system/latest/generated/index/Interaction.html" class="page">Interaction</a> for the calling thread.</p>
 </div>
 </div>
-</div>
-</li>
-</ul>
+</div></td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>TODO example migration</p>
@@ -901,39 +913,57 @@ you could also think of this interface as being analogous to the (database) tran
 </tr>
 </table>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p><code><span class="teal"><strong>getCurrentExecution</strong></span>()</code> : <code>Execution&lt;?, ?&gt;</code></p>
+<div class="listingblock">
+<div class="title">Java Sources</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">interface Interaction {
+
+  Command getCommand()
+
+  Execution&lt;?, ?&gt; getCurrentExecution() <i class="conum" data-value="1"></i><b>(1)</b>
+
+  Execution&lt;?, ?&gt; getPriorExecution() <i class="conum" data-value="2"></i><b>(2)</b>
+
+  int next(final String sequenceId) <i class="conum" data-value="3"></i><b>(3)</b>
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><code><span class="teal"><strong>getCurrentExecution</strong></span>()</code> : <code>Execution&lt;?, ?&gt;</code>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
 <p>The current (most recently pushed) <em>Execution</em> .</p>
 </div>
 </div>
-</div>
-</li>
-<li>
-<p><code><span class="teal"><strong>getPriorExecution</strong></span>()</code> : <code>Execution&lt;?, ?&gt;</code></p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><code><span class="teal"><strong>getPriorExecution</strong></span>()</code> : <code>Execution&lt;?, ?&gt;</code>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
 <p>The execution that preceded the current one.</p>
 </div>
 </div>
-</div>
-</li>
-<li>
-<p><code><span class="teal"><strong>next</strong></span>(String sequenceId)</code> : <code>int</code></p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><code><span class="teal"><strong>next</strong></span>(String sequenceId)</code> : <code>int</code>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
 <p>Generates numbers in a named sequence. The name of the sequence can be arbitrary, though note that the framework also uses this capability to generate sequence numbers corresponding to the sequences enumerated by the <em>Sequence</em> enum.</p>
 </div>
 </div>
-</div>
-</li>
-</ul>
+</div></td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>TODO example migration</p>
@@ -1163,7 +1193,7 @@ The services are used within the framework however, primarily to support the
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20201212-0424-541da530</p>
+            <p>Revision: 2.0.0-M4.20201213-0424-23816900</p>
         </div>
     </div>
 </footer>
