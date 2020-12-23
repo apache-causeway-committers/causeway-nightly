@@ -331,6 +331,9 @@ page.parent doesn't seem to be set...
 <article class="doc">
     <a name="section-top"></a>
 <h1 class="page">TransactionService : <em>interface</em></h1>
+<div class="paragraph">
+<p>Handles <em>global</em> transactions. Global transactions enable you to work with multiple transactional resources, typically relational databases.</p>
+</div>
 <div class="listingblock">
 <div class="title">Java Sources</div>
 <div class="content">
@@ -344,9 +347,9 @@ page.parent doesn't seem to be set...
 
   void nextTransaction() <i class="conum" data-value="4"></i><b>(4)</b>
 
-  void executeWithinTransaction(Runnable task) <i class="conum" data-value="5"></i><b>(5)</b>
+  Result&lt;T&gt; executeWithinTransaction(Callable&lt;T&gt; callable) <i class="conum" data-value="5"></i><b>(5)</b>
 
-  T executeWithinTransaction(Supplier&lt;T&gt; task) <i class="conum" data-value="6"></i><b>(6)</b>
+  Optional&lt;Throwable&gt; executeWithinTransaction(ThrowingRunnable runnable) <i class="conum" data-value="6"></i><b>(6)</b>
 }</code></pre>
 </div>
 </div>
@@ -394,22 +397,22 @@ page.parent doesn't seem to be set...
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
-<td><code><span class="teal"><strong>executeWithinTransaction</strong></span>(Runnable task)</code> : <code>void</code>
+<td><code><span class="teal"><strong>executeWithinTransaction</strong></span>&lt;T&gt;(Callable&lt;T&gt; callable)</code> : <code><a href="../../../commons/functional/Result.html" class="page">Result</a>&lt;T&gt;</code>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>Runs given <em>task</em> within an existing transactional boundary, or in the absence of such a boundary creates a new one.</p>
+<p>Runs given <em>callable</em> within an existing transactional boundary, or in the absence of such a boundary creates a new one.</p>
 </div>
 </div>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="6"></i><b>6</b></td>
-<td><code><span class="teal"><strong>executeWithinTransaction</strong></span>&lt;T&gt;(Supplier&lt;T&gt; task)</code> : <code>T</code>
+<td><code><span class="teal"><strong>executeWithinTransaction</strong></span>(ThrowingRunnable runnable)</code> : <code>Optional&lt;Throwable&gt;</code>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>Runs given <em>task</em> within an existing transactional boundary, or in the absence of such a boundary creates a new one.</p>
+<p>Runs given <em>runnable</em> within an existing transactional boundary, or in the absence of such a boundary creates a new one.</p>
 </div>
 </div>
 </div></td>
@@ -433,7 +436,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20201222-0430-72ec9e83</p>
+            <p>Revision: 2.0.0-M4.20201223-0432-4f611708</p>
         </div>
     </div>
 </footer>
