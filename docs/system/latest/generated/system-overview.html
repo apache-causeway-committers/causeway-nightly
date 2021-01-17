@@ -793,7 +793,10 @@ Folder: \core\interaction</code></pre>
 <div class="ulist">
 <ul>
 <li>
-<p>o.a.i.core.interaction.scope.IsisInteractionScopeBeanFactoryPostProcessor</p>
+<p>o.a.i.core.interaction.integration.InteractionAwareTransactionalBoundaryHandler</p>
+</li>
+<li>
+<p>o.a.i.core.interaction.scope.InteractionScopeBeanFactoryPostProcessor</p>
 </li>
 </ul>
 </div>
@@ -1040,6 +1043,9 @@ Folder: \core\runtime</code></pre>
 <li>
 <p>o.a.i.core.runtime.events.AppLifecycleEventService</p>
 </li>
+<li>
+<p>o.a.i.core.runtime.events.TransactionEventEmitter</p>
+</li>
 </ul>
 </div>
 <div class="paragraph">
@@ -1212,7 +1218,7 @@ Folder: \core\runtimeservices</code></pre>
 <p><em>Document Index Entries</em></p>
 </div>
 <div class="paragraph">
-<p><a href="index/core/runtimeservices/xml/XmlServiceDefault.html" class="page">XmlServiceDefault</a>, <a href="index/core/runtimeservices/xmlsnapshot/XmlSnapshotServiceDefault.html" class="page">XmlSnapshotServiceDefault</a></p>
+<p><a href="index/core/runtimeservices/transaction/TransactionServiceSpring.html" class="page">TransactionServiceSpring</a>, <a href="index/core/runtimeservices/xml/XmlServiceDefault.html" class="page">XmlServiceDefault</a>, <a href="index/core/runtimeservices/xmlsnapshot/XmlSnapshotServiceDefault.html" class="page">XmlSnapshotServiceDefault</a></p>
 </div></div></td>
 </tr>
 <tr>
@@ -1970,7 +1976,7 @@ Folder: \mappings\restclient\applib</code></pre>
 <div class="sectionbody">
 <div class="imageblock kroki">
 <div class="content">
-<object type="image/svg+xml" data="_images/diag-b17810e1584c5a1845ad962153a46134fab46c76.svg"><span class="alt">Persistence</span></object>
+<object type="image/svg+xml" data="_images/diag-bd47da70e458208731f00d995a4cc0bf3d0d389f.svg"><span class="alt">Persistence</span></object>
 </div>
 </div>
 <table class="tableblock frame-all grid-all stretch">
@@ -2035,6 +2041,12 @@ Folder: \persistence\jdo\applib</code></pre>
 <p>org.datanucleus:javax.jdo:jar:&lt;managed&gt;</p>
 </li>
 </ul>
+</div>
+<div class="paragraph">
+<p><em>Document Index Entries</em></p>
+</div>
+<div class="paragraph">
+<p><a href="index/persistence/jdo/applib/integration/JdoSupportService.html" class="page">JdoSupportService</a></p>
 </div></div></td>
 </tr>
 <tr>
@@ -2061,7 +2073,22 @@ Folder: \persistence\jdo\datanucleus</code></pre>
 <p>o.a.i.persistence.jdo.datanucleus.config.DnEntityDiscoveryListener</p>
 </li>
 <li>
+<p>o.a.i.persistence.jdo.datanucleus.config.DnSettings</p>
+</li>
+<li>
 <p>o.a.i.persistence.jdo.datanucleus.entities.DnEntityStateProvider</p>
+</li>
+<li>
+<p>o.a.i.persistence.jdo.datanucleus.exceptions.recognizers.ExceptionRecognizerForJDODataStoreException</p>
+</li>
+<li>
+<p>o.a.i.persistence.jdo.datanucleus.exceptions.recognizers.ExceptionRecognizerForJDODataStoreExceptionIntegrityConstraintViolationForeignKeyNoActionException</p>
+</li>
+<li>
+<p>o.a.i.persistence.jdo.datanucleus.exceptions.recognizers.ExceptionRecognizerForJDOObjectNotFoundException</p>
+</li>
+<li>
+<p>o.a.i.persistence.jdo.datanucleus.exceptions.recognizers.ExceptionRecognizerForSQLIntegrityConstraintViolationUniqueOrIndexException</p>
 </li>
 </ul>
 </div>
@@ -2121,34 +2148,13 @@ Folder: \persistence\jdo\integration</code></pre>
 <div class="ulist">
 <ul>
 <li>
-<p>o.a.i.persistence.jdo.integration.config.DataNucleusSettings</p>
-</li>
-<li>
-<p>o.a.i.persistence.jdo.integration.exceprecog.ExceptionRecognizerForJDODataStoreException</p>
-</li>
-<li>
-<p>o.a.i.persistence.jdo.integration.exceprecog.ExceptionRecognizerForJDODataStoreExceptionIntegrityConstraintViolationForeignKeyNoActionException</p>
-</li>
-<li>
-<p>o.a.i.persistence.jdo.integration.exceprecog.ExceptionRecognizerForJDOObjectNotFoundException</p>
-</li>
-<li>
-<p>o.a.i.persistence.jdo.integration.exceprecog.ExceptionRecognizerForSQLIntegrityConstraintViolationUniqueOrIndexException</p>
-</li>
-<li>
 <p>o.a.i.persistence.jdo.integration.jdosupport.IsisJdoSupportDN5</p>
-</li>
-<li>
-<p>o.a.i.persistence.jdo.integration.lifecycles.JdoPersistenceLifecycleService</p>
 </li>
 <li>
 <p>o.a.i.persistence.jdo.integration.metamodel.JdoIntegrationProgrammingModel</p>
 </li>
 <li>
-<p>o.a.i.persistence.jdo.integration.persistence.IsisPlatformTransactionManagerForJdo</p>
-</li>
-<li>
-<p>o.a.i.persistence.jdo.integration.persistence.PersistenceSessionFactory5</p>
+<p>o.a.i.persistence.jdo.integration.schema.JdoSchemaService</p>
 </li>
 </ul>
 </div>
@@ -2188,66 +2194,6 @@ Folder: \persistence\jdo\integration</code></pre>
 </div>
 <div class="paragraph">
 <p><a href="index/persistence/jdo/integration/schema/JdoSchemaService.html" class="page">JdoSchemaService</a></p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Apache Isis Persistence - JDO (lightweight integration)</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">Group: org.apache.isis.persistence
-Artifact: isis-persistence-jdo-lightweight
-Type: jar
-Folder: \persistence\jdo\lightweight</code></pre>
-</div>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>JDO lightweight integration (experimental)</p>
-</div>
-<div class="paragraph">
-<p><em>Components</em></p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>o.a.i.persistence.jdo.lightweight.metamodel.JdoLightweightProgrammingModel</p>
-</li>
-<li>
-<p>o.a.i.persistence.jdo.lightweight.services.LightweightJdoSupport</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p><em>Dependencies</em></p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>org.apache.isis.commons:isis-commons:jar:&lt;managed&gt;</p>
-</li>
-<li>
-<p>org.apache.isis.core:isis-applib:jar:&lt;managed&gt;</p>
-</li>
-<li>
-<p>org.apache.isis.core:isis-core-internaltestsupport:jar:&lt;managed&gt;</p>
-</li>
-<li>
-<p>org.apache.isis.core:isis-core-runtime:jar:&lt;managed&gt;</p>
-</li>
-<li>
-<p>org.apache.isis.persistence:isis-persistence-jdo-applib:jar:&lt;managed&gt;</p>
-</li>
-<li>
-<p>org.apache.isis.persistence:isis-persistence-jdo-datanucleus:jar:&lt;managed&gt;</p>
-</li>
-<li>
-<p>org.apache.isis.persistence:isis-persistence-jdo-metamodel:jar:&lt;managed&gt;</p>
-</li>
-<li>
-<p>org.apache.isis.persistence:isis-persistence-jdo-spring:jar:&lt;managed&gt;</p>
-</li>
-</ul>
 </div></div></td>
 </tr>
 <tr>
@@ -2677,7 +2623,7 @@ Folder: \security\shiro</code></pre>
 <div class="sectionbody">
 <div class="imageblock kroki">
 <div class="content">
-<object type="image/svg+xml" data="_images/diag-7d41e44f747539fb092326afc0b0d466c231251d.svg"><span class="alt">Valuetypes</span></object>
+<object type="image/svg+xml" data="_images/diag-3829ae9e0266620552e7918fea013e711c1a9958.svg"><span class="alt">Valuetypes</span></object>
 </div>
 </div>
 <table class="tableblock frame-all grid-all stretch">
@@ -2870,13 +2816,13 @@ Folder: \valuetypes\asciidoc\ui</code></pre>
 <div class="ulist">
 <ul>
 <li>
-<p>com.github.jnr:jnr-constants:jar:0.10.0</p>
+<p>com.github.jnr:jnr-constants:jar:0.10.1</p>
 </li>
 <li>
-<p>com.github.jnr:jnr-enxio:jar:0.32.1</p>
+<p>com.github.jnr:jnr-enxio:jar:0.32.3</p>
 </li>
 <li>
-<p>com.github.jnr:jnr-posix:jar:3.1.3</p>
+<p>com.github.jnr:jnr-posix:jar:3.1.4</p>
 </li>
 <li>
 <p>org.apache.isis.core:isis-core-metamodel:jar:&lt;managed&gt;</p>
@@ -4532,9 +4478,6 @@ Folder: \regressiontests</code></pre>
 <p>org.apache.isis.mavendeps:isis-mavendeps-webapp:pom:&lt;managed&gt;</p>
 </li>
 <li>
-<p>org.apache.isis.persistence:isis-persistence-jdo-lightweight:jar:&lt;managed&gt;</p>
-</li>
-<li>
 <p>org.apache.isis.security:isis-security-shiro:jar:&lt;managed&gt;</p>
 </li>
 <li>
@@ -4548,9 +4491,6 @@ Folder: \regressiontests</code></pre>
 </li>
 <li>
 <p>org.apache.isis.viewer:isis-viewer-common:jar:&lt;managed&gt;</p>
-</li>
-<li>
-<p>org.eclipse.persistence:org.eclipse.persistence.moxy:jar:2.7.7</p>
 </li>
 <li>
 <p>org.glassfish:javax.json:jar:1.1.4</p>
@@ -4601,6 +4541,9 @@ Folder: \regressiontests\stable</code></pre>
 </li>
 <li>
 <p>o.a.i.testdomain.conf.Configuration_headless$HeadlessCommandSupport</p>
+</li>
+<li>
+<p>o.a.i.testdomain.jpa.springdata.EmployeeRepository</p>
 </li>
 <li>
 <p>o.a.i.testdomain.util.interaction.InteractionBoundaryProbe</p>
@@ -5598,7 +5541,7 @@ Folder: \extensions\security\shiro-realm-ldap\impl</code></pre>
 <div class="sectionbody">
 <div class="imageblock kroki">
 <div class="content">
-<object type="image/svg+xml" data="_images/diag-9ab4ebdeaa92c609c84e5381e2861d7d076697e3.svg"><span class="alt">Subdomains</span></object>
+<object type="image/svg+xml" data="_images/diag-ec84d73abf31a304cc7d632e7ae34e377048be47.svg"><span class="alt">Subdomains</span></object>
 </div>
 </div>
 <table class="tableblock frame-all grid-all stretch">
@@ -8040,7 +7983,7 @@ Folder: \legacy\extensions\core\runtime</code></pre>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210115-0451-6cae937f</p>
+            <p>Revision: 2.0.0-M4.20210117-0453-6c27f9c8</p>
         </div>
     </div>
 </footer>

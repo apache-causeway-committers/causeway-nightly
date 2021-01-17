@@ -332,14 +332,14 @@ page.parent doesn't seem to be set...
     <a name="section-top"></a>
 <h1 class="page">TransactionService : <em>interface</em></h1>
 <div class="paragraph">
-<p>Handles <em>global</em> transactions. Global transactions enable you to work with multiple transactional resources, typically relational databases.</p>
+<p>Provides utilities to access active transactions associated with the current thread.</p>
 </div>
 <div class="listingblock">
 <div class="title">Java Sources</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">interface TransactionService {
 
-  TransactionId currentTransactionId() <i class="conum" data-value="1"></i><b>(1)</b>
+  Optional&lt;TransactionId&gt; currentTransactionId() <i class="conum" data-value="1"></i><b>(1)</b>
 
   TransactionState currentTransactionState() <i class="conum" data-value="2"></i><b>(2)</b>
 
@@ -353,18 +353,25 @@ page.parent doesn't seem to be set...
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><code><span class="teal"><strong>currentTransactionId</strong></span>()</code> : <code><a href="TransactionId.html" class="page">TransactionId</a></code>
+<td><code><span class="teal"><strong>currentTransactionId</strong></span>()</code> : <code>Optional&lt;<a href="TransactionId.html" class="page">TransactionId</a>&gt;</code>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>When called within an existing transactional boundary returns the unique identifier to the transaction, <em>null</em> otherwise.</p>
+<p>Optionally returns the unique identifier of the current thread&#8217;s transaction, based on whether there is an active transaction associated with the current thread.</p>
 </div>
 </div>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><code><span class="teal"><strong>currentTransactionState</strong></span>()</code> : <code><a href="TransactionState.html" class="page">TransactionState</a></code></td>
+<td><code><span class="teal"><strong>currentTransactionState</strong></span>()</code> : <code><a href="TransactionState.html" class="page">TransactionState</a></code>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Returns the state of the current thread&#8217;s transaction., or returns <em>TransactionState#NONE</em> , if there is no active transaction associated with the current thread.</p>
+</div>
+</div>
+</div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
@@ -372,10 +379,13 @@ page.parent doesn't seem to be set...
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>Flush all changes to the object store.</p>
+<p>Flushes all changes to the object store.</p>
 </div>
 <div class="paragraph">
 <p>Occasionally useful to ensure that newly persisted domain objects are flushed to the database prior to a subsequent repository query.</p>
+</div>
+<div class="paragraph">
+<p>If there is no active transaction associated with the current thread, then does nothing.</p>
 </div>
 </div>
 </div></td>
@@ -386,7 +396,7 @@ page.parent doesn't seem to be set...
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>Commits the current transaction (if there is one), and begins a new one. If there is no current transaction, then is a no-op.</p>
+<p>Commits the current thread&#8217;s transaction (if there is one), and in any case begins a new one.</p>
 </div>
 </div>
 </div></td>
@@ -410,7 +420,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210115-0451-6cae937f</p>
+            <p>Revision: 2.0.0-M4.20210117-0453-6c27f9c8</p>
         </div>
     </div>
 </footer>
