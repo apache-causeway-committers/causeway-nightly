@@ -165,7 +165,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../domain-entities-and-services.html">Domain Entities &amp; Services</a>
   </li>
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../object-members.html">Object Members</a>
+    <a class="nav-link" href="#userguide:fun:object-pathsToInclude.adoc">Object Members</a>
   </li>
   <li class="nav-item" data-depth="1">
     <a class="nav-link" href="../ui.html">UI Layout &amp; Hints</a>
@@ -483,7 +483,7 @@ A common technique is to factor out from domain objects into mixins and then gen
 <p>the internal <a href="../../../../refguide/latest/applib-svc/EventBusService.html" class="page">event bus</a> allows modules to influence other modules.</p>
 <div class="paragraph">
 <p>A subscriber in one module can subscribe to events emitted by domain objects in another module.
-These events can affect both the UI (eg hiding or disabling <a href="../overview.html#object-members" class="page">object members</a>, or allowing or vetoing interactions).</p>
+These events can affect both the UI (eg hiding or disabling <a href="../overview.html#object-pathsToInclude" class="page">object pathsToInclude</a>, or allowing or vetoing interactions).</p>
 </div>
 </li>
 </ul>
@@ -526,11 +526,39 @@ The <code>customers</code> module for its part does not know anything about this
 We want the invoices to know about customers, but not vice versa.
 We could surface the set of invoices for a customer using a <code>Customer_invoices</code> mixin:</p>
 </div>
-<div class="imageblock kroki">
+<div class="listingblock kroki-error">
+<div class="title"><code>invoices</code> module contributes to <code>customers</code></div>
 <div class="content">
-<object type="image/svg+xml" data="../_images/diag-74e461a40ffe2fc306feed64585c10fbce26b341.svg"><span class="alt">`invoices` module contributes to `customers`</span></object>
+<pre>hide empty pathsToInclude
+'hide methods
+
+skinparam class {
+    BackgroundColor&lt;&lt;desc&gt;&gt; Cyan
+    BackgroundColor&lt;&lt;ppt&gt;&gt; LightGreen
+    BackgroundColor&lt;&lt;mi&gt;&gt; LightPink
+    BackgroundColor&lt;&lt;role&gt;&gt; LightYellow
+    BackgroundColor&lt;&lt;strategy&gt;&gt; White
+    BackgroundColor&lt;&lt;api&gt;&gt; White
+    BackgroundColor&lt;&lt;spi&gt;&gt; White
+    BackgroundColor&lt;&lt;internal&gt;&gt; LightGrey
+    BackgroundColor&lt;&lt;value&gt;&gt; White
+
+    BackgroundColor&lt;&lt;entity&gt;&gt; LightGreen
+    BackgroundColor&lt;&lt;viewmodel&gt;&gt; LightPink
+    BackgroundColor&lt;&lt;mixin&gt;&gt; LightYellow
+}
+
+package invoice {
+    class Customer_invoices &lt;&lt;mixin&gt;&gt;
+    class Invoice &lt;&lt;mi&gt;&gt;
+}
+Customer_invoices --&gt; "0.*" Invoice: invoices
+
+package customers {
+    class Customer &lt;&lt;ppt&gt;&gt;
+}
+Customer_invoices -.r-&gt; Customer: "contributes to"</pre>
 </div>
-<div class="title">Figure 1. <code>invoices</code> module contributes to <code>customers</code></div>
 </div>
 <div class="paragraph">
 <p>In the UI, when rendering a <code>Customer</code>, we would also be presented with the associated set of <code>Invoice</code>s.</p>
@@ -541,11 +569,43 @@ For example, suppose we have a mechanism to attach <code>Document</code>s to arb
 The documents module does not depend on any other modules, but provides a <code>DocumentHolder</code> marker interface.
 We can therefore attach documents to a <code>Customer</code> by having <code>Customer</code> implement this marker interface:</p>
 </div>
-<div class="imageblock kroki">
+<div class="listingblock kroki-error">
+<div class="title"><code>customers</code> depends upon contributions of <code>documents</code></div>
 <div class="content">
-<object type="image/svg+xml" data="../_images/diag-84acb4c3dc04dbbe4810573dbaa680d349765cfc.svg"><span class="alt">`customers` depends upon contributions of `documents`</span></object>
+<pre>hide empty pathsToInclude
+'hide methods
+
+skinparam class {
+    BackgroundColor&lt;&lt;desc&gt;&gt; Cyan
+    BackgroundColor&lt;&lt;ppt&gt;&gt; LightGreen
+    BackgroundColor&lt;&lt;mi&gt;&gt; LightPink
+    BackgroundColor&lt;&lt;role&gt;&gt; LightYellow
+    BackgroundColor&lt;&lt;strategy&gt;&gt; White
+    BackgroundColor&lt;&lt;api&gt;&gt; White
+    BackgroundColor&lt;&lt;spi&gt;&gt; White
+    BackgroundColor&lt;&lt;internal&gt;&gt; LightGrey
+    BackgroundColor&lt;&lt;value&gt;&gt; White
+
+    BackgroundColor&lt;&lt;entity&gt;&gt; LightGreen
+    BackgroundColor&lt;&lt;viewmodel&gt;&gt; LightPink
+    BackgroundColor&lt;&lt;mixin&gt;&gt; LightYellow
+}
+
+package documents {
+    interface DocumentHolder &lt;&lt;role&gt;&gt;
+    class DocumentHolder_documents &lt;&lt;mixin&gt;&gt;
+    class DocumentHolder_attachDocument &lt;&lt;mixin&gt;&gt;
+    class Document &lt;&lt;ppt&gt;&gt;
+}
+DocumentHolder_documents -d-&gt; "0..*" Document: documents
+DocumentHolder_documents -.l-&gt; DocumentHolder: "contributes to"
+DocumentHolder_attachDocument -.l-&gt; DocumentHolder: "contributes to"
+
+package customers {
+    class Customer &lt;&lt;ppt&gt;&gt;
+}
+Customer -u.-^ DocumentHolder</pre>
 </div>
-<div class="title">Figure 2. <code>customers</code> depends upon contributions of <code>documents</code></div>
 </div>
 </div>
 </div>
@@ -628,7 +688,7 @@ Or, (open source) libraries such as <a href="https://www.archunit.org/">ArchUnit
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210119-0453-d2e48baf</p>
+            <p>Revision: 2.0.0-M4.20210120-0455-1de6276e</p>
         </div>
     </div>
 </footer>

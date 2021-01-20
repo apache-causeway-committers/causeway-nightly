@@ -772,16 +772,10 @@ public @interface Collection {
     Class&lt;? extends CollectionDomainEvent&lt;?,?&gt;&gt; domainEvent()   <i class="conum" data-value="1"></i><b>(1)</b>
             default CollectionDomainEvent.Default.class;
 
-    Editing editing()                                           <i class="conum" data-value="2"></i><b>(2)</b>
-            default Editing.NOT_SPECIFIED;
-
-    String editingDisabledReason()                              <i class="conum" data-value="3"></i><b>(3)</b>
-            default "";
-
-    Where hidden()                                              <i class="conum" data-value="4"></i><b>(4)</b>
+    Where hidden()                                              <i class="conum" data-value="2"></i><b>(2)</b>
             default Where.NOT_SPECIFIED;
 
-    Class&lt;?&gt; typeOf()                                           <i class="conum" data-value="5"></i><b>(5)</b>
+    Class&lt;?&gt; typeOf()                                           <i class="conum" data-value="3"></i><b>(3)</b>
             default Object.class;
 
 }</code></pre>
@@ -798,27 +792,13 @@ public @interface Collection {
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><a href="#editing"><code>editing()</code></a>
-<div class="paragraph">
-<p>Whether a collection can be added to or removed from within the UI</p>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td><code>editingDisabledReason()</code>
-<div class="paragraph">
-<p>If <code>editing()</code> is <code>DISABLED</code>, provides a reason as to why.</p>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
 <td><a href="#hidden"><code>hidden()</code></a>
 <div class="paragraph">
 <p>Indicates where (in the UI) the collection should be hidden from the user.</p>
 </div></td>
 </tr>
 <tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
 <td><a href="#typeOf"><code>typeOf()</code></a>
 <div class="paragraph">
 <p>Hints as to the run-time type of the objects within that collection (as a fallback)</p>
@@ -1153,105 +1133,6 @@ However, events can be raised programmatically either by calling the <a href="..
 </div>
 </div>
 <div class="sect1">
-<h2 id="editing"><a class="anchor" href="#editing"></a><code>editing()</code></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The <code>editing()</code> annotation indicates whether a collection can be added to or removed from within the UI.</p>
-</div>
-<div class="paragraph">
-<p>The related <code>editingDisabledReason</code> attribute specifies the a hard-coded reason why the collection cannot be modified directly.</p>
-</div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>The <a href="../../../vw/latest/about.html" class="page">Wicket viewer</a> does <strong>not</strong> currently support the modification of collections; they are rendered read-only.</p>
-</div>
-<div class="paragraph">
-<p>The workaround is to create add/remove actions and use <a href="MemberOrder.html" class="page">UI hints</a> to render them close to the collection.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>Whether a collection is enabled or disabled depends upon these factors:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>whether the domain object has been configured as immutable through the <a href="DomainObject.html#editing" class="page"><code>@DomainObject#editing()</code></a> attribute</p>
-</li>
-<li>
-<p>else (that is, if the domain object&#8217;s editability is specified as being <code>AS_CONFIGURED</code>), then the value of the
-<a href="../config/sections/isis.applib.html#isis.applib.annotation.domain-object.editing" class="page">'isis.applib.annotation.domain-object.editing'</a> configuration property.
-If set to <code>false</code>, then the object&#8217;s collections (and properties) are <strong>not</strong> editable</p>
-</li>
-<li>
-<p>else, then the value of the <code>@Collection(editing=&#8230;&#8203;)</code> attribute itself.</p>
-</li>
-<li>
-<p>else, the result of invoking any supporting <a href="../applib-methods/prefixes.html#disable" class="page"><code>disable&#8230;&#8203;()</code></a> supporting methods</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Thus, to make a collection read-only even if the object would otherwise be editable, use:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
-import lombok.Setter;
-
-public class ToDoItem {
-
-    @Collection(
-        editing=Editing.DISABLED,
-        editingDisabledReason="Use the add and remove actions to modify"
-    )
-    @Getter @Setter
-    private SortedSet&lt;ToDoItem&gt; dependencies = ...
-
-}</code></pre>
-</div>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>To reiterate, it is <em>not</em> possible to enable editing for a collection if editing has been disabled at the object-level.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="sect2">
-<h3 id="see-also-2"><a class="anchor" href="#see-also-2"></a>See also</h3>
-<div class="paragraph">
-<p>This attribute can also be specified for:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="Property.html#editing" class="page">properties</a></p>
-</li>
-<li>
-<p><a href="DomainObject.html#editing" class="page">domain object</a></p>
-</li>
-</ul>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
 <h2 id="hidden"><a class="anchor" href="#hidden"></a><code>hidden()</code></h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -1323,7 +1204,7 @@ public class Customer {
 <p>The other values of the <code>Where</code> enum have no meaning for a collection.</p>
 </div>
 <div class="sect2">
-<h3 id="see-also-3"><a class="anchor" href="#see-also-3"></a>See also</h3>
+<h3 id="see-also-2"><a class="anchor" href="#see-also-2"></a>See also</h3>
 <div class="paragraph">
 <p>This attribute can also be applied to:</p>
 </div>
@@ -1377,7 +1258,7 @@ public void Customer {
 </table>
 </div>
 <div class="sect2">
-<h3 id="see-also-4"><a class="anchor" href="#see-also-4"></a>See also</h3>
+<h3 id="see-also-3"><a class="anchor" href="#see-also-3"></a>See also</h3>
 <div class="paragraph">
 <p>This attribute can also be specified for <a href="Action.html#typeOf" class="page">actions</a>.</p>
 </div>
@@ -1401,7 +1282,7 @@ public void Customer {
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210119-0453-d2e48baf</p>
+            <p>Revision: 2.0.0-M4.20210120-0455-1de6276e</p>
         </div>
     </div>
 </footer>
