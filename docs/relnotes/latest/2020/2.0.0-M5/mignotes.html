@@ -557,6 +557,24 @@ VIEW_CONTRIBUTIONS_ONLY,</code></pre>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@DomainObject(nature=&#8230;&#8203;)</code></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>JDO_ENTITY</code></p>
+</li>
+<li>
+<p><code>JPA_ENTITY</code></p>
+</li>
+</ul>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>use <code>@DomainObject(nature=ENTITY)</code> instead</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p><code>@DomainObject(publish=&#8230;&#8203;)</code></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
@@ -686,6 +704,19 @@ CommandServiceInternal -&gt; CommandPublisher</code></pre>
 <div class="sect1">
 <h2 id="changes-to-applib-and-services"><a class="anchor" href="#changes-to-applib-and-services"></a>Changes to Applib and Services</h2>
 <div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Interaction related classes have been moved to module <code>core/interaction</code>.</p>
+</li>
+<li>
+<p>Transaction related classes have been moved to module <code>core/transaction</code>.</p>
+</li>
+<li>
+<p>JDO classes have been split up into several modules under <code>persistence/jdo/</code>.</p>
+</li>
+</ul>
+</div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -727,6 +758,14 @@ CommandServiceInternal -&gt; CommandPublisher</code></pre>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>InteractionFactory</code></p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>IsisModuleJdoDataNucleus5</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>removed, use IsisModuleJdoDatanucleus instead (symmetry with JPA/IsisModuleJpaEclipselink)</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>IsisJdoSupport, IsisJdoSupport_v3_2</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>removed, use JdoSupportService instead (symmetry with JPA/JpaSupportService)</code></p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>InteractionClosure</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>AuthenticationLayer</code></p></td>
 </tr>
@@ -739,23 +778,39 @@ CommandServiceInternal -&gt; CommandPublisher</code></pre>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>MessageBroker is held by InteractionSession</code></p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>QueryDefault removed</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ParentedOid, PojoRecreationException, PojoRefreshException</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>removed, as no longer used</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>QueryDefault (removed)</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code><span class="line-through">new QueryDefault&lt;&gt;(CommandJdo.class, "findByParent",
                         "parent", parent));</span></code></p>
 <p class="tableblock"><code>Query.named(CommandJdo.class, "findByParent")<br>
     .withParameter("parent", parent));</code></p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SudoService</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>redefined, see java doc for details</code></p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>TestClock (removed)</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>use factories of VirtualClock.frozenTestClock() instead</code></p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>UserService#getUser() : UserMemento</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>UserService#currentUser() : <strong>Optional</strong>&lt;UserMemento&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Transaction (removed)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>no replacement (use TransactionService to get current tx id)</code></p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SudoService</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>redefined, see java doc for details</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>TransactionScopeListener (removed)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>use Spring&#8217;s TransactionSynchronization instead</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>TransactionService</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>improved API provides more fine grained control</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>UserService#getUser() : UserMemento</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>UserService#currentUser() : <strong>Optional</strong>&lt;UserMemento&gt;</code></p></td>
 </tr>
 </tbody>
 </table>
@@ -807,7 +862,7 @@ validity of the used constructor rather than doing construction reflective at ru
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210124-0455-819b8d51</p>
+            <p>Revision: 2.0.0-M4.20210125-0454-1337e959</p>
         </div>
     </div>
 </footer>
