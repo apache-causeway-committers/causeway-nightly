@@ -489,6 +489,42 @@ VIEW_CONTRIBUTIONS_ONLY,</code></pre>
 </div>
 </div>
 <div class="sect1">
+<h2 id="changes-to-the-configuration"><a class="anchor" href="#changes-to-the-configuration"></a>Changes to the Configuration</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. as mapped to IsisConfiguration</caption>
+<colgroup>
+<col style="width: 40%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">was</th>
+<th class="tableblock halign-left valign-top">new</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>isis.persistence.???jdo??? //TODO</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>isis.persistence.schema</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>isis.core.runtimeservices.exception-recognizer.jdo</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>isis.core.runtimeservices.exception-recognizer.dae</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
 <h2 id="changes-to-the-programming-model"><a class="anchor" href="#changes-to-the-programming-model"></a>Changes to the Programming Model</h2>
 <div class="sectionbody">
 <div class="sect2">
@@ -715,6 +751,9 @@ CommandServiceInternal -&gt; CommandPublisher</code></pre>
 <li>
 <p>JDO classes have been split up into several modules under <code>persistence/jdo/</code>.</p>
 </li>
+<li>
+<p>Multiple <code>Exception</code> classes have been relocated at <code>org.apache.isis.applib.exceptions</code></p>
+</li>
 </ul>
 </div>
 <table class="tableblock frame-all grid-all stretch">
@@ -729,6 +768,10 @@ CommandServiceInternal -&gt; CommandPublisher</code></pre>
 </tr>
 </thead>
 <tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ApplicationException (removed)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>removed, adds no new semantics compared to the already existing RecoverableException</code></p></td>
+</tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>AuthenticationSession</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Authentication (no longer holds MessageBroker or session attributes, is now immutable)</code></p></td>
@@ -754,6 +797,10 @@ CommandServiceInternal -&gt; CommandPublisher</code></pre>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>VirtualClock (introduced)</code></p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>FatalException (removed)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>removed, adds no new semantics compared to the already existing UnrecoverableException</code></p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>IsisInteractionFactory</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>InteractionFactory</code></p></td>
 </tr>
@@ -770,12 +817,26 @@ CommandServiceInternal -&gt; CommandPublisher</code></pre>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>AuthenticationLayer</code></p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>IsisApplicationException</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ApplicationException</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>IsisException (removed)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>use one of 2 hierarchies (in support of i18n translation)</code></p>
+<p class="tableblock"><code>- RecoverableException</code></p>
+<p class="tableblock"><code>- UnrecoverableException</code></p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>IsisInteractionTracker</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>InteractionTracker</code></p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>MessageBroker is held by Authentication(Session)</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>MessageBroker is held by InteractionSession</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NonRecoverableException</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>renamed to UnrecoverableException</code></p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>ParentedOid, PojoRecreationException, PojoRefreshException</code></p></td>
@@ -880,6 +941,10 @@ check menubars.layout.xml for any occurrences
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.applib</code></p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isisMetaModel</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.metamodel</code></p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>isisSecurityApi</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.security</code></p></td>
 </tr>
@@ -890,6 +955,10 @@ check menubars.layout.xml for any occurrences
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>isisExt*</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.ext.*</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isisSub*</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.sub.*</code></p></td>
 </tr>
 </tbody>
 </table>
@@ -995,7 +1064,7 @@ check menubars.layout.xml for any occurrences
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210127-0428-373d73b4</p>
+            <p>Revision: 2.0.0-M4.20210129-0430-45d3a32d</p>
         </div>
     </div>
 </footer>
