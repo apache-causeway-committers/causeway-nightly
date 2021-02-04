@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Tooling - CLI :: Apache Isis</title>
-    <meta name="generator" content="Antora 2.3.3">
+    <meta name="generator" content="Antora 2.3.4">
     <link rel="stylesheet" href="../../../_/css/site.css">
     <link rel="stylesheet" href="../../../_/css/site-custom.css">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Raleway:300,400,500,700,800|Montserrat:300,400,700" rel="stylesheet">
@@ -407,9 +407,13 @@ CLI for the Apache Isis Tooling Ecosystem
                   path to the (multi-module) project root (default: current dir)
   -V, --version   Print version information and exit.
 Commands:
+  projdoc   Writes all generated (AsciiDoc) to given output.
   overview  Writes a System Overview document (AsciiDoc) to given output.
   index     Writes a Global Index (AsciiDoc) to given output.</code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>The "projdoc" command is the usual command to use, as it performs both the "overview" and "index" commands.</p>
 </div>
 <div class="paragraph">
 <p>By default, the current directory is used as the target to perform commands in.</p>
@@ -440,11 +444,11 @@ command:
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>configuration for the "overview" command</td>
+<td>configuration for the "overview" command (also used by the "projdoc" command)</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>configuration for the "index" command</td>
+<td>configuration for the "index" command (also used by the "projdoc" command)</td>
 </tr>
 </table>
 </div>
@@ -582,6 +586,50 @@ It consists of key:value pairs:</p>
 <p>These different types of sections are exploited by the <code>overview</code> command, described <a href="#system-overview-overview">below</a>.</p>
 </div>
 <div class="sect2">
+<h3 id="project-documentation-projdoc"><a class="anchor" href="#project-documentation-projdoc"></a>Project documentation (<code>projdoc</code>)</h3>
+<div class="paragraph">
+<p>This command generates both a <a href="#system-overview-overview">system overview</a> and generates the <a href="#index-index">global index</a>, and as such is the command that you will probably want to use most of the time.
+See those two commands for further details.</p>
+</div>
+<div class="sect3">
+<h4 id="usage"><a class="anchor" href="#usage"></a>Usage</h4>
+<div class="paragraph">
+<p>The <code>projdoc</code> command is usually invoked as follows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code>java -jar tooling/cli/target/isis-tooling-cli.jar \
+    -p . \
+    -o antora/components/system/modules/generated \
+    projdoc</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>where :</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>-p</code> and <code>-o</code> are the global options for all commands</p>
+</li>
+<li>
+<p><code>projdoc</code> selects this sub-command</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>There are no command-specific options.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="projdoc-configuration"><a class="anchor" href="#projdoc-configuration"></a>Configuration</h4>
+<div class="paragraph">
+<p>The <code>projdoc</code> command has no specific configuration.
+However, as it is effectively just the combination of the <code>overview</code> and <code>index</code> commands, note that those two commands <em>do</em> have their own configuration settings; see <a href="#overview-configuration">overview configuration</a> and <a href="#index-configuration">index configuration</a> respectively.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
 <h3 id="system-overview-overview"><a class="anchor" href="#system-overview-overview"></a>System Overview (<code>overview</code>)</h3>
 <div class="paragraph">
 <p>This command generates the <em>System Overview</em> (`.adoc) page.</p>
@@ -616,9 +664,8 @@ By sequencing the sections correctly, this therefore allows a hierarchy to be cr
 <div class="paragraph">
 <p>This way, sections can be defined that create a hierarchy.</p>
 </div>
-</div>
-<div class="sect2">
-<h3 id="usage"><a class="anchor" href="#usage"></a>Usage</h3>
+<div class="sect3">
+<h4 id="usage-2"><a class="anchor" href="#usage-2"></a>Usage</h4>
 <div class="paragraph">
 <p>The <code>overview</code> command is usually invoked as follows:</p>
 </div>
@@ -645,6 +692,7 @@ By sequencing the sections correctly, this therefore allows a hierarchy to be cr
 </div>
 <div class="paragraph">
 <p>There are no command-specific options.</p>
+</div>
 </div>
 <div class="sect3">
 <h4 id="overview-configuration"><a class="anchor" href="#overview-configuration"></a>Configuration</h4>
@@ -686,7 +734,7 @@ By sequencing the sections correctly, this therefore allows a hierarchy to be cr
 <p>Asciidoc files may refer to the <em>Document Global Index</em> via <code>xref</code> or <code>include</code> statements using paths such as <code>system:generated:index/applib/Xxx.adoc</code>.</p>
 </div>
 <div class="sect3">
-<h4 id="usage-2"><a class="anchor" href="#usage-2"></a>Usage</h4>
+<h4 id="usage-3"><a class="anchor" href="#usage-3"></a>Usage</h4>
 <div class="paragraph">
 <p>The <code>index</code> command is usually invoked as follows:</p>
 </div>
@@ -786,7 +834,7 @@ By sequencing the sections correctly, this therefore allows a hierarchy to be cr
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210203-0425-e3fb5ebd</p>
+            <p>Revision: 2.0.0-M4.20210204-0423-7102171c</p>
         </div>
     </div>
 </footer>
