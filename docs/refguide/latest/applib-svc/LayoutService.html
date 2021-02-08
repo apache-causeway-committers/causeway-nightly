@@ -240,7 +240,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../applib-ant/PropertyLayout.html">PropertyLayout</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../applib-ant/IsisSessionScope.html">RequestScoped</a>
+    <a class="nav-link" href="../applib-ant/InteractionScope.html">RequestScoped</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../applib-ant/Title.html">Title</a>
@@ -312,7 +312,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="ApplicationFeatureRepository.html">ApplicationFeatureRepository</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="AuditerService.html">AuditerService</a>
+    <a class="nav-link" href="#refguide:applib-svc:AuditerService.adoc">AuditerService</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="BookmarkService.html">BookmarkService</a>
@@ -758,7 +758,7 @@ page.parent doesn't seem to be set...
 </div>
 <article class="doc">
     <a name="section-top"></a>
-<h1 class="page"><code>LayoutService</code></h1>
+<h1 class="page">LayoutService</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="admonitionblock warning">
@@ -782,18 +782,15 @@ This functionality is surfaced through the user interface through a related <a h
 <div class="sect1">
 <h2 id="api"><a class="anchor" href="#api"></a>API</h2>
 <div class="sectionbody">
-<div class="sect2">
-<h3 id="layoutservice-interface"><a class="anchor" href="#layoutservice-interface"></a>LayoutService : <em>interface</em></h3>
+<div class="sect3">
+<h4 id="api-2"><a class="anchor" href="#api-2"></a>API</h4>
 <div class="listingblock">
-<div class="title">Java Sources</div>
+<div class="title">LayoutService.java</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">interface LayoutService {
-
-  String toXml(Class&lt;?&gt; domainClass, Style style) <i class="conum" data-value="1"></i><b>(1)</b>
-
-  byte[] toZip(final Style style) <i class="conum" data-value="2"></i><b>(2)</b>
-
-  String toMenuBarsXml(final MenuBarsService.Type type) <i class="conum" data-value="3"></i><b>(3)</b>
+  String toXml(Class&lt;?&gt; domainClass, Style style)     <i class="conum" data-value="1"></i><b>(1)</b>
+  byte[] toZip(final Style style)     <i class="conum" data-value="2"></i><b>(2)</b>
+  String toMenuBarsXml(final MenuBarsService.Type type)     <i class="conum" data-value="3"></i><b>(3)</b>
 }</code></pre>
 </div>
 </div>
@@ -801,7 +798,7 @@ This functionality is surfaced through the user interface through a related <a h
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><code><span class="teal"><strong>toXml</strong></span>(Class&lt;?&gt; domainClass, Style style)</code> : <code>String</code>
+<td><a href="#toXml">toXml</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
@@ -812,7 +809,7 @@ This functionality is surfaced through the user interface through a related <a h
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><code><span class="teal"><strong>toZip</strong></span>(Style style)</code> : <code>byte[]</code>
+<td><a href="#toZip">toZip</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
@@ -823,7 +820,7 @@ This functionality is surfaced through the user interface through a related <a h
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td><code><span class="teal"><strong>toMenuBarsXml</strong></span>(Type type)</code> : <code>String</code>
+<td><a href="#toMenuBarsXml">toMenuBarsXml</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
@@ -833,6 +830,26 @@ This functionality is surfaced through the user interface through a related <a h
 </div></td>
 </tr>
 </table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="members"><a class="anchor" href="#members"></a>Members</h4>
+<div class="sect4">
+<h5 id="toXml"><a class="anchor" href="#toXml"></a>toXml</h5>
+<div class="paragraph">
+<p>Obtains the serialized XML form of the layout (grid) for the specified domain class.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="toZip"><a class="anchor" href="#toZip"></a>toZip</h5>
+<div class="paragraph">
+<p>Obtains a zip file of the serialized XML of the layouts (grids) of all domain entities and view models.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="toMenuBarsXml"><a class="anchor" href="#toMenuBarsXml"></a>toMenuBarsXml</h5>
+<div class="paragraph">
+<p>Obtains the serialized XML form of the menu bars layout ( <a href="../../../system/latest/generated/index/applib/services/menu/MenuBarsService.html" class="page">MenuBarsService</a> ).</p>
 </div>
 <div class="paragraph">
 <p>TODO example migration</p>
@@ -927,12 +944,12 @@ The table below summarises the choices:</p>
 You can then remove all <code>@MemberGroupLayout</code>, <code>@MemberOrder</code>, <code>@ActionLayout</code>, <code>@PropertyLayout</code> and <code>@CollectionLayout</code> annotations from the source code of the domain class.</p>
 </li>
 <li>
-<p>if you want to use layout XML file to describe the grid (columns, tabs etc) and specify which object pathsToInclude are associated with those regions of the grid, then download the "normalized" version.
+<p>if you want to use layout XML file to describe the grid (columns, tabs etc) and specify which object members are associated with those regions of the grid, then download the "normalized" version.
 You can then remove the <code>@MemberGroupLayout</code> and <code>@MemberOrder</code> annotations from the source code of the domain class, but retain the <code>@ActionLayout</code>, <code>@PropertyLayout</code> and <code>@CollectionLayout</code> annotations.</p>
 </li>
 <li>
 <p>if you want to use layout XML file ONLY to describe the grid, then download the "minimal" version.
-The grid regions will be empty in this version, and the framework will use the <code>@MemberOrder</code> annotation to bind object pathsToInclude to those regions.
+The grid regions will be empty in this version, and the framework will use the <code>@MemberOrder</code> annotation to bind object members to those regions.
 The only annotation that can be safely removed from the source code with this style is the <code>@MemberGroupLayout</code> annotation.</p>
 </li>
 </ul>
@@ -940,6 +957,7 @@ The only annotation that can be safely removed from the source code with this st
 </td>
 </tr>
 </table>
+</div>
 </div>
 </div>
 </div>
@@ -1000,7 +1018,7 @@ services.</p>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210206-0423-c599190c</p>
+            <p>Revision: 2.0.0-M4.20210208-0426-5bd84665</p>
         </div>
     </div>
 </footer>

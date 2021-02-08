@@ -240,7 +240,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="PropertyLayout.html">PropertyLayout</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="IsisSessionScope.html">RequestScoped</a>
+    <a class="nav-link" href="InteractionScope.html">RequestScoped</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="Title.html">Title</a>
@@ -312,7 +312,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../applib-svc/ApplicationFeatureRepository.html">ApplicationFeatureRepository</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../applib-svc/AuditerService.html">AuditerService</a>
+    <a class="nav-link" href="#refguide:applib-svc:AuditerService.adoc">AuditerService</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../applib-svc/BookmarkService.html">BookmarkService</a>
@@ -758,42 +758,129 @@ page.parent doesn't seem to be set...
 </div>
 <article class="doc">
     <a name="section-top"></a>
-<h1 class="page"><code>@Collection</code></h1>
+<h1 class="page">@Collection</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>The <code>@Collection</code> annotation applies to collections collecting together all domain semantics within a single annotation.</p>
+<p>Domain semantics for domain object collection.</p>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="api"><a class="anchor" href="#api"></a>API</h2>
+<div class="sectionbody">
 <div class="listingblock">
+<div class="title">Collection.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Unresolved include directive in modules/applib-ant/pages/Collection.adoc - include::refguide:applib-ant:example$annotation/Collection.java[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@interface Collection {
+  Class&lt;? extends CollectionDomainEvent&lt;?, ?&gt;&gt; domainEvent() default CollectionDomainEvent.Default.class;     <i class="conum" data-value="1"></i><b>(1)</b>
+  Editing editing() default Editing.NOT_SPECIFIED;     <i class="conum" data-value="2"></i><b>(2)</b>
+  Where hidden() default Where.NOT_SPECIFIED;     <i class="conum" data-value="3"></i><b>(3)</b>
+  Class&lt;?&gt; typeOf() default Object.class;     <i class="conum" data-value="4"></i><b>(4)</b>
+}</code></pre>
 </div>
 </div>
 <div class="colist arabic">
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><a href="#domainEvent"><code>domainEvent()</code></a>
+<td><a href="#domainEvent">domainEvent</a>
+<div class="openblock">
+<div class="content">
 <div class="paragraph">
-<p>The event type to be posted to the <a href="../applib-svc/EventBusService.html" class="page"><code>EventBusService</code></a> to broadcast the collection&#8217;s business rule checking (hide, disable, validate) and its modification (before and after).</p>
+<p>Indicates that changes to the collection that should be posted to the <em>org.apache.isis.applib.services.eventbus.EventBusService event bus</em> using a custom (subclass of) <a href="../../../system/latest/generated/index/applib/events/domain/CollectionDomainEvent.html" class="page">CollectionDomainEvent</a> .</p>
+</div>
+</div>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><a href="#hidden"><code>hidden()</code></a>
+<td><a href="#editing">editing</a>
+<div class="openblock">
+<div class="content">
 <div class="paragraph">
-<p>Indicates where (in the UI) the collection should be hidden from the user.</p>
+<p>Whether the properties of this domain object can be edited, or collections of this object be added to/removed from.</p>
+</div>
+</div>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td><a href="#typeOf"><code>typeOf()</code></a>
+<td><a href="#hidden">hidden</a>
+<div class="openblock">
+<div class="content">
 <div class="paragraph">
-<p>Hints as to the run-time type of the objects within that collection (as a fallback)</p>
+<p>Indicates when the collection is not visible to the user.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><a href="#typeOf">typeOf</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>The type-of the elements held within the collection.</p>
+</div>
+</div>
 </div></td>
 </tr>
 </table>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="members"><a class="anchor" href="#members"></a>Members</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="domainEvent"><a class="anchor" href="#domainEvent"></a>domainEvent</h3>
+<div class="paragraph">
+<p>Indicates that changes to the collection that should be posted to the <em>org.apache.isis.applib.services.eventbus.EventBusService event bus</em> using a custom (subclass of) <a href="../../../system/latest/generated/index/applib/events/domain/CollectionDomainEvent.html" class="page">CollectionDomainEvent</a> .</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>public class Order {
+  public static class OrderLineItems extends CollectionDomainEvent { ... }
+
+  @CollectionInteraction(OrderLineItems.class)
+  public SortedSet&lt;OrderLine&gt; getLineItems() { ...}
+}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This subclass must provide a no-arg constructor; the fields are set reflectively.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="editing"><a class="anchor" href="#editing"></a>editing</h3>
+<div class="paragraph">
+<p>Whether the properties of this domain object can be edited, or collections of this object be added to/removed from.</p>
+</div>
+<div class="paragraph">
+<p>Note that non-editable objects can nevertheless have actions invoked upon them.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="hidden"><a class="anchor" href="#hidden"></a>hidden</h3>
+<div class="paragraph">
+<p>Indicates when the collection is not visible to the user.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="typeOf"><a class="anchor" href="#typeOf"></a>typeOf</h3>
+<div class="paragraph">
+<p>The type-of the elements held within the collection.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>For example:</p>
 </div>
@@ -842,414 +929,12 @@ page.parent doesn't seem to be set...
 </td>
 <td class="content">
 <div class="paragraph">
-<p>The annotation is one of a handful (others including <a href="CollectionLayout.html" class="page"><code>@CollectionLayout</code></a>, <a href="Property.html" class="page"><code>@Property</code></a> and <a href="PropertyLayout.html" class="page"><code>@PropertyLayout</code></a>) that can also be applied to the field, rather than the getter method.  This is specifically
-so that boilerplate-busting tools such as <a href="https://projectlombok.org/">Project Lombok</a> can be used.</p>
+<p>The annotation is one of a handful (others including <a href="CollectionLayout.html" class="page"><code>@CollectionLayout</code></a>, <a href="Property.html" class="page"><code>@Property</code></a> and <a href="PropertyLayout.html" class="page"><code>@PropertyLayout</code></a>) that can also be applied to the field, rather than the getter method.
+This is so that boilerplate-busting tools such as <a href="https://projectlombok.org/">Project Lombok</a> can be used.</p>
 </div>
 </td>
 </tr>
 </table>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="domainEvent"><a class="anchor" href="#domainEvent"></a><code>domainEvent()</code></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Whenever a domain object (or list of domain objects) is to be rendered, the framework fires off multiple domain events for every property, collection and action of the domain object.
-In the cases of the domain object&#8217;s collections, the events that are fired are:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>hide phase: to check that the collection is visible (has not been hidden)</p>
-</li>
-<li>
-<p>disable phase: to check that the collection is usable (has not been disabled)</p>
-</li>
-<li>
-<p>validate phase: to check that the collection&#8217;s arguments are valid (to add or remove an element)</p>
-</li>
-<li>
-<p>pre-execute phase: before the modification of the collection</p>
-</li>
-<li>
-<p>post-execute: after the modification of the collection</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Subscribers (which must be domain services) subscribe to events posted through the <a href="../applib-svc/EventBusService.html" class="page"><code>EventBusService</code></a>, and can influence each of these phases.</p>
-</div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>The <a href="../../../vw/latest/about.html" class="page">Wicket viewer</a> does <em>not</em> currently support the modification of collections; they are rendered read-only.
-However, domain events are still relevant to determine if such collections should be hidden.</p>
-</div>
-<div class="paragraph">
-<p>The workaround is to create add/remove actions and use <a href="MemberOrder.html" class="page">UI hints</a> to render them close to the collection.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>By default the event raised is <code>CollectionDomainEvent.Default</code>.
-For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
-import lombok.Setter;
-
-public class ToDoItem {
-
-    @Collection()
-    @Getter @Setter
-    private SortedSet&lt;ToDoItem&gt; dependencies = ...
-
-    // ...
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The <code>domainEvent</code> attribute allows a custom subclass to be emitted allowing more precise subscriptions (to those subclasses) to be defined instead.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class ToDoItem {
-
-    public static class DependenciesChangedEvent
-            extends CollectionDomainEvent&lt;ToDoItem, ToDoItem&gt; { } <i class="conum" data-value="1"></i><b>(1)</b>
-    @Collection(
-        domainEvent=DependenciesChangedEvent.class
-    )
-    @Getter @Setter
-    private SortedSet&lt;ToDoItem&gt; dependencies = ...
-
-    // ...
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>inherit from <code>CollectionDomainEvent&lt;T,E&gt;</code> where <code>T</code> is the type of the domain object being interacted with, and <code>E</code> is the type of the element in the collection (both <code>ToDoItem</code> in this example)</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>The benefit is that subscribers can be more targetted as to the events that they subscribe to.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>The framework provides a no-arg constructor and will initialize the domain event using (non-API) setters rather than through the constructor.
-This substantially reduces the boilerplate in the subclasses because no explicit constructor is required..</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="sect2">
-<h3 id="subscribers"><a class="anchor" href="#subscribers"></a>Subscribers</h3>
-<div class="paragraph">
-<p>Subscribers (which must be domain services) subscribe to events posted through the <a href="../applib-svc/EventBusService.html" class="page"><code>EventBusService</code></a>.</p>
-</div>
-<div class="paragraph">
-<p>Subscribers can be either coarse-grained (if they subscribe to the top-level event type):</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.springframework.stereotype.Service;
-import org.springframework.context.event.EventListener;
-
-@Service
-public class SomeSubscriber {
-    @EventListener(CollectionDomainEvent.class)
-    public void on(CollectionDomainEvent ev) {
-        // ...
-    }
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>or can be fine-grained (by subscribing to specific event subtypes):</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.springframework.context.event.EventListener;
-import org.springframework.stereotype.Service;
-
-@Service
-public class SomeSubscriber {
-    @EventListener(ToDoItem.DependenciesChangedEvent.class)
-    public void on(ToDoItem.DependenciesChangedEvent ev) {
-        // ...
-    }
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The subscriber&#8217;s method is called (up to) 5 times:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>whether to veto visibility (hide)</p>
-</li>
-<li>
-<p>whether to veto usability (disable)</p>
-</li>
-<li>
-<p>whether to veto execution (validate) the element being added to/removed from the collection</p>
-</li>
-<li>
-<p>steps to perform prior to the collection being added to/removed from</p>
-</li>
-<li>
-<p>steps to perform after the collection has been added to/removed from</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>The subscriber can distinguish these by calling <code>ev.getEventPhase()</code>.
-Thus the general form is:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java"> import org.springframework.context.event.EventListener;
-import org.springframework.stereotype.Service;
-
-@Service
-public class SomeSubscriber {
-
-    @EventListener(CollectionDomainEvent.class)
-    public void on(CollectionDomainEvent ev) {
-        switch(ev.getEventPhase()) {
-
-            case HIDE:                      <i class="conum" data-value="1"></i><b>(1)</b>
-                break;
-            case DISABLE:                   <i class="conum" data-value="2"></i><b>(2)</b>
-                break;
-            case VALIDATE:                  <i class="conum" data-value="3"></i><b>(3)</b>
-                break;
-
-            case EXECUTING:
-                break;
-            case EXECUTED:
-                break;
-        }
-    }
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>call <code>ev.hide()</code> or <code>ev.veto("")</code> to hide the collection</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>call <code>ev.disable("&#8230;&#8203;")</code> or <code>ev.veto("&#8230;&#8203;")</code> to disable the collection</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>call ev.invalidate("&#8230;&#8203;") or ev.veto("&#8230;&#8203;") if object being added/removed to collection is invalid</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>It is also possible to abort the transaction during the executing or executed phases by throwing an exception.
-If the exception is a subtype of <code>RecoverableException</code> then the exception will be rendered as a user-friendly warning (eg Growl/toast) rather than an error.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="default-doop-and-noop-events"><a class="anchor" href="#default-doop-and-noop-events"></a>Default, Doop and Noop events</h3>
-<div class="paragraph">
-<p>If the <code>domainEvent</code> attribute is not explicitly specified (is left as its default value, <code>CollectionDomainEvent.Default</code>), then the framework will, by default, post an event.</p>
-</div>
-<div class="paragraph">
-<p>If this is not required, then the <code>isis.reflector.facet.collectionAnnotation.domainEvent.postForDefault</code> configuration collection can be set to "false"; this will disable posting.</p>
-</div>
-<div class="paragraph">
-<p>On the other hand, if the <code>domainEvent</code> has been explicitly specified to some subclass, then an event will be posted.
-The framework provides <code>CollectionDomainEvent.Doop</code> as such a subclass, so setting the <code>domainEvent</code> attribute to this class will ensure that the event to be posted, irrespective of the configuration collection setting.</p>
-</div>
-<div class="paragraph">
-<p>And, conversely, the framework also provides <code>CollectionDomainEvent.Noop</code>; if <code>domainEvent</code> attribute is set to this class, then no event will be posted.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="raising-events-programmatically"><a class="anchor" href="#raising-events-programmatically"></a>Raising events programmatically</h3>
-<div class="paragraph">
-<p>Normally events are only raised for interactions through the UI.
-However, events can be raised programmatically either by calling the <a href="../applib-svc/EventBusService.html" class="page"><code>EventBusService</code></a> API directly, or by emulating the UI by wrapping the target object using the <a href="../applib-svc/WrapperFactory.html" class="page"><code>WrapperFactory</code></a> domain service.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="see-also"><a class="anchor" href="#see-also"></a>See also</h3>
-<div class="paragraph">
-<p>This attribute is also supported for:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="Action.html#domainEvent" class="page">actions</a> and</p>
-</li>
-<li>
-<p><a href="Property.html#domainEvent" class="page">properties</a>.</p>
-</li>
-</ul>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="hidden"><a class="anchor" href="#hidden"></a><code>hidden()</code></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Collections can be hidden at the domain-level, indicating that they are not visible to the end-user.</p>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>It is also possible to use <a href="CollectionLayout.html#hidden" class="page"><code>@CollectionLayout#hidden</code></a> or using <a href="../../../userguide/latest/fun/ui.html#object-layout" class="page">file-based layout</a> such that the collection can be hidden at the view layer.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
-import lombok.Setter;
-
-public class Customer {
-
-    @Collection(where=Where.EVERYWHERE)
-    @Getter @Setter
-    private SortedSet&lt;Address&gt; addresses = ...
-
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The acceptable values for the <code>where</code> parameter are:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>Where.EVERYWHERE</code> or <code>Where.ANYWHERE</code><br></p>
-<div class="paragraph">
-<p>The collection should be hidden everywhere.</p>
-</div>
-</li>
-<li>
-<p><code>Where.ANYWHERE</code><br></p>
-<div class="paragraph">
-<p>Synonym for everywhere.</p>
-</div>
-</li>
-<li>
-<p><code>Where.OBJECT_FORMS</code><br></p>
-<div class="paragraph">
-<p>The collection should be hidden when displayed within an object form.</p>
-</div>
-</li>
-<li>
-<p><code>Where.NOWHERE</code><br></p>
-<div class="paragraph">
-<p>The collection should not be hidden.</p>
-</div>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>The other values of the <code>Where</code> enum have no meaning for a collection.</p>
-</div>
-<div class="sect2">
-<h3 id="see-also-2"><a class="anchor" href="#see-also-2"></a>See also</h3>
-<div class="paragraph">
-<p>This attribute can also be applied to:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="Action.html#hidden" class="page">actions</a></p>
-</li>
-<li>
-<p><a href="Property.html#hidden" class="page">properties</a>.</p>
-</li>
-</ul>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="typeOf"><a class="anchor" href="#typeOf"></a><code>typeOf()</code></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The <code>typeOf</code> attribute specifies the expected type of an element contained within a collection when for whatever reason the type cannot be inferred from the generic type, or to provide a hint about the actual run-time (as opposed to compile-time) type.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
-
-public void Customer {
-
-    @Collection(typeOf=Order.class)
-    @Getter
-    private SortedSet outstandingOrders = ...
-
-}</code></pre>
-</div>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>In general we recommend that you use generics instead, eg <code>SortedSet&lt;Order&gt;</code>.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="sect2">
-<h3 id="see-also-3"><a class="anchor" href="#see-also-3"></a>See also</h3>
-<div class="paragraph">
-<p>This attribute can also be specified for <a href="Action.html#typeOf" class="page">actions</a>.</p>
-</div>
 </div>
 </div>
 </div>
@@ -1270,7 +955,7 @@ public void Customer {
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210206-0423-c599190c</p>
+            <p>Revision: 2.0.0-M4.20210208-0426-5bd84665</p>
         </div>
     </div>
 </footer>

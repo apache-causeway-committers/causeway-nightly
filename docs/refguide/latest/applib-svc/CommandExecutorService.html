@@ -240,7 +240,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../applib-ant/PropertyLayout.html">PropertyLayout</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../applib-ant/IsisSessionScope.html">RequestScoped</a>
+    <a class="nav-link" href="../applib-ant/InteractionScope.html">RequestScoped</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../applib-ant/Title.html">Title</a>
@@ -312,7 +312,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="ApplicationFeatureRepository.html">ApplicationFeatureRepository</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="AuditerService.html">AuditerService</a>
+    <a class="nav-link" href="#refguide:applib-svc:AuditerService.adoc">AuditerService</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="BookmarkService.html">BookmarkService</a>
@@ -758,39 +758,18 @@ page.parent doesn't seem to be set...
 </div>
 <article class="doc">
     <a name="section-top"></a>
-<h1 class="page"><code>CommandExecutorService</code></h1>
-<div id="preamble">
-<div class="sectionbody">
-<div class="paragraph">
-<p>The <code>CommandExecutorService</code> domain service is provides the ability to execute a specified <code>Command</code>, optionally running the command with the identity of the user captured in that <code>Command</code>.</p>
-</div>
-<div class="paragraph">
-<p>In fact, the service requires that the implementation of the <code>Command</code> being executed implements the <code>CommandWithDto</code> sub-interface.
-This allows the <a href="../schema/cmd.html" class="page"><code>CommandDto</code></a> memento to be extracted, from which the action can be invoked/property edited.</p>
-</div>
-<div class="paragraph">
-<p>The primary use case for this service is to allow the replay of commands, eg for regression testing.
-This is implemented by the (non-ASF) <a href="https://platform.incode.org/modules/spi/command/spi-command-replay.html">command replay module</a>.
-(The command replay module also provides a decorator implementation of this service that allows the command to be re-executed at the same <em>time</em> as the original command, leveraging the <code>TickingClock</code> implementation provided by the framework).</p>
-</div>
-</div>
-</div>
+<h1 class="page">CommandExecutorService</h1>
 <div class="sect1">
 <h2 id="api"><a class="anchor" href="#api"></a>API</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p>The <code>CommandExecutorService</code> defines the following API:</p>
-</div>
 <div class="listingblock">
+<div class="title">CommandExecutorService.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public interface CommandExecutorService {
-    enum SudoPolicy {
-        NO_SWITCH,
-        SWITCH,
-    }
-    void executeCommand(
-            SudoPolicy sudoPolicy,          <i class="conum" data-value="1"></i><b>(1)</b>
-            CommandWithDto commandWithDto); <i class="conum" data-value="2"></i><b>(2)</b>
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">interface CommandExecutorService {
+  Bookmark executeCommand(SudoPolicy sudoPolicy, Command command)     <i class="conum" data-value="1"></i><b>(1)</b>
+  Bookmark executeCommand(SudoPolicy sudoPolicy, CommandDto commandDto, CommandOutcomeHandler outcomeHandler)
+  Bookmark executeCommand(Command command)
+  Bookmark executeCommand(CommandDto commandDto, CommandOutcomeHandler outcomeHandler)
 }</code></pre>
 </div>
 </div>
@@ -798,18 +777,27 @@ This is implemented by the (non-ASF) <a href="https://platform.incode.org/module
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>whether to switch the effective user for the duration of executing the <code>Command</code>.
-Behind the scenes this uses the <a href="SudoService.html" class="page"><code>SudoService</code></a>.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>provided <code>Command</code> must implement <code>CommandDto</code>.</td>
+<td><a href="#executeCommand">executeCommand</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Executes the specified command.</p>
+</div>
+</div>
+</div></td>
 </tr>
 </table>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="members"><a class="anchor" href="#members"></a>Members</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="executeCommand"><a class="anchor" href="#executeCommand"></a>executeCommand</h3>
 <div class="paragraph">
-<p>When the <code>Command</code> is executed, it can also be accessed from the <code>Interaction</code> obtained by  <a href="InteractionContext.html" class="page"><code>InteractionContext</code></a>.
-Any associated objects that implement <code>HasUniqueId</code> (audit entries and the like) will therefore have the correct uniqueId and will correctly be associated with the <code>Command</code> being executed.</p>
+<p>Executes the specified command.</p>
+</div>
 </div>
 </div>
 </div>
@@ -818,24 +806,15 @@ Any associated objects that implement <code>HasUniqueId</code> (audit entries an
 <div class="sectionbody">
 <div class="paragraph">
 <p>The framework provides a default implementation of this service,
-<code>o.a.i.core.runtime.services.background.CommandExecutorServiceDefault</code></p>
+<code>o.a.i.core.runtimeservices.command.CommandExecutorServiceDefault</code></p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="related-services"><a class="anchor" href="#related-services"></a>Related Services</h2>
+<h2 id="usage"><a class="anchor" href="#usage"></a>Usage</h2>
 <div class="sectionbody">
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-TODO v2
-</td>
-</tr>
-</table>
+<div class="paragraph">
+<p>The <code>CommandExecutorService</code> domain service is provides the ability to execute a specified <code>Command</code>, optionally running the command with the identity of the user captured in that <code>Command</code>.</p>
 </div>
 </div>
 </div>
@@ -856,7 +835,7 @@ TODO v2
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210206-0423-c599190c</p>
+            <p>Revision: 2.0.0-M4.20210208-0426-5bd84665</p>
         </div>
     </div>
 </footer>

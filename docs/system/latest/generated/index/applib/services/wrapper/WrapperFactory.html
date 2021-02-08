@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>WrapperFactory : interface :: Apache Isis</title>
+    <title>Untitled :: Apache Isis</title>
     <meta name="generator" content="Antora 2.3.4">
     <link rel="stylesheet" href="../../../../../../../_/css/site.css">
     <link rel="stylesheet" href="../../../../../../../_/css/site-custom.css">
@@ -353,16 +353,11 @@ page.parent doesn't seem to be set...
 <button class="nav-toggle"></button>
   <a href="../../../../../../../docs/latest/about.html" class="home-link"></a>
 <nav class="breadcrumbs" aria-label="breadcrumbs">
-  <ul>
-    <li><a href="../../../../system-overview.html">System Overview</a></li>
-    <li><a href="WrapperFactory.html">WrapperFactory : <em>interface</em></a></li>
-  </ul>
 </nav>
   <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/master/antora/components/system/modules/generated/pages/index/applib/services/wrapper/WrapperFactory.adoc">Edit</a></div>
 </div>
 <article class="doc">
     <a name="section-top"></a>
-<h1 class="page">WrapperFactory : <em>interface</em></h1>
 <div class="paragraph">
 <p>Provides the ability to 'wrap' a domain object such that it can be interacted with while enforcing the hide/disable/validate rules implied by the Apache Isis programming model.</p>
 </div>
@@ -404,33 +399,24 @@ page.parent doesn't seem to be set...
 <div class="paragraph">
 <p>If the object has (see <em>#isWrapper(Object)</em> already been wrapped), then should just return the object back unchanged.</p>
 </div>
+<div class="sect1">
+<h2 id="api"><a class="anchor" href="#api"></a>API</h2>
+<div class="sectionbody">
 <div class="listingblock">
-<div class="title">Java Sources</div>
+<div class="title">WrapperFactory.java</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">interface WrapperFactory {
-
-  T wrap(T domainObject, SyncControl syncControl) <i class="conum" data-value="1"></i><b>(1)</b>
-
-  T wrap(T domainObject) <i class="conum" data-value="2"></i><b>(2)</b>
-
-  T wrapMixin(Class&lt;T&gt; mixinClass, Object mixedIn, SyncControl syncControl) <i class="conum" data-value="3"></i><b>(3)</b>
-
-  T wrapMixin(Class&lt;T&gt; mixinClass, Object mixedIn) <i class="conum" data-value="4"></i><b>(4)</b>
-
-  T unwrap(T possibleWrappedDomainObject) <i class="conum" data-value="5"></i><b>(5)</b>
-
-  boolean isWrapper(T possibleWrappedDomainObject) <i class="conum" data-value="6"></i><b>(6)</b>
-
-  T asyncWrap(T domainObject, AsyncControl&lt;R&gt; asyncControl) <i class="conum" data-value="7"></i><b>(7)</b>
-
-  T asyncWrapMixin(Class&lt;T&gt; mixinClass, Object mixedIn, AsyncControl&lt;R&gt; asyncControl) <i class="conum" data-value="8"></i><b>(8)</b>
-
-  List&lt;InteractionListener&gt; getListeners() <i class="conum" data-value="9"></i><b>(9)</b>
-
-  boolean addInteractionListener(InteractionListener listener) <i class="conum" data-value="10"></i><b>(10)</b>
-
-  boolean removeInteractionListener(InteractionListener listener) <i class="conum" data-value="11"></i><b>(11)</b>
-
+  T wrap(T domainObject, SyncControl syncControl)     <i class="conum" data-value="1"></i><b>(1)</b>
+  T wrap(T domainObject)     <i class="conum" data-value="2"></i><b>(2)</b>
+  T wrapMixin(Class&lt;T&gt; mixinClass, Object mixedIn, SyncControl syncControl)     <i class="conum" data-value="3"></i><b>(3)</b>
+  T wrapMixin(Class&lt;T&gt; mixinClass, Object mixedIn)     <i class="conum" data-value="4"></i><b>(4)</b>
+  T unwrap(T possibleWrappedDomainObject)     <i class="conum" data-value="5"></i><b>(5)</b>
+  boolean isWrapper(T possibleWrappedDomainObject)     <i class="conum" data-value="6"></i><b>(6)</b>
+  T asyncWrap(T domainObject, AsyncControl&lt;R&gt; asyncControl)     <i class="conum" data-value="7"></i><b>(7)</b>
+  T asyncWrapMixin(Class&lt;T&gt; mixinClass, Object mixedIn, AsyncControl&lt;R&gt; asyncControl)     <i class="conum" data-value="8"></i><b>(8)</b>
+  List&lt;InteractionListener&gt; getListeners()     <i class="conum" data-value="9"></i><b>(9)</b>
+  boolean addInteractionListener(InteractionListener listener)     <i class="conum" data-value="10"></i><b>(10)</b>
+  boolean removeInteractionListener(InteractionListener listener)     <i class="conum" data-value="11"></i><b>(11)</b>
   void notifyListeners(InteractionEvent ev)
 }</code></pre>
 </div>
@@ -439,9 +425,134 @@ page.parent doesn't seem to be set...
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><code><span class="teal"><strong>wrap</strong></span>&lt;T&gt;(T domainObject, <a href="control/SyncControl.html" class="page">SyncControl</a> syncControl)</code> : <code>T</code>
+<td><a href="#wrap">wrap</a>
 <div class="openblock">
 <div class="content">
+<div class="paragraph">
+<p>Provides the "wrapper" of a domain object against which to invoke the action.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><a href="#wrap">wrap</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>A convenience overload for <em>#wrap(Object, SyncControl)</em> , returning a wrapper to invoke the action synchronously, enforcing business rules. Any exceptions will be propagated, not swallowed.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><a href="#wrapMixin">wrapMixin</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Provides the wrapper for a <em>FactoryService#mixin(Class, Object) mixin</em> , against which to invoke the action.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><a href="#wrapMixin">wrapMixin</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>A convenience overload for <em>#wrapMixin(Class, Object, SyncControl)</em> , returning a wrapper to invoke the action synchronously, enforcing business rules. Any exceptions will be propagated, not swallowed.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><a href="#unwrap">unwrap</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Obtains the underlying domain object, if wrapped.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td><a href="#isWrapper">isWrapper</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Whether the supplied object is a wrapper around a domain object.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td><a href="#asyncWrap">asyncWrap</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Returns a proxy object for the provided <em>domainObject</em> , through which can execute the action asynchronously.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td><a href="#asyncWrapMixin">asyncWrapMixin</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Returns a proxy object for the provided <em>mixinClass</em> , through which can execute the action asynchronously.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
+<td><a href="#getListeners">getListeners</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>All <a href="listeners/InteractionListener.html" class="page">InteractionListener</a> s that have been registered using <em>#addInteractionListener(InteractionListener)</em> .</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="10"></i><b>10</b></td>
+<td><a href="#addInteractionListener">addInteractionListener</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Registers an <a href="listeners/InteractionListener.html" class="page">InteractionListener</a> , to be notified of interactions on all wrappers.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="11"></i><b>11</b></td>
+<td><a href="#removeInteractionListener">removeInteractionListener</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Remove an <a href="listeners/InteractionListener.html" class="page">InteractionListener</a> , to no longer be notified of interactions on wrappers.</p>
+</div>
+</div>
+</div></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="members"><a class="anchor" href="#members"></a>Members</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="wrap"><a class="anchor" href="#wrap"></a>wrap</h3>
 <div class="paragraph">
 <p>Provides the "wrapper" of a domain object against which to invoke the action.</p>
 </div>
@@ -468,24 +579,14 @@ page.parent doesn't seem to be set...
 <p>Otherwise, will do all the validations (raise exceptions as required etc.), but doesn&#8217;t modify the model.</p>
 </div>
 </div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><code><span class="teal"><strong>wrap</strong></span>&lt;T&gt;(T domainObject)</code> : <code>T</code>
-<div class="openblock">
-<div class="content">
+<div class="sect2">
+<h3 id="wrap"><a class="anchor" href="#wrap"></a>wrap</h3>
 <div class="paragraph">
 <p>A convenience overload for <em>#wrap(Object, SyncControl)</em> , returning a wrapper to invoke the action synchronously, enforcing business rules. Any exceptions will be propagated, not swallowed.</p>
 </div>
 </div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td><code><span class="teal"><strong>wrapMixin</strong></span>&lt;T&gt;(Class&lt;T&gt; mixinClass, Object mixedIn, <a href="control/SyncControl.html" class="page">SyncControl</a> syncControl)</code> : <code>T</code>
-<div class="openblock">
-<div class="content">
+<div class="sect2">
+<h3 id="wrapMixin"><a class="anchor" href="#wrapMixin"></a>wrapMixin</h3>
 <div class="paragraph">
 <p>Provides the wrapper for a <em>FactoryService#mixin(Class, Object) mixin</em> , against which to invoke the action.</p>
 </div>
@@ -493,24 +594,14 @@ page.parent doesn't seem to be set...
 <p>The provided <a href="control/SyncControl.html" class="page">SyncControl</a> determines whether business rules are checked first, and conversely whether the action is executed. See <em>#wrap(Object, SyncControl)</em> for more details on this.</p>
 </div>
 </div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td><code><span class="teal"><strong>wrapMixin</strong></span>&lt;T&gt;(Class&lt;T&gt; mixinClass, Object mixedIn)</code> : <code>T</code>
-<div class="openblock">
-<div class="content">
+<div class="sect2">
+<h3 id="wrapMixin"><a class="anchor" href="#wrapMixin"></a>wrapMixin</h3>
 <div class="paragraph">
 <p>A convenience overload for <em>#wrapMixin(Class, Object, SyncControl)</em> , returning a wrapper to invoke the action synchronously, enforcing business rules. Any exceptions will be propagated, not swallowed.</p>
 </div>
 </div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td><code><span class="teal"><strong>unwrap</strong></span>&lt;T&gt;(T possibleWrappedDomainObject)</code> : <code>T</code>
-<div class="openblock">
-<div class="content">
+<div class="sect2">
+<h3 id="unwrap"><a class="anchor" href="#unwrap"></a>unwrap</h3>
 <div class="paragraph">
 <p>Obtains the underlying domain object, if wrapped.</p>
 </div>
@@ -518,57 +609,32 @@ page.parent doesn't seem to be set...
 <p>If the object <em>#isWrapper(Object) is not wrapped</em> , then should just return the object back unchanged.</p>
 </div>
 </div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
-<td><code><span class="teal"><strong>isWrapper</strong></span>&lt;T&gt;(T possibleWrappedDomainObject)</code> : <code>boolean</code>
-<div class="openblock">
-<div class="content">
+<div class="sect2">
+<h3 id="isWrapper"><a class="anchor" href="#isWrapper"></a>isWrapper</h3>
 <div class="paragraph">
 <p>Whether the supplied object is a wrapper around a domain object.</p>
 </div>
 </div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="7"></i><b>7</b></td>
-<td><code><span class="teal"><strong>asyncWrap</strong></span>&lt;T, R&gt;(T domainObject, <a href="control/AsyncControl.html" class="page">AsyncControl</a>&lt;R&gt; asyncControl)</code> : <code>T</code>
-<div class="openblock">
-<div class="content">
+<div class="sect2">
+<h3 id="asyncWrap"><a class="anchor" href="#asyncWrap"></a>asyncWrap</h3>
 <div class="paragraph">
 <p>Returns a proxy object for the provided <em>domainObject</em> , through which can execute the action asynchronously.</p>
 </div>
 </div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="8"></i><b>8</b></td>
-<td><code><span class="teal"><strong>asyncWrapMixin</strong></span>&lt;T, R&gt;(Class&lt;T&gt; mixinClass, Object mixedIn, <a href="control/AsyncControl.html" class="page">AsyncControl</a>&lt;R&gt; asyncControl)</code> : <code>T</code>
-<div class="openblock">
-<div class="content">
+<div class="sect2">
+<h3 id="asyncWrapMixin"><a class="anchor" href="#asyncWrapMixin"></a>asyncWrapMixin</h3>
 <div class="paragraph">
 <p>Returns a proxy object for the provided <em>mixinClass</em> , through which can execute the action asynchronously.</p>
 </div>
 </div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="9"></i><b>9</b></td>
-<td><code><span class="teal"><strong>getListeners</strong></span>()</code> : <code>List&lt;<a href="listeners/InteractionListener.html" class="page">InteractionListener</a>&gt;</code>
-<div class="openblock">
-<div class="content">
+<div class="sect2">
+<h3 id="getListeners"><a class="anchor" href="#getListeners"></a>getListeners</h3>
 <div class="paragraph">
 <p>All <a href="listeners/InteractionListener.html" class="page">InteractionListener</a> s that have been registered using <em>#addInteractionListener(InteractionListener)</em> .</p>
 </div>
 </div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="10"></i><b>10</b></td>
-<td><code><span class="teal"><strong>addInteractionListener</strong></span>(<a href="listeners/InteractionListener.html" class="page">InteractionListener</a> listener)</code> : <code>boolean</code>
-<div class="openblock">
-<div class="content">
+<div class="sect2">
+<h3 id="addInteractionListener"><a class="anchor" href="#addInteractionListener"></a>addInteractionListener</h3>
 <div class="paragraph">
 <p>Registers an <a href="listeners/InteractionListener.html" class="page">InteractionListener</a> , to be notified of interactions on all wrappers.</p>
 </div>
@@ -576,13 +642,8 @@ page.parent doesn't seem to be set...
 <p>This is retrospective: the listener will be notified of interactions even on wrappers created before the listener was installed. (From an implementation perspective this is because the wrappers delegate back to the container to fire the events).</p>
 </div>
 </div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="11"></i><b>11</b></td>
-<td><code><span class="teal"><strong>removeInteractionListener</strong></span>(<a href="listeners/InteractionListener.html" class="page">InteractionListener</a> listener)</code> : <code>boolean</code>
-<div class="openblock">
-<div class="content">
+<div class="sect2">
+<h3 id="removeInteractionListener"><a class="anchor" href="#removeInteractionListener"></a>removeInteractionListener</h3>
 <div class="paragraph">
 <p>Remove an <a href="listeners/InteractionListener.html" class="page">InteractionListener</a> , to no longer be notified of interactions on wrappers.</p>
 </div>
@@ -590,9 +651,7 @@ page.parent doesn't seem to be set...
 <p>This is retrospective: the listener will no longer be notified of any interactions created on any wrappers, not just on those wrappers created subsequently. (From an implementation perspective this is because the wrappers delegate back to the container to fire the events).</p>
 </div>
 </div>
-</div></td>
-</tr>
-</table>
+</div>
 </div>
 </article>
 <aside class="article-aside toc hide-for-print" role="navigation">
@@ -611,7 +670,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210206-0423-c599190c</p>
+            <p>Revision: 2.0.0-M4.20210208-0426-5bd84665</p>
         </div>
     </div>
 </footer>

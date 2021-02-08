@@ -167,7 +167,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="domain-entities-and-services.html">Domain Entities &amp; Services</a>
   </li>
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="#userguide:fun:object-pathsToInclude.adoc">Object Members</a>
+    <a class="nav-link" href="object-members.html">Object Members</a>
   </li>
   <li class="nav-item" data-depth="1">
     <a class="nav-link" href="ui.html">UI Layout &amp; Hints</a>
@@ -958,7 +958,7 @@ With it, we have the ability to lookup any arbitrary domain objects.</p>
 When the PDF is scanned by the mail room, the barcode could be read to attach the correspondence to the relevant domain object.</p>
 </li>
 <li>
-<p>as a handle to any object in an audit record, as used by <a href="../../../refguide/latest/applib-svc/AuditerService.html" class="page"><code>AuditerService</code></a>;</p>
+<p>as a handle to any object in an audit record, as used by <a href="#refguide:applib-svc:AuditerService.adoc" class="page unresolved"><code>AuditerService</code></a>;</p>
 </li>
 <li>
 <p>similarly within implementations of <a href="#refguide:applib-svc:CommandServiceInternal.adoc" class="page unresolved"><code>CommandService</code></a> to persist <code>Command</code> objects</p>
@@ -980,14 +980,277 @@ Deep links meanwhile can be obtained from the <a href="../../../refguide/latest/
 <p>OIDs can also be converted into XML format, useful for integration scenarios.
 The <a href="../../../refguide/latest/schema/common.html" class="page">common schema</a> XSD defines the <code>oidDto</code> complex type for precisely this purpose.</p>
 </div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="object-members"><a class="anchor" href="#object-members"></a>Object Members</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>Unresolved include directive in modules/fun/pages/overview.adoc - include::overview/object-pathsToInclude.adoc[]
-:leveloffset: +1</p>
+<p>Every domain object in Apache Isis consists of (at most) three types of members:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>properties, such as a <code>Customer</code>'s <code>firstName</code></p>
+</li>
+<li>
+<p>collections, such as a <code>Customer</code>'s <code>orders</code> collection of <code>Order</code>s</p>
+</li>
+<li>
+<p>actions, such as a <code>Customer'</code>s <code>placeOrder(&#8230;&#8203;)</code> method.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>In addition, mixins act as contributors of behaviour to an underlying domain object.
+Typically the behaviour being contributed is an action, but it could also be a derived property or a derived collection.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>What follows <em>is</em> a simplification; the Apache Isis programming model also recognizes a number of other supporting methods for domain object members, for associated business logic.
+This is covered in more detail in <a href="business-rules.html" class="page">business rules</a>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="properties"><a class="anchor" href="#properties"></a>Properties</h3>
+<div class="paragraph">
+<p>Properties follow the standard getter/setter pattern, with the return type being a scalar (a value object or another entity or view model).</p>
+</div>
+<div class="paragraph">
+<p>For example (using <a href="https://projectlombok.org/features/GetterSetter">Project Lombok</a> to avoid some boilerplate), with:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Customer
+    @Property                       <i class="conum" data-value="1"></i><b>(1)</b>
+    @PropertyLayout                 <i class="conum" data-value="2"></i><b>(2)</b>
+    @Getter @Setter
+    private String lastName;
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The <a href="../../../refguide/latest/applib-ant/Property.html" class="page"><code>@Property</code></a> annotation defines additional domain-layer semantics</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The <a href="../../../refguide/latest/applib-ant/PropertyLayout.html" class="page"><code>@PropertyLayout</code></a> annotation defines additional presentation-layer hints</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>From this the framework infers the <code>Customer</code> domain entity, which in turn has a <code>firstName</code> string <em>property</em>.</p>
+</div>
+<div class="paragraph">
+<p><code>@Property</code> is not mandatory, though in many cases it will be present in order to specify additional semantics.</p>
+</div>
+<div class="paragraph">
+<p><code>@PropertyLayout</code> is not mandatory either.
+Whether it is present or not depends to some extent on your preferred style: the UI semantics can be specified either in code within this annotation, or can be specified through the companion <a href="ui.html#layout-file" class="page">layout file</a>.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Details on how to actually write properties in practice (the programming model) can be found <a href="object-members.html#properties" class="page">here</a>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="collections"><a class="anchor" href="#collections"></a>Collections</h3>
+<div class="paragraph">
+<p>Like properties, collections are also represented by a getter and setter, however the return type is a <code>Collection</code> or subtype.</p>
+</div>
+<div class="paragraph">
+<p>For example (again, using <a href="https://projectlombok.org/features/GetterSetter">Project Lombok</a>), with:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Customer
+    @Collection                                             <i class="conum" data-value="1"></i><b>(1)</b>
+    @CollectionLayout                                       <i class="conum" data-value="2"></i><b>(2)</b>
+    @Getter @Setter
+    private SortedSet&lt;Order&gt; orders = new TreeSet&lt;Order&gt;(); <i class="conum" data-value="3"></i><b>(3)</b>
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The <a href="../../../refguide/latest/applib-ant/Collection.html" class="page"><code>@Collection</code></a> annotation defines additional domain-layer semantics</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The <a href="../../../refguide/latest/applib-ant/CollectionLayout.html" class="page"><code>@CollectionLayout</code></a> annotation defines additional presentation-layer hints</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>The most commonly a <code>java.util.SortedSet</code> for entities obtained from an RDBMS (with set semantics).
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+all entities should define a natural ordering so that when rendered in the UI they will be ordered "meaningfully" to the end-user.
+</td>
+</tr>
+</table>
+</div></td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>From this the framework infers the <code>orders</code> <em>collection</em>.</p>
+</div>
+<div class="paragraph">
+<p>As with properties, the <code>@Collection</code> annotation is not mandatory, though in many cases it will be present in order to specify additional semantics.</p>
+</div>
+<div class="paragraph">
+<p>Similarly, <code>@CollectionLayout</code> is not mandatory either.
+Whether it is present or not depends to some extent on your preferred style: the UI semantics can be specified either in code within this annotation, or can be specified through the companion <a href="ui.html#layout-file" class="page">layout file</a>.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Details on how to actually write collections in practice (the programming model) can be found <a href="object-members.html#collections" class="page">here</a>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="actions"><a class="anchor" href="#actions"></a>Actions</h3>
+<div class="paragraph">
+<p>While <a href="object-members.html#properties" class="page">properties</a> and <a href="object-members.html#collections" class="page">collections</a> define the state held by a domain object (its "know what" responsibilities), actions define the object&#8217;s behaviour (its "know how-to" responsibilities).</p>
+</div>
+<div class="paragraph">
+<p>An application that consists only of domain entities with just "know-what" responsibilities is pretty dumb: it requires that the end-user know the business rules and doesn&#8217;t modify the state of the domain objects such that they are invalid (for example, an "end date" being before a "start date").
+Such applications are often called CRUD applications (create/read/update/delete).</p>
+</div>
+<div class="paragraph">
+<p>In more complex domains, it&#8217;s not realistic/feasible to expect the end-user to have to remember all the different business rules that govern the valid states for each domain object.
+Actions allow those business rules to be encoded programmatically.
+Those actions can either be defined in the domain class itself, or can be contributed by way of a <a href="#mixins">mixin</a>.</p>
+</div>
+<div class="paragraph">
+<p>The general philosophy for an Apache Isis (naked objects) application is <em>not</em> to constrain the end-user in how they interact with the UI: it doesn&#8217;t attempt to define a rigid business process.
+However, it <em>does</em> aim to ensure that business rule invariants are maintained, that is that domain objects aren&#8217;t allowed to enter into an invalid state.</p>
+</div>
+<div class="paragraph">
+<p>For simple domain applications, you may want to start prototyping only with properties, and only later introduce actions (representing the most common business operations).
+But an alternative approach, recommended for more complex applications, is actually to start the application with all properties non-editable.
+Then, as the end-user requires the ability to modify some state, there is a context in which to ask the question "why does this state need to change?" and "are their any side-effects?" (ie, other state that changes at the same time, or other behaviour that should occur).
+If the state change is simple, for example just being able to correct an invalid address, or adding a note or comment, then that can probably be modelled as a simple editable property.
+But if the state change is more complex, then most likely an action should be used instead.</p>
+</div>
+<div class="paragraph">
+<p>Broadly speaking, actions are those <code>public</code> methods that do not represent properties or collections.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Customer {
+    @Action                       <i class="conum" data-value="1"></i><b>(1)</b>
+    @ActionLayout                 <i class="conum" data-value="2"></i><b>(2)</b>
+    public Customer placeOrder(
+        @Parameter                <i class="conum" data-value="3"></i><b>(3)</b>
+        @ParameterLayout          <i class="conum" data-value="4"></i><b>(4)</b>
+        Product p,
+        @Parameter
+        @ParameterLayout
+        int quantity) {
+        /* ... */
+    }
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The <a href="../../../refguide/latest/applib-ant/Action.html" class="page"><code>@Action</code></a> annotation defines additional domain-layer semantics</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The <a href="../../../refguide/latest/applib-ant/ActionLayout.html" class="page"><code>@ActionLayout</code></a> annotation defines additional presentation-layer hints</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>The <a href="../../../refguide/latest/applib-ant/Parameter.html" class="page"><code>@Parameter</code></a> annotation defines additional domain-layer semantics</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>The <a href="../../../refguide/latest/applib-ant/ParameterLayout.html" class="page"><code>@ParameterLayout</code></a> annotation defines additional presentation-layer hints</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>From this the framework infers a the <code>placeOrder</code> <em>action</em>.</p>
+</div>
+<div class="paragraph">
+<p>Whether the <code>@Action</code> annotation is required to identify an action method is configurable; some teams prefer actions to be explicitly called out, others prefer that any "left over" public methods are identified as actions.</p>
+</div>
+<div class="paragraph">
+<p>The use of <code>@ActionLayout</code> is optional, the UI semantics can be specified either in code within this annotation, or can be specified through the companion <a href="ui.html#layout-file" class="page">layout file</a>.</p>
+</div>
+<div class="paragraph">
+<p>As with properties, both <code>@Parameter</code> and <code>@ParameterLayout</code> are also optional.
+Note though that UI hints for parameters <em>cannot</em> be specified in the layout file.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Details on how to actually write actions in practice (the programming model) can be found <a href="object-members.html#actions" class="page">here</a>.</p>
+</div>
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
 </div>
-<h1 id="business-rules" class="sect0"><a class="anchor" href="#business-rules"></a>Business Rules</h1>
+<div class="sect1">
+<h2 id="business-rules"><a class="anchor" href="#business-rules"></a>Business Rules</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>When a domain object is rendered in the UI or the end-user interacts with the domain object through the UI, the framework applies a series of precondition business rules to each object member (property, collection or action).</p>
 </div>
@@ -1000,9 +1263,9 @@ The <a href="../../../refguide/latest/schema/common.html" class="page">common sc
 <p>is the object member visible?</p>
 <div class="paragraph">
 <p>Members that are not visible are simply omitted from the page.
-If all the pathsToInclude in a fieldset (property group) are hidden, then the fieldset is not shown.
-If all the pathsToInclude in a tab are hidden, then the tab is not shown.
-If all the pathsToInclude of the object are hidden, then a "404" style message ("no such object") is returned to the user.</p>
+If all the members in a fieldset (property group) are hidden, then the fieldset is not shown.
+If all the members in a tab are hidden, then the tab is not shown.
+If all the members of the object are hidden, then a "404" style message ("no such object") is returned to the user.</p>
 </div>
 </li>
 <li>
@@ -1013,7 +1276,7 @@ Note that collections are always read-only.</p>
 </div>
 </li>
 <li>
-<p>for enabled object pathsToInclude, if the user then interacts with that member, are the supplied values valid (can the user "do it").</p>
+<p>for enabled object members, if the user then interacts with that member, are the supplied values valid (can the user "do it").</p>
 <div class="paragraph">
 <p>For an editable property this means validating the proposed new value of the property.
 For an invokable action this means validating that arguments being used to invoke the action.</p>
@@ -1081,6 +1344,8 @@ public boolean hidePlaceOrder() {                       <i class="conum" data-va
 </td>
 </tr>
 </table>
+</div>
+</div>
 </div>
 <div class="sect1">
 <h2 id="events"><a class="anchor" href="#events"></a>Events</h2>
@@ -1326,7 +1591,7 @@ A common technique is to factor out from domain objects into mixins and then gen
 <p>the internal <a href="../../../refguide/latest/applib-svc/EventBusService.html" class="page">event bus</a> allows modules to influence other modules.</p>
 <div class="paragraph">
 <p>A subscriber in one module can subscribe to events emitted by domain objects in another module.
-These events can affect both the UI (eg hiding or disabling <a href="#object-pathsToInclude">object pathsToInclude</a>, or allowing or vetoing interactions).</p>
+These events can affect both the UI (eg hiding or disabling <a href="#object-members">object members</a>, or allowing or vetoing interactions).</p>
 </div>
 </li>
 </ul>
@@ -1571,7 +1836,7 @@ The only real fundamental that can&#8217;t be changed is the notion that objects
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210206-0423-c599190c</p>
+            <p>Revision: 2.0.0-M4.20210208-0426-5bd84665</p>
         </div>
     </div>
 </footer>

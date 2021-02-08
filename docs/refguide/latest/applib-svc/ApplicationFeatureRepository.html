@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Raleway:300,400,500,700,800|Montserrat:300,400,700" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css"/>
 <link rel="home" href="../../.." title="Apache Isis">
-  <link rel="next" href="AuditerService.html" title="AuditerService">
+  <link rel="next" href="#refguide:applib-svc:AuditerService.adoc" title="AuditerService">
   <link rel="prev" href="AcceptHeaderService.html" title="AcceptHeaderService">
   </head>
   <body class="article">
@@ -145,7 +145,7 @@
 <div class="nav-panel-pagination">
   <a class="page-previous" rel="prev" href="AcceptHeaderService.html" title="AcceptHeaderService"><span></span></a>
   <a class="page-next" rel="next"
-     href="AuditerService.html" title="AuditerService"><span></span></a>
+     href="#refguide:applib-svc:AuditerService.adoc" title="AuditerService"><span></span></a>
 <!--
 page.parent doesn't seem to be set...
   <a class="page-parent" rel="prev" href="about.html" title="AcceptHeaderService"><span></span></a>
@@ -240,7 +240,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../applib-ant/PropertyLayout.html">PropertyLayout</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../applib-ant/IsisSessionScope.html">RequestScoped</a>
+    <a class="nav-link" href="../applib-ant/InteractionScope.html">RequestScoped</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../applib-ant/Title.html">Title</a>
@@ -312,7 +312,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="ApplicationFeatureRepository.html">ApplicationFeatureRepository</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="AuditerService.html">AuditerService</a>
+    <a class="nav-link" href="#refguide:applib-svc:AuditerService.adoc">AuditerService</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="BookmarkService.html">BookmarkService</a>
@@ -758,70 +758,27 @@ page.parent doesn't seem to be set...
 </div>
 <article class="doc">
     <a name="section-top"></a>
-<h1 class="page"><code>ApplicationFeatureRepository</code></h1>
+<h1 class="page">ApplicationFeatureRepository</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>The <code>ApplicationFeatureRepository</code> provides the access to string representations of the packages, classes and class pathsToInclude (collectively: "application features") of the domain classes within the Apache Isis' internal metamodel.</p>
+<p>Provides the access to string representations of the packages, classes and class members (collectively: "application features") of the domain classes within the framework&#8217;s internal metamodel.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="api"><a class="anchor" href="#api"></a>API</h2>
 <div class="sectionbody">
-<div class="sect2">
-<h3 id="applicationmembertype-enum"><a class="anchor" href="#applicationmembertype-enum"></a>ApplicationMemberType : <em>enum</em></h3>
 <div class="listingblock">
-<div class="title">Java Sources</div>
+<div class="title">ApplicationFeatureRepository.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">enum ApplicationMemberType {
-
-  PROPERTY
-
-  COLLECTION
-
-  ACTION
-
-  String toString()
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">interface ApplicationFeatureRepository {
+  SortedSet&lt;String&gt; packageNames()
+  SortedSet&lt;String&gt; packageNamesContainingClasses(ApplicationMemberType memberType)
+  SortedSet&lt;String&gt; classNamesContainedIn(String packageFqn, ApplicationMemberType memberType)
+  SortedSet&lt;String&gt; classNamesRecursivelyContainedIn(String packageFqn)
+  SortedSet&lt;String&gt; memberNamesOf(String packageFqn, String className, ApplicationMemberType memberType)
 }</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>TODO example migration</p>
-</div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-<div class="title">Deprecated Docs</div>
-<div class="paragraph">
-<p>== API</p>
-</div>
-<div class="paragraph">
-<p>The API defined by the service is:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Unresolved include directive in modules/applib-svc/pages/ApplicationFeatureRepository.adoc - include::refguide:applib-svc:example$services/appfeat/ApplicationFeatureRepository.java[]</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>where <code>ApplicationMemberType</code> in turn is:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Unresolved include directive in modules/applib-svc/pages/ApplicationFeatureRepository.adoc - include::refguide:applib-svc:example$services/appfeat/ApplicationMemberType.java[]</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>These methods are designed primarily to return lists of strings for use in drop-downs.</p>
-</div>
-</td>
-</tr>
-</table>
 </div>
 </div>
 </div>
@@ -845,7 +802,7 @@ page.parent doesn't seem to be set...
 </div>
 </div>
 <div class="sect1">
-<h2 id="related-services"><a class="anchor" href="#related-services"></a>Related Services</h2>
+<h2 id="see-also"><a class="anchor" href="#see-also"></a>See Also</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>The default implementation of this service uses the internal <a href="../../../core/latest/runtime-services/ApplicationFeatureFactory.html" class="page"><code>ApplicationFeatureFactory</code></a> service to instantiate <code>ApplicationFeature</code> instances.</p>
@@ -869,7 +826,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210206-0423-c599190c</p>
+            <p>Revision: 2.0.0-M4.20210208-0426-5bd84665</p>
         </div>
     </div>
 </footer>

@@ -240,7 +240,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../applib-ant/PropertyLayout.html">PropertyLayout</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../applib-ant/IsisSessionScope.html">RequestScoped</a>
+    <a class="nav-link" href="../applib-ant/InteractionScope.html">RequestScoped</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../applib-ant/Title.html">Title</a>
@@ -312,7 +312,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="ApplicationFeatureRepository.html">ApplicationFeatureRepository</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="AuditerService.html">AuditerService</a>
+    <a class="nav-link" href="#refguide:applib-svc:AuditerService.adoc">AuditerService</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="BookmarkService.html">BookmarkService</a>
@@ -758,7 +758,7 @@ page.parent doesn't seem to be set...
 </div>
 <article class="doc">
     <a name="section-top"></a>
-<h1 class="page"><code>InteractionContext</code></h1>
+<h1 class="page">InteractionContext</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
@@ -783,7 +783,7 @@ Persistent<code>Interaction</code>s support several use cases:</p>
 <p>they enable profiling of the running application (which actions are invoked then most often, what is their response time)</p>
 </li>
 <li>
-<p>if auditing is configured (using <a href="AuditerService.html" class="page"><code>AuditerService</code></a>), they provide better audit information, since the
+<p>if auditing is configured (using <a href="#refguide:applib-svc:AuditerService.adoc" class="page unresolved"><code>AuditerService</code></a>), they provide better audit information, since the
 <code>Interaction.Execution</code> captures the 'cause' of an interaction and can be correlated to the audit records (the "effect" of the interaction) by way of the <a href="../applib-classes/roles-mixins-contributees/contributee.html#HasUniqueId" class="page"><code>transactionId</code></a></p>
 </li>
 </ul>
@@ -820,18 +820,16 @@ Persistent<code>Interaction</code>s support several use cases:</p>
 <div class="sect1">
 <h2 id="api-2"><a class="anchor" href="#api-2"></a>API</h2>
 <div class="sectionbody">
-<div class="sect2">
-<h3 id="interactioncontext-interface"><a class="anchor" href="#interactioncontext-interface"></a>InteractionContext : <em>interface</em></h3>
 <div class="paragraph">
 <p>Provides the current thread&#8217;s <a href="../../../system/latest/generated/index/applib/services/iactn/Interaction.html" class="page">Interaction</a> .</p>
 </div>
+<div class="sect3">
+<h4 id="api-3"><a class="anchor" href="#api-3"></a>API</h4>
 <div class="listingblock">
-<div class="title">Java Sources</div>
+<div class="title">InteractionContext.java</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">interface InteractionContext {
-
-  Optional&lt;Interaction&gt; currentInteraction() <i class="conum" data-value="1"></i><b>(1)</b>
-
+  Optional&lt;Interaction&gt; currentInteraction()     <i class="conum" data-value="1"></i><b>(1)</b>
   Interaction currentInteractionElseFail()
 }</code></pre>
 </div>
@@ -840,7 +838,7 @@ Persistent<code>Interaction</code>s support several use cases:</p>
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><code><span class="teal"><strong>currentInteraction</strong></span>()</code> : <code>Optional&lt;<a href="../../../system/latest/generated/index/applib/services/iactn/Interaction.html" class="page">Interaction</a>&gt;</code>
+<td><a href="#currentInteraction">currentInteraction</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
@@ -850,6 +848,14 @@ Persistent<code>Interaction</code>s support several use cases:</p>
 </div></td>
 </tr>
 </table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="members"><a class="anchor" href="#members"></a>Members</h4>
+<div class="sect4">
+<h5 id="currentInteraction"><a class="anchor" href="#currentInteraction"></a>currentInteraction</h5>
+<div class="paragraph">
+<p>Optionally, the currently active <a href="../../../system/latest/generated/index/applib/services/iactn/Interaction.html" class="page">Interaction</a> for the calling thread.</p>
 </div>
 <div class="paragraph">
 <p>TODO example migration</p>
@@ -891,11 +897,10 @@ Persistent<code>Interaction</code>s support several use cases:</p>
 </div>
 </div>
 </div>
+</div>
 <div class="sect1">
-<h2 id="api-3"><a class="anchor" href="#api-3"></a>API</h2>
+<h2 id="api-4"><a class="anchor" href="#api-4"></a>API</h2>
 <div class="sectionbody">
-<div class="sect2">
-<h3 id="interaction-interface"><a class="anchor" href="#interaction-interface"></a>Interaction : <em>interface</em></h3>
 <div class="paragraph">
 <p>Represents an action invocation or property modification, resulting in some state change of the system. It captures not only the target object and arguments passed, but also builds up the call-graph, and captures metrics, eg for profiling.</p>
 </div>
@@ -917,18 +922,16 @@ you could also think of this interface as being analogous to the (database) tran
 </tr>
 </table>
 </div>
+<div class="sect3">
+<h4 id="api-5"><a class="anchor" href="#api-5"></a>API</h4>
 <div class="listingblock">
-<div class="title">Java Sources</div>
+<div class="title">Interaction.java</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">interface Interaction {
-
   Command getCommand()
-
-  Execution&lt;?, ?&gt; getCurrentExecution() <i class="conum" data-value="1"></i><b>(1)</b>
-
-  Execution&lt;?, ?&gt; getPriorExecution() <i class="conum" data-value="2"></i><b>(2)</b>
-
-  int next(final String sequenceId) <i class="conum" data-value="3"></i><b>(3)</b>
+  Execution&lt;?, ?&gt; getCurrentExecution()     <i class="conum" data-value="1"></i><b>(1)</b>
+  Execution&lt;?, ?&gt; getPriorExecution()     <i class="conum" data-value="2"></i><b>(2)</b>
+  int next(final String sequenceId)     <i class="conum" data-value="3"></i><b>(3)</b>
 }</code></pre>
 </div>
 </div>
@@ -936,7 +939,7 @@ you could also think of this interface as being analogous to the (database) tran
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><code><span class="teal"><strong>getCurrentExecution</strong></span>()</code> : <code>Execution&lt;?, ?&gt;</code>
+<td><a href="#getCurrentExecution">getCurrentExecution</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
@@ -947,7 +950,7 @@ you could also think of this interface as being analogous to the (database) tran
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><code><span class="teal"><strong>getPriorExecution</strong></span>()</code> : <code>Execution&lt;?, ?&gt;</code>
+<td><a href="#getPriorExecution">getPriorExecution</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
@@ -958,7 +961,7 @@ you could also think of this interface as being analogous to the (database) tran
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td><code><span class="teal"><strong>next</strong></span>(String sequenceId)</code> : <code>int</code>
+<td><a href="#next">next</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
@@ -968,6 +971,26 @@ you could also think of this interface as being analogous to the (database) tran
 </div></td>
 </tr>
 </table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="members-2"><a class="anchor" href="#members-2"></a>Members</h4>
+<div class="sect4">
+<h5 id="getCurrentExecution"><a class="anchor" href="#getCurrentExecution"></a>getCurrentExecution</h5>
+<div class="paragraph">
+<p>The current (most recently pushed) <em>Execution</em> .</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="getPriorExecution"><a class="anchor" href="#getPriorExecution"></a>getPriorExecution</h5>
+<div class="paragraph">
+<p>The execution that preceded the current one.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="next"><a class="anchor" href="#next"></a>next</h5>
+<div class="paragraph">
+<p>Generates numbers in a named sequence. The name of the sequence can be arbitrary, though note that the framework also uses this capability to generate sequence numbers corresponding to the sequences enumerated by the <em>Sequence</em> enum.</p>
 </div>
 <div class="paragraph">
 <p>TODO example migration</p>
@@ -1023,6 +1046,7 @@ Used by the framework both to number successive interaction <code>Execution</cod
 </td>
 </tr>
 </table>
+</div>
 </div>
 </div>
 <div class="sect2">
@@ -1187,7 +1211,7 @@ The services are used within the framework however, primarily to support the
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210206-0423-c599190c</p>
+            <p>Revision: 2.0.0-M4.20210208-0426-5bd84665</p>
         </div>
     </div>
 </footer>

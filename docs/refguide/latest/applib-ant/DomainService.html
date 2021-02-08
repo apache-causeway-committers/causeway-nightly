@@ -240,7 +240,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="PropertyLayout.html">PropertyLayout</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="IsisSessionScope.html">RequestScoped</a>
+    <a class="nav-link" href="InteractionScope.html">RequestScoped</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="Title.html">Title</a>
@@ -312,7 +312,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../applib-svc/ApplicationFeatureRepository.html">ApplicationFeatureRepository</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../applib-svc/AuditerService.html">AuditerService</a>
+    <a class="nav-link" href="#refguide:applib-svc:AuditerService.adoc">AuditerService</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../applib-svc/BookmarkService.html">BookmarkService</a>
@@ -758,37 +758,73 @@ page.parent doesn't seem to be set...
 </div>
 <article class="doc">
     <a name="section-top"></a>
-<h1 class="page"><code>@DomainService</code></h1>
+<h1 class="page">@DomainService</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>The <code>@DomainService</code> annotation indicates that the (concrete) class should be automatically instantiated as a domain service.</p>
+<p>Indicates that the class should be automatically recognized as a domain service.</p>
 </div>
+<div class="paragraph">
+<p>Also indicates whether the domain service acts as a repository for an entity, and menu ordering UI hints.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="api"><a class="anchor" href="#api"></a>API</h2>
+<div class="sectionbody">
 <div class="listingblock">
+<div class="title">DomainService.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Unresolved include directive in modules/applib-ant/pages/DomainService.adoc - include::refguide:applib-ant:example$annotation/DomainService.java[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@interface DomainService {
+  NatureOfService nature() default NatureOfService.VIEW;     <i class="conum" data-value="1"></i><b>(1)</b>
+  String objectType() default "";     <i class="conum" data-value="2"></i><b>(2)</b>
+}</code></pre>
 </div>
 </div>
 <div class="colist arabic">
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><a href="#nature"><code>nature()</code></a>
+<td><a href="#nature">nature</a>
+<div class="openblock">
+<div class="content">
 <div class="paragraph">
-<p>Whether the actions of this domain service should be rendered in UI menus only, or the <a href="../../../vro/latest/about.html" class="page">RestfulObjects</a> REST API only, or both</p>
+<p>The nature of this service, eg for menus, contributed actions, repository.</p>
+</div>
+</div>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><a href="#objectType"><code>objectType()</code></a>
+<td><a href="#objectType">objectType</a>
+<div class="openblock">
+<div class="content">
 <div class="paragraph">
-<p>Equivalent to <a href="DomainObject.html#objectType" class="page"><code>@DomainObject#objectType()</code></a>, specifies the objectType of the service.</p>
+<p>Provides the (first part of the) unique identifier (OID) for the service (the instanceId is always "1").</p>
 </div>
-<div class="paragraph">
-<p>The instanceId for services is always "1".</p>
+</div>
 </div></td>
 </tr>
 </table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="members"><a class="anchor" href="#members"></a>Members</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="nature"><a class="anchor" href="#nature"></a>nature</h3>
+<div class="paragraph">
+<p>The nature of this service, eg for menus, contributed actions, repository.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="objectType"><a class="anchor" href="#objectType"></a>objectType</h3>
+<div class="paragraph">
+<p>Provides the (first part of the) unique identifier (OID) for the service (the instanceId is always "1").</p>
+</div>
+<div class="paragraph">
+<p>If not specified then either the optional "getId()" is used, otherwise the class' name.</p>
 </div>
 <div class="paragraph">
 <p>For example:</p>
@@ -804,178 +840,6 @@ public class LoanRepository {
     public List&lt;Loan&gt; findLoansFor(Borrower borrower) { /* ... */ }
 }</code></pre>
 </div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="nature"><a class="anchor" href="#nature"></a><code>nature()</code></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>This is the purpose of the <code>nature</code> attribute: to indicates the intent of (all of) the actions defined within the domain service.</p>
-</div>
-<div class="paragraph">
-<p>The values of the enum are:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>VIEW</code></p>
-<div class="paragraph">
-<p>The default; the service&#8217;s actions appear on menu bars, can be contributed, appear in the REST API</p>
-</div>
-</li>
-<li>
-<p><code>REST</code></p>
-<div class="paragraph">
-<p>The service&#8217;s actions are intended only to be listed in the REST API exposed by the <a href="../../../vro/latest/about.html" class="page">RestfulObjects viewer</a>.</p>
-</div>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>The actual class name of the domain service is only rendered for the <code>VIEW</code> natures.</p>
-</div>
-<div class="paragraph">
-<p>For other services (whose actions should not be part of the metamodel and should not appear in the UI), just use Spring&#8217;s <code>@Service</code>, <code>@Repository</code> or <code>@Component</code> annotations.</p>
-</div>
-<div class="paragraph">
-<p>Another example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Repository
-public class LoanRepository {
-    public List&lt;Loan&gt; findLoansFor(Borrower borrower) {
-        // ...
-    }
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>A final example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainService( nature=NatureOfService.VIEW )
-@RequiredArgsConstructor(onConstructor_ = {@Inject} )
-public class Loans {                                   <i class="conum" data-value="1"></i><b>(1)</b>
-
-    private final LoanRepository loanRepository;       <i class="conum" data-value="2"></i><b>(2)</b>
-
-    @Action(semantics=SemanticsOf.SAFE)
-    public List&lt;Loan&gt; findOverdueLoans() {
-        // ...
-    }
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>name is intended to be rendered in the UI</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>it&#8217;s common for domain-layer domain services to be injected into presentation layer services.</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="objectType"><a class="anchor" href="#objectType"></a><code>objectType()</code></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The <code>objectType</code> attribute is used to provide a unique alias for the domain service&#8217;s class name.</p>
-</div>
-<div class="paragraph">
-<p>This value is used internally to generate a string representation of an service identity (the <code>Oid</code>).
-This can appear in several contexts, including:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>as the value of <code>Bookmark#getObjectType()</code> and in the <code>toString()</code> value of <code>Bookmark</code>
-(see <a href="../applib-svc/BookmarkService.html" class="page"><code>BookmarkService</code></a>)</p>
-</li>
-<li>
-<p>in the serialization of <code>OidDto</code> in the <a href="#refguide:schema:cmd">command</a> and <a href="../schema/ixn.html" class="page">interaction</a> schemas</p>
-</li>
-<li>
-<p>in the URLs of the <a href="../../../vro/latest/about.html" class="page">RestfulObjects viewer</a></p>
-</li>
-<li>
-<p>in the URLs of the <a href="../../../vw/latest/about.html" class="page">Wicket viewer</a> (specifically, for bookmarked actions)</p>
-</li>
-</ul>
-</div>
-<div class="sect2">
-<h3 id="example"><a class="anchor" href="#example"></a>Example</h3>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainService(
-    objectType="orders.OrderMenu"
-)
-public class OrderMenu {
-    ...
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="precedence"><a class="anchor" href="#precedence"></a>Precedence</h3>
-<div class="paragraph">
-<p>The rules of precedence are:</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p><code>@DomainService#objectType</code></p>
-</li>
-<li>
-<p><a href="../applib-methods/reserved.html#getId" class="page"><code>getId()</code></a></p>
-</li>
-<li>
-<p>The fully qualified class name.</p>
-</li>
-</ol>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>This might be obvious, but to make explicit: we recommend that you always specify an object type for your domain services.</p>
-</div>
-<div class="paragraph">
-<p>Otherwise, if you refactor your code (change class name or move package), then any externally held references to the OID of the service will break.
-At best this will require a data migration in the database; at worst it could cause external clients accessing data through the <a href="../../../vro/latest/about.html" class="page">Restful Objects</a> viewer to break.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>If the object type is not unique across all domain classes then the framework will fail-fast and fail to boot.
-An error message will be printed in the log to help you determine which classes have duplicate object tyoes.</p>
-</div>
-</td>
-</tr>
-</table>
 </div>
 </div>
 </div>
@@ -997,7 +861,7 @@ An error message will be printed in the log to help you determine which classes 
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210206-0423-c599190c</p>
+            <p>Revision: 2.0.0-M4.20210208-0426-5bd84665</p>
         </div>
     </div>
 </footer>

@@ -240,7 +240,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="PropertyLayout.html">PropertyLayout</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="IsisSessionScope.html">RequestScoped</a>
+    <a class="nav-link" href="InteractionScope.html">RequestScoped</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="Title.html">Title</a>
@@ -312,7 +312,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../applib-svc/ApplicationFeatureRepository.html">ApplicationFeatureRepository</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../applib-svc/AuditerService.html">AuditerService</a>
+    <a class="nav-link" href="#refguide:applib-svc:AuditerService.adoc">AuditerService</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../applib-svc/BookmarkService.html">BookmarkService</a>
@@ -758,79 +758,204 @@ page.parent doesn't seem to be set...
 </div>
 <article class="doc">
     <a name="section-top"></a>
-<h1 class="page"><code>@CollectionLayout</code></h1>
+<h1 class="page">@CollectionLayout</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>The <code>@CollectionLayout</code> annotation applies to collections, collecting together all UI hints within a single annotation.
-It is also possible to apply the annotation to actions of domain services that are acting as contributed collections.</p>
+<p>Layout hints for collections.</p>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="api"><a class="anchor" href="#api"></a>API</h2>
+<div class="sectionbody">
 <div class="listingblock">
+<div class="title">CollectionLayout.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Unresolved include directive in modules/applib-ant/pages/CollectionLayout.adoc - include::refguide:applib-ant:example$annotation/CollectionLayout.java[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@interface CollectionLayout {
+  String cssClass() default "";     <i class="conum" data-value="1"></i><b>(1)</b>
+  String defaultView() default "";     <i class="conum" data-value="2"></i><b>(2)</b>
+  String describedAs() default "";     <i class="conum" data-value="3"></i><b>(3)</b>
+  Where hidden() default Where.NOT_SPECIFIED;     <i class="conum" data-value="4"></i><b>(4)</b>
+  String named() default "";     <i class="conum" data-value="5"></i><b>(5)</b>
+  boolean namedEscaped() default true;     <i class="conum" data-value="6"></i><b>(6)</b>
+  int paged() default -1;     <i class="conum" data-value="7"></i><b>(7)</b>
+  @SuppressWarnings("rawtypes")
+Class sortedBy() default Comparator.class;     <i class="conum" data-value="8"></i><b>(8)</b>
+}</code></pre>
 </div>
 </div>
 <div class="colist arabic">
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><a href="#cssClass"><code>cssClass()</code></a>
+<td><a href="#cssClass">cssClass</a>
+<div class="openblock">
+<div class="content">
 <div class="paragraph">
-<p>The css class that a collection should have, to allow more targetted styling in <a href="../config/application-specific/application-css.html" class="page"><code>application.css</code></a></p>
+<p>Indicates the css class that a collection should have.</p>
+</div>
+</div>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><a href="#defaultView"><code>defaultView()</code></a>
+<td><a href="#defaultView">defaultView</a>
+<div class="openblock">
+<div class="content">
 <div class="paragraph">
-<p>Which view is selected by default, if multiple views are available.</p>
+<p>Indicates which view is used by default to render the collection.</p>
+</div>
+</div>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td><a href="#describedAs"><code>describedAs()</code></a>
+<td><a href="#describedAs">describedAs</a>
+<div class="openblock">
+<div class="content">
 <div class="paragraph">
 <p>Description of this collection, eg to be rendered in a tooltip.</p>
+</div>
+</div>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td><a href="#hidden"><code>hidden()</code></a>
+<td><a href="#hidden">hidden</a>
+<div class="openblock">
+<div class="content">
 <div class="paragraph">
-<p>Indicates where (in the UI) the collection should be hidden from the user.</p>
+<p>Indicates where in the UI the collection should <em>not</em> not be visible.</p>
+</div>
+</div>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
-<td><a href="#named"><code>named()</code></a>
+<td><a href="#named">named</a>
+<div class="openblock">
+<div class="content">
 <div class="paragraph">
-<p>To override the name inferred from the collection&#8217;s name in code.<br>
-A typical use case is if the desired name is a reserved Java keyword, such as <code>default</code> or <code>package</code>.</p>
+<p>Name of this collection (overriding the name derived from its name in code).</p>
+</div>
+</div>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="6"></i><b>6</b></td>
-<td><code>namedEscaped()</code>
+<td><a href="#namedEscaped">namedEscaped</a>
+<div class="openblock">
+<div class="content">
 <div class="paragraph">
-<p>Whether to HTML escape the name of this property.</p>
+<p>A flag indicating whether the value of <em>#named()</em> should be HTML escaped or not.</p>
+</div>
+</div>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="7"></i><b>7</b></td>
-<td><a href="#paged"><code>paged()</code></a>
+<td><a href="#paged">paged</a>
+<div class="openblock">
+<div class="content">
 <div class="paragraph">
 <p>The page size for instances of this class when rendered within a table.</p>
+</div>
+</div>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="8"></i><b>8</b></td>
-<td><a href="#sortedBy"><code>sortedBy()</code></a>
+<td><a href="#sortedBy">sortedBy</a>
+<div class="openblock">
+<div class="content">
 <div class="paragraph">
-<p>Indicates that the elements in the <code>java.util.SortedSet</code> collection should be sorted according to a specified <code>Comparator</code> rather than their natural sort order.</p>
+<p>Indicates that the elements in a ( <em>java.util.SortedSet</em> ) collection should be sorted according to a different order than the natural sort order, as defined by the specified <em>java.util.Comparator</em> .</p>
+</div>
+</div>
 </div></td>
 </tr>
 </table>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="members"><a class="anchor" href="#members"></a>Members</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="cssClass"><a class="anchor" href="#cssClass"></a>cssClass</h3>
+<div class="paragraph">
+<p>Indicates the css class that a collection should have.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="defaultView"><a class="anchor" href="#defaultView"></a>defaultView</h3>
+<div class="paragraph">
+<p>Indicates which view is used by default to render the collection.</p>
+</div>
+<div class="paragraph">
+<p>The only view available within the core framework is "table". However, other views can be added as extensions. Examples are those provided by the (non-ASF)Isis addons, eg "excel", "calendar" and "map".</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="describedAs"><a class="anchor" href="#describedAs"></a>describedAs</h3>
+<div class="paragraph">
+<p>Description of this collection, eg to be rendered in a tooltip.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="hidden"><a class="anchor" href="#hidden"></a>hidden</h3>
+<div class="paragraph">
+<p>Indicates where in the UI the collection should <em>not</em> not be visible.</p>
+</div>
+<div class="paragraph">
+<p>Only <em>Where#NOWHERE NOWHERE</em> or <em>Where#EVERYWHERE EVERYWHERE</em> / <em>Where#ANYWHERE ANYWHERE</em> apply for collections.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="named"><a class="anchor" href="#named"></a>named</h3>
+<div class="paragraph">
+<p>Name of this collection (overriding the name derived from its name in code).</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="namedEscaped"><a class="anchor" href="#namedEscaped"></a>namedEscaped</h3>
+<div class="paragraph">
+<p>A flag indicating whether the value of <em>#named()</em> should be HTML escaped or not.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="paged"><a class="anchor" href="#paged"></a>paged</h3>
+<div class="paragraph">
+<p>The page size for instances of this class when rendered within a table.</p>
+</div>
+<div class="paragraph">
+<p>If annotated on a collection, then the page size refers to parented collections (eg <code>Order#lineItems</code> ).</p>
+</div>
+<div class="paragraph">
+<p>If annotated on a type, then the page size refers to standalone collections (eg as returned from a repository query).</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="sortedBy"><a class="anchor" href="#sortedBy"></a>sortedBy</h3>
+<div class="paragraph">
+<p>Indicates that the elements in a ( <em>java.util.SortedSet</em> ) collection should be sorted according to a different order than the natural sort order, as defined by the specified <em>java.util.Comparator</em> .</p>
+</div>
+<div class="paragraph">
+<p>Whenever there is a collection of type <em>java.util.SortedSet</em> , the domain entity referenced is expected to implement <em>Comparable</em> , ie to have a natural ordering. In effect tis means that all domain entities should provide a natural ordering.</p>
+</div>
+<div class="paragraph">
+<p>However, in some circumstances the ordering of collection may be different to the entity&#8217;s natural ordering. For example, the entity may represent an interval of time sorted by its <em>startDate</em> ascending, but the collection may wish to sort by <em>startDate</em> .</p>
+</div>
+<div class="paragraph">
+<p>The purpose of this annotation is to provide a <em>java.util.Comparator</em> such that the collection may be sorted in an order more suitable to the context.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>For example:</p>
 </div>
@@ -880,468 +1005,6 @@ This is specifically so that boilerplate-busting tools such as <a href="https://
 </div>
 </div>
 </div>
-<div class="sect1">
-<h2 id="cssClass"><a class="anchor" href="#cssClass"></a><code>cssClass()</code></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The <code>cssClass</code> attribute can be used to render additional CSS classes in the HTML (a wrapping <code>&lt;div&gt;</code>) that represents the collection.   <a href="../config/application-specific/application-css.html" class="page">Application-specific CSS</a> can then be used to target and adjust the UI representation of that particular element.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
-import lombok.Setter;
-
-public class ToDoItem {
-
-    @CollectionLayout(
-        cssClass="x-important"
-    )
-    @Getter @Setter
-    private SortedSet&lt;ToDoItem&gt; dependencies = ...;
-
-}</code></pre>
-</div>
-</div>
-<div class="sect2">
-<h3 id="alternatives"><a class="anchor" href="#alternatives"></a>Alternatives</h3>
-<div class="paragraph">
-<p>As an alternative to using the annotation, the dynamic <a href="../../../userguide/latest/fun/ui.html#object-layout" class="page">file-based layout</a> can be used instead.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="see-also"><a class="anchor" href="#see-also"></a>See also</h3>
-<div class="paragraph">
-<p>This attribute can also be applied to:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="DomainObjectLayout.html#cssClass" class="page">domain objects</a></p>
-</li>
-<li>
-<p><a href="ActionLayout.html#cssClass" class="page">actions</a></p>
-</li>
-<li>
-<p><a href="PropertyLayout.html#cssClass" class="page">properties</a></p>
-</li>
-<li>
-<p><a href="ParameterLayout.html#cssClass" class="page">parameters</a>.</p>
-</li>
-</ul>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="defaultView"><a class="anchor" href="#defaultView"></a><code>defaultView()</code></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The <code>defaultView</code> attribute is used to select which of views should be used by default for a given collection.
-Without any hint the collection is shown collapsed (to save real estate and reduce load time).</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
-import lombok.Setter;
-
-
-public class BusRoute {
-
-    @CollectionLayout( defaultView="table" )    <i class="conum" data-value="1"></i><b>(1)</b>
-    @Getter @Setter
-    private SortedSet&lt;BusStop&gt; stops = ...
-
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>renders the collection as a table view.</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>The <a href="../../../vw/latest/about.html" class="page">Wicket viewer</a> allows additional views to be configured to render collections of objects, eg <a href="../../../vw/latest/exceldownload/about.html" class="page">Excel Download</a> ("excel"), <a href="../../../vw/latest/fullcalendar/about.html" class="page">Fullcalendar</a> ("fullcalendar") and <a href="../../../vw/latest/gmap3/about.html" class="page">Gmap3</a> ("map") extensions.
-This attribute can be used to select any of these alternative views instead.</p>
-</div>
-<div class="sect2">
-<h3 id="alternatives-2"><a class="anchor" href="#alternatives-2"></a>Alternatives</h3>
-<div class="paragraph">
-<p>As an alternative to using the annotation, the dynamic <a href="../../../userguide/latest/fun/ui.html#object-layout" class="page">file-based layout</a> can be used instead.</p>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="describedAs"><a class="anchor" href="#describedAs"></a><code>describedAs()</code></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The <code>describedAs</code> attribute is used to provide a short description of the collection to the user.
-In the <a href="../../../vw/latest/about.html" class="page">Wicket viewer</a> it is displayed as a 'tool tip'.</p>
-</div>
-<div class="paragraph">
-<p>The <code>describedAs</code> attribute can also be specified for <a href="PropertyLayout.html#describedAs" class="page">properties</a>, <a href="ActionLayout.html#describedAs" class="page">actions</a>, <a href="ParameterLayout.html#describedAs" class="page">parameters</a> and <a href="DomainObjectLayout.html#describedAs" class="page">domain objects</a>.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
-import lombok.Setter;
-
-public class ToDoItem {
-
-    @CollectionLayout(
-        describedAs = "Todo items to be completed before this one"
-    )
-    @Getter @Setter
-    private SortedSet&lt;ToDoItem&gt; dependencies = ...
-
-}</code></pre>
-</div>
-</div>
-<div class="sect2">
-<h3 id="alternatives-3"><a class="anchor" href="#alternatives-3"></a>Alternatives</h3>
-<div class="paragraph">
-<p>As an alternative to using the annotation, the dynamic <a href="../../../userguide/latest/fun/ui.html#object-layout" class="page">file-based layout</a> can be used instead.</p>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="hidden"><a class="anchor" href="#hidden"></a><code>hidden()</code></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The <code>hidden</code> attribute indicates where (in the UI) the collection should be hidden from the user.</p>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>It is also possible to use <a href="Collection.html#hidden" class="page"><code>@Collection#hidden</code></a> to hide an action at the domain layer.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
-import lombok.Setter;
-
-public class ToDoItem {
-
-    @CollectionLayout(
-        hidden=Where.EVERYWHERE
-    )
-    @Getter @Setter
-    private SortedSet&lt;ToDoItem&gt; dependencies = ...
-
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The acceptable values for the <code>where</code> parameter are:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>Where.EVERYWHERE</code> or <code>Where.ANYWHERE</code></p>
-<div class="paragraph">
-<p>The collection should be hidden everywhere.</p>
-</div>
-</li>
-<li>
-<p><code>Where.ANYWHERE</code></p>
-<div class="paragraph">
-<p>Synonym for everywhere.</p>
-</div>
-</li>
-<li>
-<p><code>Where.OBJECT_FORMS</code></p>
-<div class="paragraph">
-<p>The collection should be hidden when displayed within an object form.</p>
-</div>
-</li>
-<li>
-<p><code>Where.NOWHERE</code></p>
-<div class="paragraph">
-<p>The collection should not be hidden.</p>
-</div>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>The other values of the <code>Where</code> enum have no meaning for a collection.</p>
-</div>
-<div class="sect2">
-<h3 id="alternatives-4"><a class="anchor" href="#alternatives-4"></a>Alternatives</h3>
-<div class="paragraph">
-<p>As an alternative to using the annotation, the dynamic <a href="../../../userguide/latest/fun/ui.html#object-layout" class="page">file-based layout</a> can be used instead.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="see-also-2"><a class="anchor" href="#see-also-2"></a>See also</h3>
-<div class="paragraph">
-<p>This attribute can also be applied to:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="ActionLayout.html#hidden" class="page">actions</a></p>
-</li>
-<li>
-<p><a href="PropertyLayout.html#hidden" class="page">properties</a>.</p>
-</li>
-</ul>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="named"><a class="anchor" href="#named"></a><code>named()</code></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The <code>named</code> attribute explicitly specifies the collection&#8217;s name, overriding the name that would normally be inferred from the Java source code.</p>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>We recommend that you only use this attribute when the desired name cannot be used in Java source code.
-Examples of that include a name that would be a reserved Java keyword (eg "package"), or a name that has punctuation, eg apostrophes.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>By default the name is HTML escaped.
-To allow HTML markup, set the related <code>namedEscaped</code> attribute to <code>false</code>.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
-import lombok.Setter;
-
-public class ToDoItem {
-    @CollectionLayout(
-        named="Todo items that are &lt;i&gt;dependencies&lt;/i&gt; of this item",
-        namedEscaped=false
-    )
-    @Getter @Setter
-    private SortedSet&lt;ToDoItem&gt; dependencies = ...
-
-}</code></pre>
-</div>
-</div>
-<div class="sect2">
-<h3 id="alternatives-5"><a class="anchor" href="#alternatives-5"></a>Alternatives</h3>
-<div class="paragraph">
-<p>As an alternative to using the annotation, the dynamic <a href="../../../userguide/latest/fun/ui.html#object-layout" class="page">file-based layout</a> can be used instead.</p>
-</div>
-<div class="paragraph">
-<p>The framework also provides a separate, powerful mechanism for <a href="../../../userguide/latest/btb/i18n.html" class="page">internationalization</a>.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="see-also-3"><a class="anchor" href="#see-also-3"></a>See also</h3>
-<div class="paragraph">
-<p>This attribute can also be specified for:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="ActionLayout.html#named" class="page">actions</a></p>
-</li>
-<li>
-<p><a href="PropertyLayout.html#named" class="page">properties</a></p>
-</li>
-<li>
-<p><a href="ParameterLayout.html#named" class="page">parameters</a></p>
-</li>
-<li>
-<p><a href="DomainObjectLayout.html#named" class="page">domain objects</a></p>
-</li>
-<li>
-<p><a href="DomainServiceLayout.html#named" class="page">domain services</a>.</p>
-</li>
-</ul>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="paged"><a class="anchor" href="#paged"></a><code>paged()</code></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>r
-:Notice: Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements. See the NOTICE file distributed with this work for additional information regarding copyright ownership. The ASF licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at. <a href="http://www.apache.org/licenses/LICENSE-2.0" class="bare">http://www.apache.org/licenses/LICENSE-2.0</a> . Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR  CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
-:page-partial:</p>
-</div>
-<div class="paragraph">
-<p>The <code>paged</code> attribute specifies the number of rows to display in a (parented) collection.</p>
-</div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>The <a href="../../../vro/latest/about.html" class="page">RestfulObjects viewer</a> currently does not support paging.
-The <a href="../../../vw/latest/about.html" class="page">Wicket viewer</a> <em>does</em> support paging, but note that the paging is performed client-side rather than server-side.</p>
-</div>
-<div class="paragraph">
-<p>We therefore recommend that large collections should instead be modelled as actions (to allow filtering to be applied to limit the number of rows).</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
-import lombok.Setter;
-
-public class Order {
-
-    @CollectionLayout(paged=15)
-    @Getter @Setter
-    private SortedSet&lt;OrderLine&gt; details = ...
-
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>It is also possible to specify a global default for the page size of parented collections, using the <a href="../config/sections/isis.applib.html#isis.applib.annotation.collection-layout.paged" class="page"><code>isis.applib.annotation.collection-layout.paged</code></a> configuration property.</p>
-</div>
-<div class="sect2">
-<h3 id="alternatives-6"><a class="anchor" href="#alternatives-6"></a>Alternatives</h3>
-<div class="paragraph">
-<p>As an alternative to using the annotation, the dynamic <a href="../../../userguide/latest/fun/ui.html#object-layout" class="page">file-based layout</a> can be used instead.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="see-also-4"><a class="anchor" href="#see-also-4"></a>See also</h3>
-<div class="paragraph">
-<p>This attribute can also be applied to:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="DomainObjectLayout.html#paged" class="page">domain objects</a></p>
-</li>
-</ul>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="sortedBy"><a class="anchor" href="#sortedBy"></a><code>sortedBy()</code></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The <code>sortedBy</code> attribute specifies that the collection be ordered using the specified comparator, rather than the natural ordering of the entity (as would usually be the case).</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
-import lombok.Setter;
-
-public class ToDoItem implements Comparable&lt;ToDoItem&gt; {         <i class="conum" data-value="1"></i><b>(1)</b>
-
-    public static class DescriptionComparator                   <i class="conum" data-value="2"></i><b>(2)</b>
-                            implements Comparator&lt;ToDoItem&gt; {
-        @Override
-        public int compare(ToDoItem o1, ToDoItem o2) {
-            return Comparator.comparing(ToDoItem::getDescription)
-                             .compare(o1, o2);
-        }
-    }
-
-    @CollectionLayout(sortedBy=DependenciesComparator.class)    <i class="conum" data-value="3"></i><b>(3)</b>
-    @Getter @Setter
-    private SortedSet&lt;ToDoItem&gt; dependencies = ...
-
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>the class has a natural ordering (implementation not shown)</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>declaration of an alternative comparator class, using the object&#8217;s <code>description</code> property</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>ordering of the collection defined as being by this comparator</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>When the <code>dependencies</code> collection is rendered, the elements are sorted by the <code>description</code> property first:</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="_images/reference-annotations/CollectionLayout/sortedby-dependencies.png" alt="sortedby dependencies" width="720px">
-</div>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>Note that this screenshot shows an earlier version of the <a href="../../../vw/latest/about.html" class="page">Wicket viewer</a> UI (specifically, pre 1.8.0).</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="sect2">
-<h3 id="alternatives-7"><a class="anchor" href="#alternatives-7"></a>Alternatives</h3>
-<div class="paragraph">
-<p>As an alternative to using the annotation, the dynamic <a href="../../../userguide/latest/fun/ui.html#object-layout" class="page">file-based layout</a> can be used instead.</p>
-</div>
-</div>
-</div>
-</div>
 </article>
 <aside class="article-aside toc hide-for-print" role="navigation">
     <p class="toc-title">On this page</p>
@@ -1359,7 +1022,7 @@ public class ToDoItem implements Comparable&lt;ToDoItem&gt; {         <i class="
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210206-0423-c599190c</p>
+            <p>Revision: 2.0.0-M4.20210208-0426-5bd84665</p>
         </div>
     </div>
 </footer>

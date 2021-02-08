@@ -240,7 +240,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../applib-ant/PropertyLayout.html">PropertyLayout</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../applib-ant/IsisSessionScope.html">RequestScoped</a>
+    <a class="nav-link" href="../applib-ant/InteractionScope.html">RequestScoped</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../applib-ant/Title.html">Title</a>
@@ -312,7 +312,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="ApplicationFeatureRepository.html">ApplicationFeatureRepository</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="AuditerService.html">AuditerService</a>
+    <a class="nav-link" href="#refguide:applib-svc:AuditerService.adoc">AuditerService</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="BookmarkService.html">BookmarkService</a>
@@ -758,8 +758,69 @@ page.parent doesn't seem to be set...
 </div>
 <article class="doc">
     <a name="section-top"></a>
-<h1 class="page"><code>CommandDtoProcessorService</code></h1>
+<h1 class="page">CommandDtoProcessorService</h1>
 <div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Service used to convert a domain object into a <em>CommandDto</em> , called by <a href="../../../system/latest/generated/index/applib/services/commanddto/conmap/ContentMappingServiceForCommandDto.html" class="page">ContentMappingServiceForCommandDto</a> .</p>
+</div>
+<div class="paragraph">
+<p>The service is used as a fallback if an <a href="../../../system/latest/generated/index/applib/services/commanddto/processor/CommandDtoProcessor.html" class="page">CommandDtoProcessor</a> , hasn&#8217;t been explicitly specified using <em>Action#commandDtoProcessor()</em> or <em>Property#commandDtoProcessor()</em> .</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="api"><a class="anchor" href="#api"></a>API</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="title">CommandDtoProcessorService.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">interface CommandDtoProcessorService {
+  CommandDto process(final Object domainObject, final CommandDto commandDto)     <i class="conum" data-value="1"></i><b>(1)</b>
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><a href="#process">process</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Converts the domain object (acting as the source) into a <em>CommandDto</em> .</p>
+</div>
+</div>
+</div></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="members"><a class="anchor" href="#members"></a>Members</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="process"><a class="anchor" href="#process"></a>process</h3>
+<div class="paragraph">
+<p>Converts the domain object (acting as the source) into a <em>CommandDto</em> .</p>
+</div>
+<div class="paragraph">
+<p>The <em>CommandDto</em> that is also passed into the method will be from a default implementation provided by the framework. Most implementations will typically refine this provided DTO and return, for example adding additional user metadata to <em>CommandDto#getUserData()</em> .</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="implementation"><a class="anchor" href="#implementation"></a>Implementation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This is an SPI; there is no default implementation provided by the framework.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="usage"><a class="anchor" href="#usage"></a>Usage</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Having a DTO representation of <code>Command</code>s (or more precisely, any object implementing <code>HasCommandDto</code> offers the ability to move or copy it across the network, for example to support replay scenarios.
@@ -776,149 +837,12 @@ Another use case is to strip out large blobs for performance reasons.</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="api"><a class="anchor" href="#api"></a>API</h2>
-<div class="sectionbody">
-<div class="sect2">
-<h3 id="commanddtoprocessorservice-interface"><a class="anchor" href="#commanddtoprocessorservice-interface"></a>CommandDtoProcessorService : <em>interface</em></h3>
-<div class="paragraph">
-<p>Optional SPI called by <a href="../../../system/latest/generated/index/applib/services/commanddto/conmap/ContentMappingServiceForCommandDto.html" class="page">ContentMappingServiceForCommandDto</a> . Similar to <a href="../../../system/latest/generated/index/applib/services/commanddto/processor/CommandDtoProcessor.html" class="page">CommandDtoProcessor</a> , but applied to all <em>CommandDto</em> s globally.</p>
-</div>
-<div class="listingblock">
-<div class="title">Java Sources</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">interface CommandDtoProcessorService {
-
-  CommandDto process(final Object domainObject, final CommandDto commandDto) <i class="conum" data-value="1"></i><b>(1)</b>
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><code><span class="teal"><strong>process</strong></span>(Object domainObject, CommandDto commandDto)</code> : <code>CommandDto</code></td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>TODO example migration</p>
-</div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-<div class="title">Deprecated Docs</div>
-<div class="paragraph">
-<p>== API</p>
-</div>
-<div class="paragraph">
-<p>The API defined by <code>CommandDtoProcessorService</code> is:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Unresolved include directive in modules/applib-svc/pages/CommandDtoProcessorService.adoc - include::refguide:applib-svc:example$services/commanddto/processor/spi/CommandDtoProcessorService.java[]</code></pre>
-</div>
-</div>
-</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="implementation"><a class="anchor" href="#implementation"></a>Implementation</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>As noted in the introduction, the framework provides a default implementation, namely <code>o.a.i.applib.services.commanddto.conmap.ContentMappingServiceForCommandDto</code>.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="api-2"><a class="anchor" href="#api-2"></a>API</h2>
-<div class="sectionbody">
-<div class="sect2">
-<h3 id="commanddtoprocessor-interface"><a class="anchor" href="#commanddtoprocessor-interface"></a>CommandDtoProcessor : <em>interface</em></h3>
-<div class="paragraph">
-<p>Refine (or possibly ignore) a command when replicating from primary to secondary.</p>
-</div>
-<div class="listingblock">
-<div class="title">Java Sources</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">interface CommandDtoProcessor {
-
-  CommandDto process(CommandDto commandDto) <i class="conum" data-value="1"></i><b>(1)</b>
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><code><span class="teal"><strong>process</strong></span>(CommandDto commandDto)</code> : <code>CommandDto</code>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>The implementation can if necessary refine or alter the <em>CommandDto</em> to be replicated from primary to secondary.</p>
-</div>
-<div class="paragraph">
-<p>That said, the most common use case is to returnnull, which results in the command effectively being ignore.</p>
-</div>
-</div>
-</div></td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>TODO example migration</p>
-</div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-<div class="title">Deprecated Docs</div>
-<div class="paragraph">
-<p>== Related Classes</p>
-</div>
-<div class="paragraph">
-<p>The <code>CommandDtoProcessorService</code> is a global fallback for serializing actions of commands into a DTO.
-However, this can be overridden on on an action-by-action basis using  <a href="../applib-ant/Action.html#commanddtoprocessor" class="page"><code>@Action#commandDtoProcessor</code></a>, and on a property-by-property basis using <a href="../applib-ant/Property.html#commanddtoprocessor" class="page"><code>@Command#commandDtoProcessor()</code></a>.
-The main use case is to allow certain actions/property edits to be ignored:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Unresolved include directive in modules/applib-svc/pages/CommandDtoProcessorService.adoc - include::refguide:applib-svc:example$services/commanddto/processor/CommandDtoProcessor.java[]</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Returning <code>null</code> means that the command&#8217;s DTO is effectively ignored.</td>
-</tr>
-</table>
-</div>
-</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="related-services"><a class="anchor" href="#related-services"></a>Related Services</h2>
+<h2 id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 <div class="sectionbody">
 <div class="ulist">
 <ul>
 <li>
-<p>the <code>CommandDtoProcessorService</code> is used by <a href="ContentMappingService.html" class="page"><code>ContentMappingService</code></a> to serialize <code>Command</code>s over the REST API provided by <a href="../../../vro/latest/about.html" class="page">Restful Objects viewer</a>.
-All implementations are used.</p>
+<p><a href="../../../system/latest/generated/index/applib/services/commanddto/processor/CommandDtoProcessor.html" class="page">CommandDtoProcessor</a></p>
 </li>
 </ul>
 </div>
@@ -941,7 +865,7 @@ All implementations are used.</p>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210206-0423-c599190c</p>
+            <p>Revision: 2.0.0-M4.20210208-0426-5bd84665</p>
         </div>
     </div>
 </footer>

@@ -240,7 +240,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="PropertyLayout.html">PropertyLayout</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="IsisSessionScope.html">RequestScoped</a>
+    <a class="nav-link" href="InteractionScope.html">RequestScoped</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="Title.html">Title</a>
@@ -312,7 +312,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../applib-svc/ApplicationFeatureRepository.html">ApplicationFeatureRepository</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../applib-svc/AuditerService.html">AuditerService</a>
+    <a class="nav-link" href="#refguide:applib-svc:AuditerService.adoc">AuditerService</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../applib-svc/BookmarkService.html">BookmarkService</a>
@@ -758,102 +758,252 @@ page.parent doesn't seem to be set...
 </div>
 <article class="doc">
     <a name="section-top"></a>
-<h1 class="page"><code>@DomainObject</code></h1>
+<h1 class="page">@DomainObject</h1>
 <div id="preamble">
 <div class="sectionbody">
-<div class="admonitionblock caution">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-caution" title="Caution"></i>
-</td>
-<td class="content">
-TODO: v2 - publishing/auditing got a complete overhaul
-</td>
-</tr>
-</table>
-</div>
 <div class="paragraph">
-<p>The <code>@DomainObject</code> annotation applies to domain objects, collecting together all domain semantics within a single annotation.</p>
+<p>Domain semantics for domain objects (entities and view models; for services see <a href="../../../system/latest/generated/index/applib/annotation/DomainService.html" class="page">DomainService</a> ).</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="main-api"><a class="anchor" href="#main-api"></a>Main API</h2>
+<h2 id="api"><a class="anchor" href="#api"></a>API</h2>
 <div class="sectionbody">
 <div class="listingblock">
+<div class="title">DomainObject.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Unresolved include directive in modules/applib-ant/pages/DomainObject.adoc - include::refguide:applib-ant:example$annotation/DomainObject.java[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@interface DomainObject {
+  Class&lt;?&gt; autoCompleteRepository() default Object.class;     <i class="conum" data-value="1"></i><b>(1)</b>
+  String autoCompleteAction() default "autoComplete";     <i class="conum" data-value="2"></i><b>(2)</b>
+  Bounding bounding() default Bounding.NOT_SPECIFIED;     <i class="conum" data-value="3"></i><b>(3)</b>
+  Editing editing() default Editing.NOT_SPECIFIED;     <i class="conum" data-value="4"></i><b>(4)</b>
+  String editingDisabledReason() default "Disabled";     <i class="conum" data-value="5"></i><b>(5)</b>
+  Publishing entityChangePublishing() default Publishing.NOT_SPECIFIED;     <i class="conum" data-value="6"></i><b>(6)</b>
+  String mixinMethod() default "$$";     <i class="conum" data-value="7"></i><b>(7)</b>
+  Nature nature() default Nature.NOT_SPECIFIED;     <i class="conum" data-value="8"></i><b>(8)</b>
+  String objectType() default "";     <i class="conum" data-value="9"></i><b>(9)</b>
+  Class&lt;? extends ObjectCreatedEvent&lt;?&gt;&gt; createdLifecycleEvent() default ObjectCreatedEvent.Default.class;     <i class="conum" data-value="10"></i><b>(10)</b>
+  Class&lt;? extends ObjectPersistingEvent&lt;?&gt;&gt; persistingLifecycleEvent() default ObjectPersistingEvent.Default.class;     <i class="conum" data-value="11"></i><b>(11)</b>
+  Class&lt;? extends ObjectPersistedEvent&lt;?&gt;&gt; persistedLifecycleEvent() default ObjectPersistedEvent.Default.class;     <i class="conum" data-value="12"></i><b>(12)</b>
+  Class&lt;? extends ObjectLoadedEvent&lt;?&gt;&gt; loadedLifecycleEvent() default ObjectLoadedEvent.Default.class;     <i class="conum" data-value="13"></i><b>(13)</b>
+  Class&lt;? extends ObjectUpdatingEvent&lt;?&gt;&gt; updatingLifecycleEvent() default ObjectUpdatingEvent.Default.class;     <i class="conum" data-value="14"></i><b>(14)</b>
+  Class&lt;? extends ObjectUpdatedEvent&lt;?&gt;&gt; updatedLifecycleEvent() default ObjectUpdatedEvent.Default.class;     <i class="conum" data-value="15"></i><b>(15)</b>
+  Class&lt;? extends ObjectRemovingEvent&lt;?&gt;&gt; removingLifecycleEvent() default ObjectRemovingEvent.Default.class;     <i class="conum" data-value="16"></i><b>(16)</b>
+  Class&lt;? extends ActionDomainEvent&lt;?&gt;&gt; actionDomainEvent() default ActionDomainEvent.Default.class;     <i class="conum" data-value="17"></i><b>(17)</b>
+  Class&lt;? extends PropertyDomainEvent&lt;?, ?&gt;&gt; propertyDomainEvent() default PropertyDomainEvent.Default.class;     <i class="conum" data-value="18"></i><b>(18)</b>
+  Class&lt;? extends CollectionDomainEvent&lt;?, ?&gt;&gt; collectionDomainEvent() default CollectionDomainEvent.Default.class;     <i class="conum" data-value="19"></i><b>(19)</b>
+}</code></pre>
 </div>
 </div>
 <div class="colist arabic">
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><a href="#autoCompleteRepository"><code>autoCompleteRepository()</code></a>
+<td><a href="#autoCompleteRepository">autoCompleteRepository</a>
+<div class="openblock">
+<div class="content">
 <div class="paragraph">
-<p>Nominate a method on a domain service to be used for looking up instances of the domain object</p>
+<p>The class of the domain service that provides an <code>autoComplete(String)</code> method.</p>
+</div>
+</div>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><a href="#autoCompleteAction"><code>autoCompleteAction()</code></a>
+<td><a href="#autoCompleteAction">autoCompleteAction</a>
+<div class="openblock">
+<div class="content">
 <div class="paragraph">
-<p>Override the method name to use on the auto-complete repository</p>
+<p>The method (despite its name, not necessarily an action) to use in order to perform the auto-complete search (defaults to "autoComplete").</p>
+</div>
+</div>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td><a href="#bounding"><code>bounding()</code></a>
+<td><a href="#bounding">bounding</a>
+<div class="openblock">
+<div class="content">
 <div class="paragraph">
-<p>Whether the number of instances of this domain class is relatively small (a "bounded" set), such that instances could be selected from a drop-down list box or similar.</p>
+<p>Indicates that the class has a bounded, or finite, set of instances.</p>
+</div>
+</div>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td><a href="#editing"><code>editing()</code></a>
+<td><a href="#editing">editing</a>
+<div class="openblock">
+<div class="content">
 <div class="paragraph">
-<p>Whether the object&#8217;s properties and collections can be edited or not (ie whether the instance should be considered to be immutable)</p>
+<p>Whether the properties of this domain object can be edited, or collections of this object be added to/removed from.</p>
+</div>
+</div>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
-<td><code>editingDisabledReason()</code>
+<td><a href="#editingDisabledReason">editingDisabledReason</a>
+<div class="openblock">
+<div class="content">
 <div class="paragraph">
-<p>The default reason why the object&#8217;s properties and collections cannot be edited.</p>
+<p>If <em>#editing()</em> is set to <em>Editing#DISABLED</em> , then the reason to provide to the user as to why the object&#8217;s properties cannot be edited/collections modified.</p>
+</div>
+</div>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="6"></i><b>6</b></td>
-<td><a href="#entityChangePublishing"><code>entityChangePublishing()</code></a>
+<td><a href="#entityChangePublishing">entityChangePublishing</a>
+<div class="openblock">
+<div class="content">
 <div class="paragraph">
-<p>Indicates whether each of the changed properties of an object should be submitted to the registered
-<a href="../applib-svc/AuditerService.html" class="page"><code>AuditerService</code></a>(s) and
-whether entity changes, captured as <code>ChangingEntities</code> should be published to <a href="#refguide:applib-svc:EntityChangesSubscriber.adoc" class="page unresolved"><code>EntityChangesSubscriber</code></a>(s). (Does only apply to entity objects.)</p>
+<p>Whether entity changes should be published to <em>org.apache.isis.applib.services.publishing.spi.EntityPropertyChangeSubscriber</em> s and whether entity changes, captured as <em>org.apache.isis.applib.services.publishing.spi.EntityChanges</em> , should be dispatched to <em>org.apache.isis.applib.services.publishing.spi.EntityChangesSubscriber</em> s.</p>
+</div>
+</div>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="7"></i><b>7</b></td>
-<td><a href="#mixinMethod"><code>mixinMethod()</code></a>
+<td><a href="#mixinMethod">mixinMethod</a>
+<div class="openblock">
+<div class="content">
 <div class="paragraph">
-<p>How to recognize the "reserved" method name, meaning that the mixin&#8217;s own name will be inferred from the mixin type.
-Typical examples are "exec", "execute", "invoke", "apply" and so on.
-The default "reserved" method name is <code>$$</code>.</p>
+<p>Applicable only if <em>#nature()</em> is <em>Nature#MIXIN</em> .</p>
+</div>
+</div>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="8"></i><b>8</b></td>
-<td><a href="#nature"><code>nature()</code></a>
+<td><a href="#nature">nature</a>
+<div class="openblock">
+<div class="content">
 <div class="paragraph">
-<p>Whether the domain object logically is an entity (part of the domain layer) or is a view model (part of the application layer); or is a mixin.
-If an entity, indicates how its persistence is managed.</p>
+<p>The nature of this domain object.</p>
+</div>
+</div>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="9"></i><b>9</b></td>
-<td><a href="#objectType"><code>objectType()</code></a>
+<td><a href="#objectType">objectType</a>
+<div class="openblock">
+<div class="content">
 <div class="paragraph">
-<p>Specify an alias for the domain class used to uniquely identify the object both within the Apache Isis runtime and externally</p>
+<p>Provides a unique abbreviation for the object type, eg "customer.Customer" for Customer.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="10"></i><b>10</b></td>
+<td><a href="#createdLifecycleEvent">createdLifecycleEvent</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Indicates that the loading of the domain object should be posted to the <em>org.apache.isis.applib.services.eventbus.EventBusService event bus</em> using a custom (subclass of) <a href="../../../system/latest/generated/index/applib/events/lifecycle/ObjectCreatedEvent.html" class="page">ObjectCreatedEvent</a> .</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="11"></i><b>11</b></td>
+<td><a href="#persistingLifecycleEvent">persistingLifecycleEvent</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Indicates that the loading of the domain object should be posted to the <em>org.apache.isis.applib.services.eventbus.EventBusService event bus</em> using a custom (subclass of) <a href="../../../system/latest/generated/index/applib/events/lifecycle/ObjectPersistingEvent.html" class="page">ObjectPersistingEvent</a> .</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="12"></i><b>12</b></td>
+<td><a href="#persistedLifecycleEvent">persistedLifecycleEvent</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Indicates that the loading of the domain object should be posted to the <em>org.apache.isis.applib.services.eventbus.EventBusService event bus</em> using a custom (subclass of) <a href="../../../system/latest/generated/index/applib/events/lifecycle/ObjectPersistedEvent.html" class="page">ObjectPersistedEvent</a> .</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="13"></i><b>13</b></td>
+<td><a href="#loadedLifecycleEvent">loadedLifecycleEvent</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Indicates that the loading of the domain object should be posted to the <em>org.apache.isis.applib.services.eventbus.EventBusService event bus</em> using a custom (subclass of) <a href="../../../system/latest/generated/index/applib/events/lifecycle/ObjectLoadedEvent.html" class="page">ObjectLoadedEvent</a> .</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="14"></i><b>14</b></td>
+<td><a href="#updatingLifecycleEvent">updatingLifecycleEvent</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Indicates that the loading of the domain object should be posted to the <em>org.apache.isis.applib.services.eventbus.EventBusService event bus</em> using a custom (subclass of) <a href="../../../system/latest/generated/index/applib/events/lifecycle/ObjectUpdatingEvent.html" class="page">ObjectUpdatingEvent</a> .</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="15"></i><b>15</b></td>
+<td><a href="#updatedLifecycleEvent">updatedLifecycleEvent</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Indicates that the loading of the domain object should be posted to the <em>org.apache.isis.applib.services.eventbus.EventBusService event bus</em> using a custom (subclass of) <a href="../../../system/latest/generated/index/applib/events/lifecycle/ObjectUpdatedEvent.html" class="page">ObjectUpdatedEvent</a> .</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="16"></i><b>16</b></td>
+<td><a href="#removingLifecycleEvent">removingLifecycleEvent</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Indicates that the loading of the domain object should be posted to the <em>org.apache.isis.applib.services.eventbus.EventBusService event bus</em> using a custom (subclass of) <a href="../../../system/latest/generated/index/applib/events/lifecycle/ObjectRemovingEvent.html" class="page">ObjectRemovingEvent</a> .</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="17"></i><b>17</b></td>
+<td><a href="#actionDomainEvent">actionDomainEvent</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Indicates that an invocation of <em>any</em> action of the domain object (that do not themselves specify their own <code>@Action(domainEvent=&#8230;&#8203;)</code> should be posted to the <em>org.apache.isis.applib.services.eventbus.EventBusService event bus</em> using the specified custom (subclass of) <a href="../../../system/latest/generated/index/applib/events/domain/ActionDomainEvent.html" class="page">ActionDomainEvent</a> .</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="18"></i><b>18</b></td>
+<td><a href="#propertyDomainEvent">propertyDomainEvent</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Indicates that changes to <em>any</em> property of the domain object (that do not themselves specify their own <code>@Property(domainEvent=&#8230;&#8203;)</code> should be posted to the <em>org.apache.isis.applib.services.eventbus.EventBusService event bus</em> using the specified custom (subclass of) <a href="../../../system/latest/generated/index/applib/events/domain/PropertyDomainEvent.html" class="page">PropertyDomainEvent</a> .</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="19"></i><b>19</b></td>
+<td><a href="#collectionDomainEvent">collectionDomainEvent</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Indicates that changes to <em>any</em> collection of the domain object (that do not themselves specify their own <code>@Collection(domainEvent=&#8230;&#8203;)</code> should be posted to the <em>org.apache.isis.applib.services.eventbus.EventBusService event bus</em> using a custom (subclass of) <a href="../../../system/latest/generated/index/applib/events/domain/CollectionDomainEvent.html" class="page">CollectionDomainEvent</a> .</p>
+</div>
+</div>
 </div></td>
 </tr>
 </table>
@@ -861,1161 +1011,252 @@ If an entity, indicates how its persistence is managed.</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="entity-lifecycle-api"><a class="anchor" href="#entity-lifecycle-api"></a>Entity Lifecycle API</h2>
+<h2 id="members"><a class="anchor" href="#members"></a>Members</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p>These attributes define the events to be fired throughout an the persistence lifecycle of a domain entity:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Unresolved include directive in modules/applib-ant/pages/DomainObject.adoc - include::refguide:applib-ant:example$annotation/DomainObject.java[]</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><a href="#createdLifecycleEvent"><code>createdLifecycleEvent()</code></a>
-<div class="paragraph">
-<p>The event type to be posted to the <a href="../applib-svc/EventBusService.html" class="page"><code>EventBusService</code></a> whenever an instance is created</p>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><a href="#persistingLifecycleEvent"><code>persistingLifecycleEvent()</code></a>
-<div class="paragraph">
-<p>The event type to be posted to whenever an instance is about to be persisted</p>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td><a href="#persistedLifecycleEvent"><code>persistedLifecycleEvent()</code></a>
-<div class="paragraph">
-<p>The event type to be posted whenever an instance has just been persisted</p>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td><a href="#loadedLifecycleEvent"><code>loadedLifecycleEvent()</code></a>
-<div class="paragraph">
-<p>The event type to be posted whenever an instance has just been loaded from the datastore</p>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td><a href="#removingLifecycleEvent"><code>removingLifecycleEvent()</code></a>
-<div class="paragraph">
-<p>The event type to be posted whenever an instance is about to be deleted</p>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
-<td><a href="#updatedLifecycleEvent"><code>updatedLifecycleEvent()</code></a>
-<div class="paragraph">
-<p>The event type to be posted whenever an instance has just been updated</p>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="7"></i><b>7</b></td>
-<td><a href="#updatingLifecycleEvent"><code>updatingLifecycleEvent()</code></a>
-<div class="paragraph">
-<p>The event type to be posted whenever an instance is about to be updated</p>
-</div></td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="domain-events-api"><a class="anchor" href="#domain-events-api"></a>Domain Events API</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>These attributes define the events to be fired when a domain object&#8217;s pathsToInclude (its actions, properties and collections) are interacted with.</p>
-</div>
-<div class="paragraph">
-<p>These attributes define the default event types; they can be overridden for each specific domain member.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Unresolved include directive in modules/applib-ant/pages/DomainObject.adoc - include::refguide:applib-ant:example$annotation/DomainObject.java[]</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><code>actionDomainEvent()</code>
-<div class="paragraph">
-<p>The event type to be posted to the <a href="../applib-svc/EventBusService.html" class="page"><code>EventBusService</code></a> whenever an action of the domain object is interacted with (if not overridden using <a href="Action.html#domainEvent" class="page"><code>@Action#domainEvent()</a></code>).</p>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><code>propertyDomainEvent()</code>
-<div class="paragraph">
-<p>The event type to be posted to the <a href="../applib-svc/EventBusService.html" class="page"><code>EventBusService</code></a> whenever a property of the domain object is interacted with (if not overridden using <a href="Property.html#domainEvent" class="page"><code>@Property#domainEvent()</a></code>).</p>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td><code>collectionDomainEvent()</code>
-<div class="paragraph">
-<p>The event type to be posted to the <a href="../applib-svc/EventBusService.html" class="page"><code>EventBusService</code></a> whenever a collection of the domain object is interacted with (if not overridden using <a href="Collection.html#domainEvent" class="page"><code>@Collection#domainEvent()</a></code>).</p>
-</div></td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(
-    auditing=Auditing.ENABLED,
-    autoCompleteRepository=CustomerRepository.class
-    editing=Editing.ENABLED,                            <i class="conum" data-value="1"></i><b>(1)</b>
-    updatedLifecycleEvent=Customer.UpdatedEvent.class
-
-)
-public class Customer {
-    ...
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>default value, so could be omitted</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="autoCompleteRepository"><a class="anchor" href="#autoCompleteRepository"></a><code>autoCompleteRepository()</code></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The <code>autoCompleteRepository</code> attribute nominates a single method on a domain service as the fallback means for looking up instances of the domain object using a simple string.</p>
-</div>
-<div class="paragraph">
-<p>For example, this might search for a customer by their name or number.
-Or it could search for a country based on its ISO-3 code or user-friendly name.</p>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>If you require additional control - for example restricting the returned results based on the object being interacted with - then use the <a href="../applib-methods/prefixes.html#autoComplete" class="page"><code>autoComplete&#8230;&#8203;()</code></a> supporting method instead.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(
-    autoCompleteRepository=CustomerRepository.class
-)
-public class Customer {
-   ....
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>where:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainService
-public class CustomerRepository {
-    List&lt;Customer&gt; autoComplete(String search);  <i class="conum" data-value="1"></i><b>(1)</b>
-    ...
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>is assumed to be called "autoComplete", and accepts a single string</td>
-</tr>
-</table>
-</div>
 <div class="sect2">
-<h3 id="autoCompleteAction"><a class="anchor" href="#autoCompleteAction"></a><code>autoCompleteAction()</code></h3>
+<h3 id="autoCompleteRepository"><a class="anchor" href="#autoCompleteRepository"></a>autoCompleteRepository</h3>
 <div class="paragraph">
-<p>As noted above, by default the method invoked on the repository is assumed to be called "autoComplete".
-The optional <code>autoCompleteAction</code> attribute allows the method on the repository to be overridden.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(
-    autoCompleteRepository=Customers.class,
-    autoCompleteAction="findByName"
-)
-public class Customer {
-   ....
-}</code></pre>
-</div>
+<p>The class of the domain service that provides an <code>autoComplete(String)</code> method.</p>
 </div>
 <div class="paragraph">
-<p>where in this case <code>findByName</code> might be an existing action already defined:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainService(nature = NatureOfService.VIEW)
-public class Customers {
-
-    @Action(semantics=SemanticsOf.SAFE)
-    public List&lt;Customer&gt; findByName(
-        @MinLength(3)                       <i class="conum" data-value="1"></i><b>(1)</b>
-        @ParameterLayout(named="name")
-        String name);
-    ...
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>end-user must enter minimum number of characters to trigger the query</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>The autocomplete "action" can also be a regular method, annotated using <a href="Programmatic.html" class="page"><code>@Programmatic</code></a>.
-That is, it does not need to be part of the metamodel:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainService(nature = NatureOfService.VIEW)
-public class Customers {
-    @Programmatic
-    public List&lt;Customer&gt; findByName(
-        @MinLength(3)
-        String name);
-    ...
-}</code></pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="bounding"><a class="anchor" href="#bounding"></a><code>bounding</code></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>r</p>
-</div>
-<div class="paragraph">
-<p>Some domain classes are immutable to the user, and moreover have only a fixed number of instances.
-Often these are "reference" ("standing") data, or lookup data/pick lists.
-Typical examples could include categories, countries, states, and tax or interest rate tables.</p>
-</div>
-<div class="paragraph">
-<p>Where the number of instances is relatively small, ie bounded, then the <code>bounding</code> attribute can be used as a hint.
-For such domain objects the framework will automatically allow instances to be selected; <a href="../../../vw/latest/about.html" class="page">Wicket viewer</a> displays these as a drop-down list.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(
-    bounding=Bounding.BOUNDED,
-    editing=Editing.DISABLED        <i class="conum" data-value="1"></i><b>(1)</b>
-)
-public class Currency {
-    ...
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>This attribute is commonly combined with <code>editing=DISABLED</code> to enforce the fact that reference data is immutable</td>
-</tr>
-</table>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>There is nothing to prevent you from using this attribute for regular mutable entities, and indeed this is sometimes worth doing during early prototyping.
-However, if there is no realistic upper bound to the number of instances of an entity that might be created, generally you should use <a href="../applib-methods/prefixes.html#autoComplete" class="page"><code>autoComplete&#8230;&#8203;()</code></a> supporting method or the <a href="#autoCompleteRepository"><code>@DomainObject#autoCompleteRepository</code></a> attribute instead.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="createdLifecycleEvent"><a class="anchor" href="#createdLifecycleEvent"></a><code>createdLifecycleEvent()</code></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Whenever a domain object is instantiated or otherwise becomes known to the framework, a "created" lifecycle event is fired.
-This is typically when the <a href="../applib-svc/FactoryService.html" class="page"><code>FactoryService</code></a>'s <code>viewModel(&#8230;&#8203;)</code> method is called.</p>
-</div>
-<div class="paragraph">
-<p>Subscribers subscribe through the <a href="../applib-svc/EventBusService.html" class="page"><code>EventBusService</code></a> and can use the event to obtain a reference to the object just created.
-The subscriber could then, for example, update the object, eg looking up state from some external datastore.</p>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>It&#8217;s possible to instantiate objects without firing this lifecycle; just instantiate using its regular constructor, and then use the <code>ServiceInjector</code>'s
-<a href="../applib-svc/ServiceInjector.html" class="page"><code>injectServicesInto(&#8230;&#8203;)</code></a> to manually inject any required domain services.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>By default the event raised is <code>ObjectCreatedEvent.Default</code>.
-For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject
-public class ToDoItemDto {
-    ...
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The purpose of the <code>createdLifecycleEvent</code> attribute is to allows a custom subclass to be emitted instead.
-A similar attribute is available for other lifecycle events.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObjectLayout(
-    createdLifecycleEvent=ToDoItem.CreatedEvent.class
-)
-public class ToDoItem {
-    public static class CreatedEvent
-        extends org.apache.isis.applib.events.lifecycle.ObjectCreatedEvent&lt;ToDoItem&gt; { }
-    ...
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The benefit is that subscribers can be more targeted as to the events that they subscribe to.</p>
-</div>
-<div class="sect2">
-<h3 id="subscribers"><a class="anchor" href="#subscribers"></a>Subscribers</h3>
-<div class="paragraph">
-<p>Subscribers (which must be domain services) subscribe to events posted through the <a href="../applib-svc/EventBusService.html" class="page"><code>EventBusService</code></a>.</p>
-</div>
-<div class="paragraph">
-<p>Subscribers can be either coarse-grained (if they subscribe to the top-level event type):</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.springframework.context.event.EventListener;
-import org.springframework.stereotype.Service;
-
-@Service
-public class SomeSubscriber {
-    @EventListener(ObjectCreatedEvent.class)
-    public void on(ObjectCreatedEvent ev) {
-        if(ev.getSource() instanceof ToDoItem) {
-            ...
-        }
-    }
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>or can be fine-grained (by subscribing to specific event subtypes):</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.springframework.context.event.EventListener;
-import org.springframework.stereotype.Service;
-
-@Service
-public class SomeSubscriber {
-    @EventListener(ToDoItem.ObjectCreatedEvent.class)
-    public void on(ToDoItem.ObjectCreatedEvent ev) {
-        ...
-    }
-}</code></pre>
-</div>
+<p>It is sufficient to specify an interface rather than a concrete type.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="default-doop-and-noop-events"><a class="anchor" href="#default-doop-and-noop-events"></a>Default, Doop and Noop events</h3>
+<h3 id="autoCompleteAction"><a class="anchor" href="#autoCompleteAction"></a>autoCompleteAction</h3>
 <div class="paragraph">
-<p>If the <code>createdLifecycleEvent</code> attribute is not explicitly specified (is left as its default value, <code>ObjectCreatedEvent.Default</code>), then the framework will, by default, post an event.</p>
-</div>
-<div class="paragraph">
-<p>If this is not required, then the <code>isis.reflector.facet.domainObjectAnnotation.createdLifecycleEvent.postForDefault</code> configuration property can be set to "false"; this will disable posting.</p>
+<p>The method (despite its name, not necessarily an action) to use in order to perform the auto-complete search (defaults to "autoComplete").</p>
 </div>
 <div class="paragraph">
-<p>On the other hand, if the <code>createdLifecycleEvent</code> has been explicitly specified to some subclass, then an event will be posted.
-The framework provides <code>ObjectCreatedEvent.Doop</code> as such a subclass, so setting the <code>createdLifecycleEvent</code> attribute to this class will ensure that the event to be posted, irrespective of the configuration property setting.</p>
-</div>
-<div class="paragraph">
-<p>And, conversely, the framework also provides <code>ObjectCreatedEvent.Noop</code>; if <code>createdLifecycleEvent</code> attribute is set to this class, then no event will be posted.</p>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="editing"><a class="anchor" href="#editing"></a><code>editing()</code></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The <code>editing</code> attribute determines whether a domain object&#8217;s properties and collections are not editable (are read-only).</p>
-</div>
-<div class="paragraph">
-<p>The default is <code>AS_CONFIGURED</code>, meaning that the <a href="../config/sections/isis.applib.html#isis.applib.annotation.domain-object.editing" class="page"><code>isis.applib.annotation.domain-object.editing</code></a>
-configuration property is used to determine the whether the object is modifiable:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>true</code><br>
-+ the object&#8217;s properties and collections are modifiable.</p>
-</li>
-<li>
-<p><code>false</code><br>
-+ the object&#8217;s properties and collections are read-only, ie <em>not</em> modifiable.</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>If there is no configuration property in <code>application.properties</code> then object are assumed to be modifiable.</p>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>In other words, editing can be disabled globally by setting the <a href="../config/sections/isis.applib.html#isis.applib.annotation.domain-object.editing" class="page"><code>isis.applib.adoc#isis.applib.annotation.domain-object.editing</code></a> configuration property:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">isis.applib.annotation.domain-object.editing=false</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>We recommend this setting; it will help drive out the underlying business operations (processes and procedures) that require objects to change; these can then be captured as business actions.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>This default can be overridden on an object-by-object basis; if <code>editing()</code> is set to <code>ENABLED</code> then the object&#8217;s properties and collections are editable irrespective of the configured value; if set to <code>DISABLED</code> then the object&#8217;s properties and collections are not editable irrespective of the configured value.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(
-    editing=Editing.DISABLED,
-    editingDisabledReason="Reference data, so cannot be modified"
-)
-public class Country {
-    ...
-}</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="entityChangePublishing"><a class="anchor" href="#entityChangePublishing"></a><code>entityChangePublishing()</code></h2>
-<div class="sectionbody">
-<div class="admonitionblock caution">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-caution" title="Caution"></i>
-</td>
-<td class="content">
-TODO: v2 - publishing/auditing got a complete overhaul
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>The <code>entityChangePublishing</code> attribute indicates that if the object is modified, then each of its changed properties should be submitted to the registered <a href="#refguide:applib-svc:EntityPropertyChangeSubscriber.adoc" class="page unresolved"><code>EntityPropertyChangeSubscriber</code></a>(s).</p>
-</div>
-<div class="paragraph">
-<p>The default value for the attribute is <code>AS_CONFIGURED</code>, meaning that the <a href="../config/sections/isis.applib.html#isis.applib.annotation.domain-object.propertyChangePublishing" class="page"><code>isis.applib.annotation.domain-object.propertyChangePublishing</code></a> configuration property is used to determine the whether the action is audited:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>all</code><br></p>
-<div class="paragraph">
-<p>all changed properties of objects are audited</p>
-</div>
-</li>
-<li>
-<p><code>none</code><br></p>
-<div class="paragraph">
-<p>no changed properties of objects are audited</p>
-</div>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>If there is no configuration property in <code>application.properties</code> then auditing is automatically enabled for domain objects.</p>
-</div>
-<div class="paragraph">
-<p>This default can be overridden on an object-by-object basis; if <code>entityChangePublishing()</code> is set to <code>ENABLED</code> then changed properties of instances of the domain class are audited irrespective of the configured value; if set to <code>DISABLED</code> then the changed properties of instances are <em>not</em> audited, again irrespective of the configured value.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(
-    entityChangePublishing=Publishing.ENABLED  <i class="conum" data-value="1"></i><b>(1)</b>
-)
-public class Customer {
-    ...
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>because set to enabled, will be audited irrespective of the configured value.</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="loadedLifecycleEvent"><a class="anchor" href="#loadedLifecycleEvent"></a><code>loadedLifecycleEvent()</code></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Whenever a persistent domain object is loaded from the database, a "loaded" lifecycle event is fired.</p>
-</div>
-<div class="paragraph">
-<p>Subscribers subscribe through the <a href="../applib-svc/EventBusService.html" class="page"><code>EventBusService</code></a> and can use the event to obtain a reference to the domain object just loaded.
-The subscriber could then, for example, update or default values on the object (eg to support on-the-fly migration scenarios).</p>
-</div>
-<div class="paragraph">
-<p>By default the event raised is <code>ObjectLoadedEvent.Default</code>.
-For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject
-public class ToDoItemDto {
-    ...
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The purpose of the <code>loadedLifecycleEvent</code> attribute is to allows a custom subclass to be emitted instead.
-A similar attribute is available for other lifecycle events.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObjectLayout(
-    loadedLifecycleEvent=ToDoItem.LoadedEvent.class
-)
-public class ToDoItem {
-    public static class LoadedEvent extends
-        org.apache.isis.applib.events.lifecycle.ObjectLoadedEvent&lt;ToDoItem&gt; { }
-    ...
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The benefit is that subscribers can be more targeted as to the events that they subscribe to.</p>
-</div>
-<div class="sect2">
-<h3 id="subscribers-2"><a class="anchor" href="#subscribers-2"></a>Subscribers</h3>
-<div class="paragraph">
-<p>Subscribers (which must be domain services) subscribe to events posted through the <a href="../applib-svc/EventBusService.html" class="page"><code>EventBusService</code></a>.</p>
-</div>
-<div class="paragraph">
-<p>Subscribers can be either coarse-grained (if they subscribe to the top-level event type):</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.springframework.context.event.EventListener;
-import org.springframework.stereotype.Service;
-
-@Service
-public class SomeSubscriber {
-    @EventListener(ObjectLoadedEvent.class)
-    public void on(ObjectLoadedEvent ev) {
-        if(ev.getSource() instanceof ToDoItem) {
-            ...
-         }
-    }
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>or can be fine-grained (by subscribing to specific event subtypes):</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.springframework.context.event.EventListener;
-import org.springframework.stereotype.Service;
-
-@Service
-public class SomeSubscriber {
-    @EventListener(ToDoItem.ObjectLoadedEvent.class)
-    public void on(ToDoItem.ObjectLoadedEvent ev) {
-        ...
-    }
-}</code></pre>
-</div>
+<p>The method is required to accept a single string parameter, and must return a list of the domain type.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="default-doop-and-noop-events-2"><a class="anchor" href="#default-doop-and-noop-events-2"></a>Default, Doop and Noop events</h3>
+<h3 id="bounding"><a class="anchor" href="#bounding"></a>bounding</h3>
 <div class="paragraph">
-<p>If the <code>loadedLifecycleEvent</code> attribute is not explicitly specified (is left as its default value, <code>ObjectLoadedEvent.Default</code>), then the framework will, by default, post an event.</p>
-</div>
-<div class="paragraph">
-<p>If this is not required, then the <code>isis.reflector.facet.domainObjectAnnotation.loadedLifecycleEvent.postForDefault</code> configuration property can be set to "false"; this will disable posting.</p>
+<p>Indicates that the class has a bounded, or finite, set of instances.</p>
 </div>
 <div class="paragraph">
-<p>On the other hand, if the <code>loadedLifecycleEvent</code> has been explicitly specified to some subclass, then an event will be posted.
-The framework provides <code>ObjectLoadedEvent.Doop</code> as such a subclass, so setting the <code>loadedLifecycleEvent</code> attribute to this class will ensure that the event to be posted, irrespective of the configuration property setting.</p>
+<p>Takes precedence over auto-complete.</p>
 </div>
 <div class="paragraph">
-<p>And, conversely, the framework also provides <code>ObjectLoadedEvent.Noop</code>; if <code>loadedLifecycleEvent</code> attribute is set to this class, then no event will be posted.</p>
+<p>Note: this replaces bounded=true|false prior to v2.x</p>
 </div>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="mixinMethod"><a class="anchor" href="#mixinMethod"></a><code>mixinMethod()</code></h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="editing"><a class="anchor" href="#editing"></a>editing</h3>
 <div class="paragraph">
-<p>The <code>mixinMethod</code> attribute specifies the name of the method to be treated as a "reserved" method name, meaning that the mixin&#8217;s name should instead be inferred from the mixin&#8217;s type.</p>
+<p>Whether the properties of this domain object can be edited, or collections of this object be added to/removed from.</p>
+</div>
+<div class="paragraph">
+<p>Note that non-editable objects can nevertheless have actions invoked upon them.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="editingDisabledReason"><a class="anchor" href="#editingDisabledReason"></a>editingDisabledReason</h3>
+<div class="paragraph">
+<p>If <em>#editing()</em> is set to <em>Editing#DISABLED</em> , then the reason to provide to the user as to why the object&#8217;s properties cannot be edited/collections modified.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="entityChangePublishing"><a class="anchor" href="#entityChangePublishing"></a>entityChangePublishing</h3>
+<div class="paragraph">
+<p>Whether entity changes should be published to <em>org.apache.isis.applib.services.publishing.spi.EntityPropertyChangeSubscriber</em> s and whether entity changes, captured as <em>org.apache.isis.applib.services.publishing.spi.EntityChanges</em> , should be dispatched to <em>org.apache.isis.applib.services.publishing.spi.EntityChangesSubscriber</em> s.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="mixinMethod"><a class="anchor" href="#mixinMethod"></a>mixinMethod</h3>
+<div class="paragraph">
+<p>Applicable only if <em>#nature()</em> is <em>Nature#MIXIN</em> .</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="nature"><a class="anchor" href="#nature"></a>nature</h3>
+<div class="paragraph">
+<p>The nature of this domain object.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="objectType"><a class="anchor" href="#objectType"></a>objectType</h3>
+<div class="paragraph">
+<p>Provides a unique abbreviation for the object type, eg "customer.Customer" for Customer.</p>
+</div>
+<div class="paragraph">
+<p>This value, if specified, is used in the serialized form of the object&#8217;s OID. An OID is used by the framework to unique identify an object over time (same concept as a URN).</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="createdLifecycleEvent"><a class="anchor" href="#createdLifecycleEvent"></a>createdLifecycleEvent</h3>
+<div class="paragraph">
+<p>Indicates that the loading of the domain object should be posted to the <em>org.apache.isis.applib.services.eventbus.EventBusService event bus</em> using a custom (subclass of) <a href="../../../system/latest/generated/index/applib/events/lifecycle/ObjectCreatedEvent.html" class="page">ObjectCreatedEvent</a> .</p>
+</div>
+<div class="paragraph">
+<p>This subclass must provide a no-arg constructor; the fields are set reflectively.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="persistingLifecycleEvent"><a class="anchor" href="#persistingLifecycleEvent"></a>persistingLifecycleEvent</h3>
+<div class="paragraph">
+<p>Indicates that the loading of the domain object should be posted to the <em>org.apache.isis.applib.services.eventbus.EventBusService event bus</em> using a custom (subclass of) <a href="../../../system/latest/generated/index/applib/events/lifecycle/ObjectPersistingEvent.html" class="page">ObjectPersistingEvent</a> .</p>
+</div>
+<div class="paragraph">
+<p>This subclass must provide a no-arg constructor; the fields are set reflectively.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="persistedLifecycleEvent"><a class="anchor" href="#persistedLifecycleEvent"></a>persistedLifecycleEvent</h3>
+<div class="paragraph">
+<p>Indicates that the loading of the domain object should be posted to the <em>org.apache.isis.applib.services.eventbus.EventBusService event bus</em> using a custom (subclass of) <a href="../../../system/latest/generated/index/applib/events/lifecycle/ObjectPersistedEvent.html" class="page">ObjectPersistedEvent</a> .</p>
+</div>
+<div class="paragraph">
+<p>This subclass must provide a no-arg constructor; the fields are set reflectively.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="loadedLifecycleEvent"><a class="anchor" href="#loadedLifecycleEvent"></a>loadedLifecycleEvent</h3>
+<div class="paragraph">
+<p>Indicates that the loading of the domain object should be posted to the <em>org.apache.isis.applib.services.eventbus.EventBusService event bus</em> using a custom (subclass of) <a href="../../../system/latest/generated/index/applib/events/lifecycle/ObjectLoadedEvent.html" class="page">ObjectLoadedEvent</a> .</p>
+</div>
+<div class="paragraph">
+<p>This subclass must provide a no-arg constructor; the fields are set reflectively.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="updatingLifecycleEvent"><a class="anchor" href="#updatingLifecycleEvent"></a>updatingLifecycleEvent</h3>
+<div class="paragraph">
+<p>Indicates that the loading of the domain object should be posted to the <em>org.apache.isis.applib.services.eventbus.EventBusService event bus</em> using a custom (subclass of) <a href="../../../system/latest/generated/index/applib/events/lifecycle/ObjectUpdatingEvent.html" class="page">ObjectUpdatingEvent</a> .</p>
+</div>
+<div class="paragraph">
+<p>This subclass must provide a no-arg constructor; the fields are set reflectively.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="updatedLifecycleEvent"><a class="anchor" href="#updatedLifecycleEvent"></a>updatedLifecycleEvent</h3>
+<div class="paragraph">
+<p>Indicates that the loading of the domain object should be posted to the <em>org.apache.isis.applib.services.eventbus.EventBusService event bus</em> using a custom (subclass of) <a href="../../../system/latest/generated/index/applib/events/lifecycle/ObjectUpdatedEvent.html" class="page">ObjectUpdatedEvent</a> .</p>
+</div>
+<div class="paragraph">
+<p>This subclass must provide a no-arg constructor; the fields are set reflectively.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="removingLifecycleEvent"><a class="anchor" href="#removingLifecycleEvent"></a>removingLifecycleEvent</h3>
+<div class="paragraph">
+<p>Indicates that the loading of the domain object should be posted to the <em>org.apache.isis.applib.services.eventbus.EventBusService event bus</em> using a custom (subclass of) <a href="../../../system/latest/generated/index/applib/events/lifecycle/ObjectRemovingEvent.html" class="page">ObjectRemovingEvent</a> .</p>
+</div>
+<div class="paragraph">
+<p>This subclass must provide a no-arg constructor; the fields are set reflectively.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="actionDomainEvent"><a class="anchor" href="#actionDomainEvent"></a>actionDomainEvent</h3>
+<div class="paragraph">
+<p>Indicates that an invocation of <em>any</em> action of the domain object (that do not themselves specify their own <code>@Action(domainEvent=&#8230;&#8203;)</code> should be posted to the <em>org.apache.isis.applib.services.eventbus.EventBusService event bus</em> using the specified custom (subclass of) <a href="../../../system/latest/generated/index/applib/events/domain/ActionDomainEvent.html" class="page">ActionDomainEvent</a> .</p>
 </div>
 <div class="paragraph">
 <p>For example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject
-public class Customer {
+<pre>@DomainObject(actionDomainEvent=SomeObject.GenericActionDomainEvent.class)
+public class SomeObject{
+    public static class GenericActionDomainEvent extends ActionDomainEvent&lt;Object&gt; { ... }
 
-    @DomainObject(
-        nature=Nature.MIXIN,                                <i class="conum" data-value="1"></i><b>(1)</b>
-        mixinMethod="execute"                               <i class="conum" data-value="2"></i><b>(2)</b>
-    )
-    public class placeOrder {
-
-        public Customer execute(Product p, int quantity) {  <i class="conum" data-value="3"></i><b>(3)</b>
-            // ...
-        }
-        public String disableExecute() {
-            // ...
-        }
-        public String validate0Execute() {
-            // ...
-        }
-    }
-
-)</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>This is a mixin.<br>
-Alternatively, could have used <a href="Action.html" class="page"><code>@Action</code></a>.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>This mixin is using a non-standard method.<br></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Same name as the specified mixinMethod.
-Alternatively, when using <a href="Action.html" class="page"><code>@Action</code></a> then method&#8217;s name defaults to <code>act</code>.</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>This allows all mixins to follow a similar convention, with the name of the mixin inferred entirely from its type ("placeOrder").</p>
-</div>
-<div class="paragraph">
-<p>When invoked programmatically, the code reads:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">someCustomer.new placeOrder().execute(someProduct, 3);</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="nature"><a class="anchor" href="#nature"></a><code>nature()</code></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The <code>nature</code> attribute is used to characterize the domain object as either an entity (part of the domain layer) or as a view model (part of the application layer).
-If the domain object should be thought of as an entity, it also captures how the persistence of that entity is managed.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(nature=Nature.VIEW_MODEL)
-public class PieChartAnalysis {
+    public void changeStartDate(final Date startDate) { ...}
     ...
-}</code></pre>
+}</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Specifically, the nature must be one of:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>NOT_SPECIFIED,</code></p>
-<div class="paragraph">
-<p>(the default); specifies no paricular semantics for the domain class.</p>
-</div>
-</li>
-<li>
-<p><code>JDO_ENTITY</code></p>
-<div class="paragraph">
-<p>indicates that the domain object is an entity whose persistence is managed internally by Apache Isis, using the JDO/DataNucleus objectstore.</p>
-</div>
-</li>
-<li>
-<p><code>MIXIN</code></p>
-<div class="paragraph">
-<p>indicates that the domain object is part of the domain layer, and is contributing behaviour to objects of some other type as a mixin (also known as a trait).</p>
+<p>This will result in all actions as a more specific type to use) to emit this event.</p>
 </div>
 <div class="paragraph">
-<p>For further discussion on using mixins, see <a href="../../../userguide/latest/fun/overview.html#mixins" class="page">mixins</a> in the user guide.</p>
+<p>This subclass must provide a no-arg constructor; the fields are set reflectively. It must also use <code>Object</code> as its generic type. This is to allow mixins to also emit the same event.</p>
 </div>
-</li>
-<li>
-<p><code>VIEW_MODEL</code></p>
+</div>
+<div class="sect2">
+<h3 id="propertyDomainEvent"><a class="anchor" href="#propertyDomainEvent"></a>propertyDomainEvent</h3>
 <div class="paragraph">
-<p>indicates that the domain object is conceptually part of the application layer, and exists to surfaces behaviour and/or state that is aggregate of one or more domain entities.</p>
-</div>
-<div class="paragraph">
-<p><em>Variant: External Entity</em></p>
-</div>
-<div class="paragraph">
-<p>Or indicates that the domain object is a wrapper/proxy/stub (choose your term) to an entity that is managed by some related external system.
-For example, the domain object may hold just the URI to a RESTful resource of some third party REST service, or the id of some system accessible over SOAP.</p>
-</div>
-<div class="paragraph">
-<p>The identity of an external entity is determined solely by the state of entity&#8217;s properties.
-The framework will automatically recreate the domain object each time it is interacted with.</p>
-</div>
-<div class="paragraph">
-<p><em>Variant: In-Memory Entity</em></p>
-</div>
-<div class="paragraph">
-<p>Or indicates that the domain object is a wrapper/proxy/stub to a "synthetic" entity, for example one that is constructed from some sort of internal memory data structure.</p>
-</div>
-<div class="paragraph">
-<p>The identity of an in-memory entity is determined solely by the state of entity&#8217;s properties.
-The framework will automatically recreate the domain object each time it is interacted with.</p>
-</div>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Those natures that indicate the domain object is an entity (of some sort or another) mean then that the domain object is considered to be part of the domain model layer.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>For <code>VIEW_MODEL</code> domain objects the state of the object is encoded into its internal OID (represented ultimately as its URL), and is recreated directly from that URL.</p>
-</div>
-<div class="paragraph">
-<p>Because this particular implementation was originally added to Apache Isis in support of view models, the term was also used for the logically different external entities and in-memory entities.</p>
-</div>
-<div class="paragraph">
-<p>The benefit of <code>nature()</code> is that it allows the developer to properly characterize the layer (domain vs application) that an entity lives, thus avoiding confusion as "view model" (the implementation technique) and "view model" (the application layer concept).</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>On the other hand, view models defined in this way do have some limitations; see <a href="view-models.html" class="page"><code>View Model</code></a> for further discussion.</p>
-</div>
-<div class="paragraph">
-<p>These limitations do <em>not</em> apply to <a href="../../../userguide/latest/fun/view-models.html#jaxb" class="page">JAXB</a> view models.
-If you are using view models heavily, you may wish to restrict yourself to just the JAXB flavour.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="persistedLifecycleEvent"><a class="anchor" href="#persistedLifecycleEvent"></a><code>persistedLifecycleEvent()</code></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Whenever a (just created, still transient) domain object has been saved (INSERTed in)to the database, a "persisted" lifecycle event is fired.</p>
-</div>
-<div class="paragraph">
-<p>Subscribers subscribe through the <a href="../applib-svc/EventBusService.html" class="page"><code>EventBusService</code></a> and can use the event to obtain a reference to the domain object.
-The subscriber could then, for example, maintain an external datastore.</p>
-</div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>The object should <em>not</em> be modified during the persisted callback.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>By default the event raised is <code>ObjectPersistedEvent.Default</code>.
-For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject
-public class ToDoItemDto {
-    ...
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The purpose of the <code>persistedLifecycleEvent</code> attribute is to allows a custom subclass to be emitted instead.
-A similar attribute is available for other lifecycle events.</p>
+<p>Indicates that changes to <em>any</em> property of the domain object (that do not themselves specify their own <code>@Property(domainEvent=&#8230;&#8203;)</code> should be posted to the <em>org.apache.isis.applib.services.eventbus.EventBusService event bus</em> using the specified custom (subclass of) <a href="../../../system/latest/generated/index/applib/events/domain/PropertyDomainEvent.html" class="page">PropertyDomainEvent</a> .</p>
 </div>
 <div class="paragraph">
 <p>For example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObjectLayout(
-    persistedLifecycleEvent=ToDoItem.PersistedEvent.class
-)
-public class ToDoItem {
+<pre>@DomainObject(propertyDomainEvent=SomeObject.GenericPropertyDomainEvent.class)
+public class SomeObject{
 
-    public static class PersistedEvent extends
-        org.apache.isis.applib.events.lifecycle.ObjectPersistedEvent&lt;ToDoItem&gt; { }
-
-    // ...
-}</code></pre>
+   public LocalDate getStartDate() { ...}
+}</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>The benefit is that subscribers can be more targeted as to the events that they subscribe to.</p>
-</div>
-<div class="sect2">
-<h3 id="subscribers-3"><a class="anchor" href="#subscribers-3"></a>Subscribers</h3>
-<div class="paragraph">
-<p>Subscribers (which must be domain services) subscribe to events posted through the <a href="../applib-svc/EventBusService.html" class="page"><code>EventBusService</code></a>.</p>
-</div>
-<div class="paragraph">
-<p>Subscribers can be either coarse-grained (if they subscribe to the top-level event type):</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.springframework.context.event.EventListener;
-import org.springframework.stereotype.Service;
-
-@Service
-public class SomeSubscriber {
-    @EventListener(ObjectPersistedEvent.class)
-    public void on(ObjectPersistedEvent ev) {
-        if(ev.getSource() instanceof ToDoItem) {
-            ...
-        }
-    }
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>or can be fine-grained (by subscribing to specific event subtypes):</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.springframework.context.event.EventListener;
-import org.springframework.stereotype.Service;
-
-@Service
-public class SomeSubscriber {
-    @EventListener(ToDoItem.ObjectPersistedEvent.class)
-    public void on(ToDoItem.ObjectPersistedEvent ev) {
-        ...
-    }
-}</code></pre>
-</div>
+<p>This subclass must provide a no-arg constructor; the fields are set reflectively. It must also use <code>Object</code> as its generic type. This is to allow mixins to also emit the same event.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="default-doop-and-noop-events-3"><a class="anchor" href="#default-doop-and-noop-events-3"></a>Default, Doop and Noop events</h3>
+<h3 id="collectionDomainEvent"><a class="anchor" href="#collectionDomainEvent"></a>collectionDomainEvent</h3>
 <div class="paragraph">
-<p>If the <code>persistedLifecycleEvent</code> attribute is not explicitly specified (is left as its default value, <code>ObjectPersistedEvent.Default</code>), then the framework will, by default, post an event.</p>
-</div>
-<div class="paragraph">
-<p>If this is not required, then the <code>isis.reflector.facet.domainObjectAnnotation.persistedLifecycleEvent.postForDefault</code> configuration property can be set to "false"; this will disable posting.</p>
-</div>
-<div class="paragraph">
-<p>On the other hand, if the <code>persistedLifecycleEvent</code> has been explicitly specified to some subclass, then an event will be posted.
-The framework provides <code>ObjectPersistedEvent.Doop</code> as such a subclass, so setting the <code>persistedLifecycleEvent</code> attribute to this class will ensure that the event to be posted, irrespective of the configuration property setting.</p>
-</div>
-<div class="paragraph">
-<p>And, conversely, the framework also provides <code>ObjectPersistedEvent.Noop</code>; if <code>persistedLifecycleEvent</code> attribute is set to this class, then no event will be posted.</p>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="persistingLifecycleEvent"><a class="anchor" href="#persistingLifecycleEvent"></a><code>persistingLifecycleEvent()</code></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Whenever a (just created, still transient) domain object is about to be saved (INSERTed in)to the database, a "persisting" lifecycle event is fired.</p>
-</div>
-<div class="paragraph">
-<p>Subscribers subscribe through the <a href="../applib-svc/EventBusService.html" class="page"><code>EventBusService</code></a> and can use the event to obtain a reference to the domain object.
-The subscriber could then, for example, update the object, or it could use it maintain an external datastore.
-One possible application is to maintain a full-text search database using <a href="https://lucene.apache.org/">Apache Lucene</a> or similar.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>Another use case is to maintain "last updated by"/"last updated at" properties.
-While you can roll your own, note that the framework provides built-in support for this use case through the <a href="../applib-classes/roles-mixins-contributees/roles.html#Timestampable" class="page"><code>Timestampable</code></a> role interface.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>By default the event raised is <code>ObjectPersistingEvent.Default</code>.
-For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject
-public class ToDoItemDto {
-    ...
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The purpose of the <code>persistingLifecycleEvent</code> attribute is to allows a custom subclass to be emitted instead.
-A similar attribute is available for other lifecycle events.</p>
+<p>Indicates that changes to <em>any</em> collection of the domain object (that do not themselves specify their own <code>@Collection(domainEvent=&#8230;&#8203;)</code> should be posted to the <em>org.apache.isis.applib.services.eventbus.EventBusService event bus</em> using a custom (subclass of) <a href="../../../system/latest/generated/index/applib/events/domain/CollectionDomainEvent.html" class="page">CollectionDomainEvent</a> .</p>
 </div>
 <div class="paragraph">
 <p>For example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObjectLayout(
-    persistingLifecycleEvent=ToDoItem.PersistingEvent.class
-)
-public class ToDoItem {
-
-    public static class PersistingEvent extends
-        org.apache.isis.applib.events.lifecycle.ObjectPersistingEvent&lt;ToDoItem&gt; { }
-
-    // ...
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The benefit is that subscribers can be more targeted as to the events that they subscribe to.</p>
-</div>
-<div class="sect2">
-<h3 id="subscribers-4"><a class="anchor" href="#subscribers-4"></a>Subscribers</h3>
-<div class="paragraph">
-<p>Subscribers (which must be domain services) subscribe to events posted through the <a href="../applib-svc/EventBusService.html" class="page"><code>EventBusService</code></a>.</p>
-</div>
-<div class="paragraph">
-<p>Subscribers can be either coarse-grained (if they subscribe to the top-level event type):</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.springframework.context.event.EventListener;
-import org.springframework.stereotype.Service;
-
-@Service
-public class SomeSubscriber {
-    @EventListener(ObjectPersistingEvent.class)
-    public void on(ObjectPersistingEvent ev) {
-        if(ev.getSource() instanceof ToDoItem) {
-            ...
-        }
-    }
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>or can be fine-grained (by subscribing to specific event subtypes):</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.springframework.context.event.EventListener;
-import org.springframework.stereotype.Service;
-
-@Service
-public class SomeSubscriber {
-    @EventListener(ToDoItem.ObjectPersistingEvent.class)
-    public void on(ToDoItem.ObjectPersistingEvent ev) {
-        // ...
-    }
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="default-doop-and-noop-events-4"><a class="anchor" href="#default-doop-and-noop-events-4"></a>Default, Doop and Noop events</h3>
-<div class="paragraph">
-<p>If the <code>persistingLifecycleEvent</code> attribute is not explicitly specified (is left as its default value, <code>ObjectPersistingEvent.Default</code>), then the framework will, by default, post an event.</p>
-</div>
-<div class="paragraph">
-<p>If this is not required, then the <code>isis.reflector.facet.domainObjectAnnotation.persistingLifecycleEvent.postForDefault</code> configuration property can be set to "false"; this will disable posting.</p>
-</div>
-<div class="paragraph">
-<p>On the other hand, if the <code>persistingLifecycleEvent</code> has been explicitly specified to some subclass, then an event will be posted.
-The framework provides <code>ObjectPersistingEvent.Doop</code> as such a subclass, so setting the <code>persistingLifecycleEvent</code> attribute to this class will ensure that the event to be posted, irrespective of the configuration property setting.</p>
-</div>
-<div class="paragraph">
-<p>And, conversely, the framework also provides <code>ObjectPersistingEvent.Noop</code>; if <code>persistingLifecycleEvent</code> attribute is set to this class, then no event will be posted.</p>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="objectType"><a class="anchor" href="#objectType"></a><code>objectType()</code></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The <code>objectType</code> attribute is used to provide a unique alias for the object&#8217;s class name.</p>
-</div>
-<div class="paragraph">
-<p>This value is used internally to generate a string representation of an objects identity (the <code>Oid</code>).
-This can appear in several contexts, including:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>as the value of <code>Bookmark#getObjectType()</code> and in the <code>toString()</code> value of <code>Bookmark</code>
-(see <a href="../applib-svc/BookmarkService.html" class="page"><code>BookmarkService</code></a>)</p>
-</li>
-<li>
-<p>in the serialization of <code>OidDto</code> in the <a href="#refguide:schema:cmd">command</a> and <a href="../schema/ixn.html" class="page">interaction</a> schemas</p>
-</li>
-<li>
-<p>in the URLs of the <a href="../../../vro/latest/about.html" class="page">RestfulObjects viewer</a></p>
-</li>
-<li>
-<p>in the URLs of the <a href="../../../vw/latest/about.html" class="page">Wicket viewer</a></p>
-</li>
-<li>
-<p>in XML snapshots generated by the <a href="../applib-svc/XmlSnapshotService.html" class="page"><code>XmlSnapshotService</code></a></p>
-</li>
-</ul>
-</div>
-<div class="sect2">
-<h3 id="examples"><a class="anchor" href="#examples"></a>Examples</h3>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(
-    objectType="orders.Order"
-)
+<pre>@DomainObject(collectionDomainEvent=Order.GenericCollectionDomainEvent.class)
 public class Order {
+
+  public SortedSet&lt;OrderLine&gt; getLineItems() { ...}
+}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This subclass must provide a no-arg constructor; the fields are set reflectively. It must also use <code>Object</code> as its generic type. This is to allow mixins to also emit the same event.</p>
+</div>
+<div class="paragraph">
+<p>//// TODO: v2: currently missing subpages for these attributes.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="view-models"><a class="anchor" href="#view-models"></a>View Models</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>@DomainObject(nature=VIEW_MODEL)</code> annotation, applied to a class, indicates that the class is a view model.</p>
+</div>
+<div class="paragraph">
+<p>View models are not persisted to the database, instead their state is encoded within their identity (ultimately represented in the URL).</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(nature=VIEW_MODEL)
+public class CustomerViewModel {
+    public CustomerViewModel() {}
+    public CustomerViewModel(String firstName, int lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
     ...
 }</code></pre>
 </div>
 </div>
-</div>
-<div class="sect2">
-<h3 id="precedence"><a class="anchor" href="#precedence"></a>Precedence</h3>
 <div class="paragraph">
-<p>The rules of precedence are:</p>
+<p>Although there are several ways to instantiate a view model, we recommend that they are instantiated using an N-arg constructor that initializes all relevant state.
+The <a href="../applib-svc/ServiceRegistry.html" class="page"><code>ServiceRegistry</code></a> can then be used to inject dependencies into the view model.
+For example:</p>
 </div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p><a href="Discriminator.html" class="page"><code>@Discriminator</code></a></p>
-</li>
-<li>
-<p><code>@DomainObject#objectType</code></p>
-</li>
-<li>
-<p><a href="PersistenceCapable.html" class="page"><code>@PersistenceCapable</code></a>, if at least the <code>schema</code> attribute is defined.</p>
-<div class="paragraph">
-<p>If both <code>schema</code> and <code>table</code> are defined, then the value is &#8220;schema.table&#8221;.
-If only <code>schema</code> is defined, then the value is &#8220;schema.className&#8221;.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Customer cust = ...
+CustomerViewModel vm = factoryService.viewModel(
+    new CustomerViewModel(cust.getFirstName(), cust.getLastName()));</code></pre>
 </div>
-</li>
-<li>
-<p>Fully qualified class name of the entity.</p>
-</li>
-</ol>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -2025,400 +1266,39 @@ If only <code>schema</code> is defined, then the value is &#8220;schema.classNam
 </td>
 <td class="content">
 <div class="paragraph">
-<p>This might be obvious, but to make explicit: we recommend that you always specify an object type for your domain objects.</p>
-</div>
-<div class="paragraph">
-<p>Otherwise, if you refactor your code (change class name or move package), then any externally held references to the OID of the object will break.
-At best this will require a data migration in the database; at worst it could cause external clients accessing data through the <a href="../../../vro/latest/about.html" class="page">Restful Objects</a> viewer to break.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>If the object type is not unique across all domain classes then the framework will fail-fast and fail to boot.
-An error message will be printed in the log to help you determine which classes have duplicate object tyoes.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="removingLifecycleEvent"><a class="anchor" href="#removingLifecycleEvent"></a><code>removingLifecycleEvent()</code></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>r
-:Notice: Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements. See the NOTICE file distributed with this work for additional information regarding copyright ownership. The ASF licenses this file to you under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at. <a href="http://www.apache.org/licenses/LICENSE-2.0" class="bare">http://www.apache.org/licenses/LICENSE-2.0</a> . Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR  CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
-:page-partial:</p>
-</div>
-<div class="paragraph">
-<p>Whenever a (persistent) domain object is about to be removed (DELETEd) from the database, a "removing" lifecycle event is fired.</p>
-</div>
-<div class="paragraph">
-<p>Subscribers subscribe through the <a href="../applib-svc/EventBusService.html" class="page"><code>EventBusService</code></a> and can use the event to obtain a reference to the domain object.
-The subscriber could then, for example, could use it maintain an external datastore.
-One possible application is to maintain a full-text search database using <a href="https://lucene.apache.org/">Apache Lucene</a> or similar.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>Another use case is to maintain "last updated by"/"last updated at" properties.
-While you can roll your own, note that the framework provides built-in support for this use case through the <a href="../applib-classes/roles-mixins-contributees/roles.html#Timestampable" class="page"><code>Timestampable</code></a> role interface.</p>
+<p>See this <a href="../../../userguide/latest/btb/hints-and-tips/view-model-instantiation.html" class="page">tip</a> for further discussion about instantiating view models.</p>
 </div>
 </td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>By default the event raised is <code>ObjectRemovingEvent.Default</code>.
-For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject
-public class ToDoItemDto {
-    ...
-}</code></pre>
-</div>
+<p>View models must have a no-arg constructor; this is used internally by the framework for subsequent "recreation".</p>
 </div>
 <div class="paragraph">
-<p>The purpose of the <code>removingLifecycleEvent</code> attribute is to allows a custom subclass to be emitted instead.
-A similar attribute is available for other lifecycle events.</p>
+<p>The view model&#8217;s memento will be derived from the value of the view model object&#8217;s properties.
+Any properties annotated with <a href="Programmatic.html" class="page"><code>@Programmatic</code></a> will be excluded from the memento.
+Properties that are merely <a href="Property.html#hidden" class="page">hidden</a> <em>are</em> included in the memento.</p>
 </div>
 <div class="paragraph">
-<p>For example:</p>
+<p>View models when defined using <code>@DomainObject(nature=VIEW_MODEL)</code> have some limitations:</p>
 </div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObjectLayout(
-    removingLifecycleEvent=ToDoItem.RemovingEvent.class
-)
-public class ToDoItem {
-
-    public static class RemovingEvent extends
-        org.apache.isis.applib.events.lifecycle.ObjectRemovingEvent&lt;ToDoItem&gt; { }
-
-    // ...
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The benefit is that subscribers can be more targeted as to the events that they subscribe to.</p>
-</div>
-<div class="sect2">
-<h3 id="subscribers-5"><a class="anchor" href="#subscribers-5"></a>Subscribers</h3>
-<div class="paragraph">
-<p>Subscribers (which must be domain services) subscribe to events posted through the <a href="../applib-svc/EventBusService.html" class="page"><code>EventBusService</code></a>.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>view models cannot hold collections other view models (simple properties <em>are</em> supported, though)</p>
+</li>
+<li>
+<p>collections (of either view models or entities) are ignored.</p>
+</li>
+<li>
+<p>not every data type is supported,</p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
-<p>Subscribers can be either coarse-grained (if they subscribe to the top-level event type):</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.springframework.context.event.EventListener;
-import org.springframework.stereotype.Service;
-
-@Service
-public class SomeSubscriber {
-    @EventListener(ObjectRemovingEvent.class)
-    public void on(ObjectRemovingEvent ev) {
-        if(ev.getSource() instanceof ToDoItem) {
-            ...
-        }
-    }
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>or can be fine-grained (by subscribing to specific event subtypes):</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.springframework.context.event.EventListener;
-import org.springframework.stereotype.Service;
-
-@Service
-public class SomeSubscriber {
-    @EventListener(ToDoItem.ObjectRemovingEvent.class)
-    public void on(ToDoItem.ObjectRemovingEvent ev) {
-        ...
-    }
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="default-doop-and-noop-events-5"><a class="anchor" href="#default-doop-and-noop-events-5"></a>Default, Doop and Noop events</h3>
-<div class="paragraph">
-<p>If the <code>removingLifecycleEvent</code> attribute is not explicitly specified (is left as its default value, <code>ObjectRemovingEvent.Default</code>), then the framework will, by default, post an event.</p>
-</div>
-<div class="paragraph">
-<p>If this is not required, then the <code>isis.reflector.facet.domainObjectAnnotation.removingLifecycleEvent.postForDefault</code> configuration property can be set to "false"; this will disable posting.</p>
-</div>
-<div class="paragraph">
-<p>On the other hand, if the <code>removingLifecycleEvent</code> has been explicitly specified to some subclass, then an event will be posted.
-The framework provides <code>ObjectRemovingEvent.Doop</code> as such a subclass, so setting the <code>removingLifecycleEvent</code> attribute to this class will ensure that the event to be posted, irrespective of the configuration property setting.</p>
-</div>
-<div class="paragraph">
-<p>And, conversely, the framework also provides <code>ObjectRemovingEvent.Noop</code>; if <code>removingLifecycleEvent</code> attribute is set to this class, then no event will be posted.</p>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="updatingLifecycleEvent"><a class="anchor" href="#updatingLifecycleEvent"></a><code>updatingLifecycleEvent()</code></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Whenever a (persistent) domain object has been modified and is about to be updated to the database, an "updating" lifecycle event is fired.</p>
-</div>
-<div class="paragraph">
-<p>Subscribers subscribe through the <a href="../applib-svc/EventBusService.html" class="page"><code>EventBusService</code></a> and can use the event to obtain a reference to the domain object.
-The subscriber could then, for example, update the object, or it could use it maintain an external datastore.
-One possible application is to maintain a full-text search database using <a href="https://lucene.apache.org/">Apache Lucene</a> or similar.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>Another use case is to maintain "last updated by"/"last updated at" properties.
-While you can roll your own, note that the framework provides built-in support for this use case through the
-<a href="../applib-classes/roles-mixins-contributees/roles.html#Timestampable" class="page"><code>Timestampable</code></a> role interface.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>By default the event raised is <code>ObjectUpdatingEvent.Default</code>.
-For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject
-public class ToDoItemDto {
-    ...
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The purpose of the <code>updatingLifecycleEvent</code> attribute is to allows a custom subclass to be emitted instead.
-A similar attribute is available for other lifecycle events.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObjectLayout(
-    updatingLifecycleEvent=ToDoItem.UpdatingEvent.class
-)
-public class ToDoItem {
-
-    public static class UpdatingEvent extends
-        org.apache.isis.applib.events.lifecycle.ObjectUpdatingEvent&lt;ToDoItem&gt; { }
-
-    // ...
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The benefit is that subscribers can be more targeted as to the events that they subscribe to.</p>
-</div>
-<div class="sect2">
-<h3 id="subscribers-6"><a class="anchor" href="#subscribers-6"></a>Subscribers</h3>
-<div class="paragraph">
-<p>Subscribers (which must be domain services) subscribe to events posted through the <a href="../applib-svc/EventBusService.html" class="page"><code>EventBusService</code></a>.</p>
-</div>
-<div class="paragraph">
-<p>Subscribers can be either coarse-grained (if they subscribe to the top-level event type):</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.springframework.context.event.EventListener;
-import org.springframework.stereotype.Service;
-
-@Service
-public class SomeSubscriber {
-    @EventListener(ObjectUpdatingEvent.class)
-    public void on(ObjectUpdatingEvent ev) {
-        if(ev.getSource() instanceof ToDoItem) {
-            ...
-        }
-    }
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>or can be fine-grained (by subscribing to specific event subtypes):</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.springframework.context.event.EventListener;
-import org.springframework.stereotype.Service;
-
-@Service
-public class SomeSubscriber {
-    @EventListener(ToDoItem.ObjectUpdatingEvent.class)
-    public void on(ToDoItem.ObjectUpdatingEvent ev) {
-        ...
-    }
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="default-doop-and-noop-events-6"><a class="anchor" href="#default-doop-and-noop-events-6"></a>Default, Doop and Noop events</h3>
-<div class="paragraph">
-<p>If the <code>updatingLifecycleEvent</code> attribute is not explicitly specified (is left as its default value, <code>ObjectUpdatingEvent.Default</code>), then the framework will, by default, post an event.</p>
-</div>
-<div class="paragraph">
-<p>If this is not required, then the <code>isis.reflector.facet.domainObjectAnnotation.updatingLifecycleEvent.postForDefault</code> configuration property can be set to "false"; this will disable posting.</p>
-</div>
-<div class="paragraph">
-<p>On the other hand, if the <code>updatingLifecycleEvent</code> has been explicitly specified to some subclass, then an event will be posted.
-The framework provides <code>ObjectUpdatingEvent.Doop</code> as such a subclass, so setting the <code>updatingLifecycleEvent</code> attribute to this class will ensure that the event to be posted, irrespective of the configuration property setting.</p>
-</div>
-<div class="paragraph">
-<p>And, conversely, the framework also provides <code>ObjectUpdatingEvent.Noop</code>; if <code>updatingLifecycleEvent</code> attribute is set to this class, then no event will be posted.</p>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="updatedLifecycleEvent"><a class="anchor" href="#updatedLifecycleEvent"></a><code>updatedLifecycleEvent()</code></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Whenever a (persistent) domain object has been modified and has been updated in the database, an "updated" lifecycle event is fired.</p>
-</div>
-<div class="paragraph">
-<p>Subscribers subscribe through the <a href="../applib-svc/EventBusService.html" class="page"><code>EventBusService</code></a> and can use the event to obtain a reference to the domain object.</p>
-</div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>The object should <em>not</em> be modified during the updated callback.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>By default the event raised is <code>ObjectUpdatedEvent.Default</code>.
-For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject
-public class ToDoItemDto {
-    ...
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The purpose of the <code>updatedLifecycleEvent</code> attribute is to allows a custom subclass to be emitted instead.
-A similar attribute is available for other lifecycle events.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObjectLayout(
-    updatedLifecycleEvent=ToDoItem.UpdatedEvent.class
-)
-public class ToDoItem {
-
-    public static class UpdatedEvent extends
-        org.apache.isis.applib.events.lifecycle.ObjectUpdatedEvent&lt;ToDoItem&gt; { }
-
-    // ...
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The benefit is that subscribers can be more targeted as to the events that they subscribe to.</p>
-</div>
-<div class="sect2">
-<h3 id="subscribers-7"><a class="anchor" href="#subscribers-7"></a>Subscribers</h3>
-<div class="paragraph">
-<p>Subscribers (which must be domain services) subscribe to events posted through the <a href="../applib-svc/EventBusService.html" class="page"><code>EventBusService</code></a>.</p>
-</div>
-<div class="paragraph">
-<p>Subscribers can be either coarse-grained (if they subscribe to the top-level event type):</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.springframework.context.event.EventListener;
-import org.springframework.stereotype.Service;
-
-@Service
-public class SomeSubscriber {
-    @EventListener(ObjectUpdatedEvent.clas)
-    public void on(ObjectUpdatedEvent ev) {
-        if(ev.getSource() instanceof ToDoItem) {
-            ...
-        }
-    }
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>or can be fine-grained (by subscribing to specific event subtypes):</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.springframework.context.event.EventListener;
-import org.springframework.stereotype.Service;
-
-@Service
-public class SomeSubscriber {
-    @EventListener(ToDoItem.ObjectUpdatedEvent.class)
-    public void on(ToDoItem.ObjectUpdatedEvent ev) {
-        ...
-    }
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="default-doop-and-noop-events-7"><a class="anchor" href="#default-doop-and-noop-events-7"></a>Default, Doop and Noop events</h3>
-<div class="paragraph">
-<p>If the <code>updatedLifecycleEvent</code> attribute is not explicitly specified (is left as its default value, <code>ObjectUpdatedEvent.Default</code>), then the framework will, by default, post an event.</p>
-</div>
-<div class="paragraph">
-<p>If this is not required, then the <code>isis.reflector.facet.domainObjectAnnotation.updatedLifecycleEvent.postForDefault</code> configuration property can be set to "false"; this will disable posting.</p>
-</div>
-<div class="paragraph">
-<p>On the other hand, if the <code>updatedLifecycleEvent</code> has been explicitly specified to some subclass, then an event will be posted.
-The framework provides <code>ObjectUpdatedEvent.Doop</code> as such a subclass, so setting the <code>updatedLifecycleEvent</code> attribute to this class will ensure that the event to be posted, irrespective of the configuration property setting.</p>
-</div>
-<div class="paragraph">
-<p>And, conversely, the framework also provides <code>ObjectUpdatedEvent.Noop</code>; if <code>updatedLifecycleEvent</code> attribute is set to this class, then no event will be posted.</p>
-</div>
+<p>However, these limitations do <em>not</em> apply to <a href="../../../userguide/latest/fun/view-models.html#jaxb" class="page">JAXB</a> view models.
+If you are using view models heavily, you may wish to restrict yourself to just the JAXB flavour.</p>
 </div>
 </div>
 </div>
@@ -2439,7 +1319,7 @@ The framework provides <code>ObjectUpdatedEvent.Doop</code> as such a subclass, 
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210206-0423-c599190c</p>
+            <p>Revision: 2.0.0-M4.20210208-0426-5bd84665</p>
         </div>
     </div>
 </footer>

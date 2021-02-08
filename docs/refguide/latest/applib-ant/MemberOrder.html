@@ -240,7 +240,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="PropertyLayout.html">PropertyLayout</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="IsisSessionScope.html">RequestScoped</a>
+    <a class="nav-link" href="InteractionScope.html">RequestScoped</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="Title.html">Title</a>
@@ -312,7 +312,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../applib-svc/ApplicationFeatureRepository.html">ApplicationFeatureRepository</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../applib-svc/AuditerService.html">AuditerService</a>
+    <a class="nav-link" href="#refguide:applib-svc:AuditerService.adoc">AuditerService</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../applib-svc/BookmarkService.html">BookmarkService</a>
@@ -758,36 +758,90 @@ page.parent doesn't seem to be set...
 </div>
 <article class="doc">
     <a name="section-top"></a>
-<h1 class="page"><code>@MemberOrder</code></h1>
+<h1 class="page">@MemberOrder</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>The <code>@MemberOrder</code> annotation is used to specify the relative order of domain object pathsToInclude, that is: properties, collections and actions.</p>
+<p>Indicates the position a method should be placed in.</p>
 </div>
+<div class="paragraph">
+<p>An alternative is to use the <code>Xxx.layout.xml</code> file, where <code>Xxx</code> is the domain object name.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="api"><a class="anchor" href="#api"></a>API</h2>
+<div class="sectionbody">
 <div class="listingblock">
+<div class="title">MemberOrder.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Unresolved include directive in modules/applib-ant/pages/MemberOrder.adoc - include::refguide:applib-ant:example$annotation/MemberOrder.java[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@interface MemberOrder {
+  String name() default "";     <i class="conum" data-value="1"></i><b>(1)</b>
+  String sequence();     <i class="conum" data-value="2"></i><b>(2)</b>
+}</code></pre>
 </div>
 </div>
 <div class="colist arabic">
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><a href="#name"><code>name()</code></a>
+<td><a href="#name">name</a>
+<div class="openblock">
+<div class="content">
 <div class="paragraph">
-<p>Names a group of (property) pathsToInclude.
-All properties with this name will be grouped together.</p>
+<p>Groups or associate members with each other.</p>
+</div>
+</div>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><a href="#sequence"><code>sequence()</code></a>
+<td><a href="#sequence">sequence</a>
+<div class="openblock">
+<div class="content">
 <div class="paragraph">
-<p>Defines an ordering for pathsToInclude, within their container.</p>
+<p>The order of this member relative to other members in the same group, in Dewey-decimal notation. For collections this is relative to each other (collections aren&#8217;t grouped).</p>
+</div>
+</div>
 </div></td>
 </tr>
 </table>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="members"><a class="anchor" href="#members"></a>Members</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="name"><a class="anchor" href="#name"></a>name</h3>
+<div class="paragraph">
+<p>Groups or associate members with each other.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>For actions, indicates the property or collection to associate.</p>
+</li>
+<li>
+<p>For properties, indicates the property group</p>
+</li>
+<li>
+<p>For collections, currently has no meaning</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="sequence"><a class="anchor" href="#sequence"></a>sequence</h3>
+<div class="paragraph">
+<p>The order of this member relative to other members in the same group, in Dewey-decimal notation. For collections this is relative to each other (collections aren&#8217;t grouped).</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="notes"><a class="anchor" href="#notes"></a>Notes</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>As this is an important topic, there is <a href="../../../userguide/latest/fun/ui.html#object-layout" class="page">chapter</a> in the user guide that discusses object layout in full.</p>
 </div>
@@ -800,152 +854,11 @@ All properties with this name will be grouped together.</p>
 <td class="content">
 <div class="paragraph">
 <p>The annotation is one of a handful (others including <a href="Collection.html" class="page"><code>@Collection</code></a>, <a href="CollectionLayout.html" class="page"><code>@CollectionLayout</code></a>, <a href="Property.html" class="page"><code>@Property</code></a>) and <a href="PropertyLayout.html" class="page"><code>@PropertyLayout</code></a> that can also be applied to the field, rather than the getter method.
- This is specifically so that boilerplate-busting tools such as <a href="https://projectlombok.org/">Project Lombok</a> can be used.</p>
+This is specifically so that boilerplate-busting tools such as <a href="https://projectlombok.org/">Project Lombok</a> can be used.</p>
 </div>
 </td>
 </tr>
 </table>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="name"><a class="anchor" href="#name"></a><code>name()</code></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The interpretation of the <code>name</code> attribute varies dependent on the type of object member it is annotated upon.</p>
-</div>
-<div class="sect2">
-<h3 id="properties"><a class="anchor" href="#properties"></a>Properties</h3>
-<div class="paragraph">
-<p>For properties, the <code>name</code> attribute is used to group properties together.
-It corresponds to a <code>&lt;fieldset&gt;</code> if using <a href="../../../userguide/latest/fun/ui.html#object-layout" class="page">layout files</a>.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
-import lombok.Setter;
-
-public class Customer {
-
-    @MemberOrder(name = "Personal Details", sequence = "1.0")
-    private String firstName;
-
-    @MemberOrder(name = "Personal Details", sequence = "2.0")
-    private String lastName;
-
-    @MemberOrder(name = "Address", sequence = "1.0")
-    private String addressLine1;
-
-    @MemberOrder(name = "Address", sequence = "2.0")
-    private String addressLine2;
-
-    @MemberOrder(name = "Address", sequence = "3.0")
-    private String city;
-
-    @MemberOrder(name = "Address", sequence = "4.0")
-    private String zipCode;
-
-    // ...
-}</code></pre>
-</div>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-It&#8217;s possible to combine <code>@MemberOrder</code> with <a href="../../../userguide/latest/fun/ui.html#object-layout" class="page">layout file</a>.
-Use the layout file to define the positioning of the fieldsets, and use <code>@MemberOrder</code> to organise the properties within the fieldset.
-</td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect2">
-<h3 id="actions"><a class="anchor" href="#actions"></a>Actions</h3>
-<div class="paragraph">
-<p>For actions, the <code>name</code> attribute indicates the name of a property to associate the action with.</p>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-For actions, <code>@Member#name()</code> and xref:refguide:applib-ant:Action.adoc#associateWith()` are the same.
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
-import lombok.Setter;
-
-public class Customer {
-
-    @MemberOrder(name = "Personal Details")
-    public Customer updateName(String firstName, String lastName) {
-        // ...
-    }
-
-    @MemberOrder(name = "Address")
-    public Customer changeAddress(String firstName, String lastName) {
-        // ...
-    }
-
-    // ...
-}</code></pre>
-</div>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-the <a href="ActionLayout.html#position" class="page"><code>@ActionLayout#position()</code></a> to indicate whether the action should be rendered beneath the property, or on its fieldset panel&#8217;s header.
-</td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect2">
-<h3 id="collections"><a class="anchor" href="#collections"></a>Collections</h3>
-<div class="paragraph">
-<p>The <code>name</code> attribute is ignored when annotated on collections.</p>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="sequence"><a class="anchor" href="#sequence"></a><code>sequence()</code></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The <code>sequence</code> attribute orders pathsToInclude that have been grouped together.</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>For properties, this means ordering properties within a property group (fieldset)</p>
-</li>
-<li>
-<p>For actions, it means ordering actions that have been associated with the same property (or panel of that property&#8217;s fieldset).</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>For more on layouts, see the <a href="../../../userguide/latest/fun/ui.html#object-layout" class="page">object layout</a> chapter in the user guide.</p>
 </div>
 </div>
 </div>
@@ -966,7 +879,7 @@ the <a href="ActionLayout.html#position" class="page"><code>@ActionLayout#positi
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210206-0423-c599190c</p>
+            <p>Revision: 2.0.0-M4.20210208-0426-5bd84665</p>
         </div>
     </div>
 </footer>

@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>JdoSupportService : interface :: Apache Isis</title>
+    <title>Untitled :: Apache Isis</title>
     <meta name="generator" content="Antora 2.3.4">
     <link rel="stylesheet" href="../../../../../../../../_/css/site.css">
     <link rel="stylesheet" href="../../../../../../../../_/css/site-custom.css">
@@ -353,50 +353,34 @@ page.parent doesn't seem to be set...
 <button class="nav-toggle"></button>
   <a href="../../../../../../../../docs/latest/about.html" class="home-link"></a>
 <nav class="breadcrumbs" aria-label="breadcrumbs">
-  <ul>
-    <li><a href="../../../../../system-overview.html">System Overview</a></li>
-    <li><a href="JdoSupportService.html">JdoSupportService : <em>interface</em></a></li>
-  </ul>
 </nav>
   <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/master/antora/components/system/modules/generated/pages/index/persistence/jdo/applib/integration/JdoSupportService.adoc">Edit</a></div>
 </div>
 <article class="doc">
     <a name="section-top"></a>
-<h1 class="page">JdoSupportService : <em>interface</em></h1>
 <div class="paragraph">
 <p>Primarily provides access to the current thread&#8217;s <em>PersistenceManagerFactory</em> and hence also the current thread&#8217;s <em>PersistenceManager</em> .</p>
 </div>
+<div class="sect1">
+<h2 id="api"><a class="anchor" href="#api"></a>API</h2>
+<div class="sectionbody">
 <div class="listingblock">
-<div class="title">Java Sources</div>
+<div class="title">JdoSupportService.java</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">interface JdoSupportService {
-
   PersistenceManagerFactory getPersistenceManagerFactory()
-
-  T refresh(T domainObject) <i class="conum" data-value="1"></i><b>(1)</b>
-
+  T refresh(T domainObject)     <i class="conum" data-value="1"></i><b>(1)</b>
   void ensureLoaded(Collection&lt;?&gt; collectionOfDomainObjects)
-
   List&lt;Map&lt;String, Object&gt;&gt; executeSql(String sql)
-
   Integer executeUpdate(String sql)
-
-  void deleteAll(Class&lt;?&gt;... pcClasses) <i class="conum" data-value="2"></i><b>(2)</b>
-
-  List&lt;T&gt; executeQuery(final Class&lt;T&gt; cls, final BooleanExpression filter) <i class="conum" data-value="3"></i><b>(3)</b>
-
+  void deleteAll(Class&lt;?&gt;... pcClasses)     <i class="conum" data-value="2"></i><b>(2)</b>
+  List&lt;T&gt; executeQuery(final Class&lt;T&gt; cls, final BooleanExpression filter)     <i class="conum" data-value="3"></i><b>(3)</b>
   List&lt;T&gt; executeQuery(final Class&lt;T&gt; cls)
-
-  T executeQueryUnique(final Class&lt;T&gt; cls, final BooleanExpression filter) <i class="conum" data-value="4"></i><b>(4)</b>
-
+  T executeQueryUnique(final Class&lt;T&gt; cls, final BooleanExpression filter)     <i class="conum" data-value="4"></i><b>(4)</b>
   T executeQueryUnique(final Class&lt;T&gt; cls)
-
-  JDOQLTypedQuery&lt;T&gt; newTypesafeQuery(Class&lt;T&gt; cls) <i class="conum" data-value="5"></i><b>(5)</b>
-
-  void disableMultivaluedFetch(JDOQLTypedQuery&lt;?&gt; query) <i class="conum" data-value="6"></i><b>(6)</b>
-
-  void disableMultivaluedFetch(Query&lt;?&gt; query) <i class="conum" data-value="7"></i><b>(7)</b>
-
+  JDOQLTypedQuery&lt;T&gt; newTypesafeQuery(Class&lt;T&gt; cls)     <i class="conum" data-value="5"></i><b>(5)</b>
+  void disableMultivaluedFetch(JDOQLTypedQuery&lt;?&gt; query)     <i class="conum" data-value="6"></i><b>(6)</b>
+  void disableMultivaluedFetch(Query&lt;?&gt; query)     <i class="conum" data-value="7"></i><b>(7)</b>
   PersistenceManager getPersistenceManager()
 }</code></pre>
 </div>
@@ -405,9 +389,90 @@ page.parent doesn't seem to be set...
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><code><span class="teal"><strong>refresh</strong></span>&lt;T&gt;(T domainObject)</code> : <code>T</code>
+<td><a href="#refresh">refresh</a>
 <div class="openblock">
 <div class="content">
+<div class="paragraph">
+<p>Force a reload (corresponding to the JDO <code>PersistenceManager</code> 's <code>refresh()</code> method) of a domain objects.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><a href="#deleteAll">deleteAll</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Force the deletion of all instances of the specified class.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><a href="#executeQuery">executeQuery</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>To perform the most common use-case of executing a (type-safe) query against the specified class, filtering using the provided <em>BooleanExpression</em> , then automatically cloning the returned list and closing the query.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><a href="#executeQueryUnique">executeQueryUnique</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>To perform a common use-case of executing a (type-safe) query against the specified class, filtering a unique match using the provided <em>BooleanExpression</em> , then returning the result and closing the query.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><a href="#newTypesafeQuery">newTypesafeQuery</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>To support the execution of type-safe queries using DataNucleus' lower-level APIs (eg for group by and so on).</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td><a href="#disableMultivaluedFetch">disableMultivaluedFetch</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Fetch Optimization</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td><a href="#disableMultivaluedFetch">disableMultivaluedFetch</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Fetch Optimization</p>
+</div>
+</div>
+</div></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="members"><a class="anchor" href="#members"></a>Members</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="refresh"><a class="anchor" href="#refresh"></a>refresh</h3>
 <div class="paragraph">
 <p>Force a reload (corresponding to the JDO <code>PersistenceManager</code> 's <code>refresh()</code> method) of a domain objects.</p>
 </div>
@@ -418,13 +483,8 @@ page.parent doesn't seem to be set...
 <p>The particular example that led to this method being added was a 1:m bidirectional relationship, analogous to <code>Customer &lt;&#8594; * Order</code> . Persisting the child <code>Order</code> object did not cause the parent <code>Customer</code> 's collection of orders to be updated. In fact, JDO does not make any such guarantee to do so. Options are therefore either to maintain the collection in code, or to refresh the parent.</p>
 </div>
 </div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><code><span class="teal"><strong>deleteAll</strong></span>(Class&lt;?&gt;&#8230;&#8203; pcClasses)</code> : <code>void</code>
-<div class="openblock">
-<div class="content">
+<div class="sect2">
+<h3 id="deleteAll"><a class="anchor" href="#deleteAll"></a>deleteAll</h3>
 <div class="paragraph">
 <p>Force the deletion of all instances of the specified class.</p>
 </div>
@@ -435,13 +495,8 @@ page.parent doesn't seem to be set...
 <p>Implementation note: It can occasionally be the case that Isis' internal adapter for the domain object is still in memory. JDO/DataNucleus seems to bump up the version of the object prior to its deletion, which under normal circumstances would cause Isis to throw a concurrency exception. Therefore To prevent this from happening (ie to <em>force</em> the deletion of all instances), concurrency checking is temporarily disabled while this method is performed.</p>
 </div>
 </div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td><code><span class="teal"><strong>executeQuery</strong></span>&lt;T&gt;(Class&lt;T&gt; cls, BooleanExpression filter)</code> : <code>List&lt;T&gt;</code>
-<div class="openblock">
-<div class="content">
+<div class="sect2">
+<h3 id="executeQuery"><a class="anchor" href="#executeQuery"></a>executeQuery</h3>
 <div class="paragraph">
 <p>To perform the most common use-case of executing a (type-safe) query against the specified class, filtering using the provided <em>BooleanExpression</em> , then automatically cloning the returned list and closing the query.</p>
 </div>
@@ -458,13 +513,8 @@ page.parent doesn't seem to be set...
 </div>
 </div>
 </div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td><code><span class="teal"><strong>executeQueryUnique</strong></span>&lt;T&gt;(Class&lt;T&gt; cls, BooleanExpression filter)</code> : <code>T</code>
-<div class="openblock">
-<div class="content">
+<div class="sect2">
+<h3 id="executeQueryUnique"><a class="anchor" href="#executeQueryUnique"></a>executeQueryUnique</h3>
 <div class="paragraph">
 <p>To perform a common use-case of executing a (type-safe) query against the specified class, filtering a unique match using the provided <em>BooleanExpression</em> , then returning the result and closing the query.</p>
 </div>
@@ -481,13 +531,8 @@ page.parent doesn't seem to be set...
 </div>
 </div>
 </div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td><code><span class="teal"><strong>newTypesafeQuery</strong></span>&lt;T&gt;(Class&lt;T&gt; cls)</code> : <code>JDOQLTypedQuery&lt;T&gt;</code>
-<div class="openblock">
-<div class="content">
+<div class="sect2">
+<h3 id="newTypesafeQuery"><a class="anchor" href="#newTypesafeQuery"></a>newTypesafeQuery</h3>
 <div class="paragraph">
 <p>To support the execution of type-safe queries using DataNucleus' lower-level APIs (eg for group by and so on).</p>
 </div>
@@ -495,13 +540,8 @@ page.parent doesn't seem to be set...
 <p>Responsibility for cloning any result sets and closing the query is the responsibility of the caller.</p>
 </div>
 </div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
-<td><code><span class="teal"><strong>disableMultivaluedFetch</strong></span>(JDOQLTypedQuery&lt;?&gt; query)</code> : <code>void</code>
-<div class="openblock">
-<div class="content">
+<div class="sect2">
+<h3 id="disableMultivaluedFetch"><a class="anchor" href="#disableMultivaluedFetch"></a>disableMultivaluedFetch</h3>
 <div class="paragraph">
 <p>Fetch Optimization</p>
 </div>
@@ -512,20 +552,13 @@ page.parent doesn't seem to be set...
 <p>For RDBMS any single-valued member will be fetched in the original SQL query, but with multiple-valued members this is not supported. However what will happen is that any collection/array field will be retrieved in a single SQL query for all candidate objects (by default using an EXISTS subquery); this avoids the "N+1" problem, resulting in 1 original SQL query plus 1 SQL query per collection member. Note that you can disable this by either not putting multi-valued fields in the FetchPlan, or by setting the query extension datanucleus.rdbms.query.multivaluedFetch to none (default is "exists" using the single SQL per field).</p>
 </div>
 </div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="7"></i><b>7</b></td>
-<td><code><span class="teal"><strong>disableMultivaluedFetch</strong></span>(Query&lt;?&gt; query)</code> : <code>void</code>
-<div class="openblock">
-<div class="content">
+<div class="sect2">
+<h3 id="disableMultivaluedFetch"><a class="anchor" href="#disableMultivaluedFetch"></a>disableMultivaluedFetch</h3>
 <div class="paragraph">
 <p>Fetch Optimization</p>
 </div>
 </div>
-</div></td>
-</tr>
-</table>
+</div>
 </div>
 </article>
 <aside class="article-aside toc hide-for-print" role="navigation">
@@ -544,7 +577,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210206-0423-c599190c</p>
+            <p>Revision: 2.0.0-M4.20210208-0426-5bd84665</p>
         </div>
     </div>
 </footer>

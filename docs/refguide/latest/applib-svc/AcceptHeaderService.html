@@ -240,7 +240,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../applib-ant/PropertyLayout.html">PropertyLayout</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../applib-ant/IsisSessionScope.html">RequestScoped</a>
+    <a class="nav-link" href="../applib-ant/InteractionScope.html">RequestScoped</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../applib-ant/Title.html">Title</a>
@@ -312,7 +312,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="ApplicationFeatureRepository.html">ApplicationFeatureRepository</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="AuditerService.html">AuditerService</a>
+    <a class="nav-link" href="#refguide:applib-svc:AuditerService.adoc">AuditerService</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="BookmarkService.html">BookmarkService</a>
@@ -758,80 +758,55 @@ page.parent doesn't seem to be set...
 </div>
 <article class="doc">
     <a name="section-top"></a>
-<h1 class="page"><code>AcceptHeaderService</code></h1>
+<h1 class="page">AcceptHeaderService</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>The <code>AcceptHeaderService</code> domain service is a <a href="../applib-ant/IsisSessionScope.html" class="page"><code>@IsisSessionScope</code></a>'d service that simply exposes the HTTP <code>Accept</code> header to the domain.
-Its intended use is to support multiple versions of a REST API, where the responsibility for content negotiation (determining which version of the REST API is to be used) is managed by logic in the domain objects themselves.</p>
+<p>This service simply exposes the HTTP <code>Accept</code> header to the domain.</p>
 </div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
 <div class="paragraph">
-<p>As an alternative to performing content negotiation within the domain classes, the <a href="ContentMappingService.html" class="page"><code>ContentMappingService</code></a> SPI domain service allows the framework to perform the content negotiation responsibility.</p>
-</div>
-</td>
-</tr>
-</table>
+<p>Its intended use is to support multiple versions of a REST API, where the responsibility for content negotiation (determining which version of the REST API is to be used) is managed by logic in the domain objects themselves.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="api"><a class="anchor" href="#api"></a>API</h2>
 <div class="sectionbody">
-<div class="sect2">
-<h3 id="acceptheaderservice-interface"><a class="anchor" href="#acceptheaderservice-interface"></a>AcceptHeaderService : <em>interface</em></h3>
 <div class="listingblock">
-<div class="title">Java Sources</div>
+<div class="title">AcceptHeaderService.java</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">interface AcceptHeaderService {
-
-  List&lt;MediaType&gt; getAcceptableMediaTypes()
+  List&lt;MediaType&gt; getAcceptableMediaTypes()     <i class="conum" data-value="1"></i><b>(1)</b>
 }</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>TODO example migration</p>
-</div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-<div class="title">Deprecated Docs</div>
-<div class="paragraph">
-<p>== API</p>
-</div>
-<div class="paragraph">
-<p>The API defined by the service is:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Unresolved include directive in modules/applib-svc/pages/AcceptHeaderService.adoc - include::refguide:applib-svc:example$services/acceptheader/AcceptHeaderService.java[]</code></pre>
 </div>
 </div>
 <div class="colist arabic">
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>returns the list of media types found in the HTTP Accept header.</td>
+<td><a href="#getAcceptableMediaTypes">getAcceptableMediaTypes</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>The intention is that this service only returns a list when the request is initiated through the <em>Restful Objects viewer</em>.</p>
+</div>
+</div>
+</div></td>
 </tr>
 </table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="members"><a class="anchor" href="#members"></a>Members</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="getAcceptableMediaTypes"><a class="anchor" href="#getAcceptableMediaTypes"></a>getAcceptableMediaTypes</h3>
+<div class="paragraph">
+<p>The intention is that this service only returns a list when the request is initiated through the <em>Restful Objects viewer</em>.</p>
 </div>
 <div class="paragraph">
-<p>The intention is that this service only returns a list when the request is initiated through the <a href="../../../vro/latest/about.html" class="page">Restful Objects viewer</a>.
-Otherwise the service will likely return <code>null</code>.</p>
-</div>
-</td>
-</tr>
-</table>
+<p>Otherwise the service will likely return <code>null</code>.</p>
 </div>
 </div>
 </div>
@@ -845,7 +820,7 @@ Otherwise the service will likely return <code>null</code>.</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="usage"><a class="anchor" href="#usage"></a>Usage</h2>
+<h2 id="usage-notes"><a class="anchor" href="#usage-notes"></a>Usage Notes</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>The intended use of this service is where there are multiple concurrent versions of a REST API, for backward compatibility of existing clients.
@@ -875,12 +850,20 @@ Based on this it delegates to the appropriate underlying domain service (with a 
 <p>The service does not define any conventions as to the format of the media types.
 The option is to use the media type&#8217;s type/subtype, eg <code>application/vnd.myrestapi-v1+json</code>; an alternative is to use a media type parameter as a hint, eg <code>application/json;x-my-rest-api-version=1</code> (where <code>x-my-rest-api-version</code> is the media type parameter).</p>
 </div>
-<div class="paragraph">
-<p>The Restful Objects specification does this something similar with its own <code>x-ro-domain-type</code> media type parameter; this is used by the <a href="ContentMappingService.html" class="page"><code>ContentMappingService</code></a> to determine how to map domain objects to view models/DTOs.</p>
-</div>
 </td>
 </tr>
 </table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="alternatives"><a class="anchor" href="#alternatives"></a>Alternatives</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>As an alternative to performing content negotiation within the domain classes, the <a href="ContentMappingService.html" class="page"><code>ContentMappingService</code></a> SPI domain service allows the framework to perform the content negotiation responsibility.</p>
+</div>
+<div class="paragraph">
+<p>The Restful Objects specification supports this with its own <code>x-ro-domain-type</code> media type parameter; this is used by the <a href="ContentMappingService.html" class="page"><code>ContentMappingService</code></a> to determine how to map domain objects to view models/DTOs.</p>
 </div>
 </div>
 </div>
@@ -901,7 +884,7 @@ The option is to use the media type&#8217;s type/subtype, eg <code>application/v
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210206-0423-c599190c</p>
+            <p>Revision: 2.0.0-M4.20210208-0426-5bd84665</p>
         </div>
     </div>
 </footer>

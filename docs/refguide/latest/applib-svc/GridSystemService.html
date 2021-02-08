@@ -240,7 +240,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../applib-ant/PropertyLayout.html">PropertyLayout</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../applib-ant/IsisSessionScope.html">RequestScoped</a>
+    <a class="nav-link" href="../applib-ant/InteractionScope.html">RequestScoped</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../applib-ant/Title.html">Title</a>
@@ -312,7 +312,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="ApplicationFeatureRepository.html">ApplicationFeatureRepository</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="AuditerService.html">AuditerService</a>
+    <a class="nav-link" href="#refguide:applib-svc:AuditerService.adoc">AuditerService</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="BookmarkService.html">BookmarkService</a>
@@ -758,7 +758,7 @@ page.parent doesn't seem to be set...
 </div>
 <article class="doc">
     <a name="section-top"></a>
-<h1 class="page"><code>GridSystemService</code></h1>
+<h1 class="page">GridSystemService</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="admonitionblock warning">
@@ -776,7 +776,7 @@ TODO: this content has not yet been reviewed/updated for v2.0
 <div class="paragraph">
 <p>The <code>GridSystemService</code> encapsulates a single layout grid system which can be used to customize the layout
 of domain objects.  In particular this means being able to return a "normalized" form (validating and associating
-domain object pathsToInclude into the various regions of the grid) and in providing a default grid if there is no other
+domain object members into the various regions of the grid) and in providing a default grid if there is no other
 metadata available.</p>
 </div>
 <div class="paragraph">
@@ -805,28 +805,21 @@ Services are called in the order defined by the Spring <a href="https://docs.spr
 <div class="sect1">
 <h2 id="api"><a class="anchor" href="#api"></a>API</h2>
 <div class="sectionbody">
-<div class="sect2">
-<h3 id="gridsystemservice-interface"><a class="anchor" href="#gridsystemservice-interface"></a>GridSystemService : <em>interface</em></h3>
 <div class="paragraph">
 <p>Provides an implementation of <a href="../../../system/latest/generated/index/applib/layout/grid/Grid.html" class="page">Grid</a> .</p>
 </div>
+<div class="sect3">
+<h4 id="api-2"><a class="anchor" href="#api-2"></a>API</h4>
 <div class="listingblock">
-<div class="title">Java Sources</div>
+<div class="title">GridSystemService.java</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">interface GridSystemService {
-
-  Class&lt;G&gt; gridImplementation() <i class="conum" data-value="1"></i><b>(1)</b>
-
+  Class&lt;G&gt; gridImplementation()     <i class="conum" data-value="1"></i><b>(1)</b>
   String tns()
-
   String schemaLocation()
-
   G defaultGrid(Class&lt;?&gt; domainClass)
-
-  void normalize(G grid, Class&lt;?&gt; domainClass) <i class="conum" data-value="2"></i><b>(2)</b>
-
+  void normalize(G grid, Class&lt;?&gt; domainClass)     <i class="conum" data-value="2"></i><b>(2)</b>
   void complete(G grid, Class&lt;?&gt; domainClass)
-
   void minimal(G grid, Class&lt;?&gt; domainClass)
 }</code></pre>
 </div>
@@ -835,7 +828,7 @@ Services are called in the order defined by the Spring <a href="https://docs.spr
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><code><span class="teal"><strong>gridImplementation</strong></span>()</code> : <code>Class&lt;G&gt;</code>
+<td><a href="#gridImplementation">gridImplementation</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
@@ -846,7 +839,7 @@ Services are called in the order defined by the Spring <a href="https://docs.spr
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><code><span class="teal"><strong>normalize</strong></span>(G grid, Class&lt;?&gt; domainClass)</code> : <code>void</code>
+<td><a href="#normalize">normalize</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
@@ -856,6 +849,20 @@ Services are called in the order defined by the Spring <a href="https://docs.spr
 </div></td>
 </tr>
 </table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="members"><a class="anchor" href="#members"></a>Members</h4>
+<div class="sect4">
+<h5 id="gridImplementation"><a class="anchor" href="#gridImplementation"></a>gridImplementation</h5>
+<div class="paragraph">
+<p>Which grid (implementation) is defined by this service.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="normalize"><a class="anchor" href="#normalize"></a>normalize</h5>
+<div class="paragraph">
+<p>Validate the grid, derive any missing object members, and overwrite any facets in the metamodel based on the layout.</p>
 </div>
 <div class="paragraph">
 <p>TODO example migration</p>
@@ -901,7 +908,7 @@ As is normal practice, these are ordered as per the Spring <a href="https://docs
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>Validates and normalizes a grid, modifying the grid so that all of the domain object&#8217;s pathsToInclude (properties, collections, actions) are bound to regions of the grid.  This is done using existing metadata, most notably that of the <a href="../applib-ant/MemberOrder.html" class="page"><code>@MemberOrder</code></a> annotation.
+<td>Validates and normalizes a grid, modifying the grid so that all of the domain object&#8217;s members (properties, collections, actions) are bound to regions of the grid.  This is done using existing metadata, most notably that of the <a href="../applib-ant/MemberOrder.html" class="page"><code>@MemberOrder</code></a> annotation.
 Such a grid, if persisted as the layout XML file for the domain class, allows the
  <code>@MemberOrder</code> annotation to be removed from the source code of the domain class (but other annotations must be retained).</td>
 </tr>
@@ -912,14 +919,15 @@ Such a grid, if persisted as the layout XML file for the domain class, allows al
 </tr>
 <tr>
 <td><i class="conum" data-value="7"></i><b>7</b></td>
-<td>Takes a normalized grid and strips out removes all pathsToInclude, leaving only the grid structure.
-Such a grid, if persisted as the layout XML file for the domain class, requires that the <a href="../applib-ant/MemberOrder.html" class="page"><code>@MemberOrder</code></a> annotation is retained in the source code of said class in order to bind pathsToInclude to the regions of the grid.</td>
+<td>Takes a normalized grid and strips out removes all members, leaving only the grid structure.
+Such a grid, if persisted as the layout XML file for the domain class, requires that the <a href="../applib-ant/MemberOrder.html" class="page"><code>@MemberOrder</code></a> annotation is retained in the source code of said class in order to bind members to the regions of the grid.</td>
 </tr>
 </table>
 </div>
 </td>
 </tr>
 </table>
+</div>
 </div>
 </div>
 </div>
@@ -958,7 +966,7 @@ Such a grid, if persisted as the layout XML file for the domain class, requires 
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210206-0423-c599190c</p>
+            <p>Revision: 2.0.0-M4.20210208-0426-5bd84665</p>
         </div>
     </div>
 </footer>
