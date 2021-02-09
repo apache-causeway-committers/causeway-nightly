@@ -312,9 +312,6 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="ApplicationFeatureRepository.html">ApplicationFeatureRepository</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="#refguide:applib-svc:AuditerService.adoc">AuditerService</a>
-  </li>
-  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="BookmarkService.html">BookmarkService</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -349,6 +346,12 @@ page.parent doesn't seem to be set...
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="EmailService.html">EmailService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="EntityChangesSubscriber.html">EntityChangesSubscriber</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="EntityPropertyChangeSubscriber.html">EntityPropertyChangeSubscriber</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="ErrorReportingService.html">ErrorReportingService</a>
@@ -762,39 +765,23 @@ page.parent doesn't seem to be set...
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>The <code>EmailNotificationService</code> supports the <a href="../../../vw/latest/features.html#user-registration" class="page">user registration</a> (self sign-up) features of the <a href="../../../vw/latest/about.html" class="page">Wicket viewer</a> whereby a user can sign-up to access an application by providing a valid email address.</p>
+<p>Supporting service for the user-registration functionality.</p>
 </div>
 <div class="paragraph">
-<p>The Wicket viewer will check whether an implementation of this service (and also the <a href="UserRegistrationService.html" class="page"><code>UserRegistrationService</code></a>) is available, and if so will (unless configured not to) expose a sign-up page where the user enters their email address.
-A verification email is sent using this service; the email includes a link back to the running application.
-The user then completes the registration process (choosing a user name, password and so on) and the Wicket viewer creates an account for them (using the aforementioned <code>UserRegistrationService</code>).</p>
-</div>
-<div class="paragraph">
-<p>The role of this service in all of this is to format and send out emails for the initial registration, or for password resets.</p>
-</div>
-<div class="paragraph">
-<p>The default implementation of this service uses the <a href="EmailService.html" class="page"><code>EmailService</code></a>, which must be configured in order for user registration to be enabled.</p>
+<p>The framework provides a default implementation which in turn uses the <em>org.apache.isis.applib.services.email.EmailService</em> , namely <code>EmailServiceDefault</code> .</p>
 </div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="api"><a class="anchor" href="#api"></a>API</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p>Supporting service for the user-registration functionality.</p>
-</div>
-<div class="paragraph">
-<p>The framework provides a default implementation which in turn uses the <em>org.apache.isis.applib.services.email.EmailService</em> , namely <code>EmailServiceDefault</code> .</p>
-</div>
-<div class="sect3">
-<h4 id="api-2"><a class="anchor" href="#api-2"></a>API</h4>
 <div class="listingblock">
 <div class="title">EmailNotificationService.java</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">interface EmailNotificationService {
-  boolean send(EmailRegistrationEvent ev)
-  boolean send(PasswordResetEvent ev)
-  boolean isConfigured()     <i class="conum" data-value="1"></i><b>(1)</b>
+  boolean send(EmailRegistrationEvent ev)     <i class="conum" data-value="1"></i><b>(1)</b>
+  boolean send(PasswordResetEvent ev)     <i class="conum" data-value="2"></i><b>(2)</b>
+  boolean isConfigured()     <i class="conum" data-value="3"></i><b>(3)</b>
 }</code></pre>
 </div>
 </div>
@@ -802,6 +789,28 @@ The user then completes the registration process (choosing a user name, password
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><a href="#send">send</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Sends an email to verify an email address as part of the initial user registration</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><a href="#send">send</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Sends an email to reset a password for an already-registered user</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
 <td><a href="#isConfigured">isConfigured</a>
 <div class="openblock">
 <div class="content">
@@ -814,58 +823,29 @@ The user then completes the registration process (choosing a user name, password
 </table>
 </div>
 </div>
-<div class="sect3">
-<h4 id="members"><a class="anchor" href="#members"></a>Members</h4>
-<div class="sect4">
-<h5 id="isConfigured"><a class="anchor" href="#isConfigured"></a>isConfigured</h5>
+</div>
+<div class="sect1">
+<h2 id="members"><a class="anchor" href="#members"></a>Members</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="send"><a class="anchor" href="#send"></a>send</h3>
+<div class="paragraph">
+<p>Sends an email to verify an email address as part of the initial user registration</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="send"><a class="anchor" href="#send"></a>send</h3>
+<div class="paragraph">
+<p>Sends an email to reset a password for an already-registered user</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="isConfigured"><a class="anchor" href="#isConfigured"></a>isConfigured</h3>
 <div class="paragraph">
 <p>Whether this service has been configured and thus available for use.</p>
 </div>
 <div class="paragraph">
-<p>TODO example migration</p>
-</div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-<div class="title">Deprecated Docs</div>
-<div class="paragraph">
-<p>== SPI</p>
-</div>
-<div class="paragraph">
-<p>The SPI defined by this service is:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Unresolved include directive in modules/applib-svc/pages/EmailNotificationService.adoc - include::refguide:applib-svc:example$services/userreg/EmailNotificationService.java[]</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>sends an email to verify an email address as part of the initial user registration</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>sends an email to reset a password for an already-registered user</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>determines whether the implementation was configured and initialized correctly</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>If <code>isConfigured()</code> returns false then it is <em>not</em> valid to call <code>send(&#8230;&#8203;)</code> (and doing so will result in an <code>IllegalStateException</code> being thrown).</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
+<p>If this returns false then it is <em>not</em> valid to call <em>#send(EmailRegistrationEvent)</em> (and doing so will result in an <em>IllegalStateException</em> being thrown).</p>
 </div>
 </div>
 </div>
@@ -874,13 +854,15 @@ The user then completes the registration process (choosing a user name, password
 <h2 id="implementation"><a class="anchor" href="#implementation"></a>Implementation</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The framework provides a default implementation, <code>o.a.i.core.runtimeservices.userreg.EmailNotificationServiceDefault</code>
-that constructs the emails to send.</p>
+<p>The framework provides a default implementation, <code>o.a.i.core.runtimeservices.userreg.EmailNotificationServiceDefault</code>, that constructs the emails to send.</p>
 </div>
-<div class="sect2">
-<h3 id="alternatives"><a class="anchor" href="#alternatives"></a>Alternatives</h3>
+</div>
+</div>
+<div class="sect1">
+<h2 id="alternatives"><a class="anchor" href="#alternatives"></a>Alternatives</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>The text of these email templates is hard-coded as resources, in other words baked into the core jar files.
+<p>The text of these email templates are hard-coded as resources, in other words baked into the core jar files.
 If you need to use different text then you can of course always write and register your own implementation to be used instead of Apache Isis' default.</p>
 </div>
 <div class="paragraph">
@@ -888,10 +870,35 @@ If you need to use different text then you can of course always write and regist
 </div>
 <div class="paragraph">
 <p>Be aware also that there may not be any Apache Isis session running when this service is called.
-If necessary, one can be created on the fly using
-<code>IsisSessionFactory#runAuthenticated(&#8230;&#8203;)</code>.
+If necessary, one can be created on the fly using the <code>InteractionFactory#runAuthenticated(&#8230;&#8203;)</code> (not API).
 .</p>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="user-registration"><a class="anchor" href="#user-registration"></a>User Registration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>EmailNotificationService</code> supports the <a href="../../../vw/latest/features.html#user-registration" class="page">user registration</a> (self sign-up) features of the <a href="../../../vw/latest/about.html" class="page">Wicket viewer</a> whereby a user can sign-up to access an application by providing a valid email address.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The Wicket viewer will check whether an implementation of this service (and also the <a href="UserRegistrationService.html" class="page"><code>UserRegistrationService</code></a>) is available, and if so will (unless configured not to) expose a sign-up page where the user enters their email address.</p>
+</li>
+<li>
+<p>A verification email is sent using this service; the email includes a link back to the running application.</p>
+</li>
+<li>
+<p>The user then completes the registration process (choosing a user name, password and so on) and the Wicket viewer creates an account for them (using the aforementioned <code>UserRegistrationService</code>).</p>
+</li>
+<li>
+<p>The role of this service in all of this is to format and send out emails for the initial registration, or for password resets.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The default implementation of this service uses the <a href="EmailService.html" class="page"><code>EmailService</code></a>, which must be configured in order for user registration to be enabled.</p>
 </div>
 </div>
 </div>
@@ -903,6 +910,24 @@ If necessary, one can be created on the fly using
 </div>
 <div class="paragraph">
 <p>This service is used by (Apache Isis' default implementation of) <a href="UserRegistrationService.html" class="page"><code>UserRegistrationService</code></a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="related-event-classes"><a class="anchor" href="#related-event-classes"></a>Related Event Classes</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>See:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../../../system/latest/generated/index/applib/services/userreg/events/EmailRegistrationEvent.html" class="page">EmailRegistrationEvent</a></p>
+</li>
+<li>
+<p><a href="../../../system/latest/generated/index/applib/services/userreg/events/PasswordResetEvent.html" class="page">PasswordResetEvent</a></p>
+</li>
+</ul>
 </div>
 </div>
 </div>
@@ -923,7 +948,7 @@ If necessary, one can be created on the fly using
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210208-0426-5bd84665</p>
+            <p>Revision: 2.0.0-M4.20210209-0423-e7b97e04</p>
         </div>
     </div>
 </footer>

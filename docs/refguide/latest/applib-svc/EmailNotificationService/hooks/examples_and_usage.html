@@ -310,9 +310,6 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../../ApplicationFeatureRepository.html">ApplicationFeatureRepository</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="#refguide:applib-svc:AuditerService.adoc">AuditerService</a>
-  </li>
-  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../../BookmarkService.html">BookmarkService</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -347,6 +344,12 @@ page.parent doesn't seem to be set...
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../../EmailService.html">EmailService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../EntityChangesSubscriber.html">EntityChangesSubscriber</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../EntityPropertyChangeSubscriber.html">EntityPropertyChangeSubscriber</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../../ErrorReportingService.html">ErrorReportingService</a>
@@ -751,7 +754,79 @@ page.parent doesn't seem to be set...
 </div>
 <article class="doc">
     <a name="section-top"></a>
-
+<div class="sect1">
+<h2 id="alternatives"><a class="anchor" href="#alternatives"></a>Alternatives</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The text of these email templates are hard-coded as resources, in other words baked into the core jar files.
+If you need to use different text then you can of course always write and register your own implementation to be used instead of Apache Isis' default.</p>
+</div>
+<div class="paragraph">
+<p>If you have configured an alternative email service implementation, it should process the message body as HTML.</p>
+</div>
+<div class="paragraph">
+<p>Be aware also that there may not be any Apache Isis session running when this service is called.
+If necessary, one can be created on the fly using the <code>InteractionFactory#runAuthenticated(&#8230;&#8203;)</code> (not API).
+.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="user-registration"><a class="anchor" href="#user-registration"></a>User Registration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>EmailNotificationService</code> supports the <a href="../../../../../vw/latest/features.html#user-registration" class="page">user registration</a> (self sign-up) features of the <a href="../../../../../vw/latest/about.html" class="page">Wicket viewer</a> whereby a user can sign-up to access an application by providing a valid email address.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The Wicket viewer will check whether an implementation of this service (and also the <a href="../../UserRegistrationService.html" class="page"><code>UserRegistrationService</code></a>) is available, and if so will (unless configured not to) expose a sign-up page where the user enters their email address.</p>
+</li>
+<li>
+<p>A verification email is sent using this service; the email includes a link back to the running application.</p>
+</li>
+<li>
+<p>The user then completes the registration process (choosing a user name, password and so on) and the Wicket viewer creates an account for them (using the aforementioned <code>UserRegistrationService</code>).</p>
+</li>
+<li>
+<p>The role of this service in all of this is to format and send out emails for the initial registration, or for password resets.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The default implementation of this service uses the <a href="../../EmailService.html" class="page"><code>EmailService</code></a>, which must be configured in order for user registration to be enabled.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="related-services"><a class="anchor" href="#related-services"></a>Related Services</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The default implementation of this service uses <a href="../../EmailService.html" class="page"><code>EmailService</code></a>, which must have been configured/initialized correctly.</p>
+</div>
+<div class="paragraph">
+<p>This service is used by (Apache Isis' default implementation of) <a href="../../UserRegistrationService.html" class="page"><code>UserRegistrationService</code></a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="related-event-classes"><a class="anchor" href="#related-event-classes"></a>Related Event Classes</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>See:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../../../../../system/latest/generated/index/applib/services/userreg/events/EmailRegistrationEvent.html" class="page">EmailRegistrationEvent</a></p>
+</li>
+<li>
+<p><a href="../../../../../system/latest/generated/index/applib/services/userreg/events/PasswordResetEvent.html" class="page">PasswordResetEvent</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
 </article>
 <aside class="article-aside toc hide-for-print" role="navigation">
     <p class="toc-title">On this page</p>
@@ -769,7 +844,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210208-0426-5bd84665</p>
+            <p>Revision: 2.0.0-M4.20210209-0423-e7b97e04</p>
         </div>
     </div>
 </footer>

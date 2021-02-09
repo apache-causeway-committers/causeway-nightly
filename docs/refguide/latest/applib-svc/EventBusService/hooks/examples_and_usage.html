@@ -310,9 +310,6 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../../ApplicationFeatureRepository.html">ApplicationFeatureRepository</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="#refguide:applib-svc:AuditerService.adoc">AuditerService</a>
-  </li>
-  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../../BookmarkService.html">BookmarkService</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -347,6 +344,12 @@ page.parent doesn't seem to be set...
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../../EmailService.html">EmailService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../EntityChangesSubscriber.html">EntityChangesSubscriber</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../EntityPropertyChangeSubscriber.html">EntityPropertyChangeSubscriber</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../../ErrorReportingService.html">ErrorReportingService</a>
@@ -751,7 +754,380 @@ page.parent doesn't seem to be set...
 </div>
 <article class="doc">
     <a name="section-top"></a>
+<div class="sect1">
+<h2 id="usage-by-the-framework"><a class="anchor" href="#usage-by-the-framework"></a>Usage by the Framework</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The primary user of the service is the framework itself, which automatically emit events for <a href="../../../applib-ant/Action.html#domainEvent" class="page">actions</a>, <a href="../../../applib-ant/Property.html#domainEvent" class="page">properties</a> and <a href="../../../applib-ant/Collection.html#domainEvent" class="page">collections</a>.
+Multiple events are generated:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>when an object member is to be viewed, an event is fired; subscribers can veto (meaning that the member is hidden)</p>
+</li>
+<li>
+<p>when an object member is to be enabled, the same event instance is fired; subscribers can veto (meaning that the member is disabled, ie cannot be edited/invoked)</p>
+</li>
+<li>
+<p>when an object member is being validated, then a new event instance is fired; subscribers can veto (meaning that the candidate values/action arguments are rejected)</p>
+</li>
+<li>
+<p>when an object member is about to be changed, then the same event instance is fired; subscribers can perform pre-execution operations</p>
+</li>
+<li>
+<p>when an object member has been changed, then the same event instance is fired; subscribers can perform post-execution operations</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>If a subscriber throws an exception in the first three steps, then the interaction is vetoed.
+If a subscriber throws an exception in the last two steps, then the transaction is aborted.
+For more on this topic, see <a href="../../../applib-ant/Action.html#domainEvent" class="page"><code>@Action#domainEvent()</code></a>, <a href="../../../applib-ant/Property.html#domainEvent" class="page"><code>@Property#domainEvent()</code></a> and <a href="../../../applib-ant/Collection.html#domainEvent" class="page"><code>@Collection#domainEvent()</code></a>.</p>
+</div>
+<div class="paragraph">
+<p>It is also possible for domain objects to programmatically generate domain events.
+However the events are published, the primary use case is to decoupling interactions from one module/package/namespace and another.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="annotating-members"><a class="anchor" href="#annotating-members"></a>Annotating Members</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>As discussed in the introduction, the framework will automatically emit domain events for all of the object members (actions, properties or collections) of an object whenever that object is rendered or (more generally) interacted with.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Customer {
+    @Action()
+    public Customer placeOrder( Product product, int quantity) {
+        ...
+    }
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>will propagate an instance of the default <code>o.a.i.applib.services.eventbus.ActionDomainEvent.Default</code> class, which can then be subscribed to:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Service;
 
+@Service
+public class MySubscribingDomainService {
+    @EventListener(ActionDomainEvent.class)
+    public void on(ActionDomainEvent ev) {
+        ...
+    }
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>More commonly though you will probably want to emit domain events of a specific subtype.
+As a slightly more interesting example, suppose in a library domain that a <code>LibraryMember</code> wants to leave the library.
+A letter should be sent out detailing any books that they still have out on loan:</p>
+</div>
+<div class="paragraph">
+<p>In the <code>LibraryMember</code> class, we publish the event by way of an annotation:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class LibraryMember {
+    @Action(domainEvent=LibraryMemberLeaveEvent.class)  <i class="conum" data-value="1"></i><b>(1)</b>
+    public void leave() {
+        ...
+    }
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><code>LibraryMemberLeaveEvent</code> is a subclass of <code>o.a.i.applib.eventbus.ActionDomainEvent</code>.The topic of subclassing is discussed in more detail <a href="../../EventBusService.html#event-hierarchy" class="page">below</a>.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Meanwhile, in the <code>BookRepository</code> domain service, we subscribe to the event and act upon it.
+For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Service;
+
+@Service
+public class BookRepository {
+
+    @EventListener(LbraryMemberLeaveEvent.class)
+    public void onLibraryMemberLeaving(LibraryMemberLeaveEvent e) {
+        LibraryMember lm = e.getLibraryMember();
+        List&lt;Book&gt; lentBooks = findBooksOnLoanFor(lm);
+        if(!lentBooks.isEmpty()) {
+            sendLetter(lm, lentBooks);
+        }
+    }
+
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This design allows the <code>libraryMember</code> module to be decoupled from the <code>book</code> module.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="event-hierarchy"><a class="anchor" href="#event-hierarchy"></a>Event hierarchy</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>By creating domain event subtypes we can be more semantically precise and in turn providesmore flexibility for subscribers: they can choose whether to be broadly applicable (by subscribing to a superclass) or to be tightly focussed (by subscribing to a subclass).</p>
+</div>
+<div class="paragraph">
+<p>We recommend that you define event classes at (up to) four scopes:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>at the top "global" scope is the Apache Isis-defined <code>o.a.i.applib.event.ActionDomainEvent</code></p>
+</li>
+<li>
+<p>for the "module" scope, create a static class to represent the module itself, and creating nested classes within</p>
+</li>
+<li>
+<p>for each "class" scope, create a nested static event class in the domain object&#8217;s class for all of the domain object&#8217;s actions</p>
+</li>
+<li>
+<p>for each "action" scope, create a nested static event class for that action, inheriting from the "domain object" class.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>To put all that into code; at the module level we can define:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">package com.mycompany.modules.libmem;
+...
+public static class LibMemModule {
+    private LibMemModule() {}
+    public abstract static class ActionDomainEvent&lt;S&gt;
+                extends org.apache.isis.applib.event.ActionDomainEvent&lt;S&gt; {}
+    ...                                                                             <i class="conum" data-value="1"></i><b>(1)</b>
+    public abstract static class PropertyDomainEvent&lt;S,T&gt;
+                extends org.apache.isis.applib.event.PropertyDomainEvent&lt;S,T&gt; {}
+    public abstract static class CollectionDomainEvent&lt;S,E&gt;
+                extends org.apache.isis.applib.event.CollectionDomainEvent&lt;S,E&gt; {}
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>similar events for properties and collections should also be defined</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>For the class-level we can define:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public static class LibraryMember {
+    public abstract static class ActionDomainEvent
+            extends LibMemModule.ActionDomainEvent&lt;LibraryMember&gt; { }
+    ...                                                                             <i class="conum" data-value="1"></i><b>(1)</b>
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>similar events for properties and collections should also be defined</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>and finally at the action level we can define:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class LibraryMember {
+    public static class LeaveEvent extends LibraryMember.ActionDomainEvent { }
+    @Action(domainEvent=LeaveEvent.class)
+    public void leave() {
+        //...
+    }
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The subscriber can subscribe either to the general superclass (as before), or to any of the classes in the hierarchy.</p>
+</div>
+<div class="sect2">
+<h3 id="variation-for-contributing-services"><a class="anchor" href="#variation-for-contributing-services"></a>Variation (for contributing services)</h3>
+<div class="paragraph">
+<p>A slight variation on this is to not fix the generic parameter at the class level, ie:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public static class LibraryMember {
+    public abstract static class ActionDomainEvent&lt;S&gt;
+            extends LibMemModule.ActionDomainEvent&lt;S&gt; { }
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>and instead parameterize down at the action level:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class LibraryMember {
+    public static class LeaveEvent
+            extends LibraryMember.ActionDomainEvent&lt;LibraryMember&gt; { }
+
+    @Action(domainEvent=LeaveEvent.class)
+    public void leave() {
+        ...
+    }
+
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This then allows for other classes - in particular domain services contributing members - to also inherit from the class-level domain events.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="programmatic-posting"><a class="anchor" href="#programmatic-posting"></a>Programmatic posting</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To programmatically post an event, simply call <code>#post()</code>.</p>
+</div>
+<div class="paragraph">
+<p>The <code>LibraryMember</code> example described above could for example be rewritten into:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class LibraryMember {
+    @Action()
+    public void leave() {
+        ...
+        eventBusService.post(new LibraryMember.LeaveEvent(/*...*/));    <i class="conum" data-value="1"></i><b>(1)</b>
+    }
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><code>LibraryMember.LeaveEvent</code> could be <em>any</em> class, not just a subclass of <code>o.a.i.applib.event.ActionDomainEvent</code>.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>In practice we suspect there will be few cases where the programmatic approach is required rather than the declarative approach afforded by <a href="../../../applib-ant/Action.html#domainEvent" class="page"><code>@Action#domainEvent()</code></a> et al.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="using-wrapperfactory"><a class="anchor" href="#using-wrapperfactory"></a>Using <code>WrapperFactory</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>An alternative way to cause events to be posted is through the <a href="../../WrapperFactory.html" class="page"><code>WrapperFactory</code></a>.
+This is useful when you wish to enforce a (lack-of-) trust boundary between the caller and the callee.</p>
+</div>
+<div class="paragraph">
+<p>For example, suppose that <code>Customer#placeOrder(&#8230;&#8203;)</code> emits a <code>PlaceOrderEvent</code>, which is subscribed to by a <code>ReserveStockSubscriber</code>.
+This subscriber in turn calls <code>StockManagementService#reserveStock(&#8230;&#8203;)</code>.
+Any business rules on <code>#reserveStock(&#8230;&#8203;)</code> should be enforced.</p>
+</div>
+<div class="paragraph">
+<p>In the <code>ReserveStockSubscriber</code>, we therefore use the <code>WrapperFactory</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Service;
+
+@Service
+public class ReserveStockSubscriber {
+
+    @EventListener(Customer.PlaceOrderEvent.class)
+    public void on(Customer.PlaceOrderEvent ev) {
+        wrapperFactory.wrap(stockManagementService)
+                      .reserveStock(ev.getProduct(), ev.getQuantity());
+    }
+
+    @Inject
+    StockManagementService stockManagementService;
+    @Inject
+    WrapperFactory wrapperFactory;
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="related-services"><a class="anchor" href="#related-services"></a>Related Services</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>EventBusService</code> is intended for fine-grained publish/subscribe for object-to-object interactions within an Apache Isis domain object model.
+The event propagation is strictly in-memory, and there are no restrictions on the object acting as the event (it need not be serializable, for example).</p>
+</div>
+<div class="paragraph">
+<p>There are several mechanisms to suport coarse-grained publish/subscribe for system-to-system interactions, from Apache Isis to some other system:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Command publishing, representing the <em>intention</em> to invoke an action or edit a property.</p>
+<div class="paragraph">
+<p>These events apply to actions annotated with <a href="../../../applib-ant/Action.html#commandPublishing" class="page"><code>@Action#commandPublishing()</code></a>) and to properties properties annotated with <a href="../../../applib-ant/Property.html#commandPublishing" class="page"><code>@Property#commandPublishing</code></a>).</p>
+</div>
+<div class="paragraph">
+<p>The events are received by any/all <a href="../../CommandSubscriber.html" class="page"><code>CommandSubscriber</code></a>s.</p>
+</div>
+</li>
+<li>
+<p>Execution publishing, representing the <em>completion</em> of an action invocation or property edit.</p>
+<div class="paragraph">
+<p>These events apply to actions annotated with <a href="../../../applib-ant/Action.html#executionPublishing" class="page"><code>@Action#executionPublishing()</code></a>) and properties annotated with <a href="../../../applib-ant/Property.html#executionPublishing" class="page"><code>@Property#executionPublishing</code></a>).</p>
+</div>
+<div class="paragraph">
+<p>The events are received by any/all <a href="../../ExecutionSubscriber.html" class="page"><code>ExecutionSubscriber</code></a>s</p>
+</div>
+</li>
+<li>
+<p>Entity change publishing, representing an entity that has changed its state.</p>
+<div class="paragraph">
+<p>These events apply to objects annotated with <a href="../../../applib-ant/DomainObject.html#entityChangePublishing" class="page"><code>@DomainObject#entityChangePublishing()</code></a>).</p>
+</div>
+<div class="paragraph">
+<p>The events are received by any/all <a href="../../EntityChangesSubscriber.html" class="page"><code>EntityChangesSubscriber</code></a>s</p>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
 </article>
 <aside class="article-aside toc hide-for-print" role="navigation">
     <p class="toc-title">On this page</p>
@@ -769,7 +1145,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210208-0426-5bd84665</p>
+            <p>Revision: 2.0.0-M4.20210209-0423-e7b97e04</p>
         </div>
     </div>
 </footer>

@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Raleway:300,400,500,700,800|Montserrat:300,400,700" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css"/>
 <link rel="home" href="../../.." title="Apache Isis">
-  <link rel="next" href="ErrorReportingService.html" title="ErrorReportingService">
+  <link rel="next" href="EntityChangesSubscriber.html" title="EntityChangesSubscriber">
   <link rel="prev" href="EmailNotificationService.html" title="EmailNotificationService">
   </head>
   <body class="article">
@@ -145,7 +145,7 @@
 <div class="nav-panel-pagination">
   <a class="page-previous" rel="prev" href="EmailNotificationService.html" title="EmailNotificationService"><span></span></a>
   <a class="page-next" rel="next"
-     href="ErrorReportingService.html" title="ErrorReportingService"><span></span></a>
+     href="EntityChangesSubscriber.html" title="EntityChangesSubscriber"><span></span></a>
 <!--
 page.parent doesn't seem to be set...
   <a class="page-parent" rel="prev" href="about.html" title="EmailNotificationService"><span></span></a>
@@ -312,9 +312,6 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="ApplicationFeatureRepository.html">ApplicationFeatureRepository</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="#refguide:applib-svc:AuditerService.adoc">AuditerService</a>
-  </li>
-  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="BookmarkService.html">BookmarkService</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -349,6 +346,12 @@ page.parent doesn't seem to be set...
   </li>
   <li class="nav-item is-current-page" data-depth="2">
     <a class="nav-link" href="EmailService.html">EmailService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="EntityChangesSubscriber.html">EntityChangesSubscriber</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="EntityPropertyChangeSubscriber.html">EntityPropertyChangeSubscriber</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="ErrorReportingService.html">ErrorReportingService</a>
@@ -765,25 +768,20 @@ page.parent doesn't seem to be set...
 <p>The <code>EmailService</code> provides the ability to send HTML emails, with attachments, to one or more recipients.</p>
 </div>
 <div class="paragraph">
-<p>Apache Isis provides a default implementation to send emails (as an HTML message) using an external SMTP provider.</p>
+<p>The framework provides a default implementation to send emails using an external SMTP provider.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="api"><a class="anchor" href="#api"></a>API</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p>The API for the service is:</p>
-</div>
 <div class="listingblock">
+<div class="title">EmailService.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public interface EmailService {
-    boolean send(                                                   <i class="conum" data-value="1"></i><b>(1)</b>
-        List&lt;String&gt; to, List&lt;String&gt; cc, List&lt;String&gt; bcc,         <i class="conum" data-value="2"></i><b>(2)</b>
-        String subject,
-        String body,                                                <i class="conum" data-value="3"></i><b>(3)</b>
-        DataSource... attachments);
-    boolean isConfigured();                                         <i class="conum" data-value="4"></i><b>(4)</b>
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">interface EmailService {
+  void init()
+  boolean send(List&lt;String&gt; to, List&lt;String&gt; cc, List&lt;String&gt; bcc, String subject, String body, DataSource... attachments)     <i class="conum" data-value="1"></i><b>(1)</b>
+  boolean isConfigured()     <i class="conum" data-value="2"></i><b>(2)</b>
 }</code></pre>
 </div>
 </div>
@@ -791,23 +789,44 @@ page.parent doesn't seem to be set...
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>is the main API to send the email (and optional attachments).
-Will return <code>false</code> if failed to send</td>
+<td><a href="#send">send</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>The main API to send the email (and optional attachments).</p>
+</div>
+</div>
+</div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>pass either <code>null</code> or <code>Collections.emptyList()</code> if not required</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>should be HTML text</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>indicates whether the implementation was configured and initialized correctly.
-If this returns <code>false</code> then any attempt to call <code>send(&#8230;&#8203;)</code> will fail.</td>
+<td><a href="#isConfigured">isConfigured</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Whether this service has been configured and thus available for use.</p>
+</div>
+</div>
+</div></td>
 </tr>
 </table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="members"><a class="anchor" href="#members"></a>Members</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="send"><a class="anchor" href="#send"></a>send</h3>
+<div class="paragraph">
+<p>The main API to send the email (and optional attachments).</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="isConfigured"><a class="anchor" href="#isConfigured"></a>isConfigured</h3>
+<div class="paragraph">
+<p>Whether this service has been configured and thus available for use.</p>
+</div>
 </div>
 </div>
 </div>
@@ -824,11 +843,13 @@ This sends email as an HTML message, using an external SMTP provider.</p>
 <p>The default implementation defines a number of <a href="../config/sections/isis.core.runtime-services.html" class="page">configuration properties</a>, under the <code>isis.core.runtime-services.email</code> key.</p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="alternatives"><a class="anchor" href="#alternatives"></a>Alternatives</h3>
+</div>
+</div>
+<div class="sect1">
+<h2 id="alternative-implementations"><a class="anchor" href="#alternative-implementations"></a>Alternative Implementations</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>If you wish to write an alternative implementation, be aware that it should process the message body as HTML (as opposed to plain text or any other format).</p>
-</div>
 </div>
 </div>
 </div>
@@ -857,7 +878,7 @@ This sends email as an HTML message, using an external SMTP provider.</p>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210208-0426-5bd84665</p>
+            <p>Revision: 2.0.0-M4.20210209-0423-e7b97e04</p>
         </div>
     </div>
 </footer>
