@@ -764,28 +764,13 @@ page.parent doesn't seem to be set...
 <h1 class="page">FactoryService</h1>
 <div id="preamble">
 <div class="sectionbody">
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-TODO: this content has not yet been reviewed/updated for v2.0
-</td>
-</tr>
-</table>
-</div>
 <div class="paragraph">
-<p>The <code>FactoryService</code> collects together methods for instantiating domain objects.</p>
+<p>Collects together methods for instantiating domain objects, also injecting them with any domain services and calling lifecycle methods if defined.</p>
 </div>
 </div>
 </div>
-<div class="sect1">
-<h2 id="api"><a class="anchor" href="#api"></a>API</h2>
-<div class="sectionbody">
 <div class="sect3">
-<h4 id="api-2"><a class="anchor" href="#api-2"></a>API</h4>
+<h4 id="api"><a class="anchor" href="#api"></a>API</h4>
 <div class="listingblock">
 <div class="title">FactoryService.java</div>
 <div class="content">
@@ -811,7 +796,7 @@ TODO: this content has not yet been reviewed/updated for v2.0
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>General purpose factory method, to automatically get or create an instance of <em>requiredType</em> .</p>
+<p>Gets an instance (possibly shared or independent) of the specified type, with injection points resolved and any life-cycle callback processed.</p>
 </div>
 </div>
 </div></td>
@@ -940,10 +925,7 @@ TODO: this content has not yet been reviewed/updated for v2.0
 <div class="sect4">
 <h5 id="getOrCreate"><a class="anchor" href="#getOrCreate"></a>getOrCreate</h5>
 <div class="paragraph">
-<p>General purpose factory method, to automatically get or create an instance of <em>requiredType</em> .</p>
-</div>
-<div class="paragraph">
-<p>Maps onto one of the specialized factory methods <em>#get(Class)</em> or <em>#create(Class)</em> based on the type&#8217;s meta-data.</p>
+<p>Gets an instance (possibly shared or independent) of the specified type, with injection points resolved and any life-cycle callback processed.</p>
 </div>
 </div>
 <div class="sect4">
@@ -956,6 +938,9 @@ TODO: this content has not yet been reviewed/updated for v2.0
 <h5 id="detachedEntity"><a class="anchor" href="#detachedEntity"></a>detachedEntity</h5>
 <div class="paragraph">
 <p>Creates a new detached entity instance, with injection points resolved and defaults applied.</p>
+</div>
+<div class="paragraph">
+<p>The entity will be detacted, in other words not yet persisted.</p>
 </div>
 </div>
 <div class="sect4">
@@ -1035,79 +1020,26 @@ TODO: this content has not yet been reviewed/updated for v2.0
 <div class="paragraph">
 <p>The corollary is: if your code never uses <code>default <em>Xxx</em> ()</code> supporting methods or the <code>created()</code> callback, then you can alternatively just <em>new()</em> up the object rather than call this method.</p>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="implementation"><a class="anchor" href="#implementation"></a>Implementation</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>TODO example migration</p>
+<p>The core framework provides a default implementation of this service (<code>o.a.i.core.metamodel.services.factory.FactoryServiceDefault</code>).</p>
 </div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-<div class="title">Deprecated Docs</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="usage"><a class="anchor" href="#usage"></a>Usage</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>== API</p>
-</div>
-<div class="paragraph">
-<p>The API of <code>FactoryService</code> is:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Unresolved include directive in modules/applib-svc/pages/FactoryService.adoc - include::refguide:applib-svc:example$services/factory/FactoryService.java[]</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>General purpose factory method, to automatically get or create an instance of the required type.
-Maps onto one of the specialized factory methods <code>#get(Class)</code> or <code>#create(Class)</code> based on the type&#8217;s meta-data.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Gets an instance (possibly shared or independent) of the specified type, with injection points resolved and any life-cycle callback processed.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Creates a new detached (not yet persisted) entity instance, with injection points resolved and defaults applied.
-The class must have a no-arg constructor (for <a href="../../../pjdo/latest/about.html" class="page">JDO/DataNucleus</a>, the enhancer adds this automatically).</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>Resolves injection points for given entity.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>Creates a new Mixin instance, with injection points resolved.
-The class must have a 1-arg constructor of the appropriate type.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
-<td>Creates a new ViewModel instance, with injection points resolved, and initialized according to the given memento string.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="7"></i><b>7</b></td>
-<td>Creates a new ViewModel instance, with injection points resolved and defaults applied.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="8"></i><b>8</b></td>
-<td>Resolves injection points for given ViewModel instance.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="9"></i><b>9</b></td>
-<td>Creates a new instance of the specified class, with injection points resolved and defaults applied.</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>The object is created in memory, but (if an entity) is not persisted.
-The benefits of using this method (instead of simply using the Java <code>new</code> keyword) are:</p>
+<p>The benefits of using this method (instead of simply using the Java <code>new</code> keyword) are:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>any services will be injected into the object immediately (otherwise they will not be injected until the frameworkbecomes aware of the object, typically when it is persisted through the <a href="RepositoryService.html" class="page"><code>RepositoryService</code></a></p>
+<p>any services will be injected into the object immediately (otherwise they will not be injected until the framework becomes aware of the object, typically when it is persisted through the <a href="../../../system/latest/generated/index/applib/services/repository/RepositoryService.html" class="page"><code>RepositoryService</code></a></p>
 </li>
 <li>
 <p>the default value for any properties (usually as specified by <code>defaultXxx()</code> supporting methods) or from the value type itself will be set and the <code>created()</code> callback will be called.</p>
@@ -1115,19 +1047,13 @@ The benefits of using this method (instead of simply using the Java <code>new</c
 </ul>
 </div>
 <div class="paragraph">
-<p>An alternative idiom is to just <code>new</code> up the object and then use  <a href="ServiceInjector.html" class="page"><code>ServiceInjector</code></a> domain service can be used to inject services into the domain object.
+<p>An alternative idiom is to just <code>new</code> up the object and then use <a href="../../../system/latest/generated/index/applib/services/inject/ServiceInjector.html" class="page">ServiceInjector</a> domain service can be used to inject services into the domain object.
 Note though that no default values will be set on the created object.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-</div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="usage"><a class="anchor" href="#usage"></a>Usage</h2>
+<h2 id="example"><a class="anchor" href="#example"></a>Example</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>For example:</p>
@@ -1143,21 +1069,17 @@ repositoryService.persist(cust);</code></pre>
 </div>
 </div>
 <div class="sect1">
-<h2 id="implementation"><a class="anchor" href="#implementation"></a>Implementation</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The core framework provides a default implementation of this service (<code>o.a.i.core.metamodel.services.factory.FactoryServiceDefault</code>).</p>
-</div>
-</div>
-</div>
-<div class="sect1">
 <h2 id="related-services"><a class="anchor" href="#related-services"></a>Related Services</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The <a href="RepositoryService.html" class="page"><code>RepositoryService</code></a> is often used in conjunction with the <code>FactoryService</code>, to persist domain objects after they have been instantiated and populated.</p>
+<p>See also:</p>
 </div>
-<div class="paragraph">
-<p>An alternative to using the factory service is to simply instantiate the object ("new is the new new") and then use the <a href="ServiceRegistry.html" class="page"><code>ServiceRegistry</code></a> service to inject other domain services into the instantiated object.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>The <a href="../../../system/latest/generated/index/applib/services/repository/RepositoryService.html" class="page">RepositoryService</a> is often used in conjunction with the <code>FactoryService</code>, to persist domain objects after they have been instantiated and populated.</p>
+</li>
+</ul>
 </div>
 </div>
 </div>
@@ -1178,7 +1100,7 @@ repositoryService.persist(cust);</code></pre>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210210-0423-9f782037</p>
+            <p>Revision: 2.0.0-M4.20210211-0423-d14adde6</p>
         </div>
     </div>
 </footer>

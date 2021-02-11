@@ -764,28 +764,13 @@ page.parent doesn't seem to be set...
 <h1 class="page">GridLoaderService</h1>
 <div id="preamble">
 <div class="sectionbody">
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-TODO: this content has not yet been reviewed/updated for v2.0
-</td>
-</tr>
-</table>
-</div>
 <div class="paragraph">
-<p>The <code>GridLoaderService</code> provides the ability to load the XML layout (grid) for a domain class.</p>
+<p>Provides the ability to load the XML layout (grid) for a domain class.</p>
 </div>
 </div>
 </div>
-<div class="sect1">
-<h2 id="api"><a class="anchor" href="#api"></a>API</h2>
-<div class="sectionbody">
 <div class="sect3">
-<h4 id="api-2"><a class="anchor" href="#api-2"></a>API</h4>
+<h4 id="api"><a class="anchor" href="#api"></a>API</h4>
 <div class="listingblock">
 <div class="title">GridLoaderService.java</div>
 <div class="content">
@@ -850,7 +835,7 @@ TODO: this content has not yet been reviewed/updated for v2.0
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>Returns a new instance of a <a href="../../../system/latest/generated/index/applib/layout/grid/Grid.html" class="page">Grid</a> for the specified domain class, eg from a <code>layout.xml</code> file, else <code>null</code> .</p>
+<p>Loads a specic alternative <a href="../../../system/latest/generated/index/applib/layout/grid/Grid.html" class="page">Grid</a> layout for the specified domain class.</p>
 </div>
 </div>
 </div></td>
@@ -865,11 +850,17 @@ TODO: this content has not yet been reviewed/updated for v2.0
 <div class="paragraph">
 <p>Whether dynamic reloading of layouts is enabled.</p>
 </div>
+<div class="paragraph">
+<p>The default implementation enables reloading for prototyping mode, disables in production</p>
+</div>
 </div>
 <div class="sect4">
 <h5 id="remove"><a class="anchor" href="#remove"></a>remove</h5>
 <div class="paragraph">
 <p>To support metamodel invalidation/rebuilding of spec.</p>
+</div>
+<div class="paragraph">
+<p>This is called by the <em>org.apache.isis.applib.mixins.layout.Object_rebuildMetamodel</em> mixin action.</p>
 </div>
 </div>
 <div class="sect4">
@@ -877,6 +868,9 @@ TODO: this content has not yet been reviewed/updated for v2.0
 <div class="paragraph">
 <p>Whether any persisted layout metadata (eg a <code>.layout.xml</code> file) exists for this domain class.</p>
 </div>
+<div class="paragraph">
+<p>If none exists, will return null (and the calling <a href="../../../system/latest/generated/index/applib/services/grid/GridService.html" class="page">GridService</a> will use <a href="../../../system/latest/generated/index/applib/services/grid/GridSystemService.html" class="page">GridSystemService</a> to obtain a default grid for the domain class).</p>
+</div>
 </div>
 <div class="sect4">
 <h5 id="load"><a class="anchor" href="#load"></a>load</h5>
@@ -887,60 +881,10 @@ TODO: this content has not yet been reviewed/updated for v2.0
 <div class="sect4">
 <h5 id="load"><a class="anchor" href="#load"></a>load</h5>
 <div class="paragraph">
-<p>Returns a new instance of a <a href="../../../system/latest/generated/index/applib/layout/grid/Grid.html" class="page">Grid</a> for the specified domain class, eg from a <code>layout.xml</code> file, else <code>null</code> .</p>
+<p>Loads a specic alternative <a href="../../../system/latest/generated/index/applib/layout/grid/Grid.html" class="page">Grid</a> layout for the specified domain class.</p>
 </div>
 <div class="paragraph">
-<p>TODO example migration</p>
-</div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-<div class="title">Deprecated Docs</div>
-<div class="paragraph">
-<p>== SPI</p>
-</div>
-<div class="paragraph">
-<p>The SPI defined by this service is:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Unresolved include directive in modules/applib-svc/pages/GridLoaderService.adoc - include::refguide:applib-svc:example$services/grid/GridLoaderService.java[]</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>whether dynamic reloading of layouts is enabled.  The default implementation enables reloading for prototyping, disables in production</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>support metamodel invalidation/rebuilding of spec, eg as called by this <a href="../applib-classes/about.html#rebuildMetamodel" class="page">Object mixin</a> action.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>whether any persisted layout metadata (eg a <code>.layout.xml</code> file) exists for this domain class.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>returns a new instance of a <a href="../applib-classes/layout.html#component" class="page"><code>Grid</code></a> for the specified domain class, eg as loaded from a <code>layout.xml</code> file.
-If none exists, will return null (and the calling <a href="GridService.html" class="page"><code>GridService</code></a> will use <a href="GridSystemService.html" class="page"><code>GridSystemService</code></a> to obtain a default grid for the domain class).</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>Load a specific layout alternative, eg if specified through a <code>layout()</code> supporting method of the domain object itself.</td>
-</tr>
-</table>
-</div>
-</td>
-</tr>
-</table>
-</div>
-</div>
+<p>The layout alternative will typically be specified through a <code>layout()</code> method on the domain object, the value of which is used for the suffix of the layout file (eg "Customer-layout.archived.xml" to use a different layout for customers that have been archived).</p>
 </div>
 </div>
 </div>
@@ -948,8 +892,8 @@ If none exists, will return null (and the calling <a href="GridService.html" cla
 <h2 id="implementation"><a class="anchor" href="#implementation"></a>Implementation</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The framework provides a default implementation of this service, namely <code>GridLoaderServiceDefault</code>.  This implementation
-loads the grid from its serialized representation as a <code>.layout.xml</code> file, loaded from the classpath.</p>
+<p>The framework provides a default implementation of this service, namely <code>GridLoaderServiceDefault</code>.
+This implementation loads the grid from its serialized representation as a <code>.layout.xml</code> file, loaded from the classpath.</p>
 </div>
 <div class="paragraph">
 <p>For example, the layout for a domain class <code>com.mycompany.myapp.Customer</code> would be loaded from <code>com/mycompany/myapp/Customer.layout.xml</code>.</p>
@@ -960,7 +904,17 @@ loads the grid from its serialized representation as a <code>.layout.xml</code> 
 <h2 id="related-services"><a class="anchor" href="#related-services"></a>Related Services</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>This service is used by <a href="GridService.html" class="page"><code>GridService</code></a>.</p>
+<p>See also:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../../../system/latest/generated/index/applib/services/grid/GridService.html" class="page">GridService</a></p>
+</li>
+<li>
+<p><a href="../../../system/latest/generated/index/applib/services/grid/GridLoaderService.html" class="page">GridLoaderService</a></p>
+</li>
+</ul>
 </div>
 </div>
 </div>
@@ -981,7 +935,7 @@ loads the grid from its serialized representation as a <code>.layout.xml</code> 
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210210-0423-9f782037</p>
+            <p>Revision: 2.0.0-M4.20210211-0423-d14adde6</p>
         </div>
     </div>
 </footer>

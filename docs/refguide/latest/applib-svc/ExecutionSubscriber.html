@@ -764,150 +764,70 @@ page.parent doesn't seem to be set...
 <h1 class="page">ExecutionSubscriber</h1>
 <div id="preamble">
 <div class="sectionbody">
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-TODO: this content has not yet been reviewed/updated for v2.0
-</td>
-</tr>
-</table>
+<div class="paragraph">
+<p>SPI that allows the execution of individual interactions (action invocations or property edits) to be subscribed to.</p>
 </div>
 <div class="paragraph">
-<p>The <code>PublisherService</code> API is intended for coarse-grained publish/subscribe for system-to-system interactions, from Apache Isis to some other system.
-Events that can be published are action invocations/property edits, and changed objects.
-A typical use case is to publish onto a pub/sub bus such as <a href="http://activemq.apache.org/">ActiveMQ</a> with <a href="http://camel.apache.org">Camel</a> to keep other systems up to date.</p>
+<p>The typical use case is to facilitate coarse-grained messaging for system-to-system interactions, that is from an Apache Isis application to some other system. This could be done using a pub/sub bus such asApache ActiveMQwithApache Camel.</p>
 </div>
 <div class="paragraph">
-<p>An alternative use is for profiling: for each execution (action invocation/property edit) the framework captures metrics of the number of objects loaded or dirtied as the result of that execution.
-If the <a href="WrapperFactory.html" class="page"><code>WrapperFactory</code></a> is used to call other objects then the metrics are captured for each sub-execution.
-The framework provides a default implementation, <code>PublisherServiceLogging</code>, that will log these execution graphs (in XML form, per the <a href="../schema/ixn.html" class="page">"ixn" schema</a>) to an SLF4J logger.</p>
-</div>
-<div class="paragraph">
-<p>Only actions/properties/domain objects annotated for publishing (using <a href="../applib-ant/Action.html#publishing" class="page"><code>@Action#publishing()</code></a>, <a href="../applib-ant/Property.html#publishing" class="page"><code>@Property#publishing()</code></a> or <a href="../applib-ant/DomainObject.html#publishing" class="page"><code>@DomainObject#publishing()</code></a>) are published.</p>
+<p>Only actions/properties annotated for publishing (using <em>Action#executionPublishing()</em> or <em>Property#executionPublishing()</em> are published.</p>
 </div>
 </div>
 </div>
-<div class="sect1">
-<h2 id="api"><a class="anchor" href="#api"></a>API</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Unresolved include directive in modules/applib-svc/pages/ExecutionSubscriber.adoc - include::system:generated:page$index/PublishedObjects.adoc[]</p>
-</div>
-<div class="paragraph">
-<p>TODO example migration</p>
-</div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-<div class="title">Deprecated Docs</div>
-<div class="paragraph">
-<p>== SPI</p>
-</div>
-<div class="paragraph">
-<p>The SPI defined by the service is:</p>
-</div>
+<div class="sect3">
+<h4 id="api"><a class="anchor" href="#api"></a>API</h4>
 <div class="listingblock">
+<div class="title">ExecutionSubscriber.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Unresolved include directive in modules/applib-svc/pages/ExecutionSubscriber.adoc - include::refguide:applib-svc:example$services/publish/PublisherService.java[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">interface ExecutionSubscriber {
+  void onExecution(Interaction.Execution&lt;?, ?&gt; execution)     <i class="conum" data-value="1"></i><b>(1)</b>
+}</code></pre>
 </div>
 </div>
 <div class="colist arabic">
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>to publish an individual action invocation or property edit, as captured within an <code>Interaction.Execution</code>.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>to publish a set of changed objects.</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>where <code>PublishedObjects</code> is provides statistics on the interaction execution (action invocation or property edit):</p>
-</div>
-<div class="listingblock">
+<td><a href="#onExecution">onExecution</a>
+<div class="openblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Unresolved include directive in modules/applib-svc/pages/ExecutionSubscriber.adoc - include::refguide:applib-svc:example$services/publish/PublishedObjects.java[]</code></pre>
+<div class="paragraph">
+<p>Callback to notify that an interaction (an action invocation or property edit, as represented by <em>org.apache.isis.applib.services.iactn.Interaction.Execution</em> ) has completed.</p>
 </div>
 </div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>inherited from <code>HasUniqueId</code>, correlates back to the unique identifier of the transaction in which these objects were changed.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>inherited from <code>HasUsername</code>, is the user that initiated the transaction causing these objects to change</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Time that the interaction execution completed</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>Number of domain objects loaded in this interaction</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>Number of domain objects created in this interaction</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
-<td>Number of domain objects updated in this interaction</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="7"></i><b>7</b></td>
-<td>Number of domain objects deleted in this interaction</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="8"></i><b>8</b></td>
-<td>Number of domain objects properties that were changed in this interaction</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="9"></i><b>9</b></td>
-<td>Same details, as per <a href="../schema/chg.html" class="page"><code>chg.xsd</code></a> schema.
-This can be converted into a serializable XML representation using the <code>ChangesDtoUtils</code> utility class.</td>
+</div></td>
 </tr>
 </table>
 </div>
+</div>
+<div class="sect3">
+<h4 id="members"><a class="anchor" href="#members"></a>Members</h4>
+<div class="sect4">
+<h5 id="onExecution"><a class="anchor" href="#onExecution"></a>onExecution</h5>
 <div class="paragraph">
-<p>The numbers of objects loaded, created, updated or deleted and the number of object properties modified (in other words the "size" or "weight" of the transaction).</p>
+<p>Callback to notify that an interaction (an action invocation or property edit, as represented by <em>org.apache.isis.applib.services.iactn.Interaction.Execution</em> ) has completed.</p>
 </div>
 <div class="paragraph">
-<p>Each <code>Interaction.Execution</code> has an owning <code>Interaction</code>; this is the same object obtainable from <a href="InteractionContext.html" class="page"><code>InteractionContext</code></a>.
-Implementations that publish member executions can use <code>Interaction.Execution#getDto()</code> method to return a DTO (as per the <a href="../schema/ixn.html" class="page">"ixn" schema</a>) which can be converted into a serializable XML representation using the <code>InteractionDtoUtils</code> utility class.
-The XML can either serialize a single execution, or can be a "deep" serialization of an execution and all sub-executions.</p>
+<p>This callback method is called by the framework immediately after the interaction (not at the end of the transaction, unlike some of the other subscribers).</p>
 </div>
-</td>
-</tr>
-</table>
+<div class="paragraph">
+<p>Most implementations are expected to use <em>org.apache.isis.applib.services.iactn.Interaction.Execution#getDto()</em> to create a serializable XML representation of the execution. The easiest way to do this is using <em>InteractionDtoUtils#newInteractionDto(Interaction.Execution)</em> .</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="implementations"><a class="anchor" href="#implementations"></a>Implementations</h2>
+<h2 id="implementation"><a class="anchor" href="#implementation"></a>Implementation</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>The framework allows multiple implementations of this service to be registered; all will be called.</p>
 </div>
 <div class="paragraph">
-<p>There are two implementations provided by the framework:</p>
+<p>This is an SPI, but the framework provides a simple implementation, <code>o.a.i.applib.services.publishing.log.ExecutionLogger</code>, that just logs events as they are received.</p>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p>The core framework provides one implementation of its own, <code>PublisherServiceLogging</code> (in <code>o.a.i.applib.services.publish</code> package).
-This logs serializations to a <a href="https://logging.apache.org/log4j/log4j-2.2/manual/configuration.html">Log4j2</a> logger</p>
+<div class="paragraph">
+<p>It can be configured using:</p>
+</div>
 <div class="listingblock">
 <div class="title">log4j2-spring.xml</div>
 <div class="content">
@@ -918,7 +838,7 @@ This logs serializations to a <a href="https://logging.apache.org/log4j/log4j-2.
   &lt;Loggers&gt;
     ...
     &lt;logger
-      name="org.apache.isis.applib.services.publish.PublisherServiceLogging"
+      name="org.apache.isis.applib.services.publishing.log.ExecutionLogger"
       level="debug"/&gt;
     ...
   &lt;/Loggers&gt;
@@ -928,50 +848,13 @@ This logs serializations to a <a href="https://logging.apache.org/log4j/log4j-2.
 <div class="paragraph">
 <p>See the <code>log4j2-spring.xml</code> file in <a href="../../../docs/latest/starters/simpleapp.html" class="page">simpleapp</a> for the omitted detail.</p>
 </div>
-</li>
-<li>
-<p>the <a href="../../../mappings/latest/outbox-publisher/about.html" class="page">Outbox Publisher</a> in the <a href="../../../mappings/latest/about.html" class="page">Mappings catalog</a> persists each interaction into a <a href="https://microservices.io/patterns/data/transactional-outbox.html">outbox table</a> for subsequent processing.
-As its name implies, it uses <a href="../../../pjdo/latest/about.html" class="page">JDO/DataNucleus</a> to do this.</p>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-TODO: v2 - need to migrate this across.
-Also, check the name is correct.
-</td>
-</tr>
-</table>
-</div>
-</li>
-</ul>
-</div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="usage"><a class="anchor" href="#usage"></a>Usage</h2>
+<h2 id="wrapper-factory"><a class="anchor" href="#wrapper-factory"></a>Wrapper Factory</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>To indicate that:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>an action invocation should be published, annotate it with the <a href="../applib-ant/Action.html#publishing" class="page"><code>@Action#publishing()</code></a> annotation.</p>
-</li>
-<li>
-<p>an property edit should be published, annotate it with the <a href="../applib-ant/Property.html#publishing" class="page"><code>@Property#publishing()</code></a> annotation.</p>
-</li>
-<li>
-<p>a changed object should be published is to annotate it with the <a href="../applib-ant/DomainObject.html#publishing" class="page"><code>@DomainObject#publishing()</code></a> annotation.</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>The module also provide services that contribute to the UI.
-If contributions are not required in the UI, these can be suppressed either using security or by implementing a <a href="../../../userguide/latest/btb/hints-and-tips/vetoing-visibility.html" class="page">vetoing subscriber</a>.</p>
+<p>If the <a href="WrapperFactory.html" class="page"><code>WrapperFactory</code></a> is used to call other objects then the metrics are captured for each sub-execution.</p>
 </div>
 </div>
 </div>
@@ -979,20 +862,7 @@ If contributions are not required in the UI, these can be suppressed either usin
 <h2 id="related-services"><a class="anchor" href="#related-services"></a>Related Services</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>This service supports two main use cases:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>coarse-grained publish/subscribe for system-to-system interactions, from Apache Isis to some other system.</p>
-</li>
-<li>
-<p>profiling of interactions/transactions, eg to diagnose response/throughput issues.</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>To support these use cases several other services are involved:</p>
+<p>See also:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -1000,26 +870,34 @@ If contributions are not required in the UI, these can be suppressed either usin
 <p>the <a href="InteractionContext.html" class="page"><code>InteractionContext</code></a> is used to obtain the <code>Interaction</code> from which the member executions are published.</p>
 </li>
 <li>
-<p>the (internal) <a href="#core:runtime-services:ChangedObjectsService.adoc" class="page unresolved"><code>ChangedObjectsService</code></a> domain service is used to obtain the set of objects modified throughout the transaction</p>
+<p>the <a href="../../../system/latest/generated/index/applib/services/publishing/spi/EntityChangesSubscriber.html" class="page">EntityChangesSubscriber</a> is used to obtain the set of objects modified within the interaction</p>
 </li>
 <li>
-<p>the (internal) <a href="../../../core/latest/runtime-services/EntityChangesPublisher.html" class="page"><code>EntityChangesPublisher</code></a> domain service filters these down to those changed entities that have <code>entityChangePublishing</code> enabled (as per <a href="../applib-ant/DomainObject.html#entityChangePublishing" class="page"><code>@DomainObject#entityChangePublishing()</code></a>) and publishes to any <code>EntityChangesSubscriber</code>.</p>
+<p>the <a href="MetricsService.html" class="page"><code>MetricsService</code></a> is used to obtain the objects that are loaded throughout the transaction; this info is used in order to instantiate the <a href="../../../system/latest/generated/index/applib/services/publishing/spi/EntityChanges.html" class="page">EntityChanges</a> object passed through to the <a href="../../../system/latest/generated/index/applib/services/publishing/spi/EntityChangesSubscriber.html" class="page">EntityChangesSubscriber</a>.</p>
 </li>
 <li>
-<p>the <a href="MetricsService.html" class="page"><code>MetricsService</code></a> is used to obtain the objects that are loaded throughout the transaction; this info is used in order to instantiate the <code>PublishedObjects</code> object passed through to the <code>PublisherService</code>.</p>
+<p>The services provided by this module combine very well with the <a href="../../../system/latest/generated/index/applib/services/publishing/spi/CommandSubscriber.html" class="page">CommandSubscriber</a> and with <a href="../../../system/latest/generated/index/applib/services/publishing/spi/EntityPropertyChangeSubscriber.html" class="page">EntityPropertyChangeSubscriber</a>.</p>
+<div class="paragraph">
+<p>The <a href="../../../system/latest/generated/index/applib/services/command/Command.html" class="page">Command</a>  captures the <em>cause</em> of an interaction (an action was invoked, a property was edited), while the <a href="../../../system/latest/generated/index/applib/services/publishing/spi/ExecutionSubscriber.html" class="page">ExecutionSubscriber</a> captures the <em>effect</em> of that interaction in terms of events, while the <a href="../../../system/latest/generated/index/applib/services/publishing/spi/EntityPropertyChangeSubscriber.html" class="page">EntityPropertyChangeSubscriber</a> captures the effect of the interaction in terms of changed state.</p>
+</div>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>The services provided by this module combine very well with the <a href="CommandSubscriber.html" class="page"><code>CommandServiceListener</code></a> and with <a href="#refguide:applib-svc:AuditerService.adoc" class="page unresolved"><code>AuditerService</code></a>.
-The <code>Command</code> captures the <em>cause</em> of an interaction (an action was invoked, a property was edited), while the <code>PublisherService</code> captures the <em>effect</em> of that interaction in terms of events, and the <code>AuditerService</code> captures the effect of the interaction in terms of changed state.
-You may also want to configure the <a href="ExecutionSubscriber.html" class="page"><code>PublisherService</code></a>, which also captures the effect of the interaction but as an event.
-All three of these services collaborate implicitly by way of the <a href="../applib-classes/roles-mixins-contributees/contributee.html#HasUniqueId" class="page"><code>HasUniqueId</code></a> interface.</p>
+<p>All of these services collaborate implicitly by way of the <a href="../../../system/latest/generated/index/commons/having/HasUniqueId.html" class="page">HasUniqueId</a> interface.</p>
 </div>
 <div class="paragraph">
-<p>The <a href="EventBusService.html" class="page"><code>EventBusService</code></a> differs from the <code>PublisherService</code> in that it is intended for fine-grained publish/subscribe for object-to-object interactions within an Apache Isis domain object model.
-The event propagation is strictly in-memory, and there are no restrictions on the object acting as the event; it need not be serializable, for example.
-That said, it is possible to obtain a serialization of the action invocation/property edit causing the current event to be raised using <a href="InteractionContext.html" class="page"><code>InteractionContext</code></a> domain service.</p>
+<p>In contrast:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The <a href="../../../system/latest/generated/index/applib/services/eventbus/EventBusService.html" class="page">EventBusService</a> differs from the <a href="../../../system/latest/generated/index/applib/services/publishing/spi/ExecutionSubscriber.html" class="page">ExecutionSubscriber</a> in that the former is intended for fine-grained publish/subscribe for object-to-object interactions <em>within</em> an Apache Isis domain object model.</p>
+<div class="paragraph">
+<p>The event propagation is strictly in-memory, and there are no restrictions on the object acting as the event; it need not be serializable, for example.</p>
+</div>
+</li>
+</ul>
 </div>
 </div>
 </div>
@@ -1040,7 +918,7 @@ That said, it is possible to obtain a serialization of the action invocation/pro
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210210-0423-9f782037</p>
+            <p>Revision: 2.0.0-M4.20210211-0423-d14adde6</p>
         </div>
     </div>
 </footer>

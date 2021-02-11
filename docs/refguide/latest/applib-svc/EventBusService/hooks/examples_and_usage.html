@@ -792,10 +792,10 @@ However the events are published, the primary use case is to decoupling interact
 </div>
 </div>
 <div class="sect1">
-<h2 id="annotating-members"><a class="anchor" href="#annotating-members"></a>Annotating Members</h2>
+<h2 id="default-event-classes"><a class="anchor" href="#default-event-classes"></a>Default Event Classes</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>As discussed in the introduction, the framework will automatically emit domain events for all of the object members (actions, properties or collections) of an object whenever that object is rendered or (more generally) interacted with.</p>
+<p>The framework will automatically emit domain events for all of the object members (actions, properties or collections) of an object whenever that object is rendered or (more generally) interacted with.</p>
 </div>
 <div class="paragraph">
 <p>For example:</p>
@@ -829,6 +829,11 @@ public class MySubscribingDomainService {
 }</code></pre>
 </div>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="custom-event-classes"><a class="anchor" href="#custom-event-classes"></a>Custom Event Classes</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>More commonly though you will probably want to emit domain events of a specific subtype.
 As a slightly more interesting example, suppose in a library domain that a <code>LibraryMember</code> wants to leave the library.
@@ -868,7 +873,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class BookRepository {
 
-    @EventListener(LbraryMemberLeaveEvent.class)
+    @EventListener(LibraryMemberLeaveEvent.class)
     public void onLibraryMemberLeaving(LibraryMemberLeaveEvent e) {
         LibraryMember lm = e.getLibraryMember();
         List&lt;Book&gt; lentBooks = findBooksOnLoanFor(lm);
@@ -1017,7 +1022,7 @@ public static class LibMemModule {
 <h2 id="programmatic-posting"><a class="anchor" href="#programmatic-posting"></a>Programmatic posting</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>To programmatically post an event, simply call <code>#post()</code>.</p>
+<p>To programmatically post an event, simply call <a href="../../../../../system/latest/generated/index/applib/services/eventbus/EventBusService.html#post" class="page">EventBusService#post</a>.</p>
 </div>
 <div class="paragraph">
 <p>The <code>LibraryMember</code> example described above could for example be rewritten into:</p>
@@ -1051,8 +1056,12 @@ public static class LibMemModule {
 <h2 id="using-wrapperfactory"><a class="anchor" href="#using-wrapperfactory"></a>Using <code>WrapperFactory</code></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>An alternative way to cause events to be posted is through the <a href="../../WrapperFactory.html" class="page"><code>WrapperFactory</code></a>.
-This is useful when you wish to enforce a (lack-of-) trust boundary between the caller and the callee.</p>
+<p>Using the declarative approach does require that the method to emit the event is an action called directly by the framework (rather than a helper method programmatically called by that action).
+However by using the <a href="../../WrapperFactory.html" class="page"><code>WrapperFactory</code></a> we can invoke that helper method "through" the framework, thereby allowing the framework to emit events.
+(It can also optionally perform validation checks and other concerns associated with the UI).</p>
+</div>
+<div class="paragraph">
+<p>Another use case for the <code>WrapperFactory</code> is when you wish to enforce a (lack-of-) trust boundary between the caller and the callee.</p>
 </div>
 <div class="paragraph">
 <p>For example, suppose that <code>Customer#placeOrder(&#8230;&#8203;)</code> emits a <code>PlaceOrderEvent</code>, which is subscribed to by a <code>ReserveStockSubscriber</code>.
@@ -1145,7 +1154,7 @@ The event propagation is strictly in-memory, and there are no restrictions on th
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210210-0423-9f782037</p>
+            <p>Revision: 2.0.0-M4.20210211-0423-d14adde6</p>
         </div>
     </div>
 </footer>

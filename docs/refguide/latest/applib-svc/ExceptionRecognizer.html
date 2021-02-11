@@ -761,31 +761,6 @@ page.parent doesn't seem to be set...
 <h1 class="page">ExceptionRecognizer</h1>
 <div id="preamble">
 <div class="sectionbody">
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-TODO: this content has not yet been reviewed/updated for v2.0
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>The <code>ExceptionRecognizer</code> SPI provides the mechanism for both the domain programmer and also for components to be able to recognize and handle certain exceptions that may be thrown by the system.
-Rather than display an obscure error to the end-user, the application can instead display a user-friendly message.</p>
-</div>
-<div class="paragraph">
-<p>For example, the JDO/DataNucleus Objectstore provides a set of recognizers to recognize and handle SQL constraint exceptions such as uniqueness violations.
-These can then be rendered back to the user as expected errors, rather than fatal stacktraces.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="api"><a class="anchor" href="#api"></a>API</h2>
-<div class="sectionbody">
 <div class="paragraph">
 <p>Domain service to (attempt) to recognize certain exceptions, and return user-friendly messages instead.</p>
 </div>
@@ -793,16 +768,21 @@ These can then be rendered back to the user as expected errors, rather than fata
 <p>Rather than redirecting to a general-purpose error page, the message (corresponding to the recognized exception) is rendered as a regular validation message.</p>
 </div>
 <div class="paragraph">
-<p>More than one implementation of <a href="../../../system/latest/generated/index/applib/services/exceprecog/ExceptionRecognizer.html" class="page">ExceptionRecognizer</a> can be registered; they will all be consulted (in the order as specified by the @Order annotation) to determine if they recognize the exception. The message returned by the first service recognizing the exception is used.</p>
+<p>For example, a set of recognizers are provided for the JPA and JDO persistence mechanisms in order to recognize and handle SQL constraint exceptions such as uniqueness violations. These can then be rendered back to the user as expected errors, rather than fatal stacktraces.</p>
 </div>
 <div class="paragraph">
-<p>The Isis framework also provides a default implementation of this service that recognizes any <em>org.apache.isis.applib.exceptions.RecoverableException</em> , simply returning the exception&#8217;s <em>org.apache.isis.applib.exceptions.RecoverableException#getMessage() message</em> . This allows any component or domain object to throw this exception with the knowledge that it will be handled appropriately.</p>
+<p>More than one implementation of <a href="../../../system/latest/generated/index/applib/services/exceprecog/ExceptionRecognizer.html" class="page">ExceptionRecognizer</a> can be registered; they will all be consulted (in the order as specified by Spring&#8217;s <em>org.springframework.core.annotation.Order</em> annotation) to determine if they recognize the exception. The message returned by the first service recognizing the exception is used.</p>
+</div>
+<div class="paragraph">
+<p>The framework also provides a default implementation of this service that recognizes any <em>org.apache.isis.applib.exceptions.RecoverableException</em> , simply returning the exception&#8217;s <em>org.apache.isis.applib.exceptions.RecoverableException#getMessage() message</em> . This allows any component or domain object to throw this exception with the knowledge that it will be handled appropriately.</p>
 </div>
 <div class="paragraph">
 <p>Initially introduced for the Wicket viewer; check the documentation of other viewers to determine whether they also support this service.</p>
 </div>
+</div>
+</div>
 <div class="sect3">
-<h4 id="api-2"><a class="anchor" href="#api-2"></a>API</h4>
+<h4 id="api"><a class="anchor" href="#api"></a>API</h4>
 <div class="listingblock">
 <div class="title">ExceptionRecognizer.java</div>
 <div class="content">
@@ -834,212 +814,70 @@ These can then be rendered back to the user as expected errors, rather than fata
 <div class="paragraph">
 <p>(Attempt to) recognize the exception and return a user-friendly message to render instead.</p>
 </div>
-<div class="paragraph">
-<p>TODO example migration</p>
-</div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-<div class="title">Deprecated Docs</div>
-<div class="paragraph">
-<p>== SPI</p>
-</div>
-<div class="paragraph">
-<p>The SPI defined by this service is:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Unresolved include directive in modules/applib-svc/pages/ExceptionRecognizer.adoc - include::refguide:applib-svc:example$services/exceprecog/ExceptionRecognizer.java[]</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>the main API, to attempt to recognize an exception</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>where <code>Recognition</code> translates the recognized exception into a form that can be handled by the framework:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Unresolved include directive in modules/applib-svc/pages/ExceptionRecognizer.adoc - include::refguide:applib-svc:example$services/exceprecog/ExceptionRecognizer.java[]</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>and <code>Category</code> in turn is an enumeration of the various types of exceptions that are recognised:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Unresolved include directive in modules/applib-svc/pages/ExceptionRecognizer.adoc - include::refguide:applib-svc:example$services/exceprecog/ExceptionRecognizer.java[]</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>a violation of some declarative constraint (eg uniqueness or referential integrity) was detected.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>the object to be acted upon cannot be found (404)</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>a concurrency exception, in other words some other user has changed this object.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>recognized, but for some other reason&#8230;&#8203; 40x error</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>50x error</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
-<td>recognized, but uncategorized.</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>In essence, if an exception is recognized then it is also categorized.
-This lets the viewer act accordingly.
-For example, if an exception is raised from the loading of an individual object, then this is passed by the registered <code>ExceptionRecognizer</code>s.
-If any of these recognize the exception as representing a not-found exception, then an Apache Isis <code>ObjectNotFoundException</code> is raised.
-Both the viewers interprets this correctly (the <a href="../../../vw/latest/about.html" class="page">Wicket viewer</a> as a suitable error page, the <a href="../../../vro/latest/about.html" class="page">Restful Objects viewer</a> as a 404 status return code).</p>
-</div>
-<div class="paragraph">
-<p>If the implementation recognizes the exception then it returns a user-friendly message to be rendered (by the viewer) back to the user; otherwise it returns <code>null</code>.
-There is no need for the implementation to check for exception causes; the casual chain is unwrapped by Apache Isis core and each exception in the chain will also be passed through to the recognizer (from most specific to least).
-The recognizer implementation can therefore be as fine-grained or as coarse-grained as it wishes.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="implementation"><a class="anchor" href="#implementation"></a>Implementation</h2>
 <div class="sectionbody">
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-TODO: v2 - this is out of date; we&#8217;ve teased apart ExceptionRecognizer from ExceptionRecognizerService.
-There is also ExceptionRecognizerForType as an impl.
-</td>
-</tr>
-</table>
-</div>
 <div class="paragraph">
-<p>The framework provides two default implementations:</p>
+<p>The framework provides a number of default implementations for JPA and JDO, to recognise:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p><code>o.a.i.core.metamodel.services.exceprecog.ExceptionRecognizerDocDefault</code> provided by Apache Isis core is itself an <code>ExceptionRecognizer</code>, and will handle <code>ConcurrencyException</code>s.</p>
-<div class="paragraph">
-<p>It will also handle any application exceptions raised by the system (subclasses of <code>o.a.i.applib.RecoverableException</code>).</p>
-</div>
+<p>data already exists (uniqueness constraints)</p>
 </li>
 <li>
-<p><code>o.a.i.applib.services.exceprecog.jdo.ExceptionRecognizerCompositeForJdoObjectStore</code></p>
-<div class="paragraph">
-<p>which bundles up a number of more fine-grained implementations:</p>
+<p>object not found</p>
+</li>
+<li>
+<p>related data exists (foreign key constraints preventing change)</p>
+</li>
+<li>
+<p>unable to save data (foreign key constraints not met)</p>
+</li>
+<li>
+<p>other data access problem.</p>
+</li>
+</ul>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="usage"><a class="anchor" href="#usage"></a>Usage</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If you want to recognize and handle additional exceptions (for example to capture error messages specific to the JDBC driver you might be using), then create an implementation of this SPI for the particular error message, and annotate your implementation as a <a href="../../../system/latest/generated/index/applib/annotation/DomainService.html" class="page">DomainService</a>.</p>
+</div>
+<div class="paragraph">
+<p>There are some convenience implementations of the interface to subclass from if required.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+<div class="sectionbody">
 <div class="ulist">
 <ul>
 <li>
-<p><code>ExceptionRecognizerForSQLIntegrityConstraintViolationUniqueOrIndexException</code></p>
+<p><a href="#system:generated:index/applib/services/exceprecog/Recognition.adoc" class="page unresolved">Recognition</a></p>
+<div class="paragraph">
+<p>Part of the SPI for <a href="../../../system/latest/generated/index/applib/services/exceprecog/ExceptionRecognizer.html" class="page">ExceptionRecognizer</a></p>
+</div>
 </li>
 <li>
-<p><code>ExceptionRecognizerForJDOObjectNotFoundException</code></p>
+<p><a href="#system:generated:index/applib/services/exceprecog/Category.adoc" class="page unresolved">Category</a></p>
+<div class="paragraph">
+<p>Part of the SPI for <a href="../../../system/latest/generated/index/applib/services/exceprecog/ExceptionRecognizer.html" class="page">ExceptionRecognizer</a></p>
+</div>
 </li>
 <li>
-<p><code>ExceptionRecognizerForJDODataStoreException</code></p>
+<p><a href="../../../system/latest/generated/index/applib/services/exceprecog/ExceptionRecognizerService.html" class="page">ExceptionRecognizerService</a></p>
+<div class="paragraph">
+<p>mediates access to <a href="../../../system/latest/generated/index/applib/services/exceprecog/ExceptionRecognizer.html" class="page">ExceptionRecognizer</a>s in the correct order.</p>
+</div>
 </li>
 </ul>
-</div>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>If you want to recognize and handle additional exceptions (for example to capture error messages specific to the JDBC driver you might be using), then create a fine-grained implementation of <code>ExceptionRecognizer</code> for the particular error message (there are some convenience implementations of the interface that you can subclass from if required) and annotated with <code>@DomainService</code> in the usual way.
-Make sure that the service resides under a module registered in <code>AppManifest</code>.</p>
-</div>
-<div class="sect2">
-<h3 id="configuration-properties"><a class="anchor" href="#configuration-properties"></a>Configuration Properties</h3>
-<div class="paragraph">
-<p>The following configuration properties are relevant:</p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 16.6666%;">
-<col style="width: 50.0001%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Property</th>
-<th class="tableblock halign-left valign-top">Value<br>
-(default value)</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>isis.services.</code><br>
-<code>exceprecog.</code><br>
-<code>logRecognized</code><br>
-<code>Exceptions</code><br></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code>,<code>false</code><br>
-(<code>false</code>)</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>whether recognized exceptions should also be logged.<br></p>
-</div>
-<div class="paragraph">
-<p>Generally a recognized exception is one that is expected (for example a uniqueness constraint violated in the database) and which does not represent an error condition.
-This property logs the exception anyway, useful for debugging.</p>
-</div>
-<div class="paragraph">
-<p>This is recognised by all implementations that subclass <code>ExceptionRecognizerAbstract</code>.</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>isis.services.</code><br>
-<code>ExceptionRecognizer</code><br>
-<code>CompositeFor</code><br>
-<code>JdoObjectStore.</code><br>
-<code>disable</code><br></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code>,<code>false</code><br>
-(<code>false</code>)</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>whether to disable the default recognizers registered by <code>ExceptionRecognizerCompositeForJdoObjectStore</code>.<br></p>
-</div>
-<div class="paragraph">
-<p>This implementation provides a default set of recognizers to convert RDBMS constraints into user-friendly messages.
-In the (probably remote) chance that this functionality isn&#8217;t required, they can be disabled through this flag.</p>
-</div></div></td>
-</tr>
-</tbody>
-</table>
 </div>
 </div>
 </div>
@@ -1060,7 +898,7 @@ In the (probably remote) chance that this functionality isn&#8217;t required, th
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210210-0423-9f782037</p>
+            <p>Revision: 2.0.0-M4.20210211-0423-d14adde6</p>
         </div>
     </div>
 </footer>
