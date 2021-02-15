@@ -510,12 +510,6 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../config/sections/isis.security.shiro.html">Shiro Security Implementation</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../config/sections/jdo-datanucleus.html">JDO DataNucleus</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../config/sections/jdo-datanucleus-conf.html">DataNucleus Configuration</a>
-  </li>
-  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../config/sections/isis.viewer.restfulobjects.html">Restful Objects Viewer</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -777,6 +771,33 @@ TODO: this content has not yet been reviewed/updated for v2.0
 </table>
 </div>
 <div class="paragraph">
+<p>Required API to enable users to register an account on the system (aka "sign up").</p>
+</div>
+<div class="paragraph">
+<p>User registration also requires that the <a href="../../../system/latest/generated/index/applib/services/userreg/EmailNotificationService.html" class="page">EmailNotificationService</a> and <em>org.apache.isis.applib.services.email.EmailService</em> to be configured. The framework provides default implementations of both of these services. The notification service requires no further configuration. The email service ( <code>EmailServiceDefault</code> ) <em>does</em> require a couple of configuration properties to be set (specifying the SMTP mail server/accounts/password).</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="api"><a class="anchor" href="#api"></a>API</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="title">UserRegistrationService.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">interface UserRegistrationService {
+  boolean usernameExists(String username)
+  boolean emailExists(String emailAddress)
+  void registerUser(UserDetails userDetails)
+  boolean updatePasswordByEmail(String emailAddress, String password)
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="implementation"><a class="anchor" href="#implementation"></a>Implementation</h2>
+<div class="sectionbody">
+<div class="paragraph">
 <p>The <code>UserRegistrationService</code> provides the ability for users to sign-up to access an application by providing a valid email address, and also provides the capability for users to reset their password if forgotten.</p>
 </div>
 <div class="paragraph">
@@ -809,7 +830,7 @@ That said, we expect that such use cases will be comparatively rare; the primary
 </div>
 </div>
 <div class="sect1">
-<h2 id="api"><a class="anchor" href="#api"></a>API</h2>
+<h2 id="api-2"><a class="anchor" href="#api-2"></a>API</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Required API to enable users to register an account on the system (aka "sign up").</p>
@@ -818,7 +839,7 @@ That said, we expect that such use cases will be comparatively rare; the primary
 <p>User registration also requires that the <a href="../../../system/latest/generated/index/applib/services/userreg/EmailNotificationService.html" class="page">EmailNotificationService</a> and <em>org.apache.isis.applib.services.email.EmailService</em> to be configured. The framework provides default implementations of both of these services. The notification service requires no further configuration. The email service ( <code>EmailServiceDefault</code> ) <em>does</em> require a couple of configuration properties to be set (specifying the SMTP mail server/accounts/password).</p>
 </div>
 <div class="sect3">
-<h4 id="api-2"><a class="anchor" href="#api-2"></a>API</h4>
+<h4 id="api-3"><a class="anchor" href="#api-3"></a>API</h4>
 <div class="listingblock">
 <div class="title">UserRegistrationService.java</div>
 <div class="content">
@@ -881,7 +902,7 @@ The username and email address must both be unique (not being used by an existin
 </div>
 </div>
 <div class="sect1">
-<h2 id="implementation"><a class="anchor" href="#implementation"></a>Implementation</h2>
+<h2 id="implementation-2"><a class="anchor" href="#implementation-2"></a>Implementation</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>The core Apache Isis framework itself defines only an API; there is no default implementation.
@@ -962,7 +983,7 @@ Because the process requires email to be sent, the following services must be co
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210213-0423-5a5afc7f</p>
+            <p>Revision: 2.0.0-M4.20210215-0424-f665ec0b</p>
         </div>
     </div>
 </footer>

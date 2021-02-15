@@ -510,12 +510,6 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../config/sections/isis.security.shiro.html">Shiro Security Implementation</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../config/sections/jdo-datanucleus.html">JDO DataNucleus</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../config/sections/jdo-datanucleus-conf.html">DataNucleus Configuration</a>
-  </li>
-  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../config/sections/isis.viewer.restfulobjects.html">Restful Objects Viewer</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -764,38 +758,26 @@ page.parent doesn't seem to be set...
 <h1 class="page">SudoService</h1>
 <div id="preamble">
 <div class="sectionbody">
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-TODO: this content has not yet been reviewed/updated for v2.0
-</td>
-</tr>
-</table>
+<div class="paragraph">
+<p>Allows a block of code to be executed within an arbitrary <a href="../../../system/latest/generated/index/applib/services/iactn/ExecutionContext.html" class="page">ExecutionContext</a> , allowing the who, when and where to be temporarily switched.</p>
 </div>
 <div class="paragraph">
-<p>The <code>SudoService</code> allows the current user reported by the <a href="UserService.html" class="page"><code>UserService</code></a>  to be temporarily changed to some other user.
-This is useful both for <a href="../../../testing/latest/integtestsupport/about.html" class="page">integration testing</a> (eg if testing a workflow system whereby objects are moved from one user to another) and while running <a href="#fixtures:ROOT:about.adoc" class="page unresolved">fixture scripts</a> (eg setting up objects that would normally require several users to have acted upon the objects).</p>
+<p>Most typically this service is used to temporarily change the &qout;who", that is the user reported by the <a href="../../../system/latest/generated/index/applib/services/user/UserService.html" class="page">UserService</a> 's <em>UserService#currentUser() getUser()</em> - hence the name SudoService. But the user&#8217;s locale and timezome can also be changed, as well as the time reported by <em>org.apache.isis.applib.services.clock.ClockService</em> .</p>
+</div>
+<div class="paragraph">
+<p>The primary use case for this service is for fixture scripts and integration tests.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="api"><a class="anchor" href="#api"></a>API</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p>Intended only for use by fixture scripts and integration tests, allows a block of code to execute while the <a href="../../../system/latest/generated/index/applib/services/user/UserService.html" class="page">UserService</a> 's <em>UserService#currentUser() getUser()</em> method returns the specified user/role as the effective user.</p>
-</div>
-<div class="sect3">
-<h4 id="api-2"><a class="anchor" href="#api-2"></a>API</h4>
 <div class="listingblock">
 <div class="title">SudoService.java</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">interface SudoService {
   RoleMemento ACCESS_ALL_ROLE;     <i class="conum" data-value="1"></i><b>(1)</b>
-  T call(UnaryOperator&lt;ExecutionContext&gt; sudoMapper, Callable&lt;T&gt; supplier)     <i class="conum" data-value="2"></i><b>(2)</b>
+  T call(final UnaryOperator&lt;ExecutionContext&gt; sudoMapper, final Callable&lt;T&gt; supplier)     <i class="conum" data-value="2"></i><b>(2)</b>
   void run(final UnaryOperator&lt;ExecutionContext&gt; sudoMapper, final ThrowingRunnable runnable)     <i class="conum" data-value="3"></i><b>(3)</b>
 }</code></pre>
 </div>
@@ -815,22 +797,22 @@ This is useful both for <a href="../../../testing/latest/integtestsupport/about.
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><a href="#call">call</a>
+<td><a href="#call__UnaryOperator_Callable">call(UnaryOperator, Callable)</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>Executes the supplied block, with the <a href="../../../system/latest/generated/index/applib/services/user/UserService.html" class="page">UserService</a> returning the specified user.</p>
+<p>Executes the supplied <em>Callable</em> block, within the provided <a href="../../../system/latest/generated/index/applib/services/iactn/ExecutionContext.html" class="page">ExecutionContext</a> .</p>
 </div>
 </div>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td><a href="#run">run</a>
+<td><a href="#run__UnaryOperator_ThrowingRunnable">run(UnaryOperator, ThrowingRunnable)</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>Executes the supplied block, with the <a href="../../../system/latest/generated/index/applib/services/user/UserService.html" class="page">UserService</a> returning the specified user.</p>
+<p>Executes the supplied <em>Callable</em> block, within the provided <a href="../../../system/latest/generated/index/applib/services/iactn/ExecutionContext.html" class="page">ExecutionContext</a> .</p>
 </div>
 </div>
 </div></td>
@@ -838,96 +820,26 @@ This is useful both for <a href="../../../testing/latest/integtestsupport/about.
 </table>
 </div>
 </div>
-<div class="sect3">
-<h4 id="members"><a class="anchor" href="#members"></a>Members</h4>
-<div class="sect4">
-<h5 id="ACCESS_ALL_ROLE"><a class="anchor" href="#ACCESS_ALL_ROLE"></a>ACCESS_ALL_ROLE</h5>
+</div>
+<div class="sect1">
+<h2 id="members"><a class="anchor" href="#members"></a>Members</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="ACCESS_ALL_ROLE"><a class="anchor" href="#ACCESS_ALL_ROLE"></a>ACCESS_ALL_ROLE</h3>
 <div class="paragraph">
 <p>If included in the list of roles, then will disable security checks (can view and use all object members).</p>
 </div>
 </div>
-<div class="sect4">
-<h5 id="call"><a class="anchor" href="#call"></a>call</h5>
+<div class="sect2">
+<h3 id="call__UnaryOperator_Callable"><a class="anchor" href="#call__UnaryOperator_Callable"></a>call(UnaryOperator, Callable)</h3>
 <div class="paragraph">
-<p>Executes the supplied block, with the <a href="../../../system/latest/generated/index/applib/services/user/UserService.html" class="page">UserService</a> returning the specified user.</p>
+<p>Executes the supplied <em>Callable</em> block, within the provided <a href="../../../system/latest/generated/index/applib/services/iactn/ExecutionContext.html" class="page">ExecutionContext</a> .</p>
 </div>
 </div>
-<div class="sect4">
-<h5 id="run"><a class="anchor" href="#run"></a>run</h5>
+<div class="sect2">
+<h3 id="run__UnaryOperator_ThrowingRunnable"><a class="anchor" href="#run__UnaryOperator_ThrowingRunnable"></a>run(UnaryOperator, ThrowingRunnable)</h3>
 <div class="paragraph">
-<p>Executes the supplied block, with the <a href="../../../system/latest/generated/index/applib/services/user/UserService.html" class="page">UserService</a> returning the specified user.</p>
-</div>
-<div class="paragraph">
-<p>TODO example migration</p>
-</div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-<div class="title">Deprecated Docs</div>
-<div class="paragraph">
-<p>== API</p>
-</div>
-<div class="paragraph">
-<p>The API provided by the service is:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Unresolved include directive in modules/applib-svc/pages/SudoService.adoc - include::refguide:applib-svc:example$services/sudo/SudoService.java[]</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>special role which, if granted, will in effect disable security.
-See <a href="#access_all_role">below</a> for more details.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>executes the <code>Runnable</code> block of code in a way that calls to <a href="UserService.html" class="page"><code>UserService</code></a>'s <code>getUser()</code> will return the specified user.
-The roles of the current user are preserved.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>ditto, but executes a <code>Callable</code></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>executes the <code>Runnable</code> block of code in a way that calls to <code>UserService#getUser()</code> will return the specified user.
-The effective roles returned are those specified.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>ditto, but executes a <code>Callable</code></td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>The current user/role reported by the internal <a href="../../../core/latest/runtime-services/AuthenticationSessionProvider.html" class="page"><code>AuthenticationSessionProvider</code></a> will also return the specified user/roles.</p>
-</div>
-<div class="admonitionblock important">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-important" title="Important"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>Note that this the "effective user" does not propagate through to the <a href="../../../security/latest/about.html" class="page">Shiro security mechanism</a>, which will continue to be evaluated according to the permissions of the current user.
-See the <a href="#access_all_role"><code>ACCESS-ALL-ROLE</code></a> below for details of how to circumvent this.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-</td>
-</tr>
-</table>
-</div>
+<p>Executes the supplied <em>Callable</em> block, within the provided <a href="../../../system/latest/generated/index/applib/services/iactn/ExecutionContext.html" class="page">ExecutionContext</a> .</p>
 </div>
 </div>
 </div>
@@ -936,7 +848,7 @@ See the <a href="#access_all_role"><code>ACCESS-ALL-ROLE</code></a> below for de
 <h2 id="implementation"><a class="anchor" href="#implementation"></a>Implementation</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The core framework provides a default implementation of this service (<code>o.a.i.core.runtime.services.sudo.SudoServiceDefault</code>).</p>
+<p>The core framework provides a default implementation of this service (<code>o.a.i.core.runtimeservices.sudo.SudoServiceDefault</code>).</p>
 </div>
 </div>
 </div>
@@ -944,28 +856,35 @@ See the <a href="#access_all_role"><code>ACCESS-ALL-ROLE</code></a> below for de
 <h2 id="usage"><a class="anchor" href="#usage"></a>Usage</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>For example, this fixture script uses the <code>SudoService</code> to set up <code>ToDoItem</code> objects:</p>
+<p>This domain service is useful both for <a href="../../../testing/latest/integtestsupport/about.html" class="page">integration testing</a> and while running <a href="#fixtures:ROOT:about.adoc" class="page unresolved">fixture scripts</a>.</p>
+</div>
+<div class="paragraph">
+<p>For example, to integration test a workflow system, whereby objects are moved from one user to another, it is helpful to switch the effective user to verify that the task was assigned correctly.</p>
+</div>
+<div class="paragraph">
+<p>Or, this fixture script uses the <code>SudoService</code> to set up <code>ToDoItem</code> objects:</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">protected void execute(final ExecutionContext ec) {
     ...
-    sudoService.sudo(getUsername(),
-            new Runnable() {
-                @Override
-                public void run() {
-                    wrap(toDoItem).completed();
-                }
-            });
+    ExecutionContext ec =
+        ExecutionContext.ofUserWithSystemDefaults(
+            UserMemento.ofName("joe"));
+
+    sudoService.sudo(ec, () -&gt; wrap(toDoItem).completed());
     ...
 }</code></pre>
 </div>
 </div>
-<div class="sect2">
-<h3 id="access_all_role"><a class="anchor" href="#access_all_role"></a>ACCESS_ALL_ROLE</h3>
+</div>
+</div>
+<div class="sect1">
+<h2 id="interaction-with-shiro"><a class="anchor" href="#interaction-with-shiro"></a>Interaction with Shiro</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>When <code>sudo(&#8230;&#8203;)</code> is called the "effective user" is reported by both <a href="UserService.html" class="page"><code>UserService</code></a> and by <a href="../../../core/latest/runtime-services/AuthenticationSessionProvider.html" class="page"><code>AuthenticationSessionProvider</code></a>, but does not propagate through to the <a href="../../../security/latest/about.html" class="page">Shiro security mechanism</a>.
-These continue to be evaluated according to the permissions of the current user.</p>
+<p>When <code>sudo(&#8230;&#8203;)</code> is called the "effective user" is reported by  <a href="UserService.html" class="page"><code>UserService</code></a>.
+However, it does <em>not</em> propagate through to the <a href="../../../security/latest/about.html" class="page">Shiro security mechanism</a>, which continue to be evaluated according to the permissions of the current user.</p>
 </div>
 <div class="paragraph">
 <p>This can be a problem in certain use cases.
@@ -979,13 +898,11 @@ For example:</p>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">protected void execute(final ExecutionContext ec) {
     ...
-    sudoService.sudo(getUsername(), Arrays.asList(SudoService.ACCESS_ALL_ROLE),
-            new Runnable() {
-                @Override
-                public void run() {
-                    wrap(toDoItem).completed();
-                }
-            });
+    ExecutionContext ec =
+        ExecutionContext.ofUserWithSystemDefaults(
+            UserMemento.ofNameAndRoleNames("joe", SudoService.ACCESS_ALL_ROLE)));
+
+    sudoService.sudo(ec, () -&gt; wrap(toDoItem).completed());
     ...
 }</code></pre>
 </div>
@@ -1006,134 +923,21 @@ For example:</p>
 </div>
 </div>
 </div>
-</div>
 <div class="sect1">
-<h2 id="api-3"><a class="anchor" href="#api-3"></a>API</h2>
+<h2 id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p>Intended only for use by fixture scripts and integration tests, allows a block of code to execute while the <a href="../../../system/latest/generated/index/applib/services/user/UserService.html" class="page">UserService</a> 's <em>UserService#currentUser() getUser()</em> method returns the specified user/role as the effective user.</p>
-</div>
-<div class="sect3">
-<h4 id="api-4"><a class="anchor" href="#api-4"></a>API</h4>
-<div class="listingblock">
-<div class="title">SudoService.java</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">interface SudoService {
-  RoleMemento ACCESS_ALL_ROLE;     <i class="conum" data-value="1"></i><b>(1)</b>
-  T call(UnaryOperator&lt;ExecutionContext&gt; sudoMapper, Callable&lt;T&gt; supplier)     <i class="conum" data-value="2"></i><b>(2)</b>
-  void run(final UnaryOperator&lt;ExecutionContext&gt; sudoMapper, final ThrowingRunnable runnable)     <i class="conum" data-value="3"></i><b>(3)</b>
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><a href="#ACCESS_ALL_ROLE">ACCESS_ALL_ROLE</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>If included in the list of roles, then will disable security checks (can view and use all object members).</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><a href="#call">call</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Executes the supplied block, with the <a href="../../../system/latest/generated/index/applib/services/user/UserService.html" class="page">UserService</a> returning the specified user.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td><a href="#run">run</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Executes the supplied block, with the <a href="../../../system/latest/generated/index/applib/services/user/UserService.html" class="page">UserService</a> returning the specified user.</p>
-</div>
-</div>
-</div></td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect3">
-<h4 id="members-2"><a class="anchor" href="#members-2"></a>Members</h4>
-<div class="sect4">
-<h5 id="ACCESS_ALL_ROLE"><a class="anchor" href="#ACCESS_ALL_ROLE"></a>ACCESS_ALL_ROLE</h5>
-<div class="paragraph">
-<p>If included in the list of roles, then will disable security checks (can view and use all object members).</p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="call"><a class="anchor" href="#call"></a>call</h5>
-<div class="paragraph">
-<p>Executes the supplied block, with the <a href="../../../system/latest/generated/index/applib/services/user/UserService.html" class="page">UserService</a> returning the specified user.</p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="run"><a class="anchor" href="#run"></a>run</h5>
-<div class="paragraph">
-<p>Executes the supplied block, with the <a href="../../../system/latest/generated/index/applib/services/user/UserService.html" class="page">UserService</a> returning the specified user.</p>
-</div>
-<div class="paragraph">
-<p>TODO example migration</p>
-</div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-<div class="title">Deprecated Docs</div>
-<div class="paragraph">
-<p>== SPI</p>
-</div>
-<div class="paragraph">
-<p>The <code>SudoService.Spi</code> service allows implementations of <code>SudoService</code> to notify other services/components that the effective user and roles are different.
-The default implementation of <a href="UserService.html" class="page"><code>UserService</code></a> has been refactored to leverage this SPI.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Unresolved include directive in modules/applib-svc/pages/SudoService.adoc - include::refguide:applib-svc:example$services/sudo/SudoService.java[]</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Called by <code>SudoService#sudo(&#8230;&#8203;)</code>, prior to invoking its <code>Runnable</code> or <code>Callable</code>.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Called by <code>SudoService#sudo(&#8230;&#8203;)</code>, after its <code>Runnable</code> or <code>Callable</code> has been invoked.</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>The names of these methods were chosen based on <a href="https://shiro.apache.org/static/1.2.6/apidocs/org/apache/shiro/subject/Subject.html#runAs-org.apache.shiro.subject.PrincipalCollection-">similar names within Shiro</a>.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="related-services"><a class="anchor" href="#related-services"></a>Related Services</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The <code>IsisSessionFactory</code> is a lower-level framework service.
-It provides the <code>IsisSessionFactory#runAuthenticated(&#8230;&#8203;)</code> method as a way to programmatically start a new <code>IsisSession</code> (these can be nested).</p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../../../system/latest/generated/index/applib/services/iactn/ExecutionContext.html" class="page">ExecutionContext</a></p>
+</li>
+<li>
+<p><a href="#system:generated:index/applib/services/sudo/SudoServiceListener.adoc" class="page unresolved">SudoServiceListener</a></p>
+</li>
+<li>
+<p>the <code>InteractionFactory</code> is a lower-level framework (non-API) service, that provides the ability to programmatically start a new "interaction"; these can be nested.</p>
+</li>
+</ul>
 </div>
 </div>
 </div>
@@ -1154,7 +958,7 @@ It provides the <code>IsisSessionFactory#runAuthenticated(&#8230;&#8203;)</code>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210213-0423-5a5afc7f</p>
+            <p>Revision: 2.0.0-M4.20210215-0424-f665ec0b</p>
         </div>
     </div>
 </footer>

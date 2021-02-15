@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Untitled :: Apache Isis</title>
+    <title>RoutingService :: Apache Isis</title>
     <meta name="generator" content="Antora 2.3.4">
     <link rel="stylesheet" href="../../../_/css/site.css">
     <link rel="stylesheet" href="../../../_/css/site-custom.css">
@@ -510,12 +510,6 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../config/sections/isis.security.shiro.html">Shiro Security Implementation</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../config/sections/jdo-datanucleus.html">JDO DataNucleus</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../config/sections/jdo-datanucleus-conf.html">DataNucleus Configuration</a>
-  </li>
-  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../config/sections/isis.viewer.restfulobjects.html">Restful Objects Viewer</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -761,24 +755,11 @@ page.parent doesn't seem to be set...
 </div>
 <article class="doc">
     <a name="section-top"></a>
+<h1 class="page">RoutingService</h1>
+<div id="preamble">
+<div class="sectionbody">
 <div class="paragraph">
-<p>[#RoutingService`
-= <code>RoutingService</code></p>
-</div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-TODO: this content has not yet been reviewed/updated for v2.0
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>The <code>RoutingService</code> provides the ability to return (and therefore render) an alternative object from an action invocation.</p>
+<p>Provides the ability to return (and therefore have rendered) an alternative object from an action invocation.</p>
 </div>
 <div class="paragraph">
 <p>There are two primary use cases:</p>
@@ -786,95 +767,88 @@ TODO: this content has not yet been reviewed/updated for v2.0
 <div class="ulist">
 <ul>
 <li>
-<p>if an action returns an aggregate leaf (that is, a child object which has an owning parent), then the parent object can be
-returned instead.<br></p>
+<p>if an action returns an aggregate leaf (that is, a child object which has an owning parent), then the parent object can be * returned instead.</p>
+<div class="openblock">
+<div class="content">
 <div class="paragraph">
-<p>For example, an action returning <code>OrderItem</code> might instead render the owning <code>Order</code> object.  It is the responsibility
-of the implementation to figure out what the "owning" object might be.</p>
+<p>For example, an action returning <code>OrderItem</code> might instead render the owning <code>Order</code> object. It is the responsibility of the implementation to figure out what the "owning" object might be.</p>
+</div>
+</div>
 </div>
 </li>
 <li>
-<p>if an action returns <code>null</code> or is <code>void</code>, then return some other "useful" object.<br></p>
+<p>if an action returns <code>null</code> or is <code>void</code>, then return some other "useful" object.</p>
+<div class="openblock">
+<div class="content">
 <div class="paragraph">
-<p>For example, return the home page (eg as defined by the <a href="../applib-ant/HomePage.html" class="page"><code>@HomePage</code></a> annotation).</p>
+<p>For example, return the home page (eg as defined by the <em>org.apache.isis.applib.annotation.HomePage</em> annotation).</p>
+</div>
+</div>
 </div>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>Currently the routing service is used only by the <a href="../../../vw/latest/about.html" class="page">Wicket viewer</a>; it is ignored by the <a href="../../../vro/latest/about.html" class="page">Restful Objects</a> viewer.</p>
+<p>Currently this service is used only by the Wicket viewer; it is ignored by the Restful Objects viewer.</p>
 </div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>Unlike most other domain services, the framework will check <em>all</em> available implementations of <code>RoutingService</code> to return a route, rather than the first implementation found; in other words it uses the chain-of-responsibility pattern.
-Services are called in the order defined by the Spring <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/core/annotation/Order.html"><code>@Order</code></a> annotation (or equivalent).
-The route used will be the result of the first implementation checked that declares that it can provide a route.</p>
 </div>
-</td>
-</tr>
-</table>
 </div>
 <div class="sect1">
 <h2 id="api"><a class="anchor" href="#api"></a>API</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p>Provides the ability to return (and therefore have rendered) an alternative object from an action invocation.</p>
-</div>
-<div class="sect3">
-<h4 id="api-2"><a class="anchor" href="#api-2"></a>API</h4>
 <div class="listingblock">
 <div class="title">RoutingService.java</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">interface RoutingService {
-  boolean canRoute(Object original)
-  Object route(Object original)
+  boolean canRoute(Object original)     <i class="conum" data-value="1"></i><b>(1)</b>
+  Object route(Object original)     <i class="conum" data-value="2"></i><b>(2)</b>
 }</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>TODO example migration</p>
-</div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-<div class="title">Deprecated Docs</div>
-<div class="paragraph">
-<p>== SPI</p>
-</div>
-<div class="paragraph">
-<p>The SPI defined by this service is:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Unresolved include directive in modules/applib-svc/pages/RoutingService.adoc - include::refguide:applib-svc:example$services/routing/RoutingService.java[]</code></pre>
 </div>
 </div>
 <div class="colist arabic">
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>whether this implementation recognizes and can "route" the object.
-The <code>route(&#8230;&#8203;)</code> method is only called if this method returns <code>true</code>.</td>
+<td><a href="#canRoute__Object">canRoute(Object)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>whether this implementation recognizes and can "route" the object.</p>
+</div>
+</div>
+</div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>the object to use; this may be the same as the original object, some other object, or (indeed) <code>null</code>.</td>
+<td><a href="#route__Object">route(Object)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>The object to route to instead; this may be the same as the original object, some other object, or (indeed) <code>null</code>.</p>
+</div>
+</div>
+</div></td>
 </tr>
 </table>
 </div>
-</td>
-</tr>
-</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="members"><a class="anchor" href="#members"></a>Members</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="canRoute__Object"><a class="anchor" href="#canRoute__Object"></a>canRoute(Object)</h3>
+<div class="paragraph">
+<p>whether this implementation recognizes and can "route" the object.</p>
+</div>
+<div class="paragraph">
+<p>The <em>#route(Object)</em> method is only called if this method returns <code>true</code> .</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="route__Object"><a class="anchor" href="#route__Object"></a>route(Object)</h3>
+<div class="paragraph">
+<p>The object to route to instead; this may be the same as the original object, some other object, or (indeed) <code>null</code>.</p>
 </div>
 </div>
 </div>
@@ -884,21 +858,35 @@ The <code>route(&#8230;&#8203;)</code> method is only called if this method retu
 <div class="sectionbody">
 <div class="paragraph">
 <p>The framework provides a default implementation - <code>o.a.i.runtimeservices.routing.RoutingServiceDefault</code> - which will always return the original object provided, or the home page if a <code>null</code> or <code>void</code> was provided.
-Under the covers it uses the <a href="HomePageResolverService.html" class="page"><code>HomePageResolverService</code></a>.</p>
+Under the covers this implementation uses the <a href="HomePageResolverService.html" class="page"><code>HomePageResolverService</code></a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="usage"><a class="anchor" href="#usage"></a>Usage</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Unlike most other domain services, the framework will check <em>all</em> available implementations of <code>RoutingService</code> to return a route, rather than the first implementation found; in other words it uses the chain-of-responsibility pattern.</p>
 </div>
 <div class="paragraph">
-<p>There can be multiple implementations of <code>RoutingService</code> registered.
-These are checked in turn (chain of responsibility pattern), ordered according to the Spring <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/core/annotation/Order.html"><code>@Order</code></a> annotation or equivalent (as explained in the <a href="about.html#overriding-the-services" class="page">introduction</a> to this guide).
-The route from the first service that returns <code>true</code> from its <code>canRoute(&#8230;&#8203;)</code> method will be used.</p>
+<p>Services are called in the order defined by the Spring <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/core/annotation/Order.html"><code>@Order</code></a> annotation (or equivalent).
+The route used will be the result of the first implementation checked that declares that it can provide a route.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="related-services"><a class="anchor" href="#related-services"></a>Related Services</h2>
 <div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="HomePageResolverService.html" class="page"><code>HomePageResolverService</code></a></p>
 <div class="paragraph">
-<p>The default implementation of this service uses the
-<a href="HomePageResolverService.html" class="page"><code>HomePageResolverService</code></a>.</p>
+<p>Used by the default implementation of this service uses the
+ to determine where to route actions that return <code>null</code> or are declared as <code>void</code>.</p>
+</div>
+</li>
+</ul>
 </div>
 </div>
 </div>
@@ -919,7 +907,7 @@ The route from the first service that returns <code>true</code> from its <code>c
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210213-0423-5a5afc7f</p>
+            <p>Revision: 2.0.0-M4.20210215-0424-f665ec0b</p>
         </div>
     </div>
 </footer>

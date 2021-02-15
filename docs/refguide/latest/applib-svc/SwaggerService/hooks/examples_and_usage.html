@@ -508,12 +508,6 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../../../config/sections/isis.security.shiro.html">Shiro Security Implementation</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../../../config/sections/jdo-datanucleus.html">JDO DataNucleus</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../../../config/sections/jdo-datanucleus-conf.html">DataNucleus Configuration</a>
-  </li>
-  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../../../config/sections/isis.viewer.restfulobjects.html">Restful Objects Viewer</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -754,7 +748,62 @@ page.parent doesn't seem to be set...
 </div>
 <article class="doc">
     <a name="section-top"></a>
+<div class="sect1">
+<h2 id="usage-notes"><a class="anchor" href="#usage-notes"></a>Usage Notes</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Not all of the REST API exposed by the <a href="../../../../../vro/latest/about.html" class="page">Restful Objects viewer</a> is included in the Swagger schema definition files; the emphasis is those REST resources that are used to develop custom apps: domain objects, domain object collections and action invocations.</p>
+</div>
+<div class="paragraph">
+<p>When combined with Apache Isis' own <a href="../../../../../vro/latest/simplified-representations.html" class="page">simplified representations</a>, these are pretty much all that is needed  for this use case.</p>
+</div>
+<div class="paragraph">
+<p>The service is_not_ (currently) used by the framework itself; it is provided as a convenience for developers to build REST applications.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../../../../../system/latest/generated/index/viewer/restfulobjects/rendering/service/swagger/SwaggerServiceMenu.html" class="page">SwaggerServiceMenu</a></p>
+<div class="paragraph">
+<p>part of the <a href="../../../../../vro/latest/about.html" class="page">Restful Objects viewer</a>, this provides a prototype action that enables the swagger spec to be downloaded from theUI.</p>
+</div>
+</li>
+<li>
+<p><a href="../../../../../system/latest/generated/index/testing/integtestsupport/applib/swagger/SwaggerExporter.html" class="page">SwaggerExporter</a></p>
+<div class="paragraph">
+<p>can be used to generate a Swagger spec, for example within a test suite or larger build pipeline.</p>
+</div>
+<div class="paragraph">
+<p>An example of its use can be found in the demo app:</p>
+</div>
+<div class="listingblock">
+<div class="title">SwaggerExport_IntegTest.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Import({
+        IsisModuleViewerRestfulObjectsJaxrsResteasy4.class
+})
+class SwaggerExport_IntegTest extends ApplicationIntegTestAbstract {
 
+    @Inject ServiceRegistry serviceRegistry;
+
+    @Test
+    void export() throws IOException {
+        val swaggerExporter = new SwaggerExporter(serviceRegistry);
+        swaggerExporter.export(Visibility.PRIVATE, Format.JSON);
+    }
+}</code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
 </article>
 <aside class="article-aside toc hide-for-print" role="navigation">
     <p class="toc-title">On this page</p>
@@ -772,7 +821,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210213-0423-5a5afc7f</p>
+            <p>Revision: 2.0.0-M4.20210215-0424-f665ec0b</p>
         </div>
     </div>
 </footer>

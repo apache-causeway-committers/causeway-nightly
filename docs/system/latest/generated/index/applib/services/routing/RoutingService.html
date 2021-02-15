@@ -361,6 +361,36 @@ page.parent doesn't seem to be set...
 <div class="paragraph">
 <p>Provides the ability to return (and therefore have rendered) an alternative object from an action invocation.</p>
 </div>
+<div class="paragraph">
+<p>There are two primary use cases:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>if an action returns an aggregate leaf (that is, a child object which has an owning parent), then the parent object can be * returned instead.</p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>For example, an action returning <code>OrderItem</code> might instead render the owning <code>Order</code> object. It is the responsibility of the implementation to figure out what the "owning" object might be.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>if an action returns <code>null</code> or is <code>void</code>, then return some other "useful" object.</p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>For example, return the home page (eg as defined by the <em>org.apache.isis.applib.annotation.HomePage</em> annotation).</p>
+</div>
+</div>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Currently this service is used only by the Wicket viewer; it is ignored by the Restful Objects viewer.</p>
+</div>
 <div class="sect1">
 <h2 id="api"><a class="anchor" href="#api"></a>API</h2>
 <div class="sectionbody">
@@ -368,9 +398,55 @@ page.parent doesn't seem to be set...
 <div class="title">RoutingService.java</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">interface RoutingService {
-  boolean canRoute(Object original)
-  Object route(Object original)
+  boolean canRoute(Object original)     <i class="conum" data-value="1"></i><b>(1)</b>
+  Object route(Object original)     <i class="conum" data-value="2"></i><b>(2)</b>
 }</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><a href="#canRoute__Object">canRoute(Object)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>whether this implementation recognizes and can "route" the object.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><a href="#route__Object">route(Object)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>The object to route to instead; this may be the same as the original object, some other object, or (indeed) <code>null</code>.</p>
+</div>
+</div>
+</div></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="members"><a class="anchor" href="#members"></a>Members</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="canRoute__Object"><a class="anchor" href="#canRoute__Object"></a>canRoute(Object)</h3>
+<div class="paragraph">
+<p>whether this implementation recognizes and can "route" the object.</p>
+</div>
+<div class="paragraph">
+<p>The <em>#route(Object)</em> method is only called if this method returns <code>true</code> .</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="route__Object"><a class="anchor" href="#route__Object"></a>route(Object)</h3>
+<div class="paragraph">
+<p>The object to route to instead; this may be the same as the original object, some other object, or (indeed) <code>null</code>.</p>
 </div>
 </div>
 </div>
@@ -392,7 +468,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210213-0423-5a5afc7f</p>
+            <p>Revision: 2.0.0-M4.20210215-0424-f665ec0b</p>
         </div>
     </div>
 </footer>

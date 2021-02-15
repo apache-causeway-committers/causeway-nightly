@@ -510,12 +510,6 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../config/sections/isis.security.shiro.html">Shiro Security Implementation</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../config/sections/jdo-datanucleus.html">JDO DataNucleus</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../config/sections/jdo-datanucleus-conf.html">DataNucleus Configuration</a>
-  </li>
-  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../config/sections/isis.viewer.restfulobjects.html">Restful Objects Viewer</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -764,89 +758,124 @@ page.parent doesn't seem to be set...
 <h1 class="page">HintStore</h1>
 <div id="preamble">
 <div class="sectionbody">
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-TODO: this content has not yet been reviewed/updated for v2.0
-</td>
-</tr>
-</table>
+<div class="paragraph">
+<p>Defines a mechanism for viewers to store arbitrary UI hints on a per-object basis.</p>
 </div>
 <div class="paragraph">
-<p>The <code>HintStore</code> service defines an SPI for the <a href="../../../vw/latest/about.html" class="page">Wicket viewer</a> to store UI hints on a per-object basis.
-For example, the viewer remembers which tabs are selected, and for collections which view is selected (eg table or hidden), which page of a table to render, or whether "show all" (rows) is toggled.</p>
-</div>
-<div class="paragraph">
-<p>The default implementation of this service uses the HTTP session.
-The service is an SPI because the amount of data stored could potentially be quite large (for large numbers of users who use the app all day).
-An SPI makes it easy to plug in an alternative implementation that is more sophisticated than the default (eg implementing MRU/LRU queue, or using a NoSQL database, or simply to disabling the functionality altogether).</p>
+<p>This store <em>is</em> used by the Wicket viewer. For example, the viewer remembers which tabs are selected, and for collections which view is selected (eg table or hidden), which page of a table to render, or whether "show all" (rows) is toggled.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="api"><a class="anchor" href="#api"></a>API</h2>
 <div class="sectionbody">
-<div class="sect3">
-<h4 id="api-2"><a class="anchor" href="#api-2"></a>API</h4>
 <div class="listingblock">
 <div class="title">HintStore.java</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">interface HintStore {
-  String get(final Bookmark bookmark, String hintKey)
-  void set(final Bookmark bookmark, String hintKey, String value)
-  void remove(final Bookmark bookmark, String hintKey)
-  void removeAll(Bookmark bookmark)
-  Set&lt;String&gt; findHintKeys(Bookmark bookmark)
+  String get(final Bookmark bookmark, String hintKey)     <i class="conum" data-value="1"></i><b>(1)</b>
+  void set(final Bookmark bookmark, String hintKey, String value)     <i class="conum" data-value="2"></i><b>(2)</b>
+  void remove(final Bookmark bookmark, String hintKey)     <i class="conum" data-value="3"></i><b>(3)</b>
+  void removeAll(Bookmark bookmark)     <i class="conum" data-value="4"></i><b>(4)</b>
+  Set&lt;String&gt; findHintKeys(Bookmark bookmark)     <i class="conum" data-value="5"></i><b>(5)</b>
 }</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>TODO example migration</p>
-</div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-<div class="title">Deprecated Docs</div>
-<div class="paragraph">
-<p>== SPI</p>
-</div>
-<div class="paragraph">
-<p>The SPI of <code>HintStore</code> is:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Unresolved include directive in modules/applib-svc/pages/HintStore.adoc - include::refguide:applib-svc:example$services/hint/HintStore.java[]</code></pre>
 </div>
 </div>
 <div class="colist arabic">
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>obtain a hint (eg which tab to open) for a particular object.
-Object identity is represented by <code>Bookmark</code>, as per the <a href="BookmarkService.html" class="page"><code>BookmarkService</code></a>, so that alternative implementations can easily serialize this state to a string.</td>
+<td><a href="#get__Bookmark_String">get(Bookmark, String)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Obtain a hint (eg which tab to open) for a particular object.</p>
+</div>
+</div>
+</div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>set the state of a hint.
-(The value of) all hints are represented as strings.</td>
+<td><a href="#set__Bookmark_String_String">set(Bookmark, String, String)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Set the state of a hint for the domain object</p>
+</div>
+</div>
+</div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>remove a single hint for an object; &lt;.&gt; remove all hints &lt;.&gt; obtain all known hints for an object</td>
+<td><a href="#remove__Bookmark_String">remove(Bookmark, String)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Removes hint for the domain object.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><a href="#removeAll__Bookmark">removeAll(Bookmark)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Remotes all hints for the domain object.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><a href="#findHintKeys__Bookmark">findHintKeys(Bookmark)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>The keys of all available hints for the domain object.</p>
+</div>
+</div>
+</div></td>
 </tr>
 </table>
 </div>
-</td>
-</tr>
-</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="members"><a class="anchor" href="#members"></a>Members</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="get__Bookmark_String"><a class="anchor" href="#get__Bookmark_String"></a>get(Bookmark, String)</h3>
+<div class="paragraph">
+<p>Obtain a hint (eg which tab to open) for a particular object.</p>
+</div>
+<div class="paragraph">
+<p>Object identity is represented by <a href="../../../system/latest/generated/index/applib/services/bookmark/Bookmark.html" class="page">Bookmark</a> so that alternative implementations can easily serialize this state to a string.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="set__Bookmark_String_String"><a class="anchor" href="#set__Bookmark_String_String"></a>set(Bookmark, String, String)</h3>
+<div class="paragraph">
+<p>Set the state of a hint for the domain object</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="remove__Bookmark_String"><a class="anchor" href="#remove__Bookmark_String"></a>remove(Bookmark, String)</h3>
+<div class="paragraph">
+<p>Removes hint for the domain object.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="removeAll__Bookmark"><a class="anchor" href="#removeAll__Bookmark"></a>removeAll(Bookmark)</h3>
+<div class="paragraph">
+<p>Remotes all hints for the domain object.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="findHintKeys__Bookmark"><a class="anchor" href="#findHintKeys__Bookmark"></a>findHintKeys(Bookmark)</h3>
+<div class="paragraph">
+<p>The keys of all available hints for the domain object.</p>
 </div>
 </div>
 </div>
@@ -855,29 +884,7 @@ Object identity is represented by <code>Bookmark</code>, as per the <a href="Boo
 <h2 id="implementation"><a class="anchor" href="#implementation"></a>Implementation</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The core framework provides a default implementation of this service (<code>org.apache.isis.viewer.wicket.viewer.services.HintStoreUsingWicketSession</code>).</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="api-3"><a class="anchor" href="#api-3"></a>API</h2>
-<div class="sectionbody">
-<div class="sect3">
-<h4 id="api-4"><a class="anchor" href="#api-4"></a>API</h4>
-<div class="listingblock">
-<div class="title">HintStore.java</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">interface HintStore {
-  String get(final Bookmark bookmark, String hintKey)
-  void set(final Bookmark bookmark, String hintKey, String value)
-  void remove(final Bookmark bookmark, String hintKey)
-  void removeAll(Bookmark bookmark)
-  Set&lt;String&gt; findHintKeys(Bookmark bookmark)
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>TODO example migration</p>
+<p>The core framework provides a default implementation of this service (<code>o.a.i.viewer.wicket.viewer.services.HintStoreUsingWicketSession</code>).</p>
 </div>
 <div class="admonitionblock warning">
 <table>
@@ -886,49 +893,12 @@ Object identity is represented by <code>Bookmark</code>, as per the <a href="Boo
 <i class="fa icon-warning" title="Warning"></i>
 </td>
 <td class="content">
-<div class="title">Deprecated Docs</div>
 <div class="paragraph">
-<p>== View models</p>
-</div>
-<div class="paragraph">
-<p>Hints are stored against the <code>Bookmark</code> of a domain object, essentially the identifier of the domain object.
-For a domain entity this identifier is fixed and unchanging but for a view models the identifier changes each time the view model&#8217;s state changes (the identifier is basically a digest of the object&#8217;s state).
-This means that any hints stored against the view model&#8217;s bookmark are in effect lost as soon as the view model is modified.</p>
+<p>The default implementation of this service uses the HTTP session.
+As the amount of data stored could potentially be quite large (for large numbers of users who use the app all day), it does in effect constitute a memory leak.</p>
 </div>
 <div class="paragraph">
-<p>To address this issue the <code>HintStore</code> provides an optional interface that the view model can implement, the intent of which is to expose the "logical" identity of the view model.
-This interface is:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Unresolved include directive in modules/applib-svc/pages/HintStore.adoc - include::refguide:applib-svc:example$services/hint/HintStore.java[]</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>For example, suppose that there&#8217;s a view model that wraps a <code>Customer</code> and its <code>Order</code>s.
-For this the <code>Customer</code> represents the logical identity.
-This view model might therefore be implemented as follows:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@XmlRootElement("customerAndOrders")
-@XmlAccessType(FIELD)
-public class CustomerAndOrders implements HintStore.HintIdProvider {
-
-    @Getter @Setter
-    private Customer customer;
-
-    ...
-
-    @Programmatic
-    public String hintId() {
-        bookmarkService.bookmarkFor(getCustomer()).toString();
-    }
-
-    @XmlTransient
-    @Inject BookmarkService bookmarkService;
-}</code></pre>
-</div>
+<p>An alternative implementation might be more sophisticated (eg implementing an MRU/LRU queue, or using a NoSQL database to store the hints, or simply to disable the functionality altogether).</p>
 </div>
 </td>
 </tr>
@@ -936,13 +906,20 @@ public class CustomerAndOrders implements HintStore.HintIdProvider {
 </div>
 </div>
 </div>
-</div>
 <div class="sect1">
-<h2 id="related-services"><a class="anchor" href="#related-services"></a>Related Services</h2>
+<h2 id="see-also"><a class="anchor" href="#see-also"></a>See Also</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p>The <a href="../../../vw/latest/about.html" class="page">Wicket viewer</a> exposes the <a href="../applib-classes/about.html#clearHints" class="page">"clear hints"</a>
-mixin action that is for use by end-users of the application to clear any UI hints that have accumulated for a domain object.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>The <a href="../../../vw/latest/about.html" class="page">Wicket viewer</a> exposes theclear hints"mixin action
+(<code>o.a.i.viewer.wicket.viewer.mixins.Object_clearHints</code>)
+that is for use by end-users of the application to clear any UI hints that have accumulated for a domain object.</p>
+</li>
+<li>
+<p>Mutable view models should implement the <a href="HintIdProvider.html" class="page">HintIdProvider</a> interface in order for hints to work.</p>
+</li>
+</ul>
 </div>
 </div>
 </div>
@@ -963,7 +940,7 @@ mixin action that is for use by end-users of the application to clear any UI hin
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210213-0423-5a5afc7f</p>
+            <p>Revision: 2.0.0-M4.20210215-0424-f665ec0b</p>
         </div>
     </div>
 </footer>

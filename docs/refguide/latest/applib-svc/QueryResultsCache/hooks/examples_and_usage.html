@@ -508,12 +508,6 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../../../config/sections/isis.security.shiro.html">Shiro Security Implementation</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../../../config/sections/jdo-datanucleus.html">JDO DataNucleus</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../../../config/sections/jdo-datanucleus-conf.html">DataNucleus Configuration</a>
-  </li>
-  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../../../config/sections/isis.viewer.restfulobjects.html">Restful Objects Viewer</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -754,7 +748,80 @@ page.parent doesn't seem to be set...
 </div>
 <article class="doc">
     <a name="section-top"></a>
-
+<div class="sect1">
+<h2 id="usage"><a class="anchor" href="#usage"></a>Usage</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Suppose that there&#8217;s a <code>TaxService</code> that calculates tax on <code>Taxable</code> items, with respect to some <code>TaxType</code>, and for a given <code>LocalDate</code>.
+To calculate tax it must run a database query and then perform some additional calculations.</p>
+</div>
+<div class="paragraph">
+<p>Our original implementation is:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainService
+public class TaxService {
+    public BigDecimal calculateTax(
+            final Taxable t, final TaxType tt, final LocalDate d) {
+        // query against DB using t, tt, d
+        // further expensive calculations
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Suppose now that this service is called in a loop, for example iterating over a bunch of orders, where several of those orders are for the same taxable products, say.
+In this case the result of the calculation would always be the same for any given product.</p>
+</div>
+<div class="paragraph">
+<p>We can therefore refactor the method to use the query cache as follows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class TaxService {
+    public BigDecimal calculateTax(
+            final Taxable t, final TaxType tt, final LocalDate d) {
+        return queryResultsCache.execute(
+            new Callable&lt;BigDecimal&gt;(){                         <i class="conum" data-value="1"></i><b>(1)</b>
+                public BigDecimal call() throws Exception {
+                     // query against DB using t, tt, d
+                     // further expensive calculations
+                }
+            },
+            TaxService.class,                                   <i class="conum" data-value="2"></i><b>(2)</b>
+            "calculateTax",
+            t, tt, d);
+        }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>the <code>Callable</code> is the original code</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>the remaining parameters in essence uniquely identify the method call.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>This refactoring will be worthwhile provided that enough of the orders being processed reference the same taxable products.
+If however every order is for a different product, then no benefit will be gained from the refactoring.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="related-services"><a class="anchor" href="#related-services"></a>Related Services</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <a href="../../Scratchpad.html" class="page">Scratchpad</a> service is also intended for actions that are called many times, allowing arbitrary information to be shared between them.</p>
+</div>
+</div>
+</div>
 </article>
 <aside class="article-aside toc hide-for-print" role="navigation">
     <p class="toc-title">On this page</p>
@@ -772,7 +839,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210213-0423-5a5afc7f</p>
+            <p>Revision: 2.0.0-M4.20210215-0424-f665ec0b</p>
         </div>
     </div>
 </footer>

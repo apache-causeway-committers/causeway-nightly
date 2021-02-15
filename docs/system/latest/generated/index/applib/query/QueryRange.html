@@ -358,6 +358,12 @@ page.parent doesn't seem to be set...
 </div>
 <article class="doc">
     <a name="section-top"></a>
+<div class="paragraph">
+<p>To support paging of query results, specifies an offset/start instance and limits the number of instances to be retrieved.</p>
+</div>
+<div class="paragraph">
+<p>Used by <em>NamedQuery#withRange(QueryRange)</em> and <em>AllInstancesQuery#withRange(QueryRange)</em> .</p>
+</div>
 <div class="sect1">
 <h2 id="api"><a class="anchor" href="#api"></a>API</h2>
 <div class="sectionbody">
@@ -365,15 +371,15 @@ page.parent doesn't seem to be set...
 <div class="title">QueryRange.java</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">interface QueryRange {
-  boolean isUnconstrained()
-  boolean hasOffset()
-  boolean hasLimit()
-  long getStart()     <i class="conum" data-value="1"></i><b>(1)</b>
-  long getLimit()     <i class="conum" data-value="2"></i><b>(2)</b>
-  long getEnd()     <i class="conum" data-value="3"></i><b>(3)</b>
-  int getStartAsInt()     <i class="conum" data-value="4"></i><b>(4)</b>
-  int getLimitAsInt()     <i class="conum" data-value="5"></i><b>(5)</b>
-  int getEndAsInt()     <i class="conum" data-value="6"></i><b>(6)</b>
+  boolean isUnconstrained()     <i class="conum" data-value="1"></i><b>(1)</b>
+  boolean hasOffset()     <i class="conum" data-value="2"></i><b>(2)</b>
+  boolean hasLimit()     <i class="conum" data-value="3"></i><b>(3)</b>
+  long getStart()     <i class="conum" data-value="4"></i><b>(4)</b>
+  long getLimit()     <i class="conum" data-value="5"></i><b>(5)</b>
+  long getEnd()     <i class="conum" data-value="6"></i><b>(6)</b>
+  int getStartAsInt()     <i class="conum" data-value="7"></i><b>(7)</b>
+  int getLimitAsInt()     <i class="conum" data-value="8"></i><b>(8)</b>
+  int getEndAsInt()     <i class="conum" data-value="9"></i><b>(9)</b>
   QueryRange unconstrained()
   QueryRange start(long start)
   QueryRange limit(long limit)
@@ -387,7 +393,40 @@ page.parent doesn't seem to be set...
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><a href="#getStart">getStart</a>
+<td><a href="#isUnconstrained__">isUnconstrained()</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Whether this range is unconstrained, meaning that there is <em>#hasOffset() no offset</em> and <em>#hasLimit() no limit</em> has been specified.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><a href="#hasOffset__">hasOffset()</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Whether this range has had a non-zero offset specified using <em>#withStart(long)</em> .</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><a href="#hasLimit__">hasLimit()</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Whether this range has a limit to the number of instances to be returned using <em>#withLimit(long)</em> .</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><a href="#getStart__">getStart()</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
@@ -397,19 +436,19 @@ page.parent doesn't seem to be set...
 </div></td>
 </tr>
 <tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><a href="#getLimit">getLimit</a>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><a href="#getLimit__">getLimit()</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>The maximum number of items to return, starting at <em>#getStart()</em> (non-negative)</p>
+<p>The maximum number of items to return, starting at <em>#getStart()</em> (non-negative).</p>
 </div>
 </div>
 </div></td>
 </tr>
 <tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td><a href="#getEnd">getEnd</a>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td><a href="#getEnd__">getEnd()</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
@@ -419,8 +458,8 @@ page.parent doesn't seem to be set...
 </div></td>
 </tr>
 <tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td><a href="#getStartAsInt">getStartAsInt</a>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td><a href="#getStartAsInt__">getStartAsInt()</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
@@ -430,8 +469,8 @@ page.parent doesn't seem to be set...
 </div></td>
 </tr>
 <tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td><a href="#getLimitAsInt">getLimitAsInt</a>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td><a href="#getLimitAsInt__">getLimitAsInt()</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
@@ -441,8 +480,8 @@ page.parent doesn't seem to be set...
 </div></td>
 </tr>
 <tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
-<td><a href="#getEndAsInt">getEndAsInt</a>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
+<td><a href="#getEndAsInt__">getEndAsInt()</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
@@ -459,37 +498,55 @@ page.parent doesn't seem to be set...
 <h2 id="members"><a class="anchor" href="#members"></a>Members</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="getStart"><a class="anchor" href="#getStart"></a>getStart</h3>
+<h3 id="isUnconstrained__"><a class="anchor" href="#isUnconstrained__"></a>isUnconstrained()</h3>
+<div class="paragraph">
+<p>Whether this range is unconstrained, meaning that there is <em>#hasOffset() no offset</em> and <em>#hasLimit() no limit</em> has been specified.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="hasOffset__"><a class="anchor" href="#hasOffset__"></a>hasOffset()</h3>
+<div class="paragraph">
+<p>Whether this range has had a non-zero offset specified using <em>#withStart(long)</em> .</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="hasLimit__"><a class="anchor" href="#hasLimit__"></a>hasLimit()</h3>
+<div class="paragraph">
+<p>Whether this range has a limit to the number of instances to be returned using <em>#withLimit(long)</em> .</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="getStart__"><a class="anchor" href="#getStart__"></a>getStart()</h3>
 <div class="paragraph">
 <p>The start index into the set table. (non-negative)</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="getLimit"><a class="anchor" href="#getLimit"></a>getLimit</h3>
+<h3 id="getLimit__"><a class="anchor" href="#getLimit__"></a>getLimit()</h3>
 <div class="paragraph">
-<p>The maximum number of items to return, starting at <em>#getStart()</em> (non-negative)</p>
+<p>The maximum number of items to return, starting at <em>#getStart()</em> (non-negative).</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="getEnd"><a class="anchor" href="#getEnd"></a>getEnd</h3>
+<h3 id="getEnd__"><a class="anchor" href="#getEnd__"></a>getEnd()</h3>
 <div class="paragraph">
 <p>The end index into the set table. Overflow is ignored. (non-negative)</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="getStartAsInt"><a class="anchor" href="#getStartAsInt"></a>getStartAsInt</h3>
+<h3 id="getStartAsInt__"><a class="anchor" href="#getStartAsInt__"></a>getStartAsInt()</h3>
 <div class="paragraph">
 <p>The start index into the set table (as java int primitive)</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="getLimitAsInt"><a class="anchor" href="#getLimitAsInt"></a>getLimitAsInt</h3>
+<h3 id="getLimitAsInt__"><a class="anchor" href="#getLimitAsInt__"></a>getLimitAsInt()</h3>
 <div class="paragraph">
 <p>The maximum number of items to return (as java int primitive) if <em>limit</em> overflows an int, <em>Integer#MAX_VALUE</em> is returned.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="getEndAsInt"><a class="anchor" href="#getEndAsInt"></a>getEndAsInt</h3>
+<h3 id="getEndAsInt__"><a class="anchor" href="#getEndAsInt__"></a>getEndAsInt()</h3>
 <div class="paragraph">
 <p>The end index into the set table. Overflow is ignored. (as java int primitive) if <em>end</em> overflows an int, <em>Integer#MAX_VALUE</em> is returned.</p>
 </div>
@@ -513,7 +570,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210213-0423-5a5afc7f</p>
+            <p>Revision: 2.0.0-M4.20210215-0424-f665ec0b</p>
         </div>
     </div>
 </footer>

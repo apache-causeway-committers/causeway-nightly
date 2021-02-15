@@ -510,12 +510,6 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../config/sections/isis.security.shiro.html">Shiro Security Implementation</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../config/sections/jdo-datanucleus.html">JDO DataNucleus</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../config/sections/jdo-datanucleus-conf.html">DataNucleus Configuration</a>
-  </li>
-  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../config/sections/isis.viewer.restfulobjects.html">Restful Objects Viewer</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -764,51 +758,251 @@ page.parent doesn't seem to be set...
 <h1 class="page"><code>RepositoryService</code></h1>
 <div id="preamble">
 <div class="sectionbody">
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-TODO: this content has not yet been reviewed/updated for v2.0
-</td>
-</tr>
-</table>
+<div class="paragraph">
+<p>Collects together methods for creating, persisting and searching for entities from the underlying persistence store.</p>
 </div>
 <div class="paragraph">
-<p>The <code>RepositoryService</code> collects together methods for creating, persisting and searching for entities from the underlying persistence store.
-It acts as an abstraction over the JDO/DataNucleus objectstore.</p>
-</div>
-<div class="paragraph">
-<p>You can use it during prototyping to write naive queries, or you can use it to call the ORM (such as
-<a href="../../../pjdo/latest/about.html" class="page">JDO/DataNucleus</a>).</p>
+<p>Typically it&#8217;s good practice to define a domain-specific service (eg <code>CustomerRepository</code> ) which then delegates to this service. This domain-specific service can use some <a href="../../../system/latest/generated/index/applib/services/repository/RepositoryService.html" class="page">RepositoryService</a> 's "naive" methods that use client-side predicates for filtering; these can then be replaced by more sophisticated implementations that use proper server-side filtering later on without impacting the rest of the application.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="api"><a class="anchor" href="#api"></a>API</h2>
 <div class="sectionbody">
-<div class="sect3">
-<h4 id="api-2"><a class="anchor" href="#api-2"></a>API</h4>
 <div class="listingblock">
-<div class="title">EntityState.java</div>
+<div class="title">RepositoryService.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">enum EntityState {
-  NOT_PERSISTABLE
-  PERSISTABLE_ATTACHED
-  PERSISTABLE_DETACHED
-  PERSISTABLE_DESTROYED
-  boolean isPersistable()
-  boolean isAttached()
-  boolean isDetached()
-  boolean isDestroyed()
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">interface RepositoryService {
+  EntityState getEntityState(Object object)     <i class="conum" data-value="1"></i><b>(1)</b>
+  T detachedEntity(T entity)     <i class="conum" data-value="2"></i><b>(2)</b>
+  T persist(T domainObject)     <i class="conum" data-value="3"></i><b>(3)</b>
+  T persistAndFlush(T domainObject)     <i class="conum" data-value="4"></i><b>(4)</b>
+  void remove(Object domainObject)     <i class="conum" data-value="5"></i><b>(5)</b>
+  void removeAndFlush(Object domainObject)     <i class="conum" data-value="6"></i><b>(6)</b>
+  void removeAll(Class&lt;T&gt; cls)     <i class="conum" data-value="7"></i><b>(7)</b>
+  List&lt;T&gt; allInstances(Class&lt;T&gt; ofType)     <i class="conum" data-value="8"></i><b>(8)</b>
+  List&lt;T&gt; allInstances(Class&lt;T&gt; ofType, long start, long count)     <i class="conum" data-value="9"></i><b>(9)</b>
+  List&lt;T&gt; allMatches(Class&lt;T&gt; ofType, Predicate&lt;? super T&gt; predicate)     <i class="conum" data-value="10"></i><b>(10)</b>
+  List&lt;T&gt; allMatches(Class&lt;T&gt; ofType, Predicate&lt;? super T&gt; predicate, long start, long count)     <i class="conum" data-value="11"></i><b>(11)</b>
+  List&lt;T&gt; allMatches(Query&lt;T&gt; query)     <i class="conum" data-value="12"></i><b>(12)</b>
+  Optional&lt;T&gt; uniqueMatch(Class&lt;T&gt; ofType, Predicate&lt;T&gt; predicate)     <i class="conum" data-value="13"></i><b>(13)</b>
+  Optional&lt;T&gt; uniqueMatch(Query&lt;T&gt; query)     <i class="conum" data-value="14"></i><b>(14)</b>
+  Optional&lt;T&gt; firstMatch(Class&lt;T&gt; ofType, Predicate&lt;T&gt; predicate)     <i class="conum" data-value="15"></i><b>(15)</b>
+  Optional&lt;T&gt; firstMatch(Query&lt;T&gt; query)     <i class="conum" data-value="16"></i><b>(16)</b>
+  T refresh(T pojo)     <i class="conum" data-value="17"></i><b>(17)</b>
+  T detach(T entity)     <i class="conum" data-value="18"></i><b>(18)</b>
+  T detachedEntity(Class&lt;T&gt; ofType)     <i class="conum" data-value="19"></i><b>(19)</b>
+  T instantiate(Class&lt;T&gt; ofType)     <i class="conum" data-value="20"></i><b>(20)</b>
+  boolean isPersistent(Object domainObject)     <i class="conum" data-value="21"></i><b>(21)</b>
+  boolean isDeleted(Object domainObject)     <i class="conum" data-value="22"></i><b>(22)</b>
 }</code></pre>
 </div>
 </div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><a href="#getEntityState__Object">getEntityState(Object)</a>
+<div class="openblock">
+<div class="content">
 <div class="paragraph">
-<p>TODO example migration</p>
+<p>Returns the <a href="../../../system/latest/generated/index/applib/services/repository/EntityState.html" class="page">EntityState</a> of given <em>object</em> .</p>
 </div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><a href="#detachedEntity__T">detachedEntity(T)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Usually called as a precursor to persisting a domain entity, this method verifies that the object is an entity and injects domain services into it.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><a href="#persist__T">persist(T)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Persist the specified object (or do nothing if already persistent).</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><a href="#persistAndFlush__T">persistAndFlush(T)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Persist the specified object (or do nothing if already persistent) and flushes changes to the database.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><a href="#remove__Object">remove(Object)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Remove (ie delete) an object from the persistent object store (or do nothing if it has already been deleted).</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td><a href="#removeAndFlush__Object">removeAndFlush(Object)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Deletes the domain object but only if is persistent, and flushes changes to the database (meaning the object is deleted immediately).</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td><a href="#removeAll__Class">removeAll(Class)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Removes all instances of the domain object.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td><a href="#allInstances__Class">allInstances(Class)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Returns all persisted instances of specified type (including subtypes).</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
+<td><a href="#allInstances__Class_long_long">allInstances(Class, long, long)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Overload of <em>#allInstances(Class)</em> , returns a <em>page</em> of persisted instances of specified type (including subtypes).</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="10"></i><b>10</b></td>
+<td><a href="#allMatches__Class_Predicate">allMatches(Class, Predicate)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Returns all the instances of the specified type (including subtypes) that the predicate object accepts.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="11"></i><b>11</b></td>
+<td><a href="#allMatches__Class_Predicate_long_long">allMatches(Class, Predicate, long, long)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Overload of <em>#allMatches(Class, Predicate)</em> , returns a <em>page</em> of persisted instances of specified type (including subtypes).</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="12"></i><b>12</b></td>
+<td><a href="#allMatches__Query">allMatches(Query)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Returns all the instances that match the given <a href="../../../system/latest/generated/index/applib/query/Query.html" class="page">Query</a> .</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="13"></i><b>13</b></td>
+<td><a href="#uniqueMatch__Class_Predicate">uniqueMatch(Class, Predicate)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Finds the only instance of the specified type (including subtypes) that satifies the (client-side) predicate.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="14"></i><b>14</b></td>
+<td><a href="#uniqueMatch__Query">uniqueMatch(Query)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Find the only instance that matches the provided <a href="../../../system/latest/generated/index/applib/query/Query.html" class="page">Query</a> .</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="15"></i><b>15</b></td>
+<td><a href="#firstMatch__Class_Predicate">firstMatch(Class, Predicate)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Find the only instance of the specified type (including subtypes) that satifies the provided (client-side) predicate.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="16"></i><b>16</b></td>
+<td><a href="#firstMatch__Query">firstMatch(Query)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Find the only instance that matches the provided <a href="../../../system/latest/generated/index/applib/query/Query.html" class="page">Query</a> , if any.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="17"></i><b>17</b></td>
+<td><a href="#refresh__T">refresh(T)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Reloads the domain entity from the database.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="18"></i><b>18</b></td>
+<td><a href="#detach__T">detach(T)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Explicitly detaches the entity from the current persistence session.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="19"></i><b>19</b></td>
+<td><a href="#detachedEntity__Class">detachedEntity(Class)</a>
+<div class="openblock">
+<div class="content">
 <div class="admonitionblock warning">
 <table>
 <tr>
@@ -816,123 +1010,454 @@ It acts as an abstraction over the JDO/DataNucleus objectstore.</p>
 <i class="fa icon-warning" title="Warning"></i>
 </td>
 <td class="content">
-<div class="title">Deprecated Docs</div>
 <div class="paragraph">
-<p>== API</p>
-</div>
-<div class="paragraph">
-<p>The API of <code>RepositoryService</code> is:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Unresolved include directive in modules/applib-svc/pages/RepositoryService.adoc - include::refguide:applib-svc:example$services/repository/RepositoryService.java[]</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>determine the state of this domain entity:
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Unresolved include directive in modules/applib-svc/pages/RepositoryService.adoc - include::refguide:applib-svc:example$services/repository/EntityState.java[]</code></pre>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>create a new non-persisted domain entity.
-This is identical to
-<a href="FactoryService.html" class="page"><code>FactoryService</code></a>'s <code>detachedEntity(&#8230;&#8203;)</code> method, but is provided in the
-<code>RepositoryService</code>'s API too because instantiating and persisting objects are often done together.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>persist (ie save) an object to the persistent object store (or do nothing if it is already persistent).</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>persist (ie save) and flush; same as <code>persist()</code>, but also flushes changes to database and updates managed properties and collections (i.e., 1-1, 1-n, m-n relationships automatically maintained by the DataNucleus persistence mechanism).</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>remove (ie delete) an object from the persistent object store (or do nothing if it has already been deleted).</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
-<td>remove (delete) and flush;  same as <code>remove()</code>, but also flushes changes to database and updates managed properties and collections (i.e., 1-1, 1-n, m-n relationships automatically maintained by the DataNucleus persistence mechanism).</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="7"></i><b>7</b></td>
-<td>removes all instances of the specified type.
-Intended primarily for testing purposes.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="8"></i><b>8</b></td>
-<td>return all persisted instances of specified type.
-Mostly for prototyping, though can be useful to obtain all instances of domain entities if the number is known to be small.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="9"></i><b>9</b></td>
-<td>as previous, with paging.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="10"></i><b>10</b></td>
-<td>all persisted instances matching the <code>Predicate</code>.
-Client-side filtering so only really intended for prototyping.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="11"></i><b>11</b></td>
-<td>as previous, with paging.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="12"></i><b>12</b></td>
-<td>all persisted instances matching the (server-side) <code>Query</code>.
-<strong>This is the primary API used for querying</strong></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="13"></i><b>13</b></td>
-<td>returns the one-and-only match of an instance matching the <code>Predicate</code>.
-If there is more that one instances a run-time exception will be thrown.
-Client-side filtering so only really intended for prototyping.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="14"></i><b>14</b></td>
-<td>returns the one-and-only match of an instance matching the (server-side) <code>Query</code>
-Generally this method is preferred for looking up an object by its (primary or alternate) key.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="15"></i><b>15</b></td>
-<td>returns the first instance that matches the <code>Predicate</code>.
-No exception is thrown if more than one matches, so this is less strict that <code>uniqueMatch(&#8230;&#8203;)</code>.
-Client-side filtering so only really intended for prototyping.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="16"></i><b>16</b></td>
-<td>returns the first instance that matches the (server-side) <code>Query</code>.
-No exception is thrown if more than one matches, so this is less strict that <code>uniqueMatch(&#8230;&#8203;)</code>.</td>
-</tr>
-</table>
+<p><span class="red"><em>deprecated:</em></span></p>
 </div>
 <div class="paragraph">
-<p>The <code>uniqueMatch(&#8230;&#8203;)</code> methods are the recommended way of querying for (precisely) one instance.
-The <code>firstMatch(&#8230;&#8203;)</code> methods are for less strict querying.</p>
+<p>as it requires that the domain entity has a no-arg constructor. Use <em>#detachedEntity(Object)</em> instead.</p>
 </div>
 </td>
 </tr>
 </table>
 </div>
+<div class="paragraph">
+<p>Overload of <em>#detachedEntity(Object)</em> , but will also instantiate the domain class first.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="20"></i><b>20</b></td>
+<td><a href="#instantiate__Class">instantiate(Class)</a>
+<div class="openblock">
+<div class="content">
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p><span class="red"><em>deprecated:</em></span></p>
+</div>
+<div class="paragraph">
+<p>as it requires that the domain entity has a no-arg constructor. Use <em>#detachedEntity(Object)</em> instead.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Equivalent to <em>#detachedEntity(Class)</em> .</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="21"></i><b>21</b></td>
+<td><a href="#isPersistent__Object">isPersistent(Object)</a>
+<div class="openblock">
+<div class="content">
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p><span class="red"><em>deprecated:</em></span></p>
+</div>
+<div class="paragraph">
+<p>due to ambiguous semantic, use <em>#getEntityState(Object)</em> instead</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Determines if the specified object is persistent (that it is stored permanently outside of the virtual machine in the object store).</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="22"></i><b>22</b></td>
+<td><a href="#isDeleted__Object">isDeleted(Object)</a>
+<div class="openblock">
+<div class="content">
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p><span class="red"><em>deprecated:</em></span></p>
+</div>
+<div class="paragraph">
+<p>due to ambiguous semantic, use <em>#getEntityState(Object)</em> instead</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Determines if the specified object has been deleted from the object store.</p>
+</div>
+</div>
+</div></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="members"><a class="anchor" href="#members"></a>Members</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="getEntityState__Object"><a class="anchor" href="#getEntityState__Object"></a>getEntityState(Object)</h3>
+<div class="paragraph">
+<p>Returns the <a href="../../../system/latest/generated/index/applib/services/repository/EntityState.html" class="page">EntityState</a> of given <em>object</em> .</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="detachedEntity__T"><a class="anchor" href="#detachedEntity__T"></a>detachedEntity(T)</h3>
+<div class="paragraph">
+<p>Usually called as a precursor to persisting a domain entity, this method verifies that the object is an entity and injects domain services into it.</p>
+</div>
+<div class="paragraph">
+<p>This approach allows the domain entity to have regular constructor (with parameters) to set up the initial state of the domain object. This is preferred over <em>#detachedEntity(Class)</em> , which also instantiates the class and then injects into it - but requires that the domain object has a no-arg constructor to do so.</p>
+</div>
+<div class="paragraph">
+<p>This is the same functionality as exposed by <em>org.apache.isis.applib.services.factory.FactoryService#detachedEntity(Object)</em> . It is provided in this service as a convenience because instantiating and <em>#persist(Object) persisting</em> an object are often done together.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="persist__T"><a class="anchor" href="#persist__T"></a>persist(T)</h3>
+<div class="paragraph">
+<p>Persist the specified object (or do nothing if already persistent).</p>
+</div>
+<div class="paragraph">
+<p>The persist isn&#8217;t necessarily performed immediately; by default all pending changes are flushed to the database when the transaction completes.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="persistAndFlush__T"><a class="anchor" href="#persistAndFlush__T"></a>persistAndFlush(T)</h3>
+<div class="paragraph">
+<p>Persist the specified object (or do nothing if already persistent) and flushes changes to the database.</p>
+</div>
+<div class="paragraph">
+<p>Flushing will also result in ORM-maintained bidirectional relationships being updated.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="remove__Object"><a class="anchor" href="#remove__Object"></a>remove(Object)</h3>
+<div class="paragraph">
+<p>Remove (ie delete) an object from the persistent object store (or do nothing if it has already been deleted).</p>
+</div>
+<div class="paragraph">
+<p>The delete isn&#8217;t necessarily performed immediately; by default all pending changes are flushed to the database when the transaction completes.</p>
+</div>
+<div class="paragraph">
+<p>Note that this method is also a no-op if the domain object is not attached.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="removeAndFlush__Object"><a class="anchor" href="#removeAndFlush__Object"></a>removeAndFlush(Object)</h3>
+<div class="paragraph">
+<p>Deletes the domain object but only if is persistent, and flushes changes to the database (meaning the object is deleted immediately).</p>
+</div>
+<div class="paragraph">
+<p>Flushing will also result in ORM-maintained bidirectional relationships being updated.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="removeAll__Class"><a class="anchor" href="#removeAll__Class"></a>removeAll(Class)</h3>
+<div class="paragraph">
+<p>Removes all instances of the domain object.</p>
+</div>
+<div class="paragraph">
+<p>Intended primarily for testing purposes.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="allInstances__Class"><a class="anchor" href="#allInstances__Class"></a>allInstances(Class)</h3>
+<div class="paragraph">
+<p>Returns all persisted instances of specified type (including subtypes).</p>
+</div>
+<div class="paragraph">
+<p>Intended primarily for prototyping purposes, though is safe to use in production applications to obtain all instances of domain entities if the number is known to be small (for example, reference/lookup data).</p>
+</div>
+<div class="paragraph">
+<p>If there are no instances the list will be empty.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="allInstances__Class_long_long"><a class="anchor" href="#allInstances__Class_long_long"></a>allInstances(Class, long, long)</h3>
+<div class="paragraph">
+<p>Overload of <em>#allInstances(Class)</em> , returns a <em>page</em> of persisted instances of specified type (including subtypes).</p>
+</div>
+<div class="paragraph">
+<p>If the optional range parameters are used, the dataset returned starts from (0 based) index, and consists of only up to count items.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="allMatches__Class_Predicate"><a class="anchor" href="#allMatches__Class_Predicate"></a>allMatches(Class, Predicate)</h3>
+<div class="paragraph">
+<p>Returns all the instances of the specified type (including subtypes) that the predicate object accepts.</p>
+</div>
+<div class="paragraph">
+<p>If there are no instances the list will be empty. This method creates a new <em>List</em> object each time it is called so the caller is free to use or modify the returned <em>List</em> , but the changes will not be reflected back to the repository.</p>
+</div>
+<div class="paragraph">
+<p>This method is useful during exploration/prototyping, but - because the filtering is performed client-side - this method is only really suitable for initial development/prototyping, or for classes with very few instances. Use <em>#allMatches(Query)</em> for production code.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="allMatches__Class_Predicate_long_long"><a class="anchor" href="#allMatches__Class_Predicate_long_long"></a>allMatches(Class, Predicate, long, long)</h3>
+<div class="paragraph">
+<p>Overload of <em>#allMatches(Class, Predicate)</em> , returns a <em>page</em> of persisted instances of specified type (including subtypes).</p>
+</div>
+<div class="paragraph">
+<p>If the optional range parameters are used, the dataset returned starts from (0 based) index, and consists of only up to count items.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="allMatches__Query"><a class="anchor" href="#allMatches__Query"></a>allMatches(Query)</h3>
+<div class="paragraph">
+<p>Returns all the instances that match the given <a href="../../../system/latest/generated/index/applib/query/Query.html" class="page">Query</a> .</p>
+</div>
+<div class="paragraph">
+<p>This is the main API for server-side (performant) queries returning multiple instances, where a <em>org.apache.isis.applib.query.NamedQuery</em> can be passed in that ultimately describes a SELECT query with WHERE predicates. The mechanism by which this is defined depends on the ORM (JDO or JPA). A <em>org.apache.isis.applib.query.NamedQuery</em> can optionally specify a <em>org.apache.isis.applib.query.NamedQuery#withRange(QueryRange) range</em> of instances to be returned.</p>
+</div>
+<div class="paragraph">
+<p>It is also possible to specify an <em>org.apache.isis.applib.query.AllInstancesQuery</em> . This is equivalent to using <em>#allInstances(Class, long, long)</em> ; a range can also be specified.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="uniqueMatch__Class_Predicate"><a class="anchor" href="#uniqueMatch__Class_Predicate"></a>uniqueMatch(Class, Predicate)</h3>
+<div class="paragraph">
+<p>Finds the only instance of the specified type (including subtypes) that satifies the (client-side) predicate.</p>
+</div>
+<div class="paragraph">
+<p>This method is useful during exploration/prototyping, but - because the filtering is performed client-side - this method is only really suitable for initial development/prototyping, or for classes with very few instances. Use <em>#uniqueMatch(Query)</em> for production code.</p>
+</div>
+<div class="paragraph">
+<p>If no instance is found then <em>Optional#empty()</em> will be return, while if there is more that one instances a run-time exception will be thrown.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="uniqueMatch__Query"><a class="anchor" href="#uniqueMatch__Query"></a>uniqueMatch(Query)</h3>
+<div class="paragraph">
+<p>Find the only instance that matches the provided <a href="../../../system/latest/generated/index/applib/query/Query.html" class="page">Query</a> .</p>
+</div>
+<div class="paragraph">
+<p>This is the main API for server-side (performant) queries returning no more than one instance, where a <em>org.apache.isis.applib.query.NamedQuery</em> can be passed in that ultimately describes a SELECT query with WHERE predicates. The mechanism by which this is defined depends on the ORM (JDO or JPA). A <em>org.apache.isis.applib.query.NamedQuery</em> can optionally specify a <em>org.apache.isis.applib.query.NamedQuery#withRange(QueryRange) range</em> of instances to be returned.</p>
+</div>
+<div class="paragraph">
+<p>If no instance is found then <em>Optional#empty()</em> will be return, while if there is more that one instances a run-time exception will be thrown.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="firstMatch__Class_Predicate"><a class="anchor" href="#firstMatch__Class_Predicate"></a>firstMatch(Class, Predicate)</h3>
+<div class="paragraph">
+<p>Find the only instance of the specified type (including subtypes) that satifies the provided (client-side) predicate.</p>
+</div>
+<div class="paragraph">
+<p>This method is useful during exploration/prototyping, but - because the filtering is performed client-side - this method is only really suitable for initial development/prototyping, or for classes with very few instances. Use <em>#firstMatch(Query)</em> for production code.</p>
+</div>
+<div class="paragraph">
+<p>If no instance is found then <em>Optional#empty()</em> will be return, while if there is more that one instances then the first will be returned.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="firstMatch__Query"><a class="anchor" href="#firstMatch__Query"></a>firstMatch(Query)</h3>
+<div class="paragraph">
+<p>Find the only instance that matches the provided <a href="../../../system/latest/generated/index/applib/query/Query.html" class="page">Query</a> , if any.</p>
+</div>
+<div class="paragraph">
+<p>This is the main API for server-side (performant) queries returning the first matching instance, where a <em>org.apache.isis.applib.query.NamedQuery</em> can be passed in that ultimately describes a SELECT query with WHERE predicates. The mechanism by which this is defined depends on the ORM (JDO or JPA). A <em>org.apache.isis.applib.query.NamedQuery</em> can optionally specify a <em>org.apache.isis.applib.query.NamedQuery#withRange(QueryRange) range</em> of instances to be returned.</p>
+</div>
+<div class="paragraph">
+<p>If no instance is found then <em>Optional#empty()</em> will be return, while if there is more that one instances then the first will be returned.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="refresh__T"><a class="anchor" href="#refresh__T"></a>refresh(T)</h3>
+<div class="paragraph">
+<p>Reloads the domain entity from the database.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="detach__T"><a class="anchor" href="#detach__T"></a>detach(T)</h3>
+<div class="paragraph">
+<p>Explicitly detaches the entity from the current persistence session.</p>
+</div>
+<div class="paragraph">
+<p>This allows the entity to be read from even after the PersistenceSession that obtained it has been closed.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="detachedEntity__Class"><a class="anchor" href="#detachedEntity__Class"></a>detachedEntity(Class)</h3>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p><span class="red"><em>deprecated:</em></span></p>
+</div>
+<div class="paragraph">
+<p>as it requires that the domain entity has a no-arg constructor. Use <em>#detachedEntity(Object)</em> instead.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Overload of <em>#detachedEntity(Object)</em> , but will also instantiate the domain class first.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="instantiate__Class"><a class="anchor" href="#instantiate__Class"></a>instantiate(Class)</h3>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p><span class="red"><em>deprecated:</em></span></p>
+</div>
+<div class="paragraph">
+<p>as it requires that the domain entity has a no-arg constructor. Use <em>#detachedEntity(Object)</em> instead.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Equivalent to <em>#detachedEntity(Class)</em> .</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="isPersistent__Object"><a class="anchor" href="#isPersistent__Object"></a>isPersistent(Object)</h3>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p><span class="red"><em>deprecated:</em></span></p>
+</div>
+<div class="paragraph">
+<p>due to ambiguous semantic, use <em>#getEntityState(Object)</em> instead</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Determines if the specified object is persistent (that it is stored permanently outside of the virtual machine in the object store).</p>
+</div>
+<div class="paragraph">
+<p>This method can also return <code>true</code> if the object has been <em>#isDeleted(Object) deleted</em> from the object store.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="isDeleted__Object"><a class="anchor" href="#isDeleted__Object"></a>isDeleted(Object)</h3>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p><span class="red"><em>deprecated:</em></span></p>
+</div>
+<div class="paragraph">
+<p>due to ambiguous semantic, use <em>#getEntityState(Object)</em> instead</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Determines if the specified object has been deleted from the object store.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="implementation"><a class="anchor" href="#implementation"></a>Implementation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The default implementation of this domain service is <code>o.a.i.core.runtimeservices.repository.RepositoryServiceDefault</code>.</p>
+</div>
+<div class="sect2">
+<h3 id="configuration-properties"><a class="anchor" href="#configuration-properties"></a>Configuration Properties</h3>
+<div class="paragraph">
+<p>The default implementation of this domain service supports the following configuration properties:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 16.6666%;">
+<col style="width: 50.0001%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Value<br>
+(default value)</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>isis.core.runtime-services.</code><br>
+<code>repository-service.</code><br>
+<code>disable-auto-flush</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code>,<code>false</code><br>
+(<code>false</code>)</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Whether the <code>RepositoryService</code> should automatically flush pending changes prior to querying (via <code>allMatches()</code>, <code>firstMatch()</code> and so on).</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="usage"><a class="anchor" href="#usage"></a>Usage</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p>This section briefly discusses how application code can use (some of) these APIs.</p>
-</div>
 <div class="sect2">
 <h3 id="persist"><a class="anchor" href="#persist"></a>Persist</h3>
+<div class="paragraph">
+<p>Use an n-arg constructor, eg:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Customer cust = repositoryService.detachedEntity(
+    new Customer("Freddie", "Mercury"));
+repositoryService.persist(cust);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>rather than the deprecated version that takes a type:</p>
+</div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Customer cust = repositoryService.detachedEntity(Customer.class);
@@ -942,19 +1467,19 @@ repositoryService.persist(cust);</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>You should be aware that by default Apache Isis queues up calls to <code>#persist()</code> and <code>#remove()</code>.
+<p>You should be aware that by default the framework queues up calls to <a href="../../../system/latest/generated/index/applib/services/repository/RepositoryService.html#persist<em>T" class="page">#persist()</a> and <a href="../../../system/latest/generated/index/applib/services/repository/RepositoryService.html#remove</em>Object" class="page">#remove()</a>.
 These are then executed either when the request completes (and the transaction commits), or if the queue is flushed.
-This can be done either implicitly by the framework, or as the result of a direct call to <code>#flush()</code>.</p>
+This can be done either implicitly by the framework, or as the result of a direct call to <a href="../../../system/latest/generated/index/applib/services/xactn/TransactionService.html#flushTransaction__" class="page">TransactionService#flushTransaction</a>.</p>
 </div>
 <div class="paragraph">
 <p>By default the framework itself will cause <code>#flush()</code> to be called whenever a query is executed by way of <code>#allMatches(Query)</code>.
-However, this behaviour can be disabled using the  <a href="#refguide:config:configuring-core.adoc" class="page unresolved">configuration property</a> <code>isis.services.container.disableAutoFlush</code>.</p>
+However, this behaviour can be disabled using the  <a href="../config/sections/Other.html" class="page">Other</a></p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="persistandflush-removeandflush"><a class="anchor" href="#persistandflush-removeandflush"></a><code>persistAndFlush(&#8230;&#8203;)</code>, <code>removeAndFlush(&#8230;&#8203;)</code></h3>
 <div class="paragraph">
-<p>In some cases, such as when using managed properties and collections for implementing 1-1, 1-n, or m-n relationships, the developer needs to invoke <code>flush()</code> to send the changes to the DataNucleus persistence mechanism.
+<p>In some cases, such as when using managed properties and collections for implementing 1-1, 1-n, or m-n relationships, the developer needs to invoke <code>flush()</code> to send the changes to the persistence mechanism.
 These managed properties and collections and then updated.</p>
 </div>
 <div class="paragraph">
@@ -968,33 +1493,34 @@ These managed properties and collections and then updated.</p>
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public abstract class Warehouse extends SalesVIPEntity&lt;Marketplace&gt; {
 
     @Persistent(mappedBy = "marketplace", dependentElement = "true")
-    @Getter @Setter                                                             <i class="conum" data-value="1"></i><b>(1)</b>
-    private SortedSet&lt;MarketplaceExcludedProduct&gt; excludedProducts =
+    @Getter @Setter
+    SortedSet&lt;MarketplaceExcludedProduct&gt; excludedProducts =
                             new TreeSet&lt;MarketplaceExcludedProduct&gt;();
 
     @Action(semantics = SemanticsOf.IDEMPOTENT)
     public MarketplaceExcludedProduct addExcludedProduct(final Product product) {
-        MarketplaceExcludedProduct marketplaceExcludedProduct = this.findExcludedProduct(product);
+        val marketplaceExcludedProduct = findExcludedProduct(product);
         if (marketplaceExcludedProduct == null) {
             marketplaceExcludedProduct =
-                this.repositoryService.detachedEntity(MarketplaceExcludedProduct.class);
+                repositoryService.detachedEntity(
+                    new MarketplaceExcludedProduct.builder()
+                            .marketPlace(this)
+                            .product(product)
+                            .build());
         }
 
-        this.wrap(marketplaceExcludedProduct).setMarketplace(this);
-        this.wrap(marketplaceExcludedProduct).setProduct(product);
-
-        this.repositoryService.persistAndFlush(marketplaceExcludedProduct);     <i class="conum" data-value="2"></i><b>(2)</b>
+        repositoryService.persistAndFlush(marketplaceExcludedProduct);  <i class="conum" data-value="1"></i><b>(1)</b>
         return marketplaceExcludedProduct;
     }
 
     @Action(semantics = SemanticsOf.IDEMPOTENT)
-    public void deleteFromExcludedProducts(final Product product) {
-        final MarketplaceExcludedProduct marketplaceExcludedProduct = findExcludedProduct(product);
+    public void removeExcludedProducts(final Product product) {
+        val marketplaceExcludedProduct = findExcludedProduct(product);
         if (marketplaceExcludedProduct != null) {
-            this.repositoryService.removeAndFlush(marketplaceExcludedProduct);
+            repositoryService.removeAndFlush(marketplaceExcludedProduct);
         }
     }
-    ...                                                                         <i class="conum" data-value="3"></i><b>(3)</b>
+    ...
 }</code></pre>
 </div>
 </div>
@@ -1002,15 +1528,7 @@ These managed properties and collections and then updated.</p>
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>using lombok for brevity</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
 <td>Needed for updating the managed properties and collections.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>injected services and other methods ommited</td>
 </tr>
 </table>
 </div>
@@ -1050,23 +1568,23 @@ public void addExcludedProduct() {
 </div>
 </div>
 <div class="sect2">
-<h3 id="query-and-xxxmatches"><a class="anchor" href="#query-and-xxxmatches"></a>Query and <code>xxxMatches(&#8230;&#8203;)</code></h3>
+<h3 id="named-queries-and-xxxmatches"><a class="anchor" href="#named-queries-and-xxxmatches"></a>Named queries and <code>xxxMatches(&#8230;&#8203;)</code></h3>
 <div class="paragraph">
-<p>There are various implementations of the <code>Query</code> API, but these either duplicate functionality of the other overloads of <code>allMatches(&#8230;&#8203;)</code> or they are not supported by the JDO/DataNucleus object store.
-The only significant implementation of <code>Query</code> to be aware of is <code>QueryDefault</code>, which identifies a named query and a set of parameter/argument tuples.</p>
+<p>There are two subtypes of the <code>Query</code> API, namely <code>NamedQuery</code> and <code>AllInstancesQuery</code>.
+The former is the more important, as it identifies a named query and a set of parameter/argument tuples, and is executed server-side.</p>
 </div>
 <div class="paragraph">
-<p>For example, a <code>ToDoItem</code> could be annotated:</p>
+<p>For example, using JDO a <code>ToDoItem</code> could be annotated:</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@javax.jdo.annotations.Queries( {
     @javax.jdo.annotations.Query(
-        name = "findByAtPathAndComplete", language = "JDOQL",    <i class="conum" data-value="1"></i><b>(1)</b>
+        name = "findByAtPathAndComplete", language = "JDOQL",  <i class="conum" data-value="1"></i><b>(1)</b>
         value = "SELECT "
                 + "FROM todoapp.dom.module.todoitem.ToDoItem "
-                + "WHERE atPath.indexOf(:atPath) == 0 "          <i class="conum" data-value="2"></i><b>(2)</b>
-                + "   &amp;&amp; complete == :complete"),                <i class="conum" data-value="3"></i><b>(3)</b>
+                + "WHERE atPath.indexOf(:atPath) == 0 "        <i class="conum" data-value="2"></i><b>(2)</b>
+                + "   &amp;&amp; complete == :complete"),              <i class="conum" data-value="3"></i><b>(3)</b>
     // ...
 })
 public class ToDoItem ... {
@@ -1102,10 +1620,10 @@ public class ToDoItemRepositoryImplUsingJdoql implements ToDoItemRepositoryImpl 
     @Programmatic
     public List&lt;ToDoItem&gt; findByAtPathAndCategory(final String atPath, final Category category) {
         return repositoryService.allMatches(
-                new QueryDefault&lt;&gt;(ToDoItem.class,
-                        "findByAtPathAndCategory",                              <i class="conum" data-value="1"></i><b>(1)</b>
-                        "atPath", atPath,                                       <i class="conum" data-value="2"></i><b>(2)</b>
-                        "category", category));                                 <i class="conum" data-value="3"></i><b>(3)</b>
+                Query.named(ToDoItem.class,
+                        "findByAtPathAndCategory", <i class="conum" data-value="1"></i><b>(1)</b>
+                        "atPath", atPath,          <i class="conum" data-value="2"></i><b>(2)</b>
+                        "category", category));    <i class="conum" data-value="3"></i><b>(3)</b>
     }
     ...
     @javax.inject.Inject
@@ -1131,12 +1649,19 @@ The pattern is parameter, argument, parameter, argument, &#8230;&#8203; and so o
 </tr>
 </table>
 </div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
 <div class="paragraph">
-<p>Other JDOQL named queries (not shown) follow the exact same pattern.</p>
+<p>If using JPA, it is also possible to use the Spring Data repositories, using <a href="../../../system/latest/generated/index/persistence/jpa/applib/services/JpaSupportService.html" class="page">JpaSupportService</a>.</p>
 </div>
-<div class="paragraph">
-<p>With respect to the other query APIs, the varargs parameters are optional, but allow for (client-side and managed) paging.
-The first parameter is the <code>start</code> (0-based, the second is the <code>count</code>.</p>
+</td>
+</tr>
+</table>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -1146,8 +1671,7 @@ The first parameter is the <code>start</code> (0-based, the second is the <code>
 </td>
 <td class="content">
 <div class="paragraph">
-<p>If using JDO/DataNucleus, it is also possible to use the DataNucleus type-safe query API.
-For more details, see <a href="../../../pjdo/latest/services/IsisJdoSupport.html" class="page"><code>IsisJdoSupport</code></a>.</p>
+<p>If using JDO/DataNucleus, it is also possible to use the DataNucleus type-safe query API, see <a href="../../../system/latest/generated/index/persistence/jdo/applib/services/JdoSupportService.html" class="page">JdoSupportService</a>.</p>
 </div>
 </td>
 </tr>
@@ -1157,65 +1681,43 @@ For more details, see <a href="../../../pjdo/latest/services/IsisJdoSupport.html
 </div>
 </div>
 <div class="sect1">
-<h2 id="implementation"><a class="anchor" href="#implementation"></a>Implementation</h2>
+<h2 id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The default implementation of this domain service is <code>o.a.i.core.metamodel.services.repository.RepositoryServiceDefault</code>.</p>
+<p>Supporting classes used by the API:</p>
 </div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-TODO: v2 - discuss <code>EntityState</code>.
-</td>
-</tr>
-</table>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../../../system/latest/generated/index/applib/services/repository/EntityState.html" class="page">EntityState</a></p>
+</li>
+<li>
+<p><a href="../../../system/latest/generated/index/applib/query/Query.html" class="page">Query</a></p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../../../system/latest/generated/index/applib/query/NamedQuery.html" class="page">NamedQuery</a></p>
+</li>
+<li>
+<p><a href="../../../system/latest/generated/index/applib/query/AllInstancesQuery.html" class="page">AllInstancesQuery</a></p>
+</li>
+</ul>
 </div>
-<div class="sect2">
-<h3 id="configuration-properties"><a class="anchor" href="#configuration-properties"></a>Configuration Properties</h3>
+</li>
+<li>
+<p><a href="../../../system/latest/generated/index/applib/query/QueryRange.html" class="page">QueryRange</a></p>
+</li>
+</ul>
+</div>
 <div class="paragraph">
-<p>The default implementation of this domain service supports the following configuration properties:</p>
+<p>Transaction management:</p>
 </div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 16.6666%;">
-<col style="width: 50.0001%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Property</th>
-<th class="tableblock halign-left valign-top">Value<br>
-(default value)</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>isis.services.</code><br>
-<code>container.</code><br>
-<code>disableAutoFlush</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code>,<code>false</code><br>
-(<code>false</code>)</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Whether the <code>RepositoryService</code> should automatically flush pending changes prior to querying (via <code>allMatches()</code>, <code>firstMatch()</code> and so on).</p>
-</div></div></td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="usage-notes"><a class="anchor" href="#usage-notes"></a>Usage Notes</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The <a href="FactoryService.html" class="page"><code>FactoryService</code></a> is often used in conjunction with the <code>RepositoryService</code>, to instantiate domain objects before persisting.</p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../../../system/latest/generated/index/applib/services/xactn/TransactionService.html" class="page">TransactionService</a></p>
+</li>
+</ul>
 </div>
 </div>
 </div>
@@ -1236,7 +1738,7 @@ TODO: v2 - discuss <code>EntityState</code>.
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210213-0423-5a5afc7f</p>
+            <p>Revision: 2.0.0-M4.20210215-0424-f665ec0b</p>
         </div>
     </div>
 </footer>

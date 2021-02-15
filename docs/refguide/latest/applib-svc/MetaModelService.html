@@ -510,12 +510,6 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../config/sections/isis.security.shiro.html">Shiro Security Implementation</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../config/sections/jdo-datanucleus.html">JDO DataNucleus</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../config/sections/jdo-datanucleus-conf.html">DataNucleus Configuration</a>
-  </li>
-  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../config/sections/isis.viewer.restfulobjects.html">Restful Objects Viewer</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -764,46 +758,26 @@ page.parent doesn't seem to be set...
 <h1 class="page">MetaModelService</h1>
 <div id="preamble">
 <div class="sectionbody">
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-TODO: this content has not yet been reviewed/updated for v2.0
-</td>
-</tr>
-</table>
-</div>
 <div class="paragraph">
-<p>The <code>MetaModelService</code> service provides access to a number of aspects of Apache Isis' internal metamodel.</p>
+<p>This service provides a formal API into the framework&#8217;s metamodel.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="api"><a class="anchor" href="#api"></a>API</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p>This service provides a formal API into Isis' metamodel.</p>
-</div>
-<div class="paragraph">
-<p>This API is currently extremely limited, but the intention is to extend it gradually as use cases emerge.</p>
-</div>
-<div class="sect3">
-<h4 id="api-2"><a class="anchor" href="#api-2"></a>API</h4>
 <div class="listingblock">
 <div class="title">MetaModelService.java</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">interface MetaModelService {
   Class&lt;?&gt; fromObjectType(final String objectType)     <i class="conum" data-value="1"></i><b>(1)</b>
   String toObjectType(final Class&lt;?&gt; domainType)     <i class="conum" data-value="2"></i><b>(2)</b>
-  void rebuild(final Class&lt;?&gt; domainType)
-  DomainModel getDomainModel()     <i class="conum" data-value="3"></i><b>(3)</b>
-  BeanSort sortOf(Class&lt;?&gt; domainType, Mode mode)
-  BeanSort sortOf(Bookmark bookmark, Mode mode)
-  CommandDtoProcessor commandDtoProcessorFor(String logicalMemberIdentifier)
-  MetamodelDto exportMetaModel(final Config config)
+  void rebuild(final Class&lt;?&gt; domainType)     <i class="conum" data-value="3"></i><b>(3)</b>
+  DomainModel getDomainModel()     <i class="conum" data-value="4"></i><b>(4)</b>
+  BeanSort sortOf(Class&lt;?&gt; domainType, Mode mode)     <i class="conum" data-value="5"></i><b>(5)</b>
+  BeanSort sortOf(Bookmark bookmark, Mode mode)     <i class="conum" data-value="6"></i><b>(6)</b>
+  CommandDtoProcessor commandDtoProcessorFor(String logicalMemberIdentifier)     <i class="conum" data-value="7"></i><b>(7)</b>
+  MetamodelDto exportMetaModel(final Config config)     <i class="conum" data-value="8"></i><b>(8)</b>
 }</code></pre>
 </div>
 </div>
@@ -811,7 +785,7 @@ TODO: this content has not yet been reviewed/updated for v2.0
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><a href="#fromObjectType">fromObjectType</a>
+<td><a href="#fromObjectType__String">fromObjectType(String)</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
@@ -822,7 +796,7 @@ TODO: this content has not yet been reviewed/updated for v2.0
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><a href="#toObjectType">toObjectType</a>
+<td><a href="#toObjectType__Class">toObjectType(Class)</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
@@ -833,7 +807,18 @@ TODO: this content has not yet been reviewed/updated for v2.0
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td><a href="#getDomainModel">getDomainModel</a>
+<td><a href="#rebuild__Class">rebuild(Class)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Invalidates and rebuilds the internal metadata for the specified domain type.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><a href="#getDomainModel__">getDomainModel()</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
@@ -842,25 +827,77 @@ TODO: this content has not yet been reviewed/updated for v2.0
 </div>
 </div></td>
 </tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><a href="#sortOf__Class_Mode">sortOf(Class, Mode)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>What sort of object the domain type represents.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td><a href="#sortOf__Bookmark_Mode">sortOf(Bookmark, Mode)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Override of <em>#sortOf(Class, Mode)</em> , extracting the domain type from the provided <a href="../../../system/latest/generated/index/applib/services/bookmark/Bookmark.html" class="page">Bookmark</a> of a domain object instance.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td><a href="#commandDtoProcessorFor__String">commandDtoProcessorFor(String)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Obtains the implementation of <a href="../../../system/latest/generated/index/applib/services/commanddto/processor/CommandDtoProcessor.html" class="page">CommandDtoProcessor</a> (if any) as per <em>Action#commandDtoProcessor()</em> or <em>Property#commandDtoProcessor()</em> .</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td><a href="#exportMetaModel__Config">exportMetaModel(Config)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Exports the entire metamodel as a DTO, serializable into XML using JAXB.</p>
+</div>
+</div>
+</div></td>
+</tr>
 </table>
 </div>
 </div>
-<div class="sect3">
-<h4 id="members"><a class="anchor" href="#members"></a>Members</h4>
-<div class="sect4">
-<h5 id="fromObjectType"><a class="anchor" href="#fromObjectType"></a>fromObjectType</h5>
+</div>
+<div class="sect1">
+<h2 id="members"><a class="anchor" href="#members"></a>Members</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="fromObjectType__String"><a class="anchor" href="#fromObjectType__String"></a>fromObjectType(String)</h3>
 <div class="paragraph">
 <p>Provides a reverse lookup of a domain class' object type, as defined by <em>DomainObject#objectType()</em> (or any other mechanism that corresponds to Isis' <code>ObjectSpecIdFacet</code> ).</p>
 </div>
 </div>
-<div class="sect4">
-<h5 id="toObjectType"><a class="anchor" href="#toObjectType"></a>toObjectType</h5>
+<div class="sect2">
+<h3 id="toObjectType__Class"><a class="anchor" href="#toObjectType__Class"></a>toObjectType(Class)</h3>
 <div class="paragraph">
 <p>Provides a lookup of a domain class' object type, as defined by <em>DomainObject#objectType()</em> (or any other mechanism that corresponds to Isis' <code>ObjectSpecIdFacet</code> ).</p>
 </div>
 </div>
-<div class="sect4">
-<h5 id="getDomainModel"><a class="anchor" href="#getDomainModel"></a>getDomainModel</h5>
+<div class="sect2">
+<h3 id="rebuild__Class"><a class="anchor" href="#rebuild__Class"></a>rebuild(Class)</h3>
+<div class="paragraph">
+<p>Invalidates and rebuilds the internal metadata for the specified domain type.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="getDomainModel__"><a class="anchor" href="#getDomainModel__"></a>getDomainModel()</h3>
 <div class="paragraph">
 <p>Returns a list of representations of each of member of each domain class.</p>
 </div>
@@ -870,113 +907,35 @@ TODO: this content has not yet been reviewed/updated for v2.0
 <div class="paragraph">
 <p>Note that <em>MetaModelService#exportMetaModel(Config)</em> provides a superset of the functionality provided by this method.</p>
 </div>
+</div>
+<div class="sect2">
+<h3 id="sortOf__Class_Mode"><a class="anchor" href="#sortOf__Class_Mode"></a>sortOf(Class, Mode)</h3>
 <div class="paragraph">
-<p>TODO example migration</p>
+<p>What sort of object the domain type represents.</p>
 </div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-<div class="title">Deprecated Docs</div>
+</div>
+<div class="sect2">
+<h3 id="sortOf__Bookmark_Mode"><a class="anchor" href="#sortOf__Bookmark_Mode"></a>sortOf(Bookmark, Mode)</h3>
 <div class="paragraph">
-<p>== API</p>
+<p>Override of <em>#sortOf(Class, Mode)</em> , extracting the domain type from the provided <a href="../../../system/latest/generated/index/applib/services/bookmark/Bookmark.html" class="page">Bookmark</a> of a domain object instance.</p>
 </div>
+</div>
+<div class="sect2">
+<h3 id="commandDtoProcessorFor__String"><a class="anchor" href="#commandDtoProcessorFor__String"></a>commandDtoProcessorFor(String)</h3>
 <div class="paragraph">
-<p>The API defined by the service is:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Unresolved include directive in modules/applib-svc/pages/MetaModelService.adoc - include::refguide:applib-svc:example$services/metamodel/MetaModelService.java[]</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>reverse lookup of a domain class' object type</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>lookup of a domain class' object type</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>invalidate and rebuild the internal metadata for the specified domain type.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>returns a structure representing all the known types held in the domain model.
-Further details below.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>what sort of object a domain type is represents:
-<div class="paragraph">
-<p>accepting:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Unresolved include directive in modules/applib-svc/pages/MetaModelService.adoc - include::refguide:applib-svc:example$services/metamodel/MetaModelService.java[]</code></pre>
-</div>
+<p>Obtains the implementation of <a href="../../../system/latest/generated/index/applib/services/commanddto/processor/CommandDtoProcessor.html" class="page">CommandDtoProcessor</a> (if any) as per <em>Action#commandDtoProcessor()</em> or <em>Property#commandDtoProcessor()</em> .</p>
 </div>
 <div class="paragraph">
-<p>and returning:</p>
+<p>This is used by framework-provided implementations of <em>org.apache.isis.applib.services.conmap.ContentMappingService</em> .</p>
 </div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Unresolved include directive in modules/applib-svc/pages/MetaModelService.adoc - include::refguide:applib-svc:example$services/metamodel/BeanSort.java[]</code></pre>
 </div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
-<td>what sort of object the domain type inferred from a bookmark represents</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="7"></i><b>7</b></td>
-<td>obtain an implementation of <code>CommandDtoProcessor</code> (if any) as per an <a href="../applib-ant/Action.html#command" class="page"><code>@Action#commandDtoProcessor()</code></a> or <a href="../applib-ant/Property.html#command" class="page"><code>@Property#commandDtoProcessor()</code></a>.
+<div class="sect2">
+<h3 id="exportMetaModel__Config"><a class="anchor" href="#exportMetaModel__Config"></a>exportMetaModel(Config)</h3>
 <div class="paragraph">
-<p>This is used by the <a href="ContentMappingService.html#implementations" class="page">framework-provided implementations</a> of <code>ContentMappingService</code>.</p>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="8"></i><b>8</b></td>
-<td>Exports the entire metamodel as a DTO, serializable into XML using JAXB.
-Discussed further below.</td>
-</tr>
-</table>
+<p>Exports the entire metamodel as a DTO, serializable into XML using JAXB.</p>
 </div>
 <div class="paragraph">
-<p>The <code>DomainModel</code> is simply:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Unresolved include directive in modules/applib-svc/pages/MetaModelService.adoc - include::refguide:applib-svc:example$services/metamodel/DomainModel.java[]</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>where <code>DomainMember</code> in turn is:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Unresolved include directive in modules/applib-svc/pages/MetaModelService.adoc - include::refguide:applib-svc:example$services/metamodel/DomainMember.java[]</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>For the <code>exportMetaModel()</code> method, the <code>Config</code> property specifies which package(s) to include and can be used to ignore certain elements:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Unresolved include directive in modules/applib-svc/pages/MetaModelService.adoc - include::refguide:applib-svc:example$services/metamodel/MetaModelService.java[]</code></pre>
-</div>
-</div>
-</td>
-</tr>
-</table>
-</div>
+<p>The <a href="../../../system/latest/generated/index/applib/services/metamodel/Config.html" class="page">Config</a> parameter can be used to restrict/filter the export to some subset of the metamodel; in particular to specific <em>Config#getPackagePrefixes() package prefixes</em> .</p>
 </div>
 </div>
 </div>
@@ -985,15 +944,34 @@ Discussed further below.</td>
 <h2 id="implementation"><a class="anchor" href="#implementation"></a>Implementation</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The framework provides a default implementation of this service, <code>o.a.i.c.m.services.metamodel.MetaModelServiceDefault</code>.</p>
+<p>The framework provides a default implementation of this service, <code>o.a.i.core.metamodel.services.metamodel.MetaModelServiceDefault</code>.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="related-services"><a class="anchor" href="#related-services"></a>Related Services</h2>
+<h2 id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 <div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../../../system/latest/generated/index/applib/services/metamodel/MetaModelServiceMenu.html" class="page">MetaModelServiceMenu</a></p>
 <div class="paragraph">
-<p>The <code>MetaModelServiceMenu</code> provides a method to download all domain members as a CSV (by calling <code>MetaModelService#export()</code>) or as an XML (by calling <code>MetaModelService6#exportMetaModel(&#8230;&#8203;)</code>.</p>
+<p>exposes <a href="../../../system/latest/generated/index/applib/services/metamodel/MetaModelService.html#exportMetaModel__Config" class="page">exportMetaModel</a> as an action in the user interface.</p>
+</div>
+</li>
+<li>
+<p><a href="../../../system/latest/generated/index/applib/services/metamodel/BeanSort.html" class="page">BeanSort</a></p>
+</li>
+<li>
+<p><a href="../../../system/latest/generated/index/applib/services/metamodel/DomainMember.html" class="page">DomainMember</a></p>
+</li>
+<li>
+<p><a href="../../../system/latest/generated/index/applib/services/metamodel/DomainModel.html" class="page">DomainModel</a></p>
+</li>
+<li>
+<p><a href="../../../system/latest/generated/index/applib/services/metamodel/Config.html" class="page">Config</a></p>
+</li>
+</ul>
 </div>
 </div>
 </div>
@@ -1014,7 +992,7 @@ Discussed further below.</td>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210213-0423-5a5afc7f</p>
+            <p>Revision: 2.0.0-M4.20210215-0424-f665ec0b</p>
         </div>
     </div>
 </footer>

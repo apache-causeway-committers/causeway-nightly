@@ -358,6 +358,15 @@ page.parent doesn't seem to be set...
 </div>
 <article class="doc">
     <a name="section-top"></a>
+<div class="paragraph">
+<p>Provides the ability to reorder (or suppress) columns in both parented- and standalone tables.</p>
+</div>
+<div class="paragraph">
+<p>There can be multiple implementations of this service registered, ordered as per the Spring <em>org.springframework.core.annotation.Order</em> annotation (or equivalent). The result of the first service implementation to return a non- <code>null</code> value will be used.</p>
+</div>
+<div class="paragraph">
+<p>If all provided implementations return <code>null</code> , then the framework will fallback to a default implementation.</p>
+</div>
 <div class="sect1">
 <h2 id="api"><a class="anchor" href="#api"></a>API</h2>
 <div class="sectionbody">
@@ -365,9 +374,58 @@ page.parent doesn't seem to be set...
 <div class="title">TableColumnOrderService.java</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">interface TableColumnOrderService {
-  List&lt;String&gt; orderParented(final Object parent, final String collectionId, final Class&lt;?&gt; collectionType, final List&lt;String&gt; propertyIds)
-  List&lt;String&gt; orderStandalone(final Class&lt;?&gt; collectionType, final List&lt;String&gt; propertyIds)
+  List&lt;String&gt; orderParented(final Object parent, final String collectionId, final Class&lt;?&gt; collectionType, final List&lt;String&gt; propertyIds)     <i class="conum" data-value="1"></i><b>(1)</b>
+  List&lt;String&gt; orderStandalone(final Class&lt;?&gt; collectionType, final List&lt;String&gt; propertyIds)     <i class="conum" data-value="2"></i><b>(2)</b>
 }</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><a href="#orderParented__Object_String_Class_List">orderParented(Object, String, Class, List)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>For the parent collection owned by the specified parent and collection Id, return the set of property ids in the same or other order.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><a href="#orderStandalone__Class_List">orderStandalone(Class, List)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>For the standalone collection of the specified type, return the set of property ids in the same or other order.</p>
+</div>
+</div>
+</div></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="members"><a class="anchor" href="#members"></a>Members</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="orderParented__Object_String_Class_List"><a class="anchor" href="#orderParented__Object_String_Class_List"></a>orderParented(Object, String, Class, List)</h3>
+<div class="paragraph">
+<p>For the parent collection owned by the specified parent and collection Id, return the set of property ids in the same or other order.</p>
+</div>
+<div class="paragraph">
+<p>Return <code>null</code> if has no opinion/provides no reordering for this parent and collection.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="orderStandalone__Class_List"><a class="anchor" href="#orderStandalone__Class_List"></a>orderStandalone(Class, List)</h3>
+<div class="paragraph">
+<p>For the standalone collection of the specified type, return the set of property ids in the same or other order.</p>
+</div>
+<div class="paragraph">
+<p>Return <code>null</code> if has no opinion/provides no reordering for this type.</p>
 </div>
 </div>
 </div>
@@ -389,7 +447,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210213-0423-5a5afc7f</p>
+            <p>Revision: 2.0.0-M4.20210215-0424-f665ec0b</p>
         </div>
     </div>
 </footer>

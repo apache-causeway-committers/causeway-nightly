@@ -359,7 +359,13 @@ page.parent doesn't seem to be set...
 <article class="doc">
     <a name="section-top"></a>
 <div class="paragraph">
-<p>Intended only for use by fixture scripts and integration tests, allows a block of code to execute while the <a href="../user/UserService.html" class="page">UserService</a> 's <em>UserService#currentUser() getUser()</em> method returns the specified user/role as the effective user.</p>
+<p>Allows a block of code to be executed within an arbitrary <a href="../iactn/ExecutionContext.html" class="page">ExecutionContext</a> , allowing the who, when and where to be temporarily switched.</p>
+</div>
+<div class="paragraph">
+<p>Most typically this service is used to temporarily change the &qout;who", that is the user reported by the <a href="../user/UserService.html" class="page">UserService</a> 's <em>UserService#currentUser() getUser()</em> - hence the name SudoService. But the user&#8217;s locale and timezome can also be changed, as well as the time reported by <em>org.apache.isis.applib.services.clock.ClockService</em> .</p>
+</div>
+<div class="paragraph">
+<p>The primary use case for this service is for fixture scripts and integration tests.</p>
 </div>
 <div class="sect1">
 <h2 id="api"><a class="anchor" href="#api"></a>API</h2>
@@ -369,7 +375,7 @@ page.parent doesn't seem to be set...
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">interface SudoService {
   RoleMemento ACCESS_ALL_ROLE;     <i class="conum" data-value="1"></i><b>(1)</b>
-  T call(UnaryOperator&lt;ExecutionContext&gt; sudoMapper, Callable&lt;T&gt; supplier)     <i class="conum" data-value="2"></i><b>(2)</b>
+  T call(final UnaryOperator&lt;ExecutionContext&gt; sudoMapper, final Callable&lt;T&gt; supplier)     <i class="conum" data-value="2"></i><b>(2)</b>
   void run(final UnaryOperator&lt;ExecutionContext&gt; sudoMapper, final ThrowingRunnable runnable)     <i class="conum" data-value="3"></i><b>(3)</b>
 }</code></pre>
 </div>
@@ -389,22 +395,22 @@ page.parent doesn't seem to be set...
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><a href="#call">call</a>
+<td><a href="#call__UnaryOperator_Callable">call(UnaryOperator, Callable)</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>Executes the supplied block, with the <a href="../user/UserService.html" class="page">UserService</a> returning the specified user.</p>
+<p>Executes the supplied <em>Callable</em> block, within the provided <a href="../iactn/ExecutionContext.html" class="page">ExecutionContext</a> .</p>
 </div>
 </div>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td><a href="#run">run</a>
+<td><a href="#run__UnaryOperator_ThrowingRunnable">run(UnaryOperator, ThrowingRunnable)</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>Executes the supplied block, with the <a href="../user/UserService.html" class="page">UserService</a> returning the specified user.</p>
+<p>Executes the supplied <em>Callable</em> block, within the provided <a href="../iactn/ExecutionContext.html" class="page">ExecutionContext</a> .</p>
 </div>
 </div>
 </div></td>
@@ -423,15 +429,15 @@ page.parent doesn't seem to be set...
 </div>
 </div>
 <div class="sect2">
-<h3 id="call"><a class="anchor" href="#call"></a>call</h3>
+<h3 id="call__UnaryOperator_Callable"><a class="anchor" href="#call__UnaryOperator_Callable"></a>call(UnaryOperator, Callable)</h3>
 <div class="paragraph">
-<p>Executes the supplied block, with the <a href="../user/UserService.html" class="page">UserService</a> returning the specified user.</p>
+<p>Executes the supplied <em>Callable</em> block, within the provided <a href="../iactn/ExecutionContext.html" class="page">ExecutionContext</a> .</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="run"><a class="anchor" href="#run"></a>run</h3>
+<h3 id="run__UnaryOperator_ThrowingRunnable"><a class="anchor" href="#run__UnaryOperator_ThrowingRunnable"></a>run(UnaryOperator, ThrowingRunnable)</h3>
 <div class="paragraph">
-<p>Executes the supplied block, with the <a href="../user/UserService.html" class="page">UserService</a> returning the specified user.</p>
+<p>Executes the supplied <em>Callable</em> block, within the provided <a href="../iactn/ExecutionContext.html" class="page">ExecutionContext</a> .</p>
 </div>
 </div>
 </div>
@@ -453,7 +459,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210213-0423-5a5afc7f</p>
+            <p>Revision: 2.0.0-M4.20210215-0424-f665ec0b</p>
         </div>
     </div>
 </footer>

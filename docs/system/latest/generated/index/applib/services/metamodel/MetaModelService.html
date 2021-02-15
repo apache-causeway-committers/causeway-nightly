@@ -359,10 +359,7 @@ page.parent doesn't seem to be set...
 <article class="doc">
     <a name="section-top"></a>
 <div class="paragraph">
-<p>This service provides a formal API into Isis' metamodel.</p>
-</div>
-<div class="paragraph">
-<p>This API is currently extremely limited, but the intention is to extend it gradually as use cases emerge.</p>
+<p>This service provides a formal API into the framework&#8217;s metamodel.</p>
 </div>
 <div class="sect1">
 <h2 id="api"><a class="anchor" href="#api"></a>API</h2>
@@ -373,12 +370,12 @@ page.parent doesn't seem to be set...
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">interface MetaModelService {
   Class&lt;?&gt; fromObjectType(final String objectType)     <i class="conum" data-value="1"></i><b>(1)</b>
   String toObjectType(final Class&lt;?&gt; domainType)     <i class="conum" data-value="2"></i><b>(2)</b>
-  void rebuild(final Class&lt;?&gt; domainType)
-  DomainModel getDomainModel()     <i class="conum" data-value="3"></i><b>(3)</b>
-  BeanSort sortOf(Class&lt;?&gt; domainType, Mode mode)
-  BeanSort sortOf(Bookmark bookmark, Mode mode)
-  CommandDtoProcessor commandDtoProcessorFor(String logicalMemberIdentifier)
-  MetamodelDto exportMetaModel(final Config config)
+  void rebuild(final Class&lt;?&gt; domainType)     <i class="conum" data-value="3"></i><b>(3)</b>
+  DomainModel getDomainModel()     <i class="conum" data-value="4"></i><b>(4)</b>
+  BeanSort sortOf(Class&lt;?&gt; domainType, Mode mode)     <i class="conum" data-value="5"></i><b>(5)</b>
+  BeanSort sortOf(Bookmark bookmark, Mode mode)     <i class="conum" data-value="6"></i><b>(6)</b>
+  CommandDtoProcessor commandDtoProcessorFor(String logicalMemberIdentifier)     <i class="conum" data-value="7"></i><b>(7)</b>
+  MetamodelDto exportMetaModel(final Config config)     <i class="conum" data-value="8"></i><b>(8)</b>
 }</code></pre>
 </div>
 </div>
@@ -386,7 +383,7 @@ page.parent doesn't seem to be set...
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><a href="#fromObjectType">fromObjectType</a>
+<td><a href="#fromObjectType__String">fromObjectType(String)</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
@@ -397,7 +394,7 @@ page.parent doesn't seem to be set...
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><a href="#toObjectType">toObjectType</a>
+<td><a href="#toObjectType__Class">toObjectType(Class)</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
@@ -408,11 +405,66 @@ page.parent doesn't seem to be set...
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td><a href="#getDomainModel">getDomainModel</a>
+<td><a href="#rebuild__Class">rebuild(Class)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Invalidates and rebuilds the internal metadata for the specified domain type.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><a href="#getDomainModel__">getDomainModel()</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
 <p>Returns a list of representations of each of member of each domain class.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><a href="#sortOf__Class_Mode">sortOf(Class, Mode)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>What sort of object the domain type represents.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td><a href="#sortOf__Bookmark_Mode">sortOf(Bookmark, Mode)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Override of <em>#sortOf(Class, Mode)</em> , extracting the domain type from the provided <a href="../bookmark/Bookmark.html" class="page">Bookmark</a> of a domain object instance.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td><a href="#commandDtoProcessorFor__String">commandDtoProcessorFor(String)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Obtains the implementation of <a href="../commanddto/processor/CommandDtoProcessor.html" class="page">CommandDtoProcessor</a> (if any) as per <em>Action#commandDtoProcessor()</em> or <em>Property#commandDtoProcessor()</em> .</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td><a href="#exportMetaModel__Config">exportMetaModel(Config)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Exports the entire metamodel as a DTO, serializable into XML using JAXB.</p>
 </div>
 </div>
 </div></td>
@@ -425,19 +477,25 @@ page.parent doesn't seem to be set...
 <h2 id="members"><a class="anchor" href="#members"></a>Members</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="fromObjectType"><a class="anchor" href="#fromObjectType"></a>fromObjectType</h3>
+<h3 id="fromObjectType__String"><a class="anchor" href="#fromObjectType__String"></a>fromObjectType(String)</h3>
 <div class="paragraph">
 <p>Provides a reverse lookup of a domain class' object type, as defined by <em>DomainObject#objectType()</em> (or any other mechanism that corresponds to Isis' <code>ObjectSpecIdFacet</code> ).</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="toObjectType"><a class="anchor" href="#toObjectType"></a>toObjectType</h3>
+<h3 id="toObjectType__Class"><a class="anchor" href="#toObjectType__Class"></a>toObjectType(Class)</h3>
 <div class="paragraph">
 <p>Provides a lookup of a domain class' object type, as defined by <em>DomainObject#objectType()</em> (or any other mechanism that corresponds to Isis' <code>ObjectSpecIdFacet</code> ).</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="getDomainModel"><a class="anchor" href="#getDomainModel"></a>getDomainModel</h3>
+<h3 id="rebuild__Class"><a class="anchor" href="#rebuild__Class"></a>rebuild(Class)</h3>
+<div class="paragraph">
+<p>Invalidates and rebuilds the internal metadata for the specified domain type.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="getDomainModel__"><a class="anchor" href="#getDomainModel__"></a>getDomainModel()</h3>
 <div class="paragraph">
 <p>Returns a list of representations of each of member of each domain class.</p>
 </div>
@@ -446,6 +504,36 @@ page.parent doesn't seem to be set...
 </div>
 <div class="paragraph">
 <p>Note that <em>MetaModelService#exportMetaModel(Config)</em> provides a superset of the functionality provided by this method.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="sortOf__Class_Mode"><a class="anchor" href="#sortOf__Class_Mode"></a>sortOf(Class, Mode)</h3>
+<div class="paragraph">
+<p>What sort of object the domain type represents.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="sortOf__Bookmark_Mode"><a class="anchor" href="#sortOf__Bookmark_Mode"></a>sortOf(Bookmark, Mode)</h3>
+<div class="paragraph">
+<p>Override of <em>#sortOf(Class, Mode)</em> , extracting the domain type from the provided <a href="../bookmark/Bookmark.html" class="page">Bookmark</a> of a domain object instance.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="commandDtoProcessorFor__String"><a class="anchor" href="#commandDtoProcessorFor__String"></a>commandDtoProcessorFor(String)</h3>
+<div class="paragraph">
+<p>Obtains the implementation of <a href="../commanddto/processor/CommandDtoProcessor.html" class="page">CommandDtoProcessor</a> (if any) as per <em>Action#commandDtoProcessor()</em> or <em>Property#commandDtoProcessor()</em> .</p>
+</div>
+<div class="paragraph">
+<p>This is used by framework-provided implementations of <em>org.apache.isis.applib.services.conmap.ContentMappingService</em> .</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="exportMetaModel__Config"><a class="anchor" href="#exportMetaModel__Config"></a>exportMetaModel(Config)</h3>
+<div class="paragraph">
+<p>Exports the entire metamodel as a DTO, serializable into XML using JAXB.</p>
+</div>
+<div class="paragraph">
+<p>The <a href="Config.html" class="page">Config</a> parameter can be used to restrict/filter the export to some subset of the metamodel; in particular to specific <em>Config#getPackagePrefixes() package prefixes</em> .</p>
 </div>
 </div>
 </div>
@@ -467,7 +555,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210213-0423-5a5afc7f</p>
+            <p>Revision: 2.0.0-M4.20210215-0424-f665ec0b</p>
         </div>
     </div>
 </footer>

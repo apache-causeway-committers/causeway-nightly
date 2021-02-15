@@ -358,6 +358,12 @@ page.parent doesn't seem to be set...
 </div>
 <article class="doc">
     <a name="section-top"></a>
+<div class="paragraph">
+<p>Collects together methods for creating, persisting and searching for entities from the underlying persistence store.</p>
+</div>
+<div class="paragraph">
+<p>Typically it&#8217;s good practice to define a domain-specific service (eg <code>CustomerRepository</code> ) which then delegates to this service. This domain-specific service can use some <a href="RepositoryService.html" class="page">RepositoryService</a> 's "naive" methods that use client-side predicates for filtering; these can then be replaced by more sophisticated implementations that use proper server-side filtering later on without impacting the rest of the application.</p>
+</div>
 <div class="sect1">
 <h2 id="api"><a class="anchor" href="#api"></a>API</h2>
 <div class="sectionbody">
@@ -394,29 +400,29 @@ page.parent doesn't seem to be set...
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><a href="#getEntityState">getEntityState</a>
+<td><a href="#getEntityState__Object">getEntityState(Object)</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>Returns the EntityState of given <em>object</em> . Returns <em>EntityState#NOT_PERSISTABLE</em> for <em>object==null</em> .</p>
+<p>Returns the <a href="EntityState.html" class="page">EntityState</a> of given <em>object</em> .</p>
 </div>
 </div>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><a href="#detachedEntity">detachedEntity</a>
+<td><a href="#detachedEntity__T">detachedEntity(T)</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>Same as <em>org.apache.isis.applib.services.factory.FactoryService#detachedEntity(Object)</em> ; provided as a convenience because instantiating and <em>#persist(Object) persisting</em> are often done together.</p>
+<p>Usually called as a precursor to persisting a domain entity, this method verifies that the object is an entity and injects domain services into it.</p>
 </div>
 </div>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td><a href="#persist">persist</a>
+<td><a href="#persist__T">persist(T)</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
@@ -427,7 +433,7 @@ page.parent doesn't seem to be set...
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td><a href="#persistAndFlush">persistAndFlush</a>
+<td><a href="#persistAndFlush__T">persistAndFlush(T)</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
@@ -438,29 +444,29 @@ page.parent doesn't seem to be set...
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
-<td><a href="#remove">remove</a>
+<td><a href="#remove__Object">remove(Object)</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>Deletes the domain object but only if is attached.</p>
+<p>Remove (ie delete) an object from the persistent object store (or do nothing if it has already been deleted).</p>
 </div>
 </div>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="6"></i><b>6</b></td>
-<td><a href="#removeAndFlush">removeAndFlush</a>
+<td><a href="#removeAndFlush__Object">removeAndFlush(Object)</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>Deletes the domain object but only if is persistent, and flushes changes to the database.</p>
+<p>Deletes the domain object but only if is persistent, and flushes changes to the database (meaning the object is deleted immediately).</p>
 </div>
 </div>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="7"></i><b>7</b></td>
-<td><a href="#removeAll">removeAll</a>
+<td><a href="#removeAll__Class">removeAll(Class)</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
@@ -471,51 +477,51 @@ page.parent doesn't seem to be set...
 </tr>
 <tr>
 <td><i class="conum" data-value="8"></i><b>8</b></td>
-<td><a href="#allInstances">allInstances</a>
+<td><a href="#allInstances__Class">allInstances(Class)</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>As <em>#allInstances(Class, long, long)</em> , but but returning all instances rather than just those * within the specified range..</p>
+<p>Returns all persisted instances of specified type (including subtypes).</p>
 </div>
 </div>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="9"></i><b>9</b></td>
-<td><a href="#allInstances">allInstances</a>
+<td><a href="#allInstances__Class_long_long">allInstances(Class, long, long)</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>Returns all the instances of the specified type (including subtypes). If the optional range parameters are used, the dataset returned starts from (0 based) index, and consists of only up to count items.</p>
+<p>Overload of <em>#allInstances(Class)</em> , returns a <em>page</em> of persisted instances of specified type (including subtypes).</p>
 </div>
 </div>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="10"></i><b>10</b></td>
-<td><a href="#allMatches">allMatches</a>
+<td><a href="#allMatches__Class_Predicate">allMatches(Class, Predicate)</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>As <em>#allMatches(Class, Predicate, long, long)</em> , but returning all instances rather than just those within the specified range.</p>
+<p>Returns all the instances of the specified type (including subtypes) that the predicate object accepts.</p>
 </div>
 </div>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="11"></i><b>11</b></td>
-<td><a href="#allMatches">allMatches</a>
+<td><a href="#allMatches__Class_Predicate_long_long">allMatches(Class, Predicate, long, long)</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>Returns all the instances of the specified type (including subtypes) that the predicate object accepts. If the optional range parameters are used, the dataset returned starts from (0 based) index, and consists of only up to count items.</p>
+<p>Overload of <em>#allMatches(Class, Predicate)</em> , returns a <em>page</em> of persisted instances of specified type (including subtypes).</p>
 </div>
 </div>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="12"></i><b>12</b></td>
-<td><a href="#allMatches">allMatches</a>
+<td><a href="#allMatches__Query">allMatches(Query)</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
@@ -526,73 +532,73 @@ page.parent doesn't seem to be set...
 </tr>
 <tr>
 <td><i class="conum" data-value="13"></i><b>13</b></td>
-<td><a href="#uniqueMatch">uniqueMatch</a>
+<td><a href="#uniqueMatch__Class_Predicate">uniqueMatch(Class, Predicate)</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>Find the only instance of the specified type (including subtypes) that has the specified title.</p>
+<p>Finds the only instance of the specified type (including subtypes) that satifies the (client-side) predicate.</p>
 </div>
 </div>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="14"></i><b>14</b></td>
-<td><a href="#uniqueMatch">uniqueMatch</a>
+<td><a href="#uniqueMatch__Query">uniqueMatch(Query)</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>Find the only instance that matches the provided query.</p>
+<p>Find the only instance that matches the provided <a href="../../query/Query.html" class="page">Query</a> .</p>
 </div>
 </div>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="15"></i><b>15</b></td>
-<td><a href="#firstMatch">firstMatch</a>
+<td><a href="#firstMatch__Class_Predicate">firstMatch(Class, Predicate)</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>Find the only instance of the specified type (including subtypes) that has the specified title.</p>
+<p>Find the only instance of the specified type (including subtypes) that satifies the provided (client-side) predicate.</p>
 </div>
 </div>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="16"></i><b>16</b></td>
-<td><a href="#firstMatch">firstMatch</a>
+<td><a href="#firstMatch__Query">firstMatch(Query)</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>Find the only instance that matches the provided query, if any..</p>
+<p>Find the only instance that matches the provided <a href="../../query/Query.html" class="page">Query</a> , if any.</p>
 </div>
 </div>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="17"></i><b>17</b></td>
-<td><a href="#refresh">refresh</a>
+<td><a href="#refresh__T">refresh(T)</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>Reloads the pojo.</p>
+<p>Reloads the domain entity from the database.</p>
 </div>
 </div>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="18"></i><b>18</b></td>
-<td><a href="#detach">detach</a>
+<td><a href="#detach__T">detach(T)</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>Detach the entity from the current persistence session.</p>
+<p>Explicitly detaches the entity from the current persistence session.</p>
 </div>
 </div>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="19"></i><b>19</b></td>
-<td><a href="#detachedEntity">detachedEntity</a>
+<td><a href="#detachedEntity__Class">detachedEntity(Class)</a>
 <div class="openblock">
 <div class="content">
 <div class="admonitionblock warning">
@@ -606,21 +612,21 @@ page.parent doesn't seem to be set...
 <p><span class="red"><em>deprecated:</em></span></p>
 </div>
 <div class="paragraph">
-<p>if applicable use <em>#detachedEntity(Object)</em> instead &#8230;&#8203; "new is the new new", passing in a new-ed up instance is more flexible and also more error prone, eg. it allows the compiler to check validity of the used constructor rather than doing construction reflective at runtime.</p>
+<p>as it requires that the domain entity has a no-arg constructor. Use <em>#detachedEntity(Object)</em> instead.</p>
 </div>
 </td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>Same as <em>org.apache.isis.applib.services.factory.FactoryService#detachedEntity(Class)</em> ; provided as a convenience because instantiating and <em>#persist(Object) persisting</em> are often done together.</p>
+<p>Overload of <em>#detachedEntity(Object)</em> , but will also instantiate the domain class first.</p>
 </div>
 </div>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="20"></i><b>20</b></td>
-<td><a href="#instantiate">instantiate</a>
+<td><a href="#instantiate__Class">instantiate(Class)</a>
 <div class="openblock">
 <div class="content">
 <div class="admonitionblock warning">
@@ -634,18 +640,21 @@ page.parent doesn't seem to be set...
 <p><span class="red"><em>deprecated:</em></span></p>
 </div>
 <div class="paragraph">
-<p>if applicable use <em>#detachedEntity(Object)</em> instead</p>
+<p>as it requires that the domain entity has a no-arg constructor. Use <em>#detachedEntity(Object)</em> instead.</p>
 </div>
 </td>
 </tr>
 </table>
+</div>
+<div class="paragraph">
+<p>Equivalent to <em>#detachedEntity(Class)</em> .</p>
 </div>
 </div>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="21"></i><b>21</b></td>
-<td><a href="#isPersistent">isPersistent</a>
+<td><a href="#isPersistent__Object">isPersistent(Object)</a>
 <div class="openblock">
 <div class="content">
 <div class="admonitionblock warning">
@@ -673,7 +682,7 @@ page.parent doesn't seem to be set...
 </tr>
 <tr>
 <td><i class="conum" data-value="22"></i><b>22</b></td>
-<td><a href="#isDeleted">isDeleted</a>
+<td><a href="#isDeleted__Object">isDeleted(Object)</a>
 <div class="openblock">
 <div class="content">
 <div class="admonitionblock warning">
@@ -707,43 +716,64 @@ page.parent doesn't seem to be set...
 <h2 id="members"><a class="anchor" href="#members"></a>Members</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="getEntityState"><a class="anchor" href="#getEntityState"></a>getEntityState</h3>
+<h3 id="getEntityState__Object"><a class="anchor" href="#getEntityState__Object"></a>getEntityState(Object)</h3>
 <div class="paragraph">
-<p>Returns the EntityState of given <em>object</em> . Returns <em>EntityState#NOT_PERSISTABLE</em> for <em>object==null</em> .</p>
+<p>Returns the <a href="EntityState.html" class="page">EntityState</a> of given <em>object</em> .</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="detachedEntity"><a class="anchor" href="#detachedEntity"></a>detachedEntity</h3>
+<h3 id="detachedEntity__T"><a class="anchor" href="#detachedEntity__T"></a>detachedEntity(T)</h3>
 <div class="paragraph">
-<p>Same as <em>org.apache.isis.applib.services.factory.FactoryService#detachedEntity(Object)</em> ; provided as a convenience because instantiating and <em>#persist(Object) persisting</em> are often done together.</p>
+<p>Usually called as a precursor to persisting a domain entity, this method verifies that the object is an entity and injects domain services into it.</p>
+</div>
+<div class="paragraph">
+<p>This approach allows the domain entity to have regular constructor (with parameters) to set up the initial state of the domain object. This is preferred over <em>#detachedEntity(Class)</em> , which also instantiates the class and then injects into it - but requires that the domain object has a no-arg constructor to do so.</p>
+</div>
+<div class="paragraph">
+<p>This is the same functionality as exposed by <em>org.apache.isis.applib.services.factory.FactoryService#detachedEntity(Object)</em> . It is provided in this service as a convenience because instantiating and <em>#persist(Object) persisting</em> an object are often done together.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="persist"><a class="anchor" href="#persist"></a>persist</h3>
+<h3 id="persist__T"><a class="anchor" href="#persist__T"></a>persist(T)</h3>
 <div class="paragraph">
 <p>Persist the specified object (or do nothing if already persistent).</p>
 </div>
+<div class="paragraph">
+<p>The persist isn&#8217;t necessarily performed immediately; by default all pending changes are flushed to the database when the transaction completes.</p>
+</div>
 </div>
 <div class="sect2">
-<h3 id="persistAndFlush"><a class="anchor" href="#persistAndFlush"></a>persistAndFlush</h3>
+<h3 id="persistAndFlush__T"><a class="anchor" href="#persistAndFlush__T"></a>persistAndFlush(T)</h3>
 <div class="paragraph">
 <p>Persist the specified object (or do nothing if already persistent) and flushes changes to the database.</p>
 </div>
-</div>
-<div class="sect2">
-<h3 id="remove"><a class="anchor" href="#remove"></a>remove</h3>
 <div class="paragraph">
-<p>Deletes the domain object but only if is attached.</p>
+<p>Flushing will also result in ORM-maintained bidirectional relationships being updated.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="removeAndFlush"><a class="anchor" href="#removeAndFlush"></a>removeAndFlush</h3>
+<h3 id="remove__Object"><a class="anchor" href="#remove__Object"></a>remove(Object)</h3>
 <div class="paragraph">
-<p>Deletes the domain object but only if is persistent, and flushes changes to the database.</p>
+<p>Remove (ie delete) an object from the persistent object store (or do nothing if it has already been deleted).</p>
+</div>
+<div class="paragraph">
+<p>The delete isn&#8217;t necessarily performed immediately; by default all pending changes are flushed to the database when the transaction completes.</p>
+</div>
+<div class="paragraph">
+<p>Note that this method is also a no-op if the domain object is not attached.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="removeAll"><a class="anchor" href="#removeAll"></a>removeAll</h3>
+<h3 id="removeAndFlush__Object"><a class="anchor" href="#removeAndFlush__Object"></a>removeAndFlush(Object)</h3>
+<div class="paragraph">
+<p>Deletes the domain object but only if is persistent, and flushes changes to the database (meaning the object is deleted immediately).</p>
+</div>
+<div class="paragraph">
+<p>Flushing will also result in ORM-maintained bidirectional relationships being updated.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="removeAll__Class"><a class="anchor" href="#removeAll__Class"></a>removeAll(Class)</h3>
 <div class="paragraph">
 <p>Removes all instances of the domain object.</p>
 </div>
@@ -752,33 +782,30 @@ page.parent doesn't seem to be set...
 </div>
 </div>
 <div class="sect2">
-<h3 id="allInstances"><a class="anchor" href="#allInstances"></a>allInstances</h3>
+<h3 id="allInstances__Class"><a class="anchor" href="#allInstances__Class"></a>allInstances(Class)</h3>
 <div class="paragraph">
-<p>As <em>#allInstances(Class, long, long)</em> , but but returning all instances rather than just those * within the specified range..</p>
+<p>Returns all persisted instances of specified type (including subtypes).</p>
+</div>
+<div class="paragraph">
+<p>Intended primarily for prototyping purposes, though is safe to use in production applications to obtain all instances of domain entities if the number is known to be small (for example, reference/lookup data).</p>
+</div>
+<div class="paragraph">
+<p>If there are no instances the list will be empty.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="allInstances"><a class="anchor" href="#allInstances"></a>allInstances</h3>
+<h3 id="allInstances__Class_long_long"><a class="anchor" href="#allInstances__Class_long_long"></a>allInstances(Class, long, long)</h3>
 <div class="paragraph">
-<p>Returns all the instances of the specified type (including subtypes). If the optional range parameters are used, the dataset returned starts from (0 based) index, and consists of only up to count items.</p>
+<p>Overload of <em>#allInstances(Class)</em> , returns a <em>page</em> of persisted instances of specified type (including subtypes).</p>
 </div>
 <div class="paragraph">
-<p>If there are no instances the list will be empty. This method creates a new <em>List</em> object each time it is called so the caller is free to use or modify the returned <em>List</em> , but the changes will not be reflected back to the repository.</p>
-</div>
-<div class="paragraph">
-<p>This method should only be called where the number of instances is known to be relatively low, unless the optional range parameters (2 longs) are specified. The range parameters are "start" and "count".</p>
+<p>If the optional range parameters are used, the dataset returned starts from (0 based) index, and consists of only up to count items.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="allMatches"><a class="anchor" href="#allMatches"></a>allMatches</h3>
+<h3 id="allMatches__Class_Predicate"><a class="anchor" href="#allMatches__Class_Predicate"></a>allMatches(Class, Predicate)</h3>
 <div class="paragraph">
-<p>As <em>#allMatches(Class, Predicate, long, long)</em> , but returning all instances rather than just those within the specified range.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="allMatches"><a class="anchor" href="#allMatches"></a>allMatches</h3>
-<div class="paragraph">
-<p>Returns all the instances of the specified type (including subtypes) that the predicate object accepts. If the optional range parameters are used, the dataset returned starts from (0 based) index, and consists of only up to count items.</p>
+<p>Returns all the instances of the specified type (including subtypes) that the predicate object accepts.</p>
 </div>
 <div class="paragraph">
 <p>If there are no instances the list will be empty. This method creates a new <em>List</em> object each time it is called so the caller is free to use or modify the returned <em>List</em> , but the changes will not be reflected back to the repository.</p>
@@ -788,79 +815,91 @@ page.parent doesn't seem to be set...
 </div>
 </div>
 <div class="sect2">
-<h3 id="allMatches"><a class="anchor" href="#allMatches"></a>allMatches</h3>
+<h3 id="allMatches__Class_Predicate_long_long"><a class="anchor" href="#allMatches__Class_Predicate_long_long"></a>allMatches(Class, Predicate, long, long)</h3>
+<div class="paragraph">
+<p>Overload of <em>#allMatches(Class, Predicate)</em> , returns a <em>page</em> of persisted instances of specified type (including subtypes).</p>
+</div>
+<div class="paragraph">
+<p>If the optional range parameters are used, the dataset returned starts from (0 based) index, and consists of only up to count items.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="allMatches__Query"><a class="anchor" href="#allMatches__Query"></a>allMatches(Query)</h3>
 <div class="paragraph">
 <p>Returns all the instances that match the given <a href="../../query/Query.html" class="page">Query</a> .</p>
 </div>
 <div class="paragraph">
-<p>If there are no instances the list will be empty. This method creates a new <em>List</em> object each time it is called so the caller is free to use or modify the returned <em>List</em> , but the changes will not be reflected back to the repository.</p>
+<p>This is the main API for server-side (performant) queries returning multiple instances, where a <em>org.apache.isis.applib.query.NamedQuery</em> can be passed in that ultimately describes a SELECT query with WHERE predicates. The mechanism by which this is defined depends on the ORM (JDO or JPA). A <em>org.apache.isis.applib.query.NamedQuery</em> can optionally specify a <em>org.apache.isis.applib.query.NamedQuery#withRange(QueryRange) range</em> of instances to be returned.</p>
 </div>
 <div class="paragraph">
-<p>This method is the recommended way of querying for multiple instances.</p>
+<p>It is also possible to specify an <em>org.apache.isis.applib.query.AllInstancesQuery</em> . This is equivalent to using <em>#allInstances(Class, long, long)</em> ; a range can also be specified.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="uniqueMatch"><a class="anchor" href="#uniqueMatch"></a>uniqueMatch</h3>
+<h3 id="uniqueMatch__Class_Predicate"><a class="anchor" href="#uniqueMatch__Class_Predicate"></a>uniqueMatch(Class, Predicate)</h3>
 <div class="paragraph">
-<p>Find the only instance of the specified type (including subtypes) that has the specified title.</p>
-</div>
-<div class="paragraph">
-<p>If no instance is found then <em>Optional#empty()</em> will be return, while if there is more that one instances a run-time exception will be thrown.</p>
+<p>Finds the only instance of the specified type (including subtypes) that satifies the (client-side) predicate.</p>
 </div>
 <div class="paragraph">
 <p>This method is useful during exploration/prototyping, but - because the filtering is performed client-side - this method is only really suitable for initial development/prototyping, or for classes with very few instances. Use <em>#uniqueMatch(Query)</em> for production code.</p>
 </div>
+<div class="paragraph">
+<p>If no instance is found then <em>Optional#empty()</em> will be return, while if there is more that one instances a run-time exception will be thrown.</p>
+</div>
 </div>
 <div class="sect2">
-<h3 id="uniqueMatch"><a class="anchor" href="#uniqueMatch"></a>uniqueMatch</h3>
+<h3 id="uniqueMatch__Query"><a class="anchor" href="#uniqueMatch__Query"></a>uniqueMatch(Query)</h3>
 <div class="paragraph">
-<p>Find the only instance that matches the provided query.</p>
+<p>Find the only instance that matches the provided <a href="../../query/Query.html" class="page">Query</a> .</p>
+</div>
+<div class="paragraph">
+<p>This is the main API for server-side (performant) queries returning no more than one instance, where a <em>org.apache.isis.applib.query.NamedQuery</em> can be passed in that ultimately describes a SELECT query with WHERE predicates. The mechanism by which this is defined depends on the ORM (JDO or JPA). A <em>org.apache.isis.applib.query.NamedQuery</em> can optionally specify a <em>org.apache.isis.applib.query.NamedQuery#withRange(QueryRange) range</em> of instances to be returned.</p>
 </div>
 <div class="paragraph">
 <p>If no instance is found then <em>Optional#empty()</em> will be return, while if there is more that one instances a run-time exception will be thrown.</p>
 </div>
-<div class="paragraph">
-<p>This method is the recommended way of querying for (precisely) one instance. See also <em>#allMatches(Query)</em></p>
-</div>
 </div>
 <div class="sect2">
-<h3 id="firstMatch"><a class="anchor" href="#firstMatch"></a>firstMatch</h3>
+<h3 id="firstMatch__Class_Predicate"><a class="anchor" href="#firstMatch__Class_Predicate"></a>firstMatch(Class, Predicate)</h3>
 <div class="paragraph">
-<p>Find the only instance of the specified type (including subtypes) that has the specified title.</p>
-</div>
-<div class="paragraph">
-<p>If no instance is found then <em>Optional#empty()</em> will be return, while if there is more that one instances then the first will be returned.</p>
+<p>Find the only instance of the specified type (including subtypes) that satifies the provided (client-side) predicate.</p>
 </div>
 <div class="paragraph">
 <p>This method is useful during exploration/prototyping, but - because the filtering is performed client-side - this method is only really suitable for initial development/prototyping, or for classes with very few instances. Use <em>#firstMatch(Query)</em> for production code.</p>
 </div>
+<div class="paragraph">
+<p>If no instance is found then <em>Optional#empty()</em> will be return, while if there is more that one instances then the first will be returned.</p>
+</div>
 </div>
 <div class="sect2">
-<h3 id="firstMatch"><a class="anchor" href="#firstMatch"></a>firstMatch</h3>
+<h3 id="firstMatch__Query"><a class="anchor" href="#firstMatch__Query"></a>firstMatch(Query)</h3>
 <div class="paragraph">
-<p>Find the only instance that matches the provided query, if any..</p>
+<p>Find the only instance that matches the provided <a href="../../query/Query.html" class="page">Query</a> , if any.</p>
+</div>
+<div class="paragraph">
+<p>This is the main API for server-side (performant) queries returning the first matching instance, where a <em>org.apache.isis.applib.query.NamedQuery</em> can be passed in that ultimately describes a SELECT query with WHERE predicates. The mechanism by which this is defined depends on the ORM (JDO or JPA). A <em>org.apache.isis.applib.query.NamedQuery</em> can optionally specify a <em>org.apache.isis.applib.query.NamedQuery#withRange(QueryRange) range</em> of instances to be returned.</p>
 </div>
 <div class="paragraph">
 <p>If no instance is found then <em>Optional#empty()</em> will be return, while if there is more that one instances then the first will be returned.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="refresh"><a class="anchor" href="#refresh"></a>refresh</h3>
+<h3 id="refresh__T"><a class="anchor" href="#refresh__T"></a>refresh(T)</h3>
 <div class="paragraph">
-<p>Reloads the pojo.</p>
+<p>Reloads the domain entity from the database.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="detach"><a class="anchor" href="#detach"></a>detach</h3>
+<h3 id="detach__T"><a class="anchor" href="#detach__T"></a>detach(T)</h3>
 <div class="paragraph">
-<p>Detach the entity from the current persistence session.</p>
+<p>Explicitly detaches the entity from the current persistence session.</p>
 </div>
 <div class="paragraph">
 <p>This allows the entity to be read from even after the PersistenceSession that obtained it has been closed.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="detachedEntity"><a class="anchor" href="#detachedEntity"></a>detachedEntity</h3>
+<h3 id="detachedEntity__Class"><a class="anchor" href="#detachedEntity__Class"></a>detachedEntity(Class)</h3>
 <div class="admonitionblock warning">
 <table>
 <tr>
@@ -872,18 +911,18 @@ page.parent doesn't seem to be set...
 <p><span class="red"><em>deprecated:</em></span></p>
 </div>
 <div class="paragraph">
-<p>if applicable use <em>#detachedEntity(Object)</em> instead &#8230;&#8203; "new is the new new", passing in a new-ed up instance is more flexible and also more error prone, eg. it allows the compiler to check validity of the used constructor rather than doing construction reflective at runtime.</p>
+<p>as it requires that the domain entity has a no-arg constructor. Use <em>#detachedEntity(Object)</em> instead.</p>
 </div>
 </td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>Same as <em>org.apache.isis.applib.services.factory.FactoryService#detachedEntity(Class)</em> ; provided as a convenience because instantiating and <em>#persist(Object) persisting</em> are often done together.</p>
+<p>Overload of <em>#detachedEntity(Object)</em> , but will also instantiate the domain class first.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="instantiate"><a class="anchor" href="#instantiate"></a>instantiate</h3>
+<h3 id="instantiate__Class"><a class="anchor" href="#instantiate__Class"></a>instantiate(Class)</h3>
 <div class="admonitionblock warning">
 <table>
 <tr>
@@ -895,15 +934,18 @@ page.parent doesn't seem to be set...
 <p><span class="red"><em>deprecated:</em></span></p>
 </div>
 <div class="paragraph">
-<p>if applicable use <em>#detachedEntity(Object)</em> instead</p>
+<p>as it requires that the domain entity has a no-arg constructor. Use <em>#detachedEntity(Object)</em> instead.</p>
 </div>
 </td>
 </tr>
 </table>
 </div>
+<div class="paragraph">
+<p>Equivalent to <em>#detachedEntity(Class)</em> .</p>
+</div>
 </div>
 <div class="sect2">
-<h3 id="isPersistent"><a class="anchor" href="#isPersistent"></a>isPersistent</h3>
+<h3 id="isPersistent__Object"><a class="anchor" href="#isPersistent__Object"></a>isPersistent(Object)</h3>
 <div class="admonitionblock warning">
 <table>
 <tr>
@@ -929,7 +971,7 @@ page.parent doesn't seem to be set...
 </div>
 </div>
 <div class="sect2">
-<h3 id="isDeleted"><a class="anchor" href="#isDeleted"></a>isDeleted</h3>
+<h3 id="isDeleted__Object"><a class="anchor" href="#isDeleted__Object"></a>isDeleted(Object)</h3>
 <div class="admonitionblock warning">
 <table>
 <tr>
@@ -970,7 +1012,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210213-0423-5a5afc7f</p>
+            <p>Revision: 2.0.0-M4.20210215-0424-f665ec0b</p>
         </div>
     </div>
 </footer>

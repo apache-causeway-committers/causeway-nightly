@@ -358,6 +358,12 @@ page.parent doesn't seem to be set...
 </div>
 <article class="doc">
     <a name="section-top"></a>
+<div class="paragraph">
+<p>Allows instances of JAXB-annotated classes to be marshalled to XML and unmarshalled from XML back into domain objects.</p>
+</div>
+<div class="paragraph">
+<p>The default implementation automatically caches the JAXB marshallers by target class.</p>
+</div>
 <div class="sect1">
 <h2 id="api"><a class="anchor" href="#api"></a>API</h2>
 <div class="sectionbody">
@@ -365,13 +371,13 @@ page.parent doesn't seem to be set...
 <div class="title">JaxbService.java</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">interface JaxbService {
-  Object fromXml(JAXBContext jaxbContext, String xml)
-  Object fromXml(JAXBContext jaxbContext, String xml, Map&lt;String, Object&gt; unmarshallerProperties)
-  T fromXml(Class&lt;T&gt; domainClass, String xml)     <i class="conum" data-value="1"></i><b>(1)</b>
-  T fromXml(Class&lt;T&gt; domainClass, String xml, Map&lt;String, Object&gt; unmarshallerProperties)     <i class="conum" data-value="2"></i><b>(2)</b>
-  String toXml(Object domainObject)
-  String toXml(Object domainObject, Map&lt;String, Object&gt; marshallerProperties)
-  Map&lt;String, String&gt; toXsd(Object domainObject, IsisSchemas isisSchemas)
+  Object fromXml(JAXBContext jaxbContext, String xml)     <i class="conum" data-value="1"></i><b>(1)</b>
+  Object fromXml(JAXBContext jaxbContext, String xml, Map&lt;String, Object&gt; unmarshallerProperties)     <i class="conum" data-value="2"></i><b>(2)</b>
+  T fromXml(Class&lt;T&gt; domainClass, String xml)     <i class="conum" data-value="3"></i><b>(3)</b>
+  T fromXml(Class&lt;T&gt; domainClass, String xml, Map&lt;String, Object&gt; unmarshallerProperties)     <i class="conum" data-value="4"></i><b>(4)</b>
+  String toXml(Object domainObject)     <i class="conum" data-value="5"></i><b>(5)</b>
+  String toXml(Object domainObject, Map&lt;String, Object&gt; marshallerProperties)     <i class="conum" data-value="6"></i><b>(6)</b>
+  Map&lt;String, String&gt; toXsd(Object domainObject, IsisSchemas isisSchemas)     <i class="conum" data-value="7"></i><b>(7)</b>
 }</code></pre>
 </div>
 </div>
@@ -379,22 +385,77 @@ page.parent doesn't seem to be set...
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><a href="#fromXml">fromXml</a>
+<td><a href="#fromXml__JAXBContext_String">fromXml(JAXBContext, String)</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>As <em>#fromXml(JAXBContext, String)</em> , but downcast to a specific type.</p>
+<p>unmarshalls the XML into an instance of the class, using the provided <em>JAXBContext</em> .</p>
 </div>
 </div>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><a href="#fromXml">fromXml</a>
+<td><a href="#fromXml__JAXBContext_String_Map">fromXml(JAXBContext, String, Map)</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>As <em>#fromXml(JAXBContext, String, Map)</em> , but downcast to a specific type.</p>
+<p>unmarshalls the XML into an instance of the class, using the provided <em>JAXBContext</em> and the additional properties.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><a href="#fromXml__Class_String">fromXml(Class, String)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Unmarshalls the XML to the specified domain class.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><a href="#fromXml__Class_String_Map">fromXml(Class, String, Map)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Unmarshalls the XML to the specified domain class, with additional properties passed through to the <em>JAXBContext</em> used to performed the unmarshalling.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><a href="#toXml__Object">toXml(Object)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Marshalls the object into XML (using a <em>JAXBContext</em> for the object&#8217;s class).</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td><a href="#toXml__Object_Map">toXml(Object, Map)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Marshalls the object into XML specifying additional properties (passed to the <em>JAXBContext</em> used for the object&#8217;s class).</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td><a href="#toXsd__Object_IsisSchemas">toXsd(Object, IsisSchemas)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Generates a map of each of the schemas referenced; the key is the schema namespace, the value is the XML of the schema itself.</p>
 </div>
 </div>
 </div></td>
@@ -407,15 +468,48 @@ page.parent doesn't seem to be set...
 <h2 id="members"><a class="anchor" href="#members"></a>Members</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="fromXml"><a class="anchor" href="#fromXml"></a>fromXml</h3>
+<h3 id="fromXml__JAXBContext_String"><a class="anchor" href="#fromXml__JAXBContext_String"></a>fromXml(JAXBContext, String)</h3>
 <div class="paragraph">
-<p>As <em>#fromXml(JAXBContext, String)</em> , but downcast to a specific type.</p>
+<p>unmarshalls the XML into an instance of the class, using the provided <em>JAXBContext</em> .</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="fromXml"><a class="anchor" href="#fromXml"></a>fromXml</h3>
+<h3 id="fromXml__JAXBContext_String_Map"><a class="anchor" href="#fromXml__JAXBContext_String_Map"></a>fromXml(JAXBContext, String, Map)</h3>
 <div class="paragraph">
-<p>As <em>#fromXml(JAXBContext, String, Map)</em> , but downcast to a specific type.</p>
+<p>unmarshalls the XML into an instance of the class, using the provided <em>JAXBContext</em> and the additional properties.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="fromXml__Class_String"><a class="anchor" href="#fromXml__Class_String"></a>fromXml(Class, String)</h3>
+<div class="paragraph">
+<p>Unmarshalls the XML to the specified domain class.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="fromXml__Class_String_Map"><a class="anchor" href="#fromXml__Class_String_Map"></a>fromXml(Class, String, Map)</h3>
+<div class="paragraph">
+<p>Unmarshalls the XML to the specified domain class, with additional properties passed through to the <em>JAXBContext</em> used to performed the unmarshalling.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="toXml__Object"><a class="anchor" href="#toXml__Object"></a>toXml(Object)</h3>
+<div class="paragraph">
+<p>Marshalls the object into XML (using a <em>JAXBContext</em> for the object&#8217;s class).</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="toXml__Object_Map"><a class="anchor" href="#toXml__Object_Map"></a>toXml(Object, Map)</h3>
+<div class="paragraph">
+<p>Marshalls the object into XML specifying additional properties (passed to the <em>JAXBContext</em> used for the object&#8217;s class).</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="toXsd__Object_IsisSchemas"><a class="anchor" href="#toXsd__Object_IsisSchemas"></a>toXsd(Object, IsisSchemas)</h3>
+<div class="paragraph">
+<p>Generates a map of each of the schemas referenced; the key is the schema namespace, the value is the XML of the schema itself.</p>
+</div>
+<div class="paragraph">
+<p>A JAXB-annotated domain object will live in its own XSD namespace and may reference multiple other XSD schemas. In particular, many JAXB domain objects will reference the common isis schemas. The <em>IsisSchemas</em> paramter indicates whether these schemas should be included or excluded from the map.</p>
 </div>
 </div>
 </div>
@@ -437,7 +531,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210213-0423-5a5afc7f</p>
+            <p>Revision: 2.0.0-M4.20210215-0424-f665ec0b</p>
         </div>
     </div>
 </footer>

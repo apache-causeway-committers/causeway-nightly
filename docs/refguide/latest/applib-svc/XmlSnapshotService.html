@@ -510,12 +510,6 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../config/sections/isis.security.shiro.html">Shiro Security Implementation</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../config/sections/jdo-datanucleus.html">JDO DataNucleus</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../config/sections/jdo-datanucleus-conf.html">DataNucleus Configuration</a>
-  </li>
-  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../config/sections/isis.viewer.restfulobjects.html">Restful Objects Viewer</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -777,6 +771,92 @@ TODO: this content has not yet been reviewed/updated for v2.0
 </table>
 </div>
 <div class="paragraph">
+<p>This service allows an XML document to be generated capturing the data of a root entity and specified related entities. This XML can be used for various purposes, such as mail merge/reporting, or adhoc auditing.</p>
+</div>
+<div class="paragraph">
+<p>The framework provides an implementation of this service ( <code>XmlSnapshotServiceDefault</code> ) which is automatically registered and available for use; no further configuration is required.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="api"><a class="anchor" href="#api"></a>API</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="title">XmlSnapshotService.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">interface XmlSnapshotService {
+  XmlSnapshotService.Snapshot snapshotFor(final Object domainObject)     <i class="conum" data-value="1"></i><b>(1)</b>
+  XmlSnapshotService.Snapshot.Builder builderFor(final Object domainObject)     <i class="conum" data-value="2"></i><b>(2)</b>
+  T getChildElementValue(final Element el, final String tagname, final Class&lt;T&gt; expectedCls)     <i class="conum" data-value="3"></i><b>(3)</b>
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><a href="#snapshotFor__Object">snapshotFor(Object)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Exports the state of a domain object into a Snapshot (which can then be converted into XML, for example).</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><a href="#builderFor__Object">builderFor(Object)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Creates a Snapshot.Builder that allows the contents of the snapshot to include other related state.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><a href="#getChildElementValue__Element_String_Class">getChildElementValue(Element, String, Class)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Convenience method to extract value of an XML element, based on its type.</p>
+</div>
+</div>
+</div></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="members"><a class="anchor" href="#members"></a>Members</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="snapshotFor__Object"><a class="anchor" href="#snapshotFor__Object"></a>snapshotFor(Object)</h3>
+<div class="paragraph">
+<p>Exports the state of a domain object into a Snapshot (which can then be converted into XML, for example).</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="builderFor__Object"><a class="anchor" href="#builderFor__Object"></a>builderFor(Object)</h3>
+<div class="paragraph">
+<p>Creates a Snapshot.Builder that allows the contents of the snapshot to include other related state.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="getChildElementValue__Element_String_Class"><a class="anchor" href="#getChildElementValue__Element_String_Class"></a>getChildElementValue(Element, String, Class)</h3>
+<div class="paragraph">
+<p>Convenience method to extract value of an XML element, based on its type.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="implementation"><a class="anchor" href="#implementation"></a>Implementation</h2>
+<div class="sectionbody">
+<div class="paragraph">
 <p>The <code>XmlSnapshotService</code> provides the capability to generate XML snapshots (and if required corresponding XSD schemas) based on graphs of domain objects.</p>
 </div>
 <div class="paragraph">
@@ -792,7 +872,7 @@ For one system that we know of, a digest of this snapshot of data is signed with
 </div>
 </div>
 <div class="sect1">
-<h2 id="api"><a class="anchor" href="#api"></a>API</h2>
+<h2 id="api-2"><a class="anchor" href="#api-2"></a>API</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>This service allows an XML document to be generated capturing the data of a root entity and specified related entities. This XML can be used for various purposes, such as mail merge/reporting, or adhoc auditing.</p>
@@ -801,7 +881,7 @@ For one system that we know of, a digest of this snapshot of data is signed with
 <p>The framework provides an implementation of this service ( <code>XmlSnapshotServiceDefault</code> ) which is automatically registered and available for use; no further configuration is required.</p>
 </div>
 <div class="sect3">
-<h4 id="api-2"><a class="anchor" href="#api-2"></a>API</h4>
+<h4 id="api-3"><a class="anchor" href="#api-3"></a>API</h4>
 <div class="listingblock">
 <div class="title">XmlSnapshotService.java</div>
 <div class="content">
@@ -816,7 +896,7 @@ For one system that we know of, a digest of this snapshot of data is signed with
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><a href="#snapshotFor">snapshotFor</a>
+<td><a href="#snapshotFor__Object">snapshotFor(Object)</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
@@ -827,7 +907,7 @@ For one system that we know of, a digest of this snapshot of data is signed with
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><a href="#builderFor">builderFor</a>
+<td><a href="#builderFor__Object">builderFor(Object)</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
@@ -838,7 +918,7 @@ For one system that we know of, a digest of this snapshot of data is signed with
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td><a href="#getChildElementValue">getChildElementValue</a>
+<td><a href="#getChildElementValue__Element_String_Class">getChildElementValue(Element, String, Class)</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
@@ -851,21 +931,21 @@ For one system that we know of, a digest of this snapshot of data is signed with
 </div>
 </div>
 <div class="sect3">
-<h4 id="members"><a class="anchor" href="#members"></a>Members</h4>
+<h4 id="members-2"><a class="anchor" href="#members-2"></a>Members</h4>
 <div class="sect4">
-<h5 id="snapshotFor"><a class="anchor" href="#snapshotFor"></a>snapshotFor</h5>
+<h5 id="snapshotFor__Object"><a class="anchor" href="#snapshotFor__Object"></a>snapshotFor(Object)</h5>
 <div class="paragraph">
 <p>Exports the state of a domain object into a Snapshot (which can then be converted into XML, for example).</p>
 </div>
 </div>
 <div class="sect4">
-<h5 id="builderFor"><a class="anchor" href="#builderFor"></a>builderFor</h5>
+<h5 id="builderFor__Object"><a class="anchor" href="#builderFor__Object"></a>builderFor(Object)</h5>
 <div class="paragraph">
 <p>Creates a Snapshot.Builder that allows the contents of the snapshot to include other related state.</p>
 </div>
 </div>
 <div class="sect4">
-<h5 id="getChildElementValue"><a class="anchor" href="#getChildElementValue"></a>getChildElementValue</h5>
+<h5 id="getChildElementValue__Element_String_Class"><a class="anchor" href="#getChildElementValue__Element_String_Class"></a>getChildElementValue(Element, String, Class)</h5>
 <div class="paragraph">
 <p>Convenience method to extract value of an XML element, based on its type.</p>
 </div>
@@ -959,7 +1039,7 @@ For one system that we know of, a digest of this snapshot of data is signed with
 </div>
 </div>
 <div class="sect1">
-<h2 id="implementation"><a class="anchor" href="#implementation"></a>Implementation</h2>
+<h2 id="implementation-2"><a class="anchor" href="#implementation-2"></a>Implementation</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>The framework provides a default implementation of this service, <code>o.a.i.core.runtimeservices.xmlsnapshot.XmlSnapshotServiceDefault</code>.</p>
@@ -1123,7 +1203,7 @@ Typically such view models would implement <code>SnapshottableWithInclusions</co
 </div>
 </div>
 <div class="sect1">
-<h2 id="implementation-2"><a class="anchor" href="#implementation-2"></a>Implementation</h2>
+<h2 id="implementation-3"><a class="anchor" href="#implementation-3"></a>Implementation</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>The core framework provides an implementation of this service (<code>o.a.i.core.runtime.services.xmlsnapshot.XmlSnapshotServiceDefault</code>).</p>
@@ -1160,7 +1240,7 @@ Note that there is built-in support for JAXB classes (ie annotated with
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210213-0423-5a5afc7f</p>
+            <p>Revision: 2.0.0-M4.20210215-0424-f665ec0b</p>
         </div>
     </div>
 </footer>

@@ -508,12 +508,6 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../../../config/sections/isis.security.shiro.html">Shiro Security Implementation</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../../../config/sections/jdo-datanucleus.html">JDO DataNucleus</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../../../config/sections/jdo-datanucleus-conf.html">DataNucleus Configuration</a>
-  </li>
-  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../../../config/sections/isis.viewer.restfulobjects.html">Restful Objects Viewer</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -754,7 +748,95 @@ page.parent doesn't seem to be set...
 </div>
 <article class="doc">
     <a name="section-top"></a>
+<div class="sect1">
+<h2 id="usage"><a class="anchor" href="#usage"></a>Usage</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This domain service is useful both for <a href="../../../../../testing/latest/integtestsupport/about.html" class="page">integration testing</a> and while running <a href="#fixtures:ROOT:about.adoc" class="page unresolved">fixture scripts</a>.</p>
+</div>
+<div class="paragraph">
+<p>For example, to integration test a workflow system, whereby objects are moved from one user to another, it is helpful to switch the effective user to verify that the task was assigned correctly.</p>
+</div>
+<div class="paragraph">
+<p>Or, this fixture script uses the <code>SudoService</code> to set up <code>ToDoItem</code> objects:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">protected void execute(final ExecutionContext ec) {
+    ...
+    ExecutionContext ec =
+        ExecutionContext.ofUserWithSystemDefaults(
+            UserMemento.ofName("joe"));
 
+    sudoService.sudo(ec, () -&gt; wrap(toDoItem).completed());
+    ...
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="interaction-with-shiro"><a class="anchor" href="#interaction-with-shiro"></a>Interaction with Shiro</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When <code>sudo(&#8230;&#8203;)</code> is called the "effective user" is reported by  <a href="../../UserService.html" class="page"><code>UserService</code></a>.
+However, it does <em>not</em> propagate through to the <a href="../../../../../security/latest/about.html" class="page">Shiro security mechanism</a>, which continue to be evaluated according to the permissions of the current user.</p>
+</div>
+<div class="paragraph">
+<p>This can be a problem in certain use cases.
+For example if running a fixture script (which uses the <a href="../../WrapperFactory.html" class="page"><code>WrapperFactory</code></a>) from within an implementation of <a href="../../UserRegistrationService.html" class="page"><code>UserRegistrationService</code></a>, this is likely to result in <code>HiddenException</code>s being thrown because there is no effective user.</p>
+</div>
+<div class="paragraph">
+<p>In such cases, permission checking can simply be disabled by specifying <code>SudoService.ACCESS_ALL_ROLE</code> as one of the roles.
+For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">protected void execute(final ExecutionContext ec) {
+    ...
+    ExecutionContext ec =
+        ExecutionContext.ofUserWithSystemDefaults(
+            UserMemento.ofNameAndRoleNames("joe", SudoService.ACCESS_ALL_ROLE)));
+
+    sudoService.sudo(ec, () -&gt; wrap(toDoItem).completed());
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>In the future this service may be used more deeply, eg to propagate permissions through to the Shiro security mechanism also.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../../../../../system/latest/generated/index/applib/services/iactn/ExecutionContext.html" class="page">ExecutionContext</a></p>
+</li>
+<li>
+<p><a href="#system:generated:index/applib/services/sudo/SudoServiceListener.adoc" class="page unresolved">SudoServiceListener</a></p>
+</li>
+<li>
+<p>the <code>InteractionFactory</code> is a lower-level framework (non-API) service, that provides the ability to programmatically start a new "interaction"; these can be nested.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
 </article>
 <aside class="article-aside toc hide-for-print" role="navigation">
     <p class="toc-title">On this page</p>
@@ -772,7 +854,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210213-0423-5a5afc7f</p>
+            <p>Revision: 2.0.0-M4.20210215-0424-f665ec0b</p>
         </div>
     </div>
 </footer>

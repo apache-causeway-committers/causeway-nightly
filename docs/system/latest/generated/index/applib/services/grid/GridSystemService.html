@@ -359,7 +359,10 @@ page.parent doesn't seem to be set...
 <article class="doc">
     <a name="section-top"></a>
 <div class="paragraph">
-<p>Provides an implementation of <a href="../../layout/grid/Grid.html" class="page">Grid</a> .</p>
+<p>Encapsulates a single layout grid system which can be used to customize the layout of domain objects.</p>
+</div>
+<div class="paragraph">
+<p>In particular this means being able to return a "normalized" form (validating and associating domain object members into the various regions of the grid) and in providing a default grid if there is no other metadata available.</p>
 </div>
 <div class="sect1">
 <h2 id="api"><a class="anchor" href="#api"></a>API</h2>
@@ -369,12 +372,12 @@ page.parent doesn't seem to be set...
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">interface GridSystemService&lt;G&gt; {
   Class&lt;G&gt; gridImplementation()     <i class="conum" data-value="1"></i><b>(1)</b>
-  String tns()
-  String schemaLocation()
-  G defaultGrid(Class&lt;?&gt; domainClass)
-  void normalize(G grid, Class&lt;?&gt; domainClass)     <i class="conum" data-value="2"></i><b>(2)</b>
-  void complete(G grid, Class&lt;?&gt; domainClass)
-  void minimal(G grid, Class&lt;?&gt; domainClass)
+  String tns()     <i class="conum" data-value="2"></i><b>(2)</b>
+  String schemaLocation()     <i class="conum" data-value="3"></i><b>(3)</b>
+  G defaultGrid(Class&lt;?&gt; domainClass)     <i class="conum" data-value="4"></i><b>(4)</b>
+  void normalize(G grid, Class&lt;?&gt; domainClass)     <i class="conum" data-value="5"></i><b>(5)</b>
+  void complete(G grid, Class&lt;?&gt; domainClass)     <i class="conum" data-value="6"></i><b>(6)</b>
+  void minimal(G grid, Class&lt;?&gt; domainClass)     <i class="conum" data-value="7"></i><b>(7)</b>
 }</code></pre>
 </div>
 </div>
@@ -382,22 +385,77 @@ page.parent doesn't seem to be set...
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><a href="#gridImplementation">gridImplementation</a>
+<td><a href="#gridImplementation__">gridImplementation()</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>Which grid (implementation) is defined by this service.</p>
+<p>The concrete subclass of <a href="../../layout/grid/Grid.html" class="page">Grid</a> supported by this implementation.</p>
 </div>
 </div>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><a href="#normalize">normalize</a>
+<td><a href="#tns__">tns()</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>Validate the grid, derive any missing object members, and overwrite any facets in the metamodel based on the layout.</p>
+<p>The target namespace for this grid system.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><a href="#schemaLocation__">schemaLocation()</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>The schema location for the XSD.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><a href="#defaultGrid__Class">defaultGrid(Class)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>A default grid, used when no grid layout can be found for the domain class.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><a href="#normalize__G_Class">normalize(G, Class)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Validates and normalizes a grid, modifying the grid so that all of the domain object&#8217;s members (properties, collections, actions) are bound to regions of the grid.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td><a href="#complete__G_Class">complete(G, Class)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Takes a normalized grid and enriches it with all the available metadata (taken from Apache Isis' internal metadata) that can be represented in the layout XML.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td><a href="#minimal__G_Class">minimal(G, Class)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Takes a normalized grid and strips out removes all members, leaving only the grid structure.</p>
 </div>
 </div>
 </div></td>
@@ -410,15 +468,66 @@ page.parent doesn't seem to be set...
 <h2 id="members"><a class="anchor" href="#members"></a>Members</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="gridImplementation"><a class="anchor" href="#gridImplementation"></a>gridImplementation</h3>
+<h3 id="gridImplementation__"><a class="anchor" href="#gridImplementation__"></a>gridImplementation()</h3>
 <div class="paragraph">
-<p>Which grid (implementation) is defined by this service.</p>
+<p>The concrete subclass of <a href="../../layout/grid/Grid.html" class="page">Grid</a> supported by this implementation.</p>
+</div>
+<div class="paragraph">
+<p>There can be multiple implementations of this service, this indicates the base class used by the implementation.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="normalize"><a class="anchor" href="#normalize"></a>normalize</h3>
+<h3 id="tns__"><a class="anchor" href="#tns__"></a>tns()</h3>
 <div class="paragraph">
-<p>Validate the grid, derive any missing object members, and overwrite any facets in the metamodel based on the layout.</p>
+<p>The target namespace for this grid system.</p>
+</div>
+<div class="paragraph">
+<p>This is used when generating the XML. The Bootstrap3 grid system provided by the framework returns the value <code><a href="http://isis.apache.org/applib/layout/grid/bootstrap3" class="bare">http://isis.apache.org/applib/layout/grid/bootstrap3</a></code>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="schemaLocation__"><a class="anchor" href="#schemaLocation__"></a>schemaLocation()</h3>
+<div class="paragraph">
+<p>The schema location for the XSD.</p>
+</div>
+<div class="paragraph">
+<p>Every grid system is expected to provide a schema XSD in order to provide code completion in an IDE. The Bootstrap3 grid system provided by the framework returns the value <code><a href="http://isis.apache.org/applib/layout/grid/bootstrap3/bootstrap3.xsd" class="bare">http://isis.apache.org/applib/layout/grid/bootstrap3/bootstrap3.xsd</a></code>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="defaultGrid__Class"><a class="anchor" href="#defaultGrid__Class"></a>defaultGrid(Class)</h3>
+<div class="paragraph">
+<p>A default grid, used when no grid layout can be found for the domain class.</p>
+</div>
+<div class="paragraph">
+<p>For example, this layout could define two columns in ratio 4:8.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="normalize__G_Class"><a class="anchor" href="#normalize__G_Class"></a>normalize(G, Class)</h3>
+<div class="paragraph">
+<p>Validates and normalizes a grid, modifying the grid so that all of the domain object&#8217;s members (properties, collections, actions) are bound to regions of the grid.</p>
+</div>
+<div class="paragraph">
+<p>This is done using existing metadata, most notably that of the <em>org.apache.isis.applib.annotation.MemberOrder</em> annotation. Such a grid, if persisted as the layout XML file for the domain class, allows the <em>org.apache.isis.applib.annotation.MemberOrder</em> annotation to be removed from the source code of the domain class (but other annotations must be retained).</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="complete__G_Class"><a class="anchor" href="#complete__G_Class"></a>complete(G, Class)</h3>
+<div class="paragraph">
+<p>Takes a normalized grid and enriches it with all the available metadata (taken from Apache Isis' internal metadata) that can be represented in the layout XML.</p>
+</div>
+<div class="paragraph">
+<p>Such a grid, if persisted as the layout XML file for the domain class, allows all layout annotations ( <em>org.apache.isis.applib.annotation.ActionLayout</em> , <em>org.apache.isis.applib.annotation.PropertyLayout</em> , <em>org.apache.isis.applib.annotation.CollectionLayout</em> ) to be removed from the source code of the domain class.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="minimal__G_Class"><a class="anchor" href="#minimal__G_Class"></a>minimal(G, Class)</h3>
+<div class="paragraph">
+<p>Takes a normalized grid and strips out removes all members, leaving only the grid structure.</p>
+</div>
+<div class="paragraph">
+<p>Such a grid, if persisted as the layout XML file for the domain class, requires that the <em>org.apache.isis.applib.annotation.MemberOrder</em> annotation is retained in the source code of said class in order to bind members to the regions of the grid.</p>
 </div>
 </div>
 </div>
@@ -440,7 +549,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210213-0423-5a5afc7f</p>
+            <p>Revision: 2.0.0-M4.20210215-0424-f665ec0b</p>
         </div>
     </div>
 </footer>

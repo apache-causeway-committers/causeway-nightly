@@ -508,12 +508,6 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../../../config/sections/isis.security.shiro.html">Shiro Security Implementation</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../../../config/sections/jdo-datanucleus.html">JDO DataNucleus</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../../../config/sections/jdo-datanucleus-conf.html">DataNucleus Configuration</a>
-  </li>
-  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../../../config/sections/isis.viewer.restfulobjects.html">Restful Objects Viewer</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -754,7 +748,287 @@ page.parent doesn't seem to be set...
 </div>
 <article class="doc">
     <a name="section-top"></a>
+<div class="sect1">
+<h2 id="usage"><a class="anchor" href="#usage"></a>Usage</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="persist"><a class="anchor" href="#persist"></a>Persist</h3>
+<div class="paragraph">
+<p>Use an n-arg constructor, eg:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Customer cust = repositoryService.detachedEntity(
+    new Customer("Freddie", "Mercury"));
+repositoryService.persist(cust);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>rather than the deprecated version that takes a type:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Customer cust = repositoryService.detachedEntity(Customer.class);
+cust.setFirstName("Freddie");
+cust.setLastName("Mercury");
+repositoryService.persist(cust);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You should be aware that by default the framework queues up calls to <a href="../../../../../system/latest/generated/index/applib/services/repository/RepositoryService.html#persist<em>T" class="page">#persist()</a> and <a href="../../../../../system/latest/generated/index/applib/services/repository/RepositoryService.html#remove</em>Object" class="page">#remove()</a>.
+These are then executed either when the request completes (and the transaction commits), or if the queue is flushed.
+This can be done either implicitly by the framework, or as the result of a direct call to <a href="../../../../../system/latest/generated/index/applib/services/xactn/TransactionService.html#flushTransaction__" class="page">TransactionService#flushTransaction</a>.</p>
+</div>
+<div class="paragraph">
+<p>By default the framework itself will cause <code>#flush()</code> to be called whenever a query is executed by way of <code>#allMatches(Query)</code>.
+However, this behaviour can be disabled using the  <a href="../../../config/sections/Other.html" class="page">Other</a></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="persistandflush-removeandflush"><a class="anchor" href="#persistandflush-removeandflush"></a><code>persistAndFlush(&#8230;&#8203;)</code>, <code>removeAndFlush(&#8230;&#8203;)</code></h3>
+<div class="paragraph">
+<p>In some cases, such as when using managed properties and collections for implementing 1-1, 1-n, or m-n relationships, the developer needs to invoke <code>flush()</code> to send the changes to the persistence mechanism.
+These managed properties and collections and then updated.</p>
+</div>
+<div class="paragraph">
+<p>The <code>persistAndFlush(&#8230;&#8203;)</code> and <code>removeAndFlush(&#8230;&#8203;)</code> methods save the developer from having to additionally call the <code>flush(&#8230;&#8203;)</code> method after calling <code>persist()</code> or <code>remove()</code>.</p>
+</div>
+<div class="paragraph">
+<p>For example, the following code requires a flush to occur, so uses these methods:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public abstract class Warehouse extends SalesVIPEntity&lt;Marketplace&gt; {
 
+    @Persistent(mappedBy = "marketplace", dependentElement = "true")
+    @Getter @Setter
+    SortedSet&lt;MarketplaceExcludedProduct&gt; excludedProducts =
+                            new TreeSet&lt;MarketplaceExcludedProduct&gt;();
+
+    @Action(semantics = SemanticsOf.IDEMPOTENT)
+    public MarketplaceExcludedProduct addExcludedProduct(final Product product) {
+        val marketplaceExcludedProduct = findExcludedProduct(product);
+        if (marketplaceExcludedProduct == null) {
+            marketplaceExcludedProduct =
+                repositoryService.detachedEntity(
+                    new MarketplaceExcludedProduct.builder()
+                            .marketPlace(this)
+                            .product(product)
+                            .build());
+        }
+
+        repositoryService.persistAndFlush(marketplaceExcludedProduct);  <i class="conum" data-value="1"></i><b>(1)</b>
+        return marketplaceExcludedProduct;
+    }
+
+    @Action(semantics = SemanticsOf.IDEMPOTENT)
+    public void removeExcludedProducts(final Product product) {
+        val marketplaceExcludedProduct = findExcludedProduct(product);
+        if (marketplaceExcludedProduct != null) {
+            repositoryService.removeAndFlush(marketplaceExcludedProduct);
+        }
+    }
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Needed for updating the managed properties and collections.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>On the “addExcludedProduct()” action, if the user didn&#8217;t flush, the following test would fail because the managed collection would not containing the given product:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Test
+public void addExcludedProduct() {
+
+    // given
+    final AmazonMarketplace amazonMarketplace = this.wrapSkipRules(
+        this.marketplaceRepository).findOrCreateAmazonMarketplace(
+            AmazonMarketplaceLocation.FRANCE);
+
+    final Product product = this.wrap(this.productRepository)
+        .createProduct(UUID.randomUUID().toString(), UUID.randomUUID().toString());
+
+    // when
+    this.wrap(amazonMarketplace).addExcludedProduct(product);
+
+    // then
+    Assertions.assertThat(
+            this.wrapSkipRules(amazonMarketplace).findAllProductsExcluded()
+        ).contains(product);                                                    <i class="conum" data-value="1"></i><b>(1)</b>
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>this would fail.</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="named-queries-and-xxxmatches"><a class="anchor" href="#named-queries-and-xxxmatches"></a>Named queries and <code>xxxMatches(&#8230;&#8203;)</code></h3>
+<div class="paragraph">
+<p>There are two subtypes of the <code>Query</code> API, namely <code>NamedQuery</code> and <code>AllInstancesQuery</code>.
+The former is the more important, as it identifies a named query and a set of parameter/argument tuples, and is executed server-side.</p>
+</div>
+<div class="paragraph">
+<p>For example, using JDO a <code>ToDoItem</code> could be annotated:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@javax.jdo.annotations.Queries( {
+    @javax.jdo.annotations.Query(
+        name = "findByAtPathAndComplete", language = "JDOQL",  <i class="conum" data-value="1"></i><b>(1)</b>
+        value = "SELECT "
+                + "FROM todoapp.dom.module.todoitem.ToDoItem "
+                + "WHERE atPath.indexOf(:atPath) == 0 "        <i class="conum" data-value="2"></i><b>(2)</b>
+                + "   &amp;&amp; complete == :complete"),              <i class="conum" data-value="3"></i><b>(3)</b>
+    // ...
+})
+public class ToDoItem ... {
+    // ...
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>name of the query</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>defines the <code>atPath</code> parameter</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>defines the <code>complete</code> parameter</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>This JDO query definitions are used in the <code>ToDoItemRepositoryImplUsingJdoql</code> service:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.springframework.stereotype.Service;
+
+@Service
+public class ToDoItemRepositoryImplUsingJdoql implements ToDoItemRepositoryImpl {
+    @Programmatic
+    public List&lt;ToDoItem&gt; findByAtPathAndCategory(final String atPath, final Category category) {
+        return repositoryService.allMatches(
+                Query.named(ToDoItem.class,
+                        "findByAtPathAndCategory", <i class="conum" data-value="1"></i><b>(1)</b>
+                        "atPath", atPath,          <i class="conum" data-value="2"></i><b>(2)</b>
+                        "category", category));    <i class="conum" data-value="3"></i><b>(3)</b>
+    }
+    ...
+    @javax.inject.Inject
+    RepositoryService repositoryService;
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>corresponds to the "findByAtPathAndCategory" JDO named query</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>provide argument for the <code>atPath</code> parameter.
+The pattern is parameter, argument, parameter, argument, &#8230;&#8203; and so on.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>provide argument for the <code>category</code> parameter.
+The pattern is parameter, argument, parameter, argument, &#8230;&#8203; and so on.</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>If using JPA, it is also possible to use the Spring Data repositories, using <a href="../../../../../system/latest/generated/index/persistence/jpa/applib/services/JpaSupportService.html" class="page">JpaSupportService</a>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>If using JDO/DataNucleus, it is also possible to use the DataNucleus type-safe query API, see <a href="../../../../../system/latest/generated/index/persistence/jdo/applib/services/JdoSupportService.html" class="page">JdoSupportService</a>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Supporting classes used by the API:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../../../../../system/latest/generated/index/applib/services/repository/EntityState.html" class="page">EntityState</a></p>
+</li>
+<li>
+<p><a href="../../../../../system/latest/generated/index/applib/query/Query.html" class="page">Query</a></p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../../../../../system/latest/generated/index/applib/query/NamedQuery.html" class="page">NamedQuery</a></p>
+</li>
+<li>
+<p><a href="../../../../../system/latest/generated/index/applib/query/AllInstancesQuery.html" class="page">AllInstancesQuery</a></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><a href="../../../../../system/latest/generated/index/applib/query/QueryRange.html" class="page">QueryRange</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Transaction management:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../../../../../system/latest/generated/index/applib/services/xactn/TransactionService.html" class="page">TransactionService</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
 </article>
 <aside class="article-aside toc hide-for-print" role="navigation">
     <p class="toc-title">On this page</p>
@@ -772,7 +1046,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210213-0423-5a5afc7f</p>
+            <p>Revision: 2.0.0-M4.20210215-0424-f665ec0b</p>
         </div>
     </div>
 </footer>

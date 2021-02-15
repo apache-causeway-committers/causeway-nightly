@@ -510,12 +510,6 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../config/sections/isis.security.shiro.html">Shiro Security Implementation</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../config/sections/jdo-datanucleus.html">JDO DataNucleus</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../config/sections/jdo-datanucleus-conf.html">DataNucleus Configuration</a>
-  </li>
-  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../config/sections/isis.viewer.restfulobjects.html">Restful Objects Viewer</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -765,69 +759,16 @@ page.parent doesn't seem to be set...
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>The <code>InteractionContext</code> is a request-scoped domain service that is used to obtain the current
-<code>Interaction</code>.</p>
+<p>Provides the current thread&#8217;s <a href="../../../system/latest/generated/index/applib/services/iactn/Interaction.html" class="page">Interaction</a> .</p>
 </div>
 <div class="paragraph">
-<p>An <code>Interaction</code> generally consists of a single top-level <code>Execution</code>, either to invoke an action or to edit a property.
-If that top-level action or property uses <a href="WrapperFactory.html" class="page"><code>WrapperFactory</code></a> to invoke child actions/properties, then those sub-executions are captured as a call-graph.
-The <code>Execution</code> is thus a graph structure.</p>
-</div>
-<div class="paragraph">
-<p>If a bulk action is performed (as per an action annotated using <a href="../applib-ant/Action.html#invokeOn" class="page"><code>@Action#invokeOn</code></a>), then this will result in multiple <code>Interaction</code>s, one per selected object (not one <code>Interaction</code> with multiple top-level <code>Execution</code>s).</p>
-</div>
-<div class="paragraph">
-<p>It is possible for <code>Interaction.Execution</code>s to be persisted; this is supported by the <a href="../../../mappings/latest/outbox-publisher/about.html" class="page">Outbox Publisher</a> mapping module, for example.
-Persistent<code>Interaction</code>s support several use cases:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>they enable profiling of the running application (which actions are invoked then most often, what is their response time)</p>
-</li>
-<li>
-<p>if auditing is configured (using <a href="#refguide:applib-svc:AuditerService.adoc" class="page unresolved"><code>AuditerService</code></a>), they provide better audit information, since the
-<code>Interaction.Execution</code> captures the 'cause' of an interaction and can be correlated to the audit records (the "effect" of the interaction) by way of the <a href="../applib-classes/roles-mixins-contributees/contributee.html#HasUniqueId" class="page"><code>transactionId</code></a></p>
-</li>
-</ul>
+<p>An <a href="../../../system/latest/generated/index/applib/services/iactn/Interaction.html" class="page">Interaction</a> contains a top-level <a href="../../../system/latest/generated/index/applib/services/iactn/Execution.html" class="page">Execution</a> representing the invocation of an action or the editing of a property. If that top-level action or property uses the <em>org.apache.isis.applib.services.wrapper.WrapperFactory</em> domain service to invoke child actions/properties, then those sub-executions are captured as a call-graph. The <a href="../../../system/latest/generated/index/applib/services/iactn/Execution.html" class="page">Execution</a> is thus a graph structure.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="api"><a class="anchor" href="#api"></a>API</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p>The public API of the service consists of several related classes:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>InteractionContext</code> domain service itself:</p>
-</li>
-<li>
-<p><code>Interaction</code> class, obtainable from the <code>InteractionContext</code></p>
-<div class="paragraph">
-<p>The <code>Interaction</code> can be used to obtain the <code>Command</code> object representing the top-level invocation action/property edit.</p>
-</div>
-</li>
-<li>
-<p><code>Execution</code> class, obtainable from the <code>Interaction</code>.</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>The <code>Execution</code> class itself is abstract; there are two subclasses, <code>ActionInvocation</code> and <code>PropertyEdit</code>.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="api-2"><a class="anchor" href="#api-2"></a>API</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Provides the current thread&#8217;s <a href="../../../system/latest/generated/index/applib/services/iactn/Interaction.html" class="page">Interaction</a> .</p>
-</div>
-<div class="sect3">
-<h4 id="api-3"><a class="anchor" href="#api-3"></a>API</h4>
 <div class="listingblock">
 <div class="title">InteractionContext.java</div>
 <div class="content">
@@ -841,7 +782,7 @@ Persistent<code>Interaction</code>s support several use cases:</p>
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><a href="#currentInteraction">currentInteraction</a>
+<td><a href="#currentInteraction__">currentInteraction()</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
@@ -851,329 +792,16 @@ Persistent<code>Interaction</code>s support several use cases:</p>
 </div></td>
 </tr>
 </table>
-</div>
-</div>
-<div class="sect3">
-<h4 id="members"><a class="anchor" href="#members"></a>Members</h4>
-<div class="sect4">
-<h5 id="currentInteraction"><a class="anchor" href="#currentInteraction"></a>currentInteraction</h5>
-<div class="paragraph">
-<p>Optionally, the currently active <a href="../../../system/latest/generated/index/applib/services/iactn/Interaction.html" class="page">Interaction</a> for the calling thread.</p>
-</div>
-<div class="paragraph">
-<p>TODO example migration</p>
-</div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-<div class="title">Deprecated Docs</div>
-<div class="paragraph">
-<p>=== <code>InteractionContext</code></p>
-</div>
-<div class="paragraph">
-<p>The public API of the <code>InteractionContext</code> domain service itself consists of simply:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Unresolved include directive in modules/applib-svc/pages/InteractionContext.adoc - include::refguide:applib-svc:example$services/iactn/InteractionContext.java[]</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Returns the currently active {@link Interaction} for this thread.</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>This class is concrete (that is, it is also the implementation).</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-</div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="api-4"><a class="anchor" href="#api-4"></a>API</h2>
+<h2 id="members"><a class="anchor" href="#members"></a>Members</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p>Represents an action invocation or property modification, resulting in some state change of the system. It captures not only the target object and arguments passed, but also builds up the call-graph, and captures metrics, eg for profiling.</p>
-</div>
-<div class="paragraph">
-<p>The distinction between <a href="../../../system/latest/generated/index/applib/services/command/Command.html" class="page">Command</a> and this object is perhaps subtle: the former represents the intention to invoke an action/edit a property, whereas this represents the actual invocation/edit itself.</p>
-</div>
-<div class="paragraph">
-<p>To confuse matters slightly, historically the <a href="../../../system/latest/generated/index/applib/services/command/Command.html" class="page">Command</a> interface defines members (specifically: <em>Command#getStartedAt()</em> , <em>Command#getCompletedAt()</em> , <em>Command#getResult()</em> , <em>Command#getException()</em> ) which logically belong to this class instead; they remain in <a href="../../../system/latest/generated/index/applib/services/command/Command.html" class="page">Command</a> for backward compatibility only (and have been deprecated).</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-you could also think of this interface as being analogous to the (database) transaction. The name "Transaction" has not been used for the interface not chosen however because there is also the system-level transaction that manages the persistence of the <a href="../../../system/latest/generated/index/applib/services/command/Command.html" class="page">Command</a> object itself.
-</td>
-</tr>
-</table>
-</div>
-<div class="sect3">
-<h4 id="api-5"><a class="anchor" href="#api-5"></a>API</h4>
-<div class="listingblock">
-<div class="title">Interaction.java</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">interface Interaction {
-  Command getCommand()
-  Execution&lt;?, ?&gt; getCurrentExecution()     <i class="conum" data-value="1"></i><b>(1)</b>
-  Execution&lt;?, ?&gt; getPriorExecution()     <i class="conum" data-value="2"></i><b>(2)</b>
-  int next(final String sequenceId)     <i class="conum" data-value="3"></i><b>(3)</b>
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><a href="#getCurrentExecution">getCurrentExecution</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>The current (most recently pushed) <em>Execution</em> .</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><a href="#getPriorExecution">getPriorExecution</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>The execution that preceded the current one.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td><a href="#next">next</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Generates numbers in a named sequence. The name of the sequence can be arbitrary, though note that the framework also uses this capability to generate sequence numbers corresponding to the sequences enumerated by the <em>Sequence</em> enum.</p>
-</div>
-</div>
-</div></td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect3">
-<h4 id="members-2"><a class="anchor" href="#members-2"></a>Members</h4>
-<div class="sect4">
-<h5 id="getCurrentExecution"><a class="anchor" href="#getCurrentExecution"></a>getCurrentExecution</h5>
-<div class="paragraph">
-<p>The current (most recently pushed) <em>Execution</em> .</p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="getPriorExecution"><a class="anchor" href="#getPriorExecution"></a>getPriorExecution</h5>
-<div class="paragraph">
-<p>The execution that preceded the current one.</p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="next"><a class="anchor" href="#next"></a>next</h5>
-<div class="paragraph">
-<p>Generates numbers in a named sequence. The name of the sequence can be arbitrary, though note that the framework also uses this capability to generate sequence numbers corresponding to the sequences enumerated by the <em>Sequence</em> enum.</p>
-</div>
-<div class="paragraph">
-<p>TODO example migration</p>
-</div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-<div class="title">Deprecated Docs</div>
-<div class="paragraph">
-<p>=== <code>Interaction</code></p>
-</div>
-<div class="paragraph">
-<p>The public API of the <code>Interaction</code> class consists of:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Unresolved include directive in modules/applib-svc/pages/InteractionContext.adoc - include::refguide:applib-svc:example$services/iactn/Interaction.java[]</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The unique identifier of this interaction.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Returns a (list of) execution}s in the order that they were pushed.
-Generally there will be just one entry in this list, but additional entries may arise from the use of mixins/contributions when re-rendering a modified object.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>The current execution.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>The member <code>Execution</code> (action invocation or property edit) that preceded the current one.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>Generates numbers in a named sequence.
-Used by the framework both to number successive interaction <code>Execution</code>s and for events published by the <a href="ExecutionSubscriber.html" class="page"><code>PublisherService</code></a>.</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>This class is concrete (is also the implementation).</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
 <div class="sect2">
-<h3 id="interaction-execution"><a class="anchor" href="#interaction-execution"></a><code>Interaction.Execution</code></h3>
+<h3 id="currentInteraction__"><a class="anchor" href="#currentInteraction__"></a>currentInteraction()</h3>
 <div class="paragraph">
-<p>The <code>Interaction.Execution</code> (static nested) class represents an action invocation/property edit as a node in a call-stack execution graph.
-Sub-executions can be performed using the
-<a href="WrapperFactory.html" class="page"><code>WrapperFactory</code></a>.</p>
-</div>
-<div class="paragraph">
-<p>It has the following public API:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public abstract class Execution {
-    public Interaction getInteraction();            <i class="conum" data-value="1"></i><b>(1)</b>
-    public InteractionType getInteractionType();    <i class="conum" data-value="2"></i><b>(2)</b>
-    public String getMemberIdentifier();            <i class="conum" data-value="3"></i><b>(3)</b>
-    public Object getTarget();                      <i class="conum" data-value="4"></i><b>(4)</b>
-
-    public String getTargetClass();                 <i class="conum" data-value="5"></i><b>(5)</b>
-    public String getTargetMember();
-
-    public Execution getParent();                   <i class="conum" data-value="6"></i><b>(6)</b>
-    public List&lt;Execution&gt; getChildren();
-
-    public AbstractDomainEvent getEvent();          <i class="conum" data-value="7"></i><b>(7)</b>
-
-    public Timestamp getStartedAt();                <i class="conum" data-value="8"></i><b>(8)</b>
-    public Timestamp getCompletedAt();
-
-    public Object getReturned();                    <i class="conum" data-value="9"></i><b>(9)</b>
-    public Exception getThrew();
-
-    public T getDto();                              <i class="conum" data-value="10"></i><b>(10)</b>
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The owning <code>Interaction</code>.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Whether this is an action invocation or a property edit.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>A string uniquely identifying the action or property (similar to Javadoc syntax).</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>The object on which the action is being invoked or property edited.
-In the case of a mixin this will be the mixin object itself (rather than the mixed-in object).</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>A human-friendly description of the class of the target object, and of the name of the action invoked/property edited on the target object.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
-<td>The parent action/property that invoked this action/property edit (if any), and any actions/property edits made in turn via the <a href="WrapperFactory.html" class="page"><code>WrapperFactory</code></a>.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="7"></i><b>7</b></td>
-<td>The domain event fired via the <a href="EventBusService.html" class="page"><code>EventBusService</code></a> representing the execution of this action invocation/property edit.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="8"></i><b>8</b></td>
-<td>The date/time at which this execution started/completed.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="9"></i><b>9</b></td>
-<td>The object returned by the action invocation/property edit, or the exception thrown.
-For <code>void</code> methods and for actions returning collections, the value will be <code>null</code>.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="10"></i><b>10</b></td>
-<td>A DTO (instance of the <a href="../schema/ixn.html" class="page">"ixn" schema</a>) being a serializable representation of this action invocation/property edit.</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>There are two concrete subclasses of <code>Execution</code>.</p>
-</div>
-<div class="paragraph">
-<p>The first is <code>ActionInvocation</code>, representing the execution of an action being invoked:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class ActionInvocation extends Execution {
-    public List&lt;Object&gt; getArgs();                  <i class="conum" data-value="1"></i><b>(1)</b>
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The objects passed in as the arguments to the action&#8217;s parameters.
-Any of these could be <code>null</code>.</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>The second is <code>PropertyEdit</code>, and naturally enough represents the execution of a property being edited:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class PropertyEdit extends Execution {
-    public Object getNewValue();                    <i class="conum" data-value="1"></i><b>(1)</b>
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The object used as the new value of the property.
-Could be <code>null</code> if the property is being cleared.</td>
-</tr>
-</table>
+<p>Optionally, the currently active <a href="../../../system/latest/generated/index/applib/services/iactn/Interaction.html" class="page">Interaction</a> for the calling thread.</p>
 </div>
 </div>
 </div>
@@ -1187,13 +815,29 @@ Could be <code>null</code> if the property is being cleared.</td>
 </div>
 </div>
 <div class="sect1">
-<h2 id="interacting-with-the-services"><a class="anchor" href="#interacting-with-the-services"></a>Interacting with the services</h2>
+<h2 id="usage-notes"><a class="anchor" href="#usage-notes"></a>Usage Notes</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Typically domain objects will have little need to interact with the <code>InteractionContext</code> and <code>Interaction</code> directly.
-The services are used within the framework however, primarily to support the
-<a href="ExecutionSubscriber.html" class="page"><code>PublisherService</code></a> SPI, and to emit domain events over the
-<a href="EventBusService.html" class="page"><code>EventBusService</code></a>.</p>
+The services are used within the framework however, primarily to support the <a href="ExecutionSubscriber.html" class="page">ExecutionSubscriber</a> SPI, and to emit domain events over the <a href="EventBusService.html" class="page"><code>EventBusService</code></a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="see-also"><a class="anchor" href="#see-also"></a>See Also</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../../../system/latest/generated/index/applib/services/iactn/Interaction.html" class="page">Interaction</a>, as provided by the <code>InteractionContext</code></p>
+</li>
+<li>
+<p><a href="../../../system/latest/generated/index/applib/services/iactn/Execution.html" class="page">Execution</a>, as referenced by <a href="../../../system/latest/generated/index/applib/services/iactn/Interaction.html" class="page">Interaction</a>.</p>
+</li>
+<li>
+<p><a href="../../../system/latest/generated/index/applib/services/publishing/spi/ExecutionSubscriber.html" class="page">ExecutionSubscriber</a></p>
+</li>
+</ul>
 </div>
 </div>
 </div>
@@ -1214,7 +858,7 @@ The services are used within the framework however, primarily to support the
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210213-0423-5a5afc7f</p>
+            <p>Revision: 2.0.0-M4.20210215-0424-f665ec0b</p>
         </div>
     </div>
 </footer>

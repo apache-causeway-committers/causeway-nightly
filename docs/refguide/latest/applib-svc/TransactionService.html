@@ -510,12 +510,6 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../config/sections/isis.security.shiro.html">Shiro Security Implementation</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../config/sections/jdo-datanucleus.html">JDO DataNucleus</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../config/sections/jdo-datanucleus-conf.html">DataNucleus Configuration</a>
-  </li>
-  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../config/sections/isis.viewer.restfulobjects.html">Restful Objects Viewer</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -777,15 +771,122 @@ TODO: this content has not yet been reviewed/updated for v2.0
 </table>
 </div>
 <div class="paragraph">
-<p>The <code>TransactionService</code> (and its various supertypes) allows domain objects to influence user transactions.</p>
+<p>Provides utilities to access active transactions associated with the current thread.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="api"><a class="anchor" href="#api"></a>API</h2>
 <div class="sectionbody">
+<div class="listingblock">
+<div class="title">TransactionService.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">interface TransactionService {
+  Optional&lt;TransactionId&gt; currentTransactionId()     <i class="conum" data-value="1"></i><b>(1)</b>
+  TransactionState currentTransactionState()     <i class="conum" data-value="2"></i><b>(2)</b>
+  void flushTransaction()     <i class="conum" data-value="3"></i><b>(3)</b>
+  void nextTransaction()     <i class="conum" data-value="4"></i><b>(4)</b>
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><a href="#currentTransactionId__">currentTransactionId()</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Optionally returns the unique identifier of the current thread&#8217;s transaction, based on whether there is an active transaction associated with the current thread.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><a href="#currentTransactionState__">currentTransactionState()</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Returns the state of the current thread&#8217;s transaction., or returns <em>TransactionState#NONE</em> , if there is no active transaction associated with the current thread.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><a href="#flushTransaction__">flushTransaction()</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Flushes all changes to the object store.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><a href="#nextTransaction__">nextTransaction()</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Commits the current thread&#8217;s transaction (if there is one), and in any case begins a new one.</p>
+</div>
+</div>
+</div></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="members"><a class="anchor" href="#members"></a>Members</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="currentTransactionId__"><a class="anchor" href="#currentTransactionId__"></a>currentTransactionId()</h3>
+<div class="paragraph">
+<p>Optionally returns the unique identifier of the current thread&#8217;s transaction, based on whether there is an active transaction associated with the current thread.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="currentTransactionState__"><a class="anchor" href="#currentTransactionState__"></a>currentTransactionState()</h3>
+<div class="paragraph">
+<p>Returns the state of the current thread&#8217;s transaction., or returns <em>TransactionState#NONE</em> , if there is no active transaction associated with the current thread.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="flushTransaction__"><a class="anchor" href="#flushTransaction__"></a>flushTransaction()</h3>
+<div class="paragraph">
+<p>Flushes all changes to the object store.</p>
+</div>
+<div class="paragraph">
+<p>Occasionally useful to ensure that newly persisted domain objects are flushed to the database prior to a subsequent repository query.</p>
+</div>
+<div class="paragraph">
+<p>If there is no active transaction associated with the current thread, then does nothing.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="nextTransaction__"><a class="anchor" href="#nextTransaction__"></a>nextTransaction()</h3>
+<div class="paragraph">
+<p>Commits the current thread&#8217;s transaction (if there is one), and in any case begins a new one.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="implementation"><a class="anchor" href="#implementation"></a>Implementation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>TransactionService</code> (and its various supertypes) allows domain objects to influence user transactions.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="api-2"><a class="anchor" href="#api-2"></a>API</h2>
+<div class="sectionbody">
 <div class="sect3">
-<h4 id="api-2"><a class="anchor" href="#api-2"></a>API</h4>
+<h4 id="api-3"><a class="anchor" href="#api-3"></a>API</h4>
 <div class="listingblock">
 <div class="title">TransactionState.java</div>
 <div class="content">
@@ -863,7 +964,7 @@ TODO: this content has not yet been reviewed/updated for v2.0
 </tr>
 <tr>
 <td><i class="conum" data-value="6"></i><b>6</b></td>
-<td><a href="#canFlush">canFlush</a>
+<td><a href="#canFlush__">canFlush()</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
@@ -874,7 +975,7 @@ TODO: this content has not yet been reviewed/updated for v2.0
 </tr>
 <tr>
 <td><i class="conum" data-value="7"></i><b>7</b></td>
-<td><a href="#canCommit">canCommit</a>
+<td><a href="#canCommit__">canCommit()</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
@@ -885,7 +986,7 @@ TODO: this content has not yet been reviewed/updated for v2.0
 </tr>
 <tr>
 <td><i class="conum" data-value="8"></i><b>8</b></td>
-<td><a href="#canAbort">canAbort</a>
+<td><a href="#canAbort__">canAbort()</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
@@ -896,7 +997,7 @@ TODO: this content has not yet been reviewed/updated for v2.0
 </tr>
 <tr>
 <td><i class="conum" data-value="9"></i><b>9</b></td>
-<td><a href="#isComplete">isComplete</a>
+<td><a href="#isComplete__">isComplete()</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
@@ -909,7 +1010,7 @@ TODO: this content has not yet been reviewed/updated for v2.0
 </div>
 </div>
 <div class="sect3">
-<h4 id="members"><a class="anchor" href="#members"></a>Members</h4>
+<h4 id="members-2"><a class="anchor" href="#members-2"></a>Members</h4>
 <div class="sect4">
 <h5 id="NONE"><a class="anchor" href="#NONE"></a>NONE</h5>
 <div class="paragraph">
@@ -941,25 +1042,25 @@ TODO: this content has not yet been reviewed/updated for v2.0
 </div>
 </div>
 <div class="sect4">
-<h5 id="canFlush"><a class="anchor" href="#canFlush"></a>canFlush</h5>
+<h5 id="canFlush__"><a class="anchor" href="#canFlush__"></a>canFlush()</h5>
 <div class="paragraph">
 <p>Whether it is valid to flush the transaction.</p>
 </div>
 </div>
 <div class="sect4">
-<h5 id="canCommit"><a class="anchor" href="#canCommit"></a>canCommit</h5>
+<h5 id="canCommit__"><a class="anchor" href="#canCommit__"></a>canCommit()</h5>
 <div class="paragraph">
 <p>Whether it is valid to commit the transaction.</p>
 </div>
 </div>
 <div class="sect4">
-<h5 id="canAbort"><a class="anchor" href="#canAbort"></a>canAbort</h5>
+<h5 id="canAbort__"><a class="anchor" href="#canAbort__"></a>canAbort()</h5>
 <div class="paragraph">
 <p>Whether it is valid to mark as aborted this transaction}.</p>
 </div>
 </div>
 <div class="sect4">
-<h5 id="isComplete"><a class="anchor" href="#isComplete"></a>isComplete</h5>
+<h5 id="isComplete__"><a class="anchor" href="#isComplete__"></a>isComplete()</h5>
 <div class="paragraph">
 <p>Whether the transaction is complete (and so a new one can be started).</p>
 </div>
@@ -1040,7 +1141,7 @@ Under certain circumstances (eg actions used to perform data migration, say, or 
 </div>
 </div>
 <div class="sect1">
-<h2 id="implementation"><a class="anchor" href="#implementation"></a>Implementation</h2>
+<h2 id="implementation-2"><a class="anchor" href="#implementation-2"></a>Implementation</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>The core framework provides a default implementation of this service, <code>o.a.i.core.runtimeservices.xactn.TransactionServiceSpring</code>.</p>
@@ -1064,7 +1165,7 @@ Under certain circumstances (eg actions used to perform data migration, say, or 
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210213-0423-5a5afc7f</p>
+            <p>Revision: 2.0.0-M4.20210215-0424-f665ec0b</p>
         </div>
     </div>
 </footer>

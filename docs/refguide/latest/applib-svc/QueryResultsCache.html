@@ -510,12 +510,6 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../config/sections/isis.security.shiro.html">Shiro Security Implementation</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../config/sections/jdo-datanucleus.html">JDO DataNucleus</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../config/sections/jdo-datanucleus-conf.html">DataNucleus Configuration</a>
-  </li>
-  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../config/sections/isis.viewer.restfulobjects.html">Restful Objects Viewer</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -764,59 +758,23 @@ page.parent doesn't seem to be set...
 <h1 class="page"><code>QueryResultsCache</code></h1>
 <div id="preamble">
 <div class="sectionbody">
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-TODO: this content has not yet been reviewed/updated for v2.0
-</td>
-</tr>
-</table>
+<div class="paragraph">
+<p>Provides a mechanism by which idempotent query results can be cached for the duration of an interaction.</p>
 </div>
 <div class="paragraph">
-<p>The purpose of the <code>QueryResultsCache</code> is to improve response times to the user, by providing a request-scoped cache of the value of some (safe or idempotent) method call.
-This will typically be as the result of running a query, but could be any expensive operation.</p>
-</div>
-<div class="paragraph">
-<p>Caching such values is useful for code that loops "naively" through a bunch of stuff, performing an expensive operation each time.
-If the data is such that the same expensive operation is made many times, then the query cache is a perfect fit.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>This service was inspired by similar functionality that exists in relational databases, for example Sybase&#8217;s <a href="http://infocenter.sybase.com/help/index.jsp?topic=/com.sybase.dc20023_1251/html/optimizer/X43480.htm">subquery results cache</a> and Oracle&#8217;s <a href="http://www.dba-oracle.com/oracle11g/oracle_11g_result_cache_sql_hint.htm">result_cache</a> hint.</p>
-</div>
-</td>
-</tr>
-</table>
+<p>Caching such values is useful to improve the response time (for the end user) of code that loops "naively" through a set of items, performing an expensive operation each time. If the data is such that the same expensive operation is made many times, then the query cache is a perfect fit.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="api"><a class="anchor" href="#api"></a>API</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p>This service (API and implementation) provides a mechanism by which idempotent query results can be cached for the duration of an interaction. Most commonly this allows otherwise "naive" - eg that makes a repository call many times within a loop - to be performance tuned. The benefit is that the algorithm of the business logic can remain easy to understand.</p>
-</div>
-<div class="paragraph">
-<p>This implementation has no UI and there is only one implementation (this class) in applib, it is annotated with <em>org.apache.isis.applib.annotation.DomainService</em> . This means that it is automatically registered and available for use; no further configuration is required.</p>
-</div>
-<div class="sect3">
-<h4 id="api-2"><a class="anchor" href="#api-2"></a>API</h4>
 <div class="listingblock">
 <div class="title">QueryResultsCache.java</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">interface QueryResultsCache {
-  T execute(Callable&lt;T&gt; callable, Class&lt;?&gt; callingClass, String methodName, Object... keys)
-  void onTransactionEnded()     <i class="conum" data-value="1"></i><b>(1)</b>
+  T execute(Callable&lt;T&gt; callable, Class&lt;?&gt; callingClass, String methodName, Object... keys)     <i class="conum" data-value="1"></i><b>(1)</b>
+  void onTransactionEnded()     <i class="conum" data-value="2"></i><b>(2)</b>
   R execute(MethodReferences.Call0&lt;? extends R&gt; action, Class&lt;?&gt; callingClass, String methodName)
   R execute(MethodReferences.Call1&lt;? extends R, A0&gt; action, Class&lt;?&gt; callingClass, String methodName, A0 arg0)
   R execute(MethodReferences.Call2&lt;? extends R, A0, A1&gt; action, Class&lt;?&gt; callingClass, String methodName, A0 arg0, A1 arg1)
@@ -830,7 +788,18 @@ If the data is such that the same expensive operation is made many times, then t
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><a href="#onTransactionEnded">onTransactionEnded</a>
+<td><a href="#execute__Callable_Class_String_Object">execute(Callable, Class, String, Object)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Executes the callable if not already cached for the supplied calling class, method and keys.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><a href="#onTransactionEnded__">onTransactionEnded()</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
@@ -842,50 +811,20 @@ If the data is such that the same expensive operation is made many times, then t
 </table>
 </div>
 </div>
-<div class="sect3">
-<h4 id="members"><a class="anchor" href="#members"></a>Members</h4>
-<div class="sect4">
-<h5 id="onTransactionEnded"><a class="anchor" href="#onTransactionEnded"></a>onTransactionEnded</h5>
+</div>
+<div class="sect1">
+<h2 id="members"><a class="anchor" href="#members"></a>Members</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="execute__Callable_Class_String_Object"><a class="anchor" href="#execute__Callable_Class_String_Object"></a>execute(Callable, Class, String, Object)</h3>
+<div class="paragraph">
+<p>Executes the callable if not already cached for the supplied calling class, method and keys.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="onTransactionEnded__"><a class="anchor" href="#onTransactionEnded__"></a>onTransactionEnded()</h3>
 <div class="paragraph">
 <p>Not API, for framework use only.</p>
-</div>
-<div class="paragraph">
-<p>TODO example migration</p>
-</div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-<div class="title">Deprecated Docs</div>
-<div class="paragraph">
-<p>== API &amp; Implementation</p>
-</div>
-<div class="paragraph">
-<p>The API defined by <code>QueryResultsCache</code> is:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Unresolved include directive in modules/applib-svc/pages/QueryResultsCache.adoc - include::refguide:applib-svc:example$services/queryresultscache/QueryResultsCache.java[]</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Execute the callable if not already cached for the supplied calling class, method and keys.</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>There are also overloaded generics versions of  <code>execute(&#8230;&#8203;)</code> that simplify the calling of this domain service.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
 </div>
 </div>
 </div>
@@ -968,8 +907,7 @@ If however every order is for a different product, then no benefit will be gaine
 <h2 id="related-services"><a class="anchor" href="#related-services"></a>Related Services</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The <a href="Scratchpad.html" class="page"><code>Scratchpad</code></a> service is also intended for actions that are called many times, allowing arbitrary information to be shared between them.
-Those methods could be called from some outer loop in domain code, or by the framework itself if the action invoked has the <a href="../applib-ant/Action.html#invokeOn" class="page"><code>@Action#invokeOn()</code></a> annotation attribute set to <code>OBJECT_AND_COLLECTION</code> or <code>COLLECTION_ONLY</code>.</p>
+<p>The <a href="Scratchpad.html" class="page">Scratchpad</a> service is also intended for actions that are called many times, allowing arbitrary information to be shared between them.</p>
 </div>
 </div>
 </div>
@@ -990,7 +928,7 @@ Those methods could be called from some outer loop in domain code, or by the fra
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210213-0423-5a5afc7f</p>
+            <p>Revision: 2.0.0-M4.20210215-0424-f665ec0b</p>
         </div>
     </div>
 </footer>
