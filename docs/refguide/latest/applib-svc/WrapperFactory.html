@@ -758,23 +758,14 @@ page.parent doesn't seem to be set...
 <h1 class="page">WrapperFactory</h1>
 <div id="preamble">
 <div class="sectionbody">
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-TODO: this content has not yet been reviewed/updated for v2.0
-</td>
-</tr>
-</table>
-</div>
 <div class="paragraph">
 <p>Provides the ability to 'wrap' a domain object such that it can be interacted with while enforcing the hide/disable/validate rules implied by the Apache Isis programming model.</p>
 </div>
 <div class="paragraph">
-<p>The wrapper can alternatively also be used to execute the action asynchronously, through an <em>java.util.concurrent.ExecutorService</em> . Any business rules will be invoked synchronously beforehand, however. hand</p>
+<p>This capability goes beyond enforcing the (imperative) constraints within the <code>hideXxx()</code>, <code>disableXxx()</code> and <code>validateXxx()</code> supporting methods; it also enforces (declarative) constraints such as those represented by annotations, eg <code>@Parameter(maxLength=&#8230;&#8203;)</code> or <code>@Property(mustSatisfy=&#8230;&#8203;)</code>.</p>
+</div>
+<div class="paragraph">
+<p>The wrapper can alternatively also be used to execute the action asynchronously, through an <em>java.util.concurrent.ExecutorService</em> . Any business rules will be invoked synchronously beforehand, however.</p>
 </div>
 <div class="paragraph">
 <p>The 'wrap' is a runtime-code-generated proxy that wraps the underlying domain object. The wrapper can then be interacted with as follows:</p>
@@ -909,7 +900,7 @@ TODO: this content has not yet been reviewed/updated for v2.0
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>Returns a proxy object for the provided <em>domainObject</em> , through which can execute the action asynchronously.</p>
+<p>Returns a proxy object for the provided <em>domainObject</em> , through which can execute the action asynchronously (in another thread).</p>
 </div>
 </div>
 </div></td>
@@ -920,7 +911,7 @@ TODO: this content has not yet been reviewed/updated for v2.0
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>Returns a proxy object for the provided <em>mixinClass</em> , through which can execute the action asynchronously.</p>
+<p>Returns a proxy object for the provided <em>mixinClass</em> , through which can execute the action asynchronously (in another thread).</p>
 </div>
 </div>
 </div></td>
@@ -1032,13 +1023,13 @@ TODO: this content has not yet been reviewed/updated for v2.0
 <div class="sect2">
 <h3 id="asyncWrap__T_AsyncControl"><a class="anchor" href="#asyncWrap__T_AsyncControl"></a>asyncWrap(T, AsyncControl)</h3>
 <div class="paragraph">
-<p>Returns a proxy object for the provided <em>domainObject</em> , through which can execute the action asynchronously.</p>
+<p>Returns a proxy object for the provided <em>domainObject</em> , through which can execute the action asynchronously (in another thread).</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="asyncWrapMixin__Class_Object_AsyncControl"><a class="anchor" href="#asyncWrapMixin__Class_Object_AsyncControl"></a>asyncWrapMixin(Class, Object, AsyncControl)</h3>
 <div class="paragraph">
-<p>Returns a proxy object for the provided <em>mixinClass</em> , through which can execute the action asynchronously.</p>
+<p>Returns a proxy object for the provided <em>mixinClass</em> , through which can execute the action asynchronously (in another thread).</p>
 </div>
 </div>
 <div class="sect2">
@@ -1071,1692 +1062,12 @@ TODO: this content has not yet been reviewed/updated for v2.0
 <h2 id="implementation"><a class="anchor" href="#implementation"></a>Implementation</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The <code>WrapperFactory</code> provides the ability to enforce business rules for programmatic interactions between domain objects.
-If there is a (lack of) trust boundary between the caller and callee&#8201;&#8212;&#8201;eg if they reside in different modules&#8201;&#8212;&#8201;then the wrapper factory is one mechanism to ensure that any business constraints defined by the callee are honoured.</p>
-</div>
-<div class="paragraph">
-<p>For example, if the calling object attempts to modify an unmodifiable property on the target object, then an exception will be thrown.</p>
-</div>
-<div class="paragraph">
-<p>Said another way: interactions are performed "as if" they are through the viewer.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>For a discussion of the use of the <code>WrapperFactory</code> within integration tests (the primary or at least original use case for this service) can be found <a href="../../../testing/latest/integtestsupport/about.html#wrapper-factory" class="page">here</a>.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>This capability goes beyond enforcing the (imperative) constraints within the <code>hideXxx()</code>, <code>disableXxx()</code> and <code>validateXxx()</code> supporting methods; it also enforces (declarative) constraints such as those represented by annotations, eg <code>@Parameter(maxLength=&#8230;&#8203;)</code> or <code>@Property(mustSatisfy=&#8230;&#8203;)</code>.</p>
-</div>
-<div class="paragraph">
-<p>This capability is frequently used within <a href="../../../testing/latest/integtestsupport/about.html" class="page">integration tests</a>, but can also be used in production code.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="api-2"><a class="anchor" href="#api-2"></a>API</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The API breaks into four parts, along with a number of supporting control classes.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="api-3"><a class="anchor" href="#api-3"></a>API</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Provides the ability to 'wrap' a domain object such that it can be interacted with while enforcing the hide/disable/validate rules implied by the Apache Isis programming model.</p>
-</div>
-<div class="paragraph">
-<p>The wrapper can alternatively also be used to execute the action asynchronously, through an <em>java.util.concurrent.ExecutorService</em> . Any business rules will be invoked synchronously beforehand, however. hand</p>
-</div>
-<div class="paragraph">
-<p>The 'wrap' is a runtime-code-generated proxy that wraps the underlying domain object. The wrapper can then be interacted with as follows:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>a <code>get</code> method for properties or collections</p>
-</li>
-<li>
-<p>a <code>set</code> method for properties</p>
-</li>
-<li>
-<p>any action</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Calling any of the above methods may result in a (subclass of) <em>InteractionException</em> if the object disallows it. For example, if a property is annotated as hidden then a <a href="../../../system/latest/generated/index/applib/services/wrapper/HiddenException.html" class="page">HiddenException</a> will be thrown. Similarly if an action has a <code>validate</code> method and the supplied arguments are invalid then a <a href="../../../system/latest/generated/index/applib/services/wrapper/InvalidException.html" class="page">InvalidException</a> will be thrown.</p>
-</div>
-<div class="paragraph">
-<p>In addition, the following methods may also be called:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>the <code>title</code> method</p>
-</li>
-<li>
-<p>any <code>defaultXxx</code> or <code>choicesXxx</code> method</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>If the object has (see <em>#isWrapper(Object)</em> already been wrapped), then should just return the object back unchanged.</p>
-</div>
-<div class="sect3">
-<h4 id="api-4"><a class="anchor" href="#api-4"></a>API</h4>
-<div class="listingblock">
-<div class="title">WrapperFactory.java</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">interface WrapperFactory {
-  T wrap(T domainObject, SyncControl syncControl)     <i class="conum" data-value="1"></i><b>(1)</b>
-  T wrap(T domainObject)     <i class="conum" data-value="2"></i><b>(2)</b>
-  T wrapMixin(Class&lt;T&gt; mixinClass, Object mixedIn, SyncControl syncControl)     <i class="conum" data-value="3"></i><b>(3)</b>
-  T wrapMixin(Class&lt;T&gt; mixinClass, Object mixedIn)     <i class="conum" data-value="4"></i><b>(4)</b>
-  T unwrap(T possibleWrappedDomainObject)     <i class="conum" data-value="5"></i><b>(5)</b>
-  boolean isWrapper(T possibleWrappedDomainObject)     <i class="conum" data-value="6"></i><b>(6)</b>
-  T asyncWrap(T domainObject, AsyncControl&lt;R&gt; asyncControl)     <i class="conum" data-value="7"></i><b>(7)</b>
-  T asyncWrapMixin(Class&lt;T&gt; mixinClass, Object mixedIn, AsyncControl&lt;R&gt; asyncControl)     <i class="conum" data-value="8"></i><b>(8)</b>
-  List&lt;InteractionListener&gt; getListeners()     <i class="conum" data-value="9"></i><b>(9)</b>
-  boolean addInteractionListener(InteractionListener listener)     <i class="conum" data-value="10"></i><b>(10)</b>
-  boolean removeInteractionListener(InteractionListener listener)     <i class="conum" data-value="11"></i><b>(11)</b>
-  void notifyListeners(InteractionEvent ev)
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><a href="#wrap__T_SyncControl">wrap(T, SyncControl)</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Provides the "wrapper" of a domain object against which to invoke the action.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><a href="#wrap__T">wrap(T)</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>A convenience overload for <em>#wrap(Object, SyncControl)</em> , returning a wrapper to invoke the action synchronously, enforcing business rules. Any exceptions will be propagated, not swallowed.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td><a href="#wrapMixin__Class_Object_SyncControl">wrapMixin(Class, Object, SyncControl)</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Provides the wrapper for a <em>FactoryService#mixin(Class, Object) mixin</em> , against which to invoke the action.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td><a href="#wrapMixin__Class_Object">wrapMixin(Class, Object)</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>A convenience overload for <em>#wrapMixin(Class, Object, SyncControl)</em> , returning a wrapper to invoke the action synchronously, enforcing business rules. Any exceptions will be propagated, not swallowed.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td><a href="#unwrap__T">unwrap(T)</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Obtains the underlying domain object, if wrapped.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
-<td><a href="#isWrapper__T">isWrapper(T)</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Whether the supplied object is a wrapper around a domain object.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="7"></i><b>7</b></td>
-<td><a href="#asyncWrap__T_AsyncControl">asyncWrap(T, AsyncControl)</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Returns a proxy object for the provided <em>domainObject</em> , through which can execute the action asynchronously.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="8"></i><b>8</b></td>
-<td><a href="#asyncWrapMixin__Class_Object_AsyncControl">asyncWrapMixin(Class, Object, AsyncControl)</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Returns a proxy object for the provided <em>mixinClass</em> , through which can execute the action asynchronously.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="9"></i><b>9</b></td>
-<td><a href="#getListeners__">getListeners()</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>All <a href="../../../system/latest/generated/index/applib/services/wrapper/listeners/InteractionListener.html" class="page">InteractionListener</a> s that have been registered using <em>#addInteractionListener(InteractionListener)</em> .</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="10"></i><b>10</b></td>
-<td><a href="#addInteractionListener__InteractionListener">addInteractionListener(InteractionListener)</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Registers an <a href="../../../system/latest/generated/index/applib/services/wrapper/listeners/InteractionListener.html" class="page">InteractionListener</a> , to be notified of interactions on all wrappers.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="11"></i><b>11</b></td>
-<td><a href="#removeInteractionListener__InteractionListener">removeInteractionListener(InteractionListener)</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Remove an <a href="../../../system/latest/generated/index/applib/services/wrapper/listeners/InteractionListener.html" class="page">InteractionListener</a> , to no longer be notified of interactions on wrappers.</p>
-</div>
-</div>
-</div></td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect3">
-<h4 id="members-2"><a class="anchor" href="#members-2"></a>Members</h4>
-<div class="sect4">
-<h5 id="wrap__T_SyncControl"><a class="anchor" href="#wrap__T_SyncControl"></a>wrap(T, SyncControl)</h5>
-<div class="paragraph">
-<p>Provides the "wrapper" of a domain object against which to invoke the action.</p>
-</div>
-<div class="paragraph">
-<p>The provided <a href="../../../system/latest/generated/index/applib/services/wrapper/control/SyncControl.html" class="page">SyncControl</a> determines whether business rules are checked first, and conversely whether the action is executed. There are therefore three typical cases:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>check rules, execute action</p>
-</li>
-<li>
-<p>skip rules, execute action</p>
-</li>
-<li>
-<p>check rules, skip action</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>The last logical option (skip rules, skip action) is valid but doesn&#8217;t make sense, as it&#8217;s basically a no-op.</p>
-</div>
-<div class="paragraph">
-<p>Otherwise, will do all the validations (raise exceptions as required etc.), but doesn&#8217;t modify the model.</p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="wrap__T"><a class="anchor" href="#wrap__T"></a>wrap(T)</h5>
-<div class="paragraph">
-<p>A convenience overload for <em>#wrap(Object, SyncControl)</em> , returning a wrapper to invoke the action synchronously, enforcing business rules. Any exceptions will be propagated, not swallowed.</p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="wrapMixin__Class_Object_SyncControl"><a class="anchor" href="#wrapMixin__Class_Object_SyncControl"></a>wrapMixin(Class, Object, SyncControl)</h5>
-<div class="paragraph">
-<p>Provides the wrapper for a <em>FactoryService#mixin(Class, Object) mixin</em> , against which to invoke the action.</p>
-</div>
-<div class="paragraph">
-<p>The provided <a href="../../../system/latest/generated/index/applib/services/wrapper/control/SyncControl.html" class="page">SyncControl</a> determines whether business rules are checked first, and conversely whether the action is executed. See <em>#wrap(Object, SyncControl)</em> for more details on this.</p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="wrapMixin__Class_Object"><a class="anchor" href="#wrapMixin__Class_Object"></a>wrapMixin(Class, Object)</h5>
-<div class="paragraph">
-<p>A convenience overload for <em>#wrapMixin(Class, Object, SyncControl)</em> , returning a wrapper to invoke the action synchronously, enforcing business rules. Any exceptions will be propagated, not swallowed.</p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="unwrap__T"><a class="anchor" href="#unwrap__T"></a>unwrap(T)</h5>
-<div class="paragraph">
-<p>Obtains the underlying domain object, if wrapped.</p>
-</div>
-<div class="paragraph">
-<p>If the object <em>#isWrapper(Object) is not wrapped</em> , then should just return the object back unchanged.</p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="isWrapper__T"><a class="anchor" href="#isWrapper__T"></a>isWrapper(T)</h5>
-<div class="paragraph">
-<p>Whether the supplied object is a wrapper around a domain object.</p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="asyncWrap__T_AsyncControl"><a class="anchor" href="#asyncWrap__T_AsyncControl"></a>asyncWrap(T, AsyncControl)</h5>
-<div class="paragraph">
-<p>Returns a proxy object for the provided <em>domainObject</em> , through which can execute the action asynchronously.</p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="asyncWrapMixin__Class_Object_AsyncControl"><a class="anchor" href="#asyncWrapMixin__Class_Object_AsyncControl"></a>asyncWrapMixin(Class, Object, AsyncControl)</h5>
-<div class="paragraph">
-<p>Returns a proxy object for the provided <em>mixinClass</em> , through which can execute the action asynchronously.</p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="getListeners__"><a class="anchor" href="#getListeners__"></a>getListeners()</h5>
-<div class="paragraph">
-<p>All <a href="../../../system/latest/generated/index/applib/services/wrapper/listeners/InteractionListener.html" class="page">InteractionListener</a> s that have been registered using <em>#addInteractionListener(InteractionListener)</em> .</p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="addInteractionListener__InteractionListener"><a class="anchor" href="#addInteractionListener__InteractionListener"></a>addInteractionListener(InteractionListener)</h5>
-<div class="paragraph">
-<p>Registers an <a href="../../../system/latest/generated/index/applib/services/wrapper/listeners/InteractionListener.html" class="page">InteractionListener</a> , to be notified of interactions on all wrappers.</p>
-</div>
-<div class="paragraph">
-<p>This is retrospective: the listener will be notified of interactions even on wrappers created before the listener was installed. (From an implementation perspective this is because the wrappers delegate back to the container to fire the events).</p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="removeInteractionListener__InteractionListener"><a class="anchor" href="#removeInteractionListener__InteractionListener"></a>removeInteractionListener(InteractionListener)</h5>
-<div class="paragraph">
-<p>Remove an <a href="../../../system/latest/generated/index/applib/services/wrapper/listeners/InteractionListener.html" class="page">InteractionListener</a> , to no longer be notified of interactions on wrappers.</p>
-</div>
-<div class="paragraph">
-<p>This is retrospective: the listener will no longer be notified of any interactions created on any wrappers, not just on those wrappers created subsequently. (From an implementation perspective this is because the wrappers delegate back to the container to fire the events).</p>
-</div>
-<div class="paragraph">
-<p>TODO example migration</p>
-</div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-<div class="title">Deprecated Docs</div>
-<div class="paragraph">
-<p>=== Synchronous API</p>
-</div>
-<div class="paragraph">
-<p>The synchronous API provided by the service is:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Unresolved include directive in modules/applib-svc/pages/WrapperFactory.adoc - include::refguide:applib-svc:example$services/wrapper/WrapperFactory.java[]</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>wraps the underlying domain object so it can invoked (through its wrapper) synchronously in the same thread.
-<div class="paragraph">
-<p>The <code>SyncControl</code> modifies the way in which the wrapper interacts with the underlying domain object, discussed <a href="#synccontrol">below</a>.</p>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>overload that wraps the underlying domain object with a wrapper that will validate all business rules and then execute if they pass.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>instantiates and wraps a mixin so that it can be invoked (through its wrapper) synchronously in the same thread.
-Again <code>SyncControl</code> modifies the way in which the wrapper interacts with the underlying domain object, discussed <a href="#synccontrol">below</a>..</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>overload that instantiates and wraps a mixin with a wrapper that will validate all business rules and then execute the action if they pass.</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
 <p>The service works by returning a "wrapper" around a supplied domain object (using <a href="https://bytebuddy.net/">byte buddy</a>), and it is this wrapper that ensures that the hide/disable/validate rules implies by the Apache Isis programming model are enforced.</p>
 </div>
-</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="domain-objects"><a class="anchor" href="#domain-objects"></a>Domain Objects</h4>
-<div class="paragraph">
-<p>For domain objects (not mixins), the wrapper can be interacted with as follows:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>a <code>get&#8230;&#8203;()</code> method for properties or collections</p>
-</li>
-<li>
-<p>a <code>set&#8230;&#8203;()</code> method for properties</p>
-</li>
-<li>
-<p>an <code>addTo&#8230;&#8203;()</code> or <code>removeFrom&#8230;&#8203;()</code> method for collections</p>
-</li>
-<li>
-<p>any action</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Calling any of the above methods may result in a (subclass of) <code>InteractionException</code> if the object disallows it.
-For example, if a property is annotated with <a href="../applib-ant/ActionLayout.html#hidden" class="page"><code>@ActionLayout#hidden</code></a> then a <code>HiddenException</code> will be thrown.
-Similarly if an action has a <a href="../applib-methods/prefixes.html#validate" class="page"><code>validateXxx()</code></a> method and the supplied arguments are invalid then an <code>InvalidException</code> will be thrown.</p>
-</div>
-<div class="paragraph">
-<p>In addition, the following methods may also be called:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>the <a href="../applib-methods/reserved.html#title" class="page"><code>title()</code></a> and <code>toString()</code> methods</p>
-</li>
-<li>
-<p>any <a href="../applib-methods/prefixes.html#default" class="page"><code>default&#8230;&#8203;()</code></a>, <a href="../applib-methods/prefixes.html#choices" class="page"><code>choices&#8230;&#8203;()</code></a> or <a href="../applib-methods/prefixes.html#autoComplete" class="page"><code>autoComplete&#8230;&#8203;()</code></a> methods</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>An exception will be thrown if any other methods are thrown.</p>
-</div>
-<div class="paragraph">
-<p>If the interface is performed (action invoked or property set), then - irrespective of whether the business rules were checked or skipped - a <a href="../applib-ant/Action.html#command" class="page">command</a> will be created and pre- and post-execute <a href="../applib-ant/Action.html#domainEvent" class="page">domain event</a>s) will be fired.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="mixins"><a class="anchor" href="#mixins"></a>Mixins</h4>
-<div class="paragraph">
-<p>For mixins, the behaviour of the wrapper is similar but simpler.
-Mixin wrappers only apply to actions, and so the wrapper will enforce the hidden/disable/validate rules before executing.
-In addition, any <a href="../applib-methods/prefixes.html#default" class="page"><code>default&#8230;&#8203;()</code></a>, <a href="../applib-methods/prefixes.html#choices" class="page"><code>choices&#8230;&#8203;()</code></a> or <a href="../applib-methods/prefixes.html#autoComplete" class="page"><code>autoComplete&#8230;&#8203;()</code></a> methods can be called.</p>
-</div>
-</div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="synccontrol"><a class="anchor" href="#synccontrol"></a>API</h2>
-<div class="sectionbody">
-<div class="sect3">
-<h4 id="api-5"><a class="anchor" href="#api-5"></a>API</h4>
-<div class="listingblock">
-<div class="title">SyncControl.java</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">class SyncControl {
-  SyncControl control()
-  SyncControl withExecute()
-  SyncControl withNoExecute()
-  ImmutableEnumSet&lt;ExecutionMode&gt; getExecutionModes()     <i class="conum" data-value="1"></i><b>(1)</b>
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><a href="#getExecutionModes__">getExecutionModes()</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Not API.</p>
-</div>
-</div>
-</div></td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect3">
-<h4 id="members-3"><a class="anchor" href="#members-3"></a>Members</h4>
-<div class="sect4">
-<h5 id="getExecutionModes__"><a class="anchor" href="#getExecutionModes__"></a>getExecutionModes()</h5>
-<div class="paragraph">
-<p>Not API.</p>
-</div>
-<div class="paragraph">
-<p>TODO example migration</p>
-</div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-<div class="title">Deprecated Docs</div>
-<div class="paragraph">
-<p>==== <code>SyncControl</code></p>
-</div>
-<div class="paragraph">
-<p>The <code>SyncControl</code> class controls the way that a (synchronous) wrapper works.
-Its superclass <code>ControlAbstract</code> is:</p>
-</div>
-<div class="listingblock">
-<div class="title">ControlAbstract.java</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Unresolved include directive in modules/applib-svc/pages/WrapperFactory.adoc - include::refguide:applib-svc:example$services/wrapper/control/ControlAbstract.java[]</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>whether to check business rules (hide/disable/validate) before executing the underlying property or action</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>how to handle exceptions if they occur, using <code>ExceptionHandler</code>:
-<div class="listingblock">
-<div class="title">SyncControl.java</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Unresolved include directive in modules/applib-svc/pages/WrapperFactory.adoc - include::refguide:applib-svc:example$services/wrapper/control/ExceptionHandler.java[]</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Exceptions can be rethrown or ignored.
-If ignored, the handler can instead return a value; this must be compatible with the expected return value of the underlying action.</p>
-</div></td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>... and the <code>SyncControl</code> class itself is:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Unresolved include directive in modules/applib-svc/pages/WrapperFactory.adoc - include::refguide:applib-svc:example$services/wrapper/control/SyncControl.java[]</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Default exception handler is to rethrow the exception.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Don&#8217;t actually execute the action (for example, just check the rules as in a "dry-run").</td>
-</tr>
-</table>
-</div>
-</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="api-6"><a class="anchor" href="#api-6"></a>API</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Provides the ability to 'wrap' a domain object such that it can be interacted with while enforcing the hide/disable/validate rules implied by the Apache Isis programming model.</p>
-</div>
-<div class="paragraph">
-<p>The wrapper can alternatively also be used to execute the action asynchronously, through an <em>java.util.concurrent.ExecutorService</em> . Any business rules will be invoked synchronously beforehand, however. hand</p>
-</div>
-<div class="paragraph">
-<p>The 'wrap' is a runtime-code-generated proxy that wraps the underlying domain object. The wrapper can then be interacted with as follows:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>a <code>get</code> method for properties or collections</p>
-</li>
-<li>
-<p>a <code>set</code> method for properties</p>
-</li>
-<li>
-<p>any action</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Calling any of the above methods may result in a (subclass of) <em>InteractionException</em> if the object disallows it. For example, if a property is annotated as hidden then a <a href="../../../system/latest/generated/index/applib/services/wrapper/HiddenException.html" class="page">HiddenException</a> will be thrown. Similarly if an action has a <code>validate</code> method and the supplied arguments are invalid then a <a href="../../../system/latest/generated/index/applib/services/wrapper/InvalidException.html" class="page">InvalidException</a> will be thrown.</p>
-</div>
-<div class="paragraph">
-<p>In addition, the following methods may also be called:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>the <code>title</code> method</p>
-</li>
-<li>
-<p>any <code>defaultXxx</code> or <code>choicesXxx</code> method</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>If the object has (see <em>#isWrapper(Object)</em> already been wrapped), then should just return the object back unchanged.</p>
-</div>
-<div class="sect3">
-<h4 id="api-7"><a class="anchor" href="#api-7"></a>API</h4>
-<div class="listingblock">
-<div class="title">WrapperFactory.java</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">interface WrapperFactory {
-  T wrap(T domainObject, SyncControl syncControl)     <i class="conum" data-value="1"></i><b>(1)</b>
-  T wrap(T domainObject)     <i class="conum" data-value="2"></i><b>(2)</b>
-  T wrapMixin(Class&lt;T&gt; mixinClass, Object mixedIn, SyncControl syncControl)     <i class="conum" data-value="3"></i><b>(3)</b>
-  T wrapMixin(Class&lt;T&gt; mixinClass, Object mixedIn)     <i class="conum" data-value="4"></i><b>(4)</b>
-  T unwrap(T possibleWrappedDomainObject)     <i class="conum" data-value="5"></i><b>(5)</b>
-  boolean isWrapper(T possibleWrappedDomainObject)     <i class="conum" data-value="6"></i><b>(6)</b>
-  T asyncWrap(T domainObject, AsyncControl&lt;R&gt; asyncControl)     <i class="conum" data-value="7"></i><b>(7)</b>
-  T asyncWrapMixin(Class&lt;T&gt; mixinClass, Object mixedIn, AsyncControl&lt;R&gt; asyncControl)     <i class="conum" data-value="8"></i><b>(8)</b>
-  List&lt;InteractionListener&gt; getListeners()     <i class="conum" data-value="9"></i><b>(9)</b>
-  boolean addInteractionListener(InteractionListener listener)     <i class="conum" data-value="10"></i><b>(10)</b>
-  boolean removeInteractionListener(InteractionListener listener)     <i class="conum" data-value="11"></i><b>(11)</b>
-  void notifyListeners(InteractionEvent ev)
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><a href="#wrap__T_SyncControl">wrap(T, SyncControl)</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Provides the "wrapper" of a domain object against which to invoke the action.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><a href="#wrap__T">wrap(T)</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>A convenience overload for <em>#wrap(Object, SyncControl)</em> , returning a wrapper to invoke the action synchronously, enforcing business rules. Any exceptions will be propagated, not swallowed.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td><a href="#wrapMixin__Class_Object_SyncControl">wrapMixin(Class, Object, SyncControl)</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Provides the wrapper for a <em>FactoryService#mixin(Class, Object) mixin</em> , against which to invoke the action.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td><a href="#wrapMixin__Class_Object">wrapMixin(Class, Object)</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>A convenience overload for <em>#wrapMixin(Class, Object, SyncControl)</em> , returning a wrapper to invoke the action synchronously, enforcing business rules. Any exceptions will be propagated, not swallowed.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td><a href="#unwrap__T">unwrap(T)</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Obtains the underlying domain object, if wrapped.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
-<td><a href="#isWrapper__T">isWrapper(T)</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Whether the supplied object is a wrapper around a domain object.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="7"></i><b>7</b></td>
-<td><a href="#asyncWrap__T_AsyncControl">asyncWrap(T, AsyncControl)</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Returns a proxy object for the provided <em>domainObject</em> , through which can execute the action asynchronously.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="8"></i><b>8</b></td>
-<td><a href="#asyncWrapMixin__Class_Object_AsyncControl">asyncWrapMixin(Class, Object, AsyncControl)</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Returns a proxy object for the provided <em>mixinClass</em> , through which can execute the action asynchronously.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="9"></i><b>9</b></td>
-<td><a href="#getListeners__">getListeners()</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>All <a href="../../../system/latest/generated/index/applib/services/wrapper/listeners/InteractionListener.html" class="page">InteractionListener</a> s that have been registered using <em>#addInteractionListener(InteractionListener)</em> .</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="10"></i><b>10</b></td>
-<td><a href="#addInteractionListener__InteractionListener">addInteractionListener(InteractionListener)</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Registers an <a href="../../../system/latest/generated/index/applib/services/wrapper/listeners/InteractionListener.html" class="page">InteractionListener</a> , to be notified of interactions on all wrappers.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="11"></i><b>11</b></td>
-<td><a href="#removeInteractionListener__InteractionListener">removeInteractionListener(InteractionListener)</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Remove an <a href="../../../system/latest/generated/index/applib/services/wrapper/listeners/InteractionListener.html" class="page">InteractionListener</a> , to no longer be notified of interactions on wrappers.</p>
-</div>
-</div>
-</div></td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect3">
-<h4 id="members-4"><a class="anchor" href="#members-4"></a>Members</h4>
-<div class="sect4">
-<h5 id="wrap__T_SyncControl"><a class="anchor" href="#wrap__T_SyncControl"></a>wrap(T, SyncControl)</h5>
-<div class="paragraph">
-<p>Provides the "wrapper" of a domain object against which to invoke the action.</p>
-</div>
-<div class="paragraph">
-<p>The provided <a href="../../../system/latest/generated/index/applib/services/wrapper/control/SyncControl.html" class="page">SyncControl</a> determines whether business rules are checked first, and conversely whether the action is executed. There are therefore three typical cases:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>check rules, execute action</p>
-</li>
-<li>
-<p>skip rules, execute action</p>
-</li>
-<li>
-<p>check rules, skip action</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>The last logical option (skip rules, skip action) is valid but doesn&#8217;t make sense, as it&#8217;s basically a no-op.</p>
-</div>
-<div class="paragraph">
-<p>Otherwise, will do all the validations (raise exceptions as required etc.), but doesn&#8217;t modify the model.</p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="wrap__T"><a class="anchor" href="#wrap__T"></a>wrap(T)</h5>
-<div class="paragraph">
-<p>A convenience overload for <em>#wrap(Object, SyncControl)</em> , returning a wrapper to invoke the action synchronously, enforcing business rules. Any exceptions will be propagated, not swallowed.</p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="wrapMixin__Class_Object_SyncControl"><a class="anchor" href="#wrapMixin__Class_Object_SyncControl"></a>wrapMixin(Class, Object, SyncControl)</h5>
-<div class="paragraph">
-<p>Provides the wrapper for a <em>FactoryService#mixin(Class, Object) mixin</em> , against which to invoke the action.</p>
-</div>
-<div class="paragraph">
-<p>The provided <a href="../../../system/latest/generated/index/applib/services/wrapper/control/SyncControl.html" class="page">SyncControl</a> determines whether business rules are checked first, and conversely whether the action is executed. See <em>#wrap(Object, SyncControl)</em> for more details on this.</p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="wrapMixin__Class_Object"><a class="anchor" href="#wrapMixin__Class_Object"></a>wrapMixin(Class, Object)</h5>
-<div class="paragraph">
-<p>A convenience overload for <em>#wrapMixin(Class, Object, SyncControl)</em> , returning a wrapper to invoke the action synchronously, enforcing business rules. Any exceptions will be propagated, not swallowed.</p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="unwrap__T"><a class="anchor" href="#unwrap__T"></a>unwrap(T)</h5>
-<div class="paragraph">
-<p>Obtains the underlying domain object, if wrapped.</p>
-</div>
-<div class="paragraph">
-<p>If the object <em>#isWrapper(Object) is not wrapped</em> , then should just return the object back unchanged.</p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="isWrapper__T"><a class="anchor" href="#isWrapper__T"></a>isWrapper(T)</h5>
-<div class="paragraph">
-<p>Whether the supplied object is a wrapper around a domain object.</p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="asyncWrap__T_AsyncControl"><a class="anchor" href="#asyncWrap__T_AsyncControl"></a>asyncWrap(T, AsyncControl)</h5>
-<div class="paragraph">
-<p>Returns a proxy object for the provided <em>domainObject</em> , through which can execute the action asynchronously.</p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="asyncWrapMixin__Class_Object_AsyncControl"><a class="anchor" href="#asyncWrapMixin__Class_Object_AsyncControl"></a>asyncWrapMixin(Class, Object, AsyncControl)</h5>
-<div class="paragraph">
-<p>Returns a proxy object for the provided <em>mixinClass</em> , through which can execute the action asynchronously.</p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="getListeners__"><a class="anchor" href="#getListeners__"></a>getListeners()</h5>
-<div class="paragraph">
-<p>All <a href="../../../system/latest/generated/index/applib/services/wrapper/listeners/InteractionListener.html" class="page">InteractionListener</a> s that have been registered using <em>#addInteractionListener(InteractionListener)</em> .</p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="addInteractionListener__InteractionListener"><a class="anchor" href="#addInteractionListener__InteractionListener"></a>addInteractionListener(InteractionListener)</h5>
-<div class="paragraph">
-<p>Registers an <a href="../../../system/latest/generated/index/applib/services/wrapper/listeners/InteractionListener.html" class="page">InteractionListener</a> , to be notified of interactions on all wrappers.</p>
-</div>
-<div class="paragraph">
-<p>This is retrospective: the listener will be notified of interactions even on wrappers created before the listener was installed. (From an implementation perspective this is because the wrappers delegate back to the container to fire the events).</p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="removeInteractionListener__InteractionListener"><a class="anchor" href="#removeInteractionListener__InteractionListener"></a>removeInteractionListener(InteractionListener)</h5>
-<div class="paragraph">
-<p>Remove an <a href="../../../system/latest/generated/index/applib/services/wrapper/listeners/InteractionListener.html" class="page">InteractionListener</a> , to no longer be notified of interactions on wrappers.</p>
-</div>
-<div class="paragraph">
-<p>This is retrospective: the listener will no longer be notified of any interactions created on any wrappers, not just on those wrappers created subsequently. (From an implementation perspective this is because the wrappers delegate back to the container to fire the events).</p>
-</div>
-<div class="paragraph">
-<p>TODO example migration</p>
-</div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-<div class="title">Deprecated Docs</div>
-<div class="paragraph">
-<p>=== Asynchronous API</p>
-</div>
-<div class="paragraph">
-<p>The <code>WrapperFactory</code> also allows domain objects to be interacted with in an asynchronous fashion, in other words executed in a separate thread:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Unresolved include directive in modules/applib-svc/pages/WrapperFactory.adoc - include::refguide:applib-svc:example$services/wrapper/WrapperFactory.java[]</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Wraps the underlying domain object so it can be invoked (through its wrapper) asynchronously in a separate thread.
-The <code>AsyncControl</code> modifies the way in which the wrapper interacts with the underlying domain object, discussed <a href="#asynccontrol">below</a>.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>instantiates and wraps a mixin so that it can be invoked (through its wrapper) asynchronously in a separate thread.
-Again <code>AsyncControl</code> modifies the way this is done.</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>Executing in a separate thread means that the target and arguments are used in a new session.
-If any of these are entities, they are retrieved from the database afresh; it isn&#8217;t possible to pass domain entity references from the foreground calling thread to the background threads.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="api-8"><a class="anchor" href="#api-8"></a>API</h2>
-<div class="sectionbody">
-<div class="sect3">
-<h4 id="api-9"><a class="anchor" href="#api-9"></a>API</h4>
-<div class="listingblock">
-<div class="title">AsyncControl.java</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">class AsyncControl&lt;R&gt; {
-  AsyncControl&lt;Void&gt; returningVoid()
-  AsyncControl&lt;X&gt; returning(final Class&lt;X&gt; cls)
-  AsyncControl&lt;R&gt; with(ExecutorService executorService)
-  AsyncControl&lt;R&gt; withClock(final VirtualClock clock)
-  AsyncControl&lt;R&gt; withLocale(final Locale locale)
-  AsyncControl&lt;R&gt; withTimeZone(final TimeZone timeZone)
-  AsyncControl&lt;R&gt; withUser(final UserMemento user)
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>TODO example migration</p>
-</div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-<div class="title">Deprecated Docs</div>
-<div class="paragraph">
-<p>==== <code>AsyncControl</code></p>
-</div>
-<div class="paragraph">
-<p>The <code>AsyncControl</code> class controls the way that an asynchronous wrapper&#8201;&#8212;&#8201;as obtained by <code>asyncWrapXxx(&#8230;&#8203;)</code>&#8201;&#8212;&#8201;works.
-The class inherits from <code>ControlAbstract</code> (see above), to allow the rules checking to be skipped and to configure the <code>ExceptionHandler</code>.
-It extends with the following behaviour:</p>
-</div>
-<div class="listingblock">
-<div class="title">AsyncControl.java</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Unresolved include directive in modules/applib-svc/pages/WrapperFactory.adoc - include::refguide:applib-svc:example$services/wrapper/control/AsyncControl.java[]</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>instantiate for a void action or property edit (where there is no need or intention to provide a return value through the <code>Future</code>, discussed below).</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>instantiate for an action returning a value of <code>&lt;R&gt;</code> (where this value will be returned through the <code>Future</code>, discussed below).</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Default exception handler is just to log the exception, though this can be overridden.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>Default executor service is the common pool.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>Specify the user for the session used to execute the command asynchronously, in the background.
-If not specified, then the user of the current foreground session is used.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
-<td>Specify the roles of the user for the session used to execute the command asynchronously, in the background.
-If not specified, then the roles of the current user foreground user are used.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="7"></i><b>7</b></td>
-<td>Provides access to a <code>Future</code> representing the result of the background command.
-This may or may not hold a value.</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>The <code>AsyncControl</code> can therefore be used to check business rules or to skip them.
-If business rules are checked, note that they are performed in the context of the <em>foreground</em> session.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="api-10"><a class="anchor" href="#api-10"></a>API</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Provides the ability to 'wrap' a domain object such that it can be interacted with while enforcing the hide/disable/validate rules implied by the Apache Isis programming model.</p>
-</div>
-<div class="paragraph">
-<p>The wrapper can alternatively also be used to execute the action asynchronously, through an <em>java.util.concurrent.ExecutorService</em> . Any business rules will be invoked synchronously beforehand, however. hand</p>
-</div>
-<div class="paragraph">
-<p>The 'wrap' is a runtime-code-generated proxy that wraps the underlying domain object. The wrapper can then be interacted with as follows:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>a <code>get</code> method for properties or collections</p>
-</li>
-<li>
-<p>a <code>set</code> method for properties</p>
-</li>
-<li>
-<p>any action</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Calling any of the above methods may result in a (subclass of) <em>InteractionException</em> if the object disallows it. For example, if a property is annotated as hidden then a <a href="../../../system/latest/generated/index/applib/services/wrapper/HiddenException.html" class="page">HiddenException</a> will be thrown. Similarly if an action has a <code>validate</code> method and the supplied arguments are invalid then a <a href="../../../system/latest/generated/index/applib/services/wrapper/InvalidException.html" class="page">InvalidException</a> will be thrown.</p>
-</div>
-<div class="paragraph">
-<p>In addition, the following methods may also be called:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>the <code>title</code> method</p>
-</li>
-<li>
-<p>any <code>defaultXxx</code> or <code>choicesXxx</code> method</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>If the object has (see <em>#isWrapper(Object)</em> already been wrapped), then should just return the object back unchanged.</p>
-</div>
-<div class="sect3">
-<h4 id="api-11"><a class="anchor" href="#api-11"></a>API</h4>
-<div class="listingblock">
-<div class="title">WrapperFactory.java</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">interface WrapperFactory {
-  T wrap(T domainObject, SyncControl syncControl)     <i class="conum" data-value="1"></i><b>(1)</b>
-  T wrap(T domainObject)     <i class="conum" data-value="2"></i><b>(2)</b>
-  T wrapMixin(Class&lt;T&gt; mixinClass, Object mixedIn, SyncControl syncControl)     <i class="conum" data-value="3"></i><b>(3)</b>
-  T wrapMixin(Class&lt;T&gt; mixinClass, Object mixedIn)     <i class="conum" data-value="4"></i><b>(4)</b>
-  T unwrap(T possibleWrappedDomainObject)     <i class="conum" data-value="5"></i><b>(5)</b>
-  boolean isWrapper(T possibleWrappedDomainObject)     <i class="conum" data-value="6"></i><b>(6)</b>
-  T asyncWrap(T domainObject, AsyncControl&lt;R&gt; asyncControl)     <i class="conum" data-value="7"></i><b>(7)</b>
-  T asyncWrapMixin(Class&lt;T&gt; mixinClass, Object mixedIn, AsyncControl&lt;R&gt; asyncControl)     <i class="conum" data-value="8"></i><b>(8)</b>
-  List&lt;InteractionListener&gt; getListeners()     <i class="conum" data-value="9"></i><b>(9)</b>
-  boolean addInteractionListener(InteractionListener listener)     <i class="conum" data-value="10"></i><b>(10)</b>
-  boolean removeInteractionListener(InteractionListener listener)     <i class="conum" data-value="11"></i><b>(11)</b>
-  void notifyListeners(InteractionEvent ev)
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><a href="#wrap__T_SyncControl">wrap(T, SyncControl)</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Provides the "wrapper" of a domain object against which to invoke the action.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><a href="#wrap__T">wrap(T)</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>A convenience overload for <em>#wrap(Object, SyncControl)</em> , returning a wrapper to invoke the action synchronously, enforcing business rules. Any exceptions will be propagated, not swallowed.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td><a href="#wrapMixin__Class_Object_SyncControl">wrapMixin(Class, Object, SyncControl)</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Provides the wrapper for a <em>FactoryService#mixin(Class, Object) mixin</em> , against which to invoke the action.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td><a href="#wrapMixin__Class_Object">wrapMixin(Class, Object)</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>A convenience overload for <em>#wrapMixin(Class, Object, SyncControl)</em> , returning a wrapper to invoke the action synchronously, enforcing business rules. Any exceptions will be propagated, not swallowed.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td><a href="#unwrap__T">unwrap(T)</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Obtains the underlying domain object, if wrapped.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
-<td><a href="#isWrapper__T">isWrapper(T)</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Whether the supplied object is a wrapper around a domain object.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="7"></i><b>7</b></td>
-<td><a href="#asyncWrap__T_AsyncControl">asyncWrap(T, AsyncControl)</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Returns a proxy object for the provided <em>domainObject</em> , through which can execute the action asynchronously.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="8"></i><b>8</b></td>
-<td><a href="#asyncWrapMixin__Class_Object_AsyncControl">asyncWrapMixin(Class, Object, AsyncControl)</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Returns a proxy object for the provided <em>mixinClass</em> , through which can execute the action asynchronously.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="9"></i><b>9</b></td>
-<td><a href="#getListeners__">getListeners()</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>All <a href="../../../system/latest/generated/index/applib/services/wrapper/listeners/InteractionListener.html" class="page">InteractionListener</a> s that have been registered using <em>#addInteractionListener(InteractionListener)</em> .</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="10"></i><b>10</b></td>
-<td><a href="#addInteractionListener__InteractionListener">addInteractionListener(InteractionListener)</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Registers an <a href="../../../system/latest/generated/index/applib/services/wrapper/listeners/InteractionListener.html" class="page">InteractionListener</a> , to be notified of interactions on all wrappers.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="11"></i><b>11</b></td>
-<td><a href="#removeInteractionListener__InteractionListener">removeInteractionListener(InteractionListener)</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Remove an <a href="../../../system/latest/generated/index/applib/services/wrapper/listeners/InteractionListener.html" class="page">InteractionListener</a> , to no longer be notified of interactions on wrappers.</p>
-</div>
-</div>
-</div></td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect3">
-<h4 id="members-5"><a class="anchor" href="#members-5"></a>Members</h4>
-<div class="sect4">
-<h5 id="wrap__T_SyncControl"><a class="anchor" href="#wrap__T_SyncControl"></a>wrap(T, SyncControl)</h5>
-<div class="paragraph">
-<p>Provides the "wrapper" of a domain object against which to invoke the action.</p>
-</div>
-<div class="paragraph">
-<p>The provided <a href="../../../system/latest/generated/index/applib/services/wrapper/control/SyncControl.html" class="page">SyncControl</a> determines whether business rules are checked first, and conversely whether the action is executed. There are therefore three typical cases:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>check rules, execute action</p>
-</li>
-<li>
-<p>skip rules, execute action</p>
-</li>
-<li>
-<p>check rules, skip action</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>The last logical option (skip rules, skip action) is valid but doesn&#8217;t make sense, as it&#8217;s basically a no-op.</p>
-</div>
-<div class="paragraph">
-<p>Otherwise, will do all the validations (raise exceptions as required etc.), but doesn&#8217;t modify the model.</p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="wrap__T"><a class="anchor" href="#wrap__T"></a>wrap(T)</h5>
-<div class="paragraph">
-<p>A convenience overload for <em>#wrap(Object, SyncControl)</em> , returning a wrapper to invoke the action synchronously, enforcing business rules. Any exceptions will be propagated, not swallowed.</p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="wrapMixin__Class_Object_SyncControl"><a class="anchor" href="#wrapMixin__Class_Object_SyncControl"></a>wrapMixin(Class, Object, SyncControl)</h5>
-<div class="paragraph">
-<p>Provides the wrapper for a <em>FactoryService#mixin(Class, Object) mixin</em> , against which to invoke the action.</p>
-</div>
-<div class="paragraph">
-<p>The provided <a href="../../../system/latest/generated/index/applib/services/wrapper/control/SyncControl.html" class="page">SyncControl</a> determines whether business rules are checked first, and conversely whether the action is executed. See <em>#wrap(Object, SyncControl)</em> for more details on this.</p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="wrapMixin__Class_Object"><a class="anchor" href="#wrapMixin__Class_Object"></a>wrapMixin(Class, Object)</h5>
-<div class="paragraph">
-<p>A convenience overload for <em>#wrapMixin(Class, Object, SyncControl)</em> , returning a wrapper to invoke the action synchronously, enforcing business rules. Any exceptions will be propagated, not swallowed.</p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="unwrap__T"><a class="anchor" href="#unwrap__T"></a>unwrap(T)</h5>
-<div class="paragraph">
-<p>Obtains the underlying domain object, if wrapped.</p>
-</div>
-<div class="paragraph">
-<p>If the object <em>#isWrapper(Object) is not wrapped</em> , then should just return the object back unchanged.</p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="isWrapper__T"><a class="anchor" href="#isWrapper__T"></a>isWrapper(T)</h5>
-<div class="paragraph">
-<p>Whether the supplied object is a wrapper around a domain object.</p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="asyncWrap__T_AsyncControl"><a class="anchor" href="#asyncWrap__T_AsyncControl"></a>asyncWrap(T, AsyncControl)</h5>
-<div class="paragraph">
-<p>Returns a proxy object for the provided <em>domainObject</em> , through which can execute the action asynchronously.</p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="asyncWrapMixin__Class_Object_AsyncControl"><a class="anchor" href="#asyncWrapMixin__Class_Object_AsyncControl"></a>asyncWrapMixin(Class, Object, AsyncControl)</h5>
-<div class="paragraph">
-<p>Returns a proxy object for the provided <em>mixinClass</em> , through which can execute the action asynchronously.</p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="getListeners__"><a class="anchor" href="#getListeners__"></a>getListeners()</h5>
-<div class="paragraph">
-<p>All <a href="../../../system/latest/generated/index/applib/services/wrapper/listeners/InteractionListener.html" class="page">InteractionListener</a> s that have been registered using <em>#addInteractionListener(InteractionListener)</em> .</p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="addInteractionListener__InteractionListener"><a class="anchor" href="#addInteractionListener__InteractionListener"></a>addInteractionListener(InteractionListener)</h5>
-<div class="paragraph">
-<p>Registers an <a href="../../../system/latest/generated/index/applib/services/wrapper/listeners/InteractionListener.html" class="page">InteractionListener</a> , to be notified of interactions on all wrappers.</p>
-</div>
-<div class="paragraph">
-<p>This is retrospective: the listener will be notified of interactions even on wrappers created before the listener was installed. (From an implementation perspective this is because the wrappers delegate back to the container to fire the events).</p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="removeInteractionListener__InteractionListener"><a class="anchor" href="#removeInteractionListener__InteractionListener"></a>removeInteractionListener(InteractionListener)</h5>
-<div class="paragraph">
-<p>Remove an <a href="../../../system/latest/generated/index/applib/services/wrapper/listeners/InteractionListener.html" class="page">InteractionListener</a> , to no longer be notified of interactions on wrappers.</p>
-</div>
-<div class="paragraph">
-<p>This is retrospective: the listener will no longer be notified of any interactions created on any wrappers, not just on those wrappers created subsequently. (From an implementation perspective this is because the wrappers delegate back to the container to fire the events).</p>
-</div>
-<div class="paragraph">
-<p>TODO example migration</p>
-</div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-<div class="title">Deprecated Docs</div>
-<div class="paragraph">
-<p>=== Unwrap API</p>
-</div>
-<div class="paragraph">
-<p>The unwrap API provided by the service is:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Unresolved include directive in modules/applib-svc/pages/WrapperFactory.adoc - include::refguide:applib-svc:example$services/wrapper/WrapperFactory.java[]</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Obtains the underlying domain object or mixin, if wrapped.
-<div class="paragraph">
-<p>If the object is not wrapped, returns back unchanged.</p>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>whether the supplied object is a wrapper around a domain object or mixin.</td>
-</tr>
-</table>
-</div>
-</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="api-12"><a class="anchor" href="#api-12"></a>API</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Provides the ability to 'wrap' a domain object such that it can be interacted with while enforcing the hide/disable/validate rules implied by the Apache Isis programming model.</p>
-</div>
-<div class="paragraph">
-<p>The wrapper can alternatively also be used to execute the action asynchronously, through an <em>java.util.concurrent.ExecutorService</em> . Any business rules will be invoked synchronously beforehand, however. hand</p>
-</div>
-<div class="paragraph">
-<p>The 'wrap' is a runtime-code-generated proxy that wraps the underlying domain object. The wrapper can then be interacted with as follows:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>a <code>get</code> method for properties or collections</p>
-</li>
-<li>
-<p>a <code>set</code> method for properties</p>
-</li>
-<li>
-<p>any action</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Calling any of the above methods may result in a (subclass of) <em>InteractionException</em> if the object disallows it. For example, if a property is annotated as hidden then a <a href="../../../system/latest/generated/index/applib/services/wrapper/HiddenException.html" class="page">HiddenException</a> will be thrown. Similarly if an action has a <code>validate</code> method and the supplied arguments are invalid then a <a href="../../../system/latest/generated/index/applib/services/wrapper/InvalidException.html" class="page">InvalidException</a> will be thrown.</p>
-</div>
-<div class="paragraph">
-<p>In addition, the following methods may also be called:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>the <code>title</code> method</p>
-</li>
-<li>
-<p>any <code>defaultXxx</code> or <code>choicesXxx</code> method</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>If the object has (see <em>#isWrapper(Object)</em> already been wrapped), then should just return the object back unchanged.</p>
-</div>
-<div class="sect3">
-<h4 id="api-13"><a class="anchor" href="#api-13"></a>API</h4>
-<div class="listingblock">
-<div class="title">WrapperFactory.java</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">interface WrapperFactory {
-  T wrap(T domainObject, SyncControl syncControl)     <i class="conum" data-value="1"></i><b>(1)</b>
-  T wrap(T domainObject)     <i class="conum" data-value="2"></i><b>(2)</b>
-  T wrapMixin(Class&lt;T&gt; mixinClass, Object mixedIn, SyncControl syncControl)     <i class="conum" data-value="3"></i><b>(3)</b>
-  T wrapMixin(Class&lt;T&gt; mixinClass, Object mixedIn)     <i class="conum" data-value="4"></i><b>(4)</b>
-  T unwrap(T possibleWrappedDomainObject)     <i class="conum" data-value="5"></i><b>(5)</b>
-  boolean isWrapper(T possibleWrappedDomainObject)     <i class="conum" data-value="6"></i><b>(6)</b>
-  T asyncWrap(T domainObject, AsyncControl&lt;R&gt; asyncControl)     <i class="conum" data-value="7"></i><b>(7)</b>
-  T asyncWrapMixin(Class&lt;T&gt; mixinClass, Object mixedIn, AsyncControl&lt;R&gt; asyncControl)     <i class="conum" data-value="8"></i><b>(8)</b>
-  List&lt;InteractionListener&gt; getListeners()     <i class="conum" data-value="9"></i><b>(9)</b>
-  boolean addInteractionListener(InteractionListener listener)     <i class="conum" data-value="10"></i><b>(10)</b>
-  boolean removeInteractionListener(InteractionListener listener)     <i class="conum" data-value="11"></i><b>(11)</b>
-  void notifyListeners(InteractionEvent ev)
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><a href="#wrap__T_SyncControl">wrap(T, SyncControl)</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Provides the "wrapper" of a domain object against which to invoke the action.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><a href="#wrap__T">wrap(T)</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>A convenience overload for <em>#wrap(Object, SyncControl)</em> , returning a wrapper to invoke the action synchronously, enforcing business rules. Any exceptions will be propagated, not swallowed.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td><a href="#wrapMixin__Class_Object_SyncControl">wrapMixin(Class, Object, SyncControl)</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Provides the wrapper for a <em>FactoryService#mixin(Class, Object) mixin</em> , against which to invoke the action.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td><a href="#wrapMixin__Class_Object">wrapMixin(Class, Object)</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>A convenience overload for <em>#wrapMixin(Class, Object, SyncControl)</em> , returning a wrapper to invoke the action synchronously, enforcing business rules. Any exceptions will be propagated, not swallowed.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td><a href="#unwrap__T">unwrap(T)</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Obtains the underlying domain object, if wrapped.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
-<td><a href="#isWrapper__T">isWrapper(T)</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Whether the supplied object is a wrapper around a domain object.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="7"></i><b>7</b></td>
-<td><a href="#asyncWrap__T_AsyncControl">asyncWrap(T, AsyncControl)</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Returns a proxy object for the provided <em>domainObject</em> , through which can execute the action asynchronously.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="8"></i><b>8</b></td>
-<td><a href="#asyncWrapMixin__Class_Object_AsyncControl">asyncWrapMixin(Class, Object, AsyncControl)</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Returns a proxy object for the provided <em>mixinClass</em> , through which can execute the action asynchronously.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="9"></i><b>9</b></td>
-<td><a href="#getListeners__">getListeners()</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>All <a href="../../../system/latest/generated/index/applib/services/wrapper/listeners/InteractionListener.html" class="page">InteractionListener</a> s that have been registered using <em>#addInteractionListener(InteractionListener)</em> .</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="10"></i><b>10</b></td>
-<td><a href="#addInteractionListener__InteractionListener">addInteractionListener(InteractionListener)</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Registers an <a href="../../../system/latest/generated/index/applib/services/wrapper/listeners/InteractionListener.html" class="page">InteractionListener</a> , to be notified of interactions on all wrappers.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="11"></i><b>11</b></td>
-<td><a href="#removeInteractionListener__InteractionListener">removeInteractionListener(InteractionListener)</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Remove an <a href="../../../system/latest/generated/index/applib/services/wrapper/listeners/InteractionListener.html" class="page">InteractionListener</a> , to no longer be notified of interactions on wrappers.</p>
-</div>
-</div>
-</div></td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect3">
-<h4 id="members-6"><a class="anchor" href="#members-6"></a>Members</h4>
-<div class="sect4">
-<h5 id="wrap__T_SyncControl"><a class="anchor" href="#wrap__T_SyncControl"></a>wrap(T, SyncControl)</h5>
-<div class="paragraph">
-<p>Provides the "wrapper" of a domain object against which to invoke the action.</p>
-</div>
-<div class="paragraph">
-<p>The provided <a href="../../../system/latest/generated/index/applib/services/wrapper/control/SyncControl.html" class="page">SyncControl</a> determines whether business rules are checked first, and conversely whether the action is executed. There are therefore three typical cases:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>check rules, execute action</p>
-</li>
-<li>
-<p>skip rules, execute action</p>
-</li>
-<li>
-<p>check rules, skip action</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>The last logical option (skip rules, skip action) is valid but doesn&#8217;t make sense, as it&#8217;s basically a no-op.</p>
-</div>
-<div class="paragraph">
-<p>Otherwise, will do all the validations (raise exceptions as required etc.), but doesn&#8217;t modify the model.</p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="wrap__T"><a class="anchor" href="#wrap__T"></a>wrap(T)</h5>
-<div class="paragraph">
-<p>A convenience overload for <em>#wrap(Object, SyncControl)</em> , returning a wrapper to invoke the action synchronously, enforcing business rules. Any exceptions will be propagated, not swallowed.</p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="wrapMixin__Class_Object_SyncControl"><a class="anchor" href="#wrapMixin__Class_Object_SyncControl"></a>wrapMixin(Class, Object, SyncControl)</h5>
-<div class="paragraph">
-<p>Provides the wrapper for a <em>FactoryService#mixin(Class, Object) mixin</em> , against which to invoke the action.</p>
-</div>
-<div class="paragraph">
-<p>The provided <a href="../../../system/latest/generated/index/applib/services/wrapper/control/SyncControl.html" class="page">SyncControl</a> determines whether business rules are checked first, and conversely whether the action is executed. See <em>#wrap(Object, SyncControl)</em> for more details on this.</p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="wrapMixin__Class_Object"><a class="anchor" href="#wrapMixin__Class_Object"></a>wrapMixin(Class, Object)</h5>
-<div class="paragraph">
-<p>A convenience overload for <em>#wrapMixin(Class, Object, SyncControl)</em> , returning a wrapper to invoke the action synchronously, enforcing business rules. Any exceptions will be propagated, not swallowed.</p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="unwrap__T"><a class="anchor" href="#unwrap__T"></a>unwrap(T)</h5>
-<div class="paragraph">
-<p>Obtains the underlying domain object, if wrapped.</p>
-</div>
-<div class="paragraph">
-<p>If the object <em>#isWrapper(Object) is not wrapped</em> , then should just return the object back unchanged.</p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="isWrapper__T"><a class="anchor" href="#isWrapper__T"></a>isWrapper(T)</h5>
-<div class="paragraph">
-<p>Whether the supplied object is a wrapper around a domain object.</p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="asyncWrap__T_AsyncControl"><a class="anchor" href="#asyncWrap__T_AsyncControl"></a>asyncWrap(T, AsyncControl)</h5>
-<div class="paragraph">
-<p>Returns a proxy object for the provided <em>domainObject</em> , through which can execute the action asynchronously.</p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="asyncWrapMixin__Class_Object_AsyncControl"><a class="anchor" href="#asyncWrapMixin__Class_Object_AsyncControl"></a>asyncWrapMixin(Class, Object, AsyncControl)</h5>
-<div class="paragraph">
-<p>Returns a proxy object for the provided <em>mixinClass</em> , through which can execute the action asynchronously.</p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="getListeners__"><a class="anchor" href="#getListeners__"></a>getListeners()</h5>
-<div class="paragraph">
-<p>All <a href="../../../system/latest/generated/index/applib/services/wrapper/listeners/InteractionListener.html" class="page">InteractionListener</a> s that have been registered using <em>#addInteractionListener(InteractionListener)</em> .</p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="addInteractionListener__InteractionListener"><a class="anchor" href="#addInteractionListener__InteractionListener"></a>addInteractionListener(InteractionListener)</h5>
-<div class="paragraph">
-<p>Registers an <a href="../../../system/latest/generated/index/applib/services/wrapper/listeners/InteractionListener.html" class="page">InteractionListener</a> , to be notified of interactions on all wrappers.</p>
-</div>
-<div class="paragraph">
-<p>This is retrospective: the listener will be notified of interactions even on wrappers created before the listener was installed. (From an implementation perspective this is because the wrappers delegate back to the container to fire the events).</p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="removeInteractionListener__InteractionListener"><a class="anchor" href="#removeInteractionListener__InteractionListener"></a>removeInteractionListener(InteractionListener)</h5>
-<div class="paragraph">
-<p>Remove an <a href="../../../system/latest/generated/index/applib/services/wrapper/listeners/InteractionListener.html" class="page">InteractionListener</a> , to no longer be notified of interactions on wrappers.</p>
-</div>
-<div class="paragraph">
-<p>This is retrospective: the listener will no longer be notified of any interactions created on any wrappers, not just on those wrappers created subsequently. (From an implementation perspective this is because the wrappers delegate back to the container to fire the events).</p>
-</div>
-<div class="paragraph">
-<p>TODO example migration</p>
-</div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-<div class="title">Deprecated Docs</div>
-<div class="paragraph">
-<p>=== Listener API</p>
-</div>
-<div class="paragraph">
-<p>The listener API allows the interactions between the wrapper and the underlying domain object to be observed:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Unresolved include directive in modules/applib-svc/pages/WrapperFactory.adoc - include::refguide:applib-svc:example$services/wrapper/WrapperFactory.java[]</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>all <code>InteractionListener</code>s that have been registered.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>registers an <code>InteractionListener</code>, to be notified of interactions on all wrappers.
-The listener will be notified of interactions even on wrappers created before the listener was installed.
-(From an implementation perspective this is because the wrappers delegate back to the container to fire the events).</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>remove an <code>InteractionListener</code>, to no longer be notified of interactions on wrappers.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>used by the framework itself</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>This API isn&#8217;t (currently) used by the framework itself.</p>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>One possible use case would be to autogenerate documentation, for example a sequence diagram from tests.
-Such a feature would probably also use <a href="InteractionContext.html" class="page"><code>InteractionContext</code></a>, which builds up an execution call graph of interactions between (wrapped) objects.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="typical-usage"><a class="anchor" href="#typical-usage"></a>Typical Usage</h2>
+<h2 id="typical-usage-enforcing-constraints"><a class="anchor" href="#typical-usage-enforcing-constraints"></a>Typical Usage: Enforcing Constraints</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>The caller will typically obtain the target object (eg from some repository) and then use the injected <code>WrapperFactory</code> to wrap it before interacting with it.</p>
@@ -2799,6 +1110,140 @@ Such a feature would probably also use <a href="InteractionContext.html" class="
 </div>
 </div>
 </div>
+<div class="sect1">
+<h2 id="usage-notes"><a class="anchor" href="#usage-notes"></a>Usage Notes</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="domain-objects"><a class="anchor" href="#domain-objects"></a>Domain Objects</h3>
+<div class="paragraph">
+<p>For domain objects (not mixins), the wrapper can be interacted with as follows:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>a <code>get&#8230;&#8203;()</code> method for properties or collections</p>
+</li>
+<li>
+<p>a <code>set&#8230;&#8203;()</code> method for properties</p>
+</li>
+<li>
+<p>an <code>addTo&#8230;&#8203;()</code> or <code>removeFrom&#8230;&#8203;()</code> method for collections</p>
+</li>
+<li>
+<p>any action</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Calling any of the above methods may result in a (subclass of) <code>InteractionException</code> if the object disallows it.
+For example, if a property is annotated with <a href="../applib-ant/ActionLayout.html#hidden" class="page"><code>@ActionLayout#hidden</code></a> then a <code>HiddenException</code> will be thrown.
+Similarly if an action has a <a href="../applib-methods/prefixes.html" class="page"><code>validateXxx()</code></a> method and the supplied arguments are invalid then an <code>InvalidException</code> will be thrown.</p>
+</div>
+<div class="paragraph">
+<p>In addition, the following methods may also be called:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>the <a href="../applib-methods/reserved.html#title" class="page"><code>title()</code></a> and <code>toString()</code> methods</p>
+</li>
+<li>
+<p>any <a href="../applib-methods/prefixes.html#default" class="page"><code>default&#8230;&#8203;()</code></a>, <a href="../applib-methods/prefixes.html#choices" class="page"><code>choices&#8230;&#8203;()</code></a> or <a href="../applib-methods/prefixes.html#autoComplete" class="page"><code>autoComplete&#8230;&#8203;()</code></a> methods</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>An exception will be thrown if any other methods are thrown.</p>
+</div>
+<div class="paragraph">
+<p>If the interface is performed (action invoked or property set), then - irrespective of whether the business rules were checked or skipped - a <a href="../applib-ant/Action.html#command" class="page">command</a> will be created and pre- and post-execute <a href="../applib-ant/Action.html#domainEvent" class="page">domain event</a>s) will be fired.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="mixins"><a class="anchor" href="#mixins"></a>Mixins</h3>
+<div class="paragraph">
+<p>For mixins, the behaviour of the wrapper is similar but simpler.
+Mixin wrappers only apply to actions, and so the wrapper will enforce the hidden/disable/validate rules before executing.
+In addition, any <a href="../applib-methods/prefixes.html#default" class="page"><code>default&#8230;&#8203;()</code></a>, <a href="../applib-methods/prefixes.html#choices" class="page"><code>choices&#8230;&#8203;()</code></a> or <a href="../applib-methods/prefixes.html#autoComplete" class="page"><code>autoComplete&#8230;&#8203;()</code></a> methods can be called.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="other-use-cases"><a class="anchor" href="#other-use-cases"></a>Other Use Cases</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="creating-interactions"><a class="anchor" href="#creating-interactions"></a>Creating interactions</h3>
+<div class="paragraph">
+<p>One use case for the <code>WrapperFactory</code> is to invoke actions that have <a href="../../../system/latest/generated/index/applib/annotation/Action.html#executionPublishing" class="page">Action#executionPublishing</a> enabled.
+This will result in a serializable representation of the action invocation to be published; this could then be used to route a message to another system.</p>
+</div>
+<div class="paragraph">
+<p>The target action is often a no-op; indeed it can even be hidden if the <code>WrapperFactory</code> is invoked with rules skipped.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="integration-tests"><a class="anchor" href="#integration-tests"></a>Integration tests</h3>
+<div class="paragraph">
+<p>The <code>WrapperFactory</code> is frequently used within <a href="../../../testing/latest/integtestsupport/about.html" class="page">integration tests</a>.
+A longer discussion of the use of the <code>WrapperFactory</code> within integration tests can be found <a href="../../../testing/latest/integtestsupport/about.html#wrapper-factory" class="page">here</a>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="trust-boundaries"><a class="anchor" href="#trust-boundaries"></a>Trust boundaries</h3>
+<div class="paragraph">
+<p>If there is a (lack of) trust boundary between the caller and callee&#8201;&#8212;&#8201;eg if they reside in different modules&#8201;&#8212;&#8201;then the <code>WrapperFactory</code> is one mechanism to ensure that any business constraints defined by the callee are honoured.</p>
+</div>
+<div class="paragraph">
+<p>For example, if the calling object attempts to modify an unmodifiable property on the target object, then an exception will be thrown.</p>
+</div>
+<div class="paragraph">
+<p>Said another way: interactions are performed "as if" they are through the viewer.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="listener-api"><a class="anchor" href="#listener-api"></a>Listener API</h3>
+<div class="paragraph">
+<p>One possible use case for the listener API would be to autogenerate documentation, for example a sequence diagram from tests.</p>
+</div>
+<div class="paragraph">
+<p>Such a feature would probably also use <a href="InteractionContext.html" class="page"><code>InteractionContext</code></a>, which builds up an execution call graph of interactions between (wrapped) objects.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../../../system/latest/generated/index/applib/services/wrapper/control/SyncControl.html" class="page">SyncControl</a> and <a href="../../../system/latest/generated/index/applib/services/wrapper/control/AsyncControl.html" class="page">AsyncControl</a></p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../../../system/latest/generated/index/applib/services/wrapper/control/ExceptionHandler.html" class="page">ExceptionHandler</a></p>
+</li>
+<li>
+<p><a href="../../../system/latest/generated/index/applib/services/wrapper/control/ExecutionMode.html" class="page">ExecutionMode</a></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><a href="../../../system/latest/generated/index/applib/services/wrapper/listeners/InteractionListener.html" class="page">InteractionListener</a></p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../../../system/latest/generated/index/applib/services/wrapper/listeners/InteractionAdapter.html" class="page">InteractionAdapter</a></p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
 </article>
 <aside class="article-aside toc hide-for-print" role="navigation">
     <p class="toc-title">On this page</p>
@@ -2816,7 +1261,7 @@ Such a feature would probably also use <a href="InteractionContext.html" class="
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210215-0424-f665ec0b</p>
+            <p>Revision: 2.0.0-M4.20210216-0423-89b1ee6c</p>
         </div>
     </div>
 </footer>

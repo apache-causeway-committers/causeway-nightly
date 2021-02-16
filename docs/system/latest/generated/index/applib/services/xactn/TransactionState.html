@@ -358,6 +358,12 @@ page.parent doesn't seem to be set...
 </div>
 <article class="doc">
     <a name="section-top"></a>
+<div class="paragraph">
+<p>Represents the state of the current transaction.</p>
+</div>
+<div class="paragraph">
+<p>Obtainable from <em>TransactionService#currentTransactionState()</em> .</p>
+</div>
 <div class="sect1">
 <h2 id="api"><a class="anchor" href="#api"></a>API</h2>
 <div class="sectionbody">
@@ -374,8 +380,8 @@ page.parent doesn't seem to be set...
   boolean canCommit()     <i class="conum" data-value="7"></i><b>(7)</b>
   boolean canAbort()     <i class="conum" data-value="8"></i><b>(8)</b>
   boolean isComplete()     <i class="conum" data-value="9"></i><b>(9)</b>
-  boolean isInProgress()
-  boolean mustAbort()
+  boolean isInProgress()     <i class="conum" data-value="10"></i><b>(10)</b>
+  boolean mustAbort()     <i class="conum" data-value="11"></i><b>(11)</b>
 }</code></pre>
 </div>
 </div>
@@ -398,7 +404,7 @@ page.parent doesn't seem to be set...
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>Started, still in progress.May flush, commit or abort.</p>
+<p>Started, still in progress.</p>
 </div>
 </div>
 </div></td>
@@ -409,7 +415,7 @@ page.parent doesn't seem to be set...
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>Started, but has hit an exception.May not flush or commit (will throw an <em>IllegalStateException</em> ), can only abort.Similar to <code>setRollbackOnly</code> in EJBs.</p>
+<p>Started, but has hit an exception.</p>
 </div>
 </div>
 </div></td>
@@ -420,7 +426,7 @@ page.parent doesn't seem to be set...
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>Completed, having successfully committed.May not flush or abort or commit (will throw <em>IllegalStateException</em> ).</p>
+<p>Completed, having successfully committed.</p>
 </div>
 </div>
 </div></td>
@@ -431,7 +437,7 @@ page.parent doesn't seem to be set...
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>Completed, having aborted.May not flush, commit or abort (will throw <em>IllegalStateException</em> ).</p>
+<p>Completed, having aborted.</p>
 </div>
 </div>
 </div></td>
@@ -442,7 +448,7 @@ page.parent doesn't seem to be set...
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>Whether it is valid to flush the transaction.</p>
+<p>Whether it is valid to flush the transaction (specifically if the transaction is <em>#IN_PROGRESS in progress</em> .</p>
 </div>
 </div>
 </div></td>
@@ -453,7 +459,7 @@ page.parent doesn't seem to be set...
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>Whether it is valid to commit the transaction.</p>
+<p>Whether it is valid to commit the transaction (specifically if the transaction is <em>#IN_PROGRESS in progress</em> .</p>
 </div>
 </div>
 </div></td>
@@ -464,7 +470,7 @@ page.parent doesn't seem to be set...
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>Whether it is valid to mark as aborted this transaction}.</p>
+<p>Whether it is valid to mark as aborted this transaction.</p>
 </div>
 </div>
 </div></td>
@@ -475,7 +481,29 @@ page.parent doesn't seem to be set...
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>Whether the transaction is complete (and so a new one can be started).</p>
+<p>Whether the transaction is complete (that is, is either <em>#COMMITTED committed</em> or <em>#ABORTED aborted</em> ), and so a new transaction can be started.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="10"></i><b>10</b></td>
+<td><a href="#isInProgress__">isInProgress()</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Whether the transaction is <em>#IN_PROGRESS in progress</em> .</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="11"></i><b>11</b></td>
+<td><a href="#mustAbort__">mustAbort()</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Whether the transaction <em>#MUST_ABORT must abort</em> .</p>
 </div>
 </div>
 </div></td>
@@ -496,49 +524,76 @@ page.parent doesn't seem to be set...
 <div class="sect2">
 <h3 id="IN_PROGRESS"><a class="anchor" href="#IN_PROGRESS"></a>IN_PROGRESS</h3>
 <div class="paragraph">
-<p>Started, still in progress.May flush, commit or abort.</p>
+<p>Started, still in progress.</p>
+</div>
+<div class="paragraph">
+<p>May flush, commit or abort.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="MUST_ABORT"><a class="anchor" href="#MUST_ABORT"></a>MUST_ABORT</h3>
 <div class="paragraph">
-<p>Started, but has hit an exception.May not flush or commit (will throw an <em>IllegalStateException</em> ), can only abort.Similar to <code>setRollbackOnly</code> in EJBs.</p>
+<p>Started, but has hit an exception.</p>
+</div>
+<div class="paragraph">
+<p>May not flush or commit (will throw an <em>IllegalStateException</em> ), can only abort.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="COMMITTED"><a class="anchor" href="#COMMITTED"></a>COMMITTED</h3>
 <div class="paragraph">
-<p>Completed, having successfully committed.May not flush or abort or commit (will throw <em>IllegalStateException</em> ).</p>
+<p>Completed, having successfully committed.</p>
+</div>
+<div class="paragraph">
+<p>May not flush or abort or commit (will throw <em>IllegalStateException</em> ).</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="ABORTED"><a class="anchor" href="#ABORTED"></a>ABORTED</h3>
 <div class="paragraph">
-<p>Completed, having aborted.May not flush, commit or abort (will throw <em>IllegalStateException</em> ).</p>
+<p>Completed, having aborted.</p>
+</div>
+<div class="paragraph">
+<p>May not flush, commit or abort (will throw <em>IllegalStateException</em> ).</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="canFlush__"><a class="anchor" href="#canFlush__"></a>canFlush()</h3>
 <div class="paragraph">
-<p>Whether it is valid to flush the transaction.</p>
+<p>Whether it is valid to flush the transaction (specifically if the transaction is <em>#IN_PROGRESS in progress</em> .</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="canCommit__"><a class="anchor" href="#canCommit__"></a>canCommit()</h3>
 <div class="paragraph">
-<p>Whether it is valid to commit the transaction.</p>
+<p>Whether it is valid to commit the transaction (specifically if the transaction is <em>#IN_PROGRESS in progress</em> .</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="canAbort__"><a class="anchor" href="#canAbort__"></a>canAbort()</h3>
 <div class="paragraph">
-<p>Whether it is valid to mark as aborted this transaction}.</p>
+<p>Whether it is valid to mark as aborted this transaction.</p>
+</div>
+<div class="paragraph">
+<p>This is the case if the transaction is either currently <em>#IN_PROGRESS in progress</em> or has already been marked as <em>#MUST_ABORT must abort</em> .</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="isComplete__"><a class="anchor" href="#isComplete__"></a>isComplete()</h3>
 <div class="paragraph">
-<p>Whether the transaction is complete (and so a new one can be started).</p>
+<p>Whether the transaction is complete (that is, is either <em>#COMMITTED committed</em> or <em>#ABORTED aborted</em> ), and so a new transaction can be started.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="isInProgress__"><a class="anchor" href="#isInProgress__"></a>isInProgress()</h3>
+<div class="paragraph">
+<p>Whether the transaction is <em>#IN_PROGRESS in progress</em> .</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="mustAbort__"><a class="anchor" href="#mustAbort__"></a>mustAbort()</h3>
+<div class="paragraph">
+<p>Whether the transaction <em>#MUST_ABORT must abort</em> .</p>
 </div>
 </div>
 </div>
@@ -560,7 +615,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210215-0424-f665ec0b</p>
+            <p>Revision: 2.0.0-M4.20210216-0423-89b1ee6c</p>
         </div>
     </div>
 </footer>

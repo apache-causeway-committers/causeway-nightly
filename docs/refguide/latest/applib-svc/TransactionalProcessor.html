@@ -755,17 +755,8 @@ page.parent doesn't seem to be set...
 <h1 class="page">TransactionalProcessor</h1>
 <div id="preamble">
 <div class="sectionbody">
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-TODO: this content has not yet been reviewed/updated for v2.0
-</td>
-</tr>
-</table>
+<div class="paragraph">
+<p>Provides the mechanism to run a block of code within a transaction boundary, using Spring Framework&#8217;s transaction primitives (such as <em>TransactionDefinition</em> and its annotation equivalent, <em>Propagation</em> ).</p>
 </div>
 </div>
 </div>
@@ -910,7 +901,67 @@ TODO: this content has not yet been reviewed/updated for v2.0
 <div class="sect1">
 <h2 id="implementation"><a class="anchor" href="#implementation"></a>Implementation</h2>
 <div class="sectionbody">
+<div class="paragraph">
+<p>The core framework provides a default implementation of this service, <code>o.a.i.core.runtimeservices.transaction.TransactionServiceSpring</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="example-usage"><a class="anchor" href="#example-usage"></a>Example Usage</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The following code is taken from the <a href="../../../docs/latest/starters/simpleapp.html" class="page">SimpleApp</a>, showing how the service can be used to provide a custom REST controller:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@RestController
+@RequiredArgsConstructor
+class CustomController {
 
+  private final InteractionFactory interactionFactory;
+  private final TransactionalProcessor transactionalProcessor;  <i class="conum" data-value="1"></i><b>(1)</b>
+  private final SimpleObjects repository;
+
+  @GetMapping("/custom/simpleObjects")
+  List&lt;SimpleObject&gt; all() {
+    return callAuthenticated(newAuthentication(), repository::listAll).presentElseFail();
+  }
+
+  private SimpleAuthentication newAuthentication() {
+    return SimpleAuthentication.validOf(UserMemento.ofName("sven"));
+  }
+
+  private &lt;T&gt; Result&lt;T&gt; callAuthenticated(
+          final Authentication authentication,
+          final Callable&lt;T&gt; task) {
+    return interactionFactory.callAuthenticated(
+            authentication,
+            () -&gt; transactionService.callWithinCurrentTransactionElseCreateNew(task));
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../../../system/latest/generated/index/core/interaction/session/InteractionFactory.html" class="page">InteractionFactory</a></p>
+<div class="paragraph">
+<p>Not formal API, but used in the example above to obtain an outer "interaction" (session) within which the transaction is executed.</p>
+</div>
+</li>
+<li>
+<p><a href="../../../system/latest/generated/index/commons/functional/Result.html" class="page">Result</a></p>
+<div class="paragraph">
+<p>which captures the result of an operation, either its successful return value or an exception.</p>
+</div>
+</li>
+</ul>
+</div>
 </div>
 </div>
 </article>
@@ -930,7 +981,7 @@ TODO: this content has not yet been reviewed/updated for v2.0
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210215-0424-f665ec0b</p>
+            <p>Revision: 2.0.0-M4.20210216-0423-89b1ee6c</p>
         </div>
     </div>
 </footer>

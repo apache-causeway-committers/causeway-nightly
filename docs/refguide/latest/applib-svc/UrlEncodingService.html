@@ -758,17 +758,11 @@ page.parent doesn't seem to be set...
 <h1 class="page">UrlEncodingService</h1>
 <div id="preamble">
 <div class="sectionbody">
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-TODO: this content has not yet been reviewed/updated for v2.0
-</td>
-</tr>
-</table>
+<div class="paragraph">
+<p>Defines a consistent way to convert strings to/from a form safe for use within a URL.</p>
+</div>
+<div class="paragraph">
+<p>The service is used by the framework to map mementos (derived from the state of the view model itself) into a form that can be used as a view model. When the framework needs to recreate the view model (for example to invoke an action on it), this URL is converted back into a view model memento, from which the view model can be hydrated.</p>
 </div>
 </div>
 </div>
@@ -779,11 +773,57 @@ TODO: this content has not yet been reviewed/updated for v2.0
 <div class="title">UrlEncodingService.java</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">interface UrlEncodingService {
-  String encode(final byte[] bytes)
-  byte[] decode(String str)
+  String encode(final byte[] bytes)     <i class="conum" data-value="1"></i><b>(1)</b>
+  byte[] decode(String str)     <i class="conum" data-value="2"></i><b>(2)</b>
   String encodeString(final String str)
   String decodeToString(final String str)
 }</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><a href="#encode__byte">[encode__byte]</a>[encode(byte[])]
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Converts the string (eg view model memento) into a string safe for use within an URL</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><a href="#decode__String">decode(String)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Unconverts the string from its URL form into its original form URL.</p>
+</div>
+</div>
+</div></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="members"><a class="anchor" href="#members"></a>Members</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="encode__byte[]"><a class="anchor" href="#encode__byte[]"></a>encode(byte[])</h3>
+<div class="paragraph">
+<p>Converts the string (eg view model memento) into a string safe for use within an URL</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="decode__String"><a class="anchor" href="#decode__String"></a>decode(String)</h3>
+<div class="paragraph">
+<p>Unconverts the string from its URL form into its original form URL.</p>
+</div>
+<div class="paragraph">
+<p>Reciprocal of <em>#encode(byte[])</em> .</p>
 </div>
 </div>
 </div>
@@ -792,10 +832,13 @@ TODO: this content has not yet been reviewed/updated for v2.0
 <h2 id="implementation"><a class="anchor" href="#implementation"></a>Implementation</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The <code>UrlEncodingService</code> defines a consistent way to convert strings to/from a form safe for use within a URL.
-The service is used by the framework to map <a href="../../../userguide/latest/fun/overview.html#view-models" class="page">view model</a> mementos (derived from the state of the view model itself) into a form that can be used as a view model.
-When the framework needs to recreate the view model (for example to invoke an action on it), this URL is converted back into a view model memento, from which the view model can then be hydrated.</p>
+<p>The framework provides a default implementation, <code>o.a.i.core.runtimeservices.urlencoding.UrlEncodingServiceWithCompression</code>, that first (gzip) compresses the state and then uses <code>base-64</code> encoding of the resulting bytes.</p>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="usage-notes"><a class="anchor" href="#usage-notes"></a>Usage Notes</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>Defining this functionality as an SPI has two use cases:</p>
 </div>
@@ -814,77 +857,25 @@ For view model mementos that correspond to large strings (as might occur when se
 </ul>
 </div>
 <div class="paragraph">
-<p>The framework provides a default implementation of this service, <code>UrlEncodingServiceWithCompression</code>, discussed further in the section below.</p>
+<p>For large view models, there&#8217;s the possibility that the 2083 character limit could be exceeded; in such cases register an alternative implementation of this service.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="api-2"><a class="anchor" href="#api-2"></a>API</h2>
+<h2 id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 <div class="sectionbody">
-<div class="sect3">
-<h4 id="api-3"><a class="anchor" href="#api-3"></a>API</h4>
-<div class="listingblock">
-<div class="title">UrlEncodingService.java</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">interface UrlEncodingService {
-  String encode(final byte[] bytes)
-  byte[] decode(String str)
-  String encodeString(final String str)
-  String decodeToString(final String str)
-}</code></pre>
-</div>
-</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../../../userguide/latest/fun/overview.html#view-models" class="page">view models</a></p>
+</li>
+<li>
+<p><a href="../../../system/latest/generated/index/applib/services/urlencoding/UrlEncodingServiceUsingBaseEncodingAbstract.html" class="page">UrlEncodingServiceUsingBaseEncodingAbstract</a></p>
 <div class="paragraph">
-<p>TODO example migration</p>
+<p>provided as a convenient base class for alternative implementations.</p>
 </div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-<div class="title">Deprecated Docs</div>
-<div class="paragraph">
-<p>== SPI</p>
-</div>
-<div class="paragraph">
-<p>The SPI defined by the service is:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Unresolved include directive in modules/applib-svc/pages/UrlEncodingService.adoc - include::refguide:applib-svc:example$services/urlencoding/UrlEncodingService.java[]</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>convert the string (eg view model memento) into a string safe for use within an URL</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>unconvert the string from its URL form into its original form URL</td>
-</tr>
-</table>
-</div>
-</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="implementation-2"><a class="anchor" href="#implementation-2"></a>Implementation</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The framework provides a default implementation, <code>o.a.i.core.runtimeservices.urlencoding.UrlEncodingServiceWithCompression</code>, that first (gzip) compresses the state and then uses <code>base-64</code> encoding of the resulting bytes.
-As already noted, be aware that the maximum length of a URL should not exceed 2083 characters.
-For large view models, there&#8217;s the possibility that this limit could be exceeded; in such cases register an alternative implementation of this service.</p>
-</div>
-<div class="paragraph">
-<p>The applib also provides <code>UrlEncodingServiceUsingBaseEncodingAbstract</code>, which is provided as a convenient base class for alternative implementations.</p>
+</li>
+</ul>
 </div>
 </div>
 </div>
@@ -905,7 +896,7 @@ For large view models, there&#8217;s the possibility that this limit could be ex
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210215-0424-f665ec0b</p>
+            <p>Revision: 2.0.0-M4.20210216-0423-89b1ee6c</p>
         </div>
     </div>
 </footer>

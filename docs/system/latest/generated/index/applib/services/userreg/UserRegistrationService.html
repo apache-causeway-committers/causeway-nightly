@@ -359,10 +359,7 @@ page.parent doesn't seem to be set...
 <article class="doc">
     <a name="section-top"></a>
 <div class="paragraph">
-<p>Required API to enable users to register an account on the system (aka "sign up").</p>
-</div>
-<div class="paragraph">
-<p>User registration also requires that the <a href="EmailNotificationService.html" class="page">EmailNotificationService</a> and <em>org.apache.isis.applib.services.email.EmailService</em> to be configured. The framework provides default implementations of both of these services. The notification service requires no further configuration. The email service ( <code>EmailServiceDefault</code> ) <em>does</em> require a couple of configuration properties to be set (specifying the SMTP mail server/accounts/password).</p>
+<p>Provides the ability for users to sign-up to access an application by providing a valid email address. Also provides the capability for users to reset their password if forgotten.</p>
 </div>
 <div class="sect1">
 <h2 id="api"><a class="anchor" href="#api"></a>API</h2>
@@ -371,11 +368,91 @@ page.parent doesn't seem to be set...
 <div class="title">UserRegistrationService.java</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">interface UserRegistrationService {
-  boolean usernameExists(String username)
-  boolean emailExists(String emailAddress)
-  void registerUser(UserDetails userDetails)
-  boolean updatePasswordByEmail(String emailAddress, String password)
+  boolean usernameExists(String username)     <i class="conum" data-value="1"></i><b>(1)</b>
+  boolean emailExists(String emailAddress)     <i class="conum" data-value="2"></i><b>(2)</b>
+  void registerUser(UserDetails userDetails)     <i class="conum" data-value="3"></i><b>(3)</b>
+  boolean updatePasswordByEmail(String emailAddress, String password)     <i class="conum" data-value="4"></i><b>(4)</b>
 }</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><a href="#usernameExists__String">usernameExists(String)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Checks if there is already a user with the specified username</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><a href="#emailExists__String">emailExists(String)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Checks if there is already a user with the specified email address.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><a href="#registerUser__UserDetails">registerUser(UserDetails)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Creates the user, with specified password and email address.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><a href="#updatePasswordByEmail__String_String">updatePasswordByEmail(String, String)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Allows the user to reset their password.</p>
+</div>
+</div>
+</div></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="members"><a class="anchor" href="#members"></a>Members</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="usernameExists__String"><a class="anchor" href="#usernameExists__String"></a>usernameExists(String)</h3>
+<div class="paragraph">
+<p>Checks if there is already a user with the specified username</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="emailExists__String"><a class="anchor" href="#emailExists__String"></a>emailExists(String)</h3>
+<div class="paragraph">
+<p>Checks if there is already a user with the specified email address.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="registerUser__UserDetails"><a class="anchor" href="#registerUser__UserDetails"></a>registerUser(UserDetails)</h3>
+<div class="paragraph">
+<p>Creates the user, with specified password and email address.</p>
+</div>
+<div class="paragraph">
+<p>The username and email address must both be unique (not being used by an existing user).</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="updatePasswordByEmail__String_String"><a class="anchor" href="#updatePasswordByEmail__String_String"></a>updatePasswordByEmail(String, String)</h3>
+<div class="paragraph">
+<p>Allows the user to reset their password.</p>
 </div>
 </div>
 </div>
@@ -397,7 +474,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210215-0424-f665ec0b</p>
+            <p>Revision: 2.0.0-M4.20210216-0423-89b1ee6c</p>
         </div>
     </div>
 </footer>

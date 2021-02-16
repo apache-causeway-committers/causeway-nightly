@@ -751,7 +751,40 @@ page.parent doesn't seem to be set...
 <div class="sect1">
 <h2 id="implementation"><a class="anchor" href="#implementation"></a>Implementation</h2>
 <div class="sectionbody">
+<div class="paragraph">
+<p>The core framework itself defines only an SPI for this service; there is no default implementation.
+Rather, the implementation will depend on the security mechanism being used.</p>
+</div>
+<div class="sect2">
+<h3 id="secman"><a class="anchor" href="#secman"></a>SecMan</h3>
+<div class="paragraph">
+<p>If you have configured your app to use the <a href="../../../../../security/latest/about.html" class="page">SecMan extension</a> then note that it <em>does</em> provide an abstract implementation (<code>SecurityModuleAppUserRegistrationServiceAbstract</code>) of the <code>UserRegistrationService</code>.
+You will need to extend that service and provide implementation for the two abstract methods: <code>getInitialRole()</code> and <code>getAdditionalInitialRoles()</code>.
+This is needed so that the self-registered users are assigned automatically to your application role(s) and be able to use the application.
+Without any role such user will be able only to see/use the logout link of the application.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Service
+public class AppUserRegistrationService
+        extends SecurityModuleAppUserRegistrationServiceAbstract {
 
+    protected ApplicationRole getInitialRole() {
+        return applicationRoles.findRoleByName("regular-user");
+    }
+    protected Set&lt;ApplicationRole&gt; getAdditionalInitialRoles() {
+        return Collections.singleton(
+            applicationRoles.findRoleByName("self-registered-user"));
+    }
+
+    @Inject ApplicationRoles applicationRoles;
+}</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 </article>
@@ -771,7 +804,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210215-0424-f665ec0b</p>
+            <p>Revision: 2.0.0-M4.20210216-0423-89b1ee6c</p>
         </div>
     </div>
 </footer>

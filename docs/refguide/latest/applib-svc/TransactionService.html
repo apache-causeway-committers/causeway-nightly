@@ -758,20 +758,11 @@ page.parent doesn't seem to be set...
 <h1 class="page">TransactionService</h1>
 <div id="preamble">
 <div class="sectionbody">
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-TODO: this content has not yet been reviewed/updated for v2.0
-</td>
-</tr>
-</table>
-</div>
 <div class="paragraph">
 <p>Provides utilities to access active transactions associated with the current thread.</p>
+</div>
+<div class="paragraph">
+<p>This is a low-level service that domain objects will typically have little need to leverage; there will normally be a transaction started already by the framework at the beginning of an <em>org.apache.isis.applib.services.iactn.Interaction</em> and committed at the end. On occasion though it can on occasion be useful to take explicit control over transaction boundaries, which is where the methods provided by this domain service an be useful.</p>
 </div>
 </div>
 </div>
@@ -878,273 +869,22 @@ TODO: this content has not yet been reviewed/updated for v2.0
 <h2 id="implementation"><a class="anchor" href="#implementation"></a>Implementation</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The <code>TransactionService</code> (and its various supertypes) allows domain objects to influence user transactions.</p>
+<p>The core framework provides a default implementation of this service, <code>o.a.i.core.runtimeservices.transaction.TransactionServiceSpring</code>.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="api-2"><a class="anchor" href="#api-2"></a>API</h2>
+<h2 id="see-also"><a class="anchor" href="#see-also"></a>See Also</h2>
 <div class="sectionbody">
-<div class="sect3">
-<h4 id="api-3"><a class="anchor" href="#api-3"></a>API</h4>
-<div class="listingblock">
-<div class="title">TransactionState.java</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">enum TransactionState {
-  NONE     <i class="conum" data-value="1"></i><b>(1)</b>
-  IN_PROGRESS     <i class="conum" data-value="2"></i><b>(2)</b>
-  MUST_ABORT     <i class="conum" data-value="3"></i><b>(3)</b>
-  COMMITTED     <i class="conum" data-value="4"></i><b>(4)</b>
-  ABORTED     <i class="conum" data-value="5"></i><b>(5)</b>
-  boolean canFlush()     <i class="conum" data-value="6"></i><b>(6)</b>
-  boolean canCommit()     <i class="conum" data-value="7"></i><b>(7)</b>
-  boolean canAbort()     <i class="conum" data-value="8"></i><b>(8)</b>
-  boolean isComplete()     <i class="conum" data-value="9"></i><b>(9)</b>
-  boolean isInProgress()
-  boolean mustAbort()
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><a href="#NONE">NONE</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>No transaction exists.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><a href="#IN_PROGRESS">IN_PROGRESS</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Started, still in progress.May flush, commit or abort.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td><a href="#MUST_ABORT">MUST_ABORT</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Started, but has hit an exception.May not flush or commit (will throw an <em>IllegalStateException</em> ), can only abort.Similar to <code>setRollbackOnly</code> in EJBs.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td><a href="#COMMITTED">COMMITTED</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Completed, having successfully committed.May not flush or abort or commit (will throw <em>IllegalStateException</em> ).</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td><a href="#ABORTED">ABORTED</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Completed, having aborted.May not flush, commit or abort (will throw <em>IllegalStateException</em> ).</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
-<td><a href="#canFlush__">canFlush()</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Whether it is valid to flush the transaction.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="7"></i><b>7</b></td>
-<td><a href="#canCommit__">canCommit()</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Whether it is valid to commit the transaction.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="8"></i><b>8</b></td>
-<td><a href="#canAbort__">canAbort()</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Whether it is valid to mark as aborted this transaction}.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="9"></i><b>9</b></td>
-<td><a href="#isComplete__">isComplete()</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Whether the transaction is complete (and so a new one can be started).</p>
-</div>
-</div>
-</div></td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect3">
-<h4 id="members-2"><a class="anchor" href="#members-2"></a>Members</h4>
-<div class="sect4">
-<h5 id="NONE"><a class="anchor" href="#NONE"></a>NONE</h5>
-<div class="paragraph">
-<p>No transaction exists.</p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="IN_PROGRESS"><a class="anchor" href="#IN_PROGRESS"></a>IN_PROGRESS</h5>
-<div class="paragraph">
-<p>Started, still in progress.May flush, commit or abort.</p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="MUST_ABORT"><a class="anchor" href="#MUST_ABORT"></a>MUST_ABORT</h5>
-<div class="paragraph">
-<p>Started, but has hit an exception.May not flush or commit (will throw an <em>IllegalStateException</em> ), can only abort.Similar to <code>setRollbackOnly</code> in EJBs.</p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="COMMITTED"><a class="anchor" href="#COMMITTED"></a>COMMITTED</h5>
-<div class="paragraph">
-<p>Completed, having successfully committed.May not flush or abort or commit (will throw <em>IllegalStateException</em> ).</p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="ABORTED"><a class="anchor" href="#ABORTED"></a>ABORTED</h5>
-<div class="paragraph">
-<p>Completed, having aborted.May not flush, commit or abort (will throw <em>IllegalStateException</em> ).</p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="canFlush__"><a class="anchor" href="#canFlush__"></a>canFlush()</h5>
-<div class="paragraph">
-<p>Whether it is valid to flush the transaction.</p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="canCommit__"><a class="anchor" href="#canCommit__"></a>canCommit()</h5>
-<div class="paragraph">
-<p>Whether it is valid to commit the transaction.</p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="canAbort__"><a class="anchor" href="#canAbort__"></a>canAbort()</h5>
-<div class="paragraph">
-<p>Whether it is valid to mark as aborted this transaction}.</p>
-</div>
-</div>
-<div class="sect4">
-<h5 id="isComplete__"><a class="anchor" href="#isComplete__"></a>isComplete()</h5>
-<div class="paragraph">
-<p>Whether the transaction is complete (and so a new one can be started).</p>
-</div>
-<div class="paragraph">
-<p>TODO example migration</p>
-</div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-<div class="title">Deprecated Docs</div>
-<div class="paragraph">
-<p>== API</p>
-</div>
-<div class="paragraph">
-<p>The API of <code>TransactionService</code> is:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Unresolved include directive in modules/applib-svc/pages/TransactionService.adoc - include::refguide:applib-svc:example$services/xactn/TransactionService.java[]</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>obtains the identity of the current transaction.
-(Note, although there is an internal <code>Transaction</code> object, this isn&#8217;t exposed in the API).
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Unresolved include directive in modules/applib-svc/pages/TransactionService.adoc - include::refguide:applib-svc:example$services/xactn/TransactionId.java[]</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The <code>uniqueId</code> is in effect a session Id (eg new id per HTTP request).
-The sequence is because there could be more than one transaction per request/session.</p>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>obtains the state of the current transaction:
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Unresolved include directive in modules/applib-svc/pages/TransactionService.adoc - include::refguide:applib-svc:example$services/xactn/TransactionState.java[]</code></pre>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>If the user interaction creates/persists an object or deletes an object (eg using the
-<a href="RepositoryService.html" class="page"><code>RepositoryService</code></a>'s <code>persist()</code> or <code>delete()</code> methods), then the framework actually queues up the work and only performs the persistence command either at the end of the transaction or immediately prior to the next query.
-Performing a flush will cause any pending calls to be performed immediately.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>The framework automatically start a transaction before each user interaction (action invocation or property edit), and will commit that transaction after the interaction has completed.
-Under certain circumstances (eg actions used to perform data migration, say, or for large fixture scripts), it can be helpful to programmatically complete one transaction and start another one.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>Primarily for internal use, will execute the task within the current transaction if there is one, but if there is none then begin and then commit a new transaction for the task.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
-<td>Ditto, but retrieving the task to be performed from the supplier.</td>
-</tr>
-</table>
-</div>
-</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="implementation-2"><a class="anchor" href="#implementation-2"></a>Implementation</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The core framework provides a default implementation of this service, <code>o.a.i.core.runtimeservices.xactn.TransactionServiceSpring</code>.</p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../../../system/latest/generated/index/applib/services/xactn/TransactionId.html" class="page">TransactionId</a></p>
+</li>
+<li>
+<p><a href="../../../system/latest/generated/index/applib/services/xactn/TransactionState.html" class="page">TransactionState</a></p>
+</li>
+</ul>
 </div>
 </div>
 </div>
@@ -1165,7 +905,7 @@ Under certain circumstances (eg actions used to perform data migration, say, or 
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210215-0424-f665ec0b</p>
+            <p>Revision: 2.0.0-M4.20210216-0423-89b1ee6c</p>
         </div>
     </div>
 </footer>
