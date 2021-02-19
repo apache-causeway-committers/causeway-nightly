@@ -13,25 +13,6 @@ jobs:
     env:
       # to be shared among all steps of this job
       BASELINE: 2.0.0-M4
-      DEPLOY_TARGET: 'nexus_incode_work::default::https://nexus.incode.work/repository/nightly-builds/'
-
-      # (used by build-artifacts.sh)
-      MVN_STAGES: deploy
-
-      # possible modes are
-      # push ... push docker images to dockerhub
-      # tar  ... build docker images and save them locally as tar files
-      # skip ... skip docker image build steps
-      JIB_MODE: push
-
-      # possible modes are
-      # attach ... enables the 'source' profile, which brings in the maven-source-plugin
-      # (else) ... explicitly ensure that maven-source-plugin is disabled
-      SOURCE_MODE: attach
-
-      # (used by build-artifacts.sh)
-      PROJECT_ROOT_PATH: ${{ github.workspace }}/isis
-      NIGHTLY_ROOT_PATH: ${{ github.workspace }}/isis-nightly
 
 
     steps:
@@ -153,15 +134,39 @@ jobs:
         run: |
           bash scripts/ci/build-artifacts.sh
         env:
+          DEPLOY_TARGET: 'nexus_incode_work::default::https://nexus.incode.work/repository/nightly-builds/'
+
+          # (used by build-artifacts.sh)
+          MVN_STAGES: deploy
+
+          # possible modes are
+          # push ... push docker images to dockerhub
+          # tar  ... build docker images and save them locally as tar files
+          # skip ... skip docker image build steps
+          JIB_MODE: push
+
+          # possible modes are
+          # attach ... enables the 'source' profile, which brings in the maven-source-plugin
+          # (else) ... explicitly ensure that maven-source-plugin is disabled
+          SOURCE_MODE: attach
+
+          # (used by build-artifacts.sh)
+          PROJECT_ROOT_PATH: ${{ github.workspace }}/isis
+          NIGHTLY_ROOT_PATH: ${{ github.workspace }}/isis-nightly
+
           ## nexus.incode.work
           NEXUS_INCODE_WORK_USERNAME: ${{ secrets.NEXUS_INCODE_WORK_USERNAME }}
           NEXUS_INCODE_WORK_PASSWORD: ${{ secrets.NEXUS_INCODE_WORK_PASSWORD }}
-          MVN_ADDITIONAL_OPTS: '-DaltReleaseDeploymentRepository=${{ env.DEPLOY_TARGET }} -Dmaven.source.skip=true -Denforcer.failFast=true -DskipTests=true'
+          MVN_ADDITIONAL_OPTS: '-DaltReleaseDeploymentRepository=${{ env.DEPLOY_TARGET }} -Denforcer.failFast=true -DskipTests=true'
+
           SETTINGS_XML: ${{ env.PROJECT_ROOT_PATH }}/.m2/settings.xml
           ## hub.docker.com
           DOCKER_REGISTRY_USERNAME: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
           DOCKER_REGISTRY_PASSWORD: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
           DOCKER_REGISTRY_URL: 'https://index.docker.io/v2/'
+
+
+
 
       - name: Code Quality Analysis
         if: steps.revision.outputs.revision != 'skip'
