@@ -391,7 +391,7 @@ page.parent doesn't seem to be set...
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>Indicates the css class that a property should have.</p>
+<p>Indicates the css class that a property should have, to allow more targeted styling in <code>application.css</code> .</p>
 </div>
 </div>
 </div></td>
@@ -413,7 +413,7 @@ page.parent doesn't seem to be set...
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>Indicates where in the UI the property should <em>not</em> not be visible.</p>
+<p>Indicates where in the UI the property should <em>not</em> be visible.</p>
 </div>
 </div>
 </div></td>
@@ -512,7 +512,7 @@ page.parent doesn't seem to be set...
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>The typical entry length of a field, use to determine the optimum width for display</p>
+<p>The typical entry length of a field, use to determine the optimum width for display.</p>
 </div>
 </div>
 </div></td>
@@ -527,7 +527,7 @@ page.parent doesn't seem to be set...
 <div class="sect2">
 <h3 id="cssClass"><a class="anchor" href="#cssClass"></a>cssClass</h3>
 <div class="paragraph">
-<p>Indicates the css class that a property should have.</p>
+<p>Indicates the css class that a property should have, to allow more targeted styling in <code>application.css</code> .</p>
 </div>
 </div>
 <div class="sect2">
@@ -539,7 +539,7 @@ page.parent doesn't seem to be set...
 <div class="sect2">
 <h3 id="hidden"><a class="anchor" href="#hidden"></a>hidden</h3>
 <div class="paragraph">
-<p>Indicates where in the UI the property should <em>not</em> not be visible.</p>
+<p>Indicates where in the UI the property should <em>not</em> be visible.</p>
 </div>
 </div>
 <div class="sect2">
@@ -548,7 +548,7 @@ page.parent doesn't seem to be set...
 <p>In forms, positioning of the label (left, top or none) relative to the property value.</p>
 </div>
 <div class="paragraph">
-<p>If not specified, the default depends upon the property value&#8217;s datatype.</p>
+<p>If not specified, the default depends upon the property value&#8217;s datatype (including whether the field is <em>#multiLine()</em> .</p>
 </div>
 </div>
 <div class="sect2">
@@ -556,11 +556,17 @@ page.parent doesn't seem to be set...
 <div class="paragraph">
 <p>For string properties (and parameters), render as a text area over specified number of lines.</p>
 </div>
+<div class="paragraph">
+<p>If set to &gt; 1, then <em>#labelPosition()</em> defaults to <em>LabelPosition#TOP top</em> .</p>
+</div>
 </div>
 <div class="sect2">
 <h3 id="named"><a class="anchor" href="#named"></a>named</h3>
 <div class="paragraph">
 <p>Name of this property (overriding the name derived from its name in code).</p>
+</div>
+<div class="paragraph">
+<p>A typical use case is if the desired name is a reserved Java keyword, such as <code>default</code> or <code>package</code>.</p>
 </div>
 </div>
 <div class="sect2">
@@ -625,8 +631,64 @@ public LocalDate getEndDate() { ... }</pre>
 <div class="sect2">
 <h3 id="typicalLength"><a class="anchor" href="#typicalLength"></a>typicalLength</h3>
 <div class="paragraph">
-<p>The typical entry length of a field, use to determine the optimum width for display</p>
+<p>The typical entry length of a field, use to determine the optimum width for display.</p>
 </div>
+<div class="paragraph">
+<p>Note: the Wicket viewer does not use this information.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class ToDoItem {
+    @PropertyLayout(
+        cssClass="x-key",
+        named="Description of this &lt;i&gt;item&lt;/i&gt;",
+        namedEscaped=false,
+        describedAs="What needs to be done",
+        labelPosition=LabelPosition.LEFT,
+        typicalLength=80
+    )
+    public String getDescription() { /* ... */ }
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>As an alternative to using the <code>@PropertyLayout</code> annotation, a <a href="../../../../../../userguide/latest/fun/ui.html#object-layout" class="page">file-based layout</a> can be used (and is generally to be preferred since it is more flexible/powerful).</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The annotation is one of a handful (others including <a href="Collection.html" class="page"><code>@Collection</code></a>, <a href="CollectionLayout.html" class="page"><code>@CollectionLayout</code></a> and <a href="Property.html" class="page"><code>@Property</code></a>) that can also be applied to the field, rather than the getter method.  This is specifically
+so that boilerplate-busting tools such as <a href="https://projectlombok.org/">Project Lombok</a> can be used.</p>
+</div>
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -647,7 +709,7 @@ public LocalDate getEndDate() { ... }</pre>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210219-1655-7674de97</p>
+            <p>Revision: 2.0.0-M4.20210222-0423-14177298</p>
         </div>
     </div>
 </footer>

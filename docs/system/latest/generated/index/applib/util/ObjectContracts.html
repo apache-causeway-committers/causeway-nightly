@@ -416,6 +416,153 @@ public int compareTo(final ApplicationFeature other) {
 </div>
 </div>
 </div>
+<div class="sect1">
+<h2 id="example"><a class="anchor" href="#example"></a>Example</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
+import lombok.Setter;
+
+public class ToDoItem implements Comparable&lt;ToDoItem&gt; {
+
+    @Getter @Setter
+    private boolean complete;
+
+    @Getter @Setter
+    private LocalDate dueBy;
+
+    @Getter @Setter
+    private String description;
+
+    @Getter @Setter
+    private String ownedBy;
+
+    public int compareTo(final ToDoItem other) {
+        return ObjectContracts.compare(this, other,
+                    "complete","dueBy","description");
+    }
+
+    public String toString() {
+        return ObjectContracts.toString(this,
+                    "description","complete","dueBy","ownedBy");
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="usage-notes"><a class="anchor" href="#usage-notes"></a>Usage Notes</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="performance"><a class="anchor" href="#performance"></a>Performance</h3>
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-caution" title="Caution"></i>
+</td>
+<td class="content">
+This class is only intended for use while prototyping.
+It uses reflection heavily and is not performant.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="be-aware-of-orm-loading-issues"><a class="anchor" href="#be-aware-of-orm-loading-issues"></a>Be aware of ORM loading issues</h3>
+<div class="paragraph">
+<p><code>ObjectContracts</code> implementation can cause DataNucleus to recursively rehydrate a larger number of associated entities (More detail below).</p>
+</div>
+<div class="paragraph">
+<p>We therefore recommend that you disable
+<a href="../../../../../../refguide/latest/config/sections/jdo-datanucleus-conf.html#datanucleus.persistenceByReachabilityAtCommit" class="page">persistence-by-reachability</a> by adding:</p>
+</div>
+<div class="listingblock">
+<div class="title">persistor_datanucleus.properties</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">datanucleus.persistenceByReachabilityAtCommit=false</code></pre>
+</div>
+</div>
+<div class="imageblock kroki">
+<div class="content">
+<object type="image/svg+xml" data="../../../_images/diag-e4f2a8e33daa6ba98231aa4424332bd7dcbfdbdb.svg"><span class="alt">Diagram</span></object>
+</div>
+</div>
+<div class="paragraph">
+<p>In the course of a transaction, the <code>Agreement</code> entity is loaded into memory (not necessarily modified), and then new <code>AgreementRole</code>s are associated to it.</p>
+</div>
+<div class="paragraph">
+<p>All these entities implement <code>Comparable</code> using <code>ObjectContracts</code>, so that the implementation of <code>AgreementRole</code>'s (simplified) is:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class AgreementRole {
+    ...
+    public int compareTo(AgreementRole other) {
+        return ObjectContracts.compareTo(this, other, "agreement","startDate","party");
+    }
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>while <code>Agreement</code>'s is implemented as:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">    public class Agreement {
+        ...
+        public int compareTo(Agreement other) {
+            return ObjectContracts.compareTo(this, other, "reference");
+        }
+        ...
+    }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>and <code>Party</code>'s is similarly implemented as:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Party {
+    ...
+    public int compareTo(Party other) {
+        return ObjectContracts.compareTo(this, other, "reference");
+    }
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>DataNucleus&#8217;s persistence-by-reachability algorithm adds the <code>AgreementRole</code>s into a <code>SortedSet</code>, which causes <code>AgreementRole#compareTo()</code> to fire:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>the evaluation of the "agreement" property delegates back to the <code>Agreement</code>, whose own <code>Agreement#compareTo()</code> uses the scalar <code>reference</code> property.
+As the <code>Agreement</code> is already in-memory, this does not trigger any further database queries</p>
+</li>
+<li>
+<p>the evaluation of the "startDate" property is just a scalar property of the <code>AgreementRole</code>, so will already in-memory</p>
+</li>
+<li>
+<p>the evaluation of the "party" property delegates back to the <code>Party</code>, whose own <code>Party#compareTo()</code> requires the uses the scalar <code>reference</code> property.
+However, since the <code>Party</code> is not yet in-memory, using the <code>reference</code> property triggers a database query to "rehydrate" the <code>Party</code> instance.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>In other words, figuring out whether <code>AgreementRole</code> is comparable requires the persistence-by-reachability algorithm to run, causing the adjacent associated entity <code>Party</code> to also be retrieved.</p>
+</div>
+</div>
+</div>
+</div>
 </article>
 <aside class="article-aside toc hide-for-print" role="navigation">
     <p class="toc-title">On this page</p>
@@ -433,7 +580,7 @@ public int compareTo(final ApplicationFeature other) {
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210219-1655-7674de97</p>
+            <p>Revision: 2.0.0-M4.20210222-0423-14177298</p>
         </div>
     </div>
 </footer>

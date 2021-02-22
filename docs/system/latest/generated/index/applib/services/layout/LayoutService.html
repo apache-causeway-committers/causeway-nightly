@@ -436,6 +436,117 @@ page.parent doesn't seem to be set...
 </div>
 </div>
 </div>
+<div class="sect1">
+<h2 id="implementation"><a class="anchor" href="#implementation"></a>Implementation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The framework provides a default implementation, <code>o.a.i.core.metamodel.services.layout.LayoutServiceDefault</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="related-mixins-and-menus"><a class="anchor" href="#related-mixins-and-menus"></a>Related Mixins and Menus</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The service&#8217;s functionality is exposed in the UI through a mixin (per object) and a menu action (for all objects):</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>the <a href="#applib-classes:roles-mixins-contributees/mixins.adoc#Object" class="page unresolved"><code>Object</code> mixin</a> provides the ability to download the XML layout for any domain object (entity or view model).</p>
+</li>
+<li>
+<p>the <code>LayoutServiceMenu</code> provides the ability to download all XML layouts as a single ZIP file (in any of the three styles).</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The XML can then be copied into the codebase of the application, and annotations in the domain classes removed as desired.</p>
+</div>
+<div class="sect2">
+<h3 id="styles"><a class="anchor" href="#styles"></a>Styles</h3>
+<div class="paragraph">
+<p>Each of these actions take as a parameter an instance of <a href="Style.html" class="page">Style</a>.</p>
+</div>
+<div class="paragraph">
+<p>The <code>CURRENT</code> style corresponds to the layout already loaded for the domain class, typically from an already persisted <code>layout.xml</code> file.
+The other three styles allow the developer to choose how much metadata is to be specified in the XML, and how much (if any) will be obtained elsewhere, typically from annotations in the metamodel.
+The table below summarises the choices:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. Styles</caption>
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-bottom">Style</th>
+<th class="tableblock halign-center valign-bottom"><a href="../../annotation/MemberOrder.html" class="page"><code>@MemberOrder</code></a></th>
+<th class="tableblock halign-center valign-bottom"><a href="../../annotation/ActionLayout.html" class="page"><code>@ActionLayout</code></a>, <a href="../../annotation/PropertyLayout.html" class="page"><code>@PropertyLayout</code></a>, <a href="../../annotation/CollectionLayout.html" class="page"><code>@CollectionLayout</code></a></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-bottom"><p class="tableblock"><code>COMPLETE</code></p></td>
+<td class="tableblock halign-center valign-bottom"><p class="tableblock">serialized as XML</p></td>
+<td class="tableblock halign-center valign-bottom"><p class="tableblock">serialized as XML</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-bottom"><p class="tableblock"><code>NORMALIZED</code></p></td>
+<td class="tableblock halign-center valign-bottom"><p class="tableblock">serialized as XML</p></td>
+<td class="tableblock halign-center valign-bottom"><p class="tableblock">not in the XML</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-bottom"><p class="tableblock"><code>MINIMAL</code></p></td>
+<td class="tableblock halign-center valign-bottom"><p class="tableblock">not in the XML</p></td>
+<td class="tableblock halign-center valign-bottom"><p class="tableblock">not in the XML</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>As a developer, you therefore have a choice as to how you provide the metadata required for customised layouts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>if you want all layout metadata to be read from the <code>.layout.xml</code> file, then download the "complete" version, and copy the file alongside the domain class.</p>
+<div class="paragraph">
+<p>You can then remove all <code>@MemberOrder</code>, <code>@ActionLayout</code>, <code>@PropertyLayout</code> and <code>@CollectionLayout</code> annotations from the source code of the domain class.</p>
+</div>
+</li>
+<li>
+<p>if you want to use layout XML file to describe the grid (columns, tabs etc) and specify which object members are associated with those regions of the grid, then download the "normalized" version.</p>
+<div class="paragraph">
+<p>You can then remove the <code>@MemberOrder</code> annotations from the source code of the domain class, but retain the <code>@ActionLayout</code>, <code>@PropertyLayout</code> and <code>@CollectionLayout</code> annotations.</p>
+</div>
+</li>
+<li>
+<p>if you want to use layout XML file ONLY to describe the grid, then download the "minimal" version.</p>
+<div class="paragraph">
+<p>The grid regions will be empty in this version, and the framework will use the <code>@MemberOrder</code> annotation to bind object members to those regions.</p>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The functionality of <code>LayoutService</code> is surfaced in the user interface through a related <a href="#related-mixins-and-menus">mixin and menu action</a>.
+See also <a href="Style.html" class="page">Style</a>, which determines how much data is included in the downloaded XML.</p>
+</div>
+<div class="paragraph">
+<p>The <a href="../grid/GridService.html" class="page"><code>GridService</code></a> is responsible for loading and normalizing layout XML for a domain class.
+It in turn uses the <a href="../grid/GridLoaderService.html" class="page"><code>GridLoaderService</code></a> and  <a href="../grid/GridSystemService.html" class="page"><code>GridSystemService</code></a>
+services.</p>
+</div>
+</div>
+</div>
 </article>
 <aside class="article-aside toc hide-for-print" role="navigation">
     <p class="toc-title">On this page</p>
@@ -453,7 +564,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210219-1655-7674de97</p>
+            <p>Revision: 2.0.0-M4.20210222-0423-14177298</p>
         </div>
     </div>
 </footer>

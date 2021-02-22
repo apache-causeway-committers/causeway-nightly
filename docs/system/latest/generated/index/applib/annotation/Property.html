@@ -593,6 +593,9 @@ page.parent doesn't seem to be set...
 <p>Indicates that changes to the property that should be posted to the <em>org.apache.isis.applib.services.eventbus.EventBusService event bus</em> using a custom (subclass of) <a href="../events/domain/PropertyDomainEvent.html" class="page">PropertyDomainEvent</a> .</p>
 </div>
 <div class="paragraph">
+<p>Subscribers of this event can interact with the business rule checking (hide, disable, validate) and its modification (before and after).</p>
+</div>
+<div class="paragraph">
 <p>For example:</p>
 </div>
 <div class="listingblock">
@@ -636,6 +639,9 @@ public LocalDate getStartDate() { ...}</pre>
 <div class="paragraph">
 <p>The value should be of the form "file_extension|audio/<strong>|video/</strong>|image/*|media_type".</p>
 </div>
+<div class="paragraph">
+<p>Note that this does not prevent the user from uploading some other file type; rather it merely defaults the file type in the file open dialog.</p>
+</div>
 </div>
 <div class="sect2">
 <h3 id="hidden"><a class="anchor" href="#hidden"></a>hidden</h3>
@@ -650,6 +656,18 @@ public LocalDate getStartDate() { ...}</pre>
 </div>
 <div class="paragraph">
 <p>The default value ( <code>-1</code> ) indicates that no maxLength has been specified.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+this will usually be supplemented by a JDO or JPA-specific annotation to indicate length of the column in the table to whic the entity is mapped.
+</td>
+</tr>
+</table>
 </div>
 </div>
 <div class="sect2">
@@ -675,8 +693,17 @@ public LocalDate getStartDate() { ...}</pre>
 <div class="paragraph">
 <p>Whether this property is optional or is mandatory (ie required).</p>
 </div>
-<div class="paragraph">
-<p>For properties the default value, <em>org.apache.isis.applib.annotation.Optionality#DEFAULT</em> , usually means that the property is required unless it has been overridden by <code>javax.jdo.annotations.Column</code> with its <code>javax.jdo.annotations.Column#allowsNull()</code> attribute set to true.</p>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+this will usually be supplmented by a JDO or JPA-specific annotation to specify the nullability of the corresponding column in the table to which the owning entity is mapped.
+</td>
+</tr>
+</table>
 </div>
 </div>
 <div class="sect2">
@@ -714,6 +741,63 @@ public LocalDate getStartDate() { ...}</pre>
 </div>
 </div>
 </div>
+<div class="sect1">
+<h2 id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject
+public class Customer {
+    public static class EmailSpecification extends AbstractSpecification&lt;String&gt; {
+        public String satisfiesSafely(String proposed) {
+            return EmailUtil.ensureValidEmail(proposed);    <i class="conum" data-value="1"></i><b>(1)</b>
+        }
+    }
+    @javax.jdo.annotations.Column(allowsNull="true")                <i class="conum" data-value="2"></i><b>(2)</b>
+    @Property(
+        maxLength=30,
+        mustSatisfy=EmailSpecification.class,
+        regexPattern = "(\\w+\\.)*\\w+@(\\w+\\.)+[A-Za-z]+",
+        regexPatternFlags=Pattern.CASE_INSENSITIVE
+    )
+    public String getEmailAddress() { /* ... */ }
+    public void setEmailAddress(String emailAddress) { /* ... */ }
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>the (fictitious) <code>EmailUtil.ensureValid(&#8230;&#8203;)</code> (omitted for brevity) returns a string explaining if an email is invalid</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>generally use instead of the <code>@Property#optionality</code> attribute</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The annotation is one of a handful (others including <a href="Collection.html" class="page"><code>@Collection</code></a>, <a href="CollectionLayout.html" class="page"><code>@CollectionLayout</code></a> and <a href="PropertyLayout.html" class="page"><code>@PropertyLayout</code></a>) that can also be applied to the field, rather than the getter method.  This is specifically
+so that boilerplate-busting tools such as <a href="https://projectlombok.org/">Project Lombok</a> can be used.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
 </article>
 <aside class="article-aside toc hide-for-print" role="navigation">
     <p class="toc-title">On this page</p>
@@ -731,7 +815,7 @@ public LocalDate getStartDate() { ...}</pre>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210219-1655-7674de97</p>
+            <p>Revision: 2.0.0-M4.20210222-0423-14177298</p>
         </div>
     </div>
 </footer>

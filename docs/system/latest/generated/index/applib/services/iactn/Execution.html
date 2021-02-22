@@ -536,6 +536,99 @@ page.parent doesn't seem to be set...
 </div>
 </div>
 </div>
+<div class="sect1">
+<h2 id="implementation"><a class="anchor" href="#implementation"></a>Implementation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This is an abstract class with two concrete subclasses</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>ActionInvocation</code> represents the execution of an action being invoked:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class ActionInvocation extends Execution {
+    public List&lt;Object&gt; getArgs();                  <i class="conum" data-value="1"></i><b>(1)</b>
+}</code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The objects passed in as the arguments to the action&#8217;s parameters.
+Any of these could be <code>null</code>.
+<div class="ulist">
+<ul>
+<li>
+<p><code>PropertyEdit</code> represents the execution of a property being edited:
+=</p>
+</li>
+</ul>
+</div></td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>public class PropertyEdit extends Execution {
+    public Object getNewValue();                    <i class="conum" data-value="1"></i><b>(1)</b>
+}</pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The object used as the new value of the property.
+Could be <code>null</code> if the property is being cleared.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="usage-notes"><a class="anchor" href="#usage-notes"></a>Usage Notes</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>Execution</code>s can be subscribed to using the <a href="../publishing/spi/ExecutionSubscriber.html" class="page">ExecutionSubscriber</a> interface.</p>
+</div>
+<div class="paragraph">
+<p>+
+One reason to subscribe is to persist these interaction/executions.
+This supports several use cases:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>they enable profiling of the running application (which actions are invoked then most often, what is their response time)</p>
+</li>
+<li>
+<p>if auditing is configured (using <a href="../publishing/spi/EntityPropertyChangeSubscriber.html" class="page"><code>EntityPropertyChangeSubscriber</code></a>), they provide better audit information, since the parent <a href="Interaction.html" class="page">Interaction</a> captures the 'cause' of an interaction and can be correlated to the audit records (the "effect" of the interaction) by way of the <a href="#applib-classes:roles-mixins-contributees/contributee.adoc#HasUniqueId" class="page unresolved"><code>uniqueId</code></a> that both share.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="Interaction.html" class="page">Interaction</a></p>
+</li>
+<li>
+<p><a href="../publishing/spi/ExecutionSubscriber.html" class="page">ExecutionSubscriber</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
 </article>
 <aside class="article-aside toc hide-for-print" role="navigation">
     <p class="toc-title">On this page</p>
@@ -553,7 +646,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210219-1655-7674de97</p>
+            <p>Revision: 2.0.0-M4.20210222-0423-14177298</p>
         </div>
     </div>
 </footer>

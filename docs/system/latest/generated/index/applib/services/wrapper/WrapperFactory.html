@@ -656,6 +656,192 @@ page.parent doesn't seem to be set...
 </div>
 </div>
 </div>
+<div class="sect1">
+<h2 id="typical-usage-enforcing-constraints"><a class="anchor" href="#typical-usage-enforcing-constraints"></a>Typical Usage: Enforcing Constraints</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The caller will typically obtain the target object (eg from some repository) and then use the injected <code>WrapperFactory</code> to wrap it before interacting with it.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class CustomerAgent {
+    @Action
+    public void refundOrder(final Order order) {
+        final Order wrappedOrder = wrapperFactory.wrap(order);
+        try {
+            wrappedOrder.refund();
+        } catch(InteractionException ex) {          <i class="conum" data-value="1"></i><b>(1)</b>
+            messageService.raiseError(ex.getMessage());  <i class="conum" data-value="2"></i><b>(2)</b>
+            return;
+        }
+    }
+    ...
+    @Inject
+    WrapperFactory wrapperFactory;
+    @Inject
+    MessageService messageService;
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>if any constraints on the <code>Order&#8217;s `refund()</code> action would be violated, then &#8230;&#8203;</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>&#8230;&#8203; these will be trapped and raised to the user as a warning.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="usage-notes"><a class="anchor" href="#usage-notes"></a>Usage Notes</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="domain-objects"><a class="anchor" href="#domain-objects"></a>Domain Objects</h3>
+<div class="paragraph">
+<p>For domain objects (not mixins), the wrapper can be interacted with as follows:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>a <code>get&#8230;&#8203;()</code> method for properties or collections</p>
+</li>
+<li>
+<p>a <code>set&#8230;&#8203;()</code> method for properties</p>
+</li>
+<li>
+<p>an <code>addTo&#8230;&#8203;()</code> or <code>removeFrom&#8230;&#8203;()</code> method for collections</p>
+</li>
+<li>
+<p>any action</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Calling any of the above methods may result in a (subclass of) <code>InteractionException</code> if the object disallows it.
+For example, if a property is annotated with <a href="../../annotation/ActionLayout.html#hidden" class="page"><code>@ActionLayout#hidden</code></a> then a <code>HiddenException</code> will be thrown.
+Similarly if an action has a <a href="../../../../../../../refguide/latest/applib-methods/prefixes.html" class="page"><code>validateXxx()</code></a> method and the supplied arguments are invalid then an <code>InvalidException</code> will be thrown.</p>
+</div>
+<div class="paragraph">
+<p>In addition, the following methods may also be called:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>the <a href="../../../../../../../refguide/latest/applib-methods/reserved.html#title" class="page"><code>title()</code></a> and <code>toString()</code> methods</p>
+</li>
+<li>
+<p>any <a href="../../../../../../../refguide/latest/applib-methods/prefixes.html#default" class="page"><code>default&#8230;&#8203;()</code></a>, <a href="../../../../../../../refguide/latest/applib-methods/prefixes.html#choices" class="page"><code>choices&#8230;&#8203;()</code></a> or <a href="../../../../../../../refguide/latest/applib-methods/prefixes.html#autoComplete" class="page"><code>autoComplete&#8230;&#8203;()</code></a> methods</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>An exception will be thrown if any other methods are thrown.</p>
+</div>
+<div class="paragraph">
+<p>If the interface is performed (action invoked or property set), then - irrespective of whether the business rules were checked or skipped - a <a href="../../annotation/Action.html#command" class="page">command</a> will be created and pre- and post-execute <a href="../../annotation/Action.html#domainEvent" class="page">domain event</a>s) will be fired.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="mixins"><a class="anchor" href="#mixins"></a>Mixins</h3>
+<div class="paragraph">
+<p>For mixins, the behaviour of the wrapper is similar but simpler.
+Mixin wrappers only apply to actions, and so the wrapper will enforce the hidden/disable/validate rules before executing.
+In addition, any <a href="../../../../../../../refguide/latest/applib-methods/prefixes.html#default" class="page"><code>default&#8230;&#8203;()</code></a>, <a href="../../../../../../../refguide/latest/applib-methods/prefixes.html#choices" class="page"><code>choices&#8230;&#8203;()</code></a> or <a href="../../../../../../../refguide/latest/applib-methods/prefixes.html#autoComplete" class="page"><code>autoComplete&#8230;&#8203;()</code></a> methods can be called.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="other-use-cases"><a class="anchor" href="#other-use-cases"></a>Other Use Cases</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="creating-interactions"><a class="anchor" href="#creating-interactions"></a>Creating interactions</h3>
+<div class="paragraph">
+<p>One use case for the <code>WrapperFactory</code> is to invoke actions that have <a href="../../annotation/Action.html#executionPublishing" class="page">Action#executionPublishing</a> enabled.
+This will result in a serializable representation of the action invocation to be published; this could then be used to route a message to another system.</p>
+</div>
+<div class="paragraph">
+<p>The target action is often a no-op; indeed it can even be hidden if the <code>WrapperFactory</code> is invoked with rules skipped.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="integration-tests"><a class="anchor" href="#integration-tests"></a>Integration tests</h3>
+<div class="paragraph">
+<p>The <code>WrapperFactory</code> is frequently used within <a href="../../../../../../../testing/latest/integtestsupport/about.html" class="page">integration tests</a>.
+A longer discussion of the use of the <code>WrapperFactory</code> within integration tests can be found <a href="../../../../../../../testing/latest/integtestsupport/about.html#wrapper-factory" class="page">here</a>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="trust-boundaries"><a class="anchor" href="#trust-boundaries"></a>Trust boundaries</h3>
+<div class="paragraph">
+<p>If there is a (lack of) trust boundary between the caller and callee&#8201;&#8212;&#8201;eg if they reside in different modules&#8201;&#8212;&#8201;then the <code>WrapperFactory</code> is one mechanism to ensure that any business constraints defined by the callee are honoured.</p>
+</div>
+<div class="paragraph">
+<p>For example, if the calling object attempts to modify an unmodifiable property on the target object, then an exception will be thrown.</p>
+</div>
+<div class="paragraph">
+<p>Said another way: interactions are performed "as if" they are through the viewer.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="listener-api"><a class="anchor" href="#listener-api"></a>Listener API</h3>
+<div class="paragraph">
+<p>One possible use case for the listener API would be to autogenerate documentation, for example a sequence diagram from tests.</p>
+</div>
+<div class="paragraph">
+<p>Such a feature would probably also use <a href="../iactn/InteractionContext.html" class="page"><code>InteractionContext</code></a>, which builds up an execution call graph of interactions between (wrapped) objects.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="control/SyncControl.html" class="page">SyncControl</a> and <a href="control/AsyncControl.html" class="page">AsyncControl</a></p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="control/ExceptionHandler.html" class="page">ExceptionHandler</a></p>
+</li>
+<li>
+<p><a href="control/ExecutionMode.html" class="page">ExecutionMode</a></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><a href="listeners/InteractionListener.html" class="page">InteractionListener</a></p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="listeners/InteractionAdapter.html" class="page">InteractionAdapter</a></p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="implementation"><a class="anchor" href="#implementation"></a>Implementation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The service works by returning a "wrapper" around a supplied domain object (using <a href="https://bytebuddy.net/">byte buddy</a>), and it is this wrapper that ensures that the hide/disable/validate rules implies by the Apache Isis programming model are enforced.</p>
+</div>
+</div>
+</div>
 </article>
 <aside class="article-aside toc hide-for-print" role="navigation">
     <p class="toc-title">On this page</p>
@@ -673,7 +859,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210219-1655-7674de97</p>
+            <p>Revision: 2.0.0-M4.20210222-0423-14177298</p>
         </div>
     </div>
 </footer>

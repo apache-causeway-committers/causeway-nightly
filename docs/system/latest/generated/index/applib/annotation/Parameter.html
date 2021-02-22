@@ -397,7 +397,7 @@ page.parent doesn't seem to be set...
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>The maximum entry length of a field.</p>
+<p>The maximum entry length of a string parameter (it is ignored for other types).</p>
 </div>
 </div>
 </div></td>
@@ -472,11 +472,14 @@ page.parent doesn't seem to be set...
 <div class="paragraph">
 <p>The value should be of the form "file_extension|audio/<strong>|video/</strong>|image/*|media_type".</p>
 </div>
+<div class="paragraph">
+<p>Note that this does not prevent the user from uploading some other file type; rather it merely defaults the file type in the file open dialog.</p>
+</div>
 </div>
 <div class="sect2">
 <h3 id="maxLength"><a class="anchor" href="#maxLength"></a>maxLength</h3>
 <div class="paragraph">
-<p>The maximum entry length of a field.</p>
+<p>The maximum entry length of a string parameter (it is ignored for other types).</p>
 </div>
 <div class="paragraph">
 <p>The default value ( <code>-1</code> ) indicates that no maxLength has been specified.</p>
@@ -523,6 +526,46 @@ page.parent doesn't seem to be set...
 </div>
 </div>
 </div>
+<div class="sect1">
+<h2 id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Customer {
+    public static class EmailSpecification extends AbstractSpecification&lt;String&gt; {
+        public String satisfiesSafely(String proposed) {
+            return EmailUtil.ensureValidEmail(proposed);    <i class="conum" data-value="1"></i><b>(1)</b>
+        }
+    }
+    @Action(semantics=SemanticsOf.IDEMPOTENT)
+    public Customer updateEmail(
+        @Parameter(
+            maxLength=30,
+            mustSatisfy=EmailSpecification.class,
+            optionality=Optionality.OPTIONAL,
+            regexPattern = "(\\w+\\.)*\\w+@(\\w+\\.)+[A-Za-z]+",
+            regexPatternFlags=Pattern.CASE_INSENSITIVE
+        )
+        @ParameterLayout(named="New Email Address")
+        final String newEmailAddress
+        ...
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>the (fictitious) <code>EmailUtil.ensureValid(&#8230;&#8203;)</code> (omitted for brevity) returns a string explaining if an email is invalid</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
 </article>
 <aside class="article-aside toc hide-for-print" role="navigation">
     <p class="toc-title">On this page</p>
@@ -540,7 +583,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210219-1655-7674de97</p>
+            <p>Revision: 2.0.0-M4.20210222-0423-14177298</p>
         </div>
     </div>
 </footer>

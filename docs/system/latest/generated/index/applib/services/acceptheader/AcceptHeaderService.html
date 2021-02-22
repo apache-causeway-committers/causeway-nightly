@@ -406,6 +406,62 @@ page.parent doesn't seem to be set...
 </div>
 </div>
 </div>
+<div class="sect1">
+<h2 id="implementation"><a class="anchor" href="#implementation"></a>Implementation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <a href="../../../../../../../vro/latest/about.html" class="page">Restful Objects</a> viewer provides an implementation of this API, <code>o.a.i.viewer.restfulobjects.rendering.service.acceptheader.AcceptHeaderServiceForRest</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="usage-notes"><a class="anchor" href="#usage-notes"></a>Usage Notes</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The intended use of this service is where there are multiple concurrent versions of a REST API, for backward compatibility of existing clients.
+The <code>AcceptHeaderService</code> allows the responsibility for content negotiation (determining which version of the REST API is to be used) to be performed by logic in the domain objects themselves.</p>
+</div>
+<div class="paragraph">
+<p>The diagram below illustrated this:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../../../../_images/reference-services-api/acceptheaderservice.png" alt="acceptheaderservice" width="700px">
+</div>
+</div>
+<div class="paragraph">
+<p>The REST request is submitted to a domain service with a <a href="../../annotation/DomainService.html#nature" class="page">nature</a> of <code>VIEW_REST_ONLY</code> (<code>MyRestApi</code> in the diagram).
+This uses the <code>AcceptHeaderService</code> to obtain the values of the HTTP <code>Accept</code> header.
+Based on this it delegates to the appropriate underlying domain service (with a nature of <code>DOMAIN</code> so that they are not exposed in the REST API at all).</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The service does not define any conventions as to the format of the media types.
+The option is to use the media type&#8217;s type/subtype, eg <code>application/vnd.myrestapi-v1+json</code>; an alternative is to use a media type parameter as a hint, eg <code>application/json;x-my-rest-api-version=1</code> (where <code>x-my-rest-api-version</code> is the media type parameter).</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="alternatives"><a class="anchor" href="#alternatives"></a>Alternatives</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>As an alternative to performing content negotiation within the domain classes, the <a href="../conmap/ContentMappingService.html" class="page"><code>ContentMappingService</code></a> SPI domain service allows the framework to perform the content negotiation responsibility.</p>
+</div>
+<div class="paragraph">
+<p>The Restful Objects specification supports this with its own <code>x-ro-domain-type</code> media type parameter; this is used by the <a href="../conmap/ContentMappingService.html" class="page"><code>ContentMappingService</code></a> to determine how to map domain objects to view models/DTOs.</p>
+</div>
+</div>
+</div>
 </article>
 <aside class="article-aside toc hide-for-print" role="navigation">
     <p class="toc-title">On this page</p>
@@ -423,7 +479,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210219-1655-7674de97</p>
+            <p>Revision: 2.0.0-M4.20210222-0423-14177298</p>
         </div>
     </div>
 </footer>

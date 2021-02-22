@@ -380,6 +380,37 @@ page.parent doesn't seem to be set...
 </div>
 </div>
 </div>
+<div class="sect1">
+<h2 id="usage-example"><a class="anchor" href="#usage-example"></a>Usage Example</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>For example, suppose that there&#8217;s a view model that wraps a <code>Customer</code> and its <code>Order</code>s.
+For this view model the <code>Customer</code> represents the logical identity.
+This view model might therefore be implemented as follows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@XmlRootElement("customerAndOrders")
+@XmlAccessType(FIELD)
+public class CustomerAndOrders implements HintStore.HintIdProvider {
+
+    @Getter @Setter
+    private Customer customer;
+
+    // ...
+
+    @Programmatic
+    public String hintId() {
+        bookmarkService.bookmarkFor(getCustomer()).toString();
+    }
+
+    @XmlTransient
+    @Inject BookmarkService bookmarkService;
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
 </article>
 <aside class="article-aside toc hide-for-print" role="navigation">
     <p class="toc-title">On this page</p>
@@ -397,7 +428,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210219-1655-7674de97</p>
+            <p>Revision: 2.0.0-M4.20210222-0423-14177298</p>
         </div>
     </div>
 </footer>

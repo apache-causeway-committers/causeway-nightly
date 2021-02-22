@@ -380,6 +380,48 @@ page.parent doesn't seem to be set...
 </div>
 </div>
 </div>
+<div class="sect1">
+<h2 id="implementation"><a class="anchor" href="#implementation"></a>Implementation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The framework provides no default implementation, but the <a href="../../../../../../../docs/latest/starters/simpleapp.html" class="page">simpleapp</a> starter app provides a <a href="https://github.com/apache/isis-app-simpleapp/blob/master/webapp/src/main/java/domainapp/webapp/application/services/health/HealthCheckServiceImpl.java">sample implementation</a>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Service
+@Named("domainapp.HealthCheckServiceImpl")
+@Log4j2
+public class HealthCheckServiceImpl implements HealthCheckService {
+
+    private final SimpleObjects simpleObjects;
+
+    @Inject
+    public HealthCheckServiceImpl(SimpleObjects simpleObjects) {
+        this.simpleObjects = simpleObjects;
+    }
+
+    @Override
+    public Health check() {
+        try {
+            simpleObjects.ping();
+            return Health.ok();
+        } catch (Exception ex) {
+            return Health.error(ex);
+        }
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="related-services"><a class="anchor" href="#related-services"></a>Related Services</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The internal domain service <code>o.a.i.core.webapp.health.HealthIndicatorUsingHealthCheckService</code> acts as the bridge between Spring and the `HealthCheckService' SPI.</p>
+</div>
+</div>
+</div>
 </article>
 <aside class="article-aside toc hide-for-print" role="navigation">
     <p class="toc-title">On this page</p>
@@ -397,7 +439,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210219-1655-7674de97</p>
+            <p>Revision: 2.0.0-M4.20210222-0423-14177298</p>
         </div>
     </div>
 </footer>

@@ -422,7 +422,7 @@ page.parent doesn't seem to be set...
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>Indicates the position of theFont Awesomeicon. The icon could be rendered on the left or the right of the action button</p>
+<p>Indicates the position of theFont Awesomeicon.</p>
 </div>
 </div>
 </div></td>
@@ -466,7 +466,7 @@ page.parent doesn't seem to be set...
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>For actions that are associated with a property, indicates the positioning of the action&#8217;s button relative to the property.</p>
+<p>For actions that are associated with a property (using either <em>Action#associateWith()</em> or <em>MemberOrder#name()</em> , indicates the positioning of the action&#8217;s button relative to the property.</p>
 </div>
 </div>
 </div></td>
@@ -477,7 +477,7 @@ page.parent doesn't seem to be set...
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>How this parameters for this action are prompted, either <em>PromptStyle#DIALOG dialog</em> or <em>PromptStyle#INLINE inline</em> .</p>
+<p>How the parameters for this action are prompted, either <em>PromptStyle#DIALOG dialog</em> or <em>PromptStyle#INLINE inline</em> .</p>
 </div>
 </div>
 </div></td>
@@ -527,7 +527,10 @@ page.parent doesn't seem to be set...
 <div class="sect2">
 <h3 id="cssClassFaPosition"><a class="anchor" href="#cssClassFaPosition"></a>cssClassFaPosition</h3>
 <div class="paragraph">
-<p>Indicates the position of theFont Awesomeicon. The icon could be rendered on the left or the right of the action button</p>
+<p>Indicates the position of theFont Awesomeicon.</p>
+</div>
+<div class="paragraph">
+<p>The icon could be rendered on the left or the right of the action button</p>
 </div>
 </div>
 <div class="sect2">
@@ -547,11 +550,14 @@ page.parent doesn't seem to be set...
 <div class="paragraph">
 <p>Name of this action (overriding the name derived from its name in code).</p>
 </div>
+<div class="paragraph">
+<p>A typical use case is if the desired name is a reserved Java keyword, such as <code>default</code> or <code>package</code>.</p>
+</div>
 </div>
 <div class="sect2">
 <h3 id="position"><a class="anchor" href="#position"></a>position</h3>
 <div class="paragraph">
-<p>For actions that are associated with a property, indicates the positioning of the action&#8217;s button relative to the property.</p>
+<p>For actions that are associated with a property (using either <em>Action#associateWith()</em> or <em>MemberOrder#name()</em> , indicates the positioning of the action&#8217;s button relative to the property.</p>
 </div>
 <div class="paragraph">
 <p>Ignored if the action has not been associated with a property.</p>
@@ -560,13 +566,609 @@ page.parent doesn't seem to be set...
 <div class="sect2">
 <h3 id="promptStyle"><a class="anchor" href="#promptStyle"></a>promptStyle</h3>
 <div class="paragraph">
-<p>How this parameters for this action are prompted, either <em>PromptStyle#DIALOG dialog</em> or <em>PromptStyle#INLINE inline</em> .</p>
+<p>How the parameters for this action are prompted, either <em>PromptStyle#DIALOG dialog</em> or <em>PromptStyle#INLINE inline</em> .</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="redirectPolicy"><a class="anchor" href="#redirectPolicy"></a>redirectPolicy</h3>
 <div class="paragraph">
 <p>If the action returns its target, then determines whether to update the page or instead to redirect (forcing a re-rendering of a new page).</p>
+</div>
+<div class="paragraph">
+<p>Not re-rendering can provide a smoother UI experience.</p>
+</div>
+<div class="paragraph">
+<p>Supported by the Wicket viewer.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="names"><a class="anchor" href="#names"></a>Names</h3>
+<div class="paragraph">
+<p>The <a href="#named">named()</a> element explicitly specifies the action&#8217;s name, overriding the name that would normally be inferred from the Java source code.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Only use this attribute when the desired name cannot be used in Java source code.
+Examples of that include a name that would be a reserved Java keyword (eg "package"), or a name that has punctuation, eg apostrophes.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Customer {
+    @ActionLayout(named="Get credit rating")        <i class="conum" data-value="1"></i><b>(1)</b>
+    public CreditRating obtainCreditRating() {
+        // ...
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>"get" normally indicates a property rather than an action.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>As an alternative to using the annotation, the dynamic <a href="../../../../../../userguide/latest/fun/ui.html#object-layout" class="page">file-based layout</a> can be used instead.</p>
+</div>
+<div class="paragraph">
+<p>The framework also provides a separate, powerful mechanism for <a href="../../../../../../userguide/latest/btb/i18n.html" class="page">internationalization</a>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="css-styling"><a class="anchor" href="#css-styling"></a>CSS Styling</h3>
+<div class="paragraph">
+<p>The <a href="#cssClass">cssClass()</a> element can be used to render additional CSS classes in the HTML (a wrapping <code>&lt;div&gt;</code>) that represents the action.
+<a href="../../../../../../refguide/latest/config/application-specific/application-css.html" class="page">Application-specific CSS</a> can then be used to target and adjust the UI representation of that particular element.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class ToDoItem {
+    @ActionLayout(cssClass="x-key")
+    public ToDoItem postpone(LocalDate until) { /* ... */ }
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The similar <a href="#cssClassFa"><code>@ActionLayout#cssClassFa</code></a> annotation attribute is also used as a hint to apply CSS, specifically to add <a href="http://fortawesome.github.io/Font-Awesome/icons/">Font Awesome icons</a> on action menu items or buttons.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="sect3">
+<h4 id="alternatives"><a class="anchor" href="#alternatives"></a>Alternatives</h4>
+<div class="paragraph">
+<p>As an alternative to using the annotation, the dynamic <a href="../../../../../../userguide/latest/fun/ui.html#object-layout" class="page">file-based layout</a> can be used instead.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="smoother-ui"><a class="anchor" href="#smoother-ui"></a>Smoother UI</h3>
+<div class="paragraph">
+<p>Often an action, when invoked, will return the target (in other words, will "return this").
+The <a href="#redirectPolicy">redirectPolicy()</a> element is used to control how the object is re-rendered.</p>
+</div>
+<div class="paragraph">
+<p>There are three options:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>if set to <code>ONLY_IF_DIFFERS</code>, then the existing web page will not be re-rendered, rather it will be updated in-place (using Ajax).</p>
+<div class="paragraph">
+<p>This makes for a smoother UI.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Any properties with <a href="PropertyLayout.html#repainting" class="page"><code>@PropertyLayout#repainting</code></a> set to <code>NO_REPAINT</code> are then <em>not</em> updated.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>if set to <code>EVEN_IF_SAME</code>, then a redirect occurs and a new web page is rendered.</p>
+</li>
+<li>
+<p>if set to <code>AS_CONFIGURED</code>, then the default behaviour is as specified by the <code>isis.viewer.wicket.redirectEvenIfSameObject</code> <a href="../../../../../../vw/latest/configuration-properties.html" class="page">configuration property</a>).</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>One use case for choosing <code>EVEN_IF_SAME</code> is if the action "returning this" is intended in some way to require that the object use a different layout, as per multiple layout support, as specified using the <a href="../../../../../../refguide/latest/applib-methods/reserved.html#layout" class="page"><code>layout()</code></a> method.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
+import lombok.Setter;
+
+public class Customer {
+
+    @Getter @Setter
+    @PropertyLayout(hidden=ALWAYS)
+    private String layout;
+
+    public String layout() {                <i class="conum" data-value="1"></i><b>(1)</b>
+        return layout;
+    }
+
+    @ActionLayout(
+        redirect=EVEN_IF_SAME               <i class="conum" data-value="2"></i><b>(2)</b>
+    )
+    public Customer switchToEditMode() {
+        setLayout("edit");
+        return this;
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>specifies the alternate layout to use, eg <code>Customer-edit.layout.xml</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>even though this action returns the same target object, still re-render the page.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>If <code>switchToEditMode()</code> action is invoked, then the UI will attempt to render the customer using a <code>Customer.layout.edit.xml</code> layout file (instead of the default <code>Customer.layout.xml</code>).</p>
+</div>
+<div class="paragraph">
+<p>As an alternative to using the annotation, the dynamic <a href="../../../../../../userguide/latest/fun/ui.html#object-layout" class="page">file-based layout</a> can be used instead.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="descriptions"><a class="anchor" href="#descriptions"></a>Descriptions</h3>
+<div class="paragraph">
+<p>The <a href="#describedAs">describedAs()</a> attribute is used to provide a short description of the action to the user.
+In the <a href="../../../../../../vw/latest/about.html" class="page">Wicket viewer</a> it is displayed as a 'tool tip'.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Customer {
+    @ActionLayout(describedAs=
+        "Place a repeat order of the last (most recently placed) order")
+    public Order placeRepeatOrder(...) { /* ... */ }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>As an alternative to using the annotation, the dynamic <a href="../../../../../../userguide/latest/fun/ui.html#object-layout" class="page">file-based layout</a> can be used instead.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="font-icons"><a class="anchor" href="#font-icons"></a>Font Icons</h3>
+<div class="paragraph">
+<p>The <a href="#cssClassFa">cssClassFa()</a> element is used to specify the name of a <a href="http://fortawesome.github.io/Font-Awesome/icons/">Font Awesome icon</a> name, to be rendered on the action&#8217;s representation as a button or menu item.
+The related <a href="#cssClassFaPosition">cssClassFaPosition()</a> element specifies the positioning of the icon, to the left or the right of the text.</p>
+</div>
+<div class="paragraph">
+<p>These attributes can also be applied to <a href="DomainObjectLayout.html#cssClassFa" class="page">domain objects</a> to specify the object&#8217;s icon.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class ToDoItem {
+
+    @ActionLayout(
+        cssClassFa="fa-step-backward"
+    )
+    public ToDoItem previous() {
+        // ...
+    }
+
+    @ActionLayout(
+        cssClassFa="fa-step-forward",
+        cssClassFaPosition=ActionLayout.CssClassFaPosition.RIGHT
+    )
+    public ToDoItem next() {
+        // ...
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>There can be multiple "fa-" classes, eg to mirror or rotate the icon.
+There is no need to include the mandatory <code>fa</code> "marker" CSS class; it will be automatically added to the list.
+The <code>fa-</code> prefix can also be omitted from the class names; it will be prepended to each if required.</p>
+</div>
+<div class="paragraph">
+<p>As an alternative to using the annotation, the dynamic <a href="../../../../../../userguide/latest/fun/ui.html#object-layout" class="page">file-based layout</a> can be used instead.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class ToDoItems {
+    @Action(semantics=SemanticsOf.SAFE)             <i class="conum" data-value="1"></i><b>(1)</b>
+    @ActionLayout(
+        bookmarking=BookmarkPolicy.AS_ROOT,
+        cssClass="x-key",
+        cssClassFa="fa-checkbox",
+        describedAs="Mark the todo item as not complete after all",
+        hidden=Where.NOWHERE                        <i class="conum" data-value="2"></i><b>(2)</b>
+    )
+    @MemberOrder(sequence = "1")
+    public List&lt;ToDoItem&gt; notYetComplete() {
+        ...
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>required for bookmarkable actions</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>default value, so could be omitted</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>As an alternative to using the <code>@ActionLayout</code> annotation, a <a href="../../../../../../userguide/latest/fun/ui.html#object-layout" class="page">file-based layout</a> can be used (and is generally to be preferred since it is more flexible/powerful).</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="usage-notes"><a class="anchor" href="#usage-notes"></a>Usage Notes</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="positioning"><a class="anchor" href="#positioning"></a>Positioning</h3>
+<div class="paragraph">
+<p>The <a href="#position">position()</a> element pertains only to actions that have been associated with properties using <a href="MemberOrder.html" class="page"><code>@MemberOrder#named</code></a>.
+For these actions, it specifies the positioning of the action&#8217;s button with respect to the field representing the object property.</p>
+</div>
+<div class="paragraph">
+<p>The attribute can take one of four values: <code>BELOW</code>, <code>RIGHT</code>, <code>PANEL</code> or <code>PANEL_DROPDOWN</code>.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
+import lombok.Setter;
+
+public class Customer {
+
+    @Property( editing=Editing.DISABLED )
+    @Getter @Setter
+    private BigDecimal cost;
+
+    @Property( editing=Editing.DISABLED )
+    @Getter @Setter
+    private String location;
+
+    @MemberOrder( named="cost" )                        <i class="conum" data-value="1"></i><b>(1)</b>
+    @ActionLayout(
+        named="Update",                                 <i class="conum" data-value="2"></i><b>(2)</b>
+        position=Position.BELOW                         <i class="conum" data-value="3"></i><b>(3)</b>
+    )
+    public Customer updateCost(BigDecimal cost ) {
+        // ...
+    }
+
+    @MemberOrder( named="location" )
+    @ActionLayout(
+        named="Update",
+        position=Position.BELOW
+    )
+    public Customer updateLocation(String latitude, String longitude) {
+        // ...
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>associate the "updateCost" action with the "cost" property</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>give the action an abbreviated name, because the fact that the "cost" property is to be updated is implied by its positioning</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>positioning of the action&#8217;s button</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The default is <code>BELOW</code>.</p>
+</div>
+<div class="paragraph">
+<p>If the action is positioned as <code>RIGHT</code>, then the action&#8217;s button is rendered to the right of the property&#8217;s field, in a compact drop-down.</p>
+</div>
+<div class="paragraph">
+<p>If the action is positioned as <code>PANEL</code>, then the action&#8217;s button is rendered on the header of the panel that contains the property.</p>
+</div>
+<div class="paragraph">
+<p>And finally, if the action is positioned as <code>PANEL_DROPDOWN</code>, then the action&#8217;s button is again rendered on the panel header.</p>
+</div>
+<div class="paragraph">
+<p>If there are multiple actions associated with a single property then the positioning can be mix&#8217;ed-and-match&#8217;ed as required.
+If the <code>PANEL</code> or <code>PANEL_DROPDOWN</code> are used, then (as the screenshots above show) the actions from potentially multiple properties grouped by that panel will be shown together.</p>
+</div>
+<div class="paragraph">
+<p>As an alternative to using the annotation, the dynamic <a href="../../../../../../userguide/latest/fun/ui.html#object-layout" class="page">file-based layout</a> can be used instead.
+The fact that the layout is dynamic (does not require a rebuild/restart) is particularly useful in that the look-n-feel can be easily experimented with and adjusted.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="hiding-actions"><a class="anchor" href="#hiding-actions"></a>Hiding actions</h3>
+<div class="paragraph">
+<p>The <a href="#hidden">hidden()</a> attribute indicates where (in the UI) the action should be hidden from the user.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>It is also possible to use <a href="Action.html#hidden" class="page"><code>@Action#hidden</code></a> to hide an action at the domain layer.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Customer {
+
+    @ActionLayout(hidden=Where.EVERYWHERE)
+    public void updateStatus() {
+        // ...
+    }
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The acceptable values for the <code>where</code> parameter are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>Where.EVERYWHERE</code> or <code>Where.ANYWHERE</code></p>
+<div class="paragraph">
+<p>The action should be hidden at all times.</p>
+</div>
+</li>
+<li>
+<p><code>Where.NOWHERE</code></p>
+<div class="paragraph">
+<p>The action should not be hidden.</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The other values of the <code>Where</code> enum have no meaning for a collection.</p>
+</div>
+<div class="paragraph">
+<p>As an alternative to using the annotation, the dynamic <a href="../../../../../../userguide/latest/fun/ui.html#object-layout" class="page">file-based layout</a> can be used instead.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="prompt-style"><a class="anchor" href="#prompt-style"></a>Prompt Style</h3>
+<div class="paragraph">
+<p>The <a href="#promptStyle">promptStyle()</a> element is used to specify whether, when invoking an action associated with a domain object property, the parameters for the action are prompted either in modal dialog box, a (non-modal) sidebar dialog box, or is prompted using an inline panel (replacing the property on the page).
+For more on sidebar vs modal dialogs, see <a href="../../../../../../vw/latest/features.html#sidebar-vs-modal-dialogs" class="page">Wicket viewer features</a>.</p>
+</div>
+<div class="paragraph">
+<p>The prompt style is influenced by two <a href="../../../../../../vw/latest/configuration-properties.html" class="page">configuration properties</a>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>if the <code>promptStyle</code> attribute is set to <code>DIALOG</code>, then a configuration property is used to determine whether to render using a modal dialog or a sidebar:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../../../../../../refguide/latest/config/sections/isis.viewer.wicket.html#isis.viewer.wicket.dialog-mode" class="page"><code>isis.viewer.wicket.dialog-mode</code></a> if the action is for a domain object (entity or view model)</p>
+<div class="paragraph">
+<p>If the configuration property is not set, then sidebar is used.</p>
+</div>
+</li>
+<li>
+<p><a href="../../../../../../refguide/latest/config/sections/isis.viewer.wicket.html#isis.viewer.wicket.dialog-mode-for-menu" class="page"><code>isis.viewer.wicket.dialog-mode-for-menu</code></a> if the action is for a domain service</p>
+<div class="paragraph">
+<p>If the configuration property is not set, then modal is used.</p>
+</div>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>if the attribute is not set at all, then the<a href="../../../../../../refguide/latest/config/sections/isis.viewer.wicket.html#isis.viewer.wicket.prompt-style" class="page"><code>isis.viewer.wicket.prompt-style</code></a> configuration property is used to specify the preferred prompt style.</p>
+<div class="paragraph">
+<p>If the configuration property is not set, then an inline prompt is used.</p>
+</div>
+<div class="paragraph">
+<p>And, if this <em>is</em> set but is set to just <code>DIALOG</code>, then the <a href="../../../../../../refguide/latest/config/sections/isis.viewer.wicket.html#isis.viewer.wicket.dialog-mode" class="page"><code>isis.viewer.wicket.dialog-mode</code></a> configuration property determines which style.</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
+import lombok.Setter;
+
+public class Customer {
+
+    @Property(editing = Editing.DISABLED)           <i class="conum" data-value="1"></i><b>(1)</b>
+    @Getter @Setter
+    private String notes;
+
+    @Action(associateWith="notes")                  <i class="conum" data-value="2"></i><b>(2)</b>
+    @ActionLayout(
+        promptStyle=PromptStyle.INLINE              <i class="conum" data-value="3"></i><b>(3)</b>
+    )
+    public Customer updateNotes(String notes) {
+        // ...
+    }
+
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>property is not editable</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>instead, associate this action with the "notes" property</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>prompt for the action&#8217;s parameters using an inline panel.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Exactly one action for a given property can be specified with <code>INLINE_AS_IF_EDIT</code>.
+Assuming that the corresponding property is not itself editable, this means that the property will be rendered as if it is editable, but the action&#8217;s prompt form will be rendered instead.
+The net effect is that a property conceptually consisting of different parts (eg a name, an address or a date) can be updated using an action that lets each separate part be specified independently.</p>
+</div>
+<div class="paragraph">
+<p>As an alternative to using the annotation, the dynamic <a href="../../../../../../userguide/latest/fun/ui.html#object-layout" class="page">file-based layout</a> can be used instead.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="bookmarking-2"><a class="anchor" href="#bookmarking-2"></a>Bookmarking</h3>
+<div class="paragraph">
+<p>The <a href="#bookmarking">bookmarking()</a> element indicates if an action (with safe <a href="Action.html#semantics" class="page">action semantics</a>) is automatically bookmarked.</p>
+</div>
+<div class="paragraph">
+<p>In the <a href="../../../../../../vw/latest/about.html" class="page">Wicket viewer</a>, a link to a bookmarked object is shown in the bookmarks panel.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The <a href="../../../../../../vw/latest/about.html" class="page">Wicket viewer</a> supports <code>alt-[</code> as a shortcut for opening the bookmark panel.  <code>Esc</code> will close.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class ToDoItems {
+    @Action(semantics=SemanticsOf.SAFE)
+    @ActionLayout(bookmarking=BookmarkPolicy.AS_ROOT)
+    @MemberOrder(sequence = "1")
+    public List&lt;ToDoItem&gt; notYetComplete() {
+        ...
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>indicates that the <code>notYetComplete()</code> action is bookmarkable.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The enum value <code>AS_CHILD</code> has no meaning for actions; it relates only to bookmarked <a href="DomainObjectLayout.html#bookmarking" class="page">domain object</a>s.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>As an alternative to using the annotation, the dynamic <a href="../../../../../../userguide/latest/fun/ui.html#object-layout" class="page">file-based layout</a> can be used instead.</p>
 </div>
 </div>
 </div>
@@ -588,7 +1190,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210219-1655-7674de97</p>
+            <p>Revision: 2.0.0-M4.20210222-0423-14177298</p>
         </div>
     </div>
 </footer>

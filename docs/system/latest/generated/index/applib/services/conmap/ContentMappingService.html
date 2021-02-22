@@ -397,6 +397,70 @@ page.parent doesn't seem to be set...
 </div>
 </div>
 </div>
+<div class="sect1">
+<h2 id="implementation"><a class="anchor" href="#implementation"></a>Implementation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The framework provides two implementations of this service, both to allow objects implementing <code>HasCommandDto</code> to be converted into serializable <code>CommandDto</code>s, in other words XML.
+This is used by the <a href="../../../../../../../extensions/latest/command-log/about.html" class="page">Command Log</a> and <a href="../../../../../../../extensions/latest/command-replay/about.html" class="page">Command Replay</a> extensions to allow commands to be replicated from a primary to secondary system, for regression testing.</p>
+</div>
+<div class="paragraph">
+<p>The implementations are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>o.a.i.applib.services.commanddto.conmap.ContentMappingServiceForCommandDto</code> will map any single instance of a <code>HasCommandDto</code> into a <code>CommandDto</code> XML document</p>
+</li>
+<li>
+<p><code>o.a.i.applib.services.commanddto.conmap.ContentMappingServiceForCommandsDto</code> will map a list of <code>HasCommandDto</code>s into a <code>CommandsDto</code> XML document, and will wrap any single instance of a <code>CommandWithDto</code> into a singleton list and thence into a <code>CommandsDto</code> XML document.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>If the action invocation or property edit represent provides an implementation of a <code>CommandDtoProcessor</code> (by way of <a href="../../annotation/Action.html#commandDtoProcessor" class="page"><code>@Action#commandDtoProcessor()</code></a> or <a href="../../annotation/Property.html#commandDtoProcessor" class="page"><code>@Property#commandDtoProcessor()</code></a>) then this is also called to post-process the persisted <code>CommandDto</code> if required.
+A typical use case for this is to dynamically add in serialized <code>Blob</code>s or <code>Clob</code>s, the values of which are not captured by default in <code>CommandDto</code>.</p>
+</div>
+<div class="paragraph">
+<p>To support the writing of custom implementations of this interface, the framework also provides <code>ContentMappingService.Util</code> which includes a couple of convenience utilities:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public static class Util {
+    public static String determineDomainType(
+        final List&lt;MediaType&gt; acceptableMediaTypes) { /* ... */ }
+    public static boolean isSupported(
+            final Class&lt;?&gt; clazz,
+            final List&lt;MediaType&gt; acceptableMediaTypes) { /* ... */ }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="usage"><a class="anchor" href="#usage"></a>Usage</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>ContentMappingService</code> supports the (default implementation of the) internal <a href="../../../../../../../core/latest/runtime-services/ContentNegotiationService.html" class="page"><code>ContentNegotiationService</code></a> SPI enabling the <a href="../../../../../../../vro/latest/about.html" class="page">RestfulObjects viewer</a> to represent domain objects in some other format as specified by the HTTP <code>Accept</code> header.</p>
+</div>
+<div class="paragraph">
+<p>For its part, the (default implementation of the) <code>ContentNegotiationService</code> will check <em>all</em> available implementations of <code>ContentMappingService</code> to convert the domain object to the requested media type, rather than merely the first implementation found; in other words it uses the <a href="https://en.wikipedia.org/wiki/Chain-of-responsibility_pattern">chain-of-responsibility</a> pattern.
+Services are checked in the ordering defined by the Spring <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/core/annotation/Order.html"><code>@Order</code></a> annotation.
+The mapped object used will be the first non-<code>null</code> result returned by an implementation.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="related-services"><a class="anchor" href="#related-services"></a>Related Services</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This service is a companion to the default implementation of the <a href="../../../../../../../core/latest/runtime-services/ContentNegotiationService.html" class="page"><code>ContentNegotiationService</code></a>.</p>
+</div>
+<div class="paragraph">
+<p>The framework implementations of <code>ContentMappingService</code> use the <a href="../metamodel/MetaModelService.html" class="page"><code>MetaModelService</code></a> to lookup any custom implementations of <code>CommandDtoProcessor</code>.</p>
+</div>
+</div>
+</div>
 </article>
 <aside class="article-aside toc hide-for-print" role="navigation">
     <p class="toc-title">On this page</p>
@@ -414,7 +478,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210219-1655-7674de97</p>
+            <p>Revision: 2.0.0-M4.20210222-0423-14177298</p>
         </div>
     </div>
 </footer>
