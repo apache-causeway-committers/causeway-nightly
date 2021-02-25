@@ -746,7 +746,7 @@ page.parent doesn't seem to be set...
     <li><a href="MemberOrder.html">MemberOrder</a></li>
   </ul>
 </nav>
-  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/master/antora/components/refguide/modules/applib/pages/index/annotation/MemberOrder.adoc">Edit</a></div>
+  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/master/antora/components/refguide-index/modules/applib/pages/index/annotation/MemberOrder.adoc">Edit</a></div>
 </div>
 <article class="doc">
     <a name="section-top"></a>
@@ -835,10 +835,51 @@ page.parent doesn't seem to be set...
 </div>
 </div>
 <div class="sect1">
-<h2 id="notes"><a class="anchor" href="#notes"></a>Notes</h2>
+<h2 id="usage-notes"><a class="anchor" href="#usage-notes"></a>Usage notes</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>As this is an important topic, there is <a href="../../../../../userguide/latest/fun/ui.html#object-layout" class="page">chapter</a> in the user guide that discusses object layout in full.</p>
+<p>The interpretation of the <a href="#name">name()</a> element varies dependent on the type of object member it is annotated upon, but generally speaking it is used to associate members together.</p>
+</div>
+<div class="paragraph">
+<p>The <a href="#sequence">sequence()</a> element then orders those members that have been grouped together.</p>
+</div>
+<div class="sect2">
+<h3 id="properties"><a class="anchor" href="#properties"></a>Properties</h3>
+<div class="paragraph">
+<p>For properties, the <code>name</code> attribute is used to group properties together, and <code>sequence</code> orders the properties within that group.
+It corresponds to a <code>&lt;fieldset&gt;</code> if using <a href="../../../../../userguide/latest/fun/ui.html#object-layout" class="page">layout files</a>.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
+import lombok.Setter;
+
+public class Customer {
+
+    @MemberOrder(name = "Personal Details", sequence = "1.0")
+    private String firstName;
+
+    @MemberOrder(name = "Personal Details", sequence = "2.0")
+    private String lastName;
+
+    @MemberOrder(name = "Address", sequence = "1.0")
+    private String addressLine1;
+
+    @MemberOrder(name = "Address", sequence = "2.0")
+    private String addressLine2;
+
+    @MemberOrder(name = "Address", sequence = "3.0")
+    private String city;
+
+    @MemberOrder(name = "Address", sequence = "4.0")
+    private String zipCode;
+
+    // ...
+}</code></pre>
+</div>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -847,13 +888,72 @@ page.parent doesn't seem to be set...
 <i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-<div class="paragraph">
-<p>The annotation is one of a handful (others including <a href="Collection.html" class="page"><code>@Collection</code></a>, <a href="CollectionLayout.html" class="page"><code>@CollectionLayout</code></a>, <a href="Property.html" class="page"><code>@Property</code></a>) and <a href="PropertyLayout.html" class="page"><code>@PropertyLayout</code></a> that can also be applied to the field, rather than the getter method.
-This is specifically so that boilerplate-busting tools such as <a href="https://projectlombok.org/">Project Lombok</a> can be used.</p>
-</div>
+It&#8217;s possible to combine <code>@MemberOrder</code> with <a href="../../../../../userguide/latest/fun/ui.html#object-layout" class="page">layout file</a>.
+Use the layout file to define the positioning of the fieldsets, and use <code>@MemberOrder</code> to organise the properties within the fieldset.
 </td>
 </tr>
 </table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="actions"><a class="anchor" href="#actions"></a>Actions</h3>
+<div class="paragraph">
+<p>For actions, the <code>name</code> attribute indicates the name of a property to associate the action with, and <code>sequence</code> orders all the actions associated with the same property or collection (on the panel of the property&#8217;s fieldset, or collection&#8217;s title bar).</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
+import lombok.Setter;
+
+public class Customer {
+
+    @MemberOrder(name = "Personal Details")
+    public Customer updateName(String firstName, String lastName) {
+        // ...
+    }
+
+    @MemberOrder(name = "Address")
+    public Customer changeAddress(String firstName, String lastName) {
+        // ...
+    }
+
+    // ...
+}</code></pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+For actions, <code>@Member#name()</code> element and <a href="Action.html#associateWith" class="page">@Action#associateWith()</a> element have the same effect.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+For actions associated with properties, the <a href="ActionLayout.html#position" class="page"><code>@ActionLayout#position()</code></a> element indicates whether the action should be rendered beneath the property&#8217;s field, or instead on the property&#8217;s fieldset panel&#8217;s header.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="collections"><a class="anchor" href="#collections"></a>Collections</h3>
+<div class="paragraph">
+<p>The <code>name</code> attribute is ignored when annotated on collections.</p>
+</div>
 </div>
 </div>
 </div>
@@ -874,7 +974,7 @@ This is specifically so that boilerplate-busting tools such as <a href="https://
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210224-0425-8a48b959</p>
+            <p>Revision: 2.0.0-M4.20210225-0429-fd867bb7</p>
         </div>
     </div>
 </footer>

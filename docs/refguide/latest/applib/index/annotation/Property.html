@@ -746,7 +746,7 @@ page.parent doesn't seem to be set...
     <li><a href="Property.html">Property</a></li>
   </ul>
 </nav>
-  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/master/antora/components/refguide/modules/applib/pages/index/annotation/Property.adoc">Edit</a></div>
+  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/master/antora/components/refguide-index/modules/applib/pages/index/annotation/Property.adoc">Edit</a></div>
 </div>
 <article class="doc">
     <a name="section-top"></a>
@@ -1136,6 +1136,323 @@ this will usually be supplmented by a JDO or JPA-specific annotation to specify 
 <p>Replacement text for the pattern in generated error message.</p>
 </div>
 </div>
+<div class="sect2">
+<h3 id="hiding-properties"><a class="anchor" href="#hiding-properties"></a>Hiding properties</h3>
+<div class="paragraph">
+<p>Properties can be hidden at the domain-level, indicating that they are not visible to the end-user.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>It is also possible to use <a href="#hidden"><code>@Property#hidden()</code></a> to hide an action at the domain layer.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
+import lombok.Setter;
+
+public class Customer {
+
+    @Property(hidden=Where.EVERYWHERE)
+    @Getter @Setter
+    private int internalId;
+
+    // ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The acceptable values for the <code>where</code> parameter are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>Where.EVERYWHERE</code> or <code>Where.ANYWHERE</code></p>
+<div class="paragraph">
+<p>The property should be hidden everywhere.</p>
+</div>
+</li>
+<li>
+<p><code>Where.ANYWHERE</code></p>
+<div class="paragraph">
+<p>Synonym for everywhere.</p>
+</div>
+</li>
+<li>
+<p><code>Where.OBJECT_FORMS</code></p>
+<div class="paragraph">
+<p>The property should be hidden when displayed within an object form.</p>
+</div>
+</li>
+<li>
+<p><code>Where.PARENTED_TABLES</code></p>
+<div class="paragraph">
+<p>The property should be hidden when displayed as a column of a table within a parent object&#8217;s collection.</p>
+</div>
+</li>
+<li>
+<p><code>Where.STANDALONE_TABLES</code></p>
+<div class="paragraph">
+<p>The property should be hidden when displayed as a column of a table showing a standalone list of objects, for example as returned by a repository query.</p>
+</div>
+</li>
+<li>
+<p><code>Where.ALL_TABLES</code></p>
+<div class="paragraph">
+<p>The property should be hidden when displayed as a column of a table, either an object&#8217;s * collection or a standalone list.
+This combines <code>PARENTED_TABLES</code> and <code>STANDALONE_TABLES</code>.</p>
+</div>
+</li>
+<li>
+<p><code>Where.NOWHERE</code><br>
++ The property should not be hidden, overriding any other metadata/conventions that would normally cause the property to be hidden.<br></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>For example, if a property is annotated with <a href="Title.html" class="page"><code>@Title</code></a>, then normally this should be hidden from all tables.
+Annotating with <code>@Property(where=Where.NOWHERE)</code> overrides this.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The <a href="../../../../../vro/latest/about.html" class="page">RestfulObjects viewer</a> has only partial support for these <code>Where</code> enums.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="uploading-blobs-and-clobs"><a class="anchor" href="#uploading-blobs-and-clobs"></a>Uploading Blobs and Clobs</h3>
+<div class="paragraph">
+<p>The <a href="#fileAccept">fileAccept()</a> element applies only to <a href="../../../applib-classes/value-types.html#Blob" class="page"><code>Blob</code></a> or <a href="../../../applib-classes/value-types.html#Clob" class="page"><code>Clob</code></a> parameters, indicating the type of file to accept when uploading a new value.
+The attribute is also supported on <a href="Parameter.html#fileAccept" class="page">parameters</a>.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
+import lombok.Setter;
+
+public class ScannedDocument {
+
+    @Property(fileAccept="image/*")                 <i class="conum" data-value="1"></i><b>(1)</b>
+    @Getter @Setter
+    private Blob scannedImage;
+
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>as per <a href="http://www.w3schools.com/tags/att_input_accept.asp">reference docs</a>, either a media type (such as <code>image/*</code>) or a file type extension (such as <code>.png</code>).</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="mandatory-vs-optional"><a class="anchor" href="#mandatory-vs-optional"></a>Mandatory vs optional</h3>
+<div class="paragraph">
+<p>By default, Apache Isis assumes that all properties of an domain object or view model are required (mandatory).
+The <a href="#optionality">optionality()</a> attribute allows this to be relaxed.
+The attribute is also supported for <a href="Parameter.html#optionality" class="page">parameters</a>.</p>
+</div>
+<div class="paragraph">
+<p>That said, properties are most commonly defined on persistent domain objects (entities), in which case the JDO <a href="../../../applib-ant/Column.html" class="page"><code>@Column</code></a> should be specified.
+Apache Isis can infer the maxLength directly from the equivalent @Column#length() annotation.</p>
+</div>
+<div class="paragraph">
+<p>That said, properties are most commonly defined on persistent domain objects (entities), in which case the JDO <a href="../../../applib-ant/Column.html" class="page"><code>@Column</code></a> will in any case need to be specified.
+Apache Isis can infer the <code>optionality</code> semantic directly from the equivalent <code>@Column#allowsNull()</code> annotation/attribute.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
+import lombok.Setter;
+
+public class Customer {
+
+    @javax.jdo.annotations.Column(allowsNull="true")
+    @Getter @Setter
+    private String middleInitial;
+
+    // ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In this case there is no need for the <code>@Property#optionality</code> attribute.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="mismatched-defaults"><a class="anchor" href="#mismatched-defaults"></a>Mismatched defaults</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If the <code>@Column#allowsNull</code> attribute is omitted and the `@Property#optionality() attribute is also omitted, then note that Isis' defaults and JDO&#8217;s defaults differ.
+Specifically, Isis always assumes properties are mandatory, whereas JDO specifies that primitives are mandatory, but all reference types are optional.</p>
+</div>
+<div class="paragraph">
+<p>When Apache Isis initializes it checks for these mismatches during its metamodel validation phase, and will fail to boot ("fail-fast") if there is a mismatch.
+The fix is usually to add the <code>@Column#allowsNull()</code> annotation/attribute.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="superclass-inheritance-type"><a class="anchor" href="#superclass-inheritance-type"></a>Superclass inheritance type</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>There is one case (at least) it may be necessary to annotate the property with both <code>@Column#allowsNull</code> and also <code>@Property#optionality()</code>.
+If the property is logically mandatory and is in a subclass, but the mapping of the class hierarchy is to store both the superclass and subclass(es) into a single table (ie a "roll-up" mapping using <code>javax.jdo.annotations.InheritanceStrategy#SUPERCLASS_TABLE</code>), then JDO requires that the property is annotated as <code>@Column#allowsNull="true"</code>: its value will be not defined for other subclasses.</p>
+</div>
+<div class="paragraph">
+<p>In this case we therefore require both annotations.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@javax.jdo.annotations.PersistenceCapable
+@javax.jdo.annotations.Inheritance(strategy = InheritanceStrategy.NEW_TABLE)
+public abstract class PaymentMethod {
+    ...
+}
+@javax.jdo.annotations.PersistenceCapable
+@javax.jdo.annotations.Inheritance(strategy = InheritanceStrategy.SUPERCLASS_TABLE)
+public class CreditCardPaymentMethod extends PaymentMethod {
+
+    private String cardNumber;
+    @javax.jdo.annotations.Column(allowsNull="true")
+    @Property(optionality=Optionality.MANDATORY)
+    public String getCardNumber() { return this.cardNumber; }
+    public void setCardNumber(String cardNumber) { this.cardNumber = cardNumber; }
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Alternatively, you could rely on the fact that Apache Isis never looks at fields (whereas JDO does) and move the JDO annotation to the field:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@javax.jdo.annotations.PersistenceCapable
+@javax.jdo.annotations.Inheritance(strategy = InheritanceStrategy.SUPERCLASS_TABLE)
+public class CreditCardPaymentMethod extends PaymentMethod {
+
+    @javax.jdo.annotations.Column(allowsNull="true")
+    private String cardNumber;
+
+    public String getCardNumber() { return this.cardNumber; }
+    public void setCardNumber(String cardNumber) { this.cardNumber = cardNumber; }
+
+    // ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>However this at first glance this might be read as meaning that the property is optional whereas Apache Isis' default (required) applies.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="non-persistent-properties"><a class="anchor" href="#non-persistent-properties"></a>Non-persistent properties</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Of course, not every property is persistent (it could instead be derived), and neither is every domain object an entity (it could be a view model).
+For these non persistable properties the <code>optionality</code> attribute is still required.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Customer {
+
+    @javax.jdo.annotation.NotPersistent             <i class="conum" data-value="1"></i><b>(1)</b>
+    @Property(optionality=Optionality.OPTIONAL)
+    public String getFullName() {                   <i class="conum" data-value="2"></i><b>(2)</b>
+        // ...
+    }
+    public void setFullName(String fullName) {      <i class="conum" data-value="3"></i><b>(3)</b>
+        // ...
+    }
+
+    // ...
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>a non persisted (derived) property</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>implementation would most likely derive full name from constituent parts (eg first name, middle initial, last name)</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>implementation would most likely parse the input and update the constituent parts</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The attribute has no meaning for a primitive type such as <code>int</code>: primitives will always have a default value (e.g. zero).
+If optionality is required, then use the corresponding wrapper class (e.g. <code>java.lang.Integer</code>) and annotate with <code>Parameter#optionality()</code> as required.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The values for the attribute are simply <code>OPTIONAL</code> or <code>MANDATORY</code>.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>It is also possible to specify optionality using <a href="../../../applib-ant/Nullable.html" class="page"><code>@Nullable</code></a> annotation.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -1195,6 +1512,800 @@ so that boilerplate-busting tools such as <a href="https://projectlombok.org/">P
 </div>
 </div>
 </div>
+<div class="sect1">
+<h2 id="usage-notes"><a class="anchor" href="#usage-notes"></a>Usage Notes</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="projections"><a class="anchor" href="#projections"></a>Projections</h3>
+<div class="paragraph">
+<p>A common use case for view models is to act as a projection of some underlying entity, to decorate that entity with additional behaviour (or remove existing behaviour) for some particular business context.</p>
+</div>
+<div class="paragraph">
+<p>Very often the object that is of interest to the end-user is the underlying entity, not the view model per se.
+If the view model is displayed within a table (on a home page, say), then when the user clicks the entity/icon link for the view model, they will in fact want to drill-down to the underlying entity and skip the view model completely.</p>
+</div>
+<div class="paragraph">
+<p>The <a href="#projecting">projecting()</a> element allows the view model to indicate which of its properties holds a reference to the underlying entity of which it is a projection.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(nature=VIEW_MODEL)
+public InvoiceSummary {
+
+    @Property(
+        projecting = Projecting.PROJECTED   <i class="conum" data-value="1"></i><b>(1)</b>
+        hidden = Where.EVERYWHERE           <i class="conum" data-value="2"></i><b>(2)</b>
+    }
+    @Getter @Setter
+    private Invoice invoice;
+
+    public LocalDate getDueDate() {         <i class="conum" data-value="3"></i><b>(3)</b>
+        return invoice.getDueDate();
+    }
+
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>indicates that this property holds a reference to the underlying entity</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>the underlying entity is typically (though not necessarily) hidden</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>typical implementation of the properties of the underlying entity that are being projected in the view model.</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="declarative-validation"><a class="anchor" href="#declarative-validation"></a>Declarative validation</h3>
+<div class="paragraph">
+<p>The <a href="#mustSatisfy">mustSatisfy()</a> element allows arbitrary validation to be applied to properties using an (implementation of a) <code>org.apache.isis.applib.spec.Specification</code> object.
+The attribute is also supported on <a href="Parameter.html#mustSatisfy" class="page">parameters</a>.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The specification implementations can (of course) be reused between properties and <a href="Parameter.html#mustSatisfy" class="page">parameters</a>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The <code>Specification</code> is consulted during validation, being passed the proposed value.
+If the proposed value fails, then the value returned is the used as the invalidity reason.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class StartWithCapitalLetterSpecification
+        extends AbstractSpecification&lt;String&gt; {            <i class="conum" data-value="1"></i><b>(1)</b>
+    public String satisfiesSafely(String proposed) {
+        return "".equals(proposed)
+            ? "Empty string"
+            : !Character.isUpperCase(proposed.charAt(0))
+                ? "Does not start with a capital letter"
+                : null;
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>the <code>AbstractSpecification</code> class conveniently handles type-safety and dealing with null values.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>where:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
+import lombok.Setter;
+
+public class Customer {
+
+    @Property(mustSatisfy=StartWithCapitalLetterSpecification.class)
+    @Getter @Setter
+    private String firstName;
+
+    // ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>It is also possible to provide translatable reasons.
+Rather than implement <code>Specification</code>, instead implement <code>Specification2</code> which defines the API:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public interface Specification2 extends Specification {
+    public TranslatableString satisfiesTranslatable(Object obj); <i class="conum" data-value="1"></i><b>(1)</b>
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Return <code>null</code> if specification satisfied, otherwise the reason as a translatable string</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>With <code>Specification2</code> there is no need to implement the inherited <code>satifies(Object)</code>; that method will never be called.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="snapshotting-state"><a class="anchor" href="#snapshotting-state"></a>Snapshotting state</h3>
+<div class="paragraph">
+<p>The <a href="#snapshot">snapshot()</a> element indicates whether the property should be included/excluded from any snapshots generated by the <a href="../services/xmlsnapshot/XmlSnapshotService.html" class="page"><code>XmlSnapshotService</code></a>.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
+import lombok.Setter;
+
+public class Order {
+
+    @Property(snapshot=EXCLUDED)
+    @Getter @Setter
+    private Order previousOrder;
+
+    // ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If the property is derived, then providing only a "getter" will also work:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Order {
+    public Order getPreviousOrder() {...}
+    ...
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="editing-2"><a class="anchor" href="#editing-2"></a>Editing</h3>
+<div class="paragraph">
+<p>The <a href="#editing">editing()</a> element can be used to prevent a property from being modified or cleared, ie to make it read-only.</p>
+</div>
+<div class="paragraph">
+<p>The related <a href="#editingDisabledReason">editingDisabledReason()</a> element specifies a hard-coded reason why the property cannot be modified directly.</p>
+</div>
+<div class="paragraph">
+<p>Whether a property is enabled or disabled depends upon these factors:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>whether the domain object has been configured as immutable through the <a href="DomainObject.html#editing" class="page">@DomainObject#editing()</a> element</p>
+</li>
+<li>
+<p>else (that is, if the domain object&#8217;s editability is specified as being <code>AS_CONFIGURED</code>), then the value of the <a href="../../../config/sections/isis.applib.html#isis.applib.annotation.domain-object.editing" class="page">'isis.applib.annotation.domain-object.editing'</a> configuration property.</p>
+<div class="paragraph">
+<p>If set to <code>false</code>, then the object&#8217;s properties (and collections) are <em>not</em> editable</p>
+</div>
+</li>
+<li>
+<p>else, the value of the <code>@Property(editing=&#8230;&#8203;)</code> attribute itself</p>
+</li>
+<li>
+<p>else, the result of invoking any supporting <a href="../../../applib-methods/prefixes.html#disable" class="page"><code>disable&#8230;&#8203;()</code></a> supporting methods</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Thus, to make a property read-only even if the object would otherwise be editable, use:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
+import lombok.Setter;
+
+public class Customer {
+    @Property(
+        editing=Editing.DISABLED,
+        editingDisabledReason =
+            "The credit rating is derived from multiple factors"
+    )
+    @Getter @Setter
+    private int initialCreditRating;
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="domain-events"><a class="anchor" href="#domain-events"></a>Domain events</h3>
+<div class="paragraph">
+<p>Whenever a domain object (or list of domain objects) is to be rendered, the framework fires off multiple domain events for every property, collection and action of the domain object.
+In the cases of the domain object&#8217;s properties, the events that are fired are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>hide phase: to check that the property is visible (has not been hidden)</p>
+</li>
+<li>
+<p>disable phase: to check that the property is usable (has not been disabled)</p>
+</li>
+<li>
+<p>validate phase: to check that the property&#8217;s arguments are valid (to modify/clear its value)</p>
+</li>
+<li>
+<p>pre-execute phase: before the modification of the property</p>
+</li>
+<li>
+<p>post-execute: after the modification of the property</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Subscribers subscribe through the <a href="../services/eventbus/EventBusService.html" class="page"><code>EventBusService</code></a> and can influence each of these phases.</p>
+</div>
+<div class="paragraph">
+<p>By default the event raised is <code>PropertyDomainEvent.Default</code>.
+For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
+import lombok.Setter;
+
+public class ToDoItem {
+
+    @Property()
+    @Getter @Setter
+    private LocalDate dueBy;
+
+    // ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <a href="#domainEvent">domainEvent()</a> element allows a custom subclass to be emitted allowing more precise subscriptions (to those subclasses) to be defined instead.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
+import lombok.Setter;
+
+public class ToDoItem {
+
+    public static class DueByChangedEvent
+        extends PropertyDomainEvent&lt;ToDoItem, LocalDate&gt; { }  <i class="conum" data-value="1"></i><b>(1)</b>
+
+    @Property(domainEvent=ToDoItem.DueByChangedEvent)
+    @Getter @Setter
+    private LocalDate dueBy;
+
+    // ...
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>inherit from <code>PropertyDomainEvent&lt;T,P&gt;</code> where <code>T</code> is the type of the domain object being interacted with, and <code>P</code> is the type of the property (<code>LocalDate</code> in this example)</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The benefit is that subscribers can be more targeted as to the events that they subscribe to.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The framework provides a no-arg constructor and will initialize the domain event using (non-API) setters rather than through the constructor.
+This substantially reduces the boilerplate required in subclasses because no explicit constructor is required.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="sect3">
+<h4 id="subscribers"><a class="anchor" href="#subscribers"></a>Subscribers</h4>
+<div class="paragraph">
+<p>Subscribers (which must be domain services) subscribe to events posted through the <a href="../services/eventbus/EventBusService.html" class="page"><code>EventBusService</code></a>.</p>
+</div>
+<div class="paragraph">
+<p>Subscribers can be either coarse-grained (if they subscribe to the top-level event type):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Service;
+
+@Service
+public class SomeSubscriber {
+
+    @EventListener(PropertyDomainEvent.class)
+    public void on(PropertyDomainEvent ev) {
+        // ...
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>or can be fine-grained (by subscribing to specific event subtypes):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Service;
+
+@Service
+public class SomeSubscriber {
+
+    @EventListener(ToDoItem.DueByChangedEvent.class)
+    public void on(ToDoItem.DueByChangedEvent ev) {
+        // ...
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The subscriber&#8217;s method is called (up to) 5 times:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>whether to veto visibility (hide)</p>
+</li>
+<li>
+<p>whether to veto usability (disable)</p>
+</li>
+<li>
+<p>whether to veto execution (validate)</p>
+</li>
+<li>
+<p>steps to perform prior to the property being modified</p>
+</li>
+<li>
+<p>steps to perform after the property has been modified.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The subscriber can distinguish these by calling <code>ev.getEventPhase()</code>.
+Thus the general form is:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Service;
+
+@Service
+public class SomeSubscriber {
+
+    public void on(PropertyDomainEvent ev) {
+        switch(ev.getEventPhase()) {
+
+            case HIDE:                      <i class="conum" data-value="1"></i><b>(1)</b>
+                break;
+            case DISABLE:                   <i class="conum" data-value="2"></i><b>(2)</b>
+                break;
+            case VALIDATE:                  <i class="conum" data-value="3"></i><b>(3)</b>
+                break;
+
+            case EXECUTING:
+                break;
+            case EXECUTED:
+                break;
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>call <code>ev.hide()</code> or <code>ev.veto("")</code> to hide the property</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>call <code>ev.disable("&#8230;&#8203;")</code> or <code>ev.veto("&#8230;&#8203;")</code> to disable the property</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>call ev.invalidate("&#8230;&#8203;") or ev.veto("&#8230;&#8203;") if proposed new value for property is invalid</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>It is also possible to abort the transaction during the executing or executed phases by throwing an exception.
+If the exception is a subtype of <code>RecoverableException</code> then the exception will be rendered as a user-friendly warning (eg Growl/toast) rather than an error.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="default-doop-and-noop-events"><a class="anchor" href="#default-doop-and-noop-events"></a>Default, Doop and Noop events</h4>
+<div class="paragraph">
+<p>If the <a href="#domainEvent">domainEvent()</a> element is not explicitly specified (is left as its default value, <code>PropertyDomainEvent.Default</code>), then the framework will, by default, post an event.</p>
+</div>
+<div class="paragraph">
+<p>If this is not required, then the <a href="../../../config/sections/isis.applib.html#isis.applib.annotation.property.domain-event.post-for-default" class="page">isis.applib.annotation.property.domain-event.post-for-default</a> configuration property can be set to "false"; this will disable posting.</p>
+</div>
+<div class="paragraph">
+<p>On the other hand, if the <code>domainEvent</code> has been explicitly specified to some subclass, then an event will be posted.
+The framework provides <code>PropertyDomainEvent.Doop</code> as such a subclass, so setting the <code>domainEvent</code> attribute to this class will ensure that the event to be posted, irrespective of the configuration property setting.</p>
+</div>
+<div class="paragraph">
+<p>And, conversely, the framework also provides <code>PropertyDomainEvent.Noop</code>; if <code>domainEvent</code> attribute is set to this class, then no event will be posted.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="raising-events-programmatically"><a class="anchor" href="#raising-events-programmatically"></a>Raising events programmatically</h4>
+<div class="paragraph">
+<p>Normally events are only raised for interactions through the UI.
+However, events can be raised programmatically either by calling the <a href="../services/eventbus/EventBusService.html" class="page">EventBusService</a> API directly, or by emulating the UI by wrapping the target object using the <a href="../services/wrapper/WrapperFactory.html" class="page">WrapperFactory</a> domain service.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="regular-expressions"><a class="anchor" href="#regular-expressions"></a>Regular expressions</h3>
+<div class="paragraph">
+<p>There are three elements related to enforcing regular expressions:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The <a href="#regexPattern">regexPattern()</a> element validates the contents of any string property with respect to a regular expression pattern.
+It is ignored if applied to properties of any other type.</p>
+</li>
+<li>
+<p>The <a href="#regexPatternFlags">regexPatternFlags()</a> element specifies flags that modify the handling of the pattern.
+The values are those that would normally be passed to <code>java.util.regex.Pattern#compile(String,int)</code>.</p>
+</li>
+<li>
+<p>The <a href="#regexPatternReplacement">regexPatternReplacement()</a> attribute specifies the error message to show if the provided argument does not match the regex pattern.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
+import lombok.Setter;
+
+public class Customer {
+
+    @Property(
+        regexPattern = "(\\w+\\.)*\\w+@(\\w+\\.)+[A-Za-z]+",
+        regexPatternFlags=Pattern.CASE_INSENSITIVE,
+        regexPatternReplacement =
+            "Must be valid email address (containing a '@') symbol"   <i class="conum" data-value="1"></i><b>(1)</b>
+    )
+    @Getter @Setter
+    private String email;
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Note that there is currently no i18n support for this phrase.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This attribute can also be specified for <a href="Parameter.html#regexPattern" class="page">parameters</a>.</p>
+</div>
+<div class="sect2">
+<h3 id="command-processing"><a class="anchor" href="#command-processing"></a>Command Processing</h3>
+<div class="paragraph">
+<p>Every property edit (and <a href="Action.html#commandPublishing" class="page">action invocation</a> for that matter) is normally reified into a concrete <code>Command</code> object, basically a wrapper around the XML invocation <a href="../../../schema/cmd.html" class="page">Command</a> schema that also captures some timing metrics about the execution as well as the outcome.</p>
+</div>
+<div class="paragraph">
+<p>The main uses cases are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>as a means to allow asynchronous child commands to be executed, using the <a href="../services/wrapper/WrapperFactory.html" class="page">WrapperFactory</a> service;</p>
+</li>
+<li>
+<p>as a means to audit (persist) commands, by implementing the <a href="../services/publishing/spi/CommandSubscriber.html" class="page">CommandSubscriber</a> SPI.</p>
+<div class="paragraph">
+<p>The <a href="../../../../../extensions/latest/command-log/about.html" class="page">Command Log</a> extension <em>does</em> provide such an implementation.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+Another option to achieve this is to use the <a href="../services/publishing/spi/ExecutionSubscriber.html" class="page">ExecutionSubscriber</a> SPI.
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>to replay commands onto a secondary system, for regression testing.</p>
+<div class="paragraph">
+<p>This is implemented by the <a href="../../../../../extensions/latest/command-replay/about.html" class="page">Command Replay</a> extension, working in conjunction with the <a href="../../../../../extensions/latest/command-log/about.html" class="page">Command Log</a> extension.</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The <a href="#commandPublishing">commandPublishing()</a> element can be used to explicitly enable or disable command publishing for the property edit.</p>
+</div>
+<div class="sect3">
+<h4 id="commanddtoprocessor-implementations"><a class="anchor" href="#commanddtoprocessor-implementations"></a>CommandDtoProcessor implementations</h4>
+<div class="paragraph">
+<p>The <a href="Action.html#commandDtoProcessor" class="page">commandDtoProcessor()</a> element allows an implementation of <code>CommandDtoProcessor</code> to be specified.
+This interface has the following API:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public interface CommandDtoProcessor {
+    CommandDto process(             <i class="conum" data-value="1"></i><b>(1)</b>
+            CommandDto dto);        <i class="conum" data-value="2"></i><b>(2)</b>
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The returned <code>CommandDto</code>.
+This will typically be the <code>CommandDto</code> passed in, but may be supplemented in some way.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The <code>CommandDto</code> obtained already from the <code>Command</code>.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>This interface is used by the framework-provided implementations of <a href="../services/conmap/ContentMappingService.html" class="page">ContentMappingService</a> for the REST API, allowing <code>Command</code>s implementations that also implement <code>CommandWithDto</code> to be further customised as they are serialized out.
+The primary use case for this capability is in support of primary/secondary replication.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>on the primary, <code>Command</code>s are serialized to XML.
+This includes the identity of the target object and the argument values of all parameters.</p>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Any <code>Blob</code>s and <code>Clob</code>s are deliberately excluded from this XML (they are instead stored as references).
+This is to prevent the storage requirements for <code>Command</code> from becoming excessive.
+A <code>CommandDtoProcessor</code> can be provided to re-attach blob information if required.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>replaying <code>Command</code>s requires this missing parameter information to be reinstated.
+The <code>CommandDtoProcessor</code> therefore offers a hook to dynamically re-attach the missing <code>Blob</code> or <code>Clob</code> argument.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>As a special case, returning <code>null</code> means that the command&#8217;s DTO is effectively excluded when retrieving the list of commands.
+If replicating from master to slave, this effectively allows certain commands to be ignored.
+The <code>CommandDtoProcessor.Null</code> class provides a convenience implementation for this requirement.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>If <code>commandDtoProcessor()</code> is specified, then <code>commandPublishing()</code> is assumed to be ENABLED.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="example"><a class="anchor" href="#example"></a>Example</h4>
+<div class="paragraph">
+<p>For an example, see <a href="Action.html#commandPublishing" class="page"><code>Action#command()</code></a>.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="execution-publishing"><a class="anchor" href="#execution-publishing"></a>Execution Publishing</h3>
+<div class="paragraph">
+<p>The <a href="#executionPublishing">executionPublishing()</a> element determines whether and how a property edit is published via the registered implementation of <a href="../services/publishing/spi/ExecutionSubscriber.html" class="page"><code>ExecutionSubscriber</code></a>.</p>
+</div>
+<div class="paragraph">
+<p>A common use case is to notify external "downstream" systems of changes in the state of the Apache Isis application.</p>
+</div>
+<div class="paragraph">
+<p>The <a href="../../../config/sections/isis.applib.html#isis.applib.annotation.property.execution-publishing" class="page"><code>isis.applib.annotation.property.execution-publishing</code></a> configuration property is used to determine the whether the property edits are published:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>all</code></p>
+<div class="paragraph">
+<p>all property edits are published</p>
+</div>
+</li>
+<li>
+<p><code>none</code></p>
+<div class="paragraph">
+<p>no property edits are published</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>If there is no configuration property in <code>application.properties</code> then publishing is automatically enabled.</p>
+</div>
+<div class="paragraph">
+<p>This default can be overridden on an property-by-property basis; if <code>executionPublishing()</code> is set to <code>ENABLED</code> then the property edit is published irrespective of the configured value; if set to <code>DISABLED</code> then the property edit is <em>not</em> published, again irrespective of the configured value.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
+import lombok.Setter;
+
+public class Order {
+
+    @Property(executionPublishing=Publishing.ENABLED)    <i class="conum" data-value="1"></i><b>(1)</b>
+    @Getter @Setter
+    private int quantity;
+
+    // ...
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>because set to enabled, will be published irrespective of the configured value.</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="maximum-string-length"><a class="anchor" href="#maximum-string-length"></a>Maximum (string) length</h3>
+<div class="paragraph">
+<p>The <a href="#maxLength">maxLength()</a> attribute applies only to <code>String</code> properties, indicating the maximum number of characters that the user may enter (for example in a text field in the UI).
+The attribute It is ignored if applied to properties of any other type.</p>
+</div>
+<div class="paragraph">
+<p>That said, properties are most commonly defined on persistent domain objects (entities), in which case the JDO <a href="../../../applib-ant/Column.html" class="page"><code>@Column</code></a> will in any case need to be specified.
+Apache Isis can infer the <code>maxLength</code> semantic directly from the equivalent <code>@Column#length()</code> annotation/attribute.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
+import lombok.Setter;
+
+public class Customer {
+
+    @javax.jdo.annotations.Column(length=30)
+    @Getter @Setter
+    private String firstName;
+
+    // ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In this case there is therefore no need for the <code>@Property#maxLength</code> attribute.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="non-persistent-properties-2"><a class="anchor" href="#non-persistent-properties-2"></a>Non-persistent properties</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Of course, not every property is persistent (it could instead be derived), and neither is every domain object an entity (it could be a view model).
+For these non persistable properties the <code>maxLength</code> attribute is still required.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Customer {
+
+    @javax.jdo.annotation.NotPersistent                         <i class="conum" data-value="1"></i><b>(1)</b>
+    @Property(maxLength=100)
+    public String getFullName() { /* ... */ }                   <i class="conum" data-value="2"></i><b>(2)</b>
+    public void setFullName(String fullName) { /* ... */ }      <i class="conum" data-value="3"></i><b>(3)</b>
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>a non persisted (derived) property</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>implementation would most likely derive full name from constituent parts (eg first name, middle initial, last name)</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>implementation would most likely parse the input and update the constituent parts</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="see-also-2"><a class="anchor" href="#see-also-2"></a>See also</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This attribute can also be applied to <a href="Parameter.html#maxLength" class="page">parameters</a>.</p>
+</div>
+</div>
+</div>
 </article>
 <aside class="article-aside toc hide-for-print" role="navigation">
     <p class="toc-title">On this page</p>
@@ -1212,7 +2323,7 @@ so that boilerplate-busting tools such as <a href="https://projectlombok.org/">P
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210224-0425-8a48b959</p>
+            <p>Revision: 2.0.0-M4.20210225-0429-fd867bb7</p>
         </div>
     </div>
 </footer>
