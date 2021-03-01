@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Raleway:300,400,500,700,800|Montserrat:300,400,700" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css"/>
 <link rel="home" href="../../.." title="Apache Isis">
-  <link rel="next" href="layout.html" title="Layout">
+  <link rel="next" href="../applib/index/util/Enums.html" title="Enums">
   <link rel="prev" href="roles-mixins-contributees.html" title="Roles, Mixins and Contributees">
   </head>
   <body class="article">
@@ -145,7 +145,7 @@
 <div class="nav-panel-pagination">
   <a class="page-previous" rel="prev" href="roles-mixins-contributees.html" title="Roles, Mixins and Contributees"><span></span></a>
   <a class="page-next" rel="next"
-     href="layout.html" title="Layout"><span></span></a>
+     href="../applib/index/util/Enums.html" title="Enums"><span></span></a>
 <!--
 page.parent doesn't seem to be set...
   <a class="page-parent" rel="prev" href="about.html" title="Roles, Mixins and Contributees"><span></span></a>
@@ -276,7 +276,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="events.html">Events</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="ViewModel.html"><code>ViewModel</code></a>
+    <a class="nav-link" href="ViewModel.html">ViewModel</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="value-types.html">Value Types</a>
@@ -291,7 +291,22 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="roles-mixins-contributees.html">Roles, Mixins and Contributees</a>
   </li>
   <li class="nav-item is-current-page" data-depth="2">
+    <button class="nav-item-toggle"></button>
     <a class="nav-link" href="utility.html">Utility Classes</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../applib/index/util/Enums.html">Enums</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../applib/index/util/ObjectContracts.html">ObjectContracts</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../applib/index/util/Reasons.html">Reasons</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../applib/index/util/TitleBuffer.html">TitleBuffer</a>
+  </li>
+</ul>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="layout.html">Layout</a>
@@ -511,6 +526,9 @@ page.parent doesn't seem to be set...
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../config/sections/isis.security.shiro.html">Shiro Security Implementation</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../config/sections/isis.security.spring.html">Spring Security Implementation</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../config/sections/isis.viewer.restfulobjects.html">Restful Objects Viewer</a>
@@ -751,690 +769,24 @@ page.parent doesn't seem to be set...
 <article class="doc">
     <a name="section-top"></a>
 <h1 class="page">Utility Classes</h1>
-<div id="preamble">
-<div class="sectionbody">
 <div class="paragraph">
-<p>The <code>org.apache.isis.applib.util</code> package has a number of simple utility
-classes designed to simplify the coding of some common tasks.</p>
-</div>
-<div class="paragraph">
-<p>Unresolved include directive in modules/applib-classes/pages/utility.adoc - include::refguide:applib:page$index/util/Enums.adoc.adoc[]
-:leveloffset: +1</p>
-</div>
-</div>
-</div>
-<h1 id="objectcontracts" class="sect0"><a class="anchor" href="#objectcontracts"></a>ObjectContracts</h1>
-<div class="paragraph">
-<p>Provides fluent composition for Objects' equals, hashCode and toString. Sample usage by composing getters &#8230;&#8203;For 'compareTo' use JDK&#8217;s comparator composition &#8230;&#8203;</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>private static final Equality equality =
-		ObjectContracts.checkEquals(ApplicationFeature::getFeatureId);
-
-private static final Hashing hashing =
-		ObjectContracts.hashing(ApplicationFeature::getFeatureId);
-
-private static final ToString toString =
-		ObjectContracts.toString("featureId", ApplicationFeature::getFeatureId);
-
-public boolean equals(final Object obj) {
-	return equality.equals(this, obj);
-}
-
-public int hashCode() {
-	return hashing.hashCode(this);
-}
-
-public String toString() {
-	return toString.toString(this);
-}</pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>private static final Comparator comparator =
-		Comparator.comparing(ApplicationFeature::getFeatureId);
-
-public int compareTo(final ApplicationFeature other) {
-	return comparator.compare(this, other);
-}</pre>
-</div>
-</div>
-<div class="sect1">
-<h2 id="api"><a class="anchor" href="#api"></a>API</h2>
-<div class="sectionbody">
-<div class="listingblock">
-<div class="title">ObjectContracts.java</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">class ObjectContracts {
-  ToString&lt;T&gt; toString(String name, Function&lt;T, ?&gt; getter)
-  Equality&lt;T&gt; checkEquals(Function&lt;T, ?&gt; getter)
-  Hashing&lt;T&gt; hashing(Function&lt;T, ?&gt; getter)
-  ObjectContract&lt;T&gt; contract(Class&lt;T&gt; objectClass)
-  ObjectContract&lt;T&gt; parse(Class&lt;T&gt; target, String propertyNames)
-  String toString(T obj, String propertyNames)
-  boolean equals(T obj, Object other, String propertyNames)
-  int hashCode(Object obj, String propertyNames)
-  int compare(T obj, T other, String propertyNames)
-}</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="example"><a class="anchor" href="#example"></a>Example</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
-import lombok.Setter;
-
-public class ToDoItem implements Comparable&lt;ToDoItem&gt; {
-
-    @Getter @Setter
-    private boolean complete;
-
-    @Getter @Setter
-    private LocalDate dueBy;
-
-    @Getter @Setter
-    private String description;
-
-    @Getter @Setter
-    private String ownedBy;
-
-    public int compareTo(final ToDoItem other) {
-        return ObjectContracts.compare(this, other,
-                    "complete","dueBy","description");
-    }
-
-    public String toString() {
-        return ObjectContracts.toString(this,
-                    "description","complete","dueBy","ownedBy");
-    }
-}</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="usage-notes"><a class="anchor" href="#usage-notes"></a>Usage Notes</h2>
-<div class="sectionbody">
-<div class="sect2">
-<h3 id="performance"><a class="anchor" href="#performance"></a>Performance</h3>
-<div class="admonitionblock caution">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-caution" title="Caution"></i>
-</td>
-<td class="content">
-This class is only intended for use while prototyping.
-It uses reflection heavily and is not performant.
-</td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect2">
-<h3 id="be-aware-of-orm-loading-issues"><a class="anchor" href="#be-aware-of-orm-loading-issues"></a>Be aware of ORM loading issues</h3>
-<div class="paragraph">
-<p><code>ObjectContracts</code> implementation can cause DataNucleus to recursively rehydrate a larger number of associated entities (More detail below).</p>
-</div>
-<div class="paragraph">
-<p>We therefore recommend that you disable
-<a href="../config/sections/jdo-datanucleus-conf.html#datanucleus.persistenceByReachabilityAtCommit" class="page">persistence-by-reachability</a> by adding:</p>
-</div>
-<div class="listingblock">
-<div class="title">persistor_datanucleus.properties</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">datanucleus.persistenceByReachabilityAtCommit=false</code></pre>
-</div>
-</div>
-<div class="imageblock kroki">
-<div class="content">
-<object type="image/svg+xml" data="_images/diag-e4f2a8e33daa6ba98231aa4424332bd7dcbfdbdb.svg"><span class="alt">Diagram</span></object>
-</div>
-</div>
-<div class="paragraph">
-<p>In the course of a transaction, the <code>Agreement</code> entity is loaded into memory (not necessarily modified), and then new <code>AgreementRole</code>s are associated to it.</p>
-</div>
-<div class="paragraph">
-<p>All these entities implement <code>Comparable</code> using <code>ObjectContracts</code>, so that the implementation of <code>AgreementRole</code>'s (simplified) is:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class AgreementRole {
-    ...
-    public int compareTo(AgreementRole other) {
-        return ObjectContracts.compareTo(this, other, "agreement","startDate","party");
-    }
-    ...
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>while <code>Agreement</code>'s is implemented as:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">    public class Agreement {
-        ...
-        public int compareTo(Agreement other) {
-            return ObjectContracts.compareTo(this, other, "reference");
-        }
-        ...
-    }</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>and <code>Party</code>'s is similarly implemented as:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Party {
-    ...
-    public int compareTo(Party other) {
-        return ObjectContracts.compareTo(this, other, "reference");
-    }
-    ...
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>DataNucleus&#8217;s persistence-by-reachability algorithm adds the <code>AgreementRole</code>s into a <code>SortedSet</code>, which causes <code>AgreementRole#compareTo()</code> to fire:</p>
+<p>The <code>org.apache.isis.applib.util</code> package has a number of simple utility classes designed to simplify the coding of some common tasks.</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>the evaluation of the "agreement" property delegates back to the <code>Agreement</code>, whose own <code>Agreement#compareTo()</code> uses the scalar <code>reference</code> property.
-As the <code>Agreement</code> is already in-memory, this does not trigger any further database queries</p>
+<p><a href="../applib/index/util/Enums.html" class="page">Enums</a></p>
 </li>
 <li>
-<p>the evaluation of the "startDate" property is just a scalar property of the <code>AgreementRole</code>, so will already in-memory</p>
+<p><a href="../applib/index/util/ObjectContracts.html" class="page">ObjectContracts</a></p>
 </li>
 <li>
-<p>the evaluation of the "party" property delegates back to the <code>Party</code>, whose own <code>Party#compareTo()</code> requires the uses the scalar <code>reference</code> property.
-However, since the <code>Party</code> is not yet in-memory, using the <code>reference</code> property triggers a database query to "rehydrate" the <code>Party</code> instance.</p>
+<p><a href="../applib/index/util/Reasons.html" class="page">Reasons</a></p>
+</li>
+<li>
+<p><a href="../applib/index/util/TitleBuffer.html" class="page">TitleBuffer</a></p>
 </li>
 </ul>
-</div>
-<div class="paragraph">
-<p>In other words, figuring out whether <code>AgreementRole</code> is comparable requires the persistence-by-reachability algorithm to run, causing the adjacent associated entity <code>Party</code> to also be retrieved.</p>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="reasons"><a class="anchor" href="#reasons"></a>Reasons</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>An alternative to <a href="../applib/index/util/ReasonBuffer.html" class="page">ReasonBuffer</a> .</p>
-</div>
-<div class="sect2">
-<h3 id="api-2"><a class="anchor" href="#api-2"></a>API</h3>
-<div class="listingblock">
-<div class="title">Reasons.java</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">class Reasons {
-  String coalesce(final String... reasons)
-}</code></pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="titlebuffer"><a class="anchor" href="#titlebuffer"></a>TitleBuffer</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Title buffer is a utility class to help produce titles for objects without having to add lots of guard code.</p>
-</div>
-<div class="paragraph">
-<p>It provides two basic method: one to concatenate a title to the buffer; another to append a title with a joiner string, taking care adding in necessary spaces.</p>
-</div>
-<div class="paragraph">
-<p>The benefits of using this class is that null references are safely ignored (rather than appearing as 'null'), and joiners (a space by default) are only added when needed.</p>
-</div>
-<div class="sect2">
-<h3 id="api-3"><a class="anchor" href="#api-3"></a>API</h3>
-<div class="listingblock">
-<div class="title">TitleBuffer.java</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">class TitleBuffer {
-  TitleBuffer()     <i class="conum" data-value="1"></i><b>(1)</b>
-  TitleBuffer(final Object object)     <i class="conum" data-value="2"></i><b>(2)</b>
-  TitleBuffer(final Object object, final String defaultTitle)     <i class="conum" data-value="3"></i><b>(3)</b>
-  TitleBuffer(final String text)     <i class="conum" data-value="4"></i><b>(4)</b>
-  boolean isEmpty(final Object object)     <i class="conum" data-value="5"></i><b>(5)</b>
-  boolean isEmpty(final String text)     <i class="conum" data-value="6"></i><b>(6)</b>
-  TitleBuffer append(final int number)     <i class="conum" data-value="7"></i><b>(7)</b>
-  TitleBuffer append(final Object object)     <i class="conum" data-value="8"></i><b>(8)</b>
-  TitleBuffer append(final Object object, final String defaultValue)     <i class="conum" data-value="9"></i><b>(9)</b>
-  TitleBuffer append(final String text)     <i class="conum" data-value="10"></i><b>(10)</b>
-  TitleBuffer append(final String joiner, final Object object)     <i class="conum" data-value="11"></i><b>(11)</b>
-  TitleBuffer append(final String joiner, final Object object, final String defaultTitle)     <i class="conum" data-value="12"></i><b>(12)</b>
-  TitleBuffer append(final String joiner, final String text)     <i class="conum" data-value="13"></i><b>(13)</b>
-  TitleBuffer appendSpace()     <i class="conum" data-value="14"></i><b>(14)</b>
-  TitleBuffer concat(final Object object)     <i class="conum" data-value="15"></i><b>(15)</b>
-  TitleBuffer concat(final Object object, final String defaultValue)     <i class="conum" data-value="16"></i><b>(16)</b>
-  TitleBuffer concat(final String text)     <i class="conum" data-value="17"></i><b>(17)</b>
-  TitleBuffer concat(final String joiner, final String text)     <i class="conum" data-value="18"></i><b>(18)</b>
-  TitleBuffer concat(final String joiner, final Object object)     <i class="conum" data-value="19"></i><b>(19)</b>
-  TitleBuffer concat(final String joiner, final Object object, final String defaultValue)     <i class="conum" data-value="20"></i><b>(20)</b>
-  String toString()     <i class="conum" data-value="21"></i><b>(21)</b>
-  TitleBuffer truncate(final int noWords)     <i class="conum" data-value="22"></i><b>(22)</b>
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><a href="#TitleBuffer__">TitleBuffer()</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Creates a new, empty, <a href="../applib/index/util/TitleBuffer.html" class="page">TitleBuffer</a> .</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><a href="#TitleBuffer__Object">TitleBuffer(Object)</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Creates a new <a href="../applib/index/util/TitleBuffer.html" class="page">TitleBuffer</a> , containing the title of the specified object.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td><a href="#TitleBuffer__Object_String">TitleBuffer(Object, String)</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Creates a new title object, containing the title of the specified object.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td><a href="#TitleBuffer__String">TitleBuffer(String)</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Creates a new title object, containing the specified text.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td><a href="#isEmpty__Object">isEmpty(Object)</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Determines if the specified object&#8217;s title is empty (or null).</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
-<td><a href="#isEmpty__String">isEmpty(String)</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Determines if the specified text is empty. Will return true if either: the specified reference is null; or if the reference is an empty string.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="7"></i><b>7</b></td>
-<td><a href="#append__int">append(int)</a></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="8"></i><b>8</b></td>
-<td><a href="#append__Object">append(Object)</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Append the title of the specified object to this <a href="../applib/index/util/TitleBuffer.html" class="page">TitleBuffer</a> .</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="9"></i><b>9</b></td>
-<td><a href="#append__Object_String">append(Object, String)</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Appends the title of the specified object, or the specified text if the objects title is null or empty. Prepends a space if there is already some text in this title object.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="10"></i><b>10</b></td>
-<td><a href="#append__String">append(String)</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Appends a space (if there is already some text in this title object) and then the specified text.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="11"></i><b>11</b></td>
-<td><a href="#append__String_Object">append(String, Object)</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Appends the joining string and the title of the specified object. If the object is empty then nothing will be appended.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="12"></i><b>12</b></td>
-<td><a href="#append__String_Object_String">append(String, Object, String)</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Append the <code>joiner</code> text, a space, and the title of the specified object to the text of this <a href="../applib/index/util/TitleBuffer.html" class="page">TitleBuffer</a> . If the title of the specified object is null then use the <code>defaultValue</code> text. If both the objects title and the default value are null or equate to a zero-length string then no text will be appended ; not even the joiner text.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="13"></i><b>13</b></td>
-<td><a href="#append__String_String">append(String, String)</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Appends the joiner text, a space, and the text to the text of this <a href="../applib/index/util/TitleBuffer.html" class="page">TitleBuffer</a> . If no text yet exists in the object then the joiner text and space are omitted.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="14"></i><b>14</b></td>
-<td><a href="#appendSpace__">appendSpace()</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Append a space to the text of this TitleString object if, and only if, there is some existing text i.e., a space is only added to existing text and will not create a text entry consisting of only one space.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="15"></i><b>15</b></td>
-<td><a href="#concat__Object">concat(Object)</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Concatenate the the title value (the result of calling an objects label() method) to this TitleString object. If the value is null the no text is added.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="16"></i><b>16</b></td>
-<td><a href="#concat__Object_String">concat(Object, String)</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Concatenate the title of the object value or the specified default value if the title is equal to null or is empty, to this <a href="../applib/index/util/TitleBuffer.html" class="page">TitleBuffer</a> .</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="17"></i><b>17</b></td>
-<td><a href="#concat__String">concat(String)</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Concatenate the specified text on to the end of the text of this <a href="../applib/index/util/TitleBuffer.html" class="page">TitleBuffer</a> .</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="18"></i><b>18</b></td>
-<td><a href="#concat__String_String">concat(String, String)</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Concatenate the joiner text and the text to the text of this <a href="../applib/index/util/TitleBuffer.html" class="page">TitleBuffer</a> object. If no text yet exists in the object then the joiner text is omitted.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="19"></i><b>19</b></td>
-<td><a href="#concat__String_Object">concat(String, Object)</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Concatenate the joiner text and the title of the object to the text of this <a href="../applib/index/util/TitleBuffer.html" class="page">TitleBuffer</a> . If no object yet exists in the object then the joiner text is omitted.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="20"></i><b>20</b></td>
-<td><a href="#concat__String_Object_String">concat(String, Object, String)</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Concatenate the joiner text and the title of the object to the text of this <a href="../applib/index/util/TitleBuffer.html" class="page">TitleBuffer</a> object. If no object yet exists in the object then defaultValue is used instead.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="21"></i><b>21</b></td>
-<td><a href="#toString__">toString()</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Returns a String that represents the value of this object.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="22"></i><b>22</b></td>
-<td><a href="#truncate__int">truncate(int)</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Truncates this title so it has a maximum number of words. Spaces are used to determine words, thus two spaces in a title will cause two words to be mistakenly identified.</p>
-</div>
-</div>
-</div></td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect2">
-<h3 id="members"><a class="anchor" href="#members"></a>Members</h3>
-<div class="sect3">
-<h4 id="TitleBuffer__"><a class="anchor" href="#TitleBuffer__"></a>TitleBuffer()</h4>
-<div class="paragraph">
-<p>Creates a new, empty, <a href="../applib/index/util/TitleBuffer.html" class="page">TitleBuffer</a> .</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="TitleBuffer__Object"><a class="anchor" href="#TitleBuffer__Object"></a>TitleBuffer(Object)</h4>
-<div class="paragraph">
-<p>Creates a new <a href="../applib/index/util/TitleBuffer.html" class="page">TitleBuffer</a> , containing the title of the specified object.</p>
-</div>
-<div class="paragraph">
-<p>Note: this method only obtains the title using either <code>title()</code> or <code>toString()</code> ; it doesn&#8217;t honour other mechanisms for specifying the title, such as <em>org.apache.isis.applib.annotation.Title</em> annotation. If that functionality is required, first call <em>TitleService#titleOf(Object)</em> on the object and pass in the resultant string.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="TitleBuffer__Object_String"><a class="anchor" href="#TitleBuffer__Object_String"></a>TitleBuffer(Object, String)</h4>
-<div class="paragraph">
-<p>Creates a new title object, containing the title of the specified object.</p>
-</div>
-<div class="paragraph">
-<p>Note: this method only obtains the title using either <code>title()</code> or <code>toString()</code> ; it doesn&#8217;t honour other mechanisms for specifying the title, such as <em>org.apache.isis.applib.annotation.Title</em> annotation. If that functionality is required, first call <em>TitleService#titleOf(Object)</em> on the object and pass in the resultant string.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="TitleBuffer__String"><a class="anchor" href="#TitleBuffer__String"></a>TitleBuffer(String)</h4>
-<div class="paragraph">
-<p>Creates a new title object, containing the specified text.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="isEmpty__Object"><a class="anchor" href="#isEmpty__Object"></a>isEmpty(Object)</h4>
-<div class="paragraph">
-<p>Determines if the specified object&#8217;s title is empty (or null).</p>
-</div>
-<div class="paragraph">
-<p>Note: this method only obtains the title using either <code>title()</code> or <code>toString()</code> ; it doesn&#8217;t honour other mechanisms for specifying the title, such as <em>org.apache.isis.applib.annotation.Title</em> annotation. If that functionality is required, first call <em>TitleService#titleOf(Object)</em> on the object and pass in the resultant string.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="isEmpty__String"><a class="anchor" href="#isEmpty__String"></a>isEmpty(String)</h4>
-<div class="paragraph">
-<p>Determines if the specified text is empty. Will return true if either: the specified reference is null; or if the reference is an empty string.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="append__int"><a class="anchor" href="#append__int"></a>append(int)</h4>
-
-</div>
-<div class="sect3">
-<h4 id="append__Object"><a class="anchor" href="#append__Object"></a>append(Object)</h4>
-<div class="paragraph">
-<p>Append the title of the specified object to this <a href="../applib/index/util/TitleBuffer.html" class="page">TitleBuffer</a> .</p>
-</div>
-<div class="paragraph">
-<p>Note: this method only obtains the title using either <code>title()</code> or <code>toString()</code> ; it doesn&#8217;t honour other mechanisms for specifying the title, such as <em>org.apache.isis.applib.annotation.Title</em> annotation. If that functionality is required, first call <em>TitleService#titleOf(Object)</em> on the object and pass in the resultant string.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="append__Object_String"><a class="anchor" href="#append__Object_String"></a>append(Object, String)</h4>
-<div class="paragraph">
-<p>Appends the title of the specified object, or the specified text if the objects title is null or empty. Prepends a space if there is already some text in this title object.</p>
-</div>
-<div class="paragraph">
-<p>Note: this method only obtains the title using either <code>title()</code> or <code>toString()</code> ; it doesn&#8217;t honour other mechanisms for specifying the title, such as <em>org.apache.isis.applib.annotation.Title</em> annotation. If that functionality is required, first call <em>TitleService#titleOf(Object)</em> on the object and pass in the resultant string.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="append__String"><a class="anchor" href="#append__String"></a>append(String)</h4>
-<div class="paragraph">
-<p>Appends a space (if there is already some text in this title object) and then the specified text.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="append__String_Object"><a class="anchor" href="#append__String_Object"></a>append(String, Object)</h4>
-<div class="paragraph">
-<p>Appends the joining string and the title of the specified object. If the object is empty then nothing will be appended.</p>
-</div>
-<div class="paragraph">
-<p>Note: this method only obtains the title using either <code>title()</code> or <code>toString()</code> ; it doesn&#8217;t honour other mechanisms for specifying the title, such as <em>org.apache.isis.applib.annotation.Title</em> annotation. If that functionality is required, first call <em>TitleService#titleOf(Object)</em> on the object and pass in the resultant string.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="append__String_Object_String"><a class="anchor" href="#append__String_Object_String"></a>append(String, Object, String)</h4>
-<div class="paragraph">
-<p>Append the <code>joiner</code> text, a space, and the title of the specified object to the text of this <a href="../applib/index/util/TitleBuffer.html" class="page">TitleBuffer</a> . If the title of the specified object is null then use the <code>defaultValue</code> text. If both the objects title and the default value are null or equate to a zero-length string then no text will be appended ; not even the joiner text.</p>
-</div>
-<div class="paragraph">
-<p>Note: this method only obtains the title using either <code>title()</code> or <code>toString()</code> ; it doesn&#8217;t honour other mechanisms for specifying the title, such as <em>org.apache.isis.applib.annotation.Title</em> annotation. If that functionality is required, first call <em>TitleService#titleOf(Object)</em> on the object and pass in the resultant string.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="append__String_String"><a class="anchor" href="#append__String_String"></a>append(String, String)</h4>
-<div class="paragraph">
-<p>Appends the joiner text, a space, and the text to the text of this <a href="../applib/index/util/TitleBuffer.html" class="page">TitleBuffer</a> . If no text yet exists in the object then the joiner text and space are omitted.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="appendSpace__"><a class="anchor" href="#appendSpace__"></a>appendSpace()</h4>
-<div class="paragraph">
-<p>Append a space to the text of this TitleString object if, and only if, there is some existing text i.e., a space is only added to existing text and will not create a text entry consisting of only one space.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="concat__Object"><a class="anchor" href="#concat__Object"></a>concat(Object)</h4>
-<div class="paragraph">
-<p>Concatenate the the title value (the result of calling an objects label() method) to this TitleString object. If the value is null the no text is added.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="concat__Object_String"><a class="anchor" href="#concat__Object_String"></a>concat(Object, String)</h4>
-<div class="paragraph">
-<p>Concatenate the title of the object value or the specified default value if the title is equal to null or is empty, to this <a href="../applib/index/util/TitleBuffer.html" class="page">TitleBuffer</a> .</p>
-</div>
-<div class="paragraph">
-<p>Note: this method only obtains the title using either <code>title()</code> or <code>toString()</code> ; it doesn&#8217;t honour other mechanisms for specifying the title, such as <em>org.apache.isis.applib.annotation.Title</em> annotation. If that functionality is required, first call <em>TitleService#titleOf(Object)</em> on the object and pass in the resultant string.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="concat__String"><a class="anchor" href="#concat__String"></a>concat(String)</h4>
-<div class="paragraph">
-<p>Concatenate the specified text on to the end of the text of this <a href="../applib/index/util/TitleBuffer.html" class="page">TitleBuffer</a> .</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="concat__String_String"><a class="anchor" href="#concat__String_String"></a>concat(String, String)</h4>
-<div class="paragraph">
-<p>Concatenate the joiner text and the text to the text of this <a href="../applib/index/util/TitleBuffer.html" class="page">TitleBuffer</a> object. If no text yet exists in the object then the joiner text is omitted.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="concat__String_Object"><a class="anchor" href="#concat__String_Object"></a>concat(String, Object)</h4>
-<div class="paragraph">
-<p>Concatenate the joiner text and the title of the object to the text of this <a href="../applib/index/util/TitleBuffer.html" class="page">TitleBuffer</a> . If no object yet exists in the object then the joiner text is omitted.</p>
-</div>
-<div class="paragraph">
-<p>Note: this method only obtains the title using either <code>title()</code> or <code>toString()</code> ; it doesn&#8217;t honour other mechanisms for specifying the title, such as <em>org.apache.isis.applib.annotation.Title</em> annotation. If that functionality is required, first call <em>TitleService#titleOf(Object)</em> on the object and pass in the resultant string.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="concat__String_Object_String"><a class="anchor" href="#concat__String_Object_String"></a>concat(String, Object, String)</h4>
-<div class="paragraph">
-<p>Concatenate the joiner text and the title of the object to the text of this <a href="../applib/index/util/TitleBuffer.html" class="page">TitleBuffer</a> object. If no object yet exists in the object then defaultValue is used instead.</p>
-</div>
-<div class="paragraph">
-<p>Note: this method only obtains the title using either <code>title()</code> or <code>toString()</code> ; it doesn&#8217;t honour other mechanisms for specifying the title, such as <em>org.apache.isis.applib.annotation.Title</em> annotation. If that functionality is required, first call <em>TitleService#titleOf(Object)</em> on the object and pass in the resultant string.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="toString__"><a class="anchor" href="#toString__"></a>toString()</h4>
-<div class="paragraph">
-<p>Returns a String that represents the value of this object.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="truncate__int"><a class="anchor" href="#truncate__int"></a>truncate(int)</h4>
-<div class="paragraph">
-<p>Truncates this title so it has a maximum number of words. Spaces are used to determine words, thus two spaces in a title will cause two words to be mistakenly identified.</p>
-</div>
-</div>
-</div>
-</div>
 </div>
 </article>
 <aside class="article-aside toc hide-for-print" role="navigation">
@@ -1453,7 +805,7 @@ However, since the <code>Party</code> is not yet in-memory, using the <code>refe
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210226-0424-7cfe55a2</p>
+            <p>Revision: 2.0.0-M4.20210301-0425-00d59d7f</p>
         </div>
     </div>
 </footer>

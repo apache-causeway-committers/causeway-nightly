@@ -276,7 +276,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../applib-classes/events.html">Events</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../applib-classes/ViewModel.html"><code>ViewModel</code></a>
+    <a class="nav-link" href="../applib-classes/ViewModel.html">ViewModel</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../applib-classes/value-types.html">Value Types</a>
@@ -291,7 +291,22 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../applib-classes/roles-mixins-contributees.html">Roles, Mixins and Contributees</a>
   </li>
   <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
     <a class="nav-link" href="../applib-classes/utility.html">Utility Classes</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../applib/index/util/Enums.html">Enums</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../applib/index/util/ObjectContracts.html">ObjectContracts</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../applib/index/util/Reasons.html">Reasons</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../applib/index/util/TitleBuffer.html">TitleBuffer</a>
+  </li>
+</ul>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../applib-classes/layout.html">Layout</a>
@@ -511,6 +526,9 @@ page.parent doesn't seem to be set...
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../config/sections/isis.security.shiro.html">Shiro Security Implementation</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../config/sections/isis.security.spring.html">Spring Security Implementation</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../config/sections/isis.viewer.restfulobjects.html">Restful Objects Viewer</a>
@@ -777,22 +795,23 @@ page.parent doesn't seem to be set...
 <p>All of the API domain services provide a default implementation, and so can always be called by domain objects.</p>
 </li>
 <li>
-<p>Most of the SPI domain services also have a default implementation, although in many cases this is a fallback implementation (such as <code>AuditerServiceLogging</code> for the <a href="../applib/index/services/publishing/spi/EntityPropertyChangeSubscriber.html" class="page">EntityPropertyChangeSubscriber</a>).</p>
+<p>Most of the SPI domain services also have a default implementation, although in many cases this is a fallback implementation.</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
 <p>In one sense all API domain services are also SPI, in that they can be overridden by the domain programmer providing another domain service implementing the same type.
-For example, the framework-provided implementation of <a href="../applib/index/services/repository/RepositoryService.html" class="page"><code>RepositoryService</code></a> could be overridden this way, perhaps for more monitoring or caching purposes.
-This is most easily done using the Spring <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/core/annotation/Order.html"><code>@Order</code></a> annotation.
-Generally speaking in such cases higher precedence implementation will be used instead of the framework-provided implementation.
-For a small number of services, though, <em>all</em> available implementations are delegated to.
-One example is the (aforementioned) <a href="../applib/index/services/publishing/spi/EntityPropertyChangeSubscriber.html" class="page">EntityPropertyChangeSubscriber</a> - all configured implementations will be delegated to.</p>
+For example, the framework-provided implementation of <a href="../applib/index/services/repository/RepositoryService.html" class="page">RepositoryService</a> could be overridden this way, perhaps for more monitoring or caching purposes.
+This is most easily done using the Spring <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/core/annotation/Order.html">@Order</a> annotation.</p>
 </div>
 <div class="paragraph">
-<p>A small number of domain services can be considered both API and SPI; a good example is the <a href="../applib/index/services/email/EmailService.html" class="page"><code>EmailService</code></a> that is of direct use for domain objects wishing to send out emails, but is also used by the framework to support the <a href="../../../vw/latest/features.html#user-registration" class="page">user registration</a> functionality supported by the <a href="../../../vw/latest/about.html" class="page">Wicket viewer</a>.
-The same is true of the <a href="../applib/index/services/eventbus/EventBusService.html" class="page"><code>EventBusService</code></a>; this can be used by domain objects to broadcast arbitrary events, but is also used by the framework to automatically emit events for
-<a href="../applib/index/annotation/Action.html#domainEvent" class="page"><code>@Action#domainEvent()</code></a> etc.
+<p>Generally speaking in such cases higher precedence implementation will be used instead of the framework-provided implementation.
+For some services, though, <em>all</em> available implementations are delegated to; these are typically subscribers such as <a href="../applib/index/services/publishing/spi/EntityPropertyChangeSubscriber.html" class="page">EntityPropertyChangeSubscriber</a>.</p>
+</div>
+<div class="paragraph">
+<p>A small number of domain services can be considered both API and SPI; a good example is the <a href="../applib/index/services/email/EmailService.html" class="page">EmailService</a> that is of direct use for domain objects wishing to send out emails, but is also used by the framework to support the <a href="../../../vw/latest/features.html#user-registration" class="page">user registration</a> functionality supported by the <a href="../../../vw/latest/about.html" class="page">Wicket viewer</a>.
+The same is true of the <a href="../applib/index/services/eventbus/EventBusService.html" class="page">EventBusService</a>; this can be used by domain objects to broadcast arbitrary events, but is also used by the framework to automatically emit events for
+<a href="../applib/index/annotation/Action.html#domainEvent" class="page">@Action#domainEvent()</a> etc.
 For these hybrid services we have categorized the service as an API service.</p>
 </div>
 <div class="paragraph">
@@ -911,7 +930,7 @@ For example, the viewer remembers which tabs are selected, and for collections w
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../applib/index/services/i18n/LocaleProvider.html" class="page">LocaleProvider</a></code></p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Request-scoped service to return the locale of the current user, in support of i18n (ie so that the app&#8217;s UI, messages and exceptions can be translated to the required locale by the <a href="../applib/index/services/i18n/TranslationService.html" class="page"><code>TranslationService</code></a>.</p>
+<p>Request-scoped service to return the locale of the current user, in support of i18n (ie so that the app&#8217;s UI, messages and exceptions can be translated to the required locale by the <a href="../applib/index/services/i18n/TranslationService.html" class="page">TranslationService</a>.</p>
 </div></div></td>
 </tr>
 <tr>
@@ -929,7 +948,7 @@ For example, the viewer remembers which tabs are selected, and for collections w
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../applib/index/services/i18n/TranslationService.html" class="page">TranslationService</a></code></p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Translate an app&#8217;s UI, messages and exceptions for the current user (as per the locale provided by <a href="../applib/index/services/i18n/LocaleProvider.html" class="page"><code>LocalProvider</code></a>.</p>
+<p>Translate an app&#8217;s UI, messages and exceptions for the current user (as per the locale provided by <a href="../applib/index/services/i18n/LocaleProvider.html" class="page">LocalProvider</a>.</p>
 </div></div></td>
 </tr>
 <tr>
@@ -1032,6 +1051,13 @@ It can also be used to dispatch actions asynchronously, to be run through a <cod
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../applib/index/services/publishing/spi/CommandSubscriber.html" class="page">CommandSubscriber</a></code></p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>SPI service to listen on command instances, ie representations of an action invocation or property edit.
+Used for command/auditing and background services.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../applib/index/services/publishing/spi/ExecutionSubscriber.html" class="page">ExecutionSubscriber</a></code></p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>SPI service to listen on command instances, ie representations of an action invocation or property edit.
 Used for command/auditing and background services.</p>
@@ -1331,8 +1357,8 @@ within the metamodel.</p>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../applib/index/services/grid/GridService.html" class="page">GridService</a></code></p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>A facade on top of both <a href="../applib/index/services/grid/GridLoaderService.html" class="page"><code>GridLoaderService</code></a> and
-<a href="../applib/index/services/grid/GridSystemService.html" class="page"><code>GridSystemService</code></a>, thus being able to return normalized grids for any domain class.</p>
+<p>A facade on top of both <a href="../applib/index/services/grid/GridLoaderService.html" class="page">GridLoaderService</a> and
+<a href="../applib/index/services/grid/GridSystemService.html" class="page">GridSystemService</a>, thus being able to return normalized grids for any domain class.</p>
 </div></div></td>
 </tr>
 <tr>
@@ -1357,7 +1383,7 @@ Used by</p>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../applib/index/services/i18n/TranslationsResolver.html" class="page">TranslationsResolver</a></code></p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Obtain translations for a particuar phrase and locale, in support of i18n (ie so that the app&#8217;s UI, messages and exceptions can be translated to the required locale by the <a href="../applib/index/services/i18n/TranslationService.html" class="page"><code>TranslationService</code></a></p>
+<p>Obtain translations for a particuar phrase and locale, in support of i18n (ie so that the app&#8217;s UI, messages and exceptions can be translated to the required locale by the <a href="../applib/index/services/i18n/TranslationService.html" class="page">TranslationService</a></p>
 </div></div></td>
 </tr>
 </tbody>
@@ -1481,13 +1507,20 @@ see also the <a href="../../../security/latest/about.html" class="page">Security
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../applib/index/services/session/SessionLoggingService.html" class="page">SessionLoggingService</a></code></p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>Records each login and logout by end-users.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../../../security/latest/session-log/about.html" class="page">Session Log<br>
+(Security Guide)</a></p>
+</li>
+</ul>
 </div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>* <a href="../../../security/latest/session-log/about.html" class="page">Session Log<br>
-(Security Guide)</a></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><a href="../applib/index/services/userreg/UserRegistrationService.html" class="page">UserRegistrationService</a></code></p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><a href="../applib/index/services/userreg/UserRegistrationService.html" class="page">UserRegistrationService</a></p>
+<p>Create a new user account with the configured security mechanism.</p>
 </div></div></td>
 </tr>
 </tbody>
@@ -1505,8 +1538,7 @@ Importantly, this also minimizes the coupling between your code and Apache Isis,
 <div class="paragraph">
 <p>The framework also defines a number of "internal" services.
 These are not part of the framework&#8217;s formal API, in that they use classes that are outside of the applib.
-These internal framework services should be thought of as part of the internal design of the framework, and are liable to change from release to release.
-The internal framework services are documented in the <a href="../../../core/latest/runtime-services/about.html" class="page">Framework Internal Services</a> guide.</p>
+These internal framework services should be thought of as part of the internal design of the framework, and are liable to change from release to release.</p>
 </div>
 </div>
 </div>
@@ -1561,10 +1593,10 @@ TODO: v2 - should extend this &#8230;&#8203; a good point to discuss also the @I
 <p>For objects that are already persisted, the service is automatically injected just after the object is rehydrated by JDO/DataNucleus.</p>
 </div>
 <div class="paragraph">
-<p>For transient objects (instantiated programmatically), the <a href="../applib/index/services/factory/FactoryService.html" class="page"><code>FactoryService#viewModel(&#8230;&#8203;)</code></a> or the <a href="../applib/index/services/repository/RepositoryService.html" class="page"><code>RepositoryService#detachedEntity(&#8230;&#8203;)</code></a>'s will automatically inject the services.</p>
+<p>For transient objects (instantiated programmatically), the <a href="../applib/index/services/factory/FactoryService.html" class="page">FactoryService#viewModel(&#8230;&#8203;)</a> or the <a href="../applib/index/services/repository/RepositoryService.html" class="page">RepositoryService#detachedEntity(&#8230;&#8203;)</a>'s will automatically inject the services.</p>
 </div>
 <div class="paragraph">
-<p>Alternatively the object can be instantiated simply using <code>new</code>, then services injected using <a href="../applib/index/services/inject/ServiceInjector.html" class="page"><code>ServiceInjector</code></a>'s <code>injectServicesInto(&#8230;&#8203;)</code> method.</p>
+<p>Alternatively the object can be instantiated simply using <code>new</code>, then services injected using <a href="../applib/index/services/inject/ServiceInjector.html" class="page">ServiceInjector</a>'s <code>injectServicesInto(&#8230;&#8203;)</code> method.</p>
 </div>
 </div>
 </div>
@@ -1586,12 +1618,12 @@ The <a href="../applib/index/annotation/OrderPrecedence.html" class="page">Order
 These include:</p>
 </div>
 <div class="paragraph">
-<p><a href="../applib/index/services/conmap/ContentMappingService.html" class="page"><code>ContentMappingService</code></a>,
-<a href="../applib/index/services/grid/GridSystemService.html" class="page"><code>GridSystemService</code></a>, and
-<a href="../applib/index/services/routing/RoutingService.html" class="page"><code>RoutingService</code></a>.</p>
+<p><a href="../applib/index/services/conmap/ContentMappingService.html" class="page">ContentMappingService</a>,
+<a href="../applib/index/services/grid/GridSystemService.html" class="page">GridSystemService</a>, and
+<a href="../applib/index/services/routing/RoutingService.html" class="page">RoutingService</a>.</p>
 </div>
 <div class="paragraph">
-<p>For example, suppose you wanted to provide your own implementation of <a href="../applib/index/services/i18n/LocaleProvider.html" class="page"><code>LocaleProvider</code></a>.
+<p>For example, suppose you wanted to provide your own implementation of <a href="../applib/index/services/i18n/LocaleProvider.html" class="page">LocaleProvider</a>.
 The default implementation has these annotations:</p>
 </div>
 <div class="listingblock">
@@ -1641,7 +1673,7 @@ The outline boxes are services while the coloured boxes represent data structure
 <div class="ulist">
 <ul>
 <li>
-<p>the (request-scoped) <a href="../applib/index/services/iactn/InteractionContext.html" class="page"><code>InteractionContext</code></a> domain service acts as a factory for the <code>Interaction</code> object, which keeps track of the call-graph of executions (<code>Interaction.Execution</code>) of either action invocations or property edits.</p>
+<p>the (request-scoped) <a href="../applib/index/services/iactn/InteractionContext.html" class="page">InteractionContext</a> domain service acts as a factory for the <code>Interaction</code> object, which keeps track of the call-graph of executions (<code>Interaction.Execution</code>) of either action invocations or property edits.</p>
 <div class="paragraph">
 <p>In the majority of cases there is likely to be just a single top-level node of this graph, but for applications that use the <a href="../applib/index/services/wrapper/WrapperFactory.html" class="page">WrapperFactory</a> extensively each successive call results in a new child execution.</p>
 </div>
@@ -1651,27 +1683,26 @@ The outline boxes are services while the coloured boxes represent data structure
 </li>
 <li>
 <p>before and after each action invocation/property edit, a <a href="../applib-classes/events/domainevent.html" class="page">domain event</a> is may be broadcast to all subscribers.
-Whether this occurs depends on whether the action/property has been annotated (using <a href="../applib/index/annotation/Action.html#domainEvent" class="page"><code>@Action#domainEvent()</code></a> or <a href="../applib/index/annotation/Property.html#domainEvent" class="page"><code>@Property#domainEvent()</code></a>).</p>
+Whether this occurs depends on whether the action/property has been annotated (using <a href="../applib/index/annotation/Action.html#domainEvent" class="page">@Action#domainEvent()</a> or <a href="../applib/index/annotation/Property.html#domainEvent" class="page">@Property#domainEvent()</a>).</p>
 <div class="paragraph">
 <p>(Note that subscribers will also receive events for vetoing the action/property; this is not shown on the diagram).</p>
 </div>
 </li>
 <li>
-<p>As each execution progresses, and objects that are modified are "enlisted" into the (internal) <a href="#core:runtime-services:ChangedObjectsService.adoc" class="page unresolved"><code>ChangedObjectsServiceInternal</code></a> domain service.
-Metrics as to which objects are merely loaded into memory are also captured using the <a href="../applib/index/services/metrics/MetricsService.html" class="page"><code>MetricsService</code></a> (not shown on the diagram).</p>
+<p>As each execution progresses, and objects that are modified are "enlisted" (managed by an service internal to the framework).
+Metrics as to which objects are merely loaded into memory are also captured using the <a href="../applib/index/services/metrics/MetricsService.html" class="page">MetricsService</a> (not shown on the diagram).</p>
 </li>
 <li>
 <p>At the end of each execution, details of that execution are published through the (internal)
-<a href="../../../core/latest/runtime-services/ExecutionPublisher.html" class="page"><code>ExecutionPublisher</code></a> domain service.
-This is only done for actions/properties annotated appropriate (with <a href="../applib/index/annotation/Action.html#exectionPublishing" class="page"><code>@Action#exectionPublishing()</code></a> or <a href="../applib/index/annotation/Property.html#exectionPublishing" class="page"><code>@Property#exectionPublishing()</code></a>).</p>
+<a href="#core:runtime-services:ExecutionPublisher.adoc" class="page unresolved">ExecutionPublisher</a> domain service.
+This is only done for actions/properties annotated appropriate (with <a href="../applib/index/annotation/Action.html#exectionPublishing" class="page">@Action#exectionPublishing()</a> or <a href="../applib/index/annotation/Property.html#exectionPublishing" class="page">@Property#exectionPublishing()</a>).</p>
 <div class="paragraph">
 <p>The internal service delegates in turn to any registered <a href="../applib/index/services/publishing/spi/ExecutionSubscriber.html" class="page">ExecutionSubscriber</a>s (there may be more than one).</p>
 </div>
 </li>
 <li>
-<p>At the end of each transaction, details of all changed objects are published, through the (internal) <a href="../../../core/latest/runtime-services/EntityChangesPublisher.html" class="page"><code>EntityChangesPublisher</code></a> to any registered <code>EntityChangesSubscriber</code> implementations and
-through the (internal) <a href="../../../core/latest/runtime-services/EntityPropertyChangePublisher.html" class="page"><code>EntityPropertyChangePublisher</code></a> to any registered <code>EntityPropertyChangeSubscriber</code> implementations.
-Only domain objects specified to be published with <a href="../applib/index/annotation/DomainObject.html#entityChangePublishing" class="page"><code>@DomainObject#entityChangePublishing()</code></a> are published.<br></p>
+<p>At the end of each transaction, details of all changed objects are published to any registered <a href="../applib/index/services/publishing/spi/EntityChangesSubscriber.html" class="page">EntityChangesSubscriber</a> implementations and (through an internal service) also to any registered <a href="../applib/index/services/publishing/spi/EntityPropertyChangeSubscriber.html" class="page">EntityPropertyChangeSubscriber</a> implementations.
+Only domain objects specified to be published with <a href="../applib/index/annotation/DomainObject.html#entityChangePublishing" class="page">@DomainObject#entityChangePublishing()</a> are published.</p>
 <div class="admonitionblock note">
 <table>
 <tr>
@@ -1680,7 +1711,7 @@ Only domain objects specified to be published with <a href="../applib/index/anno
 </td>
 <td class="content">
 <div class="paragraph">
-<p>Note that it&#8217;s possible for there to be more than one transaction per top-level interaction, by virtue of the <a href="../applib/index/services/xactn/TransactionService.html" class="page"><code>TransactionService</code></a>.</p>
+<p>Note that it&#8217;s possible for there to be more than one transaction per top-level interaction, by virtue of the <a href="../applib/index/services/xactn/TransactionService.html" class="page">TransactionService</a>.</p>
 </div>
 </td>
 </tr>
@@ -1697,7 +1728,7 @@ This captures whether the command succeeded or failed.</p>
 </ul>
 </div>
 <div class="paragraph">
-<p>Implementations of <a href="../applib/index/services/publishing/spi/CommandSubscriber.html" class="page">CommandSubscriber</a> can use the <code>Command#getMemento()</code> method to obtain a XML equivalent of that <code>Command</code>, reified using the <a href="../schema/cmd.html" class="page"><code>cmd.xsd</code></a> schema.
+<p>Implementations of <a href="../applib/index/services/publishing/spi/CommandSubscriber.html" class="page">CommandSubscriber</a> can use the <code>Command#getMemento()</code> method to obtain a XML equivalent of that <code>Command</code>, reified using the <a href="../schema/cmd.html" class="page">cmd.xsd</a> schema.
 This can be converted back into a <code>CommandDto</code> using the <code>CommandDtoUtils</code> utility class (part of the applib).</p>
 </div>
 <div class="paragraph">
@@ -1740,7 +1771,7 @@ The framework provides a default <code>PublisherServiceLogging</code> implementa
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210226-0424-7cfe55a2</p>
+            <p>Revision: 2.0.0-M4.20210301-0425-00d59d7f</p>
         </div>
     </div>
 </footer>

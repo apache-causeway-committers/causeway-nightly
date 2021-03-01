@@ -274,7 +274,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../../applib-classes/events.html">Events</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../../applib-classes/ViewModel.html"><code>ViewModel</code></a>
+    <a class="nav-link" href="../../applib-classes/ViewModel.html">ViewModel</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../../applib-classes/value-types.html">Value Types</a>
@@ -289,7 +289,22 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../../applib-classes/roles-mixins-contributees.html">Roles, Mixins and Contributees</a>
   </li>
   <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
     <a class="nav-link" href="../../applib-classes/utility.html">Utility Classes</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="util/Enums.html">Enums</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="util/ObjectContracts.html">ObjectContracts</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="util/Reasons.html">Reasons</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="util/TitleBuffer.html">TitleBuffer</a>
+  </li>
+</ul>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../../applib-classes/layout.html">Layout</a>
@@ -509,6 +524,9 @@ page.parent doesn't seem to be set...
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../../config/sections/isis.security.shiro.html">Shiro Security Implementation</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../config/sections/isis.security.spring.html">Spring Security Implementation</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../../config/sections/isis.viewer.restfulobjects.html">Restful Objects Viewer</a>
@@ -748,6 +766,16 @@ page.parent doesn't seem to be set...
 <article class="doc">
     <a name="section-top"></a>
 <h1 class="page">Identifier</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Combines <a href="id/TypeIdentifier.html" class="page">TypeIdentifier</a> and member identification (from properties, collections or actions), to a fully qualified <em>feature</em> identifier.</p>
+</div>
+<div class="paragraph">
+<p>For <a href="Identifier.html" class="page">Identifier</a> (s) of type <em>Identifier.Type#CLASS</em> member information is left empty.</p>
+</div>
+</div>
+</div>
 <div class="sect1">
 <h2 id="api"><a class="anchor" href="#api"></a>API</h2>
 <div class="sectionbody">
@@ -755,105 +783,20 @@ page.parent doesn't seem to be set...
 <div class="title">Identifier.java</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">class Identifier {
-  public static final Depth CLASS;
-  public static final Depth CLASS_MEMBERNAME;
-  public static final Depth CLASS_MEMBERNAME_PARAMETERS;
-  public static final Depth MEMBERNAME_ONLY;
-  public static final Depth PARAMETERS_ONLY;
-  Identifier classIdentifier(final Class&lt;?&gt; cls)
-  Identifier classIdentifier(final String className)
-  Identifier propertyOrCollectionIdentifier(final Class&lt;?&gt; declaringClass, final String propertyOrCollectionName)
-  Identifier propertyOrCollectionIdentifier(final String declaringClassName, final String propertyOrCollectionName)
-  Identifier actionIdentifier(final Class&lt;?&gt; declaringClass, final String actionName, final Class&lt;?&gt;... parameterClasses)
-  Identifier actionIdentifier(final String declaringClassName, final String actionName, final Class&lt;?&gt;... parameterClasses)
-  Identifier actionIdentifier(final String declaringClassName, final String actionName, final List&lt;String&gt; parameterClassNames)
-  String getClassName()
+  Identifier classIdentifier(final TypeIdentifier typeIdentifier)
+  Identifier propertyOrCollectionIdentifier(final TypeIdentifier typeIdentifier, final String propertyOrCollectionName)
+  Identifier actionIdentifier(final TypeIdentifier typeIdentifier, final String actionName, final Class&lt;?&gt;... parameterClasses)
+  Identifier actionIdentifier(final TypeIdentifier typeIdentifier, final String actionName, final Can&lt;String&gt; parameterClassNames)
+  String getLogicalIdentityString(final String delimiter)
   String getClassNaturalName()
-  String getMemberName()
   String getMemberNaturalName()
-  List&lt;String&gt; getMemberParameterNames()
-  List&lt;String&gt; getMemberParameterNaturalNames()
-  Type getType()
-  boolean isPropertyOrCollection()     <i class="conum" data-value="1"></i><b>(1)</b>
-  String toIdentityString(final Depth depth)
-  String toClassIdentityString()
-  StringBuilder toClassIdentityString(final StringBuilder buf)
-  String toNameIdentityString()
-  StringBuilder toNameIdentityString(final StringBuilder buf)
-  String toClassAndNameIdentityString()
-  StringBuilder toClassAndNameIdentityString(final StringBuilder buf)
-  String toParmsIdentityString()
-  StringBuilder toParmsIdentityString(final StringBuilder buf)
-  String toNameParmsIdentityString()
-  StringBuilder toNameParmsIdentityString(final StringBuilder buf)
-  String toFullIdentityString()
-  int compareTo(final Identifier o2)
-  boolean equals(final Object obj)     <i class="conum" data-value="2"></i><b>(2)</b>
-  boolean equals(final Identifier other)
+  Can&lt;String&gt; getMemberParameterClassNaturalNames()
+  int compareTo(final Identifier other)
+  boolean equals(final Object obj)
+  boolean isEqualTo(final Identifier other)
   int hashCode()
   String toString()
-  Identifier fromIdentityString(final String asString)     <i class="conum" data-value="3"></i><b>(3)</b>
 }</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><a href="#isPropertyOrCollection__">isPropertyOrCollection()</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Convenience method.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><a href="#equals__Object">equals(Object)</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>REVIEW: why not just compare the <em>#toString()</em> representations?</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td><a href="#fromIdentityString__String">fromIdentityString(String)</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Factory method.</p>
-</div>
-</div>
-</div></td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="members"><a class="anchor" href="#members"></a>Members</h2>
-<div class="sectionbody">
-<div class="sect2">
-<h3 id="isPropertyOrCollection__"><a class="anchor" href="#isPropertyOrCollection__"></a>isPropertyOrCollection()</h3>
-<div class="paragraph">
-<p>Convenience method.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="equals__Object"><a class="anchor" href="#equals__Object"></a>equals(Object)</h3>
-<div class="paragraph">
-<p>REVIEW: why not just compare the <em>#toString()</em> representations?</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="fromIdentityString__String"><a class="anchor" href="#fromIdentityString__String"></a>fromIdentityString(String)</h3>
-<div class="paragraph">
-<p>Factory method.</p>
 </div>
 </div>
 </div>
@@ -875,7 +818,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210226-0424-7cfe55a2</p>
+            <p>Revision: 2.0.0-M4.20210301-0425-00d59d7f</p>
         </div>
     </div>
 </footer>
