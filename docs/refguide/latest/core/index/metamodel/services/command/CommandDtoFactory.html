@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Core Runtime Services :: Apache Isis</title>
+    <title>CommandDtoFactory (interface) :: Apache Isis</title>
     <meta name="generator" content="Antora 2.3.4">
     <link rel="stylesheet" href="../../../../../../../_/css/site.css">
     <link rel="stylesheet" href="../../../../../../../_/css/site-custom.css">
@@ -136,7 +136,7 @@
     </div>
   </nav>
 </header>
-<div class="body  -toc -title">
+<div class="body ">
 <div class="nav-container" data-component="refguide" data-version="latest">
   <aside class="nav">
     <div class="panels">
@@ -758,55 +758,122 @@ page.parent doesn't seem to be set...
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="../../../../../about.html">Reference Guide</a></li>
-    <li><a href="about.html">Core Runtime Services</a></li>
+    <li><a href="CommandDtoFactory.html">CommandDtoFactory <em>(interface)</em></a></li>
   </ul>
 </nav>
-  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/master/antora/components/refguide-index/modules/core/pages/index/runtimeservices/hooks/pages-to-update/about.adoc">Edit</a></div>
+  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/master/antora/components/refguide-index/modules/core/pages/index/metamodel/services/command/CommandDtoFactory.adoc">Edit</a></div>
 </div>
 <article class="doc">
     <a name="section-top"></a>
-<h1 class="page">Core Runtime Services</h1>
-<div class="admonitionblock warning">
+<h1 class="page">CommandDtoFactory <em>(interface)</em></h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Used to serialize the intention to invoke an action or edit a property as a <em>CommandDto</em> , for example such that it can be persisted and then executed at some later time or even against some external system.</p>
+</div>
+<div class="paragraph">
+<p>There are some similarities to <em>org.apache.isis.core.metamodel.services.ixn.InteractionDtoFactory</em> , which is used to instantiate an <em>org.apache.isis.schema.ixn.v2.InteractionDto</em> that represents the <em>actual</em> execution of the action invocation or property edit.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="api"><a class="anchor" href="#api"></a>API</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="title">CommandDtoFactory.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">interface CommandDtoFactory {
+  CommandDto asCommandDto(final UUID uniqueId, final Can&lt;ManagedObject&gt; targetAdapters, final ObjectAction objectAction, final Can&lt;ManagedObject&gt; argAdapters)     <i class="conum" data-value="1"></i><b>(1)</b>
+  CommandDto asCommandDto(final UUID uniqueId, final Can&lt;ManagedObject&gt; targetAdapters, final OneToOneAssociation association, final ManagedObject valueAdapterOrNull)     <i class="conum" data-value="2"></i><b>(2)</b>
+  void addActionArgs(final ObjectAction objectAction, final ActionDto actionDto, final Can&lt;ManagedObject&gt; argAdapters)     <i class="conum" data-value="3"></i><b>(3)</b>
+  void addPropertyValue(final OneToOneAssociation property, final PropertyDto propertyDto, final ManagedObject valueAdapter)     <i class="conum" data-value="4"></i><b>(4)</b>
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
 <table>
 <tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-TODO: v2: to be updated
-</td>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><a href="#asCommandDto__UUID_Can_ObjectAction_Can">asCommandDto(UUID, Can, ObjectAction, Can)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Returns a <em>CommandDto</em> that represents the intention to invoke an action on a target object (or target objects, to support the notion of bulk actions).</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><a href="#asCommandDto__UUID_Can_OneToOneAssociation_ManagedObject">asCommandDto(UUID, Can, OneToOneAssociation, ManagedObject)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Returns a <em>CommandDto</em> that represents the intention to edit (set or clear) a property on a target (or possibly many targets, for symmetry with actions).</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><a href="#addActionArgs__ObjectAction_ActionDto_Can">addActionArgs(ObjectAction, ActionDto, Can)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Adds the arguments of an action to an <em>ActionDto</em> (the element within a <em>CommandDto</em> representing an action invocation).</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><a href="#addPropertyValue__OneToOneAssociation_PropertyDto_ManagedObject">addPropertyValue(OneToOneAssociation, PropertyDto, ManagedObject)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Adds the new value argument of a property to a <em>PropertyDto</em> (the element a <em>CommandDto</em> representing an property edit).</p>
+</div>
+</div>
+</div></td>
 </tr>
 </table>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="members"><a class="anchor" href="#members"></a>Members</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="asCommandDto__UUID_Can_ObjectAction_Can"><a class="anchor" href="#asCommandDto__UUID_Can_ObjectAction_Can"></a>asCommandDto(UUID, Can, ObjectAction, Can)</h3>
 <div class="paragraph">
-<p>This Maven module contains implementations of both public API services (as defined in the applib) and also non-API classes.</p>
+<p>Returns a <em>CommandDto</em> that represents the intention to invoke an action on a target object (or target objects, to support the notion of bulk actions).</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="asCommandDto__UUID_Can_OneToOneAssociation_ManagedObject"><a class="anchor" href="#asCommandDto__UUID_Can_OneToOneAssociation_ManagedObject"></a>asCommandDto(UUID, Can, OneToOneAssociation, ManagedObject)</h3>
+<div class="paragraph">
+<p>Returns a <em>CommandDto</em> that represents the intention to edit (set or clear) a property on a target (or possibly many targets, for symmetry with actions).</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="addActionArgs__ObjectAction_ActionDto_Can"><a class="anchor" href="#addActionArgs__ObjectAction_ActionDto_Can"></a>addActionArgs(ObjectAction, ActionDto, Can)</h3>
+<div class="paragraph">
+<p>Adds the arguments of an action to an <em>ActionDto</em> (the element within a <em>CommandDto</em> representing an action invocation).</p>
 </div>
 <div class="paragraph">
-<p>See the <a href="#refguide:applib-svc:">Domain Services Reference Guide</a> for details on the public API services.</p>
+<p>This is used when the command is actually executed to populate the parameters of the equivalent <em>org.apache.isis.schema.ixn.v2.ActionInvocationDto</em></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="addPropertyValue__OneToOneAssociation_PropertyDto_ManagedObject"><a class="anchor" href="#addPropertyValue__OneToOneAssociation_PropertyDto_ManagedObject"></a>addPropertyValue(OneToOneAssociation, PropertyDto, ManagedObject)</h3>
+<div class="paragraph">
+<p>Adds the new value argument of a property to a <em>PropertyDto</em> (the element a <em>CommandDto</em> representing an property edit).</p>
 </div>
 <div class="paragraph">
-<p>This documentation relates only to the non-API services
-These documents should be
-thought of as part of the internal design of the framework, and are liable to change from release to release.</p>
+<p>This is used when the command is actually executed to set the the new value of the equivalent <em>org.apache.isis.schema.ixn.v2.PropertyEditDto</em> .</p>
 </div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>We do not guarantee that <a href="http://semver.org">semantic versioning</a> will be honoured for these services.</p>
 </div>
-</td>
-</tr>
-</table>
 </div>
-<div class="paragraph">
-<p>Unresolved include directive in modules/core/pages/index/runtimeservices/hooks/pages-to-update/about.adoc - include::partial$_presentation-layer.adoc[]
-Unresolved include directive in modules/core/pages/index/runtimeservices/hooks/pages-to-update/about.adoc - include::partial$_application-layer.adoc[]
-Unresolved include directive in modules/core/pages/index/runtimeservices/hooks/pages-to-update/about.adoc - include::partial$_persistence-layer.adoc[]</p>
 </div>
 </article>
 <aside class="article-aside toc hide-for-print" role="navigation">
@@ -825,7 +892,7 @@ Unresolved include directive in modules/core/pages/index/runtimeservices/hooks/p
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210301-0425-00d59d7f</p>
+            <p>Revision: 2.0.0-M4.20210302-0424-5701dc1c</p>
         </div>
     </div>
 </footer>

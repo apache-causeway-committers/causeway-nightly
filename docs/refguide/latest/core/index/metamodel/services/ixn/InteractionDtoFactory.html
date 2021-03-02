@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>ExecutionPublisher :: Apache Isis</title>
+    <title>InteractionDtoFactory (interface) :: Apache Isis</title>
     <meta name="generator" content="Antora 2.3.4">
     <link rel="stylesheet" href="../../../../../../../_/css/site.css">
     <link rel="stylesheet" href="../../../../../../../_/css/site-custom.css">
@@ -758,53 +758,34 @@ page.parent doesn't seem to be set...
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="../../../../../about.html">Reference Guide</a></li>
-    <li><a href="ExecutionPublisher.html"><code>ExecutionPublisher</code></a></li>
+    <li><a href="InteractionDtoFactory.html">InteractionDtoFactory <em>(interface)</em></a></li>
   </ul>
 </nav>
-  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/master/antora/components/refguide-index/modules/core/pages/index/runtimeservices/hooks/pages-to-update/ExecutionPublisher.adoc">Edit</a></div>
+  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/master/antora/components/refguide-index/modules/core/pages/index/metamodel/services/ixn/InteractionDtoFactory.adoc">Edit</a></div>
 </div>
 <article class="doc">
     <a name="section-top"></a>
-<h1 class="page"><code>ExecutionPublisher</code></h1>
+<h1 class="page">InteractionDtoFactory <em>(interface)</em></h1>
 <div id="preamble">
 <div class="sectionbody">
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-TODO: this content has not yet been reviewed/updated for v2.0
-</td>
-</tr>
-</table>
+<div class="paragraph">
+<p>Used to serialize the execution of an action invocation or property edit as an <em>org.apache.isis.schema.ixn.v2.InteractionDto</em> , for example that it can be published to downstream systems.</p>
 </div>
 <div class="paragraph">
-<p>The (internal) <code>ExecutionPublisher</code> domain service acts as an internal facade to any configured <a href="../../../../../applib/index/services/publishing/spi/ExecutionSubscriber.html" class="page">ExecutionSubscriber</a> domain service(s).</p>
-</div>
-<div class="paragraph">
-<p>For published action invocations/ property edits, it provides an API for those member executions to call.</p>
-</div>
-<div class="paragraph">
-<p>For published objects, it provides an API for the framework to call at the end of the interaction; it obtains details of the changed objects (from the <a href="#core:runtime-services:ChangedObjectsService.adoc" class="page unresolved">ChangedObjectsServiceInternal</a>) and filters them to just those objects that are to be published; these are then passed through to any configured <code>ExecutionSubscriber</code> implementations.</p>
+<p>There are some similarities to <em>org.apache.isis.core.metamodel.services.command.CommandDtoFactory</em> , which is used to instantiate an <em>org.apache.isis.schema.cmd.v2.CommandDto</em> that represents the <em>intention</em> to invoke an action or edit a property.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="spi-and-implementation"><a class="anchor" href="#spi-and-implementation"></a>SPI and Implementation</h2>
+<h2 id="api"><a class="anchor" href="#api"></a>API</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p>The SPI of the service is:</p>
-</div>
 <div class="listingblock">
+<div class="title">InteractionDtoFactory.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public interface ExecutionPublisher {
-
-	void publishActionInvocation(Execution execution);   <i class="conum" data-value="1"></i><b>(1)</b>
-
-    void publishPropertyEdit(Execution execution);       <i class="conum" data-value="2"></i><b>(2)</b>
-
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">interface InteractionDtoFactory {
+  ActionInvocationDto asActionInvocationDto(ObjectAction objectAction, ManagedObject targetAdapter, Can&lt;ManagedObject&gt; argumentAdapters)     <i class="conum" data-value="1"></i><b>(1)</b>
+  PropertyEditDto asPropertyEditDto(OneToOneAssociation property, ManagedObject targetAdapter, ManagedObject newValueAdapterIfAny)     <i class="conum" data-value="2"></i><b>(2)</b>
+  ActionInvocationDto updateResult(ActionInvocationDto actionInvocationDto, ObjectAction objectAction, Object resultPojo)     <i class="conum" data-value="3"></i><b>(3)</b>
 }</code></pre>
 </div>
 </div>
@@ -812,27 +793,67 @@ TODO: this content has not yet been reviewed/updated for v2.0
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>to publish an action invocation, as represented by the specified member <code>Execution</code> parameter and with the <a href="../../../../../applib/index/annotation/Action.html#executionPublishing" class="page">@Action#executionPublishing</a> annotation attribute or equivalent, to any configured <a href="../../../../../applib/index/services/publishing/spi/ExecutionSubscriber.html" class="page">ExecutionSubscriber</a>.
-The <code>Execution</code> object will be an instance of <code>ActionInvocation</code> (see <a href="../../../../../applib/index/services/iactn/InteractionContext.html" class="page">InteractionContext</a> for details).</td>
+<td><a href="#asActionInvocationDto__ObjectAction_ManagedObject_Can">asActionInvocationDto(ObjectAction, ManagedObject, Can)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Called by the framework when invoking an action, to create an <em>ActionInvocationDto</em> capturing the details of the action invocation (target, arguments etc).</p>
+</div>
+</div>
+</div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>to publish a property edit, as as represented by the specified member <code>Execution</code> parameter and with the <a href="../../../../../applib/index/annotation/Property.html#publishing" class="page">@Property#executionPublishing</a> annotation attribute or equivalent, to any configured <a href="../../../../../applib/index/services/publishing/spi/ExecutionSubscriber.html" class="page">ExecutionSubscriber</a>.
-The <code>Execution</code> object will be an instance of <code>PropertyEdit</code> (see <a href="../../../../../applib/index/services/iactn/InteractionContext.html" class="page">InteractionContext</a> for details).</td>
+<td><a href="#asPropertyEditDto__OneToOneAssociation_ManagedObject_ManagedObject">asPropertyEditDto(OneToOneAssociation, ManagedObject, ManagedObject)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Called by the framework when editing a property, to create an <em>PropertyEditDto</em> capturing the details of the action invocation (target, arguments etc).</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><a href="#updateResult__ActionInvocationDto_ObjectAction_Object">updateResult(ActionInvocationDto, ObjectAction, Object)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Called by the framework to attach the result of an action invocation to the aforementioned <em>ActionInvocationDto</em> .</p>
+</div>
+</div>
+</div></td>
 </tr>
 </table>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="related-classes"><a class="anchor" href="#related-classes"></a>Related Classes</h2>
+<h2 id="members"><a class="anchor" href="#members"></a>Members</h2>
 <div class="sectionbody">
+<div class="sect2">
+<h3 id="asActionInvocationDto__ObjectAction_ManagedObject_Can"><a class="anchor" href="#asActionInvocationDto__ObjectAction_ManagedObject_Can"></a>asActionInvocationDto(ObjectAction, ManagedObject, Can)</h3>
 <div class="paragraph">
-<p>In total there are 4 sorts of data the framework has publishers for &#8230;&#8203;
-. <strong>EntityPropertyChanges</strong>: published via <code>EntityPropertyChangePublisher</code> and subscribed to via <code>EntityPropertyChangeSubscriber</code> (SPI)
-. <strong>EntityChanges</strong>: published via <code>EntityChangesPublisher</code> and subscribed to via <code>EntityChangesSubscriber</code> (SPI)
-. <strong>Execution</strong>: published via <code>ExecutionPublisher</code> and subscribed to via <code>ExecutionSubscriber</code> (SPI)
-. <strong>Command</strong>: published via <code>CommandPublisher</code> and subscribed to via <code>CommandSubscriber</code> (SPI)</p>
+<p>Called by the framework when invoking an action, to create an <em>ActionInvocationDto</em> capturing the details of the action invocation (target, arguments etc).</p>
+</div>
+<div class="paragraph">
+<p><em>ActionInvocationDto</em> is a subtype of <em>org.apache.isis.schema.ixn.v2.MemberExecutionDto</em> that is in turn a part of the overall <em>org.apache.isis.schema.ixn.v2.InteractionDto</em> .</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="asPropertyEditDto__OneToOneAssociation_ManagedObject_ManagedObject"><a class="anchor" href="#asPropertyEditDto__OneToOneAssociation_ManagedObject_ManagedObject"></a>asPropertyEditDto(OneToOneAssociation, ManagedObject, ManagedObject)</h3>
+<div class="paragraph">
+<p>Called by the framework when editing a property, to create an <em>PropertyEditDto</em> capturing the details of the action invocation (target, arguments etc).</p>
+</div>
+<div class="paragraph">
+<p><em>PropertyEditDto</em> is a subtype of <em>org.apache.isis.schema.ixn.v2.MemberExecutionDto</em> that is in turn a part of the overall <em>org.apache.isis.schema.ixn.v2.InteractionDto</em> .</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="updateResult__ActionInvocationDto_ObjectAction_Object"><a class="anchor" href="#updateResult__ActionInvocationDto_ObjectAction_Object"></a>updateResult(ActionInvocationDto, ObjectAction, Object)</h3>
+<div class="paragraph">
+<p>Called by the framework to attach the result of an action invocation to the aforementioned <em>ActionInvocationDto</em> .</p>
+</div>
 </div>
 </div>
 </div>
@@ -853,7 +874,7 @@ The <code>Execution</code> object will be an instance of <code>PropertyEdit</cod
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210301-0425-00d59d7f</p>
+            <p>Revision: 2.0.0-M4.20210302-0424-5701dc1c</p>
         </div>
     </div>
 </footer>

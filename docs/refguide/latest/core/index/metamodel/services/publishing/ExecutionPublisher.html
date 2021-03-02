@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>EntityChangeTracker :: Apache Isis</title>
+    <title>ExecutionPublisher (interface) :: Apache Isis</title>
     <meta name="generator" content="Antora 2.3.4">
     <link rel="stylesheet" href="../../../../../../../_/css/site.css">
     <link rel="stylesheet" href="../../../../../../../_/css/site-custom.css">
@@ -758,57 +758,31 @@ page.parent doesn't seem to be set...
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="../../../../../about.html">Reference Guide</a></li>
-    <li><a href="EntityChangeTracker.html"><code>EntityChangeTracker</code></a></li>
+    <li><a href="ExecutionPublisher.html">ExecutionPublisher <em>(interface)</em></a></li>
   </ul>
 </nav>
-  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/master/antora/components/refguide-index/modules/core/pages/index/runtimeservices/hooks/pages-to-update/EntityChangeTracker.adoc">Edit</a></div>
+  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/master/antora/components/refguide-index/modules/core/pages/index/metamodel/services/publishing/ExecutionPublisher.adoc">Edit</a></div>
 </div>
 <article class="doc">
     <a name="section-top"></a>
-<h1 class="page"><code>EntityChangeTracker</code></h1>
+<h1 class="page">ExecutionPublisher <em>(interface)</em></h1>
 <div id="preamble">
 <div class="sectionbody">
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-TODO: this content has not yet been reviewed/updated for v2.0
-</td>
-</tr>
-</table>
-</div>
 <div class="paragraph">
-<p>The <code>EntityChangeTracker</code> class is an (internal) request-scoped domain service that is responsible for collecting the details of all changes to domain objects within an interaction.
-This is then used by various other  (internal) domain services, notably <a href="#core:runtime-services:AuditerDispatchService.adoc" class="page unresolved">AuditerDispatchService</a> and <a href="#core:runtime-services:PublisherDispatchService.adoc" class="page unresolved">PublisherDispatchService</a>.</p>
+<p>Notifies <a href="../../../../../applib/index/services/publishing/spi/ExecutionSubscriber.html" class="page">ExecutionSubscriber</a> s that an action has been executed or a property edited.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="spi-and-implementation"><a class="anchor" href="#spi-and-implementation"></a>SPI and Implementation</h2>
+<h2 id="api"><a class="anchor" href="#api"></a>API</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p>The SPI of the service is:</p>
-</div>
 <div class="listingblock">
+<div class="title">ExecutionPublisher.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@IsisSessionScope
-public class ChangedObjectsService {
-    public void enlistCreated(final ObjectAdapter adapter);                                     <i class="conum" data-value="1"></i><b>(1)</b>
-    public void enlistUpdating(final ObjectAdapter adapter);
-    public void enlistDeleting(final ObjectAdapter adapter);
-
-    public boolean hasChangedAdapters();                                                        <i class="conum" data-value="2"></i><b>(2)</b>
-
-    public Map&lt;ObjectAdapter, PublishingChangeKind&gt; getChangeKindByEnlistedAdapter();           <i class="conum" data-value="3"></i><b>(3)</b>
-    public int numberObjectsDirtied();
-    public int numberObjectPropertiesModified();
-
-    public Set&lt;Map.Entry&lt;AdapterAndProperty, PreAndPostValues&gt;&gt; getChangedObjectProperties();   <i class="conum" data-value="4"></i><b>(4)</b>
-
-    public void clearChangedObjectProperties();                                                 <i class="conum" data-value="5"></i><b>(5)</b>
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">interface ExecutionPublisher {
+  void publishActionInvocation(Execution&lt;?, ?&gt; execution)     <i class="conum" data-value="1"></i><b>(1)</b>
+  void publishPropertyEdit(Execution&lt;?, ?&gt; execution)     <i class="conum" data-value="2"></i><b>(2)</b>
+  T withPublishingSuppressed(Supplier&lt;T&gt; block)     <i class="conum" data-value="3"></i><b>(3)</b>
 }</code></pre>
 </div>
 </div>
@@ -816,51 +790,61 @@ public class ChangedObjectsService {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Enlists an object that has just been created, updated or deleted, capturing the pre-modification values of the properties.</td>
+<td><a href="#publishActionInvocation__Execution">publishActionInvocation(Execution)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Notifies <a href="../../../../../applib/index/services/publishing/spi/ExecutionSubscriber.html" class="page">ExecutionSubscriber</a> s of an action invocation through the <em>ExecutionSubscriber#onExecution(Execution)</em> callback.</p>
+</div>
+</div>
+</div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Used by the framework to determine whether to send the completed <code>Command</code> to <a href="../../../../../applib/index/services/publishing/spi/CommandSubscriber.html" class="page">CommandSubscriber</a>, for example so that it can be persisted).</td>
+<td><a href="#publishPropertyEdit__Execution">publishPropertyEdit(Execution)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Notifies <a href="../../../../../applib/index/services/publishing/spi/ExecutionSubscriber.html" class="page">ExecutionSubscriber</a> s of a property edit through the <em>ExecutionSubscriber#onExecution(Execution)</em> callback.</p>
+</div>
+</div>
+</div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Used by <a href="#core:runtime-services:PublisherDispatchService.adoc" class="page unresolved">PublisherDispatchService</a> to obtain details of and
-counters of all objects changed within the transaction.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>Used by <a href="#core:runtime-services:AuditerDispatchService.adoc" class="page unresolved">AuditerDispatchService</a> to obtain all pairs of
-pre/post values of changed properties</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>Called by the framework to for clean up after auditing and publishing has completed.</td>
+<td><a href="#withPublishingSuppressed__Supplier">withPublishingSuppressed(Supplier)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Slightly hokey wormhole (anti)pattern to disable publishing for mixin associations.</p>
+</div>
+</div>
+</div></td>
 </tr>
 </table>
 </div>
-<div class="paragraph">
-<p>For enlisted objects, if just created, then a dummy value <code>"[NEW]"</code> is used for the pre-modification value; if just
-deleted, then a dummy value <code>"[DELETED]"</code> is used for the post-modification value.  The post-modification values of
-properties are captured when the transaction commits.</p>
-</div>
-<div class="paragraph">
-<p>The service implementation is <code>o.a.i.c.r.s.changes.ChangedObjectsServiceInternal</code>.</p>
-</div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="registering-the-service"><a class="anchor" href="#registering-the-service"></a>Registering the Service</h2>
+<h2 id="members"><a class="anchor" href="#members"></a>Members</h2>
 <div class="sectionbody">
+<div class="sect2">
+<h3 id="publishActionInvocation__Execution"><a class="anchor" href="#publishActionInvocation__Execution"></a>publishActionInvocation(Execution)</h3>
 <div class="paragraph">
-<p>Apache Isis' default implementation of <code>EntityChangeTracker</code> class is automatically registered (it is annotated with <code>@DomainService</code>) so no further configuration is required.</p>
+<p>Notifies <a href="../../../../../applib/index/services/publishing/spi/ExecutionSubscriber.html" class="page">ExecutionSubscriber</a> s of an action invocation through the <em>ExecutionSubscriber#onExecution(Execution)</em> callback.</p>
 </div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="related-classes"><a class="anchor" href="#related-classes"></a>Related Classes</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="publishPropertyEdit__Execution"><a class="anchor" href="#publishPropertyEdit__Execution"></a>publishPropertyEdit(Execution)</h3>
 <div class="paragraph">
-<p>Both the <a href="#core:runtime-services:AuditerDispatchService.adoc" class="page unresolved">AuditerDispatchService</a> and <a href="#core:runtime-services:PublisherDispatchService.adoc" class="page unresolved">PublisherDispatchService</a> (internal) domain services query this object.</p>
+<p>Notifies <a href="../../../../../applib/index/services/publishing/spi/ExecutionSubscriber.html" class="page">ExecutionSubscriber</a> s of a property edit through the <em>ExecutionSubscriber#onExecution(Execution)</em> callback.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="withPublishingSuppressed__Supplier"><a class="anchor" href="#withPublishingSuppressed__Supplier"></a>withPublishingSuppressed(Supplier)</h3>
+<div class="paragraph">
+<p>Slightly hokey wormhole (anti)pattern to disable publishing for mixin associations.</p>
+</div>
 </div>
 </div>
 </div>
@@ -881,7 +865,7 @@ properties are captured when the transaction commits.</p>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210301-0425-00d59d7f</p>
+            <p>Revision: 2.0.0-M4.20210302-0424-5701dc1c</p>
         </div>
     </div>
 </footer>

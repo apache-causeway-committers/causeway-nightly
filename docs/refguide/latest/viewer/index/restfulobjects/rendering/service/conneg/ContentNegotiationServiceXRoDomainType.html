@@ -787,8 +787,8 @@ page.parent doesn't seem to be set...
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">class ContentNegotiationServiceXRoDomainType {
   public static final String X_RO_DOMAIN_TYPE;
-  Response.ResponseBuilder buildResponse(final IResourceContext renderContext, final ManagedObject objectAdapter)     <i class="conum" data-value="1"></i><b>(1)</b>
-  Response.ResponseBuilder buildResponse(final IResourceContext renderContext, final ObjectAndActionInvocation objectAndActionInvocation)     <i class="conum" data-value="2"></i><b>(2)</b>
+  Response.ResponseBuilder buildResponse(final IResourceContext resourceContext, final ManagedObject objectAdapter)     <i class="conum" data-value="1"></i><b>(1)</b>
+  Response.ResponseBuilder buildResponse(final IResourceContext resourceContext, final ObjectAndActionInvocation objectAndActionInvocation)     <i class="conum" data-value="2"></i><b>(2)</b>
 }</code></pre>
 </div>
 </div>
@@ -837,6 +837,68 @@ page.parent doesn't seem to be set...
 </div>
 </div>
 </div>
+<div class="sect1">
+<h2 id="usage-notes"><a class="anchor" href="#usage-notes"></a>Usage Notes</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The value of the <code>x-ro-domain-type</code> parameter corresponds to the DTO to be mapped into by the <a href="../../../../../../applib/index/services/conmap/ContentMappingService.html" class="page">ContentMappingService</a>.</p>
+</div>
+<div class="paragraph">
+<p>If the DTO is annotated with JAXB, then also note that the runtime type must be annotated with the JAXB <code>javax.xml.bind.annotation.XmlRootElement</code> so that RestEasy is able to unambiguously serialize it.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="example"><a class="anchor" href="#example"></a>Example</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>For example, consider a todo app that defines a  <code>ToDoItemDto</code> class, generated from an XSD and therefore JAXB annotated.</p>
+</div>
+<div class="paragraph">
+<p>An implementation of <code>ContentMappingService</code> that maps the application&#8217;s <code>todoapp.dom.module.todoitem.ToDoItem</code> entities into <code>todoapp.dto.module.todoitem.ToDoItemDto</code> classes.</p>
+</div>
+<div class="paragraph">
+<p>A REST client can therefore request a DTO representation of an entity by invoking</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code>http://localhost:8080/restful/objects/TODO/0</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>with an <code>Accept</code> header of:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code>application/xml;profile=urn:org.restfulobjects:repr-types/object;x-ro-domain-type=todoapp.dto.module.todoitem.ToDoItemDto</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>will result in an XML serialization of that class:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../../../../../_images/index/restfulobjects/rendering/service/conneg/accept-xml.png" alt="accept xml" width="700px">
+</div>
+</div>
+<div class="paragraph">
+<p>while similarly hitting the same URL with an <code>Accept</code> header of:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code>application/json;profile=urn:org.restfulobjects:repr-types/object;x-ro-domain-type=todoapp.dto.module.todoitem.ToDoItemDto</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>will result in the JSON serialization of that class:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../../../../../_images/index/restfulobjects/rendering/service/conneg/accept-json.png" alt="accept json" width="700px">
+</div>
+</div>
+</div>
+</div>
 </article>
 <aside class="article-aside toc hide-for-print" role="navigation">
     <p class="toc-title">On this page</p>
@@ -854,7 +916,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210301-0425-00d59d7f</p>
+            <p>Revision: 2.0.0-M4.20210302-0424-5701dc1c</p>
         </div>
     </div>
 </footer>

@@ -384,60 +384,125 @@ page.parent doesn't seem to be set...
 <article class="doc">
     <a name="section-top"></a>
 <h1 class="page">Architecture</h1>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-TODO: this content has not yet been reviewed/updated for v2.0
-</td>
-</tr>
-</table>
-</div>
 <div class="paragraph">
 <p>The <a href="about.html" class="page">RestfulObjects viewer</a> implements the <a href="http://restfulobjects.org">Restful Object spec</a>, meaning that it defines a well-defined set of endpoint URLs as resources, and generates a well-defined set of (JSON) representations when these resources are accessed.</p>
 </div>
 <div class="paragraph">
 <p>By default, the Restful Objects viewer will automatically handle requests and return representations according to the RO spec.
-However, its internal architecture provides several hooks for content negotiation, thereby allowing the generated representation to be influenced using the standard HTTP <code>Accept</code> header.
+However, its internal architecture provides the <a href="../../refguide/latest/viewer/index/restfulobjects/rendering/service/conneg/ContentNegotiationService.html" class="page">ContentNegotiationService</a> SPI to allow alternative representations to be returned based on the standard HTTP <code>Accept</code> header.
 In response, the server uses the <code>Content-Type</code> header which the client can use to know how to process the returned representation.</p>
+</div>
+<div class="paragraph">
+<p>The principal motivation is to allow more flexible representations to be generated for REST clients that (perhaps through their use of a certain JavaScript library, say) expect, or at least works best with, a certain style of representation.</p>
+</div>
+<div class="paragraph">
+<p>Another use case is to support "third party" REST clients over which you have no control.
+In this scenario you <em>must not</em> naively expose entities through the RO viewer, because over time those entities will inevitably evolve and change their structure.
+If the entities were exposed directly then those REST clients will break.</p>
+</div>
+<div class="paragraph">
+<p>Instead you need to create some sort of stable facade over your domain entities, one which you will preserve even if the domain entities change.
+There are three ways in which you can do this:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p><code>RepresentationService</code><br>
-+ The <a href="#core:runtime-services:RepresentationService.adoc" class="page unresolved">RepresentationService</a> is an SPI domain service (plugin-point) that allows an arbitrary representation to be generated for any of the resources defined in the RO spec.<br>
-+ Normally this SPI service need not be replaced, because the default implementation (<code>RepresentationServiceContentNegotiator</code>) simply uses the HTTP <code>Accept</code> header and delegates onto another service, the (slightly misnamed) <code>ContentNegotiationService</code>, to actually generate the representation.
-There can be multiple implementations of the <code>ContentNegotiationService</code> and the content negotiator will delegate to each in turn until one is able to handle the request (per the chain of responsibliity pattern).</p>
+<p>first is to solve the problem at the domain layer by defining a regular Apache Isis <a href="../../userguide/latest/fun/overview.html#view-models" class="page">view model</a>.
+This is then surfaced over the RO viewer.</p>
+<div class="paragraph">
+<p>If the underlying entities change, then care must be taken to ensure that structure of the view model nevertheless is unchanged.</p>
+</div>
 </li>
 <li>
-<p><code>ContentNegotiationService</code><br>
-+ As noted above, there can be multiple implementations of the
+<p>a second option is to solve the problem at the persistence layer, but defining a (SQL) view in the database and then <a href="../../pjdo/latest/jdo-mappings.html#mapping-to-a-view" class="page">mapping this</a> to a (read-only) entity.
+Again this is surfaced by the RO viewer.</p>
+<div class="paragraph">
+<p>If the underlying tables change (as the result of a change in their corresponding domain entities) then once more the view must be refactored so that it still presents the same structure.</p>
+</div>
+</li>
+<li>
+<p>our third option is to solve the problem at the presentation layer, using the <code>ContentNegotiationService</code> described in this section.</p>
+<div class="paragraph">
+<p>The <code>ContentNegotiationService</code> is responsible for inspecting the HTTP <code>Accept</code> header, and use this to select the correct representation to render.</p>
+</div>
+<div class="paragraph">
+<p>The Apache Isis framework provides three implementations of <code>ContentNegotiationService</code> which inspects different elements of the HTTP <code>Accept</code> header.
+One of these implementations, <code>ContentNegotiationServiceXRoDomainType</code> will further delegate down to the companion <a href="../../refguide/latest/applib/index/services/conmap/ContentMappingService.html" class="page">ContentMappingService</a> service (if configured/available), based on the value of the "x-ro-domain-type" parameter of the header.</p>
+</div>
+<div class="paragraph">
+<p>A typical implementation of <code>ContentMappingService</code> will convert the domain object into some sort of DTO (data transfer object) as specified by the "x-ro-domaintype".
+If this DTO is annotated with JAXB or Jackson mappings, then the RO viewer (courtesy of the underlying <a href="http://resteasy.jboss.org/">RestEasy</a> framework) can serialize these directly.</p>
+</div>
+<div class="paragraph">
+<p>What all that means is that, if the underlying entities change, we are required to update the mappings in the <code>ContentMappingService</code> to map to the same DTOs.</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>This diagram illustrates the three options available:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/restfulobjects/facade-choices.png" alt="facade choices" width="700px">
+</div>
+</div>
+<div class="paragraph">
+<p>Here we focus on implementing a facade at the viewer (presentation) layer:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#core:runtime-services:ContentNegotiationService.adoc" class="page unresolved">ContentNegotiationService</a></p>
+<div class="paragraph">
+<p>As noted above, there can be multiple implementations of the
 <a href="#core:runtime-services:ContentNegotiationService.adoc" class="page unresolved">ContentNegotiationService</a>, each one handling a particular HTTP <code>Accept</code> header.
-If the implementation does not recognize the value of the header, if can simply return <code>null</code>.<br>
-+ The framework provides a number of implementations; an implementation that handles the
+If the implementation does not recognize the value of the header, if can simply return <code>null</code>.</p>
+</div>
+<div class="paragraph">
+<p>The framework provides a number of implementations; an implementation that handles the
 <a href="simplified-representations.html" class="page">simplified representation</a> of the Apache Isis profile; an implementation that provides support for the <code>x-ro-domain-type</code> parameter, and a default/fallback implementation that returns the representations defined by the RO spec.</p>
+</div>
 </li>
 <li>
-<p><code>ContentMappingService</code><br>
-+ The <a href="../../refguide/latest/applib/index/services/conmap/ContentMappingService.html" class="page">ContentMappingService</a> is used by the implementation of
-<code>ContentNegotationService</code> that recognizes the <code>x-ro-domain-type</code>, its role being to transform a domain object (usually an entity) into some other form (usually a DTO), as specified by the <code>x-ro-domain-type</code> parameter.
+<p><a href="../../refguide/latest/applib/index/services/conmap/ContentMappingService.html" class="page">ContentMappingService</a></p>
+<div class="paragraph">
+<p>The <a href="../../refguide/latest/applib/index/services/conmap/ContentMappingService.html" class="page">ContentMappingService</a> is used by the implementation of
+<a href="#core:runtime-services:ContentNegotiationService.adoc" class="page unresolved">ContentNegotiationService</a> that recognizes the <code>x-ro-domain-type</code>, its role being to transform a domain object (usually an entity) into some other form (usually a DTO), as specified by the <code>x-ro-domain-type</code> parameter.
 There can be many such implementations, each handling a different target domain type.</p>
+</div>
 </li>
 </ul>
 </div>
 <div class="paragraph">
 <p>This diagram shows how these services collaborate:</p>
 </div>
-<div class="imageblock">
+<div class="imageblock kroki">
 <div class="content">
-<img src="_images/rgfis/service-collaborations.png" alt="service collaborations" width="800px">
+<object type="image/svg+xml" data="_images/diag-c841b564b7bdfa701a0d0f67dcb5e3b2fa30184d.svg"><span class="alt">Diagram</span></object>
 </div>
 </div>
 <div class="paragraph">
 <p>Taken together these domain services offer a lot of flexibility in terms of the representations that can be generated from the RestfulObjects viewer.</p>
+</div>
+<div class="paragraph">
+<p>For further details, see:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../../refguide/latest/viewer/index/restfulobjects/rendering/service/conneg/ContentNegotiationService.html" class="page">ContentNegotiationService</a></p>
+</li>
+<li>
+<p><a href="../../refguide/latest/viewer/index/restfulobjects/rendering/service/conneg/ContentNegotiationServiceForRestfulObjectsV1_0.html" class="page">ContentNegotiationServiceForRestfulObjectsV1_0</a></p>
+</li>
+<li>
+<p><a href="../../refguide/latest/viewer/index/restfulobjects/rendering/service/conneg/ContentNegotiationServiceXRoDomainType.html" class="page">ContentNegotiationServiceXRoDomainType</a></p>
+</li>
+<li>
+<p><a href="../../refguide/latest/viewer/index/restfulobjects/rendering/service/conneg/ContentNegotiationServiceOrgApacheIsisV1.html" class="page">ContentNegotiationServiceOrgApacheIsisV1</a> and  <a href="../../refguide/latest/viewer/index/restfulobjects/rendering/service/conneg/ContentNegotiationServiceOrgApacheIsisV2.html" class="page">ContentNegotiationServiceOrgApacheIsisV2</a></p>
+</li>
+</ul>
 </div>
 </article>
 <aside class="article-aside toc hide-for-print" role="navigation">
@@ -456,7 +521,7 @@ There can be many such implementations, each handling a different target domain 
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210301-0425-00d59d7f</p>
+            <p>Revision: 2.0.0-M4.20210302-0424-5701dc1c</p>
         </div>
     </div>
 </footer>

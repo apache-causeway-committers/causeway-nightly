@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>RepresentationService (interface) :: Apache Isis</title>
+    <title>RepresentationService :: Apache Isis</title>
     <meta name="generator" content="Antora 2.3.4">
     <link rel="stylesheet" href="../../../../../../../_/css/site.css">
     <link rel="stylesheet" href="../../../../../../../_/css/site-custom.css">
@@ -758,18 +758,21 @@ page.parent doesn't seem to be set...
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="../../../../../about.html">Reference Guide</a></li>
-    <li><a href="RepresentationService.html">RepresentationService <em>(interface)</em></a></li>
+    <li><a href="RepresentationService.html">RepresentationService</a></li>
   </ul>
 </nav>
   <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/master/antora/components/refguide-index/modules/viewer/pages/index/restfulobjects/rendering/service/RepresentationService.adoc">Edit</a></div>
 </div>
 <article class="doc">
     <a name="section-top"></a>
-<h1 class="page">RepresentationService <em>(interface)</em></h1>
+<h1 class="page">RepresentationService</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>Configure the Restful Objects viewer to emit custom representations (rather than the standard representations defined in the RO spec).</p>
+<p>Configures the Restful Objects viewer to emit custom representations (rather than the standard representations defined in the RO spec).</p>
+</div>
+<div class="paragraph">
+<p>The default implementations ultimately generate representations according to theRestful Objects specv1.0. It does this through a level of abstraction by delegating to implementations of the <a href="conneg/ContentNegotiationService.html" class="page">ContentNegotiationService</a> SPI. This provides a mechanism for altering representations according to the HTTP <code>Accept</code> header.</p>
 </div>
 <div class="paragraph">
 <p>This interface is EXPERIMENTAL and may change in the future.</p>
@@ -782,13 +785,145 @@ page.parent doesn't seem to be set...
 <div class="listingblock">
 <div class="title">RepresentationService.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">interface RepresentationService {
-  Response objectRepresentation(IResourceContext resourceContext, ManagedObject objectAdapter)
-  Response propertyDetails(IResourceContext resourceContext, ManagedProperty objectAndProperty)
-  Response collectionDetails(IResourceContext resourceContext, ManagedCollection objectAndCollection)
-  Response actionPrompt(IResourceContext resourceContext, ManagedAction objectAndAction)
-  Response actionResult(IResourceContext resourceContext, ObjectAndActionInvocation objectAndActionInvocation)
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">class RepresentationService {
+  RepresentationService(List&lt;ContentNegotiationService&gt; contentNegotiationServices)
+  Response objectRepresentation(final IResourceContext resourceContext, final ManagedObject objectAdapter)     <i class="conum" data-value="1"></i><b>(1)</b>
+  Response propertyDetails(final IResourceContext resourceContext, final ManagedProperty objectAndProperty)     <i class="conum" data-value="2"></i><b>(2)</b>
+  Response collectionDetails(final IResourceContext resourceContext, final ManagedCollection objectAndCollection)     <i class="conum" data-value="3"></i><b>(3)</b>
+  Response actionPrompt(final IResourceContext resourceContext, final ManagedAction objectAndAction)     <i class="conum" data-value="4"></i><b>(4)</b>
+  Response actionResult(final IResourceContext resourceContext, final ObjectAndActionInvocation objectAndActionInvocation)     <i class="conum" data-value="5"></i><b>(5)</b>
+  void assertContentNegotiationServiceHandled(final Response.ResponseBuilder responseBuilder)
+  Response.ResponseBuilder buildResponse(Function&lt;ContentNegotiationService, Response.ResponseBuilder&gt; connegServiceBuildResponse)     <i class="conum" data-value="6"></i><b>(6)</b>
 }</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><a href="#objectRepresentation__IResourceContext_ManagedObject">objectRepresentation(IResourceContext, ManagedObject)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Returns a representation of a single object.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><a href="#propertyDetails__IResourceContext_ManagedProperty">propertyDetails(IResourceContext, ManagedProperty)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Returns a representation of a single property of an object.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><a href="#collectionDetails__IResourceContext_ManagedCollection">collectionDetails(IResourceContext, ManagedCollection)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Returns a representation of a single collection of an object.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><a href="#actionPrompt__IResourceContext_ManagedAction">actionPrompt(IResourceContext, ManagedAction)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Returns a representation of a single action (prompt) of an object.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><a href="#actionResult__IResourceContext_ObjectAndActionInvocation">actionResult(IResourceContext, ObjectAndActionInvocation)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Returns a representation of a single action invocation of an object.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td><a href="#buildResponse__Function">buildResponse(Function)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Iterates over all <em>#contentNegotiationServices injected</em> <a href="conneg/ContentNegotiationService.html" class="page">ContentNegotiationService</a> s to find one that returns a <em>Response.ResponseBuilder</em> using the provided function.</p>
+</div>
+</div>
+</div></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="members"><a class="anchor" href="#members"></a>Members</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="objectRepresentation__IResourceContext_ManagedObject"><a class="anchor" href="#objectRepresentation__IResourceContext_ManagedObject"></a>objectRepresentation(IResourceContext, ManagedObject)</h3>
+<div class="paragraph">
+<p>Returns a representation of a single object.</p>
+</div>
+<div class="paragraph">
+<p>By default this representation is as per section 14.4 of the RO spec, v1.0.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="propertyDetails__IResourceContext_ManagedProperty"><a class="anchor" href="#propertyDetails__IResourceContext_ManagedProperty"></a>propertyDetails(IResourceContext, ManagedProperty)</h3>
+<div class="paragraph">
+<p>Returns a representation of a single property of an object.</p>
+</div>
+<div class="paragraph">
+<p>By default this representation is as per section 16.4 of the RO spec, v1.0.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="collectionDetails__IResourceContext_ManagedCollection"><a class="anchor" href="#collectionDetails__IResourceContext_ManagedCollection"></a>collectionDetails(IResourceContext, ManagedCollection)</h3>
+<div class="paragraph">
+<p>Returns a representation of a single collection of an object.</p>
+</div>
+<div class="paragraph">
+<p>By default this representation is as per section 17.5 of the RO spec, v1.0.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="actionPrompt__IResourceContext_ManagedAction"><a class="anchor" href="#actionPrompt__IResourceContext_ManagedAction"></a>actionPrompt(IResourceContext, ManagedAction)</h3>
+<div class="paragraph">
+<p>Returns a representation of a single action (prompt) of an object.</p>
+</div>
+<div class="paragraph">
+<p>By default this representation is as per section 18.2 of the RO spec, v1.0.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="actionResult__IResourceContext_ObjectAndActionInvocation"><a class="anchor" href="#actionResult__IResourceContext_ObjectAndActionInvocation"></a>actionResult(IResourceContext, ObjectAndActionInvocation)</h3>
+<div class="paragraph">
+<p>Returns a representation of a single action invocation of an object.</p>
+</div>
+<div class="paragraph">
+<p>By default this representation is as per section 19.5 of the RO spec, v1.0.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="buildResponse__Function"><a class="anchor" href="#buildResponse__Function"></a>buildResponse(Function)</h3>
+<div class="paragraph">
+<p>Iterates over all <em>#contentNegotiationServices injected</em> <a href="conneg/ContentNegotiationService.html" class="page">ContentNegotiationService</a> s to find one that returns a <em>Response.ResponseBuilder</em> using the provided function.</p>
+</div>
+<div class="paragraph">
+<p>There will always be at least one such service, namely the <a href="conneg/ContentNegotiationServiceForRestfulObjectsV1_0.html" class="page">ContentNegotiationServiceForRestfulObjectsV1_0</a> .</p>
 </div>
 </div>
 </div>
@@ -810,7 +945,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210301-0425-00d59d7f</p>
+            <p>Revision: 2.0.0-M4.20210302-0424-5701dc1c</p>
         </div>
     </div>
 </footer>
