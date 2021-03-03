@@ -641,6 +641,43 @@ public class MyLocaleProvider implements LocaleProvider {
 </div>
 </div>
 <div class="sect1">
+<h2 id="vetoing-visibility"><a class="anchor" href="#vetoing-visibility"></a>Vetoing Visibility</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The framework provides a number of actions (domain service menu items or mixins) that you may wish to suppress from the user interface.
+This can be done by implementing a "vetoing subscriber" design pattern.</p>
+</div>
+<div class="paragraph">
+<p>For example, the <a href="../../../refguide/latest/applib/index/services/bookmark/BookmarkService.html" class="page">BookmarkService</a> has a related interface, <a href="../../../refguide/latest/applib/index/services/bookmark/BookmarkHolder.html" class="page">BookmarkHolder</a>, for objects that holds a reference to another domain object implicitly as a <a href="../../../refguide/latest/applib/index/services/bookmark/Bookmark.html" class="page">Bookmark</a>.</p>
+</div>
+<div class="paragraph">
+<p>The <a href="../../../refguide/latest/applib/index/services/bookmark/BookmarkHolder_object.html" class="page">BookmarkHolder_object</a> mixin surfaces the related domain object as an "object" property of the <code>BookmarkHolder</code>.</p>
+</div>
+<div class="paragraph">
+<p>If you want to suppress this property, a vetoing subscriber can listen to the associated domain event of the mixin:</p>
+</div>
+<div class="listingblock">
+<div class="title">HideBookmarkHolderObjectProperty.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Service;
+
+@Service
+public class HideBookmarkHolderObjectProperty {
+
+    @EventListener(BookmarkHolder_object.PropertyDomainEvent.class)
+    public void on(BookmarkHolder_object.PropertyDomainEvent ev) {
+        ev.hide();
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>These domain events will often have a superclass, in which case the vetoing subscriber can be as broad-brush or fine-grained as required.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="transactions-and-errors"><a class="anchor" href="#transactions-and-errors"></a>Transactions and Errors</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -1028,7 +1065,7 @@ a domain object, for instance to check English syntax?</em></p>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210302-0424-5701dc1c</p>
+            <p>Revision: 2.0.0-M4.20210303-0421-824621db</p>
         </div>
     </div>
 </footer>

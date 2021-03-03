@@ -430,36 +430,40 @@ TODO: this content has not yet been reviewed/updated for v2.0
 <li>
 <p>By "authentication" we mean logging into the application using some credentials, typically a username and password.
 Authentication also means looking up the set of roles to which a user belongs.</p>
+<div class="paragraph">
+<p>The framework allows for different authentication mechanisms through the <a href="../../refguide/latest/core/index/security/authentication/Authenticator.html" class="page">Authenticator</a> SPI.
+.</p>
+</div>
 </li>
 <li>
-<p>By "authorization" we mean permissions: granting roles to have access to features (object member) of the app.</p>
+<p>By "authorization" we mean permissions: granting roles to have access to features (domain object members) of the app.</p>
+<div class="paragraph">
+<p>The framework allows for different authorization mechanisms through the <a href="../../refguide/latest/core/index/security/authorization/Authorizor.html" class="page">Authorizor</a> SPI.</p>
+</div>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>Apache Isis has two levels of permissions.
-<em>Read</em> permission means that the user can view the object member; it will be rendered in the UI.  An action with only read permission will be shown disabled ("greyed out".
-<em>Write</em> permission means that the object member can be changed.  For actions this means that they can be invoked.</p>
+<p>There are two levels of permissions:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><em>Read</em> permission means that the user can view the object member; it will be rendered in the UI.</p>
+<div class="paragraph">
+<p>An action with only read permission will be shown disabled ("greyed out"); a property with read-only permission cannot be edited.</p>
+</div>
+</li>
+<li>
+<p><em>Write</em> permission means that the object member can be changed.</p>
+<div class="paragraph">
+<p>For actions this means that they can be invoked.</p>
+</div>
+</li>
+</ul>
 </div>
 <div class="paragraph">
-<p>The framework provides an API for both authentication and authorization, and provides an implementation that integrates with <a href="http://shiro.apache.org">Apache Shiro</a>.
-Shiro in turn uses the concept of a <em>realm</em> as a source for both authentication and optionally authorization.</p>
-</div>
-<div class="paragraph">
-<p>Shiro ships with a simple text-based realm&#8201;&#8212;&#8201;the <code>IniRealm</code>&#8201;&#8212;&#8201;which reads users (and password), user roles and role permissions from the <code>WEB-INF/shiro.ini</code> file.
-The <a href="../../docs/latest/starters/helloworld.html" class="page">HelloWorld</a> and <a href="../../docs/latest/starters/simpleapp.html" class="page">SimpleApp</a> starter apps are both configured to use this realm.</p>
-</div>
-<div class="paragraph">
-<p>Shiro also ships with an implementation of an LDAP-based realm; LDAP is often used to manage user/passwords and corresponding user groups.
-Apache Isis in turn extends this with its <code>IsisLdapRealm</code>, which provides more flexibility for both group/role and role/permissions management.</p>
-</div>
-<div class="paragraph">
-<p>In addition, the <a href="about.html" class="page">SecMan extension</a> provides an implementation of the Shiro <code>Realm</code> API.
-This extension also represents users, roles and permissions as domain objects, allowing them to be administered through Apache Isis itself.
-Moreover, it can also optionally delegate password management to a subsidiary (delegate) realm (usually LDAP as discussed above).</p>
-</div>
-<div class="paragraph">
-<p>In addition to Apache Isis' Shiro-based implementation of its authentication and authorization APIs, Isis also provides a "bypass" implementation, useful for quick-n-dirty prototyping when you want to in effect disable (bypass) security completely.</p>
+<p>If there is neither <em>read</em> nor <em>write</em> permissions then the feature will be invisible to the user.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -487,6 +491,80 @@ The <a href="../../extensions/latest/command-log/about.html" class="page">Comman
 </div>
 </div>
 </div>
+<div class="sect1">
+<h2 id="implementations"><a class="anchor" href="#implementations"></a>Implementations</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="shiro"><a class="anchor" href="#shiro"></a>Shiro</h3>
+<div class="paragraph">
+<p>The framework provides an API for both authentication and authorization, and provides an implementation that integrates with <a href="http://shiro.apache.org">Apache Shiro</a>.
+Shiro in turn uses the concept of a <em>realm</em> as a source for both authentication and optionally authorization.</p>
+</div>
+<div class="paragraph">
+<p>Shiro ships with a simple text-based realm&#8201;&#8212;&#8201;the <code>IniRealm</code>&#8201;&#8212;&#8201;which reads users (and password), user roles and role permissions from the <code>WEB-INF/shiro.ini</code> file.
+The <a href="../../docs/latest/starters/helloworld.html" class="page">HelloWorld</a> and <a href="../../docs/latest/starters/simpleapp.html" class="page">SimpleApp</a> starter apps are both configured to use this realm.</p>
+</div>
+<div class="paragraph">
+<p>The Shiro framework ships with an implementation of an LDAP-based realm; LDAP is often used to manage user/passwords and corresponding user groups.
+Apache Isis extends Shiro&#8217;s implementation this  <code>IsisLdapRealm</code>, which provides more flexibility for both group/role and role/permissions management.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="bypass"><a class="anchor" href="#bypass"></a>Bypass</h3>
+<div class="paragraph">
+<p>The framework provides a "bypass" implementation, useful for quick-n-dirty prototyping when you want to in effect disable (bypass) security completely.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="keycloak"><a class="anchor" href="#keycloak"></a>KeyCloak</h3>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+TODO: v2 - not yet documented.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="spring"><a class="anchor" href="#spring"></a>Spring</h3>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+TODO: v2 - WIP, not yet documented.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="secman"><a class="anchor" href="#secman"></a>SecMan</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <a href="about.html" class="page">SecMan extension</a>'s primary purpose is for authorisation, defining a database of roles and permissions associated with
+those roles.
+It also maps users to roles.</p>
+</div>
+<div class="paragraph">
+<p>As these users, roles and permissions are domain objects, they can be administered through Apache Isis itself.</p>
+</div>
+<div class="paragraph">
+<p>Because each user to be authorised must exist in the SecMan database, this means that it can also act as a secondary authenticator.
+It does this by providing an implementation of the Shiro <code>Realm</code> API.
+Using this design the password management can be handled to a subsidiary (delegate) Shiro realm (for example, LDAP, as discussed <a href="#shiro">above</a>).</p>
+</div>
+</div>
+</div>
 </article>
 <aside class="article-aside toc hide-for-print" role="navigation">
     <p class="toc-title">On this page</p>
@@ -504,7 +582,7 @@ The <a href="../../extensions/latest/command-log/about.html" class="page">Comman
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210302-0424-5701dc1c</p>
+            <p>Revision: 2.0.0-M4.20210303-0421-824621db</p>
         </div>
     </div>
 </footer>
