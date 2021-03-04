@@ -1053,13 +1053,10 @@ public LocalDate getEndDate() { ... }</pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="text-boxes"><a class="anchor" href="#text-boxes"></a>Text boxes</h3>
+<h3 id="css-styling"><a class="anchor" href="#css-styling"></a>CSS Styling</h3>
 <div class="paragraph">
-<p>The <a href="#multiLine">multiLine()</a> element  specifies that the text field for a string property should span multiple lines.
-It is ignored for other property types.</p>
-</div>
-<div class="paragraph">
-<p>If set &gt; 1 (as would normally be the case), then the default <a href="#labelPosition">labelPosition</a> defaults to <code>TOP</code> (rather than <code>LEFT</code>, as would normally be the case).</p>
+<p>The <a href="#cssClass">cssClass()</a> element can be used to render additional CSS classes in the HTML (a wrapping <code>&lt;div&gt;</code>) that represents the property.
+<a href="../../../config/application-specific/application-css.html" class="page">Application-specific CSS</a> can then be used to target and adjust the UI representation of that particular element.</p>
 </div>
 <div class="paragraph">
 <p>For example:</p>
@@ -1069,20 +1066,15 @@ It is ignored for other property types.</p>
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
 import lombok.Setter;
 
-public class BugReport {
+public class ToDoItem {
 
-    @PropertyLayout(
-        numberOfLines=10
-    )
+    @PropertyLayout(cssClass="x-key")
     @Getter @Setter
-    private String stepsToReproduce;
+    private LocalDate dueBy;
 
     // ...
 }</code></pre>
 </div>
-</div>
-<div class="paragraph">
-<p>Here the <code>stepsToReproduce</code> property will be displayed in a text box of 10 rows.</p>
 </div>
 </div>
 <div class="sect2">
@@ -1127,6 +1119,74 @@ public class Document {
     )
     @Getter @Setter
     private Blob blob;
+
+    // ...
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="breadcrumbs-where-am-i"><a class="anchor" href="#breadcrumbs-where-am-i"></a>Breadcrumbs (where am I?)</h3>
+<div class="paragraph">
+<p>The <a href="#navigable">navigable()</a> element allows to specify a domain object&#8217;s (or view&#8217;s) navigable parent, as utilized by the 'Where am I' feature.</p>
+</div>
+<div class="paragraph">
+<p>For example, suppose:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject
+public class Company {
+    // ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>then:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
+import lombok.Setter;
+
+@DomainObject
+public class Employee {
+
+    @PropertyLayout(navigable=Navigable.PARENT)
+    @Getter @Setter
+    private Company myCompany;
+
+    // ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This points up to the <code>Employee</code>'s parent <code>Company</code>.</p>
+</div>
+<div class="paragraph">
+<p>For further details on using a navigable tree-structure, see <a href="../../../../../vw/latest/features.html#where-am-i" class="page">Where am I</a> in the user guide.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="descriptions"><a class="anchor" href="#descriptions"></a>Descriptions</h3>
+<div class="paragraph">
+<p>The <a href="#describedAs">describedAs()</a> element is used to provide a short description of the property to the user.</p>
+</div>
+<div class="paragraph">
+<p>In the <a href="../../../../../vw/latest/about.html" class="page">Wicket viewer</a> it is displayed as a 'tool tip'.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Customer {
+
+    @PropertyLayout(
+        describedAs = "The name that the customer has indicated " +
+                      "that they wish to be addressed as " +
+                      "(e.g. Johnny rather than Jonathan)")
+    private String firstName;
 
     // ...
 }</code></pre>
@@ -1186,52 +1246,13 @@ public class ToDoItem {
 </div>
 </div>
 <div class="sect2">
-<h3 id="breadcrumbs-where-am-i"><a class="anchor" href="#breadcrumbs-where-am-i"></a>Breadcrumbs (where am I?)</h3>
+<h3 id="typical-string-length"><a class="anchor" href="#typical-string-length"></a>Typical (string) length</h3>
 <div class="paragraph">
-<p>The <a href="#navigable">navigable()</a> element allows to specify a domain object&#8217;s (or view&#8217;s) navigable parent, as utilized by the 'Where am I' feature.</p>
-</div>
-<div class="paragraph">
-<p>For example, suppose:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject
-public class Company {
-    // ...
-}</code></pre>
-</div>
+<p>The <a href="#typicalLength">typicalLength()</a> element indicates the typical length of a string property.
+It is ignored for properties of other types.</p>
 </div>
 <div class="paragraph">
-<p>then:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
-import lombok.Setter;
-
-@DomainObject
-public class Employee {
-
-    @PropertyLayout(navigable=Navigable.PARENT)
-    @Getter @Setter
-    private Company myCompany;
-
-    // ...
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>This points up to the <code>Employee</code>'s parent <code>Company</code>.</p>
-</div>
-<div class="paragraph">
-<p>For further details on using a navigable tree-structure, see <a href="../../../../../vw/latest/features.html#where-am-i" class="page">Where am I</a> in the user guide.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="css-styling"><a class="anchor" href="#css-styling"></a>CSS Styling</h3>
-<div class="paragraph">
-<p>The <a href="#cssClass">cssClass()</a> element can be used to render additional CSS classes in the HTML (a wrapping <code>&lt;div&gt;</code>) that represents the property.
-<a href="../../../config/application-specific/application-css.html" class="page">Application-specific CSS</a> can then be used to target and adjust the UI representation of that particular element.</p>
+<p>The information is intended as a hint to the UI to determine the space that should be given to render a particular string property.</p>
 </div>
 <div class="paragraph">
 <p>For example:</p>
@@ -1241,15 +1262,28 @@ public class Employee {
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
 import lombok.Setter;
 
-public class ToDoItem {
+public class Customer {
 
-    @PropertyLayout(cssClass="x-key")
+    @javax.jdo.annotations.Column(length=30)
+    @ParameterLayout(typicalLength=20)
     @Getter @Setter
-    private LocalDate dueBy;
+    private String firstName;
 
     // ...
 }</code></pre>
 </div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+All that said, the <a href="../../../../../vw/latest/about.html" class="page">Wicket viewer</a> uses the maximum space available for all fields, so in effect ignores this element.
+</td>
+</tr>
+</table>
 </div>
 </div>
 <div class="sect2">
@@ -1292,13 +1326,13 @@ Note that the value <code>INLINE_AS_IF_EDIT</code> does not make sense for prope
 </div>
 </div>
 <div class="sect2">
-<h3 id="typical-string-length"><a class="anchor" href="#typical-string-length"></a>Typical (string) length</h3>
+<h3 id="text-boxes"><a class="anchor" href="#text-boxes"></a>Text boxes</h3>
 <div class="paragraph">
-<p>The <a href="#typicalLength">typicalLength()</a> element indicates the typical length of a string property.
-It is ignored for properties of other types.</p>
+<p>The <a href="#multiLine">multiLine()</a> element  specifies that the text field for a string property should span multiple lines.
+It is ignored for other property types.</p>
 </div>
 <div class="paragraph">
-<p>The information is intended as a hint to the UI to determine the space that should be given to render a particular string property.</p>
+<p>If set &gt; 1 (as would normally be the case), then the default <a href="#labelPosition">labelPosition</a> defaults to <code>TOP</code> (rather than <code>LEFT</code>, as would normally be the case).</p>
 </div>
 <div class="paragraph">
 <p>For example:</p>
@@ -1308,29 +1342,122 @@ It is ignored for properties of other types.</p>
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
 import lombok.Setter;
 
-public class Customer {
+public class BugReport {
 
-    @javax.jdo.annotations.Column(length=30)
-    @ParameterLayout(typicalLength=20)
+    @PropertyLayout(
+        numberOfLines=10
+    )
     @Getter @Setter
-    private String firstName;
+    private String stepsToReproduce;
 
     // ...
 }</code></pre>
 </div>
 </div>
-<div class="admonitionblock note">
+<div class="paragraph">
+<p>Here the <code>stepsToReproduce</code> property will be displayed in a text box of 10 rows.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="date-intervals"><a class="anchor" href="#date-intervals"></a>Date intervals</h3>
+<div class="paragraph">
+<p>The <a href="#renderDay">renderDay()</a> element applies only to date properties whereby the date will be rendered as the day before the value actually held in the domain object.
+It is ignored for properties of other types.</p>
+</div>
+<div class="paragraph">
+<p>This behaviour might at first glance appear odd, but the rationale is to support the use case of a sequence of instances that represent adjacent intervals of time.
+In such cases there would typically be <code>startDate</code> and <code>endDate</code> properties, eg for all of Q2. Storing this as a half-closed interval&#8201;&#8212;&#8201;eg <code>[1-Apr-2015, 1-July-2015)</code>&#8201;&#8212;&#8201;can substantially simplify internal algorithms; the <code>endDate</code> of one interval will correspond to the <code>startDate</code> of the next.</p>
+</div>
+<div class="paragraph">
+<p>However, from an end-user perspective the requirement may be to render the interval as a fully closed interval; eg the end date should be shown as <code>30-Jun-2015</code>.</p>
+</div>
+<div class="paragraph">
+<p>This attribute therefore bridges the gap; it presents the information in a way that makes sense to an end-user, but also stores the domain object in a way that is easy work with internally.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
+import lombok.Setter;
+
+public class Tenancy {
+
+    @Getter @Setter
+    private LocalDate startDate;
+
+    @PropertyLayout(
+        renderDay = RenderDay.AS_DAY_BEFORE
+    )
+    @Getter @Setter
+    private LocalDate endDate;
+
+    // ...
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class ToDoItem {
+    @PropertyLayout(
+        cssClass="x-key",
+        named="Description of this &lt;i&gt;item&lt;/i&gt;",
+        namedEscaped=false,
+        describedAs="What needs to be done",
+        labelPosition=LabelPosition.LEFT,
+        typicalLength=80
+    )
+    public String getDescription() { /* ... */ }
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="admonitionblock tip">
 <table>
 <tr>
 <td class="icon">
-<i class="fa icon-note" title="Note"></i>
+<i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-All that said, the <a href="../../../../../vw/latest/about.html" class="page">Wicket viewer</a> uses the maximum space available for all fields, so in effect ignores this element.
+<div class="paragraph">
+<p>As an alternative to using the <code>@PropertyLayout</code> annotation, a <a href="../../../../../userguide/latest/fun/ui.html#object-layout" class="page">file-based layout</a> can be used (and is generally to be preferred since it is more flexible/powerful).</p>
+</div>
 </td>
 </tr>
 </table>
 </div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The annotation is one of a handful (others including <a href="Collection.html" class="page">@Collection</a>, <a href="CollectionLayout.html" class="page">@CollectionLayout</a> and <a href="Property.html" class="page">@Property</a>) that can also be applied to the field, rather than the getter method.  This is specifically
+so that boilerplate-busting tools such as <a href="https://projectlombok.org/">Project Lombok</a> can be used.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="usage-notes"><a class="anchor" href="#usage-notes"></a>Usage Notes</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>As alternative to using the annotation, the dynamic <a href="../../../../../userguide/latest/fun/ui.html#object-layout" class="page">file-based layout</a> can generally be used instead.</p>
 </div>
 <div class="sect2">
 <h3 id="label-positioning"><a class="anchor" href="#label-positioning"></a>Label Positioning</h3>
@@ -1466,7 +1593,7 @@ This combines <code>PARENTED_TABLES</code> and <code>STANDALONE_TABLES</code>.</
 </table>
 </div>
 <div class="sect3">
-<h4 id="examples"><a class="anchor" href="#examples"></a>Examples</h4>
+<h4 id="examples-2"><a class="anchor" href="#examples-2"></a>Examples</h4>
 <div class="paragraph">
 <p>For example:</p>
 </div>
@@ -1499,133 +1626,6 @@ Annotating with <code>@Property(where=Where.NOWHERE)</code> overrides this.</p>
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="descriptions"><a class="anchor" href="#descriptions"></a>Descriptions</h3>
-<div class="paragraph">
-<p>The <a href="#describedAs">describedAs()</a> element is used to provide a short description of the property to the user.</p>
-</div>
-<div class="paragraph">
-<p>In the <a href="../../../../../vw/latest/about.html" class="page">Wicket viewer</a> it is displayed as a 'tool tip'.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Customer {
-
-    @PropertyLayout(
-        describedAs = "The name that the customer has indicated " +
-                      "that they wish to be addressed as " +
-                      "(e.g. Johnny rather than Jonathan)")
-    private String firstName;
-
-    // ...
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="date-intervals"><a class="anchor" href="#date-intervals"></a>Date intervals</h3>
-<div class="paragraph">
-<p>The <a href="#renderDay">renderDay()</a> element applies only to date properties whereby the date will be rendered as the day before the value actually held in the domain object.
-It is ignored for properties of other types.</p>
-</div>
-<div class="paragraph">
-<p>This behaviour might at first glance appear odd, but the rationale is to support the use case of a sequence of instances that represent adjacent intervals of time.
-In such cases there would typically be <code>startDate</code> and <code>endDate</code> properties, eg for all of Q2. Storing this as a half-closed interval&#8201;&#8212;&#8201;eg <code>[1-Apr-2015, 1-July-2015)</code>&#8201;&#8212;&#8201;can substantially simplify internal algorithms; the <code>endDate</code> of one interval will correspond to the <code>startDate</code> of the next.</p>
-</div>
-<div class="paragraph">
-<p>However, from an end-user perspective the requirement may be to render the interval as a fully closed interval; eg the end date should be shown as <code>30-Jun-2015</code>.</p>
-</div>
-<div class="paragraph">
-<p>This attribute therefore bridges the gap; it presents the information in a way that makes sense to an end-user, but also stores the domain object in a way that is easy work with internally.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
-import lombok.Setter;
-
-public class Tenancy {
-
-    @Getter @Setter
-    private LocalDate startDate;
-
-    @PropertyLayout(
-        renderDay = RenderDay.AS_DAY_BEFORE
-    )
-    @Getter @Setter
-    private LocalDate endDate;
-
-    // ...
-}</code></pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="examples-2"><a class="anchor" href="#examples-2"></a>Examples</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class ToDoItem {
-    @PropertyLayout(
-        cssClass="x-key",
-        named="Description of this &lt;i&gt;item&lt;/i&gt;",
-        namedEscaped=false,
-        describedAs="What needs to be done",
-        labelPosition=LabelPosition.LEFT,
-        typicalLength=80
-    )
-    public String getDescription() { /* ... */ }
-    ...
-}</code></pre>
-</div>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>As an alternative to using the <code>@PropertyLayout</code> annotation, a <a href="../../../../../userguide/latest/fun/ui.html#object-layout" class="page">file-based layout</a> can be used (and is generally to be preferred since it is more flexible/powerful).</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>The annotation is one of a handful (others including <a href="Collection.html" class="page">@Collection</a>, <a href="CollectionLayout.html" class="page">@CollectionLayout</a> and <a href="Property.html" class="page">@Property</a>) that can also be applied to the field, rather than the getter method.  This is specifically
-so that boilerplate-busting tools such as <a href="https://projectlombok.org/">Project Lombok</a> can be used.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="usage-notes"><a class="anchor" href="#usage-notes"></a>Usage Notes</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>As alternative to using the annotation, the dynamic <a href="../../../../../userguide/latest/fun/ui.html#object-layout" class="page">file-based layout</a> can generally be used instead.</p>
-</div>
 </div>
 </div>
 </article>
@@ -1645,7 +1645,7 @@ so that boilerplate-busting tools such as <a href="https://projectlombok.org/">P
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210303-0421-824621db</p>
+            <p>Revision: 2.0.0-M4.20210304-0425-3fbcd984</p>
         </div>
     </div>
 </footer>

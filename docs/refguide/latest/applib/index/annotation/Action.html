@@ -1052,6 +1052,52 @@ page.parent doesn't seem to be set...
 <p>The value should be of the form "file_extension|audio/<strong>|video/</strong>|image/*|media_type".</p>
 </div>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class ToDoItem {
+    public static class CompletedEvent extends ActionDomainEvent&lt;ToDoItem&gt; { }
+    @Action(
+        commandPublishing=Publishing.ENABLED,
+        commandExecuteIn=CommandExecuteIn.FOREGROUND,          <i class="conum" data-value="1"></i><b>(1)</b>
+        commandPersistence=CommandPersistence.NOT_PERSISTED,   <i class="conum" data-value="2"></i><b>(2)</b>
+        domainEvent=CompletedEvent.class,
+        hidden = Where.NOWHERE,                                <i class="conum" data-value="3"></i><b>(3)</b>
+        executionPublishing = Publishing.ENABLED,
+        semantics = SemanticsOf.IDEMPOTENT
+    )
+    public ToDoItem completed() { /* ... */ }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>default value, so could be omitted</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>default value, so could be omitted</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>default value, so could be omitted</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="usage-notes"><a class="anchor" href="#usage-notes"></a>Usage Notes</h2>
+<div class="sectionbody">
 <div class="sect2">
 <h3 id="domain-events"><a class="anchor" href="#domain-events"></a>Domain events</h3>
 <div class="paragraph">
@@ -1294,6 +1340,75 @@ However, events can be raised programmatically either by calling the <a href="..
 </div>
 </div>
 <div class="sect2">
+<h3 id="deployment-modes"><a class="anchor" href="#deployment-modes"></a>Deployment modes</h3>
+<div class="paragraph">
+<p>By default actions are available irrespective of the <a href="../../../config/about.html#deployment-types" class="page">deployment mode</a>.
+The <a href="#restrictTo">restrictTo()</a> element specifies whether the action should instead be restricted to only available in prototyping mode.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Customer {
+
+    @Action
+    public Order placeNewOrder() {
+        // ...
+    }
+    @Action(semantics=SemanticsOf.SAFE)
+    public List&lt;Order&gt; listRecentOrders() {
+        // ...
+    }
+
+    @Action(restrictTo=RestrictTo.PROTOTYPING)      <i class="conum" data-value="1"></i><b>(1)</b>
+    public List&lt;Order&gt; listAllOrders() {
+        // ...
+    }
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Only visible in prototype mode.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>In this case the listing of all orders (in the <code>listAllOrders()</code> action) probably doesn&#8217;t make sense for production; there could be thousands or millions.
+However, it would be useful to disaply how for a test or demo system where there are only a handful of orders.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="collection-type"><a class="anchor" href="#collection-type"></a>Collection type</h3>
+<div class="paragraph">
+<p>The <a href="#typeOf">typeOf()</a> element specifies the expected type of an element returned by the action (returning a collection), when for whatever reason the type cannot be inferred from the generic type, or to provide a hint about the actual run-time (as opposed to compile-time) type.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public void AccountService {
+
+    @Action(typeOf=Customer.class)
+    public List errantAccounts() {
+        return customers.allNewCustomers();
+    }
+    ...
+
+    @Inject CustomerRepository customers;
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In general we recommend that you use generics instead, eg <code>List&lt;Customer&gt;</code>.</p>
+</div>
+</div>
+<div class="sect2">
 <h3 id="associating-actions-with-properties-and-collections"><a class="anchor" href="#associating-actions-with-properties-and-collections"></a>Associating actions with properties and collections</h3>
 <div class="paragraph">
 <p>The <code>associateWith</code> element allows an action to be associated with other properties or collections of the same domain object.
@@ -1523,6 +1638,61 @@ Note though that the results of this caching will only be apparent if the action
 </table>
 </div>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="related-spis"><a class="anchor" href="#related-spis"></a>Related SPIs</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../services/publishing/spi/CommandSubscriber.html" class="page">CommandSubscriber</a> SPI</p>
+<div class="paragraph">
+<p>for actions where command publishing (as per <a href="#commandPublishing">@Action#commandPublishing()</a>) is enabled</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../../../../../extensions/latest/command-log/about.html" class="page">Command Log</a> extension</p>
+<div class="paragraph">
+<p>provides an implementation that simply logs actions using the logging library</p>
+</div>
+</li>
+<li>
+<p><a href="../../../../../extensions/latest/command-replay/about.html" class="page">Command Replay</a> extension</p>
+<div class="paragraph">
+<p>provides an implementation to replicate commands from a primary to a secondary system.</p>
+</div>
+<div class="paragraph">
+<p>This implementation also leverages <a href="#commandDtoProcessor">commandDtoProcessor()</a> to process <code>CommandDto</code>s before being replciated</p>
+</div>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><a href="../services/publishing/spi/ExecutionSubscriber.html" class="page">ExecutionSubscriber</a> SPI</p>
+<div class="paragraph">
+<p>for actions where execution publishing (as per <a href="#executionPublishing">@Action#executionPublishing</a>) is enabled</p>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../services/eventbus/EventBusService.html" class="page">EventBusService</a></p>
+<div class="paragraph">
+<p>which broadcasts domain events as per <a href="#domainEvent">@Action#domainEvent()</a></p>
+</div>
+</li>
+</ul>
+</div>
 <div class="sect2">
 <h3 id="command-processing"><a class="anchor" href="#command-processing"></a>Command Processing</h3>
 <div class="paragraph">
@@ -1719,177 +1889,6 @@ The effect is to ignore it for replay purposes:</p>
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="collection-type"><a class="anchor" href="#collection-type"></a>Collection type</h3>
-<div class="paragraph">
-<p>The <a href="#typeOf">typeOf()</a> element specifies the expected type of an element returned by the action (returning a collection), when for whatever reason the type cannot be inferred from the generic type, or to provide a hint about the actual run-time (as opposed to compile-time) type.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public void AccountService {
-
-    @Action(typeOf=Customer.class)
-    public List errantAccounts() {
-        return customers.allNewCustomers();
-    }
-    ...
-
-    @Inject CustomerRepository customers;
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>In general we recommend that you use generics instead, eg <code>List&lt;Customer&gt;</code>.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="deployment-modes"><a class="anchor" href="#deployment-modes"></a>Deployment modes</h3>
-<div class="paragraph">
-<p>By default actions are available irrespective of the <a href="../../../config/about.html#deployment-types" class="page">deployment mode</a>.
-The <a href="#restrictTo">restrictTo()</a> element specifies whether the action should instead be restricted to only available in prototyping mode.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Customer {
-
-    @Action
-    public Order placeNewOrder() {
-        // ...
-    }
-    @Action(semantics=SemanticsOf.SAFE)
-    public List&lt;Order&gt; listRecentOrders() {
-        // ...
-    }
-
-    @Action(restrictTo=RestrictTo.PROTOTYPING)      <i class="conum" data-value="1"></i><b>(1)</b>
-    public List&lt;Order&gt; listAllOrders() {
-        // ...
-    }
-    ...
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Only visible in prototype mode.</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>In this case the listing of all orders (in the <code>listAllOrders()</code> action) probably doesn&#8217;t make sense for production; there could be thousands or millions.
-However, it would be useful to disaply how for a test or demo system where there are only a handful of orders.</p>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="related-spis"><a class="anchor" href="#related-spis"></a>Related SPIs</h2>
-<div class="sectionbody">
-<div class="ulist">
-<ul>
-<li>
-<p><a href="../services/publishing/spi/CommandSubscriber.html" class="page">CommandSubscriber</a> SPI</p>
-<div class="paragraph">
-<p>for actions where command publishing (as per <a href="#commandPublishing">@Action#commandPublishing()</a>) is enabled</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="../../../../../extensions/latest/command-log/about.html" class="page">Command Log</a> extension</p>
-<div class="paragraph">
-<p>provides an implementation that simply logs actions using the logging library</p>
-</div>
-</li>
-<li>
-<p><a href="../../../../../extensions/latest/command-replay/about.html" class="page">Command Replay</a> extension</p>
-<div class="paragraph">
-<p>provides an implementation to replicate commands from a primary to a secondary system.</p>
-</div>
-<div class="paragraph">
-<p>This implementation also leverages <a href="#commandDtoProcessor">commandDtoProcessor()</a> to process <code>CommandDto</code>s before being replciated</p>
-</div>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p><a href="../services/publishing/spi/ExecutionSubscriber.html" class="page">ExecutionSubscriber</a> SPI</p>
-<div class="paragraph">
-<p>for actions where execution publishing (as per <a href="#executionPublishing">@Action#executionPublishing</a>) is enabled</p>
-</div>
-</li>
-</ul>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-<div class="sectionbody">
-<div class="ulist">
-<ul>
-<li>
-<p><a href="../services/eventbus/EventBusService.html" class="page">EventBusService</a></p>
-<div class="paragraph">
-<p>which broadcasts domain events as per <a href="#domainEvent">@Action#domainEvent()</a></p>
-</div>
-</li>
-</ul>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class ToDoItem {
-    public static class CompletedEvent extends ActionDomainEvent&lt;ToDoItem&gt; { }
-    @Action(
-        commandPublishing=Publishing.ENABLED,
-        commandExecuteIn=CommandExecuteIn.FOREGROUND,          <i class="conum" data-value="1"></i><b>(1)</b>
-        commandPersistence=CommandPersistence.NOT_PERSISTED,   <i class="conum" data-value="2"></i><b>(2)</b>
-        domainEvent=CompletedEvent.class,
-        hidden = Where.NOWHERE,                                <i class="conum" data-value="3"></i><b>(3)</b>
-        executionPublishing = Publishing.ENABLED,
-        semantics = SemanticsOf.IDEMPOTENT
-    )
-    public ToDoItem completed() { /* ... */ }
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>default value, so could be omitted</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>default value, so could be omitted</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>default value, so could be omitted</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="usage-notes"><a class="anchor" href="#usage-notes"></a>Usage Notes</h2>
-<div class="sectionbody">
-
 </div>
 </div>
 </article>
@@ -1909,7 +1908,7 @@ However, it would be useful to disaply how for a test or demo system where there
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210303-0421-824621db</p>
+            <p>Revision: 2.0.0-M4.20210304-0425-3fbcd984</p>
         </div>
     </div>
 </footer>

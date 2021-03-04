@@ -968,43 +968,9 @@ Class sortedBy() default Comparator.class;     <i class="conum" data-value="8"><
 </div>
 </div>
 <div class="sect2">
-<h3 id="hiding-collections"><a class="anchor" href="#hiding-collections"></a>Hiding collections</h3>
+<h3 id="client-side-sorting"><a class="anchor" href="#client-side-sorting"></a>Client-side Sorting</h3>
 <div class="paragraph">
-<p>The <a href="#hidden">hidden()</a> element indicates where (in the UI) the collection should be hidden from the user.</p>
-</div>
-<div class="paragraph">
-<p>The acceptable values are:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>Where.EVERYWHERE</code> or <code>Where.ANYWHERE</code></p>
-<div class="paragraph">
-<p>The collection should be hidden everywhere.</p>
-</div>
-</li>
-<li>
-<p><code>Where.ANYWHERE</code></p>
-<div class="paragraph">
-<p>Synonym for everywhere.</p>
-</div>
-</li>
-<li>
-<p><code>Where.OBJECT_FORMS</code></p>
-<div class="paragraph">
-<p>The collection should be hidden when displayed within an object form.</p>
-</div>
-</li>
-<li>
-<p><code>Where.NOWHERE</code></p>
-<div class="paragraph">
-<p>The collection should not be hidden.</p>
-</div>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>The other values of the <code>Where</code> enum have no meaning for a collection.</p>
+<p>The <a href="#sortedBy">sortedBy()</a> element specifies that the collection be ordered using the specified comparator, rather than the natural ordering of the entity (as would usually be the case).</p>
 </div>
 <div class="paragraph">
 <p>For example:</p>
@@ -1014,82 +980,43 @@ Class sortedBy() default Comparator.class;     <i class="conum" data-value="8"><
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
 import lombok.Setter;
 
-public class ToDoItem {
+public class ToDoItem implements Comparable&lt;ToDoItem&gt; {         <i class="conum" data-value="1"></i><b>(1)</b>
 
-    @CollectionLayout(
-        hidden=Where.EVERYWHERE
-    )
+    public static class DescriptionComparator                   <i class="conum" data-value="2"></i><b>(2)</b>
+                            implements Comparator&lt;ToDoItem&gt; {
+        @Override
+        public int compare(ToDoItem o1, ToDoItem o2) {
+            return Comparator.comparing(ToDoItem::getDescription)
+                             .compare(o1, o2);
+        }
+    }
+
+    @CollectionLayout(sortedBy=DependenciesComparator.class)    <i class="conum" data-value="3"></i><b>(3)</b>
     @Getter @Setter
     private SortedSet&lt;ToDoItem&gt; dependencies = ...
+
 }</code></pre>
 </div>
 </div>
-<div class="sect3">
-<h4 id="alternatives"><a class="anchor" href="#alternatives"></a>Alternatives</h4>
-<div class="paragraph">
-<p>It is also possible to use <a href="Collection.html#hidden" class="page">@Collection#hidden</a> to hide a collection at the domain layer.</p>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class ToDoItem {
-    @CollectionLayout(
-        cssClass="x-key",
-        named="Todo items that are &lt;i&gt;dependencies&lt;/i&gt; of this item.",
-        namedEscaped=false,
-        describedAs="Other todo items that must be completed before this one",
-        labelPosition=LabelPosition.LEFT,
-        render=EAGERLY)
-    public SortedSet&lt;ToDoItem&gt; getDependencies() { /* ... */ }
-    ...
-}</code></pre>
-</div>
-</div>
-<div class="admonitionblock tip">
+<div class="colist arabic">
 <table>
 <tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>As an alternative to using the <code>@CollectionLayout</code> annotation, a <a href="../../../../../userguide/latest/fun/ui.html#object-layout" class="page">file-based layout</a> can be used (and is generally to be preferred since it is more flexible/powerful).</p>
-</div>
-</td>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>the class has a natural ordering (implementation not shown)</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>declaration of an alternative comparator class, using the object&#8217;s <code>description</code> property</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>ordering of the collection defined as being by this comparator</td>
 </tr>
 </table>
 </div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
 <div class="paragraph">
-<p>The annotation is one of a handful (others including <a href="Collection.html" class="page">@Collection</a>, <a href="Property.html" class="page">@Property</a> and <a href="PropertyLayout.html" class="page">@PropertyLayout</a>) that can also be applied to the field, rather than the getter method.
-This is specifically so that boilerplate-busting tools such as <a href="https://projectlombok.org/">Project Lombok</a> can be used.</p>
+<p>When the <code>dependencies</code> collection is rendered, the elements are sorted by the <code>description</code> property first.</p>
 </div>
-</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="usage-notes"><a class="anchor" href="#usage-notes"></a>Usage Notes</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>As alternative to using the annotation, the dynamic <a href="../../../../../userguide/latest/fun/ui.html#object-layout" class="page">file-based layout</a> can generally be used instead.</p>
 </div>
 <div class="sect2">
 <h3 id="paging"><a class="anchor" href="#paging"></a>Paging</h3>
@@ -1161,6 +1088,70 @@ public class ToDoItem {
 </div>
 </div>
 <div class="sect2">
+<h3 id="hiding-collections"><a class="anchor" href="#hiding-collections"></a>Hiding collections</h3>
+<div class="paragraph">
+<p>The <a href="#hidden">hidden()</a> element indicates where (in the UI) the collection should be hidden from the user.</p>
+</div>
+<div class="paragraph">
+<p>The acceptable values are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>Where.EVERYWHERE</code> or <code>Where.ANYWHERE</code></p>
+<div class="paragraph">
+<p>The collection should be hidden everywhere.</p>
+</div>
+</li>
+<li>
+<p><code>Where.ANYWHERE</code></p>
+<div class="paragraph">
+<p>Synonym for everywhere.</p>
+</div>
+</li>
+<li>
+<p><code>Where.OBJECT_FORMS</code></p>
+<div class="paragraph">
+<p>The collection should be hidden when displayed within an object form.</p>
+</div>
+</li>
+<li>
+<p><code>Where.NOWHERE</code></p>
+<div class="paragraph">
+<p>The collection should not be hidden.</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The other values of the <code>Where</code> enum have no meaning for a collection.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
+import lombok.Setter;
+
+public class ToDoItem {
+
+    @CollectionLayout(
+        hidden=Where.EVERYWHERE
+    )
+    @Getter @Setter
+    private SortedSet&lt;ToDoItem&gt; dependencies = ...
+}</code></pre>
+</div>
+</div>
+<div class="sect3">
+<h4 id="alternatives"><a class="anchor" href="#alternatives"></a>Alternatives</h4>
+<div class="paragraph">
+<p>It is also possible to use <a href="Collection.html#hidden" class="page">@Collection#hidden</a> to hide a collection at the domain layer.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
 <h3 id="default-view"><a class="anchor" href="#default-view"></a>Default view</h3>
 <div class="paragraph">
 <p>The <a href="#defaultView">`defaultView()</a> element is used to select which of views should be used by default for a given collection.
@@ -1195,57 +1186,6 @@ public class BusRoute {
 <div class="paragraph">
 <p>The <a href="../../../../../vw/latest/about.html" class="page">Wicket viewer</a> allows additional views to be configured to render collections of objects, eg <a href="../../../../../vw/latest/exceldownload/about.html" class="page">Excel Download</a> ("excel"), <a href="../../../../../vw/latest/fullcalendar/about.html" class="page">Fullcalendar</a> ("fullcalendar") and <a href="../../../../../vw/latest/gmap3/about.html" class="page">Gmap3</a> ("map") extensions.
 This attribute can be used to select any of these alternative views instead.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="client-side-sorting"><a class="anchor" href="#client-side-sorting"></a>Client-side Sorting</h3>
-<div class="paragraph">
-<p>The <a href="#sortedBy">sortedBy()</a> element specifies that the collection be ordered using the specified comparator, rather than the natural ordering of the entity (as would usually be the case).</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
-import lombok.Setter;
-
-public class ToDoItem implements Comparable&lt;ToDoItem&gt; {         <i class="conum" data-value="1"></i><b>(1)</b>
-
-    public static class DescriptionComparator                   <i class="conum" data-value="2"></i><b>(2)</b>
-                            implements Comparator&lt;ToDoItem&gt; {
-        @Override
-        public int compare(ToDoItem o1, ToDoItem o2) {
-            return Comparator.comparing(ToDoItem::getDescription)
-                             .compare(o1, o2);
-        }
-    }
-
-    @CollectionLayout(sortedBy=DependenciesComparator.class)    <i class="conum" data-value="3"></i><b>(3)</b>
-    @Getter @Setter
-    private SortedSet&lt;ToDoItem&gt; dependencies = ...
-
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>the class has a natural ordering (implementation not shown)</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>declaration of an alternative comparator class, using the object&#8217;s <code>description</code> property</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>ordering of the collection defined as being by this comparator</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>When the <code>dependencies</code> collection is rendered, the elements are sorted by the <code>description</code> property first.</p>
 </div>
 </div>
 <div class="sect2">
@@ -1326,6 +1266,66 @@ public class ToDoItem {
 </div>
 </div>
 </div>
+<div class="sect1">
+<h2 id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class ToDoItem {
+    @CollectionLayout(
+        cssClass="x-key",
+        named="Todo items that are &lt;i&gt;dependencies&lt;/i&gt; of this item.",
+        namedEscaped=false,
+        describedAs="Other todo items that must be completed before this one",
+        labelPosition=LabelPosition.LEFT,
+        render=EAGERLY)
+    public SortedSet&lt;ToDoItem&gt; getDependencies() { /* ... */ }
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>As an alternative to using the <code>@CollectionLayout</code> annotation, a <a href="../../../../../userguide/latest/fun/ui.html#object-layout" class="page">file-based layout</a> can be used (and is generally to be preferred since it is more flexible/powerful).</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The annotation is one of a handful (others including <a href="Collection.html" class="page">@Collection</a>, <a href="Property.html" class="page">@Property</a> and <a href="PropertyLayout.html" class="page">@PropertyLayout</a>) that can also be applied to the field, rather than the getter method.
+This is specifically so that boilerplate-busting tools such as <a href="https://projectlombok.org/">Project Lombok</a> can be used.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="usage-notes"><a class="anchor" href="#usage-notes"></a>Usage Notes</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>As alternative to using the annotation, the dynamic <a href="../../../../../userguide/latest/fun/ui.html#object-layout" class="page">file-based layout</a> can generally be used instead.</p>
+</div>
+</div>
+</div>
 </article>
 <aside class="article-aside toc hide-for-print" role="navigation">
     <p class="toc-title">On this page</p>
@@ -1343,7 +1343,7 @@ public class ToDoItem {
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210303-0421-824621db</p>
+            <p>Revision: 2.0.0-M4.20210304-0425-3fbcd984</p>
         </div>
     </div>
 </footer>
