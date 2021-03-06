@@ -274,6 +274,9 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../events.html">Events</a>
   </li>
   <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../mixees-and-mixins.html">Mixees and Mixins</a>
+  </li>
+  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../ViewModel.html">ViewModel</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -281,12 +284,6 @@ page.parent doesn't seem to be set...
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../spec.html">Specification pattern</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../i18n.html">i18n support</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../roles-mixins-contributees.html">Roles, Mixins and Contributees</a>
   </li>
   <li class="nav-item" data-depth="2">
     <button class="nav-item-toggle"></button>
@@ -766,259 +763,131 @@ page.parent doesn't seem to be set...
 <article class="doc">
     <a name="section-top"></a>
 <h1 class="page">Lifecycle Events</h1>
-<div id="preamble">
-<div class="sectionbody">
 <div class="paragraph">
-<p>This section catalogues the various lifecycle event classes defined by Apache Isis.
-These events are fired automatically when a domain object is loaded, created, updated and so forth.</p>
+<p>Lifecycle events are broadcast through the <a href="../../applib/index/services/eventbus/EventBusService.html" class="page">EventBusService</a> when a domain entity is loaded, created, updated to/from the database.</p>
 </div>
 <div class="paragraph">
-<p>The lifecycle event classes are listed in the table below:</p>
+<p>They allow subscribers to trigger other operations as a result of these persistence operations.
+One use case is to maintain an alternate data store.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <caption class="title">Table 1. Lifecycle Event Classes</caption>
 <colgroup>
-<col style="width: 20%;">
-<col style="width: 40%;">
-<col style="width: 40%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
 </colgroup>
 <thead>
 <tr>
 <th class="tableblock halign-left valign-top">API</th>
-<th class="tableblock halign-left valign-top">Implementation</th>
-<th class="tableblock halign-left valign-top">Notes</th>
+<th class="tableblock halign-left valign-top">Event class defined by</th>
+<th class="tableblock halign-left valign-top">Raised when</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><a href="../events.html#AbstractLifecycleEvent" class="page"><code>o.a.i.applib.</code><br>
-<code>AbstractLifecycleEvent</code></a></p>
+<p><a href="../../applib/index/events/lifecycle/AbstractLifecycleEvent.html" class="page">AbstractLifecycleEvent</a></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(abstract class)</p>
+<p>n/a</p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Superclass of the other lifecycle events, listed below in this table.</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><a href="../events.html#ObjectCreatedEvent" class="page"><code>o.a.i.applib.</code><br>
-<code>ObjectCreatedEvent</code></a></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(abstract class).<br>
-<code>ObjectCreatedEvent.Default</code> is the concrete implementation that is used.</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Broadcast when an object is first instantiated using the <a href="../../applib/index/services/factory/FactoryService.html" class="page">FactoryService</a>'s
-<code>#instantiate(&#8230;&#8203;)</code> method.</p>
+<p>n/a - superclass of the other lifecycle events.</p>
 </div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><a href="../events.html#ObjectLoadedEvent" class="page"><code>o.a.i.applib.</code><br>
-<code>ObjectLoadedEvent</code></a></p>
+<p><a href="../../applib/index/events/lifecycle/ObjectCreatedEvent.html" class="page">ObjectCreatedEvent</a></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(abstract class).<br>
-<code>ObjectLoadedEvent.Default</code> is the concrete implementation that is used.</p>
+<p><a href="../../applib/index/annotation/DomainObject.html#createdLifecycleEvent" class="page">DomainObject<br>
+#createdLifecycleEvent()</a></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Broadcast when an object is retrieved from the database.</p>
+<p>entity is first instantiated using  <a href="../../applib/index/services/factory/FactoryService.html" class="page">FactoryService</a><br></p>
+</div>
+<div class="paragraph">
+<p>Also raised for view models.</p>
 </div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><a href="../events.html#ObjectPersistedEvent" class="page"><code>o.a.i.applib.</code><br>
-<code>ObjectPersistedEvent</code></a></p>
+<p><a href="../../applib/index/events/lifecycle/ObjectLoadedEvent.html" class="page">ObjectLoadedEvent</a></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(abstract class).<br>
-<code>ObjectPersistedEvent.Default</code> is the concrete implementation that is used.</p>
+<p><a href="../../applib/index/annotation/DomainObject.html#loadedLifecycleEvent" class="page">DomainObject<br>
+#loadedLifecycleEvent()</a></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Broadcast when an object is first saved (inserted) into the database using the <a href="../../applib/index/services/repository/RepositoryService.html" class="page">RepositoryService</a>'s
+<p>entity is retrieved from the database.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="../../applib/index/events/lifecycle/ObjectPersistedEvent.html" class="page">ObjectPersistedEvent</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="../../applib/index/annotation/DomainObject.html#persistedLifecycleEvent" class="page">DomainObject<br>
+#persistedLifecycleEvent()</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>entity is first saved (inserted) into the database using the <a href="../../applib/index/services/repository/RepositoryService.html" class="page">RepositoryService</a>'s
 <code>#persist(&#8230;&#8203;)</code> method.</p>
 </div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><a href="../events.html#ObjectPersistingEvent" class="page"><code>o.a.i.applib.</code><br>
-<code>ObjectPersistingEvent</code></a></p>
+<p><a href="../../applib/index/events/lifecycle/ObjectPersistingEvent.html" class="page">ObjectPersistingEvent</a></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(abstract class).<br>
-<code>ObjectPersistingEvent.Default</code> is the concrete implementation that is used.</p>
+<p><a href="../../applib/index/annotation/DomainObject.html#persistingLifecycleEvent" class="page">DomainObject<br>
+#persistingLifecycleEvent()</a></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Broadcast when an object is about to be saved (inserted) into the database using the <a href="../../applib/index/services/repository/RepositoryService.html" class="page">RepositoryService</a>'s
+<p>entity is about to be saved (inserted) into the database using the <a href="../../applib/index/services/repository/RepositoryService.html" class="page">RepositoryService</a>'s
 <code>#persist(&#8230;&#8203;)</code> method.</p>
 </div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><a href="../events.html#ObjectRemovingEvent" class="page"><code>o.a.i.applib.</code><br>
-<code>ObjectRemovingEvent</code></a></p>
+<p><a href="../../applib/index/events/lifecycle/ObjectRemovingEvent.html" class="page">ObjectRemovingEvent</a></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(abstract class).<br>
-<code>ObjectRemovingEvent.Default</code> is the concrete implementation that is used.</p>
+<p><a href="../../applib/index/annotation/DomainObject.html#removingLifecycleEvent" class="page">DomainObject<br>
+#removingLifecycleEvent()</a></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Broadcast when an object is about to be deleted from the database using the <a href="../../applib/index/services/repository/RepositoryService.html" class="page">RepositoryService</a>'s
+<p>entity is about to be deleted from the database using the <a href="../../applib/index/services/repository/RepositoryService.html" class="page">RepositoryService</a>'s
 <code>#remove(&#8230;&#8203;)</code> method.</p>
 </div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><a href="../events.html#ObjectUpdatedEvent" class="page"><code>o.a.i.applib.</code><br>
-<code>ObjectUpdatedEvent</code></a></p>
+<p><a href="../../applib/index/events/lifecycle/ObjectUpdatedEvent.html" class="page">ObjectUpdatedEvent</a></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(abstract class).<br>
-<code>ObjectUpdatedEvent.Default</code> is the concrete implementation that is used.</p>
+<p><a href="../../applib/index/annotation/DomainObject.html#updatingLifecycleEvent" class="page">DomainObject<br>
+#updatingLifecycleEvent()</a></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Broadcast when an object has just been updated in the database.
-This is done either explicitly when the current transaction is flushed using the <a href="../../applib/index/services/repository/RepositoryService.html" class="page">RepositoryService</a>'s <code>#flush(&#8230;&#8203;)</code> method, else is done implicitly when the transaction commits at the end of the user request.</p>
+<p>entity has just been updated in the database.</p>
 </div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><a href="../events.html#ObjectUpdatingEvent" class="page"><code>o.a.i.applib.</code><br>
-<code>ObjectUpdatingEvent</code></a></p>
+<p><a href="../../applib/index/events/lifecycle/ObjectUpdatingEvent.html" class="page">ObjectUpdatingEvent</a></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>o.a.i.core</code><br>
-<code>events.lifecycle</code><br>
-<code>isis-applib</code></p>
+<p><a href="../../applib/index/annotation/DomainObject.html#updatedLifecycleEvent" class="page">DomainObject<br>
+#updatedLifecycleEvent()</a></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(abstract class).<br>
-<code>ObjectUpdatingEvent.Default</code> is the concrete implementation that is used.</p>
+<p>entity is about to be updated in the database.</p>
 </div></div></td>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<div class="sect1">
-<h2 id="AbstractLifecycleEvent"><a class="anchor" href="#AbstractLifecycleEvent"></a><code>AbstractLifecycleEvent</code></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>This class is the superclass for all lifecycle events that are raised by the framework when loading, saving, updating or deleting objects from the database.</p>
-</div>
-<div class="paragraph">
-<p>Its immediate subclasses are:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="../events.html#ObjectCreatedEvent" class="page">ObjectCreatedEvent</a></p>
-</li>
-<li>
-<p><a href="../events.html#ObjectLoadedEvent" class="page">ObjectLoadedEvent</a></p>
-</li>
-<li>
-<p><a href="../events.html#ObjectPersistedEvent" class="page">ObjectPersistedEvent</a></p>
-</li>
-<li>
-<p><a href="../events.html#ObjectPersistingEvent" class="page">ObjectPersistingEvent</a></p>
-</li>
-<li>
-<p><a href="../events.html#ObjectRemovingEvent" class="page">ObjectRemovingEvent</a></p>
-</li>
-<li>
-<p><a href="../events.html#ObjectUpdatedEvent" class="page">ObjectUpdatedEvent</a></p>
-</li>
-<li>
-<p><a href="../events.html#ObjectUpdatingEvent" class="page">ObjectUpdatingEvent</a></p>
-</li>
-</ul>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="ObjectCreatedEvent"><a class="anchor" href="#ObjectCreatedEvent"></a><code>ObjectCreatedEvent</code></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Subclass of <a href="../events.html#AbstractLifecycleEvent" class="page">AbstractLifecycleEvent</a>, broadcast when an object is first instantiated using the <a href="../../applib/index/services/factory/FactoryService.html" class="page">FactoryServuce</a>'s <code>#instantiate(&#8230;&#8203;)</code> method.</p>
-</div>
-<div class="paragraph">
-<p><code>ObjectCreatedEvent.Default</code> is the implementation that is used by default, but this can be overridden using <a href="../../applib/index/annotation/DomainObject.html#createdLifecycleEvent" class="page">@DomainObject#createdLifecycleEvent</a>.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="ObjectLoadedEvent"><a class="anchor" href="#ObjectLoadedEvent"></a><code>ObjectLoadedEvent</code></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Subclass of <a href="../events.html#AbstractLifecycleEvent" class="page">AbstractLifecycleEvent</a>, broadcast when an object is retrieved from the database.</p>
-</div>
-<div class="paragraph">
-<p><code>ObjectLoadedEvent.Default</code> is the concrete implementation that is used.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="ObjectPersistedEvent"><a class="anchor" href="#ObjectPersistedEvent"></a><code>ObjectPersistedEvent</code></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Subclass of <a href="../events.html#AbstractLifecycleEvent" class="page">AbstractLifecycleEvent</a>, broadcast when an object is first saved (inserted) into the database using the <a href="../../applib/index/services/repository/RepositoryService.html" class="page">RepositoryService</a>'s <code>#persist(&#8230;&#8203;)</code> method.</p>
-</div>
-<div class="paragraph">
-<p><code>ObjectPersistedEvent.Default</code> is the implementation that is used by default, but this can be overridden using <a href="../../applib/index/annotation/DomainObject.html#persistedLifecycleEvent" class="page">@DomainObject#persistedLifecycleEvent</a>.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="ObjectPersistingEvent"><a class="anchor" href="#ObjectPersistingEvent"></a><code>ObjectPersistingEvent</code></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Subclass of <a href="../events.html#AbstractLifecycleEvent" class="page">AbstractLifecycleEvent</a>, broadcast when an object is about to be saved (inserted) into the database using the <a href="../../applib/index/services/repository/RepositoryService.html" class="page">RepositoryService</a>'s <code>#persist(&#8230;&#8203;)</code> method.</p>
-</div>
-<div class="paragraph">
-<p><code>ObjectPersistingEvent.Default</code> is the implementation that is used by default, but this can be overridden using <a href="../../applib/index/annotation/DomainObject.html#persistingLifecycleEvent" class="page">@DomainObject#persistingLifecycleEvent</a>.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="ObjectRemovingEvent"><a class="anchor" href="#ObjectRemovingEvent"></a><code>ObjectRemovingEvent</code></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Subclass of <a href="../events.html#AbstractLifecycleEvent" class="page">AbstractLifecycleEvent</a>, broadcast when an object is about to be deleted from the database using the <a href="../../applib/index/services/repository/RepositoryService.html" class="page">RepositoryService</a>'s <code>#remove(&#8230;&#8203;)</code> method.</p>
-</div>
-<div class="paragraph">
-<p><code>ObjectRemovingEvent.Default</code> is the implementation that is used by default, but this can be overridden using <a href="../../applib/index/annotation/DomainObject.html#removingLifecycleEvent" class="page">@DomainObject#removingLifecycleEvent</a>.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="ObjectUpdatedEvent"><a class="anchor" href="#ObjectUpdatedEvent"></a><code>ObjectUpdatedEvent</code></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Subclass of <a href="../events.html#AbstractLifecycleEvent" class="page">AbstractLifecycleEvent</a>, broadcast when an object has just been updated in the database.
-This is done either explicitly when the current transaction is flushed using the <a href="../../applib/index/services/repository/RepositoryService.html" class="page">RepositoryService</a>'s <code>#flush(&#8230;&#8203;)</code> method, else is done implicitly when the transaction commits at the end of the user request.</p>
-</div>
-<div class="paragraph">
-<p><code>ObjectUpdatedEvent.Default</code> is the implementation that is used by default, but this can be overridden using <a href="../../applib/index/annotation/DomainObject.html#updatedLifecycleEvent" class="page">@DomainObject#updatedLifecycleEvent</a>.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="ObjectUpdatingEvent"><a class="anchor" href="#ObjectUpdatingEvent"></a><code>ObjectUpdatingEvent</code></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Subclass of <a href="../events.html#AbstractLifecycleEvent" class="page">AbstractLifecycleEvent</a>, broadcast when an object is about to be updated in the database.
-This is done either explicitly when the current transaction is flushed using the <a href="../../applib/index/services/repository/RepositoryService.html" class="page">RepositoryService</a>'s <code>#flush(&#8230;&#8203;)</code> method, else is done implicitly when the transaction commits at the end of the user request.</p>
-</div>
-<div class="paragraph">
-<p><code>ObjectUpdatingEvent.Default</code> is the implementation that is used by default, but this can be overridden using <a href="../../applib/index/annotation/DomainObject.html#updatingLifecycleEvent" class="page">@DomainObject#updatingLifecycleEvent</a>.</p>
-</div>
-</div>
-</div>
 </article>
 <aside class="article-aside toc hide-for-print" role="navigation">
     <p class="toc-title">On this page</p>
@@ -1036,7 +905,7 @@ This is done either explicitly when the current transaction is flushed using the
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210305-0425-7000946e</p>
+            <p>Revision: 2.0.0-M4.20210306-0425-98495fab</p>
         </div>
     </div>
 </footer>

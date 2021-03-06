@@ -274,6 +274,9 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../events.html">Events</a>
   </li>
   <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../mixees-and-mixins.html">Mixees and Mixins</a>
+  </li>
+  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../ViewModel.html">ViewModel</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -281,12 +284,6 @@ page.parent doesn't seem to be set...
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../spec.html">Specification pattern</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../i18n.html">i18n support</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../roles-mixins-contributees.html">Roles, Mixins and Contributees</a>
   </li>
   <li class="nav-item" data-depth="2">
     <button class="nav-item-toggle"></button>
@@ -766,512 +763,73 @@ page.parent doesn't seem to be set...
 <article class="doc">
     <a name="section-top"></a>
 <h1 class="page">Domain Event Classes</h1>
-<div id="preamble">
-<div class="sectionbody">
 <div class="paragraph">
-<p>This section catalogues the various domain event classes defined by Apache Isis.</p>
+<p>Domain events are broadcast through the <a href="../../applib/index/services/eventbus/EventBusService.html" class="page">EventBusService</a> whenever the framework interacts with the domain object members.</p>
 </div>
 <div class="paragraph">
-<p>These events are broadcast on the <a href="../../applib/index/services/eventbus/EventBusService.html" class="page">EventBusService</a>.
-The domain events are broadcast as a result of being specified in the <a href="../../applib/index/annotation/Action.html#domainEvent" class="page">@Action#domainEvent()</a>,  <a href="../../applib/index/annotation/Property.html#domainEvent" class="page">@Property#domainEvent()</a> or <a href="../../applib/index/annotation/Collection.html#domainEvent" class="page">@Collection#domainEvent()</a> attributes.</p>
-</div>
-<div class="paragraph">
-<p>They are listed in the table below.</p>
+<p>They allow subscribers to change either veto the interaction, or to trigger other operations as a result of the interaction.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <caption class="title">Table 1. Domain Event Classes</caption>
 <colgroup>
-<col style="width: 20%;">
-<col style="width: 40%;">
-<col style="width: 40%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
 </colgroup>
 <thead>
 <tr>
 <th class="tableblock halign-left valign-top">API</th>
-<th class="tableblock halign-left valign-top">Implementation</th>
-<th class="tableblock halign-left valign-top">Notes</th>
+<th class="tableblock halign-left valign-top">Event class defined by</th>
+<th class="tableblock halign-left valign-top">Published when</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><a href="../events.html#AbstractDomainEvent" class="page"><code>o.a.i.applib.</code><br>
-<code>AbstractDomainEvent</code></a></p>
+<p><a href="../../applib/index/events/domain/AbstractDomainEvent.html" class="page">AbstractDomainEvent</a></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(abstract class)</p>
+<p>n/a</p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Superclass of the other domain events, listed below in this table.</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><a href="../events.html#ActionDomainEvent" class="page"><code>o.a.i.applib.</code><br>
-<code>ActionDomainEvent</code></a></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(abstract class).<br>
-<code>ActionDomainEvent.Default</code> is the concrete implementation used if no <code>@Action#domainEvent</code> attribute is specified</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Broadcast whenever there is an interaction (hide/disable/validate/pre-execute/post-execute) with an object&#8217;s action.</p>
+<p>n/a - superclass of the other domain events.</p>
 </div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><a href="../events.html#CollectionDomainEvent" class="page"><code>o.a.i.applib.</code><br>
-<code>CollectionDomainEvent</code></a></p>
+<p><a href="../../applib/index/events/domain/ActionDomainEvent.html" class="page">ActionDomainEvent</a></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(abstract class).<br>
-<code>CollectionDomainEvent.Default</code> is the concrete implementation used if no <code>@Collection#domainEvent</code> attribute
-is specified.</p>
+<p><a href="../../applib/index/annotation/Action.html#domainEvent" class="page">@Action#domainEvent()</a></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Broadcast whenever there is an interaction (hide/disable/validate/access) with an object&#8217;s collection.</p>
+<p>interact with (hide, disable, validate, pre-execute, post-execute) an object&#8217;s action.</p>
 </div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><a href="../events.html#PropertyDomainEvent" class="page"><code>o.a.i.applib.</code><br>
-<code>PropertyDomainEvent</code></a></p>
+<p><a href="../../applib/index/events/domain/CollectionDomainEvent.html" class="page">CollectionDomainEvent</a></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(abstract class).<br>
-<code>PropertyDomainEvent.Default</code> is the concrete implementation used if no <code>@Propert#domainEvent</code> attribute is specified</p>
+<p><a href="../../applib/index/annotation/Collection.html#domainEvent" class="page">@Collection#domainEvent()</a></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Broadcast whenever there is an interaction (hide/disable/validate/access) with an object&#8217;s property.</p>
+<p>hide an object&#8217;s collection.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="../../applib/index/events/domain/PropertyDomainEvent.html" class="page">PropertyDomainEvent</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="../../applib/index/annotation/Property.html#domainEvent" class="page">@Property#domainEvent()</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>interact with (hide, disable, validate, pre-edit, post-edit) an object&#8217;s property.</p>
 </div></div></td>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<div class="sect1">
-<h2 id="AbstractDomainEvent"><a class="anchor" href="#AbstractDomainEvent"></a><code>AbstractDomainEvent</code></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>This class is the superclass for all domain events that are raised by the framework when interacting with actions, properties or collections.</p>
-</div>
-<div class="paragraph">
-<p>Its immediate subclasses are:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="../events.html#ActionDomainEvent" class="page">ActionDomainEvent</a></p>
-</li>
-<li>
-<p><a href="../events.html#PropertyDomainEvent" class="page">PropertyDomainEvent</a></p>
-</li>
-<li>
-<p><a href="../events.html#CollectionDomainEvent" class="page">CollectionDomainEvent</a></p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>The main purpose of the class is to define the protocol by which subscribers can influence an interaction (eg hide a collection, disable a property, validate action arguments).
-It class also provides a simple mechanism to allow adhoc sharing of user data between different phases.</p>
-</div>
-<div class="sect2">
-<h3 id="api"><a class="anchor" href="#api"></a>API</h3>
-<div class="paragraph">
-<p>The API of the class is:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public abstract class AbstractDomainEvent&lt;S&gt; extends java.util.EventObject {
-
-    public S getSource();                                           <i class="conum" data-value="1"></i><b>(1)</b>
-    public Object getMixedIn();                                     <i class="conum" data-value="2"></i><b>(2)</b>
-    public Object getSubject();                                     <i class="conum" data-value="3"></i><b>(3)</b>
-
-    public Identifier getIdentifier();                              <i class="conum" data-value="4"></i><b>(4)</b>
-
-    public Phase getEventPhase();                                   <i class="conum" data-value="5"></i><b>(5)</b>
-
-    public void hide();                                             <i class="conum" data-value="6"></i><b>(6)</b>
-    public boolean isHidden();                                      <i class="conum" data-value="7"></i><b>(7)</b>
-
-    public void disable(final String reason);                       <i class="conum" data-value="8"></i><b>(8)</b>
-    public void disable(final TranslatableString reason);
-    public String getDisabledReason();                              <i class="conum" data-value="9"></i><b>(9)</b>
-    public TranslatableString getDisabledReasonTranslatable();
-    public boolean isDisabled();
-
-    public void invalidate(final String reason);                    <i class="conum" data-value="10"></i><b>(10)</b>
-    public void invalidate(final TranslatableString reason);
-    public String getInvalidityReason();                            <i class="conum" data-value="11"></i><b>(11)</b>
-    public TranslatableString getInvalidityReasonTranslatable();
-    public boolean isInvalid();
-
-    public void veto(final String reason, final Object... args);    <i class="conum" data-value="12"></i><b>(12)</b>
-    public void veto(final TranslatableString translatableReason);
-
-    public Object get(Object key);                                  <i class="conum" data-value="13"></i><b>(13)</b>
-    public void put(Object key, Object value);
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The domain object raising this event.
-<div class="paragraph">
-<p>For a "regular" action, property or collection then this will be the target domain object.
-But for a "mixin" action, this will be an instance of the mixin itself.</p>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>For a "mixin", this will be the target object that is being contributed to.
-<div class="paragraph">
-<p>For a "regular" action, this will return <code>null</code>.</p>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Returns the domain object being interacted with, irrespective of whether this is a "regular" action/property/collection or a "mixin".
-<div class="ulist">
-<ul>
-<li>
-<p>For a regular member, this will return the same as <code>getSource()</code>.</p>
-</li>
-<li>
-<p>For a mixin, this will return the same as <code>getMixedIn()</code>.</p>
-</li>
-</ul>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>Identifier of the action, property or collection being interacted with.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>Whether the framework is checking visibility, enablement, validity or actually executing (invoking action, editing property), as per the <code>Phase</code> enum (defined below).</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
-<td>API for subscribers to hide the member</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="7"></i><b>7</b></td>
-<td>Used by the framework to determine if the member should be hidden (not rendered)</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="8"></i><b>8</b></td>
-<td>API for subscribers to disable the member, specifying the reason why (possibly translated)</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="9"></i><b>9</b></td>
-<td>Used by the framework to determine whether the member should be disabled (greyed out) when rendered.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="10"></i><b>10</b></td>
-<td>API for subscribers to invalidate an interaction, eg invalid arguments to an action</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="11"></i><b>11</b></td>
-<td>Used by the framework to determine whether the interaction is invalid and should be blocked (eg pressing OK shows message)</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="12"></i><b>12</b></td>
-<td>Convenience API for subscribers to veto; will automatically call either <code>hide()</code>, <code>disable(&#8230;&#8203;)</code> or <code>invalidate(&#8230;&#8203;)</code> based on the phase</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="13"></i><b>13</b></td>
-<td>Mechanism to allow subscribers to share arbitrary information between phases.
-One event instance is used for both the hide and disable phases, and a different event instance is shared between validate/pre-execute/post-execute.</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>The referenced <code>Phase</code> enum is in turn:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public enum Phase {
-    HIDE,
-    DISABLE,
-    VALIDATE,
-    EXECUTING,
-    EXECUTED;
-    public boolean isValidatingOrLater();    <i class="conum" data-value="1"></i><b>(1)</b>
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The significance being that at this point the proposed values/arguments are known, and so the event can be fully populated.</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="ActionDomainEvent"><a class="anchor" href="#ActionDomainEvent"></a><code>ActionDomainEvent</code></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Subclass of <a href="../events.html#AbstractDomainEvent" class="page">AbstractDomainEvent</a> for actions.</p>
-</div>
-<div class="paragraph">
-<p>The class has a number of responsibilities (in addition to those it inherits):</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>capture the target object being interacted with</p>
-</li>
-<li>
-<p>capture the arguments for each of the action&#8217;s parameters</p>
-</li>
-<li>
-<p>provide selected metadata about the action parameters from the metamodel (names, types)</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>The class itself is instantiated automatically by the framework whenever interacting with a rendered object&#8217;s action.</p>
-</div>
-<div class="sect2">
-<h3 id="api-2"><a class="anchor" href="#api-2"></a>API</h3>
-<div class="paragraph">
-<p>The API of the class is:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public abstract class ActionDomainEvent&lt;S&gt; extends AbstractDomainEvent&lt;S&gt; {
-
-    public static class Default extends ActionDomainEvent&lt;Object&gt; { }   <i class="conum" data-value="1"></i><b>(1)</b>
-    public static class Noop extends ActionDomainEvent&lt;Object&gt; { }      <i class="conum" data-value="2"></i><b>(2)</b>
-    public static class Doop extends ActionDomainEvent&lt;Object&gt; { }      <i class="conum" data-value="3"></i><b>(3)</b>
-
-    public SemanticsOf getSemantics();
-
-    public List&lt;String&gt; getParameterNames();
-    public List&lt;Class&lt;?&gt;&gt; getParameterTypes();
-
-    public List&lt;Object&gt; getArguments();                                 <i class="conum" data-value="4"></i><b>(4)</b>
-    public Object getReturnValue();                                     <i class="conum" data-value="5"></i><b>(5)</b>
-    public void setReturnValue();                                       <i class="conum" data-value="6"></i><b>(6)</b>
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The <code>Default</code> nested static class is the default for the <a href="../../applib/index/annotation/Action.html#domainEvent" class="page">@Action#domainEvent()</a>
-annotation attribute.
-Whether this raises an event or not depends upon the <code>isis.reflector.facet.actionAnnotation.domainEvent.postForDefault</code> configuration property.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>The <code>Noop</code> class is provided as a convenience to indicate that an event should <em>not</em> be posted (irrespective of the configuration property setting).</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Similarly, the <code>Doop</code> class is provided as a convenience to indicate that an event <em>should</em> be raised (irrespective of the configuration property setting).</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>The arguments being used to invoke the action; populated during validate phase and subsequent phases.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>The value returned by the action; populated only in the executed phase.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
-<td>Allows the subscriber to effectively change the value returned by the action; may only be called in the executed phase.</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="CollectionDomainEvent"><a class="anchor" href="#CollectionDomainEvent"></a><code>CollectionDomainEvent</code></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Subclass of <a href="../events.html#AbstractDomainEvent" class="page">AbstractDomainEvent</a> for collections.</p>
-</div>
-<div class="paragraph">
-<p>The class has a couple of responsibilities (in addition to those it inherits):</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>capture the target object being interacted with</p>
-</li>
-<li>
-<p>indicate whether the interaction is to add or remove an object from the collection (or simply to indicate that the collection is being accessed/read)</p>
-</li>
-<li>
-<p>capture the object reference being added or removed</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>The class itself is instantiated automatically by the framework whenever interacting with a rendered object&#8217;s collection.</p>
-</div>
-<div class="sect2">
-<h3 id="api-3"><a class="anchor" href="#api-3"></a>API</h3>
-<div class="paragraph">
-<p>The API of the class is:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public abstract class CollectionDomainEvent&lt;S,T&gt; extends AbstractDomainEvent&lt;S&gt; {
-
-    public static class Default                                 <i class="conum" data-value="1"></i><b>(1)</b>
-        extends CollectionDomainEvent&lt;Object, Object&gt; { }
-    public static class Noop                                    <i class="conum" data-value="2"></i><b>(2)</b>
-        extends CollectionDomainEvent&lt;Object, Object&gt; { }
-    public static class Doop                                    <i class="conum" data-value="3"></i><b>(3)</b>
-        extends CollectionDomainEvent&lt;Object, Object&gt; { }
-
-    public T getValue();                                        <i class="conum" data-value="4"></i><b>(4)</b>
-    public Of getOf();                                          <i class="conum" data-value="5"></i><b>(5)</b>
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The <code>Default</code> nested static class is the default for the <a href="../../applib/index/annotation/Collection.html#domainEvent" class="page">@Collection#domainEvent()</a> annotation attribute.
-Whether this raises an event or not depends upon the
-<code>isis.reflector.facet.collectionAnnotation.domainEvent.postForDefault</code> configuration property.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>The <code>Noop</code> class is provided as a convenience to indicate that an event should <em>not</em> be posted (irrespective of the configuration property setting).</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Similarly, the <code>Doop</code> class is provided as a convenience to indicate that an event <em>should</em> be raised (irrespective of the configuration property setting).</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>the object being added or removed</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>whether this is to add or to remove</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>where the <code>Of</code> enum indicates in turn how the collection is being interacted with:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public static enum Of {
-    ACCESS,         <i class="conum" data-value="1"></i><b>(1)</b>
-    ADD_TO,         <i class="conum" data-value="2"></i><b>(2)</b>
-    REMOVE_FROM     <i class="conum" data-value="3"></i><b>(3)</b>
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>collection is being rendered; set during for hide and disable phases</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>collection is being added to; set for validate, executing and executed phases</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>or, collection is being removed from; set for validate, executing and executed phases</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="PropertyDomainEvent"><a class="anchor" href="#PropertyDomainEvent"></a><code>PropertyDomainEvent</code></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Subclass of <a href="../events.html#AbstractDomainEvent" class="page">AbstractDomainEvent</a> for properties.</p>
-</div>
-<div class="paragraph">
-<p>The class has a couple of responsibilities (in addition to those it inherits):</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>capture the target object being interacted with</p>
-</li>
-<li>
-<p>capture the old and new values of the property</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>The class itself is instantiated automatically by the framework whenever interacting with a rendered object&#8217;s property.</p>
-</div>
-<div class="sect2">
-<h3 id="api-4"><a class="anchor" href="#api-4"></a>API</h3>
-<div class="paragraph">
-<p>The API of the class is:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public abstract class PropertyDomainEvent&lt;S,T&gt; extends AbstractDomainEvent&lt;S&gt; {
-
-    public static class Default                                 <i class="conum" data-value="1"></i><b>(1)</b>
-        extends PropertyDomainEvent&lt;Object, Object&gt; { }
-    public static class Noop                                    <i class="conum" data-value="2"></i><b>(2)</b>
-        extends PropertyDomainEvent&lt;Object, Object&gt; { }
-    public static class Doop                                    <i class="conum" data-value="3"></i><b>(3)</b>
-        extends PropertyDomainEvent&lt;Object, Object&gt; { }
-
-    public T getOldValue();                                     <i class="conum" data-value="4"></i><b>(4)</b>
-    public T getNewValue();                                     <i class="conum" data-value="5"></i><b>(5)</b>
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The <code>Default</code> nested static class is the default for the <a href="../../applib/index/annotation/Property.html#domainEvent" class="page">@Property#domainEvent()</a> annotation attribute.
-Whether this raises an event or not depends upon the
-<code>isis.reflector.facet.propertyAnnotation.domainEvent.postForDefault</code> configuration property.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>The <code>Noop</code> class is provided as a convenience to indicate that an event should <em>not</em> be posted (irrespective of the configuration property setting).</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Similarly, the <code>Doop</code> class is provided as a convenience to indicate that an event <em>should</em> be raised (irrespective of the configuration property setting).</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>The pre-modification value of the property; populated at validate and subsequent phases.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>The proposed (post-modification) value of the property; populated at validate and subsequent phases</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-</div>
 </article>
 <aside class="article-aside toc hide-for-print" role="navigation">
     <p class="toc-title">On this page</p>
@@ -1289,7 +847,7 @@ Whether this raises an event or not depends upon the
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210305-0425-7000946e</p>
+            <p>Revision: 2.0.0-M4.20210306-0425-98495fab</p>
         </div>
     </div>
 </footer>

@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Raleway:300,400,500,700,800|Montserrat:300,400,700" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css"/>
 <link rel="home" href="../../.." title="Apache Isis">
-  <link rel="next" href="ViewModel.html" title="ViewModel">
+  <link rel="next" href="mixees-and-mixins.html" title="Mixees and Mixins">
   <link rel="prev" href="about.html" title="Classes">
   </head>
   <body class="article">
@@ -145,7 +145,7 @@
 <div class="nav-panel-pagination">
   <a class="page-previous" rel="prev" href="about.html" title="Classes"><span></span></a>
   <a class="page-next" rel="next"
-     href="ViewModel.html" title="ViewModel"><span></span></a>
+     href="mixees-and-mixins.html" title="Mixees and Mixins"><span></span></a>
 <!--
 page.parent doesn't seem to be set...
   <a class="page-parent" rel="prev" href="about.html" title="Classes"><span></span></a>
@@ -276,6 +276,9 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="events.html">Events</a>
   </li>
   <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="mixees-and-mixins.html">Mixees and Mixins</a>
+  </li>
+  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="ViewModel.html">ViewModel</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -283,12 +286,6 @@ page.parent doesn't seem to be set...
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="spec.html">Specification pattern</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="i18n.html">i18n support</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="roles-mixins-contributees.html">Roles, Mixins and Contributees</a>
   </li>
   <li class="nav-item" data-depth="2">
     <button class="nav-item-toggle"></button>
@@ -773,898 +770,292 @@ page.parent doesn't seem to be set...
 <h2 id="domain-event-classes"><a class="anchor" href="#domain-event-classes"></a>Domain Event Classes</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>This section catalogues the various domain event classes defined by Apache Isis.</p>
+<p>Domain events are broadcast through the <a href="../applib/index/services/eventbus/EventBusService.html" class="page">EventBusService</a> whenever the framework interacts with the domain object members.</p>
 </div>
 <div class="paragraph">
-<p>These events are broadcast on the <a href="../applib/index/services/eventbus/EventBusService.html" class="page">EventBusService</a>.
-The domain events are broadcast as a result of being specified in the <a href="../applib/index/annotation/Action.html#domainEvent" class="page">@Action#domainEvent()</a>,  <a href="../applib/index/annotation/Property.html#domainEvent" class="page">@Property#domainEvent()</a> or <a href="../applib/index/annotation/Collection.html#domainEvent" class="page">@Collection#domainEvent()</a> attributes.</p>
-</div>
-<div class="paragraph">
-<p>They are listed in the table below.</p>
+<p>They allow subscribers to change either veto the interaction, or to trigger other operations as a result of the interaction.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <caption class="title">Table 1. Domain Event Classes</caption>
 <colgroup>
-<col style="width: 20%;">
-<col style="width: 40%;">
-<col style="width: 40%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
 </colgroup>
 <thead>
 <tr>
 <th class="tableblock halign-left valign-top">API</th>
-<th class="tableblock halign-left valign-top">Implementation</th>
-<th class="tableblock halign-left valign-top">Notes</th>
+<th class="tableblock halign-left valign-top">Event class defined by</th>
+<th class="tableblock halign-left valign-top">Published when</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><a href="#AbstractDomainEvent"><code>o.a.i.applib.</code><br>
-<code>AbstractDomainEvent</code></a></p>
+<p><a href="../applib/index/events/domain/AbstractDomainEvent.html" class="page">AbstractDomainEvent</a></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(abstract class)</p>
+<p>n/a</p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Superclass of the other domain events, listed below in this table.</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><a href="#ActionDomainEvent"><code>o.a.i.applib.</code><br>
-<code>ActionDomainEvent</code></a></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(abstract class).<br>
-<code>ActionDomainEvent.Default</code> is the concrete implementation used if no <code>@Action#domainEvent</code> attribute is specified</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Broadcast whenever there is an interaction (hide/disable/validate/pre-execute/post-execute) with an object&#8217;s action.</p>
+<p>n/a - superclass of the other domain events.</p>
 </div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><a href="#CollectionDomainEvent"><code>o.a.i.applib.</code><br>
-<code>CollectionDomainEvent</code></a></p>
+<p><a href="../applib/index/events/domain/ActionDomainEvent.html" class="page">ActionDomainEvent</a></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(abstract class).<br>
-<code>CollectionDomainEvent.Default</code> is the concrete implementation used if no <code>@Collection#domainEvent</code> attribute
-is specified.</p>
+<p><a href="../applib/index/annotation/Action.html#domainEvent" class="page">@Action#domainEvent()</a></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Broadcast whenever there is an interaction (hide/disable/validate/access) with an object&#8217;s collection.</p>
+<p>interact with (hide, disable, validate, pre-execute, post-execute) an object&#8217;s action.</p>
 </div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><a href="#PropertyDomainEvent"><code>o.a.i.applib.</code><br>
-<code>PropertyDomainEvent</code></a></p>
+<p><a href="../applib/index/events/domain/CollectionDomainEvent.html" class="page">CollectionDomainEvent</a></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(abstract class).<br>
-<code>PropertyDomainEvent.Default</code> is the concrete implementation used if no <code>@Propert#domainEvent</code> attribute is specified</p>
+<p><a href="../applib/index/annotation/Collection.html#domainEvent" class="page">@Collection#domainEvent()</a></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Broadcast whenever there is an interaction (hide/disable/validate/access) with an object&#8217;s property.</p>
+<p>hide an object&#8217;s collection.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="../applib/index/events/domain/PropertyDomainEvent.html" class="page">PropertyDomainEvent</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="../applib/index/annotation/Property.html#domainEvent" class="page">@Property#domainEvent()</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>interact with (hide, disable, validate, pre-edit, post-edit) an object&#8217;s property.</p>
 </div></div></td>
 </tr>
 </tbody>
 </table>
-<div class="sect2">
-<h3 id="AbstractDomainEvent"><a class="anchor" href="#AbstractDomainEvent"></a><code>AbstractDomainEvent</code></h3>
-<div class="paragraph">
-<p>This class is the superclass for all domain events that are raised by the framework when interacting with actions, properties or collections.</p>
-</div>
-<div class="paragraph">
-<p>Its immediate subclasses are:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="#ActionDomainEvent">ActionDomainEvent</a></p>
-</li>
-<li>
-<p><a href="#PropertyDomainEvent">PropertyDomainEvent</a></p>
-</li>
-<li>
-<p><a href="#CollectionDomainEvent">CollectionDomainEvent</a></p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>The main purpose of the class is to define the protocol by which subscribers can influence an interaction (eg hide a collection, disable a property, validate action arguments).
-It class also provides a simple mechanism to allow adhoc sharing of user data between different phases.</p>
-</div>
-<div class="sect3">
-<h4 id="api"><a class="anchor" href="#api"></a>API</h4>
-<div class="paragraph">
-<p>The API of the class is:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public abstract class AbstractDomainEvent&lt;S&gt; extends java.util.EventObject {
-
-    public S getSource();                                           <i class="conum" data-value="1"></i><b>(1)</b>
-    public Object getMixedIn();                                     <i class="conum" data-value="2"></i><b>(2)</b>
-    public Object getSubject();                                     <i class="conum" data-value="3"></i><b>(3)</b>
-
-    public Identifier getIdentifier();                              <i class="conum" data-value="4"></i><b>(4)</b>
-
-    public Phase getEventPhase();                                   <i class="conum" data-value="5"></i><b>(5)</b>
-
-    public void hide();                                             <i class="conum" data-value="6"></i><b>(6)</b>
-    public boolean isHidden();                                      <i class="conum" data-value="7"></i><b>(7)</b>
-
-    public void disable(final String reason);                       <i class="conum" data-value="8"></i><b>(8)</b>
-    public void disable(final TranslatableString reason);
-    public String getDisabledReason();                              <i class="conum" data-value="9"></i><b>(9)</b>
-    public TranslatableString getDisabledReasonTranslatable();
-    public boolean isDisabled();
-
-    public void invalidate(final String reason);                    <i class="conum" data-value="10"></i><b>(10)</b>
-    public void invalidate(final TranslatableString reason);
-    public String getInvalidityReason();                            <i class="conum" data-value="11"></i><b>(11)</b>
-    public TranslatableString getInvalidityReasonTranslatable();
-    public boolean isInvalid();
-
-    public void veto(final String reason, final Object... args);    <i class="conum" data-value="12"></i><b>(12)</b>
-    public void veto(final TranslatableString translatableReason);
-
-    public Object get(Object key);                                  <i class="conum" data-value="13"></i><b>(13)</b>
-    public void put(Object key, Object value);
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The domain object raising this event.
-<div class="paragraph">
-<p>For a "regular" action, property or collection then this will be the target domain object.
-But for a "mixin" action, this will be an instance of the mixin itself.</p>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>For a "mixin", this will be the target object that is being contributed to.
-<div class="paragraph">
-<p>For a "regular" action, this will return <code>null</code>.</p>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Returns the domain object being interacted with, irrespective of whether this is a "regular" action/property/collection or a "mixin".
-<div class="ulist">
-<ul>
-<li>
-<p>For a regular member, this will return the same as <code>getSource()</code>.</p>
-</li>
-<li>
-<p>For a mixin, this will return the same as <code>getMixedIn()</code>.</p>
-</li>
-</ul>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>Identifier of the action, property or collection being interacted with.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>Whether the framework is checking visibility, enablement, validity or actually executing (invoking action, editing property), as per the <code>Phase</code> enum (defined below).</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
-<td>API for subscribers to hide the member</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="7"></i><b>7</b></td>
-<td>Used by the framework to determine if the member should be hidden (not rendered)</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="8"></i><b>8</b></td>
-<td>API for subscribers to disable the member, specifying the reason why (possibly translated)</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="9"></i><b>9</b></td>
-<td>Used by the framework to determine whether the member should be disabled (greyed out) when rendered.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="10"></i><b>10</b></td>
-<td>API for subscribers to invalidate an interaction, eg invalid arguments to an action</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="11"></i><b>11</b></td>
-<td>Used by the framework to determine whether the interaction is invalid and should be blocked (eg pressing OK shows message)</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="12"></i><b>12</b></td>
-<td>Convenience API for subscribers to veto; will automatically call either <code>hide()</code>, <code>disable(&#8230;&#8203;)</code> or <code>invalidate(&#8230;&#8203;)</code> based on the phase</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="13"></i><b>13</b></td>
-<td>Mechanism to allow subscribers to share arbitrary information between phases.
-One event instance is used for both the hide and disable phases, and a different event instance is shared between validate/pre-execute/post-execute.</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>The referenced <code>Phase</code> enum is in turn:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public enum Phase {
-    HIDE,
-    DISABLE,
-    VALIDATE,
-    EXECUTING,
-    EXECUTED;
-    public boolean isValidatingOrLater();    <i class="conum" data-value="1"></i><b>(1)</b>
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The significance being that at this point the proposed values/arguments are known, and so the event can be fully populated.</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="ActionDomainEvent"><a class="anchor" href="#ActionDomainEvent"></a><code>ActionDomainEvent</code></h3>
-<div class="paragraph">
-<p>Subclass of <a href="#AbstractDomainEvent">AbstractDomainEvent</a> for actions.</p>
-</div>
-<div class="paragraph">
-<p>The class has a number of responsibilities (in addition to those it inherits):</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>capture the target object being interacted with</p>
-</li>
-<li>
-<p>capture the arguments for each of the action&#8217;s parameters</p>
-</li>
-<li>
-<p>provide selected metadata about the action parameters from the metamodel (names, types)</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>The class itself is instantiated automatically by the framework whenever interacting with a rendered object&#8217;s action.</p>
-</div>
-<div class="sect3">
-<h4 id="api-2"><a class="anchor" href="#api-2"></a>API</h4>
-<div class="paragraph">
-<p>The API of the class is:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public abstract class ActionDomainEvent&lt;S&gt; extends AbstractDomainEvent&lt;S&gt; {
-
-    public static class Default extends ActionDomainEvent&lt;Object&gt; { }   <i class="conum" data-value="1"></i><b>(1)</b>
-    public static class Noop extends ActionDomainEvent&lt;Object&gt; { }      <i class="conum" data-value="2"></i><b>(2)</b>
-    public static class Doop extends ActionDomainEvent&lt;Object&gt; { }      <i class="conum" data-value="3"></i><b>(3)</b>
-
-    public SemanticsOf getSemantics();
-
-    public List&lt;String&gt; getParameterNames();
-    public List&lt;Class&lt;?&gt;&gt; getParameterTypes();
-
-    public List&lt;Object&gt; getArguments();                                 <i class="conum" data-value="4"></i><b>(4)</b>
-    public Object getReturnValue();                                     <i class="conum" data-value="5"></i><b>(5)</b>
-    public void setReturnValue();                                       <i class="conum" data-value="6"></i><b>(6)</b>
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The <code>Default</code> nested static class is the default for the <a href="../applib/index/annotation/Action.html#domainEvent" class="page">@Action#domainEvent()</a>
-annotation attribute.
-Whether this raises an event or not depends upon the <code>isis.reflector.facet.actionAnnotation.domainEvent.postForDefault</code> configuration property.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>The <code>Noop</code> class is provided as a convenience to indicate that an event should <em>not</em> be posted (irrespective of the configuration property setting).</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Similarly, the <code>Doop</code> class is provided as a convenience to indicate that an event <em>should</em> be raised (irrespective of the configuration property setting).</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>The arguments being used to invoke the action; populated during validate phase and subsequent phases.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>The value returned by the action; populated only in the executed phase.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
-<td>Allows the subscriber to effectively change the value returned by the action; may only be called in the executed phase.</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="CollectionDomainEvent"><a class="anchor" href="#CollectionDomainEvent"></a><code>CollectionDomainEvent</code></h3>
-<div class="paragraph">
-<p>Subclass of <a href="#AbstractDomainEvent">AbstractDomainEvent</a> for collections.</p>
-</div>
-<div class="paragraph">
-<p>The class has a couple of responsibilities (in addition to those it inherits):</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>capture the target object being interacted with</p>
-</li>
-<li>
-<p>indicate whether the interaction is to add or remove an object from the collection (or simply to indicate that the collection is being accessed/read)</p>
-</li>
-<li>
-<p>capture the object reference being added or removed</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>The class itself is instantiated automatically by the framework whenever interacting with a rendered object&#8217;s collection.</p>
-</div>
-<div class="sect3">
-<h4 id="api-3"><a class="anchor" href="#api-3"></a>API</h4>
-<div class="paragraph">
-<p>The API of the class is:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public abstract class CollectionDomainEvent&lt;S,T&gt; extends AbstractDomainEvent&lt;S&gt; {
-
-    public static class Default                                 <i class="conum" data-value="1"></i><b>(1)</b>
-        extends CollectionDomainEvent&lt;Object, Object&gt; { }
-    public static class Noop                                    <i class="conum" data-value="2"></i><b>(2)</b>
-        extends CollectionDomainEvent&lt;Object, Object&gt; { }
-    public static class Doop                                    <i class="conum" data-value="3"></i><b>(3)</b>
-        extends CollectionDomainEvent&lt;Object, Object&gt; { }
-
-    public T getValue();                                        <i class="conum" data-value="4"></i><b>(4)</b>
-    public Of getOf();                                          <i class="conum" data-value="5"></i><b>(5)</b>
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The <code>Default</code> nested static class is the default for the <a href="../applib/index/annotation/Collection.html#domainEvent" class="page">@Collection#domainEvent()</a> annotation attribute.
-Whether this raises an event or not depends upon the
-<code>isis.reflector.facet.collectionAnnotation.domainEvent.postForDefault</code> configuration property.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>The <code>Noop</code> class is provided as a convenience to indicate that an event should <em>not</em> be posted (irrespective of the configuration property setting).</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Similarly, the <code>Doop</code> class is provided as a convenience to indicate that an event <em>should</em> be raised (irrespective of the configuration property setting).</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>the object being added or removed</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>whether this is to add or to remove</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>where the <code>Of</code> enum indicates in turn how the collection is being interacted with:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public static enum Of {
-    ACCESS,         <i class="conum" data-value="1"></i><b>(1)</b>
-    ADD_TO,         <i class="conum" data-value="2"></i><b>(2)</b>
-    REMOVE_FROM     <i class="conum" data-value="3"></i><b>(3)</b>
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>collection is being rendered; set during for hide and disable phases</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>collection is being added to; set for validate, executing and executed phases</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>or, collection is being removed from; set for validate, executing and executed phases</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="PropertyDomainEvent"><a class="anchor" href="#PropertyDomainEvent"></a><code>PropertyDomainEvent</code></h3>
-<div class="paragraph">
-<p>Subclass of <a href="#AbstractDomainEvent">AbstractDomainEvent</a> for properties.</p>
-</div>
-<div class="paragraph">
-<p>The class has a couple of responsibilities (in addition to those it inherits):</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>capture the target object being interacted with</p>
-</li>
-<li>
-<p>capture the old and new values of the property</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>The class itself is instantiated automatically by the framework whenever interacting with a rendered object&#8217;s property.</p>
-</div>
-<div class="sect3">
-<h4 id="api-4"><a class="anchor" href="#api-4"></a>API</h4>
-<div class="paragraph">
-<p>The API of the class is:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public abstract class PropertyDomainEvent&lt;S,T&gt; extends AbstractDomainEvent&lt;S&gt; {
-
-    public static class Default                                 <i class="conum" data-value="1"></i><b>(1)</b>
-        extends PropertyDomainEvent&lt;Object, Object&gt; { }
-    public static class Noop                                    <i class="conum" data-value="2"></i><b>(2)</b>
-        extends PropertyDomainEvent&lt;Object, Object&gt; { }
-    public static class Doop                                    <i class="conum" data-value="3"></i><b>(3)</b>
-        extends PropertyDomainEvent&lt;Object, Object&gt; { }
-
-    public T getOldValue();                                     <i class="conum" data-value="4"></i><b>(4)</b>
-    public T getNewValue();                                     <i class="conum" data-value="5"></i><b>(5)</b>
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The <code>Default</code> nested static class is the default for the <a href="../applib/index/annotation/Property.html#domainEvent" class="page">@Property#domainEvent()</a> annotation attribute.
-Whether this raises an event or not depends upon the
-<code>isis.reflector.facet.propertyAnnotation.domainEvent.postForDefault</code> configuration property.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>The <code>Noop</code> class is provided as a convenience to indicate that an event should <em>not</em> be posted (irrespective of the configuration property setting).</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Similarly, the <code>Doop</code> class is provided as a convenience to indicate that an event <em>should</em> be raised (irrespective of the configuration property setting).</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>The pre-modification value of the property; populated at validate and subsequent phases.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>The proposed (post-modification) value of the property; populated at validate and subsequent phases</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="ui-event-classes"><a class="anchor" href="#ui-event-classes"></a>UI Event Classes</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>This section catalogues the various UI event classes defined by Apache Isis.</p>
+<p>UI events are broadcast on the <a href="../applib/index/services/eventbus/EventBusService.html" class="page">EventBusService</a> as the result of rendering a domain object.</p>
 </div>
 <div class="paragraph">
-<p>These events are broadcast on the <a href="../applib/index/services/eventbus/EventBusService.html" class="page">EventBusService</a>.  The domain
-events are broadcast as a result of being specified in the <a href="../applib/index/annotation/DomainObjectLayout.html#titleUiEvent" class="page">@DomainObjectLayout#titleUiEvent()</a>,  <a href="../applib/index/annotation/DomainObjectLayout.html#iconUiEvent" class="page">@DomainObjectLayout#iconUiEvent()</a> or <a href="../applib/index/annotation/DomainObjectLayout.html#cssClassUiEvent" class="page">@DomainObjectLayout#cssClassUiEvent()</a> attributes.</p>
+<p>They allow subscribers to change various presentation aspects of the rendered object.</p>
 </div>
 <div class="paragraph">
-<p>They are listed in the table below.</p>
+<p>Note that if the domain object defines its own layout preferences (for example, a <a href="../applib-methods/reserved.html#title" class="page">title()</a> supporting method) then these will take precedence.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <caption class="title">Table 2. UI Event Classes</caption>
 <colgroup>
-<col style="width: 20%;">
-<col style="width: 40%;">
-<col style="width: 40%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
 </colgroup>
 <thead>
 <tr>
 <th class="tableblock halign-left valign-top">API</th>
-<th class="tableblock halign-left valign-top">Implementation</th>
-<th class="tableblock halign-left valign-top">Notes</th>
+<th class="tableblock halign-left valign-top">Event class defined by</th>
+<th class="tableblock halign-left valign-top">Raised when</th>
+<th class="tableblock halign-left valign-top">Overridden by</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><a href="#TitleUiEvent"><code>o.a.i.applib.</code><br>
-<code>TitleUiEvent</code></a></p>
+<p><a href="../applib/index/events/ui/TitleUiEvent.html" class="page">TitleUiEvent</a></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(abstract class).<br>
-<code>TitleUiEvent.Default</code> is the concrete implementation used if no <code>@DomainObjectLayout#titleUiEvent</code> attribute is specified</p>
+<p><a href="../applib/index/annotation/DomainObjectLayout.html#titleUiEvent" class="page">@DomainObjectLayout#titleUiEvent()</a></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Broadcast whenever there is a requirement to obtain a title for a domain object.
-Note that if the domain object defines its own <a href="../applib-methods/reserved.html#title" class="page">title()</a> supporting method, or has <a href="../applib/index/annotation/Title.html" class="page">@Title</a> annotation(s) on its properties, then these will take precedence.</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><a href="#IconUiEvent"><code>o.a.i.applib.</code><br>
-<code>IconUiEvent</code></a></p>
+<p>... rendering the title for a domain object.</p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(abstract class).<br>
-<code>IconUiEvent.Default</code> is the concrete implementation used if no <code>@DomainObjectLayout#iconUiEvent</code> attribute is specified</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Broadcast whenever there is a requirement to obtain an icon (or rather, the name of an icon) for a domain object.
-Note that if the domain object defines its own <a href="../applib-methods/reserved.html#iconName" class="page">iconName()</a> supporting method, or if it has the <a href="../applib/index/annotation/DomainObjectLayout.html#cssClassFa" class="page">@DomainObjectLayout#cssClassFa()</a> attribute, then these will take precedence.</p>
+<p><a href="../applib-methods/reserved.html#title" class="page">title()</a><br>
+<a href="../applib/index/annotation/Title.html" class="page">@Title</a></p>
 </div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><a href="#CssClassUiEvent"><code>o.a.i.applib.</code><br>
-<code>CssClassUiEvent</code></a></p>
+<p><a href="../applib/index/events/ui/IconUiEvent.html" class="page">IconUiEvent</a></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(abstract class).<br>
-<code>CssClassUiEvent.Default</code> is the concrete implementation used if no <code>@DomainObjectLayout#cssClassUiEvent</code> attribute is specified</p>
+<p><a href="../applib/index/annotation/DomainObjectLayout.html#iconUiEvent" class="page">@DomainObjectLayout#iconUiEvent()</a></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Broadcast whenever there is a requirement to obtain a CSS class hint for a domain object.
-Note that if the domain object defines its own <a href="../applib-methods/reserved.html#cssClass" class="page">cssClass()</a> supporting method then this
-will take precedence.</p>
+<p>... rendering an icon for a domain object.</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="../applib-methods/reserved.html#iconName" class="page">iconName()</a></p>
 </div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><a href="#LayoutUiEvent"><code>o.a.i.applib.</code><br>
-<code>LayoutUiEvent</code></a></p>
+<p><a href="../applib/index/events/ui/CssClassUiEvent.html" class="page">CssClassUiEvent</a></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(abstract class).<br>
-<code>LayoutUiEvent.Default</code> is the concrete implementation used if no <code>@DomainObjectLayout#layoutUiEvent</code> attribute is specified</p>
+<p><a href="../applib/index/annotation/DomainObjectLayout.html#cssClassUiEvent" class="page">@DomainObjectLayout#cssClassUiEvent()</a></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Broadcast whenever there is a requirement to obtain an alternative layout for a domain object.
-Note that if the domain object defines its own <a href="../applib-methods/reserved.html#layout" class="page">layout()</a> supporting method then this
-will take precedence.</p>
+<p>... obtaining a CSS class hint for a domain object.</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="../applib-methods/reserved.html#cssClass" class="page">cssClass()</a></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="../applib/index/events/ui/LayoutUiEvent.html" class="page">LayoutUiEvent</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="../applib/index/annotation/DomainObjectLayout.html#layoutUiEvent" class="page">@DomainObjectLayout#layoutUiEvent()</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>... obtain an alternative layout for a domain object.</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="../applib-methods/reserved.html#layout" class="page">layout()</a></p>
 </div></div></td>
 </tr>
 </tbody>
 </table>
-<div class="sect2">
-<h3 id="TitleUiEvent"><a class="anchor" href="#TitleUiEvent"></a><code>TitleUiEvent</code></h3>
-<div class="paragraph">
-<p>This event class represents a request to obtain the title of a domain object.
-The class has a number of responsibilities:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>capture the target object being interacted with</p>
-</li>
-<li>
-<p>capture the title, if any, as specified to one of the subscribers</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>The class itself is instantiated automatically by the framework whenever interacting with a rendered object&#8217;s action.</p>
-</div>
-<div class="paragraph">
-<p>If the domain object defines its own <a href="../applib-methods/reserved.html#title" class="page">title()</a> supporting method, or has <a href="../applib/index/annotation/Title.html" class="page">@Title</a> annotation(s) on its properties, then these will take precedence.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="IconUiEvent"><a class="anchor" href="#IconUiEvent"></a><code>IconUiEvent</code></h3>
-<div class="paragraph">
-<p>This event class represents a request to obtain the icon (or rather, name of icon) of a domain object.
-The class has a number of responsibilities:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>capture the target object being interacted with</p>
-</li>
-<li>
-<p>capture the icon (name), if any, as specified to one of the subscribers</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>The class itself is instantiated automatically by the framework whenever interacting with a rendered object&#8217;s action.</p>
-</div>
-<div class="paragraph">
-<p>If the domain object defines its own <a href="../applib-methods/reserved.html#iconName" class="page">iconName()</a> supporting method, or if it has the
-<a href="../applib/index/annotation/DomainObjectLayout.html#cssClassFa" class="page">@DomainObjectLayout#cssClassFa()</a> attribute, then these will take precedence.
-r</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="CssClassUiEvent"><a class="anchor" href="#CssClassUiEvent"></a><code>CssClassUiEvent</code></h3>
-<div class="paragraph">
-<p>This event class represents a request to obtain the a CSS class hint of a domain object.
-The class has a number of responsibilities:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>capture the target object being interacted with</p>
-</li>
-<li>
-<p>capture the CSS class, if any, as specified to one of the subscribers</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>The class itself is instantiated automatically by the framework whenever interacting with a rendered object&#8217;s action.</p>
-</div>
-<div class="paragraph">
-<p>If the domain object defines its own <a href="../applib-methods/reserved.html#cssClass" class="page">cssClass()</a> supporting method then this will take precedence.</p>
-</div>
-</div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="lifecycle-events"><a class="anchor" href="#lifecycle-events"></a>Lifecycle Events</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>This section catalogues the various lifecycle event classes defined by Apache Isis.
-These events are fired automatically when a domain object is loaded, created, updated and so forth.</p>
+<p>Lifecycle events are broadcast through the <a href="../applib/index/services/eventbus/EventBusService.html" class="page">EventBusService</a> when a domain entity is loaded, created, updated to/from the database.</p>
 </div>
 <div class="paragraph">
-<p>The lifecycle event classes are listed in the table below:</p>
+<p>They allow subscribers to trigger other operations as a result of these persistence operations.
+One use case is to maintain an alternate data store.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <caption class="title">Table 3. Lifecycle Event Classes</caption>
 <colgroup>
-<col style="width: 20%;">
-<col style="width: 40%;">
-<col style="width: 40%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
 </colgroup>
 <thead>
 <tr>
 <th class="tableblock halign-left valign-top">API</th>
-<th class="tableblock halign-left valign-top">Implementation</th>
-<th class="tableblock halign-left valign-top">Notes</th>
+<th class="tableblock halign-left valign-top">Event class defined by</th>
+<th class="tableblock halign-left valign-top">Raised when</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><a href="#AbstractLifecycleEvent"><code>o.a.i.applib.</code><br>
-<code>AbstractLifecycleEvent</code></a></p>
+<p><a href="../applib/index/events/lifecycle/AbstractLifecycleEvent.html" class="page">AbstractLifecycleEvent</a></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(abstract class)</p>
+<p>n/a</p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Superclass of the other lifecycle events, listed below in this table.</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><a href="#ObjectCreatedEvent"><code>o.a.i.applib.</code><br>
-<code>ObjectCreatedEvent</code></a></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(abstract class).<br>
-<code>ObjectCreatedEvent.Default</code> is the concrete implementation that is used.</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Broadcast when an object is first instantiated using the <a href="../applib/index/services/factory/FactoryService.html" class="page">FactoryService</a>'s
-<code>#instantiate(&#8230;&#8203;)</code> method.</p>
+<p>n/a - superclass of the other lifecycle events.</p>
 </div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><a href="#ObjectLoadedEvent"><code>o.a.i.applib.</code><br>
-<code>ObjectLoadedEvent</code></a></p>
+<p><a href="../applib/index/events/lifecycle/ObjectCreatedEvent.html" class="page">ObjectCreatedEvent</a></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(abstract class).<br>
-<code>ObjectLoadedEvent.Default</code> is the concrete implementation that is used.</p>
+<p><a href="../applib/index/annotation/DomainObject.html#createdLifecycleEvent" class="page">DomainObject<br>
+#createdLifecycleEvent()</a></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Broadcast when an object is retrieved from the database.</p>
+<p>entity is first instantiated using  <a href="../applib/index/services/factory/FactoryService.html" class="page">FactoryService</a><br></p>
+</div>
+<div class="paragraph">
+<p>Also raised for view models.</p>
 </div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><a href="#ObjectPersistedEvent"><code>o.a.i.applib.</code><br>
-<code>ObjectPersistedEvent</code></a></p>
+<p><a href="../applib/index/events/lifecycle/ObjectLoadedEvent.html" class="page">ObjectLoadedEvent</a></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(abstract class).<br>
-<code>ObjectPersistedEvent.Default</code> is the concrete implementation that is used.</p>
+<p><a href="../applib/index/annotation/DomainObject.html#loadedLifecycleEvent" class="page">DomainObject<br>
+#loadedLifecycleEvent()</a></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Broadcast when an object is first saved (inserted) into the database using the <a href="../applib/index/services/repository/RepositoryService.html" class="page">RepositoryService</a>'s
+<p>entity is retrieved from the database.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="../applib/index/events/lifecycle/ObjectPersistedEvent.html" class="page">ObjectPersistedEvent</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="../applib/index/annotation/DomainObject.html#persistedLifecycleEvent" class="page">DomainObject<br>
+#persistedLifecycleEvent()</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>entity is first saved (inserted) into the database using the <a href="../applib/index/services/repository/RepositoryService.html" class="page">RepositoryService</a>'s
 <code>#persist(&#8230;&#8203;)</code> method.</p>
 </div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><a href="#ObjectPersistingEvent"><code>o.a.i.applib.</code><br>
-<code>ObjectPersistingEvent</code></a></p>
+<p><a href="../applib/index/events/lifecycle/ObjectPersistingEvent.html" class="page">ObjectPersistingEvent</a></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(abstract class).<br>
-<code>ObjectPersistingEvent.Default</code> is the concrete implementation that is used.</p>
+<p><a href="../applib/index/annotation/DomainObject.html#persistingLifecycleEvent" class="page">DomainObject<br>
+#persistingLifecycleEvent()</a></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Broadcast when an object is about to be saved (inserted) into the database using the <a href="../applib/index/services/repository/RepositoryService.html" class="page">RepositoryService</a>'s
+<p>entity is about to be saved (inserted) into the database using the <a href="../applib/index/services/repository/RepositoryService.html" class="page">RepositoryService</a>'s
 <code>#persist(&#8230;&#8203;)</code> method.</p>
 </div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><a href="#ObjectRemovingEvent"><code>o.a.i.applib.</code><br>
-<code>ObjectRemovingEvent</code></a></p>
+<p><a href="../applib/index/events/lifecycle/ObjectRemovingEvent.html" class="page">ObjectRemovingEvent</a></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(abstract class).<br>
-<code>ObjectRemovingEvent.Default</code> is the concrete implementation that is used.</p>
+<p><a href="../applib/index/annotation/DomainObject.html#removingLifecycleEvent" class="page">DomainObject<br>
+#removingLifecycleEvent()</a></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Broadcast when an object is about to be deleted from the database using the <a href="../applib/index/services/repository/RepositoryService.html" class="page">RepositoryService</a>'s
+<p>entity is about to be deleted from the database using the <a href="../applib/index/services/repository/RepositoryService.html" class="page">RepositoryService</a>'s
 <code>#remove(&#8230;&#8203;)</code> method.</p>
 </div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><a href="#ObjectUpdatedEvent"><code>o.a.i.applib.</code><br>
-<code>ObjectUpdatedEvent</code></a></p>
+<p><a href="../applib/index/events/lifecycle/ObjectUpdatedEvent.html" class="page">ObjectUpdatedEvent</a></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(abstract class).<br>
-<code>ObjectUpdatedEvent.Default</code> is the concrete implementation that is used.</p>
+<p><a href="../applib/index/annotation/DomainObject.html#updatingLifecycleEvent" class="page">DomainObject<br>
+#updatingLifecycleEvent()</a></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Broadcast when an object has just been updated in the database.
-This is done either explicitly when the current transaction is flushed using the <a href="../applib/index/services/repository/RepositoryService.html" class="page">RepositoryService</a>'s <code>#flush(&#8230;&#8203;)</code> method, else is done implicitly when the transaction commits at the end of the user request.</p>
+<p>entity has just been updated in the database.</p>
 </div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><a href="#ObjectUpdatingEvent"><code>o.a.i.applib.</code><br>
-<code>ObjectUpdatingEvent</code></a></p>
+<p><a href="../applib/index/events/lifecycle/ObjectUpdatingEvent.html" class="page">ObjectUpdatingEvent</a></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><code>o.a.i.core</code><br>
-<code>events.lifecycle</code><br>
-<code>isis-applib</code></p>
+<p><a href="../applib/index/annotation/DomainObject.html#updatedLifecycleEvent" class="page">DomainObject<br>
+#updatedLifecycleEvent()</a></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>(abstract class).<br>
-<code>ObjectUpdatingEvent.Default</code> is the concrete implementation that is used.</p>
+<p>entity is about to be updated in the database.</p>
 </div></div></td>
 </tr>
 </tbody>
 </table>
-<div class="sect2">
-<h3 id="AbstractLifecycleEvent"><a class="anchor" href="#AbstractLifecycleEvent"></a><code>AbstractLifecycleEvent</code></h3>
-<div class="paragraph">
-<p>This class is the superclass for all lifecycle events that are raised by the framework when loading, saving, updating or deleting objects from the database.</p>
-</div>
-<div class="paragraph">
-<p>Its immediate subclasses are:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="#ObjectCreatedEvent">ObjectCreatedEvent</a></p>
-</li>
-<li>
-<p><a href="#ObjectLoadedEvent">ObjectLoadedEvent</a></p>
-</li>
-<li>
-<p><a href="#ObjectPersistedEvent">ObjectPersistedEvent</a></p>
-</li>
-<li>
-<p><a href="#ObjectPersistingEvent">ObjectPersistingEvent</a></p>
-</li>
-<li>
-<p><a href="#ObjectRemovingEvent">ObjectRemovingEvent</a></p>
-</li>
-<li>
-<p><a href="#ObjectUpdatedEvent">ObjectUpdatedEvent</a></p>
-</li>
-<li>
-<p><a href="#ObjectUpdatingEvent">ObjectUpdatingEvent</a></p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect2">
-<h3 id="ObjectCreatedEvent"><a class="anchor" href="#ObjectCreatedEvent"></a><code>ObjectCreatedEvent</code></h3>
-<div class="paragraph">
-<p>Subclass of <a href="#AbstractLifecycleEvent">AbstractLifecycleEvent</a>, broadcast when an object is first instantiated using the <a href="../applib/index/services/factory/FactoryService.html" class="page">FactoryServuce</a>'s <code>#instantiate(&#8230;&#8203;)</code> method.</p>
-</div>
-<div class="paragraph">
-<p><code>ObjectCreatedEvent.Default</code> is the implementation that is used by default, but this can be overridden using <a href="../applib/index/annotation/DomainObject.html#createdLifecycleEvent" class="page">@DomainObject#createdLifecycleEvent</a>.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="ObjectLoadedEvent"><a class="anchor" href="#ObjectLoadedEvent"></a><code>ObjectLoadedEvent</code></h3>
-<div class="paragraph">
-<p>Subclass of <a href="#AbstractLifecycleEvent">AbstractLifecycleEvent</a>, broadcast when an object is retrieved from the database.</p>
-</div>
-<div class="paragraph">
-<p><code>ObjectLoadedEvent.Default</code> is the concrete implementation that is used.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="ObjectPersistedEvent"><a class="anchor" href="#ObjectPersistedEvent"></a><code>ObjectPersistedEvent</code></h3>
-<div class="paragraph">
-<p>Subclass of <a href="#AbstractLifecycleEvent">AbstractLifecycleEvent</a>, broadcast when an object is first saved (inserted) into the database using the <a href="../applib/index/services/repository/RepositoryService.html" class="page">RepositoryService</a>'s <code>#persist(&#8230;&#8203;)</code> method.</p>
-</div>
-<div class="paragraph">
-<p><code>ObjectPersistedEvent.Default</code> is the implementation that is used by default, but this can be overridden using <a href="../applib/index/annotation/DomainObject.html#persistedLifecycleEvent" class="page">@DomainObject#persistedLifecycleEvent</a>.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="ObjectPersistingEvent"><a class="anchor" href="#ObjectPersistingEvent"></a><code>ObjectPersistingEvent</code></h3>
-<div class="paragraph">
-<p>Subclass of <a href="#AbstractLifecycleEvent">AbstractLifecycleEvent</a>, broadcast when an object is about to be saved (inserted) into the database using the <a href="../applib/index/services/repository/RepositoryService.html" class="page">RepositoryService</a>'s <code>#persist(&#8230;&#8203;)</code> method.</p>
-</div>
-<div class="paragraph">
-<p><code>ObjectPersistingEvent.Default</code> is the implementation that is used by default, but this can be overridden using <a href="../applib/index/annotation/DomainObject.html#persistingLifecycleEvent" class="page">@DomainObject#persistingLifecycleEvent</a>.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="ObjectRemovingEvent"><a class="anchor" href="#ObjectRemovingEvent"></a><code>ObjectRemovingEvent</code></h3>
-<div class="paragraph">
-<p>Subclass of <a href="#AbstractLifecycleEvent">AbstractLifecycleEvent</a>, broadcast when an object is about to be deleted from the database using the <a href="../applib/index/services/repository/RepositoryService.html" class="page">RepositoryService</a>'s <code>#remove(&#8230;&#8203;)</code> method.</p>
-</div>
-<div class="paragraph">
-<p><code>ObjectRemovingEvent.Default</code> is the implementation that is used by default, but this can be overridden using <a href="../applib/index/annotation/DomainObject.html#removingLifecycleEvent" class="page">@DomainObject#removingLifecycleEvent</a>.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="ObjectUpdatedEvent"><a class="anchor" href="#ObjectUpdatedEvent"></a><code>ObjectUpdatedEvent</code></h3>
-<div class="paragraph">
-<p>Subclass of <a href="#AbstractLifecycleEvent">AbstractLifecycleEvent</a>, broadcast when an object has just been updated in the database.
-This is done either explicitly when the current transaction is flushed using the <a href="../applib/index/services/repository/RepositoryService.html" class="page">RepositoryService</a>'s <code>#flush(&#8230;&#8203;)</code> method, else is done implicitly when the transaction commits at the end of the user request.</p>
-</div>
-<div class="paragraph">
-<p><code>ObjectUpdatedEvent.Default</code> is the implementation that is used by default, but this can be overridden using <a href="../applib/index/annotation/DomainObject.html#updatedLifecycleEvent" class="page">@DomainObject#updatedLifecycleEvent</a>.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="ObjectUpdatingEvent"><a class="anchor" href="#ObjectUpdatingEvent"></a><code>ObjectUpdatingEvent</code></h3>
-<div class="paragraph">
-<p>Subclass of <a href="#AbstractLifecycleEvent">AbstractLifecycleEvent</a>, broadcast when an object is about to be updated in the database.
-This is done either explicitly when the current transaction is flushed using the <a href="../applib/index/services/repository/RepositoryService.html" class="page">RepositoryService</a>'s <code>#flush(&#8230;&#8203;)</code> method, else is done implicitly when the transaction commits at the end of the user request.</p>
-</div>
-<div class="paragraph">
-<p><code>ObjectUpdatingEvent.Default</code> is the implementation that is used by default, but this can be overridden using <a href="../applib/index/annotation/DomainObject.html#updatingLifecycleEvent" class="page">@DomainObject#updatingLifecycleEvent</a>.</p>
-</div>
-</div>
 </div>
 </div>
 </article>
@@ -1684,7 +1075,7 @@ This is done either explicitly when the current transaction is flushed using the
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210305-0425-7000946e</p>
+            <p>Revision: 2.0.0-M4.20210306-0425-98495fab</p>
         </div>
     </div>
 </footer>
