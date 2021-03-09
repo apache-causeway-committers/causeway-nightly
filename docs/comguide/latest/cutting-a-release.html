@@ -522,7 +522,10 @@ Without appropriate additional configuration, this would result in the generated
 This is stored in the <code>src/main/appended-resources/supplemental-models.xml</code> file, relative to the root of each releasable module.</p>
 </div>
 <div class="paragraph">
-<p>It&#8217;s first necessary to have built the framework locally at least once:</p>
+<p>It&#8217;s first necessary to have built the framework locally at least once.</p>
+</div>
+<div class="paragraph">
+<p>In the root directory:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -537,18 +540,6 @@ This is stored in the <code>src/main/appended-resources/supplemental-models.xml<
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mvn license:download-licenses
 groovy scripts/checkmissinglicenses.groovy</code></pre>
 </div>
-</div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-this groovy script assumes it is being run from the <code>isis-parent</code> directory.
-</td>
-</tr>
-</table>
 </div>
 <div class="paragraph">
 <p>The Maven plugin creates a <code>license.xml</code> file in the <code>target/generated-resources</code> directory of each module.
@@ -693,14 +684,6 @@ git push origin $ISISBRANCH -u</code></pre>
 </div>
 </div>
 </li>
-<li>
-<p>Finally switch to the <code>isis-parent</code> directory:</p>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd isis-parent</code></pre>
-</div>
-</div>
-</li>
 </ul>
 </div>
 </div>
@@ -709,48 +692,45 @@ git push origin $ISISBRANCH -u</code></pre>
 <div class="paragraph">
 <p>Search through the <code>.java</code> files for <code>2.0.0-M4</code>, and change to <code>2.0.0-M5</code>.</p>
 </div>
+<div class="paragraph">
+<p>At the time of writing there are just a couple of files that have the release hard-coded.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="switch-to-the-isis-parent-directory"><a class="anchor" href="#switch-to-the-isis-parent-directory"></a>Switch to the <code>isis-parent</code> directory</h3>
+<div class="paragraph">
+<p>The remainder of the release process is performed from the context of the <code>isis-parent</code> directory:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd isis-parent</code></pre>
+</div>
+</div>
 </div>
 <div class="sect2">
 <h3 id="bump-projects-to-isisrel"><a class="anchor" href="#bump-projects-to-isisrel"></a>Bump projects to <code>$ISISREL</code></h3>
 <div class="paragraph">
-<p>We use <code>mvn versions:set</code> to manually bump the release version:</p>
+<p>We use <code>mvn versions:set</code> to manually bump the release version.
+(After release, there is a <a href="#reset-revision-property">similar step at the end</a> to reset back to a <code>-SNAPSHOT</code> version).</p>
 </div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mvn versions:set -DnewVersion=$ISISREL
-mvn install -o -DskipTests
-
-pushd ../starters
-mvn versions:set -DnewVersion=$ISISREL
-popd
-
-git add ..
-git commit -m "$ISISJIRA: bumps version to $ISISREL"</code></pre>
-</div>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-After release, there is a <a href="#reset-revision-property">similar step at the end</a> to reset back to <code>2.0.0-SNAPSHOT</code>.
-</td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect2">
-<h3 id="sanity-check"><a class="anchor" href="#sanity-check"></a>Sanity check</h3>
 <div class="paragraph">
-<p>Perform one last sanity check on the codebase.
-Delete all Isis artifacts from your local Maven repo, then build using the <code>-o</code> offline flag:</p>
+<p>(Still in the <code>isis-parent</code> directory), the steps are:</p>
 </div>
+<div class="ulist">
+<ul>
+<li>
+<p>First we bump the framework&#8217;s <code>pom.xml</code> files:</p>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">rm -rf ~/.m2/repository/org/apache/isis
-mvn clean install -o -Dreleased -P'!all'</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mvn versions:set -DnewVersion=$ISISREL</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>next we build the framework so that these versioned <code>pom.xml</code> files are available for the next step:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mvn install -o -DskipTests -Dreleased</code></pre>
 </div>
 </div>
 <div class="admonitionblock note">
@@ -770,6 +750,43 @@ mvn clean install -o -Dreleased -P'!all'</code></pre>
 </tr>
 </table>
 </div>
+</li>
+<li>
+<p>next we also update the starters (as used by applications built using the framework):</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">pushd ../starters
+mvn versions:set -DnewVersion=$ISISREL
+mvn install -DskipTests -o
+popd</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>finally we commit the changes:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git add ..
+git commit -m "$ISISJIRA: bumps version to $ISISREL"</code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="sanity-check"><a class="anchor" href="#sanity-check"></a>Sanity check</h3>
+<div class="paragraph">
+<p>Perform one last sanity check on the codebase.
+Delete all Isis artifacts from your local Maven repo, then build using the <code>-o</code> offline flag:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">rm -rf ~/.m2/repository/org/apache/isis
+mvn clean install -o -Dreleased
+git clean -dfx ..</code></pre>
+</div>
+</div>
 </div>
 <div class="sect2">
 <h3 id="deploy"><a class="anchor" href="#deploy"></a>Deploy</h3>
@@ -778,18 +795,10 @@ mvn clean install -o -Dreleased -P'!all'</code></pre>
 We activate the (inherited) <code>apache-release</code> profile to bring in the <code>gpg</code> plugin for code signing.</p>
 </div>
 <div class="paragraph">
-<p>The build creates a zip of the directory, so before executing the release we remove any other files.
-Still in the <code>isis-parent</code> directory:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">pushd ..
-git clean -dfx
-popd</code></pre>
-</div>
+<p>The build creates a zip of the directory, so before executing the release we remove any other files.</p>
 </div>
 <div class="paragraph">
-<p>To deploy (upload the artifacts), we use:</p>
+<p>Still in the <code>isis-parent</code> directory, we deploy (upload the artifacts) using:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -916,7 +925,7 @@ See <a href="key-generation.html" class="page">Key Generation</a> for more detai
 <div class="sect2">
 <h3 id="reset-revision-property"><a class="anchor" href="#reset-revision-property"></a>Reset <code>revision</code> property</h3>
 <div class="paragraph">
-<p>At the beginning of the release process we bumped the version to the release version, ie <code>$ISISREL</code>.
+<p>At the <a href="#bump-code-to-isisrel">beginning</a> of the release process we bumped the version to the release version, ie <code>$ISISREL</code>.
 With the release now deployed we now need to reset the revision back down to the base snapshot, ie <code>2.0.0-SNAPSHOT</code>.</p>
 </div>
 <div class="admonitionblock note">
@@ -927,8 +936,7 @@ With the release now deployed we now need to reset the revision back down to the
 </td>
 <td class="content">
 <div class="paragraph">
-<p>Previously we bumped to the next development snapshot.
-However, this approach doesn&#8217;t play well with CI/CD when Apache Isis is mounted as a git submodule, so instead we always use <code>2.0.0-SNAPSHOT</code> for all development work.</p>
+<p>Bumping back to <code>2.0.0-SNAPSHOT</code> (rather than the next development snapshot) simplifies CI/CD scripts for teams that want to building Apache Isis from source using git submodules.</p>
 </div>
 </td>
 </tr>
@@ -940,7 +948,7 @@ However, this approach doesn&#8217;t play well with CI/CD when Apache Isis is mo
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mvn versions:set -DnewVersion=2.0.0-SNAPSHOT
-mvn install -DskipTests -o -Dreleased -P'!all'
+mvn install -DskipTests -o -Dreleased
 
 pushd ../starters
 mvn versions:set -DnewVersion=2.0.0-SNAPSHOT
@@ -1294,7 +1302,7 @@ The vote will be open for a minimum of 72 hours.
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210308-0425-0793a862</p>
+            <p>Revision: 2.0.0-M4.20210309-0425-f68b9266</p>
         </div>
     </div>
 </footer>
