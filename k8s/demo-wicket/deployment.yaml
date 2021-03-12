@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: isis-app-demo-wicket
+  name: app-demo-wicket
 spec:
   selector:
     matchLabels:
-      app: isis-app-demo-wicket
+      app: app-demo-wicket
   replicas: 1
   template:
     metadata:
       labels:
-        app: isis-app-demo-wicket
+        app: app-demo-wicket
     spec:
       containers:
         - image: apacheisis/demo-wicket:latest
           imagePullPolicy: Always
-          name: isis-app-demo-wicket
+          name: app-demo-wicket
           env:
             - name: PROTOTYPING
               value: "true"
@@ -25,19 +25,19 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: isis-app-demo-wicket
+  name: app-demo-wicket
 spec:
   ports:
     - port: 80
       targetPort: 8080
       protocol: TCP
   selector:
-    app: isis-app-demo-wicket
+    app: app-demo-wicket
 ---
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: isis-app-demo-wicket
+  name: app-demo-wicket
   annotations:
     kubernetes.io/ingress.class: "nginx"
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
@@ -45,13 +45,13 @@ spec:
   tls:
     - hosts:
         - demo-wicket.isis.incode.work
-      secretName: isis-app-demo-wicket-tls
+      secretName: app-demo-wicket-tls
   rules:
     - host: demo-wicket.isis.incode.work
       http:
         paths:
           - path: /
             backend:
-              serviceName: isis-app-demo-wicket
+              serviceName: app-demo-wicket
               servicePort: 80
 
