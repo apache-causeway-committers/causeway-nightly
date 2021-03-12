@@ -18,9 +18,9 @@ jobs:
       matrix:
         branch:
         - jdo
-        - jpa
-        - jdo-SNAPSHOT
-        - jpa-SNAPSHOT
+#        - jpa
+#        - jdo-SNAPSHOT
+#        - jpa-SNAPSHOT
 
     steps:
     - name: Checkout apache/isis-app-simpleapp repo
@@ -92,37 +92,66 @@ jobs:
       run: |
         cat pom.xml
 
-#    - name: Build with Maven
+    - name: Build with Maven
+      shell: bash
+      run: |
+        mvn install
+
+    - name: Build and Push Docker Image
+      shell: bash
+      run: |
+        mvn -pl webapp -Ddocker jib:build
+      env:
+        DOCKER_REGISTRY_USERNAME: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
+        DOCKER_REGISTRY_PASSWORD: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
+
+    - name: Checkout current repo
+      uses: actions/checkout@v2.3.4
+
+#    - name: Dump filesystem after checkout current repo
 #      shell: bash
 #      run: |
-#        mvn install
-#
-#    - name: Build and Push Docker Image
-#      shell: bash
-#      run: |
-#        mvn -pl webapp -Ddocker jib:build
-#      env:
-#        DOCKER_REGISTRY_USERNAME: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
-#        DOCKER_REGISTRY_PASSWORD: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
-#
-#    - name: Checkout current repo
-#      uses: actions/checkout@v2.3.4
-#
-##    - name: Dump filesystem after checkout current repo
-##      shell: bash
-##      run: |
-##        find . -print | grep -v ".git"
-#
-#    - name: Undeploy from cluster (simpleapp.isis.incode.work)
-#      uses: actions-hub/kubectl@master
-#      env:
-#        KUBE_CONFIG: ${{ secrets.K3D_INCODE_WORK_KUBE_CONFIG }}
-#      with:
-#        args: delete -f k8s/simpleapp/deployment.yaml
-#
-#    - name: (Re)deploy to cluster (simpleapp.isis.incode.work)
-#      uses: actions-hub/kubectl@master
-#      env:
-#        KUBE_CONFIG: ${{ secrets.K3D_INCODE_WORK_KUBE_CONFIG }}
-#      with:
-#        args: apply -f k8s/simpleapp/deployment.yaml
+#        find . -print | grep -v ".git"
+
+
+    - name: "Undeploy: kubectl delete -f ingress.yml"
+      uses: actions-hub/kubectl@master
+      env:
+        KUBE_CONFIG: ${{ secrets.K3D_INCODE_WORK_KUBE_CONFIG }}
+      with:
+        args: delete -f k8s/simpleapp/030-ingress.yaml
+
+    - name: "Undeploy: kubectl delete -f service.yml"
+      uses: actions-hub/kubectl@master
+      env:
+        KUBE_CONFIG: ${{ secrets.K3D_INCODE_WORK_KUBE_CONFIG }}
+      with:
+        args: delete -f k8s/simpleapp/020-service.yaml
+
+    - name: "Undeploy: kubectl delete -f deployment.yml"
+      uses: actions-hub/kubectl@master
+      env:
+        KUBE_CONFIG: ${{ secrets.K3D_INCODE_WORK_KUBE_CONFIG }}
+      with:
+        args: delete -f k8s/simpleapp/010-deployment.yaml
+
+    - name: "(Re)deploy: kubectl apply -f deployment.yml"
+      uses: actions-hub/kubectl@master
+      env:
+        KUBE_CONFIG: ${{ secrets.K3D_INCODE_WORK_KUBE_CONFIG }}
+      with:
+        args: apply -f k8s/simpleapp/010-deployment.yaml
+
+    - name: "(Re)deploy: kubectl apply -f service.yml"
+      uses: actions-hub/kubectl@master
+      env:
+        KUBE_CONFIG: ${{ secrets.K3D_INCODE_WORK_KUBE_CONFIG }}
+      with:
+        args: apply -f k8s/simpleapp/020-service.yaml
+
+    - name: "(Re)deploy: kubectl apply -f ingress.yml"
+      uses: actions-hub/kubectl@master
+      env:
+        KUBE_CONFIG: ${{ secrets.K3D_INCODE_WORK_KUBE_CONFIG }}
+      with:
+        args: apply -f k8s/simpleapp/030-ingress.yaml
