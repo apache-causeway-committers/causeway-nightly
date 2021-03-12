@@ -31,9 +31,13 @@ jobs:
           yq eval ".spec.template.metadata.labels.app = \"$APP_NAME\"" k8s/simpleapp/010-deployment.yaml -M -i
           yq eval ".spec.template.spec.containers[0].name = \"$APP_NAME\"" k8s/simpleapp/010-deployment.yaml -M -i
           cat k8s/simpleapp/010-deployment.yaml
-          yq eval '.metadata.name = "$APP_NAME"' k8s/simpleapp/020-service.yaml -M -i
+          echo "---"
+          yq eval ".metadata.name = \"$APP_NAME\"" k8s/simpleapp/020-service.yaml -M -i
+          yq eval ".spec.selector.app = \"$APP_NAME\"" k8s/simpleapp/020-service.yaml -M -i
           cat k8s/simpleapp/020-service.yaml
-          yq eval '.metadata.name = "$APP_NAME"' k8s/simpleapp/030-ingress.yaml -M -i
+          echo "---"
+          yq eval ".metadata.name = \"$APP_NAME\"" k8s/simpleapp/030-ingress.yaml -M -i
+          yq eval ".spec.rules[0].http.paths[0].backend.serviceName = \"$APP_NAME\"" k8s/simpleapp/030-ingress.yaml -M -i
           cat k8s/simpleapp/030-ingress.yaml
 
 #      - name: "kubectl apply -f deployment.yml"
