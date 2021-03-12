@@ -18,17 +18,17 @@ echo "SECRET : $SECRET"
 cd $DIRNAME/$APPLICATION
 
 echo "---"
-yq eval ".metadata.name = \"$APP\"" 010-deployment.yaml -M -i
+yq eval -i ".metadata.name = \"$APP\"" 010-deployment.yaml -i
 yq eval ".spec.selector.matchLabels.app = \"$APP\"" 010-deployment.yaml -M -i
 yq eval ".spec.template.metadata.labels.app = \"$APP\"" 010-deployment.yaml -M -i
 yq eval ".spec.template.spec.containers[0].image = \"$IMAGE\"" 010-deployment.yaml -M -i
 yq eval ".spec.template.spec.containers[0].name = \"$APP\"" 010-deployment.yaml -M -i
-cat k8s/simpleapp/010-deployment.yaml
+cat 010-deployment.yaml
 
 echo "---"
 yq eval ".metadata.name = \"$APP\"" 020-service.yaml -M -i
 yq eval ".spec.selector.app = \"$APP\"" 020-service.yaml -M -i
-cat k8s/simpleapp/020-service.yaml
+cat 020-service.yaml
 
 echo "---"
 yq eval ".metadata.name = \"$APP\"" 030-ingress.yaml -M -i
@@ -36,4 +36,4 @@ yq eval ".spec.tls[0].hosts[0] = \"$HOST\"" 030-ingress.yaml -M -i
 yq eval ".spec.tls[0].secretName = \"$SECRET\"" 030-ingress.yaml -M -i
 yq eval ".spec.rules[0].http.paths[0].backend.serviceName = \"$APP\"" 030-ingress.yaml -M -i
 yq eval ".spec.rules[0].host = \"$HOST\"" 030-ingress.yaml -M -i
-cat k8s/simpleapp/030-ingress.yaml
+cat 030-ingress.yaml
