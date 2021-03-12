@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    name: Build, Test, Docker Image, Push, Redeploy
+    name: Build and Redeploy
     runs-on: ubuntu-latest
     env:
       APP: isis-app-simpleapp
@@ -58,8 +58,7 @@ jobs:
       id: revision
       shell: bash
       run: |
-        ON_SNAPSHOT=$(echo ${{ matrix.branch }} | grep SNAPSHOT)
-        if [[ $ON_SNAPSHOT != "" ]]
+        if [[ ${{ matrix.branch }} =~ .*-SNAPSHOT ]]
         then
           PARENT=$(curl -X GET "https://nexus.incode.work/service/rest/v1/search?sort=version&repository=nightly-builds&group=org.apache.isis.app&name=isis-app-starter-parent" -H "accept: application/json" -s | jq '.items[0].version' | sed 's/"//g')
           echo "parentVersion = $PARENT"
