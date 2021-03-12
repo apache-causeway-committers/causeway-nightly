@@ -15,7 +15,7 @@ echo "IMAGE  : $IMAGE"
 echo "HOST   : $HOST"
 echo "SECRET : $SECRET"
 
-pushd $DIRNAME/$APPLICATION
+cd $DIRNAME/$APPLICATION
 
 echo "---"
 yq eval ".metadata.name = \"$APP\"" 010-deployment.yaml -M -i
