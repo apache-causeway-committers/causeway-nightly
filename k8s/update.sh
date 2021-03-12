@@ -6,7 +6,8 @@ APPLICATION=$1
 BRANCH=$2
 
 APP="isis-app-${APPLICATION}-${BRANCH}"
-IMAGE="apacheisis/${APPLICATION}:${BRANCH}"
+IMAGE="apacheisis/${APPLICATION}:latest"
+#IMAGE="apacheisis/${APPLICATION}:${BRANCH}"
 HOST="${APPLICATION}.${BRANCH}.isis.incode.work"
 SECRET="isis-app-${APPLICATION}-tls-${BRANCH}"
 
