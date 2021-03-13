@@ -5,8 +5,10 @@ on:
 
 jobs:
   deploy:
-    name: Deploy simpleapp to k8s cluster
+    name: Deploy to k8s cluster
     runs-on: ubuntu-latest
+    env:
+      APPNAME: simpleapp
 
     strategy:
       matrix:
@@ -28,25 +30,25 @@ jobs:
       - name: Update scripts
         shell: bash
         run: |
-          sh k8s/update.sh simpleapp ${{ matrix.branch }}
+          sh k8s/update.sh $APPNAME ${{ matrix.branch }}
 
       - name: "kubectl apply -f deployment.yml"
         uses: actions-hub/kubectl@master
         env:
           KUBE_CONFIG: ${{ secrets.K3D_INCODE_WORK_KUBE_CONFIG }}
         with:
-          args: apply -f k8s/simpleapp/010-deployment.yaml
+          args: apply -f k8s/$APPNAME/010-deployment.yaml
 
       - name: "kubectl apply -f service.yml"
         uses: actions-hub/kubectl@master
         env:
           KUBE_CONFIG: ${{ secrets.K3D_INCODE_WORK_KUBE_CONFIG }}
         with:
-          args: apply -f k8s/simpleapp/020-service.yaml
+          args: apply -f k8s/$APPNAME/020-service.yaml
 
       - name: "kubectl apply -f ingress.yml"
         uses: actions-hub/kubectl@master
         env:
           KUBE_CONFIG: ${{ secrets.K3D_INCODE_WORK_KUBE_CONFIG }}
         with:
-          args: apply -f k8s/simpleapp/030-ingress.yaml
+          args: apply -f k8s/$APPNAME/030-ingress.yaml

@@ -9,43 +9,26 @@ on:
 
 jobs:
   build:
-    name: Build, Test, Docker Image, Push, Redeploy
+    name: Build and Redeploy
     runs-on: ubuntu-latest
     env:
+      APPNAME: helloworld
       APP: isis-app-helloworld
+
+    strategy:
+      matrix:
+        branch:
+        - jdo
+        - jpa
+        - jdo-SNAPSHOT
+        - jpa-SNAPSHOT
 
     steps:
     - name: Checkout apache/isis-app-helloworld repo
       uses: actions/checkout@v2.3.4
       with:
         repository: apache/isis-app-helloworld
-        ref: refs/heads/master
-
-#    - name: Dump filesystem after checkout isis-app-helloworld repo
-#      shell: bash
-#      run: |
-#        find . -print | grep -v ".git"
-
-    - name: Calculate $REVISION
-      id: revision
-      run: |
-        BASELINE=$(cat pom.xml | grep "<version>" | head -1 | awk -F'>' '{print $2}' | awk -F'<' '{print $1}')
-        SHA_ID=$(curl -s --request GET \
-                 --url https://api.github.com/repos/apache/$APP/git/ref/heads/master \
-                 --header 'content-type: application/json' \
-                 | grep sha | cut -d\: -f2 | cut -d\" -f2 | cut -c1-8)
-        REVISION=${BASELINE}.$(date +%Y%m%d-%H%M)-${SHA_ID}
-        echo "##[set-output name=revision;]${REVISION}"
-
-    - name: Share $REVISION as Environment Variable
-      run: echo "REVISION=${{ steps.revision.outputs.revision }}" >> $GITHUB_ENV
-
-    - name: Print $REVISION
-      shell: bash
-      run: |
-        echo ==============  ENV  =================
-        echo REVISION            \: $REVISION
-        echo ======================================
+        ref: refs/heads/${{ matrix.branch }}
 
     - name: Set up JDK 11
       uses: actions/setup-java@v1
@@ -67,15 +50,43 @@ jobs:
           ${{ runner.os }}-build-
           ${{ runner.os }}-
 
+    - name: Calculate $REVISION
+      id: revision
+      shell: bash
+      run: |
+        if [[ ${{ matrix.branch }} =~ .*-SNAPSHOT ]]
+        then
+          PARENT=$(curl -X GET "https://nexus.incode.work/service/rest/v1/search?sort=version&repository=nightly-builds&group=org.apache.isis.app&name=isis-app-starter-parent" -H "accept: application/json" -s | jq '.items[0].version' | sed 's/"//g')
+          echo "parentVersion = $PARENT"
+          mvn versions:update-parent -DparentVersion="[$PARENT]"
+        fi
+        BASELINE=$(cat pom.xml | grep "<version>" | head -1 | awk -F'>' '{print $2}' | awk -F'<' '{print $1}')
+        SHA_ID=$(curl -s --request GET \
+                 --url https://api.github.com/repos/apache/$APP/git/ref/heads/${{ matrix.branch }} \
+                 --header 'content-type: application/json' \
+                 | grep sha | cut -d\: -f2 | cut -d\" -f2 | cut -c1-8)
+        REVISION=${BASELINE}.$(date +%Y%m%d-%H%M)-${SHA_ID}
+        echo "##[set-output name=revision;]${REVISION}"
+
+    - name: Share $REVISION as Environment Variable
+      run: echo "REVISION=${{ steps.revision.outputs.revision }}" >> $GITHUB_ENV
+
+    - name: Print $REVISION
+      shell: bash
+      run: |
+        echo ==============  ENV  =================
+        echo REVISION            \: $REVISION
+        echo ======================================
+
     - name: Update Maven version
       shell: bash
       run: |
         mvn versions:set -DnewVersion=$REVISION
 
-#    - name: Print pom.xml
-#      shell: bash
-#      run: |
-#        cat pom.xml
+    - name: Print pom.xml
+      shell: bash
+      run: |
+        cat pom.xml
 
     - name: Build with Maven
       shell: bash
@@ -87,27 +98,61 @@ jobs:
       run: |
         mvn -Ddocker jib:build
       env:
+        REVISION: ${{ matrix.branch }}
         DOCKER_REGISTRY_USERNAME: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
         DOCKER_REGISTRY_PASSWORD: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
 
     - name: Checkout current repo
       uses: actions/checkout@v2.3.4
 
-#    - name: Dump filesystem after checkout current repo
-#      shell: bash
-#      run: |
-#        find . -print | grep -v ".git"
+    - name: Install yq
+      shell: bash
+      run: |
+        sudo snap install yq
 
-    - name: Undeploy from cluster (helloworld.isis.incode.work)
+    - name: Update k8s yaml
+      shell: bash
+      run: |
+        sh k8s/update.sh $APPNAME ${{ matrix.branch }}
+
+    - name: "Undeploy: kubectl delete -f ingress.yml"
       uses: actions-hub/kubectl@master
       env:
         KUBE_CONFIG: ${{ secrets.K3D_INCODE_WORK_KUBE_CONFIG }}
       with:
-        args: delete -f k8s/helloworld/deployment.yaml
+        args: delete -f k8s/$APPNAME/030-ingress.yaml --force
 
-    - name: (Re)deploy to cluster (helloworld.isis.incode.work)
+    - name: "Undeploy: kubectl delete -f service.yml"
       uses: actions-hub/kubectl@master
       env:
         KUBE_CONFIG: ${{ secrets.K3D_INCODE_WORK_KUBE_CONFIG }}
       with:
-        args: apply -f k8s/helloworld/deployment.yaml
+        args: delete -f k8s/$APPNAME/020-service.yaml --force
+
+    - name: "Undeploy: kubectl delete -f deployment.yml"
+      uses: actions-hub/kubectl@master
+      env:
+        KUBE_CONFIG: ${{ secrets.K3D_INCODE_WORK_KUBE_CONFIG }}
+      with:
+        args: delete -f k8s/$APPNAME/010-deployment.yaml --force
+
+    - name: "(Re)deploy: kubectl apply -f deployment.yml"
+      uses: actions-hub/kubectl@master
+      env:
+        KUBE_CONFIG: ${{ secrets.K3D_INCODE_WORK_KUBE_CONFIG }}
+      with:
+        args: apply -f k8s/$APPNAME/010-deployment.yaml
+
+    - name: "(Re)deploy: kubectl apply -f service.yml"
+      uses: actions-hub/kubectl@master
+      env:
+        KUBE_CONFIG: ${{ secrets.K3D_INCODE_WORK_KUBE_CONFIG }}
+      with:
+        args: apply -f k8s/$APPNAME/020-service.yaml
+
+    - name: "(Re)deploy: kubectl apply -f ingress.yml"
+      uses: actions-hub/kubectl@master
+      env:
+        KUBE_CONFIG: ${{ secrets.K3D_INCODE_WORK_KUBE_CONFIG }}
+      with:
+        args: apply -f k8s/$APPNAME/030-ingress.yaml
