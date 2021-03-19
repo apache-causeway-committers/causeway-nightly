@@ -938,6 +938,37 @@ validity of the used constructor rather than doing construction reflective at ru
 </div>
 </div>
 <div class="sect1">
+<h2 id="wicket-viewer"><a class="anchor" href="#wicket-viewer"></a>Wicket Viewer</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>All descendants of <code>PanelAbstract</code> now need 2 generic type arguments instead of 1,
+where the newly added is first and specifies the <em>IModel&#8217;s</em> generic type parameter.</p>
+</div>
+<div class="listingblock">
+<div class="title">PanelAbstract</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">// PanelAbstract&lt;T extends IModel&lt;?&gt;&gt; extends PanelBase // &lt;-- previously
+PanelAbstract&lt;T, M extends IModel&lt;T&gt;&gt; extends PanelBase&lt;T&gt; <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>solves methods clashing 'having same erasure yet neither overrides the other'</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">Example Migration</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">// MyPanel extends PanelAbstract&lt;IModel&lt;String&gt;&gt; // &lt;-- previously
+MyPanel extends PanelAbstract&lt;String, IModel&lt;String&gt;&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="extensions"><a class="anchor" href="#extensions"></a>Extensions</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -1154,7 +1185,7 @@ check menubars.layout.xml for any occurrences
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210318-0426-19ad5357</p>
+            <p>Revision: 2.0.0-M4.20210319-0426-b5944afd</p>
         </div>
     </div>
 </footer>
