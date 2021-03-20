@@ -465,7 +465,7 @@ The parent <code>pom.xml</code> of each releasable module specifies the RAT Mave
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mvn clean
 
 pushd isis-parent
-mvn org.apache.rat:apache-rat-plugin:check -D rat.numUnapprovedLicenses=1000 -Dreleased -P'!all'
+mvn org.apache.rat:apache-rat-plugin:check -D rat.numUnapprovedLicenses=1000 -Dreleased
 popd
 
 for a in `/bin/find . -name rat.txt -print`; do grep '!???' $a; done &gt; /tmp/rat-qn.txt
@@ -529,7 +529,7 @@ This is stored in the <code>src/main/appended-resources/supplemental-models.xml<
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mvn clean install -o</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mvn clean install -o -DskipTests</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -573,6 +573,18 @@ licenses to remove from supplemental-models.xml (are spurious):
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sh preview.sh</code></pre>
 </div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+this now needs to be run using Java 11 (because of the "projdoc" tooling).
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>Check for any Asciidoc errors, and fix.</p>
@@ -1000,18 +1012,45 @@ git fetch</code></pre>
 <h2 id="update-starter-apps"><a class="anchor" href="#update-starter-apps"></a>Update starter apps</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>For each starter app, we create a new branch and make the changes there, pushing the branch back if the sanity check passes.</p>
+<p>For each of the two starter apps, we maintain four branches:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>for helloworld, the steps are:</p>
+<p><code>jdo</code> and <code>jpa</code></p>
+<div class="paragraph">
+<p>These are intended to reference the <em>most recently released</em> version, the first demonstrating persistence using JDO, the second using JPA.
+These are the branches referenced from the home page and getting started pages of the website.</p>
+</div>
+</li>
+<li>
+<p><code>jdo-SNAPSHOT</code> and <code>jpa-SNAPSHOT</code></p>
+<div class="paragraph">
+<p>These reference the most current snapshot nightly build.</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The general idea is that a release will fast-forward <code>jdo</code> to <code>jdo-SNAPSHOT</code> and similarly moves <code>jpa</code> up to <code>jpa-SNAPSHOT</code>, bumping to the newly released version of the framework in the process.</p>
+</div>
+<div class="paragraph">
+<p>In order that we don&#8217;t break the starter apps while a release is being voted on, we do the changes in work branches, <code>$ISISBRANCH-jdo</code> and <code>$ISISBRANCH-jpa</code>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>for <em>helloworld</em>, we create a release branch for both variants:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>for <code>jdo</code>:</p>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git checkout master
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git checkout jdo-SNAPSHOT
 git pull --ff-only
 
-git checkout -b $ISISBRANCH
+git checkout -b $ISISBRANCH-jdo
 
 mvn versions:update-parent -DparentVersion=$ISISREL <i class="conum" data-value="1"></i><b>(1)</b>
 mvn versions:set -DnewVersion=$ISISREL
@@ -1024,40 +1063,137 @@ mvn spring-boot:run</code></pre>
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>requires the current parent to exist locally in <code>~/.m2/repository</code>.
-If this isn&#8217;t the case, then manually edit instead.</td>
+<td>the top-level <code>pom.xml</code> references the ASF staging repository, so this will pull down the release if not already present in <code>~/.m2/repository</code>.</td>
 </tr>
 </table>
 </div>
-</li>
-<li>
-<p>for simple app, the steps are almost the same:</p>
+<div class="paragraph">
+<p>Commit any changes and then push the branch to origin:</p>
+</div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git checkout master
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git add .
+git commit -m "$ISISJIRA - updates to $ISISREL (jdo)"
+git push -u origin $ISISBRANCH-jdo</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>repeat for <code>jpa</code>:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git checkout jpa-SNAPSHOT
 git pull --ff-only
 
-git checkout -b $ISISBRANCH
+git checkout -b $ISISBRANCH-jpa
+
+mvn versions:update-parent -DparentVersion=$ISISREL
+mvn versions:set -DnewVersion=$ISISREL
+
+mvn clean install -o
+mvn spring-boot:run</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Commit any changes and then push the branch to origin:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git add .
+git commit -m "$ISISJIRA - updates to $ISISREL (jpa)"
+git push -u origin $ISISBRANCH-jpa</code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>for <em>simple app</em>, the steps are almost the same:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>for <code>jdo</code>:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git checkout jdo-SNAPSHOT
+git pull --ff-only
+
+git checkout -b $ISISBRANCH-jdo
 
 mvn versions:update-parent -DparentVersion=$ISISREL <i class="conum" data-value="1"></i><b>(1)</b>
 mvn versions:set -DnewVersion=$ISISREL
 
-mvn clean install -Dmetamodel.lockdown
-mvn -pl webapp test -Dmavendeps.lockdown -B         <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+mvn clean install -Dmetamodel.lockdown -B -o        <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>requires the current parent to exist locally in <code>~/.m2/repository</code>.
-If this isn&#8217;t the case, then manually edit instead.</td>
+<td>the top-level <code>pom.xml</code> references the ASF staging repository, so this will pull down the release if not already present in <code>~/.m2/repository</code>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
 <td>the -B flag is required to avoid control characters in generated output</td>
 </tr>
 </table>
+</div>
+<div class="paragraph">
+<p>Approve any failed lockdown tests (the mavendeps will fail first time around because the dependencies on Apache Isis itself have just be bumped).</p>
+</div>
+<div class="paragraph">
+<p>You could also check the output of the Cucumber tests, under:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>webapp-tests/target/cucumber-reports</code> and</p>
+</li>
+<li>
+<p><code>webapp-tests/target/cucumber-html-reports</code>.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Repeat, then run the app as a sanity check:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mvn -pl webapp spring-boot:run</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Commit any changes and then push the branch to origin:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git add .
+git commit -m "$ISISJIRA - updates to $ISISREL (jdo)"
+git push -u origin $ISISBRANCH-jdo</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>repeat for <code>jpa</code>:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git checkout jpa-SNAPSHOT
+git pull --ff-only
+
+git checkout -b $ISISBRANCH-jpa
+
+mvn versions:update-parent -DparentVersion=$ISISREL
+mvn versions:set -DnewVersion=$ISISREL
+
+mvn clean install -Dmetamodel.lockdown -B -o</code></pre>
+</div>
 </div>
 <div class="paragraph">
 <p>Approve any failed lockdown tests (the mavendeps will fail first time around because the dependencies on Apache Isis itself have just be bumped).</p>
@@ -1071,27 +1207,19 @@ If this isn&#8217;t the case, then manually edit instead.</td>
 </div>
 </div>
 <div class="paragraph">
-<p>You could also check the output of the Cucumber tests, under:</p>
+<p>Commit any changes and then push the branch to origin:</p>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>webapp/target/cucumber-reports</code> and</p>
-</li>
-<li>
-<p><code>webapp/target/cucumber-html-reports</code>.</p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p>For both apps, commit any changes and then push the release branch to origin once ok:</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git add .
-git commit -m "$ISISJIRA - updates to $ISISREL"
-git push -u origin $ISISBRANCH</code></pre>
+git commit -m "$ISISJIRA - updates to $ISISREL (jpa)"
+git push -u origin $ISISBRANCH-jpa</code></pre>
 </div>
+</div>
+</div>
+</div>
+</li>
+</ul>
 </div>
 </li>
 </ul>
@@ -1146,10 +1274,22 @@ popd</code></pre>
 </div>
 </li>
 <li>
-<p>Back in the <code>isis</code> repo&#8217;s worktree for <code>master</code> (as opposed to the <code>release</code> worktree, that is), generate the Antora site (from the top-level directory):</p>
+<p>Back in the <code>isis</code> repo&#8217;s <code>release</code> worktree, generate the Antora site (from the top-level directory).</p>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+this now needs to be run using Java 11 (because of the "projdoc" tooling).
+</td>
+</tr>
+</table>
+</div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd ../isis
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd ../isis-release
 
 sh preview.sh</code></pre>
 </div>
@@ -1302,7 +1442,7 @@ The vote will be open for a minimum of 72 hours.
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210319-0426-b5944afd</p>
+            <p>Revision: 2.0.0-M4.20210320-0739-04384de6</p>
         </div>
     </div>
 </footer>

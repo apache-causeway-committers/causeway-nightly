@@ -626,8 +626,15 @@ page.parent doesn't seem to be set...
 <p>The quickest way to start learning about Apache Isis is to use the <code>helloworld</code> starter app.</p>
 </div>
 <div class="paragraph">
-<p>Using the instructions <a href="#downloading-running">below</a>, you can  download a tiny Apache Isis app, consisting of a simple one-class domain model, namely the <code>HelloWorldObject</code> entity and a supporting <code>HelloWorldObjects</code> repository domain service.
-Both the business logic and supporting bootstrapping classes are in a single Maven module (in different Java packages).</p>
+<p>There are two variations of the application (and so two branches in the git repo).
+One variation uses JDO as the ORM, the other uses JPA, so you can focus on whichever ORM you prefer.</p>
+</div>
+<div class="paragraph">
+<p>The application is also deployed online for you to try out,  <a href="https://helloworld.jdo.isis.incode.work">here (jdo)</a> and <a href="https://helloworld.jpa.isis.incode.work">here (jpa)</a>.</p>
+</div>
+<div class="paragraph">
+<p>Using the instructions <a href="#downloading-running">below</a>, you can download a minimal Apache Isis app, consisting of a single domain entity (<code>HelloWorldObject</code>) with supporting domain services.
+Both the business logic and supporting bootstrapping classes are in a single Maven module.</p>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -639,14 +646,11 @@ Both the business logic and supporting bootstrapping classes are in a single Mav
 <div class="paragraph">
 <p>We don&#8217;t recommend that you use the helloworld starter app as the basis for your own applications.
 Instead, use the <a href="simpleapp.html" class="page">SimpleApp starter app</a>.
-It also creates a minimal application, but provides more structure and example tests, useful as you build out your own app.</p>
+It also creates a minimal application, but provides more structure along with tests, useful as you build out your own app.</p>
 </div>
 </td>
 </tr>
 </table>
-</div>
-<div class="paragraph">
-<p>You can also try out this application online, running <a href="https://helloworld.isis.incode.work">here</a>.</p>
 </div>
 </div>
 </div>
@@ -659,7 +663,10 @@ It also creates a minimal application, but provides more structure and example t
 <div class="ulist">
 <ul>
 <li>
-<p>an LTS version of Java: either Java 8 JDK or Java 11 JDK</p>
+<p>Java 11 JDK (or later)</p>
+<div class="paragraph">
+<p>Apache Isis itself is compatible with Java 8, but the helloworld app itself is configured for Java 11.</p>
+</div>
 </li>
 <li>
 <p><a href="http://maven.apache.org">Apache Maven</a> 3.5+</p>
@@ -667,17 +674,11 @@ It also creates a minimal application, but provides more structure and example t
 </ul>
 </div>
 <div class="paragraph">
-<p>You&#8217;ll probably also want to use an IDE; the Apache Isis committers use either IntelliJ or Eclipse; in the <a href="../../../setupguide/latest/about.html" class="page">Setup Guide</a> we have detailed setup instructions for using these two IDEs.
-If you&#8217;re a NetBeans user you should have no problems as it too has strong support for Maven.</p>
+<p>If using JDO as the ORM, you&#8217;ll also need to run the Datanucleus enhancer (this post-processes the byte code of the entities).
+The <a href="../../../setupguide/latest/about.html" class="page">Setup Guide</a> explains how to do this for either IntelliJ and Eclipse.</p>
 </div>
 <div class="paragraph">
-<p>When building and running within an IDE, you&#8217;ll also need to configure the Datanucleus enhancer.
-This is implemented as a Maven plugin, so in the case of IntelliJ, it&#8217;s easy enough to run the enhancer as required.
-It should be just as straightforward for NetBeans too.</p>
-</div>
-<div class="paragraph">
-<p>For Eclipse the maven integration story is a little less refined.
-All is not lost, however; DataNucleus also has an implementation of the enhancer as an Eclipse plugin, which works well enough.</p>
+<p>If using JPA as the ORM, the equivalent process to enhancement is performed at run-time, so there are no special setup considerations.</p>
 </div>
 </div>
 </div>
@@ -692,15 +693,30 @@ All is not lost, however; DataNucleus also has an implementation of the enhancer
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl https://codeload.github.com/apache/isis-app-helloworld/zip/2.0.0-M5 | jar xv
-cd isis-app-helloworld-2.0.0-M5
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl https://codeload.github.com/apache/isis-app-helloworld/zip/jdo | jar xv
+cd isis-app-helloworld-jdo
 
 mvn clean install
 mvn spring-boot:run</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>This should only take a few seconds to download, compile and run.
+<p>to use JDO for the ORM, or:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl https://codeload.github.com/apache/isis-app-helloworld/zip/jpa | jar xv
+cd isis-app-helloworld-jpa
+
+mvn clean install
+mvn spring-boot:run</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>to use JPA as the ORM.</p>
+</div>
+<div class="paragraph">
+<p>Either way, this should only take a few seconds to download, compile and run.
 Then browse to <a href="http://localhost:8080" class="bare">http://localhost:8080</a>, and read on.</p>
 </div>
 </div>
@@ -725,7 +741,7 @@ Then browse to <a href="http://localhost:8080" class="bare">http://localhost:808
 </div>
 </div>
 <div class="paragraph">
-<p>The app itself is configured to run using <a href="../../../security/latest/about.html" class="page">shiro security</a>, as configured in the <code>WEB-INF/shiro.ini</code> config file.
+<p>The app itself is configured to run using <a href="../../../security/latest/about.html" class="page">shiro security</a>, as configured in the <code>shiro.ini</code> config file.
 You can login with:</p>
 </div>
 <div class="ulist">
@@ -776,7 +792,7 @@ Create an object using the menu:</p>
 </div>
 </div>
 <div class="paragraph">
-<p>The above functionality is implemented by this code:</p>
+<p>The above functionality is implemented by this code (in the <code>HelloWorldObjects</code> menu domain service):</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -806,12 +822,12 @@ public String default0Create() {
 </div>
 </div>
 <div class="paragraph">
-<p>The above functionality is implemented by this code:</p>
+<p>The above functionality is implemented by this code (in the <code>HelloWorldObject</code> entity):</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Action(semantics = SemanticsOf.IDEMPOTENT,
-        publishing = Publishing.ENABLED,        <i class="conum" data-value="1"></i><b>(1)</b>
+        publishing = Publishing.ENABLED,
         associateWith = "name")
 public HelloWorldObject updateName(
         @Name final String name) {
@@ -822,22 +838,6 @@ public String default0UpdateName() {
     return getName();
 }</code></pre>
 </div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Publishing enabled means that the action invocation is converted into XML and dispatched to all configured implementations of the <a href="../../../refguide/latest/applib/index/services/publishing/spi/ExecutionSubscriber.html" class="page">ExecutionSubscriber</a> SPI.
-<div class="paragraph">
-<p>The framework provides a default implementation that just logs the interaction:</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="_images/helloworld/using/075-logged-action.png" alt="075 logged action" width="600px">
-</div>
-</div></td>
-</tr>
-</table>
 </div>
 </div>
 <div class="sect3">
@@ -863,15 +863,10 @@ For example:</p>
 </div>
 </div>
 <div class="paragraph">
-<p>The viewer displays a message confirming that the object has been deleted:</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="_images/helloworld/using/100-object-deleted.png" alt="100 object deleted" width="600px">
-</div>
+<p>The viewer should display a pop-up message confirming that the object has been deleted.</p>
 </div>
 <div class="paragraph">
-<p>The above functionality is implemented by this code:</p>
+<p>The above functionality is implemented by this code (in the <code>HelloWorldObject</code> entity):</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -896,6 +891,18 @@ public void delete() {
 </div>
 <div class="sect2">
 <h3 id="swagger-restful-objects"><a class="anchor" href="#swagger-restful-objects"></a>Swagger (Restful Objects)</h3>
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-caution" title="Caution"></i>
+</td>
+<td class="content">
+if invoking an action using Swagger returns a 401 (unauthorised), then navigate to the REST API directly (<a href="http://localhost:8080/restful" class="bare">http://localhost:8080/restful</a> to authenticate the browser first]).
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
 <p>Using <span class="menuseq"><b class="menu">Prototyping</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="menuitem">Open Swagger UI</b></span> menu item (or just going back to the home page at <a href="http://localhost:8080">localhost:8080</a>) we can use <a href="https://swagger.io/">Swagger UI</a> as a front-end to the REST API provided by the Restful Objects viewer.</p>
 </div>
@@ -920,18 +927,6 @@ If the API is private (or for prototyping), then resources corresponding to enti
 <div class="content">
 <img src="_images/helloworld/using/220-create-object-thru-rest-api.png" alt="220 create object thru rest api" width="600px">
 </div>
-</div>
-<div class="admonitionblock caution">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-caution" title="Caution"></i>
-</td>
-<td class="content">
-if invoking the action returns a 401 (unauthorised), then navigate to the REST API directly (<a href="http://localhost:8080/restful" class="bare">http://localhost:8080/restful</a> to authenticate the browser first]).
-</td>
-</tr>
-</table>
 </div>
 <div class="paragraph">
 <p>The response indicates that the object was successfully created:</p>
@@ -978,24 +973,25 @@ The REST API implemented by Apache Isis is specified in the <a href="http://www.
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code>src/main/java/
-  domainapp/                            <i class="conum" data-value="1"></i><b>(1)</b>
+  domainapp/                                    <i class="conum" data-value="1"></i><b>(1)</b>
     modules
-      hello/                            <i class="conum" data-value="2"></i><b>(2)</b>
-        dom/                            <i class="conum" data-value="3"></i><b>(3)</b>
-          hwo/                          <i class="conum" data-value="4"></i><b>(4)</b>
+      hello/                                    <i class="conum" data-value="2"></i><b>(2)</b>
+        dom/                                    <i class="conum" data-value="3"></i><b>(3)</b>
+          hwo/                                  <i class="conum" data-value="4"></i><b>(4)</b>
             HelloWorldObject.java
             HelloWorldObject.layout.xml
             HelloWorldObject.png
+            HelloWorldObjectRepository.java     <i class="conum" data-value="5"></i><b>(5)</b>
             HelloWorldObjects.java
-        types/                          <i class="conum" data-value="5"></i><b>(5)</b>
+        types/                                  <i class="conum" data-value="6"></i><b>(6)</b>
           Name.java
           Notes.java
-      HelloWorldModule.java             <i class="conum" data-value="6"></i><b>(6)</b>
+      HelloWorldModule.java                     <i class="conum" data-value="7"></i><b>(7)</b>
     webapp/
-      AppManifest.java                  <i class="conum" data-value="7"></i><b>(7)</b>
-      HelloWorldApp.java                <i class="conum" data-value="8"></i><b>(8)</b>
-  META-INF/
-    persistence.xml                     <i class="conum" data-value="9"></i><b>(9)</b></code></pre>
+      AppManifest.java                          <i class="conum" data-value="8"></i><b>(8)</b>
+      HelloWorldApp.java                        <i class="conum" data-value="9"></i><b>(9)</b>
+  META-INF        /
+    persistence.xml                             <i class="conum" data-value="10"></i><b>(10)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -1022,27 +1018,31 @@ The associated <code>.layout.xml</code> and <code>.png</code> are optional but p
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>The <code>types</code> package contains meta-annotations to describe the usage of common value types such as <code>String</code>s.</td>
+<td>For the <code>jpa</code> branch only, uses Spring Data JPA to automatically provide the query implementation.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>The <code>types</code> package contains meta-annotations to describe the usage of common value types such as <code>String</code>s.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
 <td><code>HelloWorldModule</code> is a Spring <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/annotation/Configuration.html">@Configuration</a> which allows the domain services and entities of the module to be located.<br>
 This is discussed in more detail <a href="#helloworldmodule">below</a>.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
 <td><code>AppManifest</code> is the top-level Spring <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/annotation/Configuration.html">@Configuration</a> that specifies the components of Apache Isis to use, along with the modules making up the application itself (ie <code>HelloWorldModule</code>).<br>
 This is discussed in more detail <a href="#appmanifest">below</a>.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
 <td><code>HelloWorldApp</code> is the <a href="https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/autoconfigure/SpringBootApplication.html">@SpringBootApplication</a> used to bootstrap the app.
 It&#8217;s pretty much boilerplate - the important piece is that it references <code>AppManifest</code>.<br>
 This is discussed in more detail <a href="#helloworldapp">below</a>.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="9"></i><b>9</b></td>
-<td>The <code>persistence.xml</code> file is required when using the JDO/DataNucleus object store (though it is basically boilerplate, an empty file).</td>
+<td><i class="conum" data-value="10"></i><b>10</b></td>
+<td>For the <code>jdo</code> branch only, the <code>persistence.xml</code> file is required boilerplate.</td>
 </tr>
 </table>
 </div>
@@ -1061,6 +1061,11 @@ In the case of <code>HelloWorldModule</code>, it is extremely simple:</p>
 @Configuration
 @Import({})                         <i class="conum" data-value="1"></i><b>(1)</b>
 @ComponentScan                      <i class="conum" data-value="2"></i><b>(2)</b>
+@EnableJpaRepositories              <i class="conum" data-value="3"></i><b>(3)</b>
+@EntityScan(                        <i class="conum" data-value="4"></i><b>(4)</b>
+    basePackageClasses = {
+        HelloWorldModule.class
+})
 public class HelloWorldModule {
 }</code></pre>
 </div>
@@ -1076,13 +1081,18 @@ If there were, these would be expressed in terms of module classes (each being a
 <td><i class="conum" data-value="2"></i><b>2</b></td>
 <td>specifies this class' package as a root to scan for Spring <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/stereotype/Component.html">@Component</a>s.</td>
 </tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>for <code>jpa</code> branch only, enables Spring Data JPA repositories</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>for <code>jpa</code> branch only, to automatically discover JPA entities</td>
+</tr>
 </table>
 </div>
 <div class="paragraph">
-<p>The scanning mechanism is leveraged by Apache Isis to pick up three types of classes:</p>
-</div>
-<div class="paragraph">
-<p>This will pick up the <code>HelloWorldObjects</code> repository because it is annotated with the framework&#8217;s <a href="../../../refguide/latest/applib/index/annotation/DomainService.html" class="page">@DomainService</a> annotation (in turn meta-annotated with <code>@Component</code>).</p>
+<p>The scanning mechanism is also leveraged by Apache Isis to pick up three types of classes:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -1096,17 +1106,16 @@ Because <code>@DomainService</code> is meta-annotated as a <code>@Component</cod
 <p>Depending on their nature, domain services are used to build up the menu, or are available to call programmatically, eg repositories, or sometimes both.</p>
 </div>
 <div class="paragraph">
-<p>In the helloworld starter app, the only domain service  is <code>HelloWorldObjects</code>.
-This appears in the menu, and also acts as a repository for the <code>HelloWorldObject</code> entity.</p>
+<p>In the helloworld starter app, the main domain services is <code>HelloWorldObjects</code>.
+This appears in the menu, and also acts as a repository for the <code>HelloWorldObject</code> entity.
+The <code>jpa</code> branch also has the <code>HelloWorldRepository</code> Spring Data service.</p>
 </div>
 </li>
 <li>
 <p>all entities.</p>
 <div class="paragraph">
-<p>These are entities that are annotated with both <a href="../../../refguide/latest/applib/index/annotation/DomainObject.html" class="page">@DomainObject</a> annotation and with <code>@javax.jdo.annotations.PersistenceCapable</code>.
-Because <code>@DomainObject</code> is meta-annotated as a <code>@Component</code>, these are found automatically by Spring.
-They are passed through to the JDO/DataNucleus object store, in order to create database mappings from the entities to relational tables.
-It is also annotated with <a href="../../../refguide/latest/applib/index/annotation/DomainObject.html" class="page">@DomainObject</a></p>
+<p>These are entities that are annotated with both <a href="../../../refguide/latest/applib/index/annotation/DomainObject.html" class="page">@DomainObject</a> annotation and with the ORM-specific annotation.
+For <code>jdo</code> branch, this is <code>@javax.jdo.annotations.PersistenceCapable</code>; for the <code>jpa</code> branch this is <code>@javax.persistence.Entity</code>).</p>
 </div>
 <div class="paragraph">
 <p>In the helloworld starter app, the only entity is <code>HelloWorldObject</code>.</p>
@@ -1127,25 +1136,25 @@ It is also annotated with <a href="../../../refguide/latest/applib/index/annotat
 <div class="sect3">
 <h4 id="appmanifest"><a class="anchor" href="#appmanifest"></a>AppManifest</h4>
 <div class="paragraph">
-<p>The "app manifest" (the name has been retained from Apache Isis v1.x) is the top-level Spring <code>@Configuration</code>.
-In the case of the helloworld starter app, the <code>AppManifest</code> looks like this:</p>
+<p>The "app manifest" is the top-level Spring <code>@Configuration</code>.
+In the case of the helloworld starter app <strong>for the <code>jdo</code> branch</strong> the <code>AppManifest</code> looks like this:</p>
 </div>
 <div class="listingblock">
 <div class="title">AppManifest.java</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Configuration
 @Import({
-        IsisModuleCoreRuntimeServices.class,                    <i class="conum" data-value="1"></i><b>(1)</b>
-        IsisModuleSecurityShiro.class,                          <i class="conum" data-value="2"></i><b>(2)</b>
-        IsisModuleJdoDataNucleus5.class,                        <i class="conum" data-value="3"></i><b>(3)</b>
-        IsisModuleViewerRestfulObjectsJaxrsResteasy4.class,     <i class="conum" data-value="4"></i><b>(4)</b>
-        IsisModuleViewerWicketViewer.class,                     <i class="conum" data-value="5"></i><b>(5)</b>
+        IsisModuleCoreRuntimeServices.class,                <i class="conum" data-value="1"></i><b>(1)</b>
+        IsisModuleSecurityShiro.class,                      <i class="conum" data-value="2"></i><b>(2)</b>
+        IsisModuleJdoDataNucleus5.class,                    <i class="conum" data-value="3"></i><b>(3)</b>
+        IsisModuleViewerRestfulObjectsJaxrsResteasy4.class, <i class="conum" data-value="4"></i><b>(4)</b>
+        IsisModuleViewerWicketViewer.class,                 <i class="conum" data-value="5"></i><b>(5)</b>
 
-        IsisModuleTestingH2ConsoleUi.class,                     <i class="conum" data-value="6"></i><b>(6)</b>
+        IsisModuleTestingH2ConsoleUi.class,                 <i class="conum" data-value="6"></i><b>(6)</b>
 
-        HelloWorldModule.class                                  <i class="conum" data-value="7"></i><b>(7)</b>
+        HelloWorldModule.class                              <i class="conum" data-value="7"></i><b>(7)</b>
 })
-@PropertySource(IsisPresets.NoTranslations)                     <i class="conum" data-value="8"></i><b>(8)</b>
+@PropertySource(IsisPresets.NoTranslations)                 <i class="conum" data-value="8"></i><b>(8)</b>
 public class AppManifest {
 }</code></pre>
 </div>
@@ -1189,6 +1198,29 @@ This particular one disables the framework&#8217;s i18n support using the <code>
 </tr>
 </table>
 </div>
+<div class="paragraph">
+<p>For the <code>jpa</code> branch the <code>AppManifest</code> is almost identical, just replacing:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>IsisModuleJdoDataNucleus5.class,</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>with:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>IsisModuleJpaEclipseLink.class,</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>This bootstraps the JPA as the ORM instead of JDO.</p>
+</div>
 </div>
 <div class="sect3">
 <h4 id="helloworldapp"><a class="anchor" href="#helloworldapp"></a>HelloWorldApp</h4>
@@ -1217,7 +1249,7 @@ public class HelloWorldApp
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>references the <code>AppManifest</code> mentioned earlier</td>
+<td>references the <code>AppManifest</code> mentioned <a href="#appmanifest">above</a>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
@@ -1422,7 +1454,8 @@ Basically, though, it amounts to running the <code>main()</code> method in the <
 </div>
 </div>
 <div class="paragraph">
-<p>which uses an IntelliJ feature to execute a different <em>Run Configuration</em> for the DataNucleus enhancer beforehand:</p>
+<p>If using JDO as the ORM, then the DataNucleus enhancer must be run beforehand.
+With IntelliJ this can be done by setting up a different <em>Run Configuration</em> to be executed beforehand:</p>
 </div>
 <div class="imageblock">
 <div class="content">
@@ -1472,7 +1505,7 @@ Although a little more complex, it provides more structure and example tests, al
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210319-0426-b5944afd</p>
+            <p>Revision: 2.0.0-M4.20210320-0739-04384de6</p>
         </div>
     </div>
 </footer>

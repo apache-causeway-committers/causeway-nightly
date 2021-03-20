@@ -626,13 +626,31 @@ page.parent doesn't seem to be set...
 <p>The quickest way to get started building an application "for real" is to use the <code>simpleapp</code> starter app.</p>
 </div>
 <div class="paragraph">
-<p>As with the <a href="helloworld.html" class="page">HelloWorld</a> starter app, the instructions <a href="#downloading-running">below</a> will download a very simple one-class domain model, namely the <code>SimpleObject</code> entity and a supporting <code>SimpleObjects</code> domain service.</p>
+<p>There are two variations of the application (and so two branches in the git repo).
+One variation uses JDO as the ORM, the other uses JPA, so you can focus on whichever ORM you prefer.</p>
 </div>
 <div class="paragraph">
-<p>However, the app also provides more structure to assist you as your application grows, with multiple Maven modules, and examples of unit tests, integration tests and BDD (cucumber) specs.</p>
+<p>The application is also deployed online for you to try out, <a href="https://simpleapp.jdo.isis.incode.work">here (jdo)</a> and <a href="https://simpleapp.jpa.isis.incode.work">here (jpa)</a>.</p>
 </div>
 <div class="paragraph">
-<p>You also can try out this application online, running <a href="https://simpleapp.isis.incode.work">here</a>.</p>
+<p>As with the <a href="helloworld.html" class="page">HelloWorld</a> starter app, the instructions <a href="#downloading-running">below</a> will download a minimal Apache Isis app consisting of a single entity (<code>SimpleObject</code>) with supporting domain services.</p>
+</div>
+<div class="paragraph">
+<p>However, unlike HelloWorld, this app also provides more structure to assist you as your application grows, with business logic placed in a separate Maven module (<code>simpleapp-&#8230;&#8203;-module-simple</code>) to the module that bootstraps the webapp (<code>simpleapp-&#8230;&#8203;-webapp</code>).
+Replace "&#8230;&#8203;" with either "jdo" or "jpa", as appropriate.</p>
+</div>
+<div class="paragraph">
+<p>The idea is that as your application grows in scope that you put each new area of functionality in its own module (copy-n-paste the <code>simpleapp-&#8230;&#8203;-module-simple</code> module).
+These modules can depend on each other, but Maven will to ensure that dependencies between these areas of functionality are unidirectional.
+In this way your application will be a "modular monolith"; said another way it will prevent your application from degenerating into a <a href="https://en.wikipedia.org/wiki/Big_ball_of_mud">big ball of mud</a>.
+See also the discussion <a href="#structure-of-the-app">below</a>.</p>
+</div>
+<div class="paragraph">
+<p>The application also includes examples of unit tests, integration tests and BDD (cucumber) specs.
+You&#8217;ll find these in their own Maven modules (<code>simpleapp-&#8230;&#8203;-module-simple-tests</code> and <code>simpleapp-&#8230;&#8203;-webapp-tests</code>).
+Normally we recommend that tests should be in the same Maven module as the code that they exercise.
+The simpleapp doesn&#8217;t do it this way just to give you the option to exclude them while initially prototyping/exploring a domain.
+You can use them as a reference once your ideas have solidifid and you need to start writing proper "production" code.</p>
 </div>
 </div>
 </div>
@@ -645,7 +663,10 @@ page.parent doesn't seem to be set...
 <div class="ulist">
 <ul>
 <li>
-<p>an LTS version of Java: either Java 8 JDK or Java 11 JDK</p>
+<p>Java 11 JDK (or later)</p>
+<div class="paragraph">
+<p>Apache Isis itself is compatible with Java 8, but the simpleapp itself is configured for Java 11.</p>
+</div>
 </li>
 <li>
 <p><a href="http://maven.apache.org">Apache Maven</a> 3.5+</p>
@@ -653,17 +674,11 @@ page.parent doesn't seem to be set...
 </ul>
 </div>
 <div class="paragraph">
-<p>You&#8217;ll probably also want to use an IDE; the Apache Isis committers use either IntelliJ or Eclipse; in the <a href="../../../setupguide/latest/about.html" class="page">Setup Guide</a> we have detailed setup instructions for using these two IDEs.
-If you&#8217;re a NetBeans user you should have no problems as it too has strong support for Maven.</p>
+<p>If using JDO as the ORM, you&#8217;ll also need to run the Datanucleus enhancer (this post-processes the byte code of the entities).
+The <a href="../../../setupguide/latest/about.html" class="page">Setup Guide</a> explains how to do this for either IntelliJ and Eclipse.</p>
 </div>
 <div class="paragraph">
-<p>When building and running within an IDE, you&#8217;ll also need to configure the Datanucleus enhancer.
-This is implemented as a Maven plugin, so in the case of IntelliJ, it&#8217;s easy enough to run the enhancer as required.
-It should be just as straightforward for NetBeans too.</p>
-</div>
-<div class="paragraph">
-<p>For Eclipse the maven integration story is a little less refined.
-All is not lost, however; DataNucleus also has an implementation of the enhancer as an Eclipse plugin, which works well enough.</p>
+<p>If using JPA as the ORM, the equivalent process to enhancement is performed at run-time, so there are no special setup considerations.</p>
 </div>
 </div>
 </div>
@@ -678,12 +693,27 @@ All is not lost, however; DataNucleus also has an implementation of the enhancer
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl https://codeload.github.com/apache/isis-app-simpleapp/zip/2.0.0-M5 | jar xv
-cd isis-app-simpleapp-2.0.0-M5
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl https://codeload.github.com/apache/isis-app-simpleapp/zip/jdo | jar xv
+cd isis-app-simpleapp-jdo
 
 mvn clean install
 mvn -pl webapp spring-boot:run</code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>to use JDO for the ORM, or:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl https://codeload.github.com/apache/isis-app-simpleapp/zip/jpa | jar xv
+cd isis-app-simpleapp-jpa
+
+mvn clean install
+mvn -pl webapp spring-boot:run</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>to use JPA as the ORM.</p>
 </div>
 <div class="paragraph">
 <p>This should only take a few seconds to download, compile and run.
@@ -711,7 +741,7 @@ Then browse to <a href="http://localhost:8080" class="bare">http://localhost:808
 </div>
 </div>
 <div class="paragraph">
-<p>The app itself is configured to run using <a href="../../../security/latest/about.html" class="page">shiro security</a>, as configured in the <code>WEB-INF/shiro.ini</code> config file.
+<p>The app itself is configured to run using <a href="../../../security/latest/about.html" class="page">shiro security</a>, as configured in the <code>shiro.ini</code> config file.
 You can login with:</p>
 </div>
 <div class="ulist">
@@ -747,17 +777,33 @@ You can login with:</p>
 @HomePage
 public class HomePageViewModel {
 
-    public TranslatableString title() {
-        return TranslatableString.tr("{num} objects", "num", getObjects().size());
+    public String title() {                             <i class="conum" data-value="1"></i><b>(1)</b>
+        return return getObjects().size() + " objects";
     }
 
-    public List&lt;SimpleObject&gt; getObjects() {
+    public List&lt;SimpleObject&gt; getObjects() {            <i class="conum" data-value="2"></i><b>(2)</b>
         return simpleObjects.listAll();
     }
 
-    @Inject SimpleObjects simpleObjects;
+    @Inject SimpleObjects simpleObjects;                <i class="conum" data-value="3"></i><b>(3)</b>
 }</code></pre>
 </div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>identifies or describes the object</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>collection of objects shown on the page</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>automatically injected by the framework</td>
+</tr>
+</table>
 </div>
 <div class="sect3">
 <h4 id="fixtures"><a class="anchor" href="#fixtures"></a>Fixtures</h4>
@@ -788,16 +834,29 @@ This can be done using fixture scripts, accessible from the <span class="menuseq
 
     @Override
     protected void execute(final ExecutionContext ec) {
-        ec.executeChild(this, new TeardownFixtureAbstract2() {
-            @Override
-            protected void execute(final ExecutionContext executionContext) {
-                deleteFrom(SimpleObject.class);
-            }
-        });
-        ec.executeChild(this, new SimpleObject_persona.PersistAll());
+        ec.executeChildren(this,
+            moduleWithFixturesService.getTeardownFixture());        <i class="conum" data-value="1"></i><b>(1)</b>
+        ec.executeChild(this,
+            new SimpleObject_persona.PersistAll());                 <i class="conum" data-value="2"></i><b>(2)</b>
     }
+
+    @Inject ModuleWithFixturesService moduleWithFixturesService;
+
 }</code></pre>
 </div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>uses injected service to tear down all objects.
+(Each module provides a teardown script; these are run in the correct sequence).</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Creates new objects</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>When executed, all objects created by the fixture are listed:</p>
@@ -853,16 +912,14 @@ This can be done using fixture scripts, accessible from the <span class="menuseq
 </div>
 </div>
 <div class="paragraph">
-<p>The above functionality is implemented by this code:</p>
+<p>The above functionality is implemented by this code (in the <code>SimpleObjects</code> menu domain service):</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public static class CreateActionDomainEvent extends ActionDomainEvent {}
-@Action(semantics = SemanticsOf.NON_IDEMPOTENT,
-        domainEvent = CreateActionDomainEvent.class)                     <i class="conum" data-value="1"></i><b>(1)</b>
-@ActionLayout(promptStyle = PromptStyle.DIALOG_SIDEBAR)                  <i class="conum" data-value="2"></i><b>(2)</b>
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Action(semantics = SemanticsOf.NON_IDEMPOTENT)                     <i class="conum" data-value="1"></i><b>(1)</b>
+@ActionLayout(promptStyle = PromptStyle.DIALOG_SIDEBAR)             <i class="conum" data-value="2"></i><b>(2)</b>
 public SimpleObject create(
-        @Name final String name) {                                       <i class="conum" data-value="3"></i><b>(3)</b>
+        @Name final String name) {                                  <i class="conum" data-value="3"></i><b>(3)</b>
     return repositoryService.persist(SimpleObject.ofName(name));
 }</code></pre>
 </div>
@@ -871,11 +928,11 @@ public SimpleObject create(
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Published on an in-memory event bus; this allows subscribers to veto or to react to the action invocation.</td>
+<td>Specifying semantics is recommended, as it changes the HTTP method that is used if the action is invoked through the <a href="../../../vro/latest/about.html" class="page">REST API</a>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Policies such as modal or sidebar can be specified per action, or globally in <code>application.yml</code> file.</td>
+<td>Prompt styles such as modal or sidebar can be specified per action, or globally in <code>application.yml</code> file.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
@@ -898,16 +955,11 @@ public SimpleObject create(
 </div>
 </div>
 <div class="paragraph">
-<p>The above functionality is implemented by this code:</p>
+<p>The above functionality is implemented by this code (in the <code>SimpleObject</code> entity):</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public static class UpdateNameActionDomainEvent
-                      extends SimpleObject.ActionDomainEvent {}
-@Action(semantics = IDEMPOTENT,
-        publishing = Publishing.ENABLED,                    <i class="conum" data-value="1"></i><b>(1)</b>
-        associateWith = "name",
-        domainEvent = UpdateNameActionDomainEvent.class)
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Action(semantics = IDEMPOTENT)
 public SimpleObject updateName(
         @Name final String name) {
     setName(name);
@@ -917,30 +969,6 @@ public String default0UpdateName() {
     return getName();
 }</code></pre>
 </div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Publishing enabled means that the action invocation is converted into XML and dispatched to all configured implementations of the <a href="../../../refguide/latest/applib/index/services/publishing/spi/ExecutionSubscriber.html" class="page">ExecutionSubscriber</a> SPI.
-<div class="paragraph">
-<p>The framework provides a default implementation that just logs the interaction:</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="_images/simpleapp/using/075-publish-logging-1.png" alt="075 publish logging 1" width="600px">
-</div>
-</div>
-<div class="paragraph">
-<p>It also logs the fact that the object itself was modified:</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="_images/simpleapp/using/076-publish-logging-2.png" alt="076 publish logging 2" width="600px">
-</div>
-</div></td>
-</tr>
-</table>
 </div>
 </div>
 <div class="sect3">
@@ -974,16 +1002,13 @@ For example:</p>
 </div>
 </div>
 <div class="paragraph">
-<p>The above functionality is implemented by this code:</p>
+<p>The above functionality is implemented by this code (in the`SimpleObject` entity):</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public static class DeleteActionDomainEvent
-                       extends SimpleObject.ActionDomainEvent {}
-@Action(semantics = NON_IDEMPOTENT_ARE_YOU_SURE,
-        domainEvent = DeleteActionDomainEvent.class)
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Action(semantics = NON_IDEMPOTENT_ARE_YOU_SURE)                        <i class="conum" data-value="1"></i><b>(1)</b>
 public void delete() {
-    final String title = titleService.titleOf(this);                 <i class="conum" data-value="1"></i><b>(1)</b>
+    final String title = titleService.titleOf(this);                    <i class="conum" data-value="2"></i><b>(2)</b>
     messageService.informUser(String.format("'%s' deleted", title));
     repositoryService.removeAndFlush(this);
 }</code></pre>
@@ -993,7 +1018,11 @@ public void delete() {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Note that this method uses three services provided by the framework; these are injected into the domain object automatically.</td>
+<td>Requires the user to confirm the action</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The action&#8217;s implementation uses three services provided by the framework; these are injected into the domain object automatically.</td>
 </tr>
 </table>
 </div>
@@ -1001,6 +1030,18 @@ public void delete() {
 </div>
 <div class="sect2">
 <h3 id="swagger-restful-objects"><a class="anchor" href="#swagger-restful-objects"></a>Swagger (Restful Objects)</h3>
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-caution" title="Caution"></i>
+</td>
+<td class="content">
+if invoking an action using Swagger returns a 401 (unauthorised), then navigate to the REST API directly (<a href="http://localhost:8080/restful" class="bare">http://localhost:8080/restful</a> to authenticate the browser first]).
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
 <p>Using <span class="menuseq"><b class="menu">Prototyping</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="menuitem">Open Swagger UI</b></span> menu item (or just going back to the home page at <a href="http://localhost:8080">localhost:8080</a>) we can use <a href="https://swagger.io/">Swagger UI</a> as a front-end to the REST API provided by the Restful Objects viewer.</p>
 </div>
@@ -1025,18 +1066,6 @@ If the API is private (or for prototyping), then resources corresponding to enti
 <div class="content">
 <img src="_images/simpleapp/using/220-create-object-thru-rest-api.png" alt="220 create object thru rest api" width="600px">
 </div>
-</div>
-<div class="admonitionblock caution">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-caution" title="Caution"></i>
-</td>
-<td class="content">
-if invoking the action returns a 401 (unauthorised), then navigate to the REST API directly (<a href="http://localhost:8080/restful" class="bare">http://localhost:8080/restful</a> to authenticate the browser first]).
-</td>
-</tr>
-</table>
 </div>
 <div class="paragraph">
 <p>The response indicates that the object was successfully created:</p>
@@ -1078,17 +1107,24 @@ The REST API implemented by Apache Isis is specified in the <a href="http://www.
 <div class="sect2">
 <h3 id="application-modules"><a class="anchor" href="#application-modules"></a>Application Modules</h3>
 <div class="paragraph">
-<p>The application consists of three modules, with a top-level module acting as an aggregator, the <code>module-simple</code> module that contains the business logic, and <code>webapp</code> module that acts as a bootstrapper.</p>
+<p>The application consists of five modules:</p>
 </div>
 <div class="imageblock kroki">
 <div class="content">
-<object type="image/svg+xml" data="_images/diag-599346a9f77a489b6217b75d7ac3b4db988213ba.svg"><span class="alt">simpleapp module dependencies</span></object>
+<object type="image/svg+xml" data="_images/diag-8ab7baff76ffc186da54f47082e4791d011a387e.svg"><span class="alt">simpleapp dependencies</span></object>
 </div>
-<div class="title">Figure 1. simpleapp module dependencies</div>
+<div class="title">Figure 1. simpleapp dependencies</div>
 </div>
 <div class="paragraph">
-<p>Each Maven module contains exactly one <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/annotation/Configuration.html">@Configuration</a> class, residing at the package root for that Maven module.
-So, the <code>module-simple</code> maven
+<p>where "&#8230;&#8203;" is either "jdo" or "jpa", depending on the branch.</p>
+</div>
+<div class="paragraph">
+<p>The main business logic resides in <code>module-&#8230;&#8203;-simple</code>, with the <code>webapp</code> module acting as an aggregator.
+Each of these modules have unit and/or integration tests.
+To allow them to be easily excluded (while prototyping/exploration), they have been placed into their own respective modules.</p>
+</div>
+<div class="paragraph">
+<p>The (non-test) Maven modules each contain exactly one <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/annotation/Configuration.html">@Configuration</a> class, residing at the package root for that Maven module.
 The location of this class is used for classpath scanning.</p>
 </div>
 <div class="paragraph">
@@ -1097,7 +1133,7 @@ For example, you might have a <code>module-customer</code> holding a <code>Custo
 </div>
 <div class="imageblock kroki">
 <div class="content">
-<object type="image/svg+xml" data="_images/diag-e93d5135146b237a9132afa0c6e25e5ebc58358e.svg"><span class="alt">Typical application dependencies</span></object>
+<object type="image/svg+xml" data="_images/diag-5936d1561be55d4f98b2c97cf62e09251ce1dabf.svg"><span class="alt">Typical application dependencies</span></object>
 </div>
 <div class="title">Figure 2. Typical application dependencies</div>
 </div>
@@ -1117,9 +1153,7 @@ For integration tests, this uses the <a href="https://docs.spring.io/spring-boot
 <p>These two different annotations reference a (class annotated with) <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/annotation/Configuration.html">@Configuration</a>, which in turn can <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/annotation/Import.html">@Import</a> other annotations.</p>
 </div>
 <div class="paragraph">
-<p>By convention, the top-level <code>@Configuration</code> in an Apache Isis application is called the "app manifest".
-This references not only the application-level modules (described <a href="about.html#application-modules" class="page">above</a>), but also the framework&#8217;s modules.
-There will be several of these app manifests, typically one for the webapp itself, and one for integration testing each module.</p>
+<p>By convention, the top-level <code>@Configuration</code> in an Apache Isis application is called the "app manifest".</p>
 </div>
 <div class="paragraph">
 <p>The <a href="_attachments/simpleapp-modules-dependencies.pptx">diagram</a> below shows how classes fit together:</p>
@@ -1131,11 +1165,14 @@ There will be several of these app manifests, typically one for the webapp itsel
 <div class="title">Figure 3. Module Dependencies</div>
 </div>
 <div class="paragraph">
+<p>(For a JPA branch, the <code>JdoDataNucleus5</code> dependency is replaced by <code>JpaEclipseLink</code>).</p>
+</div>
+<div class="paragraph">
 <p>Let&#8217;s now review the contents of each of the modules in the simpleapp starter app.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="module-simples-srcmainjava"><a class="anchor" href="#module-simples-srcmainjava"></a>module-simple&#8217;s src/main/java</h3>
+<h3 id="module-simples-srcmainjava"><a class="anchor" href="#module-simples-srcmainjava"></a>module-&#8230;&#8203;-simple&#8217;s src/main/java</h3>
 <div class="paragraph">
 <p>Under <code>src/main/java</code> we have:</p>
 </div>
@@ -1150,16 +1187,17 @@ There will be several of these app manifests, typically one for the webapp itsel
             SimpleObject.java
             SimpleObject.layout.xml
             SimpleObject.png
+            SimpleObjectRepository.java <i class="conum" data-value="5"></i><b>(5)</b>
             SimpleObjects.java
-        fixture/                        <i class="conum" data-value="5"></i><b>(5)</b>
+        fixture/                        <i class="conum" data-value="6"></i><b>(6)</b>
           SimpleObject_persona.java
           SimpleObjectBuilder.java
-        types/                          <i class="conum" data-value="6"></i><b>(6)</b>
+        types/                          <i class="conum" data-value="7"></i><b>(7)</b>
           Name.java
           Notes.java
-      SimpleModule.java                 <i class="conum" data-value="7"></i><b>(7)</b>
+      SimpleModule.java                 <i class="conum" data-value="8"></i><b>(8)</b>
   META-INF/
-    persistence.xml                     <i class="conum" data-value="8"></i><b>(8)</b></code></pre>
+    persistence.xml                     <i class="conum" data-value="9"></i><b>(9)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -1171,36 +1209,39 @@ Change as required.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Defines the 'simple' module.
-Apache Isis can be used for both microservice and monolithic architectures, but for the latter it encourages "modular monoliths" from the start.</td>
+<td>Top level package for the 'simple' module.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>The <code>dom</code> package holds the "domain object model" for this module.
-Modules may have other packages, common ones include <code>types</code> and <code>fixture</code>s (as below), also <code>api</code>s, <code>contribution</code>s, <code>spi</code>s</td>
+<td>The <code>dom</code> subpackage holds the "domain object model" for this module.
+Modules may have other subpackages, common ones include <code>types</code> and <code>fixture</code>s (as below), also <code>api</code>s, <code>contribution</code>s, <code>spi</code>s</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>Holds classes for the <code>so</code> ("simple object") entity/aggregate, consisting of the entity definition itself (<code>SimpleObject</code>) and a corresponding repository (<code>SimpleObjects</code>).
+<td>Holds classes for the <code>so</code> ("simple object") entity/aggregate, consisting of the entity definition itself (<code>SimpleObject</code>) and a corresponding domin services (<code>SimpleObjects</code> and <code>SimpleObjectRepository</code>).
 The associated <code>.layout.xml</code> and <code>.png</code> are optional but provide metadata/resources for rendering (Maven is configured to also treat <code>src/main/java</code> as a resource location).</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>For the <code>jpa</code> branch only, uses Spring Data JPA to automatically provide the query implementation.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
 <td>The <code>fixture</code> package contains classes to set up the database to an initial state (as described <a href="#fixtures">earlier</a>.
 One of the classes is a <code>FixtureScript</code> (defines <em>how</em> to set up the data) the other is a persona enum (defines <em>what</em> data to set up).</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
 <td>The <code>types</code> package contains meta-annotations to describe the usage of common value types such as <code>String</code>s.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
 <td><code>SimpleModule</code> is a Spring <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/annotation/Configuration.html">@Configuration</a> which allows the domain services and entities of the module to be located.<br>
 This is discussed in more detail below.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="8"></i><b>8</b></td>
-<td>The <code>persistence.xml</code> file is required when using the JDO/DataNucleus object store (though it is basically boilerplate, an empty file).</td>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
+<td>For the <code>jdo</code> branch only, the <code>persistence.xml</code> file is required boilerplate.</td>
 </tr>
 </table>
 </div>
@@ -1217,10 +1258,12 @@ In the case of <code>SimpleModule</code>, it consists of:</p>
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">package domainapp.modules.simple;
 ... imports omitted ...
 @Configuration
-@Import({})                                                                 <i class="conum" data-value="1"></i><b>(1)</b>
-@ComponentScan                                                              <i class="conum" data-value="2"></i><b>(2)</b>
+@Import({})                                            <i class="conum" data-value="1"></i><b>(1)</b>
+@ComponentScan                                         <i class="conum" data-value="2"></i><b>(2)</b>
+@EnableJpaRepositories                                 <i class="conum" data-value="3"></i><b>(3)</b>
+@EntityScan(basePackageClasses = {SimpleModule.class}) <i class="conum" data-value="4"></i><b>(4)</b>
 public class SimpleModule
-                implements ModuleWithFixtures {                             <i class="conum" data-value="3"></i><b>(3)</b>
+                implements ModuleWithFixtures {        <i class="conum" data-value="5"></i><b>(5)</b>
 
     @Override
     public FixtureScript getTeardownFixture() {
@@ -1232,16 +1275,7 @@ public class SimpleModule
         };
     }
 
-    public static class PropertyDomainEvent&lt;S,T&gt;                            <i class="conum" data-value="4"></i><b>(4)</b>
-    extends org.apache.isis.applib.events.domain.PropertyDomainEvent&lt;S,T&gt; {}
-
-    public static class CollectionDomainEvent&lt;S,T&gt;
-    extends org.apache.isis.applib.events.domain.CollectionDomainEvent&lt;S,T&gt; {}
-
-    public static class ActionDomainEvent&lt;S&gt; extends
-    org.apache.isis.applib.events.domain.ActionDomainEvent&lt;S&gt; {}
-
-    @ConfigurationProperties("app.simple-module")                           <i class="conum" data-value="5"></i><b>(5)</b>
+    @ConfigurationProperties("app.simple-module")      <i class="conum" data-value="6"></i><b>(6)</b>
     @Data
     @Validated
     public static class Configuration {
@@ -1277,19 +1311,20 @@ If there were, these would be expressed in terms of module classes (each being a
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>for <code>jpa</code> branch only, enables Spring Data JPA repositories</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>for <code>jpa</code> branch only, to automatically discover JPA entities</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
 <td>Optionally, modules can implement the testing&#8217;s <code>ModuleWithFixtures</code> interface.
 Through this, they can provide a fixture script which can be used to teardown all entities that are "owned" by the module.
 Since the module dependency graph is known, this allows all data to be removed, useful for prototyping and sometimes for integration tests.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>The actions for the domain objects and domain services all emit domain events, ultimately inheriting from <a href="#refguide:applib-cm:classes/domainevent/ActionDomainEvent.adoc" class="page unresolved">ActionDomainEvent</a>.
-By convention, this inheritance hierarchy includes classes defined at the module level.
-This then allows subscribes to subscribe to all actions emitted by anything within the module.<br>
-Events can also be emitted for <a href="#refguide:applib-cm:classes/domainevent/PropertyDomainEvent.adoc" class="page unresolved">properties</a> and <a href="#refguide:applib-cm:classes/domainevent/CollectionDomainEvent.adoc" class="page unresolved">collections</a>.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
 <td>Spring Boot <a href="https://docs.spring.io/spring-boot/docs/current/reference/html/spring-boot-features.html#boot-features-external-config-typesafe-configuration-properties">type-safe configuration</a>, as per <a href="https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/context/properties/ConfigurationProperties.html">@ConfigurationProperties</a> annotation.
 This Spring Boot feature is used by the framework, but can equally easily be used by application code.
 The <code>@Name.Specification</code> class uses this configuration property.</td>
@@ -1297,10 +1332,7 @@ The <code>@Name.Specification</code> class uses this configuration property.</td
 </table>
 </div>
 <div class="paragraph">
-<p>The scanning mechanism is leveraged by Apache Isis to pick up three types of classes:</p>
-</div>
-<div class="paragraph">
-<p>This will pick up the <code>SimpleObjects</code> repository because it is annotated with the framework&#8217;s <a href="../../../refguide/latest/applib/index/annotation/DomainService.html" class="page">@DomainService</a> annotation; itself meta-annotated with <code>@Component</code>.</p>
+<p>The scanning mechanism is also leveraged by Apache Isis to pick up three types of classes:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -1315,15 +1347,15 @@ Because <code>@DomainService</code> is meta-annotated as a <code>@Component</cod
 </div>
 <div class="paragraph">
 <p>In the simpleapp starter app, the only domain service  is <code>SimpleObjects</code>.
-This appears in the menu, and also acts as a repository for the <code>SimpleObject</code> entity.</p>
+This appears in the menu, and also acts as a repository for the <code>SimpleObject</code> entity.
+The <code>jpa</code> branch also has the <code>SimpleObjectRepository</code> Spring Data service.</p>
 </div>
 </li>
 <li>
 <p>all entities.</p>
 <div class="paragraph">
-<p>These are entities that are annotated with both <a href="../../../refguide/latest/applib/index/annotation/DomainObject.html" class="page">@DomainObject</a> annotation and with <code>@javax.jdo.annotations.PersistenceCapable</code>.
-Because <code>@DomainObject</code> is meta-annotated as a <code>@Component</code>, these are found automatically by Spring.
-They are passed through to the JDO/DataNucleus object store, in order to create database mappings from the entities to relational tables.</p>
+<p>These are entities that are annotated with both <a href="../../../refguide/latest/applib/index/annotation/DomainObject.html" class="page">@DomainObject</a> annotation and with the ORM-specific annotation.
+For <code>jdo</code> branch, this is <code>@javax.jdo.annotations.PersistenceCapable</code>; for the <code>jpa</code> branch this is <code>@javax.persistence.Entity</code>).</p>
 </div>
 <div class="paragraph">
 <p>In the simpleapp starter app, the only entity is <code>SimpleObject</code>.</p>
@@ -1343,7 +1375,7 @@ They are passed through to the JDO/DataNucleus object store, in order to create 
 </div>
 </div>
 <div class="sect2">
-<h3 id="module-simples-srctestjava"><a class="anchor" href="#module-simples-srctestjava"></a>module-simple&#8217;s src/test/java</h3>
+<h3 id="module-simple-tests-srctestjava"><a class="anchor" href="#module-simple-tests-srctestjava"></a>module-&#8230;&#8203;-simple-test&#8217;s src/test/java</h3>
 <div class="paragraph">
 <p>Under <code>src/test/java</code> we have:</p>
 </div>
@@ -1354,14 +1386,17 @@ They are passed through to the JDO/DataNucleus object store, in order to create 
     modules/
       simple/
         dom/
-          so/                                   <i class="conum" data-value="1"></i><b>(1)</b>
+          so/                                       <i class="conum" data-value="1"></i><b>(1)</b>
             SimpleObject_Test.java
             SimpleObjects_Test.java
         integtests/
-          tests/                                <i class="conum" data-value="2"></i><b>(2)</b>
+          tests/                                    <i class="conum" data-value="2"></i><b>(2)</b>
             SimpleObject_IntegTest.java
             SimpleObjects_IntegTest.java
-          SimpleModuleIntegTestAbstract.java    <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
+          SimpleModuleIntegTestAbstract.java        <i class="conum" data-value="3"></i><b>(3)</b>
+          SimpleModuleIntegTestConfiguration.java   <i class="conum" data-value="4"></i><b>(4)</b>
+src/test/resources/
+  application-test.yml                              <i class="conum" data-value="5"></i><b>(5)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -1380,6 +1415,14 @@ These use the <a href="../../../refguide/latest/applib/index/services/wrapper/Wr
 <td><i class="conum" data-value="3"></i><b>3</b></td>
 <td>The <code>SimpleModuleIntegTestAbstract</code> superclass bootstraps the module&#8217;s integration tests.
 This is discussed in more detail below.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Spring to bootstrap the integration test.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Configuration for the "test" profile</td>
 </tr>
 </table>
 </div>
@@ -1416,26 +1459,27 @@ the naming convention&#8201;&#8212;&#8201;with <code>Test</code> and <code>Integ
 <div class="title">SimpleModuleIntegTestAbstract.java</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@SpringBootTest(
-        classes = SimpleModuleIntegTestAbstract.AppManifest.class   <i class="conum" data-value="1"></i><b>(1)</b>
+        classes = SimpleModuleIntegTestAbstract.TestApp.class   <i class="conum" data-value="1"></i><b>(1)</b>
 )
-@TestPropertySource({                                               <i class="conum" data-value="2"></i><b>(2)</b>
-        IsisPresets.H2InMemory_withUniqueSchema,                    <i class="conum" data-value="3"></i><b>(3)</b>
-        IsisPresets.DataNucleusAutoCreate,                          <i class="conum" data-value="4"></i><b>(4)</b>
-        IsisPresets.UseLog4j2Test,                                  <i class="conum" data-value="5"></i><b>(5)</b>
-})
+@ActiveProfiles("test") <i class="conum" data-value="2"></i><b>(2)</b>
 public abstract class SimpleModuleIntegTestAbstract
-        extends IsisIntegrationTestAbstractWithFixtures {           <i class="conum" data-value="6"></i><b>(6)</b>
+        extends IsisIntegrationTestAbstractWithFixtures {       <i class="conum" data-value="3"></i><b>(3)</b>
 
     @Configuration
     @Import({
-        IsisModuleCoreRuntimeServices.class,                        <i class="conum" data-value="7"></i><b>(7)</b>
-        IsisModuleSecurityBypass.class,
-        IsisModuleJdoDataNucleus5.class,
-        IsisModuleTestingFixturesApplib.class,                      <i class="conum" data-value="8"></i><b>(8)</b>
+        IsisModuleCoreRuntimeServices.class,                    <i class="conum" data-value="4"></i><b>(4)</b>
+        IsisModuleSecurityBypass.class,                         <i class="conum" data-value="5"></i><b>(5)</b>
+        IsisModuleJdoDataNucleus5.class,                        <i class="conum" data-value="6"></i><b>(6)</b>
+        IsisModuleTestingFixturesApplib.class,                  <i class="conum" data-value="7"></i><b>(7)</b>
 
-        SimpleModule.class
+        SimpleModule.class                                      <i class="conum" data-value="8"></i><b>(8)</b>
     })
-    public static class AppManifest {
+    @PropertySources({
+            @PropertySource(IsisPresets.H2InMemory_withUniqueSchema),     <i class="conum" data-value="9"></i><b>(9)</b>
+            @PropertySource(IsisPresets.DatanucleusAutocreateNoValidate), <i class="conum" data-value="10"></i><b>(10)</b>
+            @PropertySource(IsisPresets.UseLog4j2Test),                   <i class="conum" data-value="11"></i><b>(11)</b>
+    })
+    public static class TestApp {
     }
 }</code></pre>
 </div>
@@ -1444,52 +1488,58 @@ public abstract class SimpleModuleIntegTestAbstract
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The <code>AppManifest</code> (defined as a nested static class below) lists the modules needed to bootstrap the integration test.</td>
+<td>The <code>TestApp</code> (defined as a nested static class below) lists the modules needed to bootstrap the integration test.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Spring allows additional properties to be defined through the <a href="https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/test/context/TestPropertySource.html">@TestPropertySource</a> annotation</td>
+<td>Actives the "test" profile, which reads in additional configuratoin in `application-test.yml"</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Runs the tests in memory using H2.
-A unique schema allows tests to potentially be run in parallel</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>Ensures that JDO/DataNucleus is configured to create the database schema first.
-This may be required because the application might otherwise be configured to use the <a href="../../../userguide/latest/flyway/about.html" class="page">Flyway integration</a>.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>Sets up logging to use the configuration defined in the <code>log4j2-test.xml</code> file</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
-<td>Tests typically inherit from <code>IsisIntegrationTestAbstract</code>, which provides some convenience methods to inherit from.
-In this case, the test inherits from the <code>IsisIntegrationTestAbstractWithFixtures</code> subclass which also adds in support for running fixtures.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="7"></i><b>7</b></td>
 <td>Specifies the modules that make up Apache Isis framework itself.
 These include core, security set to the bypass implementation (effecively is ignored) and JDO/DataNucleus for persistence.
 Note that there no viewers are bootstrapped because the tests are run through Spring&#8217;s integration testing framework, rather than (say) as Selenium tests.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="8"></i><b>8</b></td>
-<td>Brings in support for running fixtures.</td>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Disables security checks.</td>
 </tr>
-</table>
-</div>
-<div class="admonitionblock tip">
-<table>
 <tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-You can learn more about testing in the <a href="../../../testing/latest/about.html" class="page">Testing Guide</a>.
-</td>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Configures JDO as the ORM.
+<div class="paragraph">
+<p>If using JPA, this would be <code>IsisModuleJpaEclipseLink.class</code> instead.</p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Brings in support for running fixtures.
+<div class="paragraph">
+<p>You can learn more about testing in the <a href="../../../testing/latest/about.html" class="page">Testing Guide</a>.</p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>The module containing the actual business logic to be tested.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td>Runs the tests in memory using H2.
+A unique schema allows tests to potentially be run in parallel</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
+<td>Ensures that JDO/DataNucleus is configured to create the database schema first.
+This may be required because the application might otherwise be configured to use the <a href="../../../userguide/latest/flyway/about.html" class="page">Flyway integration</a>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="10"></i><b>10</b></td>
+<td>Sets up logging to use the configuration defined in the <code>log4j2-test.xml</code> file</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="11"></i><b>11</b></td>
+<td>Tests typically inherit from <code>IsisIntegrationTestAbstract</code>, which provides some convenience methods to inherit from.
+In this case, the test inherits from the <code>IsisIntegrationTestAbstractWithFixtures</code> subclass which also adds in support for running fixtures.</td>
 </tr>
 </table>
 </div>
@@ -1518,8 +1568,12 @@ You can learn more about testing in the <a href="../../../testing/latest/about.h
             HomePageViewModel.layout.xml
             HomePageViewModel.png
          ApplicationModule.java                                 <i class="conum" data-value="6"></i><b>(6)</b>
-      AppManifest.java                                          <i class="conum" data-value="7"></i><b>(7)</b>
-      SimpleApp.java                                            <i class="conum" data-value="8"></i><b>(8)</b></code></pre>
+      custom/
+        restapi/
+          CustomController.class    <i class="conum" data-value="7"></i><b>(7)</b>
+        CustomModule.class
+      AppManifest.java                                          <i class="conum" data-value="8"></i><b>(8)</b>
+      SimpleApp.java                                            <i class="conum" data-value="9"></i><b>(9)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -1560,19 +1614,29 @@ This integrates with Spring Boot&#8217;s <a href="https://docs.spring.io/spring-
 </tr>
 <tr>
 <td><i class="conum" data-value="6"></i><b>6</b></td>
-<td>Defines the services in the webapp module, along with dependencies onto the other modules in the application.<br>
-Discussed in more detail below.</td>
+<td>Defines the services in the webapp module, along with dependencies onto the other modules in the application.
+<div class="paragraph">
+<p>Discussed in more detail below.</p>
+</div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="7"></i><b>7</b></td>
-<td><code>AppManifest</code> is the top-level Spring <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/annotation/Configuration.html">@Configuration</a> that specifies the components of Apache Isis to use, along with the modules making up the application itself (ie <code>ApplicationModule</code>, which depends in turn on <code>SimpleModule</code>).<br>
-This is discussed in more detail below</td>
+<td>Demonstrates how to implement custom REST controller using business logic.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="8"></i><b>8</b></td>
+<td><code>AppManifest</code> is the top-level Spring <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/annotation/Configuration.html">@Configuration</a> that specifies the components of Apache Isis to use, along with the modules making up the application itself (ie <code>ApplicationModule</code>, which depends in turn on <code>SimpleModule</code>, and <code>CustomModule</code>).
+<div class="paragraph">
+<p>This is discussed in more detail below</p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
 <td><code>SimpleApp</code> is the <a href="https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/autoconfigure/SpringBootApplication.html">@SpringBootApplication</a> used to bootstrap the app.
-It&#8217;s pretty much boilerplate - the important piece is that it references <code>AppManifest</code>.<br>
-It&#8217;s discussed in more detail below</td>
+It&#8217;s pretty much boilerplate - the important piece is that it references <code>AppManifest</code>.
+<div class="paragraph">
+<p>Discussed in more detail below</p>
+</div></td>
 </tr>
 </table>
 </div>
@@ -1610,7 +1674,7 @@ public class ApplicationModule {
 <div class="sect3">
 <h4 id="appmanifest"><a class="anchor" href="#appmanifest"></a>AppManifest</h4>
 <div class="paragraph">
-<p>The "app manifest" (the name has been retained from Apache Isis v1.x) is the top-level Spring <code>@Configuration</code>.
+<p>The "app manifest" is the top-level Spring <code>@Configuration</code>.
 It looks like this:</p>
 </div>
 <div class="listingblock">
@@ -1630,11 +1694,13 @@ It looks like this:</p>
         IsisModuleExtFlywayImpl.class,                          <i class="conum" data-value="8"></i><b>(8)</b>
 
         ApplicationModule.class,                                <i class="conum" data-value="9"></i><b>(9)</b>
+        CustomModule.class,                                     <i class="conum" data-value="9"></i><b>(9)</b>
 
         DomainAppDemo.class                                     <i class="conum" data-value="10"></i><b>(10)</b>
 })
-@PropertySource(IsisPresets.NoTranslations)                     <i class="conum" data-value="11"></i><b>(11)</b>
-@PropertySource(IsisPresets.DebugDiscovery),
+@PropertySources({
+        @PropertySource(IsisPresets.DebugDiscovery),            <i class="conum" data-value="11"></i><b>(11)</b>
+})
 public class AppManifest {
 }</code></pre>
 </div>
@@ -1653,7 +1719,9 @@ There are several security implementations, precisely one must be selected</td>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
 <td>Enables JDO/DataNucleus for persistence.
-Optional (though if omitted then only <a href="../../../userguide/latest/fun/overview.html#view-models" class="page">view models</a> may be used, with hand-rolled persistence).</td>
+<div class="paragraph">
+<p>If using JPA as the ORM, replace with <code>IsisModuleJpaEclipseLink.class</code>.</p>
+</div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
@@ -1677,8 +1745,10 @@ Optional (though if omitted then only <a href="../../../userguide/latest/fun/ove
 </tr>
 <tr>
 <td><i class="conum" data-value="9"></i><b>9</b></td>
-<td>References the application&#8217;s module(s), in this case just the one, <code>ApplicationModule</code>.<br>
-This is discussed below.</td>
+<td>References the application&#8217;s module(s), in this case <code>ApplicationModule</code> and <code>CustomModule</code>.
+<div class="paragraph">
+<p><code>ApplicationModule</code> is discussed below.</p>
+</div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="10"></i><b>10</b></td>
@@ -1753,17 +1823,18 @@ As an alternative to making this call, you can also just run with a system prope
   config/
     application.properties              <i class="conum" data-value="1"></i><b>(1)</b>
     application-SQLSERVER.properties    <i class="conum" data-value="2"></i><b>(2)</b>
+    application-POSTGRES.properties     <i class="conum" data-value="3"></i><b>(3)</b>
   db/
     migration/
       SQLSERVER/
-        Vyyyy.mm.dd.hh.ss__xxx.sql      <i class="conum" data-value="3"></i><b>(3)</b>
-  static/                               <i class="conum" data-value="4"></i><b>(4)</b>
-  templates/                            <i class="conum" data-value="5"></i><b>(5)</b>
-  application.yml                       <i class="conum" data-value="6"></i><b>(6)</b>
-  banner.txt                            <i class="conum" data-value="7"></i><b>(7)</b>
-  log4j2-spring.xml                     <i class="conum" data-value="8"></i><b>(8)</b>
-  menubars.layout.xml                   <i class="conum" data-value="9"></i><b>(9)</b>
-  shiro.ini                             <i class="conum" data-value="10"></i><b>(10)</b></code></pre>
+        Vyyyy.mm.dd.hh.ss__xxx.sql      <i class="conum" data-value="4"></i><b>(4)</b>
+  static/                               <i class="conum" data-value="5"></i><b>(5)</b>
+  templates/                            <i class="conum" data-value="6"></i><b>(6)</b>
+  application.yml                       <i class="conum" data-value="7"></i><b>(7)</b>
+  banner.txt                            <i class="conum" data-value="8"></i><b>(8)</b>
+  log4j2-spring.xml                     <i class="conum" data-value="9"></i><b>(9)</b>
+  menubars.layout.xml                   <i class="conum" data-value="10"></i><b>(10)</b>
+  shiro.ini                             <i class="conum" data-value="11"></i><b>(11)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -1854,7 +1925,7 @@ JQuery is available by default.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="webapps-srctestjava"><a class="anchor" href="#webapps-srctestjava"></a>webapp&#8217;s src/test/java</h3>
+<h3 id="webapp-tests-srctestjava"><a class="anchor" href="#webapp-tests-srctestjava"></a>webapp-test&#8217;s src/test/java</h3>
 <div class="paragraph">
 <p>Under <code>src/test/java</code> we have different sets of tests.
 We&#8217;ll inspect each in turn.</p>
@@ -1895,7 +1966,7 @@ These reside under <code>domain.webapp.bdd</code>:</p>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
 <td>defines the step definitions (or "glue") which describes how to interact with the application.<br>
-This class inherits from <code>ApplicationIntegTestAbstract</code>, the base class for integration tests, described in the <a href="about.html#integration-tests" class="page">next section</a>.</td>
+This class inherits from <code>WebAppIntegTestAbstract</code>, the base class for integration tests, described in the <a href="#integration-tests">next section</a>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
@@ -1954,13 +2025,17 @@ This class inherits from <code>ApplicationIntegTestAbstract</code>, the base cla
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Uses approval tests to verify that the metamodel is unchanged between releases of Apache Isis.<br>
-Discussed in more detail below.</td>
+<td>Uses approval tests to verify that the metamodel is unchanged between releases of Apache Isis.
+<div class="paragraph">
+<p>Discussed in more detail below.</p>
+</div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Bootstraps the app and runs the metamodel validators to check that there are not metamodel errors.<br>
-This can also be done simply when running the application, but performing the checks through integration tests enables "fail-fast" checking, as part of CI, for example.</td>
+<td>Bootstraps the app and runs the metamodel validators to check that there are not metamodel errors.
+<div class="paragraph">
+<p>This can also be done simply when running the application, but performing the checks through integration tests enables "fail-fast" checking, as part of CI, for example.</p>
+</div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
@@ -1969,7 +2044,7 @@ This can also be done simply when running the application, but performing the ch
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
 <td>Base class used to bootstrap all integration tests for this module.
-It is very similar to the base class used to bootstrap the integration tests for the simple module <a href="about.html#SimpleModuleIntegTestAbstract" class="page">about.adoc#SimpleModuleIntegTestAbstract</a>, but referencing <code>ApplicationModule</code> rather than <code>SimpleModule</code>.</td>
+It is very similar to the base class used to bootstrap the integration tests for the simple module <a href="#simplemoduleintegtestabstract">SimpleModuleIntegTestAbstract</a>, but referencing <code>ApplicationModule</code> rather than <code>SimpleModule</code>.</td>
 </tr>
 </table>
 </div>
@@ -2095,7 +2170,8 @@ Basically, though, it amounts to running the <code>main()</code> method in the <
 </div>
 </div>
 <div class="paragraph">
-<p>which uses an IntelliJ feature to run a different run configuration to run DataNucleus enhancer beforehand:</p>
+<p>If using JDO as the ORM, then the DataNucleus enhancer must be run beforehand.
+With IntelliJ this can be done by setting up a different <em>Run Configuration</em> to be executed beforehand:</p>
 </div>
 <div class="imageblock">
 <div class="content">
@@ -2116,6 +2192,169 @@ There is plenty more guidance on this site; start with the <a href="../../../use
 </div>
 </div>
 </div>
+<div class="sect1">
+<h2 id="using-an-external-database-and-flywaydb"><a class="anchor" href="#using-an-external-database-and-flywaydb"></a>Using an external database and FlywayDB</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The application is configured by default uses H2 as an inmemory database, with <a href="#fixtures">fixtures</a> used to populate the database with representative data.</p>
+</div>
+<div class="paragraph">
+<p>To deploy to production though of course will require a persistent database, and the schema of the tables will be explicitly managed.
+Although both JDO and JPA can automatically create the database schema, many development teams choose to manage the schema externally to the ORM.</p>
+</div>
+<div class="paragraph">
+<p>A popular tool to do this is <a href="https://flywaydb.org/">Flyway</a>, and Spring Boot provides automatic support for it using <a href="https://docs.spring.io/spring-boot/docs/current/reference/html/appendix-application-properties.html#common-application-properties-data-migration">these configuration properties</a>.</p>
+</div>
+<div class="paragraph">
+<p>The simpleapp demonstrates how this can be done using SQL Server.
+Adapt the following for your own preferred database.</p>
+</div>
+<div class="sect2">
+<h3 id="prereqs"><a class="anchor" href="#prereqs"></a>Prereqs</h3>
+<div class="paragraph">
+<p>If you happen to use SQL Server, then just use a dev instance.
+Otherwise, you can easily run up an instance using Docker:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">docker run \
+    --name sqlserver \
+    -e 'ACCEPT_EULA=Y' \
+    -e 'SA_PASSWORD=pa$$w0rd' \
+    -p 1433:1433 \
+    -d mcr.microsoft.com/mssql/server:2019-latest</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can then connect:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>if on Linux/Mac, start a command line client using:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">docker exec -it sqlserver \
+    /opt/mssql-tools/bin/sqlcmd \
+    -S localhost -U sa -P pa$$w0rd</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>if on Windows, you might instead prefer to use Microsoft&#8217;s free GUI client, <a href="https://docs.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms?view=sql-server-ver15">SQL Server Management Studio</a>.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>You then need to create a database and login:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-sql hljs" data-lang="sql">CREATE DATABASE [simpleapp]
+go
+CREATE LOGIN [simpleapp]
+    WITH PASSWORD=N'simpleapp',
+        DEFAULT_DATABASE=[simpleapp],
+        CHECK_EXPIRATION=OFF, CHECK_POLICY=OFF
+go
+USE [simpleapp]
+GO
+ALTER AUTHORIZATION ON DATABASE::[simpleapp] TO [simpleapp]
+GO</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If using the command line, type 'exit' to quit out.</p>
+</div>
+<div class="paragraph">
+<p>To confirm the connect, try logging in as simpleapp/simpleapp, and verify using:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-sql hljs" data-lang="sql">select db_name(), user_name()
+go</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This should return <code>simpleapp</code> and <code>dbo</code> respectively, meaning that the <code>simpleapp</code> login is all-powerful in the <code>simpleapp</code> database.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="enabling-flyway"><a class="anchor" href="#enabling-flyway"></a>Enabling Flyway</h3>
+<div class="paragraph">
+<p>With the backend database running, we can now run the simpleapp application with Flyway enabled.
+This is done simply by activating the "SQLSERVER" profile (see also the <a href="https://docs.spring.io/spring-boot/docs/current/reference/html/spring-boot-features.html#boot-features-profiles">Spring docs</a>):</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>either by setting a system property:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">-Dspring.profiles.active=SQLSERVER</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>or by setting an environment variable:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">export SPRING_PROFILES_ACTIVE=SQLSERVER</code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>This will cause Spring to read in the <code>config/application-SQLSERVER.properties</code> file:</p>
+</div>
+<div class="listingblock">
+<div class="title">config/application-SQLSERVER.properties</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">spring.flyway.enabled=true
+spring.flyway.default-schema=SIMPLE
+spring.flyway.schemas=SIMPLE
+
+spring.datasource.platform=sqlserver
+spring.datasource.url=jdbc:sqlserver://localhost;databaseName=simpleapp
+spring.datasource.driver-class-name=com.microsoft.sqlserver.jdbc.SQLServerDriver
+spring.datasource.username=simpleapp
+spring.datasource.password=simpleapp
+
+#isis.persistence.schema.create-schema-sql-template=   (use flyway instead)
+isis.persistence.schema.auto-create-schemas=
+
+# DataNucleus, and must use camelCase rather than kebab-case
+datanucleus.schema.autoCreateAll=false</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Flyway in turn reads the migration scripts under <code>db.migration</code> package (in <code>src/main/resources</code> of the <code>webapp</code> module).</p>
+</div>
+<div class="paragraph">
+<p>Run up the application and Flyway will run in the scripts.
+It will also create its own table, <code>SIMPLE.flyway_schema_history</code>:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/simpleapp/flyway/tables-created.png" alt="tables created" width="300px">
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="cleaning-up"><a class="anchor" href="#cleaning-up"></a>Cleaning up</h3>
+<div class="paragraph">
+<p>If you were using Docker to try this out, remember to clean up afterwards:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">docker kill sqlserver
+docker rm sqlserver</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
 </article>
 <aside class="article-aside toc hide-for-print" role="navigation">
     <p class="toc-title">On this page</p>
@@ -2133,7 +2372,7 @@ There is plenty more guidance on this site; start with the <a href="../../../use
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210319-0426-b5944afd</p>
+            <p>Revision: 2.0.0-M4.20210320-0739-04384de6</p>
         </div>
     </div>
 </footer>
