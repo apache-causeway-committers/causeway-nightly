@@ -83,14 +83,15 @@
           <a class="navbar-link" href="#">Components</a>
           <div class="navbar-dropdown">
             <span class="navbar-item navbar-heading">Viewers</span>
-            <a class="navbar-item" href="../../../../../vw/2.0.0-M5/about.html">Wicket UI</a>
-            <a class="navbar-item" href="../../../../../vro/2.0.0-M5/about.html">Restful Objects (REST)</a>
+            <a class="navbar-item" href="../../../../../vw/2.0.0-M5/about.html">Web UI (Wicket)</a>
+            <a class="navbar-item" href="../../../../../vro/2.0.0-M5/about.html">REST API (Restful Objects)</a>
             <hr class="navbar-divider"/>
             <span class="navbar-item navbar-heading">Security</span>
             <a class="navbar-item" href="../../../../../security/2.0.0-M5/about.html">Security Guide</a>
             <hr class="navbar-divider"/>
             <span class="navbar-item navbar-heading">Persistence</span>
-            <a class="navbar-item" href="../../../../../pjdo/2.0.0-M5/about.html">DataNucleus (JDO)</a>
+            <a class="navbar-item" href="../../../../../pjpa/2.0.0-M5/about.html">JPA (EclipseLink)</a>
+            <a class="navbar-item" href="../../../../../pjdo/2.0.0-M5/about.html">JDO (DataNucleus)</a>
             <hr class="navbar-divider"/>
             <span class="navbar-item navbar-heading">Extensions</span>
             <a class="navbar-item" href="../../../../../extensions/2.0.0-M5/about.html">Extensions Catalog</a>
@@ -1131,121 +1132,6 @@ public LocalDate getEndDate() { ... }</pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="css-styling"><a class="anchor" href="#css-styling"></a>CSS Styling</h3>
-<div class="paragraph">
-<p>The <a href="#cssClass">cssClass()</a> element can be used to render additional CSS classes in the HTML (a wrapping <code>&lt;div&gt;</code>) that represents the property.
-<a href="../../../config/application-specific/application-css.html" class="page">Application-specific CSS</a> can then be used to target and adjust the UI representation of that particular element.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
-import lombok.Setter;
-
-public class ToDoItem {
-
-    @PropertyLayout(cssClass="x-key")
-    @Getter @Setter
-    private LocalDate dueBy;
-
-    // ...
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="smoother-ui"><a class="anchor" href="#smoother-ui"></a>Smoother UI</h3>
-<div class="paragraph">
-<p>The <a href="#repainting">repainting()</a> element is used to indicate that the value held by the property never changes over time, even when other properties of the object do change.</p>
-</div>
-<div class="paragraph">
-<p>Setting this attribute to <code>true</code> is used as a hint to the viewer to not redraw the property after an AJAX update of some other property/ies of the object have changed.
-This is primarily for performance, eg can improve the user experience when rendering PDFs/blobs.</p>
-</div>
-<div class="paragraph">
-<p>Note that for this to work, the viewer will also ensure that none of the property&#8217;s parent component (such as a tab group panel) are re-rendered.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>Design note: we considered implementing this an "immutable" flag on the <a href="Property.html" class="page">@Property</a> annotation (because this flag is typically appropriate for immutable/unchanging properties of a domain object).
-However, we decided not to do that, on the basis that it might be interpreted as having a deeper impact within the framework than simply a hint for rendering.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
-import lombok.Setter;
-
-public class Document {
-
-    @PropertyLayout(
-        repainting=Repainting.NO_REPAINT
-    )
-    @Getter @Setter
-    private Blob blob;
-
-    // ...
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="breadcrumbs-where-am-i"><a class="anchor" href="#breadcrumbs-where-am-i"></a>Breadcrumbs (where am I?)</h3>
-<div class="paragraph">
-<p>The <a href="#navigable">navigable()</a> element allows to specify a domain object&#8217;s (or view&#8217;s) navigable parent, as utilized by the 'Where am I' feature.</p>
-</div>
-<div class="paragraph">
-<p>For example, suppose:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject
-public class Company {
-    // ...
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>then:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
-import lombok.Setter;
-
-@DomainObject
-public class Employee {
-
-    @PropertyLayout(navigable=Navigable.PARENT)
-    @Getter @Setter
-    private Company myCompany;
-
-    // ...
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>This points up to the <code>Employee</code>'s parent <code>Company</code>.</p>
-</div>
-<div class="paragraph">
-<p>For further details on using a navigable tree-structure, see <a href="../../../../../vw/latest/features.html#where-am-i" class="page">Where am I</a> in the user guide.</p>
-</div>
-</div>
-<div class="sect2">
 <h3 id="descriptions"><a class="anchor" href="#descriptions"></a>Descriptions</h3>
 <div class="paragraph">
 <p>The <a href="#describedAs">describedAs()</a> element is used to provide a short description of the property to the user.</p>
@@ -1365,13 +1251,10 @@ All that said, the <a href="../../../../../vw/latest/about.html" class="page">Wi
 </div>
 </div>
 <div class="sect2">
-<h3 id="prompt-style"><a class="anchor" href="#prompt-style"></a>Prompt Style</h3>
+<h3 id="css-styling"><a class="anchor" href="#css-styling"></a>CSS Styling</h3>
 <div class="paragraph">
-<p>The <a href="#promptStyle">promptStyle()</a> element is used to specify whether, when editing a domain object property, the new value for the property is prompted by way of a dialog box, or is prompted using an inline panel (replacing the property on the page).</p>
-</div>
-<div class="paragraph">
-<p>If the attribute is not set, then the value of the <a href="../../../config/sections/isis.viewer.wicket.html#isis.viewer.wicket.prompt-style" class="page">isis.viewer.wicket.prompt-style</a> configuration property is used.
-If this is itself not set, then an inline prompt is used.</p>
+<p>The <a href="#cssClass">cssClass()</a> element can be used to render additional CSS classes in the HTML (a wrapping <code>&lt;div&gt;</code>) that represents the property.
+<a href="../../../config/application-specific/application-css.html" class="page">Application-specific CSS</a> can then be used to target and adjust the UI representation of that particular element.</p>
 </div>
 <div class="paragraph">
 <p>For example:</p>
@@ -1381,26 +1264,105 @@ If this is itself not set, then an inline prompt is used.</p>
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
 import lombok.Setter;
 
-public class Customer {
+public class ToDoItem {
 
-    @PropertyLayout(
-        promptStyle=PromptStyle.INLINE  <i class="conum" data-value="1"></i><b>(1)</b>
-    )
+    @PropertyLayout(cssClass="x-key")
     @Getter @Setter
-    private String notes;
+    private LocalDate dueBy;
 
     // ...
 }</code></pre>
 </div>
 </div>
-<div class="colist arabic">
+</div>
+<div class="sect2">
+<h3 id="breadcrumbs-where-am-i"><a class="anchor" href="#breadcrumbs-where-am-i"></a>Breadcrumbs (where am I?)</h3>
+<div class="paragraph">
+<p>The <a href="#navigable">navigable()</a> element allows to specify a domain object&#8217;s (or view&#8217;s) navigable parent, as utilized by the 'Where am I' feature.</p>
+</div>
+<div class="paragraph">
+<p>For example, suppose:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject
+public class Company {
+    // ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>then:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
+import lombok.Setter;
+
+@DomainObject
+public class Employee {
+
+    @PropertyLayout(navigable=Navigable.PARENT)
+    @Getter @Setter
+    private Company myCompany;
+
+    // ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This points up to the <code>Employee</code>'s parent <code>Company</code>.</p>
+</div>
+<div class="paragraph">
+<p>For further details on using a navigable tree-structure, see <a href="../../../../../vw/latest/features.html#where-am-i" class="page">Where am I</a> in the user guide.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="smoother-ui"><a class="anchor" href="#smoother-ui"></a>Smoother UI</h3>
+<div class="paragraph">
+<p>The <a href="#repainting">repainting()</a> element is used to indicate that the value held by the property never changes over time, even when other properties of the object do change.</p>
+</div>
+<div class="paragraph">
+<p>Setting this attribute to <code>true</code> is used as a hint to the viewer to not redraw the property after an AJAX update of some other property/ies of the object have changed.
+This is primarily for performance, eg can improve the user experience when rendering PDFs/blobs.</p>
+</div>
+<div class="paragraph">
+<p>Note that for this to work, the viewer will also ensure that none of the property&#8217;s parent component (such as a tab group panel) are re-rendered.</p>
+</div>
+<div class="admonitionblock note">
 <table>
 <tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>prompt for the new value for the property using an inline panel
-Note that the value <code>INLINE_AS_IF_EDIT</code> does not make sense for properties; if specified then it will be interpreted as just <code>INLINE</code>.</td>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Design note: we considered implementing this an "immutable" flag on the <a href="Property.html" class="page">@Property</a> annotation (because this flag is typically appropriate for immutable/unchanging properties of a domain object).
+However, we decided not to do that, on the basis that it might be interpreted as having a deeper impact within the framework than simply a hint for rendering.</p>
+</div>
+</td>
 </tr>
 </table>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
+import lombok.Setter;
+
+public class Document {
+
+    @PropertyLayout(
+        repainting=Repainting.NO_REPAINT
+    )
+    @Getter @Setter
+    private Blob blob;
+
+    // ...
+}</code></pre>
+</div>
 </div>
 </div>
 <div class="sect2">
@@ -1435,107 +1397,6 @@ public class BugReport {
 <div class="paragraph">
 <p>Here the <code>stepsToReproduce</code> property will be displayed in a text box of 10 rows.</p>
 </div>
-</div>
-<div class="sect2">
-<h3 id="date-intervals"><a class="anchor" href="#date-intervals"></a>Date intervals</h3>
-<div class="paragraph">
-<p>The <a href="#renderDay">renderDay()</a> element applies only to date properties whereby the date will be rendered as the day before the value actually held in the domain object.
-It is ignored for properties of other types.</p>
-</div>
-<div class="paragraph">
-<p>This behaviour might at first glance appear odd, but the rationale is to support the use case of a sequence of instances that represent adjacent intervals of time.
-In such cases there would typically be <code>startDate</code> and <code>endDate</code> properties, eg for all of Q2. Storing this as a half-closed interval&#8201;&#8212;&#8201;eg <code>[1-Apr-2015, 1-July-2015)</code>&#8201;&#8212;&#8201;can substantially simplify internal algorithms; the <code>endDate</code> of one interval will correspond to the <code>startDate</code> of the next.</p>
-</div>
-<div class="paragraph">
-<p>However, from an end-user perspective the requirement may be to render the interval as a fully closed interval; eg the end date should be shown as <code>30-Jun-2015</code>.</p>
-</div>
-<div class="paragraph">
-<p>This attribute therefore bridges the gap; it presents the information in a way that makes sense to an end-user, but also stores the domain object in a way that is easy work with internally.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
-import lombok.Setter;
-
-public class Tenancy {
-
-    @Getter @Setter
-    private LocalDate startDate;
-
-    @PropertyLayout(
-        renderDay = RenderDay.AS_DAY_BEFORE
-    )
-    @Getter @Setter
-    private LocalDate endDate;
-
-    // ...
-}</code></pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class ToDoItem {
-    @PropertyLayout(
-        cssClass="x-key",
-        named="Description of this &lt;i&gt;item&lt;/i&gt;",
-        namedEscaped=false,
-        describedAs="What needs to be done",
-        labelPosition=LabelPosition.LEFT,
-        typicalLength=80
-    )
-    public String getDescription() { /* ... */ }
-    ...
-}</code></pre>
-</div>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>As an alternative to using the <code>@PropertyLayout</code> annotation, a <a href="../../../../../userguide/latest/fun/ui.html#object-layout" class="page">file-based layout</a> can be used (and is generally to be preferred since it is more flexible/powerful).</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>The annotation is one of a handful (others including <a href="Collection.html" class="page">@Collection</a>, <a href="CollectionLayout.html" class="page">@CollectionLayout</a> and <a href="Property.html" class="page">@Property</a>) that can also be applied to the field, rather than the getter method.  This is specifically
-so that boilerplate-busting tools such as <a href="https://projectlombok.org/">Project Lombok</a> can be used.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="usage-notes"><a class="anchor" href="#usage-notes"></a>Usage Notes</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>As alternative to using the annotation, the dynamic <a href="../../../../../userguide/latest/fun/ui.html#object-layout" class="page">file-based layout</a> can generally be used instead.</p>
 </div>
 <div class="sect2">
 <h3 id="label-positioning"><a class="anchor" href="#label-positioning"></a>Label Positioning</h3>
@@ -1671,7 +1532,7 @@ This combines <code>PARENTED_TABLES</code> and <code>STANDALONE_TABLES</code>.</
 </table>
 </div>
 <div class="sect3">
-<h4 id="examples-2"><a class="anchor" href="#examples-2"></a>Examples</h4>
+<h4 id="examples"><a class="anchor" href="#examples"></a>Examples</h4>
 <div class="paragraph">
 <p>For example:</p>
 </div>
@@ -1704,6 +1565,146 @@ Annotating with <code>@Property(where=Where.NOWHERE)</code> overrides this.</p>
 </div>
 </div>
 </div>
+<div class="sect2">
+<h3 id="date-intervals"><a class="anchor" href="#date-intervals"></a>Date intervals</h3>
+<div class="paragraph">
+<p>The <a href="#renderDay">renderDay()</a> element applies only to date properties whereby the date will be rendered as the day before the value actually held in the domain object.
+It is ignored for properties of other types.</p>
+</div>
+<div class="paragraph">
+<p>This behaviour might at first glance appear odd, but the rationale is to support the use case of a sequence of instances that represent adjacent intervals of time.
+In such cases there would typically be <code>startDate</code> and <code>endDate</code> properties, eg for all of Q2. Storing this as a half-closed interval&#8201;&#8212;&#8201;eg <code>[1-Apr-2015, 1-July-2015)</code>&#8201;&#8212;&#8201;can substantially simplify internal algorithms; the <code>endDate</code> of one interval will correspond to the <code>startDate</code> of the next.</p>
+</div>
+<div class="paragraph">
+<p>However, from an end-user perspective the requirement may be to render the interval as a fully closed interval; eg the end date should be shown as <code>30-Jun-2015</code>.</p>
+</div>
+<div class="paragraph">
+<p>This attribute therefore bridges the gap; it presents the information in a way that makes sense to an end-user, but also stores the domain object in a way that is easy work with internally.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
+import lombok.Setter;
+
+public class Tenancy {
+
+    @Getter @Setter
+    private LocalDate startDate;
+
+    @PropertyLayout(
+        renderDay = RenderDay.AS_DAY_BEFORE
+    )
+    @Getter @Setter
+    private LocalDate endDate;
+
+    // ...
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="prompt-style"><a class="anchor" href="#prompt-style"></a>Prompt Style</h3>
+<div class="paragraph">
+<p>The <a href="#promptStyle">promptStyle()</a> element is used to specify whether, when editing a domain object property, the new value for the property is prompted by way of a dialog box, or is prompted using an inline panel (replacing the property on the page).</p>
+</div>
+<div class="paragraph">
+<p>If the attribute is not set, then the value of the <a href="../../../config/sections/isis.viewer.wicket.html#isis.viewer.wicket.prompt-style" class="page">isis.viewer.wicket.prompt-style</a> configuration property is used.
+If this is itself not set, then an inline prompt is used.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
+import lombok.Setter;
+
+public class Customer {
+
+    @PropertyLayout(
+        promptStyle=PromptStyle.INLINE  <i class="conum" data-value="1"></i><b>(1)</b>
+    )
+    @Getter @Setter
+    private String notes;
+
+    // ...
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>prompt for the new value for the property using an inline panel
+Note that the value <code>INLINE_AS_IF_EDIT</code> does not make sense for properties; if specified then it will be interpreted as just <code>INLINE</code>.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="examples-2"><a class="anchor" href="#examples-2"></a>Examples</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class ToDoItem {
+    @PropertyLayout(
+        cssClass="x-key",
+        named="Description of this &lt;i&gt;item&lt;/i&gt;",
+        namedEscaped=false,
+        describedAs="What needs to be done",
+        labelPosition=LabelPosition.LEFT,
+        typicalLength=80
+    )
+    public String getDescription() { /* ... */ }
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>As an alternative to using the <code>@PropertyLayout</code> annotation, a <a href="../../../../../userguide/latest/fun/ui.html#object-layout" class="page">file-based layout</a> can be used (and is generally to be preferred since it is more flexible/powerful).</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The annotation is one of a handful (others including <a href="Collection.html" class="page">@Collection</a>, <a href="CollectionLayout.html" class="page">@CollectionLayout</a> and <a href="Property.html" class="page">@Property</a>) that can also be applied to the field, rather than the getter method.  This is specifically
+so that boilerplate-busting tools such as <a href="https://projectlombok.org/">Project Lombok</a> can be used.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="usage-notes"><a class="anchor" href="#usage-notes"></a>Usage Notes</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>As alternative to using the annotation, the dynamic <a href="../../../../../userguide/latest/fun/ui.html#object-layout" class="page">file-based layout</a> can generally be used instead.</p>
+</div>
 </div>
 </div>
 </article>
@@ -1723,7 +1724,7 @@ Annotating with <code>@Property(where=Where.NOWHERE)</code> overrides this.</p>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210323-0425-53e535fd</p>
+            <p>Revision: 2.0.0-M4.20210325-0439-aa8afaf8</p>
         </div>
     </div>
 </footer>

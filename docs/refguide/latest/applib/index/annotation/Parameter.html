@@ -83,14 +83,15 @@
           <a class="navbar-link" href="#">Components</a>
           <div class="navbar-dropdown">
             <span class="navbar-item navbar-heading">Viewers</span>
-            <a class="navbar-item" href="../../../../../vw/2.0.0-M5/about.html">Wicket UI</a>
-            <a class="navbar-item" href="../../../../../vro/2.0.0-M5/about.html">Restful Objects (REST)</a>
+            <a class="navbar-item" href="../../../../../vw/2.0.0-M5/about.html">Web UI (Wicket)</a>
+            <a class="navbar-item" href="../../../../../vro/2.0.0-M5/about.html">REST API (Restful Objects)</a>
             <hr class="navbar-divider"/>
             <span class="navbar-item navbar-heading">Security</span>
             <a class="navbar-item" href="../../../../../security/2.0.0-M5/about.html">Security Guide</a>
             <hr class="navbar-divider"/>
             <span class="navbar-item navbar-heading">Persistence</span>
-            <a class="navbar-item" href="../../../../../pjdo/2.0.0-M5/about.html">DataNucleus (JDO)</a>
+            <a class="navbar-item" href="../../../../../pjpa/2.0.0-M5/about.html">JPA (EclipseLink)</a>
+            <a class="navbar-item" href="../../../../../pjdo/2.0.0-M5/about.html">JDO (DataNucleus)</a>
             <hr class="navbar-divider"/>
             <span class="navbar-item navbar-heading">Extensions</span>
             <a class="navbar-item" href="../../../../../extensions/2.0.0-M5/about.html">Extensions Catalog</a>
@@ -1066,29 +1067,6 @@ If optionality is required, then use the corresponding wrapper class (e.g. <code
 </div>
 </div>
 <div class="sect2">
-<h3 id="maximum-string-length"><a class="anchor" href="#maximum-string-length"></a>Maximum string length</h3>
-<div class="paragraph">
-<p>The <a href="#maxLength">maxLength()</a> element applies only to <code>String</code> parameters, indicating the maximum number of characters that the user may enter (for example in a text field in the UI).
-It is ignored if applied to parameters of any other type.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class CustomerRepository {
-    public Customer newCustomer(
-        @Parameter(maxLength=30)
-        final String firstName,
-        @Parameter(maxLength=50)
-        final String lastName) {
-        ...
-    }
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
 <h3 id="declarative-validation"><a class="anchor" href="#declarative-validation"></a>Declarative validation</h3>
 <div class="paragraph">
 <p>The <a href="#mustSatisfy">mustSatisfy()</a> element allows arbitrary validation to be applied to parameters using an (implementation of a) <a href="../spec/Specification.html" class="page">Specification</a> object.</p>
@@ -1189,51 +1167,6 @@ This defines the API:</p>
 </div>
 </div>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Customer {
-    public static class EmailSpecification extends AbstractSpecification&lt;String&gt; {
-        public String satisfiesSafely(String proposed) {
-            return EmailUtil.ensureValidEmail(proposed);    <i class="conum" data-value="1"></i><b>(1)</b>
-        }
-    }
-    @Action(semantics=SemanticsOf.IDEMPOTENT)
-    public Customer updateEmail(
-        @Parameter(
-            maxLength=30,
-            mustSatisfy=EmailSpecification.class,
-            optionality=Optionality.OPTIONAL,
-            regexPattern = "(\\w+\\.)*\\w+@(\\w+\\.)+[A-Za-z]+",
-            regexPatternFlags=Pattern.CASE_INSENSITIVE
-        )
-        @ParameterLayout(named="New Email Address")
-        final String newEmailAddress
-        ...
-    }
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>the (fictitious) <code>EmailUtil.ensureValid(&#8230;&#8203;)</code> (omitted for brevity) returns a string explaining if an email is invalid</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="usage-notes"><a class="anchor" href="#usage-notes"></a>Usage Notes</h2>
-<div class="sectionbody">
 <div class="sect2">
 <h3 id="regular-expressions"><a class="anchor" href="#regular-expressions"></a>Regular Expressions</h3>
 <div class="paragraph">
@@ -1319,6 +1252,74 @@ or <a href="../../../applib-classes/value-types.html#Clob" class="page">Clob</a>
 </div>
 </div>
 </div>
+<div class="sect1">
+<h2 id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Customer {
+    public static class EmailSpecification extends AbstractSpecification&lt;String&gt; {
+        public String satisfiesSafely(String proposed) {
+            return EmailUtil.ensureValidEmail(proposed);    <i class="conum" data-value="1"></i><b>(1)</b>
+        }
+    }
+    @Action(semantics=SemanticsOf.IDEMPOTENT)
+    public Customer updateEmail(
+        @Parameter(
+            maxLength=30,
+            mustSatisfy=EmailSpecification.class,
+            optionality=Optionality.OPTIONAL,
+            regexPattern = "(\\w+\\.)*\\w+@(\\w+\\.)+[A-Za-z]+",
+            regexPatternFlags=Pattern.CASE_INSENSITIVE
+        )
+        @ParameterLayout(named="New Email Address")
+        final String newEmailAddress
+        ...
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>the (fictitious) <code>EmailUtil.ensureValid(&#8230;&#8203;)</code> (omitted for brevity) returns a string explaining if an email is invalid</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="usage-notes"><a class="anchor" href="#usage-notes"></a>Usage Notes</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="maximum-string-length"><a class="anchor" href="#maximum-string-length"></a>Maximum string length</h3>
+<div class="paragraph">
+<p>The <a href="#maxLength">maxLength()</a> element applies only to <code>String</code> parameters, indicating the maximum number of characters that the user may enter (for example in a text field in the UI).
+It is ignored if applied to parameters of any other type.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class CustomerRepository {
+    public Customer newCustomer(
+        @Parameter(maxLength=30)
+        final String firstName,
+        @Parameter(maxLength=50)
+        final String lastName) {
+        ...
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
 </article>
 <aside class="article-aside toc hide-for-print" role="navigation">
     <p class="toc-title">On this page</p>
@@ -1336,7 +1337,7 @@ or <a href="../../../applib-classes/value-types.html#Clob" class="page">Clob</a>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M4.20210323-0425-53e535fd</p>
+            <p>Revision: 2.0.0-M4.20210325-0439-aa8afaf8</p>
         </div>
     </div>
 </footer>
