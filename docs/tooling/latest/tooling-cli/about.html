@@ -402,8 +402,10 @@ page.parent doesn't seem to be set...
 <pre class="highlightjs highlight"><code>Usage: cli [-hV] [-o=&lt;outputPath&gt;] [-p=&lt;projectRootPath&gt;] [COMMAND]
 CLI for the Apache Isis Tooling Ecosystem
   -h, --help      Show this help message and exit.
-  -o, --output=&lt;outputPath&gt;
-                  path to the output file (default: NONE = write to std.out)
+  -w, --overview=&lt;overviewPath&gt;
+                  path to write the overview file (default: NONE = write to std.out)
+  -x, --index=&lt;indexPath&gt;
+                  path to write the refguide index files (default: NONE = write to std.out)
   -p, --project=&lt;projectRootPath&gt;
                   path to the (multi-module) project root (default: current dir)
   -V, --version   Print version information and exit.
@@ -432,8 +434,12 @@ Commands:
   option ...
 command:
   overview: <i class="conum" data-value="2"></i><b>(2)</b>
+    option ...
+    option ...
     ...
   index:    <i class="conum" data-value="3"></i><b>(3)</b>
+    option ...
+    option ...
     ...</code></pre>
 </div>
 </div>
@@ -473,7 +479,7 @@ Inspect its <a href="https://github.com/apache/isis/blob/master/tooling/cli/src/
 <h2 id="commands"><a class="anchor" href="#commands"></a>Commands</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>All commands accept two parameters:</p>
+<p>All commands accept the following common parameters:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -483,14 +489,7 @@ Inspect its <a href="https://github.com/apache/isis/blob/master/tooling/cli/src/
 <p>in other words, the root of the git repo.</p>
 </div>
 </li>
-<li>
-<p><code>-o</code> the output target root for generated <em>adoc</em></p>
-</li>
 </ul>
-</div>
-<div class="paragraph">
-<p>These are specified first in the command line.
-The command is then specified, along with any command-specific options.</p>
 </div>
 <div class="paragraph">
 <p>A number of global configuration options can be specified under the <code>global</code> entry in the <code>isis-tooling.yml</code> file.</p>
@@ -499,44 +498,152 @@ The command is then specified, along with any command-specific options.</p>
 <div class="title">isis-tooling.yml</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yml hljs" data-lang="yml">global:
-  outputRootFolder:                                                       <i class="conum" data-value="1"></i><b>(1)</b>
-  licenseHeader: "Licensed to the Apache Software Foundation (ASF) ..."   <i class="conum" data-value="2"></i><b>(2)</b>
-  documentPagesPath: "pages"                                              <i class="conum" data-value="3"></i><b>(3)</b>
-  namespacePartsSkipCount: 3                                              <i class="conum" data-value="4"></i><b>(4)</b>
-  sections:                                                               <i class="conum" data-value="5"></i><b>(5)</b>
-    App: org.apache.isis.app.*
-    Mavendeps: org.apache.isis.mavendeps.*
-    ...
-    Core: org.apache.isis.core.*
-    Persistence: org.apache.isis.persistence
-    JDO: "org.apache.isis.persistence:isis-persistence-jdo.*"
-    JPA: "org.apache.isis.persistence:isis-persistence-jpa.*"
-    ...</code></pre>
+  licenseHeader: "Licensed to the Apache Software Foundation (ASF) ..."   <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>the output target root for generated <em>adoc</em>; corresponds to command line option <code>-o</code> (if empty the current dir is used)</td>
+<td>license header to include with each generated adoc file</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="project-documentation-projdoc"><a class="anchor" href="#project-documentation-projdoc"></a>Project documentation (<code>projdoc</code>)</h3>
+<div class="paragraph">
+<p>This command generates both a <a href="#system-overview-overview">system overview</a> and generates the <a href="#index-index">global index</a>, and as such is the command that you will probably want to use most of the time.
+See those two commands for further details.</p>
+</div>
+<div class="sect3">
+<h4 id="usage"><a class="anchor" href="#usage"></a>Usage</h4>
+<div class="paragraph">
+<p>The <code>projdoc</code> command is usually invoked as follows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code>java -jar tooling/cli/target/isis-tooling-cli.jar \
+    -p . \
+    -w core/adoc \
+    -x antora/components/refguide-index \
+    projdoc</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>where :</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>-p</code> is a global options for all commands</p>
+</li>
+<li>
+<p><code>-w</code> is the option for the <code>overview</code> sub-command, specifying the output root path</p>
+</li>
+<li>
+<p><code>-x</code> is the option for the <code>index</code> sub-command</p>
+</li>
+<li>
+<p><code>projdoc</code> selects this sub-command (which simply runs both <code>overview</code> and <code>index</code> sub-commands)</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="projdoc-configuration"><a class="anchor" href="#projdoc-configuration"></a>Configuration</h4>
+<div class="paragraph">
+<p>The <code>projdoc</code> command has no specific configuration.
+However, as it is effectively just the combination of the <code>overview</code> and <code>index</code> commands, note that those two commands <em>do</em> have their own configuration settings; see <a href="#overview-configuration">overview configuration</a> and <a href="#index-configuration">index configuration</a> respectively.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="system-overview-overview"><a class="anchor" href="#system-overview-overview"></a>System Overview (<code>overview</code>)</h3>
+<div class="paragraph">
+<p>This command generates the <em>System Overview</em> (`.adoc) page.</p>
+</div>
+<div class="paragraph">
+<p>This page summarises the contents of each section (defined by the <code>commands.overview.sections</code> configuration key), also with a <a href="https://c4model.com/">C4</a> diagram showing how the modules relate.</p>
+</div>
+<div class="sect3">
+<h4 id="usage-2"><a class="anchor" href="#usage-2"></a>Usage</h4>
+<div class="paragraph">
+<p>The <code>overview</code> command is usually invoked as follows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code>java -jar tooling/cli/target/isis-tooling-cli.jar \
+    -p . \
+    -v core/adoc \
+    overview</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>where :</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>-p</code> is a global options for all commands</p>
+</li>
+<li>
+<p><code>-w</code> is the option for the <code>overview</code> sub-command, specifying the output root path</p>
+</li>
+<li>
+<p><code>overview</code> selects this sub-command</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>There are no command-specific options.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="overview-configuration"><a class="anchor" href="#overview-configuration"></a>Configuration</h4>
+<div class="paragraph">
+<p>The <code>overview</code> command supports a number of command-specific configuration options:</p>
+</div>
+<div class="listingblock">
+<div class="title">isis-tooling.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yml hljs" data-lang="yml">commands:
+  overview:
+    rootFolder:                                                     <i class="conum" data-value="1"></i><b>(1)</b>
+    pagesPath: "modules/_overview/pages"                            <i class="conum" data-value="2"></i><b>(2)</b>
+    systemOverviewFilename: "about.adoc"                            <i class="conum" data-value="3"></i><b>(3)</b>
+    description: "These tables summarize all Maven artifacts ..."   <i class="conum" data-value="4"></i><b>(4)</b>
+    sections:                                                       <i class="conum" data-value="5"></i><b>(5)</b>
+      ...
+      Persistence: org.apache.isis.persistence
+      JDO: "org.apache.isis.persistence:isis-persistence-jdo.*"
+      JPA: "org.apache.isis.persistence:isis-persistence-jpa.*"
+      ...</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>the output target root for generated overview <em>adoc</em>; corresponds to command line option <code>-v</code> (if empty the current dir is used)</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>license header to include with each generated adoc file</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
 <td>sub-folder name for <em>adoc</em> pages</td>
 </tr>
 <tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>name of the <em>System Overview</em> (adoc) file</td>
+</tr>
+<tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>how many namespace parts in a <em>fqn</em> one wants to skip, eg. in <code>org.apache.isis.applib.Xxx</code> if we skip 3 namespace parts we&#8217;ll end up with <code>applib.Xxx</code></td>
+<td><em>System Overview</em> summary description text</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
 <td>Logical grouping of modules for the system overview, but also used to determine which modules to scan for index files.
 <div class="paragraph">
-<p>If not specified the natural Maven project hierarchy is reflected as is.</p>
+<p>If not specified the natural Maven project hierarchy is reflected as is.
+This is discussed in more detail below.</p>
 </div></td>
 </tr>
 </table>
@@ -586,140 +693,12 @@ It consists of key:value pairs:</p>
 <div class="paragraph">
 <p>These different types of sections are exploited by the <code>overview</code> command, described <a href="#system-overview-overview">below</a>.</p>
 </div>
-<div class="sect2">
-<h3 id="project-documentation-projdoc"><a class="anchor" href="#project-documentation-projdoc"></a>Project documentation (<code>projdoc</code>)</h3>
 <div class="paragraph">
-<p>This command generates both a <a href="#system-overview-overview">system overview</a> and generates the <a href="#index-index">global index</a>, and as such is the command that you will probably want to use most of the time.
-See those two commands for further details.</p>
-</div>
-<div class="sect3">
-<h4 id="usage"><a class="anchor" href="#usage"></a>Usage</h4>
-<div class="paragraph">
-<p>The <code>projdoc</code> command is usually invoked as follows:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code>java -jar tooling/cli/target/isis-tooling-cli.jar \
-    -p . \
-    -o antora/components/system/modules/generated \
-    projdoc</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>where :</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>-p</code> and <code>-o</code> are the global options for all commands</p>
-</li>
-<li>
-<p><code>projdoc</code> selects this sub-command</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>There are no command-specific options.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="projdoc-configuration"><a class="anchor" href="#projdoc-configuration"></a>Configuration</h4>
-<div class="paragraph">
-<p>The <code>projdoc</code> command has no specific configuration.
-However, as it is effectively just the combination of the <code>overview</code> and <code>index</code> commands, note that those two commands <em>do</em> have their own configuration settings; see <a href="#overview-configuration">overview configuration</a> and <a href="#index-configuration">index configuration</a> respectively.</p>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="system-overview-overview"><a class="anchor" href="#system-overview-overview"></a>System Overview (<code>overview</code>)</h3>
-<div class="paragraph">
-<p>This command generates the <em>System Overview</em> (`.adoc) page.</p>
-</div>
-<div class="paragraph">
-<p>This page summarises the contents of each section (defined by the <code>global.sections</code> configuration key), also with a <a href="https://c4model.com/">C4</a> diagram showing how the modules relate.</p>
-</div>
-<div class="paragraph">
-<p>As described <a href="#configuration-file">above</a>, sections are defined that either match on a group or on a group and artifact.
-The overview command places these under a level 2 or a level 3 heading respectively.
+<p>Sections that match on a groupID are placed under a level 2 heading, while sections matching on group and artifact are placed under a level 3 heading.
 By sequencing the sections correctly, this therefore allows a hierarchy to be created.</p>
 </div>
 <div class="paragraph">
-<p>For example,</p>
-</div>
-<div class="listingblock">
-<div class="title">isis-tooling.yml</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-yml hljs" data-lang="yml">global:
-  ...
-  sections:
-    ...
-    Persistence: org.apache.isis.persistence
-    JDO: "org.apache.isis.persistence:isis-persistence-jdo.*"
-    JPA: "org.apache.isis.persistence:isis-persistence-jpa.*"
-    ...</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The <code>overview</code> command will render "Persistence" section at level 2 (because its pattern is only for a <code>groupId</code>), and then the "JDO" and "JPA" sections underneath at level 3 (because there patterns also include an <code>artifactId</code>).</p>
-</div>
-<div class="paragraph">
-<p>This way, sections can be defined that create a hierarchy.</p>
-</div>
-<div class="sect3">
-<h4 id="usage-2"><a class="anchor" href="#usage-2"></a>Usage</h4>
-<div class="paragraph">
-<p>The <code>overview</code> command is usually invoked as follows:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code>java -jar tooling/cli/target/isis-tooling-cli.jar \
-    -p . \
-    -o antora/components/system/modules/generated \
-    overview</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>where :</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>-p</code> and <code>-o</code> are the global options for all commands</p>
-</li>
-<li>
-<p><code>overview</code> selects this sub-command</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>There are no command-specific options.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="overview-configuration"><a class="anchor" href="#overview-configuration"></a>Configuration</h4>
-<div class="paragraph">
-<p>The <code>overview</code> command supports a number of command-specific configuration options:</p>
-</div>
-<div class="listingblock">
-<div class="title">isis-tooling.yml</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-yml hljs" data-lang="yml">commands:
-  overview:
-    description: "These tables summarize all Maven artifacts ..."           <i class="conum" data-value="1"></i><b>(1)</b>
-    systemOverviewFilename: "system-overview.adoc"                          <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><em>System Overview</em> head line</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>name of the <em>System Overview</em> (adoc) file</td>
-</tr>
-</table>
+<p>For example, in the config example above the sections defined will render "Persistence" section at level 2 (because its pattern is only for a <code>groupId</code>), and then the "JDO" and "JPA" sections underneath at level 3 (because there patterns also include an <code>artifactId</code>).</p>
 </div>
 </div>
 </div>
@@ -743,7 +722,7 @@ By sequencing the sections correctly, this therefore allows a hierarchy to be cr
 <div class="content">
 <pre class="highlightjs highlight"><code>java -jar tooling/cli/target/isis-tooling-cli.jar \
     -p . \
-    -o antora/components/system/modules/generated \
+    -x antora/components/refguide-index \
     index</code></pre>
 </div>
 </div>
@@ -753,15 +732,15 @@ By sequencing the sections correctly, this therefore allows a hierarchy to be cr
 <div class="ulist">
 <ul>
 <li>
-<p><code>-p</code> and <code>-o</code> are the global options for all commands</p>
+<p><code>-p</code> is a global options for all commands</p>
+</li>
+<li>
+<p><code>-x</code> is the option for the <code>index</code> sub-command, specifying the output root path</p>
 </li>
 <li>
 <p><code>index</code> selects this sub-command</p>
 </li>
 </ul>
-</div>
-<div class="paragraph">
-<p>There are no command-specific options.</p>
 </div>
 </div>
 <div class="sect3">
@@ -774,24 +753,34 @@ By sequencing the sections correctly, this therefore allows a hierarchy to be cr
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yml hljs" data-lang="yml">commands:
   index:
-    documentGlobalIndexPath: "pages/index"                                  <i class="conum" data-value="1"></i><b>(1)</b>
-    documentGlobalIndexXrefPageIdFormat: "system:generated:index/%s.adoc"   <i class="conum" data-value="2"></i><b>(2)</b>
-    fixOrphanedAdocIncludeStatements: true                                  <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
+    rootFolder:                                                             <i class="conum" data-value="1"></i><b>(1)</b>
+    documentGlobalIndexPath: "pages/index"                                  <i class="conum" data-value="2"></i><b>(2)</b>
+    documentGlobalIndexXrefPageIdFormat: "system:generated:index/%s.adoc"   <i class="conum" data-value="3"></i><b>(3)</b>
+    namespacePartsSkipCount: 3                                              <i class="conum" data-value="4"></i><b>(4)</b>
+    fixOrphanedAdocIncludeStatements: true                                  <i class="conum" data-value="5"></i><b>(5)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>sub-folder name for the <em>Document Global Index</em></td>
+<td>the output target root for generated index <em>adoc</em> files; corresponds to command line option <code>-x</code> (if empty the current dir is used)</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>format for include statements via which other <em>adoc</em> files may refer to the Document Global Index</td>
+<td>sub-folder name for the <em>Document Global Index</em></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>whether to activate the <code>OrphanedIncludeStatementFixer</code>, discussed below.</td>
+<td>format for include statements via which other <em>adoc</em> files may refer to the Document Global Index</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>how many namespace parts in a <em>fqn</em> one wants to skip, eg. in <code>org.apache.isis.applib.Xxx</code> if we skip 3 namespace parts we&#8217;ll end up with <code>applib.Xxx</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>whether to activate the <code>OrphanedIncludeStatementFixer</code>.</td>
 </tr>
 </table>
 </div>
@@ -835,7 +824,7 @@ By sequencing the sections correctly, this therefore allows a hierarchy to be cr
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M5.20210329-0431-ff033b3f</p>
+            <p>Revision: 2.0.0-M5.20210330-0430-ec5baae7</p>
         </div>
     </div>
 </footer>
