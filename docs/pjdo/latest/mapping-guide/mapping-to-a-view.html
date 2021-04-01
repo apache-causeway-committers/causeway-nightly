@@ -3,13 +3,15 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Using JNDI DataSource :: Apache Isis</title>
+    <title>Mapping to a View :: Apache Isis</title>
     <meta name="generator" content="Antora 2.3.4">
     <link rel="stylesheet" href="../../../_/css/site.css">
     <link rel="stylesheet" href="../../../_/css/site-custom.css">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Raleway:300,400,500,700,800|Montserrat:300,400,700" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css"/>
 <link rel="home" href="../../.." title="Apache Isis">
+  <link rel="next" href="../dependency-injection.html" title="Dependency Injection">
+  <link rel="prev" href="mandatory-properties-in-subtypes.html" title="Mandatory Properties in Subtypes">
   </head>
   <body class="article">
 <header class="header">
@@ -142,12 +144,12 @@
   <aside class="nav">
     <div class="panels">
 <div class="nav-panel-pagination">
-  <a class="page-previous disabled" rel="prev" href="" title=""><span></span></a>
-  <a class="page-next disabled" rel="next"
-     href="" title=""><span></span></a>
+  <a class="page-previous" rel="prev" href="mandatory-properties-in-subtypes.html" title="Mandatory Properties in Subtypes"><span></span></a>
+  <a class="page-next" rel="next"
+     href="../dependency-injection.html" title="Dependency Injection"><span></span></a>
 <!--
 page.parent doesn't seem to be set...
-  <a class="page-parent disabled" rel="prev" href="" title=""><span></span></a>
+  <a class="page-parent" rel="prev" href="../mapping-guide.html" title="Mandatory Properties in Subtypes"><span></span></a>
 -->
 </div>
 <div class="nav-panel-menu is-active" data-panel="menu">
@@ -157,25 +159,37 @@ page.parent doesn't seem to be set...
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
   <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
     <a class="nav-link" href="../setup-and-configuration.html">Setup and Configuration</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../configuring/disabling-persistence-by-reachability.html">Disabling Persistence by Reachability</a>
   </li>
-  <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../jdo-mappings.html">JDO Mappings</a>
+</ul>
   </li>
   <li class="nav-item" data-depth="1">
     <a class="nav-link" href="../db-schemas.html">DB Schemas</a>
   </li>
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../hints-and-tips.html">Hints-n-Tips</a>
-  </li>
-  <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <span class="nav-text">Domain Services</span>
+    <a class="nav-link" href="../mapping-guide.html">Mapping Guide</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../services/IsisJdoSupport.html">IsisJdoSupport</a>
+    <a class="nav-link" href="one-to-m-bidirectional-relationships.html">1-m Bidirectional relationships</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="mandatory-properties-in-subtypes.html">Mandatory Properties in Subtypes</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="mapping-to-a-view.html">Mapping to a View</a>
   </li>
 </ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../dependency-injection.html">Dependency Injection</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../hints-and-tips.html">Hints-n-Tips</a>
   </li>
 </ul>
   </li>
@@ -368,117 +382,26 @@ page.parent doesn't seem to be set...
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="../about.html">JDO/DataNucleus</a></li>
-    <li><a href="using-jndi-data-source.html">Using JNDI DataSource</a></li>
+    <li><a href="../mapping-guide.html">Mapping Guide</a></li>
+    <li><a href="mapping-to-a-view.html">Mapping to a View</a></li>
   </ul>
 </nav>
-  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/master/persistence/jdo/adoc/modules/ROOT/pages/configuring/using-jndi-data-source.adoc">Edit</a></div>
+  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/master/persistence/jdo/adoc/modules/ROOT/pages/mapping-guide/mapping-to-a-view.adoc">Edit</a></div>
 </div>
 <article class="doc">
     <a name="section-top"></a>
-<h1 class="page">Using JNDI DataSource</h1>
-<div id="preamble">
-<div class="sectionbody">
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-TODO - v2 - not yet reviewed/updated.
-</td>
-</tr>
-</table>
+<h1 class="page">Mapping to a View</h1>
+<div class="paragraph">
+<p>JDO/DataNucleus supports the ability to map the entity that is mapped to a view rather than a database table.
+Moreover, DataNucleus itself can create/maintain this view.</p>
 </div>
 <div class="paragraph">
-<p>Apache Isis' JDO objectstore can be configured either to connect to the database using its own connection pool, or by using a container-managed datasource.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="application-managed"><a class="anchor" href="#application-managed"></a>Application managed</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Using a connection pool managed directly by the application (that is, by Apache Isis' JDO objectstore and ultimately by DataNucleus) requires a single set of configuration properties to be specified.</p>
+<p>One use case for this is to support use cases which act upon aggregate information.
+An <a href="https://github.com/estatio/estatio/blob/b77d0b03ec86463227ba90f8341299066ddba69f/estatioapp/module/lease/dom/src/main/java/org/estatio/dom/lease/invoicing/viewmodel/InvoiceSummaryForPropertyDueDateStatus.java#L57">example</a> is in the (non-ASF) <a href="http://github.com/estatio/estatio">Estatio</a> application, which uses a view to define an "invoice run": a representatoin of all pending invoices to be sent out for a particular shopping centre.
+(Note that example also shows the entity as being "non-durable", but if the view is read/write then&#8201;&#8212;&#8201;I think&#8201;&#8212;&#8201;that this isn&#8217;t necessary required).</p>
 </div>
 <div class="paragraph">
-<p>Specify the connection driver, url, username and password.
-For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">javax.jdo.option.ConnectionDriverName=net.sf.log4jdbc.DriverSpy
-javax.jdo.option.ConnectionURL=jdbc:log4jdbc:hsqldb:mem:test
-javax.jdo.option.ConnectionUserName=sa
-javax.jdo.option.ConnectionPassword=</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>It is also possible to specify the <code>datanucleus.ConnectionPasswordDecrypter</code> property;
-see the <a href="http://www.datanucleus.org/products/accessplatform_4_1/persistence_properties.html#ConnectionPasswordDecrypter">DataNucleus documentation</a> for further details.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="container-managed-jndi"><a class="anchor" href="#container-managed-jndi"></a>Container managed (JNDI)</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Using a datasource managed by the servlet container requires three separate bits of configuration.</p>
-</div>
-<div class="paragraph">
-<p>Firstly, specify the name of the datasource in the <code>WEB-INF\persistor_datanucleus.properties</code> file. For example:</p>
-</div>
-<div class="paragraph">
-<p>If connection pool settings are also present in this file, they will simply be ignored. Any other configuration properties are passed through directly to DataNucleus.</p>
-</div>
-<div class="paragraph">
-<p>Secondly, in the <code>WEB-INF/web.xml</code>, declare the resource reference:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;resource-ref&gt;
-    &lt;description&gt;db&lt;/description&gt;
-    &lt;res-ref-name&gt;jdbc/simpleapp&lt;/res-ref-name&gt;
-    &lt;res-type&gt;javax.sql.DataSource&lt;/res-type&gt;
-    &lt;res-auth&gt;Container&lt;/res-auth&gt;
-&lt;/resource-ref&gt;</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Finally, declare the datasource as required by the servlet container. For example, if using Tomcat 7, the datasource can be specified by adding the following to <code>$TOMCAT_HOME/conf/context.xml</code>:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;Resource name="jdbc/simpleapp"
-  auth="Container"
-  type="javax.sql.DataSource"
-  maxActive="100"
-  maxIdle="30"
-  maxWait="10000"
-  username="sa"
-  password="p4ssword"
-  driverClassName="com.microsoft.sqlserver.jdbc.SQLServerDriver"
-  url="jdbc:sqlserver://127.0.0.1:1433;instance=.;databaseName=simpleapp"/&gt;</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>You will also need to make sure that the JDBC driver is on the servlet container&#8217;s classpath. For Tomcat, this means copying the driver to <code>$TOMCAT_HOME/lib</code>.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>According to Tomcat&#8217;s documentation, it is supposedly possible to copy the <code>conf/context.xml</code> to the name of the webapp, eg <code>conf/mywebapp.xml</code>, and scope the connection to that webapp only.  I was unable to get this working, however.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-</div>
+<p>For more on this topic, see the <a href="http://www.datanucleus.org/products/datanucleus/jdo/mapping.html#schema_rdbms_views">DataNucleus documentation</a>.</p>
 </div>
 </article>
 <aside class="article-aside toc hide-for-print" role="navigation">
@@ -497,7 +420,7 @@ see the <a href="http://www.datanucleus.org/products/accessplatform_4_1/persiste
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M5.20210331-0429-a58dac06</p>
+            <p>Revision: 2.0.0-M5.20210401-0430-14179194</p>
         </div>
     </div>
 </footer>

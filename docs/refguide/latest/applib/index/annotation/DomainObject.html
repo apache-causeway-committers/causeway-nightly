@@ -1319,6 +1319,27 @@ public class Order {
 <p>This subclass must provide a no-arg constructor; the fields are set reflectively. It must also use <code>Object</code> as its generic type. This is to allow mixins to also emit the same event.</p>
 </div>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../services/publishing/spi/EntityPropertyChangeSubscriber.html" class="page">EntityPropertyChangeSubscriber</a> SPI</p>
+<div class="paragraph">
+<p>(only applies to entity objects)</p>
+</div>
+</li>
+<li>
+<p><a href="../services/publishing/spi/EntityChangesSubscriber.html" class="page">EntityChangesSubscriber</a> SPI</p>
+<div class="paragraph">
+<p>(only applies to entity objects)</p>
+</div>
+</li>
+</ul>
+</div>
 <div class="sect2">
 <h3 id="auditing"><a class="anchor" href="#auditing"></a>Auditing</h3>
 <div class="paragraph">
@@ -1372,28 +1393,446 @@ public class Customer {
 </div>
 </div>
 <div class="sect2">
-<h3 id="editing-2"><a class="anchor" href="#editing-2"></a>Editing</h3>
+<h3 id="lifecycle-events"><a class="anchor" href="#lifecycle-events"></a>Lifecycle Events</h3>
 <div class="paragraph">
-<p>The <a href="#editing">editing()</a> element determines whether a domain object&#8217;s properties and collections are not editable (are read-only).</p>
-</div>
-<div class="paragraph">
-<p>The default is <code>AS_CONFIGURED</code>, meaning that the <a href="../../../config/sections/isis.applib.html#isis.applib.annotation.domain-object.editing" class="page">isis.applib.annotation.domain-object.editing</a>
-configuration property is used to determine the whether the object is modifiable:</p>
+<p>Whenever the framework interacts with a domain entity, lifecycle events are fired.
+These are:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p><code>true</code><br>
-+ the object&#8217;s properties and collections are modifiable.</p>
+<p>instantiated</p>
+<div class="paragraph">
+<p>through <a href="../services/factory/FactoryService.html" class="page">FactoryService</a>.
+An event is also fired for view models</p>
+</div>
 </li>
 <li>
-<p><code>false</code><br>
-+ the object&#8217;s properties and collections are read-only, ie <em>not</em> modifiable.</p>
+<p>persisting</p>
+<div class="paragraph">
+<p>an entity is about to be persisted (<code>INSERT</code>ed) into the database</p>
+</div>
+</li>
+<li>
+<p>persisted</p>
+<div class="paragraph">
+<p>an entity has just been persisted to the database</p>
+</div>
+</li>
+<li>
+<p>loaded</p>
+<div class="paragraph">
+<p>an already persistent entity has just been loaded from the database</p>
+</div>
+</li>
+<li>
+<p>updating</p>
+<div class="paragraph">
+<p>an already persistent entity is about to be saved (<code>UPDATE</code>d) to the database</p>
+</div>
+</li>
+<li>
+<p>updated</p>
+<div class="paragraph">
+<p>an already persistent entity has just been saved (<code>UPDATE</code>d) to the database</p>
+</div>
+</li>
+<li>
+<p>removing</p>
+<div class="paragraph">
+<p>an already persistent entity is about to be removed (<code>DELETE</code>d) from the database</p>
+</div>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>If there is no configuration property in <code>application.properties</code> then object are assumed to be modifiable.</p>
+<p>The framework has a built-in event class (for each lifecycle hint) that is raised by default; for example a <code>ObjectUpdatingEvent.Default</code> is raised when an object is about to be updated.
+Subscribers subscribe through the <a href="../services/eventbus/EventBusService.html" class="page">EventBusService</a> and can use the event to obtain a reference to the object just created.</p>
+</div>
+<div class="paragraph">
+<p>This basic model can be influenced in a couple of ways:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>first, it is also possible to suppress any events from being emitted using a configuration property (a different config property exists each lifecycle hook).</p>
+</li>
+<li>
+<p>second, an element on <a href="DomainObject.html" class="page">DomainObject</a> annotation (for each lifecycle hook) allows a different event subtype to be emitted instead</p>
+<div class="paragraph">
+<p>This allows subscribers to more targeted as to the events that they subscribe to.</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The framework also provides convenience "Doop" and a "Noop" event classes, that provoke these behaviours:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>if the appropriate <a href="DomainObject.html" class="page">DomainObject</a>' element is set to the "Doop" subclass, then this will event will be fired</p>
+<div class="paragraph">
+<p>this is a convenient way of ensuring an event is fired even if the hook has been disabled globally, but without the hassle of defining a custom event type</p>
+</div>
+</li>
+<li>
+<p>if set to the "Noop" subclass, then an event will <em>not</em> be fired.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The table below summarises all the lifecycle hooks:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. Lifecycle events</caption>
+<colgroup>
+<col style="width: 13.3333%;">
+<col style="width: 40%;">
+<col style="width: 20%;">
+<col style="width: 26.6667%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Lifecycle event</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Config property</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="DomainObject.html" class="page">@DomainObject</a> override</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Framework event types</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>created</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="../../../config/sections/isis.applib.html#isis.applib.annotation.domain-object.created-lifecycle-event.post-for-default" class="page">isis.applib.annotation.domain-object.created-lifecycle-event.post-for-default</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="#createdLifecycleEvent">createdLifecycleEvent()</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ObjectCreatedEvent.Default<br>
+ObjectCreatedEvent.Doop<br>
+ObjectCreatedEvent.Noop</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>loaded</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="../../../config/sections/isis.applib.html#isis.applib.annotation.domain-object.loaded-lifecycle-event.post-for-default" class="page">isis.applib.annotation.domain-object.loaded-lifecycle-event.post-for-default</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="#loadedLifecycleEvent">loadedLifecycleEvent()</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ObjectLoadedEvent.Default<br>
+ObjectLoadedEvent.Doop<br>
+ObjectLoadedEvent.Noop</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>persisting</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="../../../config/sections/isis.applib.html#isis.applib.annotation.domain-object.persisting-lifecycle-event.post-for-default" class="page">isis.applib.annotation.domain-object.persisting-lifecycle-event.post-for-default</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="#persistingLifecycleEvent">persistingLifecycleEvent()</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ObjectPersistingEvent.Default<br>
+ObjectPersistingEvent.Doop<br>
+ObjectPersistingEvent.Noop</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>persisted</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="../../../config/sections/isis.applib.html#isis.applib.annotation.domain-object.persisted-lifecycle-event.post-for-default" class="page">isis.applib.annotation.domain-object.persisted-lifecycle-event.post-for-default</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="#persistedLifecycleEvent">persistedLifecycleEvent()</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ObjectPersistedEvent.Default<br>
+ObjectPersistedEvent.Doop<br>
+ObjectPersistedEvent.Noop</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>updating</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="../../../config/sections/isis.applib.html#isis.applib.annotation.domain-object.updating-lifecycle-event.post-for-default" class="page">isis.applib.annotation.domain-object.updating-lifecycle-event.post-for-default</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="#updatingLifecycleEvent">updatingLifecycleEvent()</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ObjectUpdatingEvent.Default<br>
+ObjectUpdatingEvent.Doop<br>
+ObjectUpdatingEvent.Noop</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>updated</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="../../../config/sections/isis.applib.html#isis.applib.annotation.domain-object.updated-lifecycle-event.post-for-default" class="page">isis.applib.annotation.domain-object.updated-lifecycle-event.post-for-default</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="#updatedLifecycleEvent">updatedLifecycleEvent()</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ObjectUpdatedEvent.Default<br>
+ObjectUpdatedEvent.Doop<br>
+ObjectUpdatedEvent.Noop</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>removing</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="../../../config/sections/isis.applib.html#isis.applib.annotation.domain-object.removing-lifecycle-event.post-for-default" class="page">isis.applib.annotation.domain-object.removing-lifecycle-event.post-for-default</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="#removingLifecycleEvent">removingLifecycleEvent()</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ObjectRemovingEvent.Default<br>
+ObjectRemovingEvent.Doop<br>
+ObjectRemovingEvent.Noop</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="sect3">
+<h4 id="subscribers"><a class="anchor" href="#subscribers"></a>Subscribers</h4>
+<div class="paragraph">
+<p>Subscribers can be either coarse-grained (if they subscribe to the top-level event type):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Service;
+
+@Service
+public class SomeSubscriber {
+    @EventListener(ObjectCreatedEvent.class)
+    public void on(ObjectCreatedEvent ev) {
+        if(ev.getSource() instanceof ToDoItem) {
+            ...
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>or can be fine-grained (by subscribing to specific event subtypes):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Service;
+
+@Service
+public class SomeSubscriber {
+    @EventListener(ToDoItem.ObjectCreatedEvent.class)
+    public void on(ToDoItem.ObjectCreatedEvent ev) {
+        ...
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="examples"><a class="anchor" href="#examples"></a>Examples</h4>
+<div class="sect4">
+<h5 id="created-example"><a class="anchor" href="#created-example"></a>created example</h5>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObjectLayout(
+    createdLifecycleEvent=ToDoItem.CreatedEvent.class
+)
+public class ToDoItem {
+    public static class CreatedEvent
+        extends org.apache.isis.applib.events.lifecycle.ObjectCreatedEvent&lt;ToDoItem&gt; { }
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>It&#8217;s possible to instantiate objects without firing this lifecycle; just instantiate using its regular constructor, and then use the <code>ServiceInjector</code>'s
+<a href="../services/inject/ServiceInjector.html" class="page">injectServicesInto(&#8230;&#8203;)</a> to manually inject any required domain services.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect4">
+<h5 id="persisting-example"><a class="anchor" href="#persisting-example"></a>persisting example</h5>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObjectLayout(
+    persistingLifecycleEvent=ToDoItem.PersistingEvent.class
+)
+public class ToDoItem {
+
+    public static class PersistingEvent extends
+        org.apache.isis.applib.events.lifecycle.ObjectPersistingEvent&lt;ToDoItem&gt; { }
+
+    // ...
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="persisted-example"><a class="anchor" href="#persisted-example"></a>persisted example</h5>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObjectLayout(
+    persistedLifecycleEvent=ToDoItem.PersistedEvent.class
+)
+public class ToDoItem {
+
+    public static class PersistedEvent extends
+        org.apache.isis.applib.events.lifecycle.ObjectPersistedEvent&lt;ToDoItem&gt; { }
+
+    // ...
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="loaded-example"><a class="anchor" href="#loaded-example"></a>loaded example</h5>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObjectLayout(
+    loadedLifecycleEvent=ToDoItem.LoadedEvent.class
+)
+public class ToDoItem {
+    public static class LoadedEvent extends
+        org.apache.isis.applib.events.lifecycle.ObjectLoadedEvent&lt;ToDoItem&gt; { }
+    ...
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="updating-example"><a class="anchor" href="#updating-example"></a>updating example</h5>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObjectLayout(
+    updatingLifecycleEvent=ToDoItem.UpdatingEvent.class
+)
+public class ToDoItem {
+
+    public static class UpdatingEvent extends
+        org.apache.isis.applib.events.lifecycle.ObjectUpdatingEvent&lt;ToDoItem&gt; { }
+
+    // ...
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="updated-example"><a class="anchor" href="#updated-example"></a>updated example</h5>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObjectLayout(
+    updatedLifecycleEvent=ToDoItem.UpdatedEvent.class
+)
+public class ToDoItem {
+
+    public static class UpdatedEvent extends
+        org.apache.isis.applib.events.lifecycle.ObjectUpdatedEvent&lt;ToDoItem&gt; { }
+
+    // ...
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="removing-example"><a class="anchor" href="#removing-example"></a>removing example</h5>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObjectLayout(
+    removingLifecycleEvent=ToDoItem.RemovingEvent.class
+)
+public class ToDoItem {
+
+    public static class RemovingEvent extends
+        org.apache.isis.applib.events.lifecycle.ObjectRemovingEvent&lt;ToDoItem&gt; { }
+
+    // ...
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="reference-data"><a class="anchor" href="#reference-data"></a>Reference Data</h3>
+<div class="paragraph">
+<p>Some domain classes are immutable to the user, and moreover have only a fixed number of instances.
+Often these are "reference" ("standing") data, or lookup data/pick lists.
+Typical examples could include categories, countries, states, and tax or interest rate tables.</p>
+</div>
+<div class="paragraph">
+<p>Where the number of instances is relatively small, ie bounded, then the <a href="#bounding">bounding()</a> element can be used as a hint.
+For such domain objects the framework will automatically allow instances to be selected; <a href="../../../../../vw/latest/about.html" class="page">Wicket viewer</a> displays these as a drop-down list.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(
+    bounding=Bounding.BOUNDED,
+    editing=Editing.DISABLED        <i class="conum" data-value="1"></i><b>(1)</b>
+)
+public class Currency {
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>This attribute is commonly combined with <code>editing=DISABLED</code> to enforce the fact that reference data is immutable</td>
+</tr>
+</table>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -1403,150 +1842,8 @@ configuration property is used to determine the whether the object is modifiable
 </td>
 <td class="content">
 <div class="paragraph">
-<p>In other words, editing can be disabled globally by setting the <a href="../../../config/sections/isis.applib.html#isis.applib.annotation.domain-object.editing" class="page">isis.applib.adoc#isis.applib.annotation.domain-object.editing</a> configuration property:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">isis.applib.annotation.domain-object.editing=false</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>We recommend this setting; it will help drive out the underlying business operations (processes and procedures) that require objects to change; these can then be captured as business actions.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>This default can be overridden on an object-by-object basis; if <code>editing()</code> is set to <code>ENABLED</code> then the object&#8217;s properties and collections are editable irrespective of the configured value; if set to <code>DISABLED</code> then the object&#8217;s properties and collections are not editable irrespective of the configured value.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(
-    editing=Editing.DISABLED,
-    editingDisabledReason="Reference data, so cannot be modified"
-)
-public class Country {
-    ...
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="nature-2"><a class="anchor" href="#nature-2"></a>Nature</h3>
-<div class="paragraph">
-<p>The <a href="#nature">nature()</a> element is used to characterize the domain object as either an entity (part of the domain layer) or as a view model (part of the application layer).
-If the domain object should be thought of as an entity, it also captures how the persistence of that entity is managed.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(nature=Nature.VIEW_MODEL)
-public class PieChartAnalysis {
-    ...
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Specifically, the nature must be one of:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>NOT_SPECIFIED,</code></p>
-<div class="paragraph">
-<p>(the default); specifies no paricular semantics for the domain class.</p>
-</div>
-</li>
-<li>
-<p><code>ENTITY</code></p>
-<div class="paragraph">
-<p>indicates that the domain object is an entity whose persistence is managed internally by Apache Isis, using the JDO/DataNucleus objectstore.</p>
-</div>
-</li>
-<li>
-<p><code>MIXIN</code></p>
-<div class="paragraph">
-<p>indicates that the domain object is part of the domain layer, and is contributing behaviour to objects of some other type as a mixin (also known as a trait).</p>
-</div>
-<div class="paragraph">
-<p>For further discussion on using mixins, see <a href="../../../../../userguide/latest/fun/overview.html#mixins" class="page">mixins</a> in the user guide.</p>
-</div>
-</li>
-<li>
-<p><code>VIEW_MODEL</code></p>
-<div class="paragraph">
-<p>indicates that the domain object is conceptually part of the application layer, and exists to surfaces behaviour and/or state that is aggregate of one or more domain entities.</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><em>Variant: External Entity</em></p>
-<div class="paragraph">
-<p>Or indicates that the domain object is a wrapper/proxy/stub (choose your term) to an entity that is managed by some related external system.
-For example, the domain object may hold just the URI to a RESTful resource of some third party REST service, or the id of some system accessible over SOAP.</p>
-</div>
-<div class="paragraph">
-<p>The identity of an external entity is determined solely by the state of entity&#8217;s properties.
-The framework will automatically recreate the domain object each time it is interacted with.</p>
-</div>
-</li>
-<li>
-<p><em>Variant: In-Memory Entity</em></p>
-<div class="paragraph">
-<p>Or indicates that the domain object is a wrapper/proxy/stub to a "synthetic" entity, for example one that is constructed from some sort of internal memory data structure.</p>
-</div>
-<div class="paragraph">
-<p>The identity of an in-memory entity is determined solely by the state of entity&#8217;s properties.
-The framework will automatically recreate the domain object each time it is interacted with.</p>
-</div>
-</li>
-</ul>
-</div>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Those natures that indicate the domain object is an entity (of some sort or another) mean then that the domain object is considered to be part of the domain model layer.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>For <code>VIEW_MODEL</code> domain objects the state of the object is encoded into its internal OID (represented ultimately as its URL), and is recreated directly from that URL.</p>
-</div>
-<div class="paragraph">
-<p>Because this particular implementation was originally added to Apache Isis in support of view models, the term was also used for the logically different external entities and in-memory entities.</p>
-</div>
-<div class="paragraph">
-<p>The benefit of <code>nature()</code> is that it allows the developer to properly characterize the layer (domain vs application) that an entity lives, thus avoiding confusion as "view model" (the implementation technique) and "view model" (the application layer concept).</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>On the other hand, view models defined in this way do have some limitations; see <a href="#view-models">View Models</a> for further discussion.</p>
-</div>
-<div class="paragraph">
-<p>These limitations do <em>not</em> apply to <a href="../../../../../userguide/latest/fun/view-models.html#jaxb" class="page">JAXB</a> view models.
-If you are using view models heavily, you may wish to restrict yourself to just the JAXB flavour.</p>
+<p>There is nothing to prevent you from using this attribute for regular mutable entities, and indeed this is sometimes worth doing during early prototyping.
+However, if there is no realistic upper bound to the number of instances of an entity that might be created, generally you should use <a href="../../../applib-methods/prefixes.html#autoComplete" class="page">autoComplete&#8230;&#8203;()</a> supporting method or the <a href="#autoCompleteRepository">@DomainObject#autoCompleteRepository</a> attribute instead.</p>
 </div>
 </td>
 </tr>
@@ -1586,7 +1883,7 @@ This can appear in several contexts, including:</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+<h2 id="examples-2"><a class="anchor" href="#examples-2"></a>Examples</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>For example:</p>
@@ -1657,263 +1954,6 @@ At best this will require a data migration in the database; at worst it could ca
 <div class="paragraph">
 <p>If the object type is not unique across all domain classes then the framework will fail-fast and fail to boot.
 An error message will be printed in the log to help you determine which classes have duplicate object tyoes.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-<div class="sectionbody">
-<div class="ulist">
-<ul>
-<li>
-<p><a href="../services/publishing/spi/EntityPropertyChangeSubscriber.html" class="page">EntityPropertyChangeSubscriber</a> SPI</p>
-<div class="paragraph">
-<p>(only applies to entity objects)</p>
-</div>
-</li>
-<li>
-<p><a href="../services/publishing/spi/EntityChangesSubscriber.html" class="page">EntityChangesSubscriber</a> SPI</p>
-<div class="paragraph">
-<p>(only applies to entity objects)</p>
-</div>
-</li>
-</ul>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="example"><a class="anchor" href="#example"></a>Example</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(
-    auditing=Auditing.ENABLED,
-    autoCompleteRepository=CustomerRepository.class
-    editing=Editing.ENABLED,
-    updatedLifecycleEvent=Customer.UpdatedEvent.class
-
-)
-public class Customer {
-    ...
-}</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="view-models"><a class="anchor" href="#view-models"></a>View Models</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The <code>@DomainObject(nature=VIEW_MODEL)</code> annotation, applied to a class, indicates that the class is a view model.</p>
-</div>
-<div class="paragraph">
-<p>View models are not persisted to the database, instead their state is encoded within their identity (ultimately represented in the URL).</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(nature=VIEW_MODEL)
-public class CustomerViewModel {
-    public CustomerViewModel() {}
-    public CustomerViewModel(String firstName, int lastName) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-    }
-    ...
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Although there are several ways to instantiate a view model, we recommend that they are instantiated using an N-arg constructor that initializes all relevant state.
-The <a href="../services/registry/ServiceRegistry.html" class="page">ServiceRegistry</a> can then be used to inject dependencies into the view model.
-For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Customer cust = ...
-CustomerViewModel vm = factoryService.viewModel(
-    new CustomerViewModel(cust.getFirstName(), cust.getLastName()));</code></pre>
-</div>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>See this <a href="../../../../../userguide/latest/btb/hints-and-tips/view-model-instantiation.html" class="page">tip</a> for further discussion about instantiating view models.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>View models must have a no-arg constructor; this is used internally by the framework for subsequent "recreation".</p>
-</div>
-<div class="paragraph">
-<p>The view model&#8217;s memento will be derived from the value of the view model object&#8217;s properties.
-Any properties annotated with <a href="Programmatic.html" class="page">@Programmatic</a> will be excluded from the memento.
-Properties that are merely <a href="Property.html#hidden" class="page">hidden</a> <em>are</em> included in the memento.</p>
-</div>
-<div class="paragraph">
-<p>View models when defined using <code>@DomainObject(nature=VIEW_MODEL)</code> have some limitations:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>view models cannot hold collections other view models (simple properties <em>are</em> supported, though)</p>
-</li>
-<li>
-<p>collections (of either view models or entities) are ignored.</p>
-</li>
-<li>
-<p>not every data type is supported,</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>However, these limitations do <em>not</em> apply to <a href="../../../../../userguide/latest/fun/view-models.html#jaxb" class="page">JAXB</a> view models.
-If you are using view models heavily, you may wish to restrict yourself to just the JAXB flavour.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="usage-notes"><a class="anchor" href="#usage-notes"></a>Usage Notes</h2>
-<div class="sectionbody">
-<div class="sect2">
-<h3 id="auto-complete"><a class="anchor" href="#auto-complete"></a>Auto-complete</h3>
-<div class="paragraph">
-<p>The <a href="#autoCompleteRepository">autoCompleteRepository()</a> element nominates a single method on a domain service as the fallback means for looking up instances of the domain object using a simple string.</p>
-</div>
-<div class="paragraph">
-<p>For example, this might search for a customer by their name or number.
-Or it could search for a country based on its ISO-3 code or user-friendly name.</p>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>If you require additional control - for example restricting the returned results based on the object being interacted with - then use the <a href="../../../applib-methods/prefixes.html#autoComplete" class="page">autoComplete&#8230;&#8203;()</a> supporting method instead.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(
-    autoCompleteRepository=CustomerRepository.class
-)
-public class Customer {
-   ....
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>where:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainService
-public class CustomerRepository {
-    List&lt;Customer&gt; autoComplete(String search);  <i class="conum" data-value="1"></i><b>(1)</b>
-    ...
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>is assumed to be called "autoComplete", and accepts a single string</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>(As noted above) the method invoked on the repository is assumed to be called "autoComplete".
-The optional <a href="#autoCompleteAction">autoCompleteAction()</a> element allows the name of this method to be overridden.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(
-    autoCompleteRepository=Customers.class,
-    autoCompleteAction="findByName"
-)
-public class Customer {
-   ....
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>where in this case <code>findByName</code> might be an existing action already defined:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainService(nature = NatureOfService.VIEW)
-public class Customers {
-
-    @Action(semantics=SemanticsOf.SAFE)
-    public List&lt;Customer&gt; findByName(
-        @MinLength(3)                       <i class="conum" data-value="1"></i><b>(1)</b>
-        @ParameterLayout(named="name")
-        String name);
-    ...
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>end-user must enter minimum number of characters to trigger the query</td>
-</tr>
-</table>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-The autocomplete "action" can also be a regular method, annotated using <a href="Programmatic.html" class="page">@Programmatic</a>.
-That is, it does not need to be part of the metamodel:
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>+</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainService(nature = NatureOfService.VIEW)
-public class Customers {
-    @Programmatic
-    public List&lt;Customer&gt; findByName(
-        @MinLength(3)
-        String name);
-    ...
-}</code></pre>
-</div>
-</div>
 </div>
 <div class="sect2">
 <h3 id="mixin-method"><a class="anchor" href="#mixin-method"></a>Mixin method</h3>
@@ -2244,326 +2284,83 @@ Even easier, <code>event#getSubject()</code> will always return the domain objec
 </div>
 </div>
 <div class="sect2">
-<h3 id="reference-data"><a class="anchor" href="#reference-data"></a>Reference Data</h3>
+<h3 id="nature-2"><a class="anchor" href="#nature-2"></a>Nature</h3>
 <div class="paragraph">
-<p>Some domain classes are immutable to the user, and moreover have only a fixed number of instances.
-Often these are "reference" ("standing") data, or lookup data/pick lists.
-Typical examples could include categories, countries, states, and tax or interest rate tables.</p>
-</div>
-<div class="paragraph">
-<p>Where the number of instances is relatively small, ie bounded, then the <a href="#bounding">bounding()</a> element can be used as a hint.
-For such domain objects the framework will automatically allow instances to be selected; <a href="../../../../../vw/latest/about.html" class="page">Wicket viewer</a> displays these as a drop-down list.</p>
+<p>The <a href="#nature">nature()</a> element is used to characterize the domain object as either an entity (part of the domain layer) or as a view model (part of the application layer).
+If the domain object should be thought of as an entity, it also captures how the persistence of that entity is managed.</p>
 </div>
 <div class="paragraph">
 <p>For example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(
-    bounding=Bounding.BOUNDED,
-    editing=Editing.DISABLED        <i class="conum" data-value="1"></i><b>(1)</b>
-)
-public class Currency {
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(nature=Nature.VIEW_MODEL)
+public class PieChartAnalysis {
     ...
 }</code></pre>
 </div>
 </div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>This attribute is commonly combined with <code>editing=DISABLED</code> to enforce the fact that reference data is immutable</td>
-</tr>
-</table>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
 <div class="paragraph">
-<p>There is nothing to prevent you from using this attribute for regular mutable entities, and indeed this is sometimes worth doing during early prototyping.
-However, if there is no realistic upper bound to the number of instances of an entity that might be created, generally you should use <a href="../../../applib-methods/prefixes.html#autoComplete" class="page">autoComplete&#8230;&#8203;()</a> supporting method or the <a href="#autoCompleteRepository">@DomainObject#autoCompleteRepository</a> attribute instead.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect2">
-<h3 id="lifecycle-events"><a class="anchor" href="#lifecycle-events"></a>Lifecycle Events</h3>
-<div class="paragraph">
-<p>Whenever the framework interacts with a domain entity, lifecycle events are fired.
-These are:</p>
+<p>Specifically, the nature must be one of:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>instantiated</p>
+<p><code>NOT_SPECIFIED,</code></p>
 <div class="paragraph">
-<p>through <a href="../services/factory/FactoryService.html" class="page">FactoryService</a>.
-An event is also fired for view models</p>
+<p>(the default); specifies no paricular semantics for the domain class.</p>
 </div>
 </li>
 <li>
-<p>persisting</p>
+<p><code>ENTITY</code></p>
 <div class="paragraph">
-<p>an entity is about to be persisted (<code>INSERT</code>ed) into the database</p>
+<p>indicates that the domain object is an entity whose persistence is managed internally by Apache Isis, using the JDO/DataNucleus objectstore.</p>
 </div>
 </li>
 <li>
-<p>persisted</p>
+<p><code>MIXIN</code></p>
 <div class="paragraph">
-<p>an entity has just been persisted to the database</p>
+<p>indicates that the domain object is part of the domain layer, and is contributing behaviour to objects of some other type as a mixin (also known as a trait).</p>
+</div>
+<div class="paragraph">
+<p>For further discussion on using mixins, see <a href="../../../../../userguide/latest/fun/overview.html#mixins" class="page">mixins</a> in the user guide.</p>
 </div>
 </li>
 <li>
-<p>loaded</p>
+<p><code>VIEW_MODEL</code></p>
 <div class="paragraph">
-<p>an already persistent entity has just been loaded from the database</p>
+<p>indicates that the domain object is conceptually part of the application layer, and exists to surfaces behaviour and/or state that is aggregate of one or more domain entities.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><em>Variant: External Entity</em></p>
+<div class="paragraph">
+<p>Or indicates that the domain object is a wrapper/proxy/stub (choose your term) to an entity that is managed by some related external system.
+For example, the domain object may hold just the URI to a RESTful resource of some third party REST service, or the id of some system accessible over SOAP.</p>
+</div>
+<div class="paragraph">
+<p>The identity of an external entity is determined solely by the state of entity&#8217;s properties.
+The framework will automatically recreate the domain object each time it is interacted with.</p>
 </div>
 </li>
 <li>
-<p>updating</p>
+<p><em>Variant: In-Memory Entity</em></p>
 <div class="paragraph">
-<p>an already persistent entity is about to be saved (<code>UPDATE</code>d) to the database</p>
+<p>Or indicates that the domain object is a wrapper/proxy/stub to a "synthetic" entity, for example one that is constructed from some sort of internal memory data structure.</p>
+</div>
+<div class="paragraph">
+<p>The identity of an in-memory entity is determined solely by the state of entity&#8217;s properties.
+The framework will automatically recreate the domain object each time it is interacted with.</p>
 </div>
 </li>
-<li>
-<p>updated</p>
-<div class="paragraph">
-<p>an already persistent entity has just been saved (<code>UPDATE</code>d) to the database</p>
-</div>
-</li>
-<li>
-<p>removing</p>
-<div class="paragraph">
-<p>an already persistent entity is about to be removed (<code>DELETE</code>d) from the database</p>
+</ul>
 </div>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>The framework has a built-in event class (for each lifecycle hint) that is raised by default; for example a <code>ObjectUpdatingEvent.Default</code> is raised when an object is about to be updated.
-Subscribers subscribe through the <a href="../services/eventbus/EventBusService.html" class="page">EventBusService</a> and can use the event to obtain a reference to the object just created.</p>
-</div>
-<div class="paragraph">
-<p>This basic model can be influenced in a couple of ways:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>first, it is also possible to suppress any events from being emitted using a configuration property (a different config property exists each lifecycle hook).</p>
-</li>
-<li>
-<p>second, an element on <a href="DomainObject.html" class="page">DomainObject</a> annotation (for each lifecycle hook) allows a different event subtype to be emitted instead</p>
-<div class="paragraph">
-<p>This allows subscribers to more targeted as to the events that they subscribe to.</p>
-</div>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>The framework also provides convenience "Doop" and a "Noop" event classes, that provoke these behaviours:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>if the appropriate <a href="DomainObject.html" class="page">DomainObject</a>' element is set to the "Doop" subclass, then this will event will be fired</p>
-<div class="paragraph">
-<p>this is a convenient way of ensuring an event is fired even if the hook has been disabled globally, but without the hassle of defining a custom event type</p>
-</div>
-</li>
-<li>
-<p>if set to the "Noop" subclass, then an event will <em>not</em> be fired.</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>The table below summarises all the lifecycle hooks:</p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. Lifecycle events</caption>
-<colgroup>
-<col style="width: 13.3333%;">
-<col style="width: 40%;">
-<col style="width: 20%;">
-<col style="width: 26.6667%;">
-</colgroup>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Lifecycle event</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Config property</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><a href="DomainObject.html" class="page">@DomainObject</a> override</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Framework event types</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>created</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><a href="../../../config/sections/isis.applib.html#isis.applib.annotation.domain-object.created-lifecycle-event.post-for-default" class="page">isis.applib.annotation.domain-object.created-lifecycle-event.post-for-default</a></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><a href="#createdLifecycleEvent">createdLifecycleEvent()</a></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ObjectCreatedEvent.Default<br>
-ObjectCreatedEvent.Doop<br>
-ObjectCreatedEvent.Noop</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>loaded</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><a href="../../../config/sections/isis.applib.html#isis.applib.annotation.domain-object.loaded-lifecycle-event.post-for-default" class="page">isis.applib.annotation.domain-object.loaded-lifecycle-event.post-for-default</a></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><a href="#loadedLifecycleEvent">loadedLifecycleEvent()</a></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ObjectLoadedEvent.Default<br>
-ObjectLoadedEvent.Doop<br>
-ObjectLoadedEvent.Noop</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>persisting</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><a href="../../../config/sections/isis.applib.html#isis.applib.annotation.domain-object.persisting-lifecycle-event.post-for-default" class="page">isis.applib.annotation.domain-object.persisting-lifecycle-event.post-for-default</a></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><a href="#persistingLifecycleEvent">persistingLifecycleEvent()</a></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ObjectPersistingEvent.Default<br>
-ObjectPersistingEvent.Doop<br>
-ObjectPersistingEvent.Noop</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>persisted</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><a href="../../../config/sections/isis.applib.html#isis.applib.annotation.domain-object.persisted-lifecycle-event.post-for-default" class="page">isis.applib.annotation.domain-object.persisted-lifecycle-event.post-for-default</a></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><a href="#persistedLifecycleEvent">persistedLifecycleEvent()</a></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ObjectPersistedEvent.Default<br>
-ObjectPersistedEvent.Doop<br>
-ObjectPersistedEvent.Noop</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>updating</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><a href="../../../config/sections/isis.applib.html#isis.applib.annotation.domain-object.updating-lifecycle-event.post-for-default" class="page">isis.applib.annotation.domain-object.updating-lifecycle-event.post-for-default</a></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><a href="#updatingLifecycleEvent">updatingLifecycleEvent()</a></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ObjectUpdatingEvent.Default<br>
-ObjectUpdatingEvent.Doop<br>
-ObjectUpdatingEvent.Noop</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>updated</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><a href="../../../config/sections/isis.applib.html#isis.applib.annotation.domain-object.updated-lifecycle-event.post-for-default" class="page">isis.applib.annotation.domain-object.updated-lifecycle-event.post-for-default</a></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><a href="#updatedLifecycleEvent">updatedLifecycleEvent()</a></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ObjectUpdatedEvent.Default<br>
-ObjectUpdatedEvent.Doop<br>
-ObjectUpdatedEvent.Noop</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>removing</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><a href="../../../config/sections/isis.applib.html#isis.applib.annotation.domain-object.removing-lifecycle-event.post-for-default" class="page">isis.applib.annotation.domain-object.removing-lifecycle-event.post-for-default</a></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><a href="#removingLifecycleEvent">removingLifecycleEvent()</a></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ObjectRemovingEvent.Default<br>
-ObjectRemovingEvent.Doop<br>
-ObjectRemovingEvent.Noop</code></p></td>
-</tr>
-</tbody>
-</table>
-<div class="sect3">
-<h4 id="subscribers"><a class="anchor" href="#subscribers"></a>Subscribers</h4>
-<div class="paragraph">
-<p>Subscribers can be either coarse-grained (if they subscribe to the top-level event type):</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.springframework.context.event.EventListener;
-import org.springframework.stereotype.Service;
-
-@Service
-public class SomeSubscriber {
-    @EventListener(ObjectCreatedEvent.class)
-    public void on(ObjectCreatedEvent ev) {
-        if(ev.getSource() instanceof ToDoItem) {
-            ...
-        }
-    }
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>or can be fine-grained (by subscribing to specific event subtypes):</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.springframework.context.event.EventListener;
-import org.springframework.stereotype.Service;
-
-@Service
-public class SomeSubscriber {
-    @EventListener(ToDoItem.ObjectCreatedEvent.class)
-    public void on(ToDoItem.ObjectCreatedEvent ev) {
-        ...
-    }
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="examples-2"><a class="anchor" href="#examples-2"></a>Examples</h4>
-<div class="sect4">
-<h5 id="created-example"><a class="anchor" href="#created-example"></a>created example</h5>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObjectLayout(
-    createdLifecycleEvent=ToDoItem.CreatedEvent.class
-)
-public class ToDoItem {
-    public static class CreatedEvent
-        extends org.apache.isis.applib.events.lifecycle.ObjectCreatedEvent&lt;ToDoItem&gt; { }
-    ...
-}</code></pre>
-</div>
+<p>Those natures that indicate the domain object is an entity (of some sort or another) mean then that the domain object is considered to be part of the domain model layer.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -2573,131 +2370,334 @@ public class ToDoItem {
 </td>
 <td class="content">
 <div class="paragraph">
-<p>It&#8217;s possible to instantiate objects without firing this lifecycle; just instantiate using its regular constructor, and then use the <code>ServiceInjector</code>'s
-<a href="../services/inject/ServiceInjector.html" class="page">injectServicesInto(&#8230;&#8203;)</a> to manually inject any required domain services.</p>
+<p>For <code>VIEW_MODEL</code> domain objects the state of the object is encoded into its internal OID (represented ultimately as its URL), and is recreated directly from that URL.</p>
+</div>
+<div class="paragraph">
+<p>Because this particular implementation was originally added to Apache Isis in support of view models, the term was also used for the logically different external entities and in-memory entities.</p>
+</div>
+<div class="paragraph">
+<p>The benefit of <code>nature()</code> is that it allows the developer to properly characterize the layer (domain vs application) that an entity lives, thus avoiding confusion as "view model" (the implementation technique) and "view model" (the application layer concept).</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>On the other hand, view models defined in this way do have some limitations; see <a href="#view-models">View Models</a> for further discussion.</p>
+</div>
+<div class="paragraph">
+<p>These limitations do <em>not</em> apply to <a href="../../../../../userguide/latest/fun/view-models.html#jaxb" class="page">JAXB</a> view models.
+If you are using view models heavily, you may wish to restrict yourself to just the JAXB flavour.</p>
 </div>
 </td>
 </tr>
 </table>
 </div>
 </div>
-<div class="sect4">
-<h5 id="persisting-example"><a class="anchor" href="#persisting-example"></a>persisting example</h5>
+<div class="sect2">
+<h3 id="editing-2"><a class="anchor" href="#editing-2"></a>Editing</h3>
+<div class="paragraph">
+<p>The <a href="#editing">editing()</a> element determines whether a domain object&#8217;s properties and collections are not editable (are read-only).</p>
+</div>
+<div class="paragraph">
+<p>The default is <code>AS_CONFIGURED</code>, meaning that the <a href="../../../config/sections/isis.applib.html#isis.applib.annotation.domain-object.editing" class="page">isis.applib.annotation.domain-object.editing</a>
+configuration property is used to determine the whether the object is modifiable:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>true</code><br>
++ the object&#8217;s properties and collections are modifiable.</p>
+</li>
+<li>
+<p><code>false</code><br>
++ the object&#8217;s properties and collections are read-only, ie <em>not</em> modifiable.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>If there is no configuration property in <code>application.properties</code> then object are assumed to be modifiable.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>In other words, editing can be disabled globally by setting the <a href="../../../config/sections/isis.applib.html#isis.applib.annotation.domain-object.editing" class="page">isis.applib.adoc#isis.applib.annotation.domain-object.editing</a> configuration property:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">isis.applib.annotation.domain-object.editing=false</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We recommend this setting; it will help drive out the underlying business operations (processes and procedures) that require objects to change; these can then be captured as business actions.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>This default can be overridden on an object-by-object basis; if <code>editing()</code> is set to <code>ENABLED</code> then the object&#8217;s properties and collections are editable irrespective of the configured value; if set to <code>DISABLED</code> then the object&#8217;s properties and collections are not editable irrespective of the configured value.</p>
+</div>
 <div class="paragraph">
 <p>For example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObjectLayout(
-    persistingLifecycleEvent=ToDoItem.PersistingEvent.class
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(
+    editing=Editing.DISABLED,
+    editingDisabledReason="Reference data, so cannot be modified"
 )
-public class ToDoItem {
-
-    public static class PersistingEvent extends
-        org.apache.isis.applib.events.lifecycle.ObjectPersistingEvent&lt;ToDoItem&gt; { }
-
-    // ...
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect4">
-<h5 id="persisted-example"><a class="anchor" href="#persisted-example"></a>persisted example</h5>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObjectLayout(
-    persistedLifecycleEvent=ToDoItem.PersistedEvent.class
-)
-public class ToDoItem {
-
-    public static class PersistedEvent extends
-        org.apache.isis.applib.events.lifecycle.ObjectPersistedEvent&lt;ToDoItem&gt; { }
-
-    // ...
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect4">
-<h5 id="loaded-example"><a class="anchor" href="#loaded-example"></a>loaded example</h5>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObjectLayout(
-    loadedLifecycleEvent=ToDoItem.LoadedEvent.class
-)
-public class ToDoItem {
-    public static class LoadedEvent extends
-        org.apache.isis.applib.events.lifecycle.ObjectLoadedEvent&lt;ToDoItem&gt; { }
+public class Country {
     ...
 }</code></pre>
 </div>
 </div>
 </div>
-<div class="sect4">
-<h5 id="updating-example"><a class="anchor" href="#updating-example"></a>updating example</h5>
+</div>
+</div>
+<div class="sect1">
+<h2 id="example"><a class="anchor" href="#example"></a>Example</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>For example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObjectLayout(
-    updatingLifecycleEvent=ToDoItem.UpdatingEvent.class
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(
+    auditing=Auditing.ENABLED,
+    autoCompleteRepository=CustomerRepository.class
+    editing=Editing.ENABLED,
+    updatedLifecycleEvent=Customer.UpdatedEvent.class
+
 )
-public class ToDoItem {
-
-    public static class UpdatingEvent extends
-        org.apache.isis.applib.events.lifecycle.ObjectUpdatingEvent&lt;ToDoItem&gt; { }
-
-    // ...
+public class Customer {
+    ...
 }</code></pre>
 </div>
 </div>
 </div>
-<div class="sect4">
-<h5 id="updated-example"><a class="anchor" href="#updated-example"></a>updated example</h5>
+</div>
+<div class="sect1">
+<h2 id="view-models"><a class="anchor" href="#view-models"></a>View Models</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>@DomainObject(nature=VIEW_MODEL)</code> annotation, applied to a class, indicates that the class is a view model.</p>
+</div>
+<div class="paragraph">
+<p>View models are not persisted to the database, instead their state is encoded within their identity (ultimately represented in the URL).</p>
+</div>
 <div class="paragraph">
 <p>For example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObjectLayout(
-    updatedLifecycleEvent=ToDoItem.UpdatedEvent.class
-)
-public class ToDoItem {
-
-    public static class UpdatedEvent extends
-        org.apache.isis.applib.events.lifecycle.ObjectUpdatedEvent&lt;ToDoItem&gt; { }
-
-    // ...
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(nature=VIEW_MODEL)
+public class CustomerViewModel {
+    public CustomerViewModel() {}
+    public CustomerViewModel(String firstName, int lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
+    ...
 }</code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>Although there are several ways to instantiate a view model, we recommend that they are instantiated using an N-arg constructor that initializes all relevant state.
+The <a href="../services/registry/ServiceRegistry.html" class="page">ServiceRegistry</a> can then be used to inject dependencies into the view model.
+For example:</p>
 </div>
-<div class="sect4">
-<h5 id="removing-example"><a class="anchor" href="#removing-example"></a>removing example</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Customer cust = ...
+CustomerViewModel vm = factoryService.viewModel(
+    new CustomerViewModel(cust.getFirstName(), cust.getLastName()));</code></pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>See this <a href="../../../../../userguide/latest/btb/hints-and-tips/view-model-instantiation.html" class="page">tip</a> for further discussion about instantiating view models.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>View models must have a no-arg constructor; this is used internally by the framework for subsequent "recreation".</p>
+</div>
+<div class="paragraph">
+<p>The view model&#8217;s memento will be derived from the value of the view model object&#8217;s properties.
+Any properties annotated with <a href="Programmatic.html" class="page">@Programmatic</a> will be excluded from the memento.
+Properties that are merely <a href="Property.html#hidden" class="page">hidden</a> <em>are</em> included in the memento.</p>
+</div>
+<div class="paragraph">
+<p>View models when defined using <code>@DomainObject(nature=VIEW_MODEL)</code> have some limitations:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>view models cannot hold collections other view models (simple properties <em>are</em> supported, though)</p>
+</li>
+<li>
+<p>collections (of either view models or entities) are ignored.</p>
+</li>
+<li>
+<p>not every data type is supported,</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>However, these limitations do <em>not</em> apply to <a href="../../../../../userguide/latest/fun/view-models.html#jaxb" class="page">JAXB</a> view models.
+If you are using view models heavily, you may wish to restrict yourself to just the JAXB flavour.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="usage-notes"><a class="anchor" href="#usage-notes"></a>Usage Notes</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="auto-complete"><a class="anchor" href="#auto-complete"></a>Auto-complete</h3>
+<div class="paragraph">
+<p>The <a href="#autoCompleteRepository">autoCompleteRepository()</a> element nominates a single method on a domain service as the fallback means for looking up instances of the domain object using a simple string.</p>
+</div>
+<div class="paragraph">
+<p>For example, this might search for a customer by their name or number.
+Or it could search for a country based on its ISO-3 code or user-friendly name.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>If you require additional control - for example restricting the returned results based on the object being interacted with - then use the <a href="../../../applib-methods/prefixes.html#autoComplete" class="page">autoComplete&#8230;&#8203;()</a> supporting method instead.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
 <p>For example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObjectLayout(
-    removingLifecycleEvent=ToDoItem.RemovingEvent.class
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(
+    autoCompleteRepository=CustomerRepository.class
 )
-public class ToDoItem {
-
-    public static class RemovingEvent extends
-        org.apache.isis.applib.events.lifecycle.ObjectRemovingEvent&lt;ToDoItem&gt; { }
-
-    // ...
+public class Customer {
+   ....
 }</code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>where:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainService
+public class CustomerRepository {
+    List&lt;Customer&gt; autoComplete(String search);  <i class="conum" data-value="1"></i><b>(1)</b>
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>is assumed to be called "autoComplete", and accepts a single string</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>(As noted above) the method invoked on the repository is assumed to be called "autoComplete".
+The optional <a href="#autoCompleteAction">autoCompleteAction()</a> element allows the name of this method to be overridden.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(
+    autoCompleteRepository=Customers.class,
+    autoCompleteAction="findByName"
+)
+public class Customer {
+   ....
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>where in this case <code>findByName</code> might be an existing action already defined:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainService(nature = NatureOfService.VIEW)
+public class Customers {
+
+    @Action(semantics=SemanticsOf.SAFE)
+    public List&lt;Customer&gt; findByName(
+        @MinLength(3)                       <i class="conum" data-value="1"></i><b>(1)</b>
+        @ParameterLayout(named="name")
+        String name);
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>end-user must enter minimum number of characters to trigger the query</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The autocomplete "action" can also be a regular method, annotated using <a href="Programmatic.html" class="page">@Programmatic</a>.
+That is, it does not need to be part of the metamodel:
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainService(nature = NatureOfService.VIEW)
+public class Customers {
+    @Programmatic
+    public List&lt;Customer&gt; findByName(
+        @MinLength(3)
+        String name);
+    ...
+}</code></pre>
 </div>
 </div>
 </div>
@@ -2720,7 +2720,7 @@ public class ToDoItem {
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M5.20210331-0429-a58dac06</p>
+            <p>Revision: 2.0.0-M5.20210401-0430-14179194</p>
         </div>
     </div>
 </footer>

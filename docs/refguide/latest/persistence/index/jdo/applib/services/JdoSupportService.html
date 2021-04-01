@@ -1059,6 +1059,292 @@ page.parent doesn't seem to be set...
 </div>
 </div>
 </div>
+<div class="sect1">
+<h2 id="examples-and-usage"><a class="anchor" href="#examples-and-usage"></a>Examples and Usage</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>IsisJdoSupport</code> service provides a number of general purpose methods for working with the JDO/DataNucleus objectstore.
+In general these act at a lower-level of abstraction than the APIs normally used (specifically, those of <a href="../../../../../applib/index/services/repository/RepositoryService.html" class="page">RepositoryService</a>), but nevertheless deal with some of the most common use cases.
+For service also provides access to the underlying JDO <code>PersistenceManager</code> for full control.</p>
+</div>
+<div class="paragraph">
+<p>The following sections discuss the functionality provided by the service, broken out into categories.</p>
+</div>
+<div class="sect2">
+<h3 id="executing-sql"><a class="anchor" href="#executing-sql"></a>Executing SQL</h3>
+<div class="paragraph">
+<p>You can use the <code>IsisJdoSupportService</code> to perform arbitrary SQL SELECTs or UPDATEs:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public interface IsisJdoSupport {
+    @Programmatic
+    List&lt;Map&lt;String, Object&gt;&gt; executeSql(String sql);
+    @Programmatic
+    Integer executeUpdate(String sql);
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>executeSql(&#8230;&#8203;)</code> method allows arbitrary SQL <code>SELECT</code> queries to be submitted:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">List&lt;Map&lt;String, Object&gt;&gt; results = isisJdoSupport.executeSql("select * from custMgmt.customers");</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The result set is automatically converted into a list of maps, where the map key is the column name.</p>
+</div>
+<div class="paragraph">
+<p>In a similar manner, the <code>executeUpdate(&#8230;&#8203;)</code> allows arbitrary SQL <code>UPDATE</code>s to be performed.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">int count = isisJdoSupport.executeUpdate("select count(*) from custMgmt.customers);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The returned value is the number of rows updated.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>As an alternative, consider using DataNucleus' <a href="http://www.datanucleus.org/products/accessplatform_4_0/jdo/jdoql_typesafe.html">type-safe JDO query API</a>, discussed <a href="#pjdo:ROOT:services/IsisJdoSupport.adoc#type-safe-query-api" class="page unresolved">below</a>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="type-safe-jdoql-queries"><a class="anchor" href="#type-safe-jdoql-queries"></a>Type-safe JDOQL Queries</h3>
+<div class="paragraph">
+<p>DataNucleus provides an <a href="http://www.datanucleus.org/products/accessplatform_4_0/jdo/jdoql_typesafe.html">extension to JDO</a>, so that JDOQL queries can be built up and executed using a set of type-safe classes.</p>
+</div>
+<div class="paragraph">
+<p>The types in question for type safe queries are not the domain entities, but rather are companion "Q&#8230;&#8203;" query classes.
+These classes are generated dynamically by an <a href="https://www.jcp.org/en/jsr/detail?id=269">annotation processor</a> as a side-effect of compilation, one "Q&#8230;&#8203;" class for each of the <a href="../../../../../applib-ant/PersistenceCapable.html" class="page">@PersistenceCapable</a> domain entity in your application.
+For example, a <code>ToDoItem</code> domain entity will give rise to a <code>QToDoItem</code> query class.
+These "Q&#8230;&#8203;" classes mirror the structure of domain entity, but expose properties that allow predicates to be built up for querying instances, as well as other functions in support of order by, group by and other clauses.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The IntelliJ IDE automatically enables annotation processing by default, as does Maven.
+Using Eclipse IDE you may need to configure annotation processing manually; see the  <a href="../../../../../../../setupguide/latest/eclipse/about.html#enable-annotation-processing" class="page">Setup Guide</a>.
+The DataNucleus' <a href="http://www.datanucleus.org/products/accessplatform_4_0/jdo/jdoql_typesafe.html">documentation</a> offers some guidance on confirming that APT is enabled.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The <code>IsisJdoSupport</code> service offers two methods at different levels of abstraction:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public interface IsisJdoSupport {
+    @Programmatic
+    &lt;T&gt; List&lt;T&gt; executeQuery(final Class&lt;T&gt; cls, final BooleanExpression be);
+    @Programmatic
+    &lt;T&gt; T executeQueryUnique(final Class&lt;T&gt; cls, final BooleanExpression be);
+    @Programmatic
+    &lt;T&gt; TypesafeQuery&lt;T&gt; newTypesafeQuery(Class&lt;T&gt; cls);
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>executeQuery(&#8230;&#8203;)</code> method supports the common case of obtaining a set of objects that meet some criteria, filtered using the provided <code>BooleanExpression</code>.
+To avoid memory leaks, the returned list is cloned and the underlying query closed.</p>
+</div>
+<div class="paragraph">
+<p>For example, consider an implementation of <code>ToDoItemRepository</code> using type-safe queries.
+The following JDOQL:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-sql hljs" data-lang="sql">SELECT
+FROM todoapp.dom.module.todoitem.ToDoItem
+WHERE atPath.indexOf(:atPath) == 0
+   &amp;&amp; complete == :complete")</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>can be expressed using type-safe queries as follows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public List&lt;ToDoItem&gt; findByAtPathAndCategory(final String atPath, final Category category) {
+    final QToDoItem q = QToDoItem.candidate();
+    return isisJdoSupport.executeQuery(ToDoItem.class,
+            q.atPath.eq(atPath).and(
+            q.category.eq(category)));
+}</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>You can find the full example of the JDOQL equivalent in the <a href="../../../../../applib/index/services/repository/RepositoryService.html" class="page">RepositoryService</a></p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The <code>executeUniqueQuery(&#8230;&#8203;)</code> method is similar to <code>executeQuery(&#8230;&#8203;)</code>, however expects the query to return at most a single object, which it returns (or <code>null</code> if none).</p>
+</div>
+<div class="paragraph">
+<p>The <code>newTypesafeQuery(&#8230;&#8203;)</code> method is a lower-level API that allows a type safe query to be instantiated for most sophisticated querying, eg using group by or order by clauses.
+See the DataNucleus <a href="http://www.datanucleus.org/products/accessplatform_4_0/jdo/jdoql_typesafe.html">documentation</a> for full details of using this.</p>
+</div>
+<div class="paragraph">
+<p>One thing to be aware of is that after the query has been executed, it should be closed, using <code>query.closeAll()</code>.
+If calling <code>query.executeList()</code> we also recommend cloning the resultant list first.
+The following utility method does both of these tasks:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">private static &lt;T&gt; List&lt;T&gt; executeListAndClose(final TypesafeQuery&lt;T&gt; query) {
+    final List&lt;T&gt; elements = query.executeList();
+    final List&lt;T&gt; list = Lists.newArrayList(elements);
+    query.closeAll();
+    return list;
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="fixture-support"><a class="anchor" href="#fixture-support"></a>Fixture support</h3>
+<div class="paragraph">
+<p>When writing <a href="../../../../../../../testing/latest/integtestsupport/about.html" class="page">integration tests</a> you&#8217;ll usually need to tear down some/all mutable transactional data before each test.
+One way to do that is to use the <code>executeUpdate(&#8230;&#8203;)</code> method described <a href="#pjdo:ROOT:services/IsisJdoSupport.adoc#executing-sql" class="page unresolved">above</a>.</p>
+</div>
+<div class="paragraph">
+<p>Alternatively, the <code>deleteAll(&#8230;&#8203;)</code> method will let your test delete all instances of a class without resorting to SQL:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public interface IsisJdoSupport {
+    void deleteAll(Class&lt;?&gt;... pcClasses);
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class TearDownAll extends FixtureScriptAbstract {
+    @Override
+    protected void execute(final ExecutionContext ec) {
+        isisJdoSupport.deleteAll(Order.class);
+        isisJdoSupport.deleteAll(CustomerAddress.class);
+        isisJdoSupport.deleteAll(Customer.class);
+    }
+    @Inject
+    IsisJdoSupport isisJdoSupport;
+}</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>It can occasionally be the case that Apache Isis' internal adapter for the domain object is still in memory.
+JDO/DataNucleus seems to bump up the version of the object prior to its deletion, which under normal circumstances would cause Apache Isis to throw a concurrency exception.
+Therefore to prevent this from happening (ie to <em>force</em> the deletion of all instances), concurrency checking is temporarily disabled while this method is performed.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="reloading-entities"><a class="anchor" href="#reloading-entities"></a>Reloading entities</h3>
+<div class="paragraph">
+<p>An <a href="http://www.datanucleus.org:15080/products/accessplatform_5_0/jdo/mapping.html#one_many_relations">(intentional) limitation</a> of JDO/DataNucleus is that persisting a child entity (in a 1:n bidirectional relationship) does not cause the parent&#8217;s collection to be updated.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public interface IsisJdoSupport {
+    &lt;T&gt; T refresh(T domainObject);
+    void ensureLoaded(Collection&lt;?&gt; collectionOfDomainObjects);
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>refresh(T domainObject)</code> method can be used to reload the parent object (or indeed any object).
+Under the covers it uses the JDO <code>PersistenceManager#refresh(&#8230;&#8203;)</code> API.</p>
+</div>
+<div class="paragraph">
+<p>The <code>ensureLoaded(&#8230;&#8203;)</code> method allows a collection of domain objects to be loaded from the database in a single hit.
+This can be valuable as a performance optimization to avoid multiple roundtrips to the database.
+Under the covers it uses the <code>PersistenceManager#retrieveAll(&#8230;&#8203;)</code> API.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="jdo-persistencemanager"><a class="anchor" href="#jdo-persistencemanager"></a>JDO <code>PersistenceManager</code></h3>
+<div class="paragraph">
+<p>The functionality provided by <code>IsisJdoSupport</code> focus only on the most common use cases.
+If you require more flexibility than this, eg for dynamically constructed queries, then you can use the service to access the underlying JDO <code>PersistenceManager</code> API:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public interface IsisJdoSupport {
+    @Programmatic
+    PersistenceManager getJdoPersistenceManager();
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Orders {
+
+    public List&lt;Order&gt; findOrders( /* ... */ ) {
+        javax.jdo.PersistenceManager pm = isisJdoSupport.getPersistenceManager();
+
+        ...
+
+        return someListOfOrders;
+    }
+
+    @Inject
+    IsisJdoSupport isisJdoSupport;
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
 </article>
 <aside class="article-aside toc hide-for-print" role="navigation">
     <p class="toc-title">On this page</p>
@@ -1076,7 +1362,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M5.20210331-0429-a58dac06</p>
+            <p>Revision: 2.0.0-M5.20210401-0430-14179194</p>
         </div>
     </div>
 </footer>

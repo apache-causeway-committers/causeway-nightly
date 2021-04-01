@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Raleway:300,400,500,700,800|Montserrat:300,400,700" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css"/>
 <link rel="home" href="../.." title="Apache Isis">
-  <link rel="next" href="jdo-mappings.html" title="JDO Mappings">
+  <link rel="next" href="configuring/disabling-persistence-by-reachability.html" title="Disabling Persistence by Reachability">
   <link rel="prev" href="about.html" title="JDO/DataNucleus">
   </head>
   <body class="article">
@@ -146,7 +146,7 @@
 <div class="nav-panel-pagination">
   <a class="page-previous" rel="prev" href="about.html" title="JDO/DataNucleus"><span></span></a>
   <a class="page-next" rel="next"
-     href="jdo-mappings.html" title="JDO Mappings"><span></span></a>
+     href="configuring/disabling-persistence-by-reachability.html" title="Disabling Persistence by Reachability"><span></span></a>
 <!--
 page.parent doesn't seem to be set...
   <a class="page-parent disabled" rel="prev" href="" title="JDO/DataNucleus"><span></span></a>
@@ -159,25 +159,37 @@ page.parent doesn't seem to be set...
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
   <li class="nav-item is-current-page" data-depth="1">
+    <button class="nav-item-toggle"></button>
     <a class="nav-link" href="setup-and-configuration.html">Setup and Configuration</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="configuring/disabling-persistence-by-reachability.html">Disabling Persistence by Reachability</a>
   </li>
-  <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="jdo-mappings.html">JDO Mappings</a>
+</ul>
   </li>
   <li class="nav-item" data-depth="1">
     <a class="nav-link" href="db-schemas.html">DB Schemas</a>
   </li>
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="hints-and-tips.html">Hints-n-Tips</a>
-  </li>
-  <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <span class="nav-text">Domain Services</span>
+    <a class="nav-link" href="mapping-guide.html">Mapping Guide</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="services/IsisJdoSupport.html">IsisJdoSupport</a>
+    <a class="nav-link" href="mapping-guide/one-to-m-bidirectional-relationships.html">1-m Bidirectional relationships</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="mapping-guide/mandatory-properties-in-subtypes.html">Mandatory Properties in Subtypes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="mapping-guide/mapping-to-a-view.html">Mapping to a View</a>
   </li>
 </ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="dependency-injection.html">Dependency Injection</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="hints-and-tips.html">Hints-n-Tips</a>
   </li>
 </ul>
   </li>
@@ -379,13 +391,299 @@ page.parent doesn't seem to be set...
     <a name="section-top"></a>
 <h1 class="page">Setup and Configuration</h1>
 <div class="sect1">
-<h2 id="classpath-and-modules"><a class="anchor" href="#classpath-and-modules"></a>Classpath and Modules</h2>
+<h2 id="maven-pom-xml"><a class="anchor" href="#maven-pom-xml"></a>Maven pom.xml</h2>
 <div class="sectionbody">
+<div class="sect2">
+<h3 id="dependency-management"><a class="anchor" href="#dependency-management"></a>Dependency Management</h3>
 <div class="paragraph">
-<p>The</p>
+<p>If your application inherits from the Apache Isis starter app (<code>org.apache.isis.app:isis-app-starter-parent</code> then that will define the version automatically:</p>
+</div>
+<div class="listingblock">
+<div class="title">pom.xml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;parent&gt;
+    &lt;groupId&gt;org.apache.isis.app&lt;/groupId&gt;
+    &lt;artifactId&gt;isis-app-starter-parent&lt;/artifactId&gt;
+    &lt;version&gt;2.0.0-M6&lt;/version&gt;
+    &lt;relativePath/&gt;
+&lt;/parent&gt;</code></pre>
+</div>
 </div>
 <div class="paragraph">
-<p>The <a href="../../refguide/latest/config/about.html" class="page">Configuration Guide</a> includes a <a href="#refguide:config:sections/jdo-datanucleus.adoc" class="page unresolved">section</a> for JDO/Persistence object store, and another <a href="#refguide:config:sections/jdo-datanucleus-conf.adoc" class="page unresolved">section</a> for configuration that is passed through to DataNucleus unchanged.</p>
+<p>Alternatively, import the core BOM.
+This is usually done in the top-level parent pom of your application:</p>
+</div>
+<div class="listingblock">
+<div class="title">pom.xml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependencyManagement&gt;
+    &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.apache.isis.core&lt;/groupId&gt;
+            &lt;artifactId&gt;isis-core&lt;/artifactId&gt;
+            &lt;version&gt;2.0.0-M6&lt;/version&gt;
+            &lt;version&gt;2.0.0-SNAPSHOT&lt;/version&gt;
+            &lt;scope&gt;import&lt;/scope&gt;
+            &lt;type&gt;pom&lt;/type&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+&lt;/dependencyManagement&gt;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="dependency"><a class="anchor" href="#dependency"></a>Dependency</h3>
+<div class="paragraph">
+<p>For every Maven module that includes JPA entities, add the following dependency:</p>
+</div>
+<div class="listingblock">
+<div class="title">pom.xml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.apache.isis.mavendeps&lt;/groupId&gt;
+        &lt;artifactId&gt;isis-mavendeps-jpa&lt;/artifactId&gt;
+        &lt;type&gt;pom&lt;/type&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="update-appmanifest"><a class="anchor" href="#update-appmanifest"></a>Update AppManifest</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In your application&#8217;s <code>AppManifest</code> (top-level Spring <code>@Configuration</code> used to bootstrap the app), import the</p>
+</div>
+<div class="listingblock">
+<div class="title">AppManifest.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Configuration
+@Import({
+        ...
+        IsisModuleJpaEclipselink.class,
+        ...
+})
+public class AppManifest {
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="datasource"><a class="anchor" href="#datasource"></a>DataSource</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The JPA object store uses Spring to provide a <code>javax.sql.DataSource</code>.
+Normally this is done by setting the <code>spring.datasource</code> configuration properties, as described in the
+<a href="https://docs.spring.io/spring-boot/docs/current/reference/html/spring-boot-features.html#boot-features-connect-to-production-database-configuration">Spring Boot</a> documentation.</p>
+</div>
+<div class="paragraph">
+<p>For example, the <a href="../../docs/latest/starters/simpleapp.html" class="page">SimpleApp</a> starter app defines these:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>for H2 (in-memory):</p>
+<div class="listingblock">
+<div class="title">app.properties</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">spring.datasource.platform=h2
+spring.datasource.url=jdbc:h2:mem:simple
+spring.datasource.driver-class-name=org.h2.Driver</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>for SQL Server:</p>
+<div class="listingblock">
+<div class="title">app.properties</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">spring.datasource.platform=sqlserver
+spring.datasource.url=jdbc:sqlserver://localhost;databaseName=simpleapp
+spring.datasource.driver-class-name=com.microsoft.sqlserver.jdbc.SQLServerDriver
+spring.datasource.username=simpleapp
+spring.datasource.password=simpleapp</code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>It is also possible to programmatically define a <code>DataSource</code>; see the <a href="https://docs.spring.io/spring-boot/docs/current/reference/html/howto.html#howto-data-access">Spring docs</a> for details.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="create-schema"><a class="anchor" href="#create-schema"></a>Create Schema</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>It&#8217;s good practice to use <a href="https://crate.io/docs/sql-99/en/latest/chapters/17.html#create-schema-statement">SQL schemas</a> as a way to organise database tables into groups.
+We recommend all the entities within a module use the same schema, and moreover that the <a href="../../refguide/latest/applib/index/annotation/DomainObject.html#objectType" class="page">object type</a> also follows the same pattern.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@javax.persistence.Entity
+@javax.persistence.Table(
+    schema="SIMPLE",                                <i class="conum" data-value="1"></i><b>(1)</b>
+    ...
+)
+@DomainObject(objectType = "simple.SimpleObject")   <i class="conum" data-value="2"></i><b>(2)</b>
+...
+public class SimpleObject ... {
+
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>specifies the database schema.
+The table name will be based on the entity</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>corresponding two-part object type.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>When prototyping we rely on the ORM to automatically create the entire database tables, which includes the owning schemas.
+As EclipseLink does not do this automatically, the framework will do this if requested.
+The <a href="../../refguide/latest/config/sections/isis.persistence.schema.html#isis.persistence.schema.auto-create-schemas" class="page">isis.persistence.schema.auto-create-schemas</a> controls if this is done or not.</p>
+</div>
+<div class="paragraph">
+<p>Different database vendors have different syntaxes to do this, and so this can be configured using the <a href="../../refguide/latest/config/sections/isis.persistence.schema.html#isis.persistence.schema.create-schema-sql-template" class="page">isis.persistence.schema.create-schema-sql-template</a>.
+The default value is to use SQL-99 syntax ("CREATE SCHEMA IF NOT EXISTS %S"), passed through to <code>String.format()</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="auto-create-or-validate-tables"><a class="anchor" href="#auto-create-or-validate-tables"></a>Auto-create (or validate) tables</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When running against the h2 in-memory database (eg for prototype mode or integration tests), you&#8217;ll probably want DataNucleus to automatically create the tables.</p>
+</div>
+<div class="paragraph">
+<p>This can be configured using the:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../../refguide/latest/config/sections/datanucleus.html#datanucleus.schema.auto-create-all" class="page">datanucleus.schema.autoCreateAll</a> configuration property.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Conversely, if running in production then you will probably use <a href="../../userguide/latest/flyway/about.html" class="page">Flyway</a> to manage database migrations.
+In this case you&#8217;ll just want to validate that the database table structure of the target database is in line with what DataNucleus expectss.</p>
+</div>
+<div class="paragraph">
+<p>You can do this using the:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../../refguide/latest/config/sections/datanucleus.html#datanucleus.schema.validate-all" class="page">datanucleus.schema.validateAll</a> configuration property.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>This will fail-fast if there is a mismatch.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="other-configuration-properties"><a class="anchor" href="#other-configuration-properties"></a>Other Configuration Properties</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Additional configuration properties for DataNucleus itself can be specified directly under the <code>datanucleus.</code> configuration key.</p>
+</div>
+<div class="paragraph">
+<p>We recommend that some of these should be configured:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>disable <a href="configuring/disabling-persistence-by-reachability.html" class="page">persistence by reachability</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>See the <a href="../../refguide/latest/config/sections/datanucleus.html" class="page">datanucleus</a> section of the <a href="../../refguide/latest/config/about.html" class="page">Configuration Guide</a> for further details.</p>
+</div>
+<div class="paragraph">
+<p>Furthermore, DataNucleus will search for various other XML mapping files, eg <code>mappings.jdo</code>.
+A full list can be found <a href="http://www.datanucleus.org/products/datanucleus/jdo/metadata.html">here</a>.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>DataNucleus properties must be specified using <code>camelCase</code>, not <code>kebab-case</code>.</p>
+</div>
+<div class="paragraph">
+<p>For example, use <code>datanucleus.schema.autoCreateAll</code> not <code>datanucleus.schema.auto-create-all</code></p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="persistence-xml"><a class="anchor" href="#persistence-xml"></a><code>persistence.xml</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>DataNucleus will for itself also read the <code>META-INF/persistence.xml</code>.
+In theory this can hold mappings and even connection strings.
+However, with Apache Isis we tend to use annotations instead and externalize connection strings. so its definition is extremely simply, specifying just the name of the "persistence unit".</p>
+</div>
+<div class="paragraph">
+<p>Here&#8217;s the one provided by the <a href="../../docs/latest/starters/simpleapp.html" class="page">SimpleApp</a> starter app:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;?xml version="1.0" encoding="UTF-8" ?&gt;
+&lt;persistence xmlns="http://java.sun.com/xml/ns/persistence"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd" version="1.0"&gt;
+
+    &lt;persistence-unit name="simple"&gt;
+    &lt;/persistence-unit&gt;
+&lt;/persistence&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Normally all one needs to do is to change the <code>persistence-unit</code> name.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>If you use Eclipse IDE on Windows then
+<a href="../../setupguide/latest/eclipse/about.html#workaround-for-path-limits-the-dn-plugin-to-use-the-persistence-xml" class="page">note the importance</a> of the <code>persistence.xml</code> file to make DataNucleus enhancer work correctly.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>See <a href="http://www.datanucleus.org/products/datanucleus/jdo/persistence.html#persistenceunit">DataNucleus' documentation</a> on <code>persistence.xml</code> to learn more.</p>
 </div>
 </div>
 </div>
@@ -406,7 +704,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M5.20210331-0429-a58dac06</p>
+            <p>Revision: 2.0.0-M5.20210401-0430-14179194</p>
         </div>
     </div>
 </footer>
