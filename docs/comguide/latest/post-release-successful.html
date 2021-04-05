@@ -339,6 +339,9 @@ page.parent doesn't seem to be set...
         <li class="version is-latest">
           <a href="../../security/latest/about.html">latest</a>
         </li>
+        <li class="version">
+          <a href="../../security/2.0.0-M5/index.html">2.0.0-M5</a>
+        </li>
       </ul>
     </li>
     <li class="component">
@@ -1034,36 +1037,38 @@ git pull --ff-only</code></pre>
 </div>
 </li>
 <li>
-<p>still in the <code>isis-site</code> repo, delete all the files in <code>content/</code> <em>except</em> for the <code>schema</code> and <code>versions</code> directories:</p>
+<p>still in the <code>isis-site</code> repo, run the <code>copyover.sh</code> script:</p>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">pushd content
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sh copyover.sh</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This deletes all the files in <code>content/</code> <em>except</em> for the <code>schema</code> and <code>versions</code> directories, and copies the generated Antora site to <code>isis-site</code> repo&#8217;s <code>contents</code> directory:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">#!/usr/bin/env bash
+pushd content
 for a in $(ls -1 | grep -v schema | grep -v versions)
 do
     rm -rf $a
 done
-popd</code></pre>
+popd
+
+pushd ../isis
+cp -Rf antora/target/site/* ../isis-site/content/.
+popd
+
+git add .</code></pre>
 </div>
 </div>
 </li>
 <li>
-<p>Copy the generated Antora site to <code>isis-site</code> repo&#8217;s <code>contents</code> directory:</p>
+<p>Commit the changes and preview:</p>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd ../isis
-
-cp -Rf antora/target/site/* ../isis-site/content/.</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>Back in the <code>isis-site</code> repo, commit the changes and preview:</p>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd ../isis-site
-
-git add .
-git commit -m "$ISISJIRA : production changes to website"
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git commit -m "updates website"
 
 sh preview.sh</code></pre>
 </div>
@@ -1296,7 +1301,7 @@ Copy-n-paste the above mailing list announcement should suffice.</p>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M5.20210403-0430-d1a7ac64</p>
+            <p>Revision: 2.0.0-M5.20210405-0430-3efc8bc8</p>
         </div>
     </div>
 </footer>
