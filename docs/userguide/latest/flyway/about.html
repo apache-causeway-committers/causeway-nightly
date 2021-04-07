@@ -305,14 +305,6 @@ page.parent doesn't seem to be set...
       </ul>
     </li>
     <li class="component">
-      <span class="title">Legacy Catalog</span>
-      <ul class="versions">
-        <li class="version is-latest">
-          <a href="../../../legacy/latest/about.html">latest</a>
-        </li>
-      </ul>
-    </li>
-    <li class="component">
       <span class="title">Reference Guide</span>
       <ul class="versions">
         <li class="version is-latest">
@@ -461,59 +453,82 @@ public static class AppManifest {
 </div>
 </div>
 <div class="paragraph">
-<p>Also configure Flyway connection parameters to use those of JDO JDO/DataNucleus object store:</p>
-</div>
-<div class="listingblock">
-<div class="title">application.properties</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">spring.flyway.url=...
-spring.flyway.user=...
-spring.flyway.password=...</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>If Flyway is enabled, then <code>autoCreateAll</code> should also be disabled:</p>
+<p>Configure Flyway connection parameters:</p>
 </div>
 <div class="listingblock">
 <div class="title">application.properties</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">spring.flyway.enabled=true
-datanucleus.schema.autoCreateAll=false</code></pre>
+spring.flyway.default-schema=SIMPLE             <i class="conum" data-value="1"></i><b>(1)</b>
+spring.flyway.schemas=SIMPLE                    <i class="conum" data-value="2"></i><b>(2)</b>
+spring.flyway.create-schemas=true               <i class="conum" data-value="3"></i><b>(3)</b>
+
+isis.persistence.schema.auto-create-schemas=    <i class="conum" data-value="4"></i><b>(4)</b></code></pre>
 </div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>the default schema managed by Flyway (containing the <code>schema_version</code> table); see <a href="https://flywaydb.org/documentation/configuration/parameters/defaultSchema">flyway.defaultSchema</a> config property (Flyway docs) for more info</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>all of the schemas managed by Flyway; see <a href="https://flywaydb.org/documentation/configuration/parameters/schemas">flyway.schemas</a> config property (Flyway docs) for more info</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>whether Flyway should automatically create schemas ; see <a href="https://flywaydb.org/documentation/configuration/parameters/createSchemas">flyway.createSchemas</a> for more info</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>instruct Apache Isis to <em>not</em> attempt to create schemas</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The ORM should also be configured to <em>not</em> automatically create tables:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>if using <a href="../../../pjpa/latest/about.html" class="page">JPA/Eclipselink</a>, then:</p>
+<div class="listingblock">
+<div class="title">application.properties</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">eclipselink.ddl-generation=none</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>if using <a href="../../../pjdo/latest/about.html" class="page">JDO/DataNucleus</a>, then:</p>
+<div class="listingblock">
+<div class="title">application.properties</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">datanucleus.schema.autoCreateAll=false</code></pre>
+</div>
+</div>
+</li>
+</ul>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="using-in-memory-object-stores"><a class="anchor" href="#using-in-memory-object-stores"></a>Using in-memory object stores</h2>
+<h2 id="managing-different-variants"><a class="anchor" href="#managing-different-variants"></a>Managing different variants</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>When running with an in-memory object store - either for prototyping or integration tests - you will need the database tables to be created first.</p>
 </div>
 <div class="paragraph">
-<p>In normal circumstances this is most easily peformed using with <code>autoCreateAll</code> enabled (and Flyway disabled).
-If you want your tests to check your Flyway scripts beforehand, there is nothing to prevent you from using Flyway all the time, even for integration tests.</p>
+<p>In normal circumstances this is most easily accomplished with the ORM automatically creating the tables (and Flyway disabled).</p>
 </div>
 <div class="paragraph">
-<p>One point to be aware of though is that the DDL syntax may vary between an in-memory database (such as H2) and a typical production database (such as PostgreSQL or SQL Server).
-Luckily, Spring Boot&#8217;s Flyway integration allows different variants of scripts for different vendors to be stored, in <code>db.migration.{vendor}</code> package (where <code>{vendor}</code> is as defined by the <a href="https://github.com/spring-projects/spring-boot/blob/v2.2.3.RELEASE/spring-boot-project/spring-boot/src/main/java/org/springframework/boot/jdbc/DatabaseDriver.java">DatabaseDriver</a> class).
+<p>However, if you want your tests to check your Flyway scripts beforehand, there is nothing to prevent you from using Flyway all the time, even for integration tests.
+One point to be aware of though is that the DDL syntax may vary between an in-memory database (such as H2) and a typical production database (such as PostgreSQL or SQL Server).</p>
+</div>
+<div class="paragraph">
+<p>Luckily, Spring Boot&#8217;s Flyway integration allows different variants of scripts for different vendors to be stored, in <code>db.migration.{vendor}</code> package (where <code>{vendor}</code> is as defined by the <a href="https://github.com/spring-projects/spring-boot/blob/v2.2.3.RELEASE/spring-boot-project/spring-boot/src/main/java/org/springframework/boot/jdbc/DatabaseDriver.java">DatabaseDriver</a> class).
 The <a href="../../../docs/latest/starters/simpleapp.html" class="page">simpleapp starter app</a> also provides an example of this.</p>
-</div>
-<div class="sect2">
-<h3 id="custom-schemas"><a class="anchor" href="#custom-schemas"></a>Custom schemas</h3>
-<div class="paragraph">
-<p>In some circumstances DataNucleus&#8201;&#8212;&#8201;when running with <code>autoCreateAll</code> enabled&#8201;&#8212;&#8201;has been known to not create the prerequisite schema objects.</p>
-</div>
-<div class="paragraph">
-<p>If this occurs, consider enabling Flyway for in-memory tests, and then use a custom value of <code>spring.flyway.locations</code> property to pick up the custom schema files:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">spring.flyway.locations=classpath:db/migration/custom-schema</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>This property could be configured for example using <code>@TestPropertySource</code>, or <code>@ActiveProfile</code>.</p>
-</div>
 </div>
 </div>
 </div>
@@ -524,9 +539,6 @@ The <a href="../../../docs/latest/starters/simpleapp.html" class="page">simpleap
 <ul>
 <li>
 <p><a href="https://docs.spring.io/spring-boot/docs/current/reference/html/howto.html#howto-execute-flyway-database-migrations-on-startup">Spring Boot docs</a> for Flyway integration</p>
-</li>
-<li>
-<p><a href="https://www.baeldung.com/spring-boot-configure-data-source-programmatic">www.baeldung.com</a> docs on how to programmatically build a <code>DataSource</code></p>
 </li>
 </ul>
 </div>
@@ -549,7 +561,7 @@ The <a href="../../../docs/latest/starters/simpleapp.html" class="page">simpleap
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M5.20210405-0430-3efc8bc8</p>
+            <p>Revision: 2.0.0-M5.20210407-0431-7933b5d8</p>
         </div>
     </div>
 </footer>

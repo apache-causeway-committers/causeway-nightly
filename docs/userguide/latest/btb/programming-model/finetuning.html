@@ -303,14 +303,6 @@ page.parent doesn't seem to be set...
       </ul>
     </li>
     <li class="component">
-      <span class="title">Legacy Catalog</span>
-      <ul class="versions">
-        <li class="version is-latest">
-          <a href="../../../../legacy/latest/about.html">latest</a>
-        </li>
-      </ul>
-    </li>
-    <li class="component">
       <span class="title">Reference Guide</span>
       <ul class="versions">
         <li class="version is-latest">
@@ -423,18 +415,6 @@ page.parent doesn't seem to be set...
 <h1 class="page">Finetuning</h1>
 <div id="preamble">
 <div class="sectionbody">
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-TODO - v2 - not yet reviewed/updated.
-</td>
-</tr>
-</table>
-</div>
 <div class="paragraph">
 <p>The core metamodel defines APIs and implementations for building the Apache Isis metamodel: a description of the set of entities, domain services and values that make up the domain model.</p>
 </div>
@@ -479,54 +459,37 @@ In short, the <code>FacetFactory</code>s registered defines the Apache Isis prog
 <h2 id="modifying-the-prog-model"><a class="anchor" href="#modifying-the-prog-model"></a>Modifying the Prog. Model</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The default implementation of <code>ProgrammingModel</code> is <a href="https://github.com/apache/isis/blob/master/core/metamodel/src/main/java/org/apache/isis/progmodels/dflt/ProgrammingModelFacetsJava5.java">ProgrammingModelFacetsJava5</a>, which registers a large number of <code>FacetFactory</code>s.</p>
+<p>Creating the <code>ProgrammingModel</code> is the responsibility of the <a href="https://github.com/apache/isis/blob/master/core/metamodel/src/main/java/org/apache/isis/core/metamodel/progmodel/ProgrammingModelService.java">ProgrammingModelService</a>.</p>
 </div>
 <div class="paragraph">
-<p>By editing <code>application.properties</code> you can modify the programming conventions either by (a) using the default programming model, but tweaking it to include new `FacetFactory`s or exclude existing, or (b) by specifying a completely different programming model implementation.</p>
+<p>The default implementation, <a href="https://github.com/apache/isis/blob/master/core/metamodel/src/main/java/org/apache/isis/core/metamodel/specloader/ProgrammingModelServiceDefault.java">ProgrammingModelServiceDefault</a>, creates as the <code>ProgrammingModel</code> the concrete implementation <a href="https://github.com/apache/isis/blob/master/core/metamodel/src/main/java/org/apache/isis/core/metamodel/progmodels/dflt/ProgrammingModelFacetsJava8.java">ProgrammingModelFacetsJava8</a>, which registers a large number of <code>FacetFactory</code>s.
+This programming model can then be added to because the service call every known implementation of <a href="https://github.com/apache/isis/blob/master/core/metamodel/src/main/java/org/apache/isis/core/metamodel/facetapi/MetaModelRefiner.java">MetaModelRefiner</a>.</p>
 </div>
 <div class="paragraph">
-<p>Let&#8217;s see how this is done.</p>
-</div>
-<div class="sect2">
-<h3 id="including-or-excluding-facets"><a class="anchor" href="#including-or-excluding-facets"></a>Including or excluding facets</h3>
-<div class="paragraph">
-<p>Suppose that you wanted to completely remove support for some existing facet, eg to support the "persisting()" and "persisted()" callback methods.
-This would be done using:</p>
+<p>The programming model can also be filtered using the <a href="https://github.com/apache/isis/blob/master/core/metamodel/src/main/java/org/apache/isis/core/metamodel/progmodel/ProgrammingModelInitFilter.java">ProgrammingModelInitFilter</a> interface.
+The default implementation of <em>this</em> interface, <a href="https://github.com/apache/isis/blob/master/core/metamodel/src/main/java/org/apache/isis/core/metamodel/progmodel/ProgrammingModelInitFilterDefault.java">ProgrammingModelInitFilterDefault</a> accepts all facet factories though allows deprecated facet factories to be excluded through a configuration property.</p>
 </div>
 <div class="paragraph">
-<p>xref:refguide:config:sections/isis.core.meta-model.introspector.adoc#</p>
+<p>The diagram below shows how these classes relate:</p>
 </div>
-<div class="listingblock">
+<div class="imageblock kroki">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">isis.reflector.facets.exclude=\
-    org.apache.isis.core.metamodel.facets.object.callbacks.PersistCallbackFacetFactory</code></pre>
+<object type="image/svg+xml" data="../_images/diag-419be38423032876d89d1d44c80aafe9db857a3b.svg"><span class="alt">Programming Model classes</span></object>
 </div>
-</div>
-<div class="paragraph">
-<p>Or, suppose you wanted to use add some custom facet factory of your own, use:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">isis.reflector.facets.include=com.mycompany.isis.facets.MyCoolFacetFactory</code></pre>
-</div>
+<div class="title">Figure 1. Programming Model classes</div>
 </div>
 <div class="paragraph">
-<p>To include/exclude more than one <code>FacetFactory</code>, specify as a comma-separated list.</p>
+<p>To summarise:</p>
 </div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>This <a href="http://isis.markmail.org/thread/472c3mrvcgnripst">thread</a> from the users mailing list (in Apr 2014) shows a typical customization (to enable per-instance security) (though note that <a href="../about.html#multi-tenancy" class="page">Multi-Tenancy</a> is now a better solution to that particular use-case.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
+<div class="ulist">
+<ul>
+<li>
+<p>To add to the programming model (new facet factories, validators or post processors), create a <code>@Service</code> implementing the <code>MetaModelRefiner</code> interface</p>
+</li>
+<li>
+<p>to remove from the programming model, create a <code>@Service</code> implementing a ProgrammingModelInitFilter` (with an earlier precedence than the default implementation).</p>
+</li>
+</ul>
 </div>
 </div>
 </div>
@@ -547,7 +510,7 @@ This would be done using:</p>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M5.20210405-0430-3efc8bc8</p>
+            <p>Revision: 2.0.0-M5.20210407-0431-7933b5d8</p>
         </div>
     </div>
 </footer>

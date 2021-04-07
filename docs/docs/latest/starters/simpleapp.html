@@ -294,7 +294,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../../../incubator/latest/about.html">Incubator</a>
   </li>
   <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../../../legacy/latest/about.html">Legacy</a>
+    <a class="nav-link" href="#legacy:ROOT:about.adoc">Legacy</a>
   </li>
 </ul>
   </li>
@@ -512,14 +512,6 @@ page.parent doesn't seem to be set...
       <ul class="versions">
         <li class="version is-latest">
           <a href="../../../pjpa/latest/about.html">latest</a>
-        </li>
-      </ul>
-    </li>
-    <li class="component">
-      <span class="title">Legacy Catalog</span>
-      <ul class="versions">
-        <li class="version is-latest">
-          <a href="../../../legacy/latest/about.html">latest</a>
         </li>
       </ul>
     </li>
@@ -1585,10 +1577,14 @@ In this case, the test inherits from the <code>IsisIntegrationTestAbstractWithFi
          ApplicationModule.java                                 <i class="conum" data-value="6"></i><b>(6)</b>
       custom/
         restapi/
-          CustomController.class    <i class="conum" data-value="7"></i><b>(7)</b>
+          CustomController.class                                <i class="conum" data-value="7"></i><b>(7)</b>
         CustomModule.class
-      AppManifest.java                                          <i class="conum" data-value="8"></i><b>(8)</b>
-      SimpleApp.java                                            <i class="conum" data-value="9"></i><b>(9)</b></code></pre>
+      quartz/
+        job/
+          SampleJob.class                                       <i class="conum" data-value="8"></i><b>(8)</b>
+        QuartzModule.class
+      AppManifest.java                                          <i class="conum" data-value="9"></i><b>(9)</b>
+      SimpleApp.java                                            <i class="conum" data-value="10"></i><b>(10)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -1636,17 +1632,21 @@ This integrates with Spring Boot&#8217;s <a href="https://docs.spring.io/spring-
 </tr>
 <tr>
 <td><i class="conum" data-value="7"></i><b>7</b></td>
-<td>Demonstrates how to implement custom REST controller using business logic.</td>
+<td>Demonstrates how to implement a custom REST controller, accessing the domain object model managed by Apache Isis.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="8"></i><b>8</b></td>
+<td>Demonstrates how to run quartz as a background service, accessing the domain object model managed by Apache Isis.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
 <td><code>AppManifest</code> is the top-level Spring <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/annotation/Configuration.html">@Configuration</a> that specifies the components of Apache Isis to use, along with the modules making up the application itself (ie <code>ApplicationModule</code>, which depends in turn on <code>SimpleModule</code>, and <code>CustomModule</code>).
 <div class="paragraph">
 <p>This is discussed in more detail below</p>
 </div></td>
 </tr>
 <tr>
-<td><i class="conum" data-value="9"></i><b>9</b></td>
+<td><i class="conum" data-value="10"></i><b>10</b></td>
 <td><code>SimpleApp</code> is the <a href="https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/autoconfigure/SpringBootApplication.html">@SpringBootApplication</a> used to bootstrap the app.
 It&#8217;s pretty much boilerplate - the important piece is that it references <code>AppManifest</code>.
 <div class="paragraph">
@@ -1699,7 +1699,7 @@ It looks like this:</p>
 @Import({
         IsisModuleCoreRuntimeServices.class,                    <i class="conum" data-value="1"></i><b>(1)</b>
         IsisModuleSecurityShiro.class,                          <i class="conum" data-value="2"></i><b>(2)</b>
-        IsisModuleJdoDataNucleus5.class,                        <i class="conum" data-value="3"></i><b>(3)</b>
+        IsisModuleJpaEclipseLink.class,                         <i class="conum" data-value="3"></i><b>(3)</b>
         IsisModuleViewerRestfulObjectsJaxrsResteasy4.class,     <i class="conum" data-value="4"></i><b>(4)</b>
         IsisModuleViewerWicketViewer.class,                     <i class="conum" data-value="5"></i><b>(5)</b>
 
@@ -1710,6 +1710,7 @@ It looks like this:</p>
 
         ApplicationModule.class,                                <i class="conum" data-value="9"></i><b>(9)</b>
         CustomModule.class,                                     <i class="conum" data-value="9"></i><b>(9)</b>
+        QuartzModule.class,                                     <i class="conum" data-value="9"></i><b>(9)</b>
 
         DomainAppDemo.class                                     <i class="conum" data-value="10"></i><b>(10)</b>
 })
@@ -1733,9 +1734,9 @@ There are several security implementations, precisely one must be selected</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Enables JDO/DataNucleus for persistence.
+<td>Enables JPA/Eclipselink for persistence.
 <div class="paragraph">
-<p>If using JPA as the ORM, replace with <code>IsisModuleJpaEclipseLink.class</code>.</p>
+<p>If using JDO as the ORM, replace with <code>IsisModuleJdoDataNucleus5</code>.</p>
 </div></td>
 </tr>
 <tr>
@@ -1760,7 +1761,7 @@ There are several security implementations, precisely one must be selected</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="9"></i><b>9</b></td>
-<td>References the application&#8217;s module(s), in this case <code>ApplicationModule</code> and <code>CustomModule</code>.
+<td>References the application&#8217;s module(s), in this case <code>ApplicationModule</code> , <code>CustomModule</code> and <code>QuartzModule</code>.
 <div class="paragraph">
 <p><code>ApplicationModule</code> is discussed below.</p>
 </div></td>
@@ -2387,7 +2388,7 @@ docker rm sqlserver</code></pre>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M5.20210405-0430-3efc8bc8</p>
+            <p>Revision: 2.0.0-M5.20210407-0431-7933b5d8</p>
         </div>
     </div>
 </footer>

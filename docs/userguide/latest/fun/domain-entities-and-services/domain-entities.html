@@ -303,14 +303,6 @@ page.parent doesn't seem to be set...
       </ul>
     </li>
     <li class="component">
-      <span class="title">Legacy Catalog</span>
-      <ul class="versions">
-        <li class="version is-latest">
-          <a href="../../../../legacy/latest/about.html">latest</a>
-        </li>
-      </ul>
-    </li>
-    <li class="component">
       <span class="title">Reference Guide</span>
       <ul class="versions">
         <li class="version is-latest">
@@ -429,9 +421,18 @@ As such, they are mapped to a persistent object store, typically an RDBMS, with 
 </div>
 <div class="paragraph">
 <p>The vast majority of such entities will be annotated with <code>@DomainObject(nature=ENTITY)</code>.
-In addition they will also require ORM metadata.
-For example, <a href="../../../../pjdo/latest/about.html" class="page">JDO/DataNucleus</a> requires the
+In addition they will also require ORM metadata.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>for <a href="../../../../pjpa/latest/about.html" class="page">JPA/Eclipselink</a>, this requires the <code>javax.persistence.Entity</code> annotation</p>
+</li>
+<li>
+<p>for <a href="../../../../pjdo/latest/about.html" class="page">JDO/DataNucleus</a>, this requires the
 <code>@javax.jdo.annotations.PersistenceCapable</code> annotation.</p>
+</li>
+</ul>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -451,10 +452,54 @@ It is also possible to specify ORM metadata using <code>.xml</code> files.
 </div>
 </div>
 <div class="sect1">
-<h2 id="persistencecapable"><a class="anchor" href="#persistencecapable"></a>PersistenceCapable (JDO)</h2>
+<h2 id="entities-jpa"><a class="anchor" href="#entities-jpa"></a>Entities (JPA)</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Focusing for now on the <a href="../../../../pjdo/latest/about.html" class="page">JDO API</a>, entities are flagged as being "persistence capable", indicating how the ORM should manage their identity:</p>
+<p>JPA entities are typically defined using the <code>@javax.persistence.Entity</code> annotation, with additional annotations to define their primary key, scalar properties and relationships to other entities.</p>
+</div>
+<div class="paragraph">
+<p>For some examples, see:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://www.baeldung.com/jpa-entities">Baeldung article on JPA entities</a></p>
+</li>
+<li>
+<p><a href="https://spring.io/guides/gs/accessing-data-jpa/">Spring Data tutorial</a></p>
+</li>
+<li>
+<p><a href="https://docs.jboss.org/hibernate/annotations/3.5/reference/en/html/entity.html#entity-mapping">JBoss tutorial</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>See the <a href="../../../../pjpa/latest/about.html" class="page">JPA/Eclipselink object store</a> for further information on annotating domain entities.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="entities-jdo"><a class="anchor" href="#entities-jdo"></a>Entities (JDO)</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>See the <a href="../../../../pjdo/latest/about.html" class="page">JDO/DataNucleus object store</a> for further information on annotating domain entities.</p>
+</div>
+<div class="sect2">
+<h3 id="persistencecapable"><a class="anchor" href="#persistencecapable"></a>PersistenceCapable</h3>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+This section is specific to the <a href="../../../../pjdo/latest/about.html" class="page">JDO API</a>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>With the <a href="../../../../pjdo/latest/about.html" class="page">JDO API</a>, entities are flagged as being "persistence capable", indicating how the ORM should manage their identity:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -514,10 +559,20 @@ In particular, its strongly recommended that the <code>objectType</code> (which 
 </table>
 </div>
 </div>
+<div class="sect2">
+<h3 id="key-properties-jdo"><a class="anchor" href="#key-properties-jdo"></a>Key Properties (JDO)</h3>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+This section is specific to the <a href="../../../../pjdo/latest/about.html" class="page">JDO API</a>
+</td>
+</tr>
+</table>
 </div>
-<div class="sect1">
-<h2 id="key-properties"><a class="anchor" href="#key-properties"></a>Key Properties</h2>
-<div class="sectionbody">
 <div class="paragraph">
 <p>All domain entities will have some sort of mandatory key properties.
 The example below is a very simple case, where the entity is identified by a <code>name</code> property.
@@ -596,10 +651,20 @@ The ORM will create a no-arg constructor to allow domain entity to be rehydrated
 </table>
 </div>
 </div>
+<div class="sect2">
+<h3 id="queries-jdo"><a class="anchor" href="#queries-jdo"></a>Queries (JDO)</h3>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+This section is specific to the <a href="../../../../pjdo/latest/about.html" class="page">JDO API</a>
+</td>
+</tr>
+</table>
 </div>
-<div class="sect1">
-<h2 id="queries"><a class="anchor" href="#queries"></a>Queries</h2>
-<div class="sectionbody">
 <div class="paragraph">
 <p>When using JDO, it&#8217;s also common for domain entities to have queries annotated on them.
 These are used by repository domain services to query for instances of the entity:</p>
@@ -656,10 +721,10 @@ This is a generic repository for any domain class.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public List&lt;SimpleObject&gt; findByName(String name) {
-    return repositoryService.allMatches(              <i class="conum" data-value="1"></i><b>(1)</b>
-            new QueryDefault&lt;&gt;(SimpleObject.class,    <i class="conum" data-value="2"></i><b>(2)</b>
-                        "findByName",                 <i class="conum" data-value="3"></i><b>(3)</b>
-                        "name", name                  <i class="conum" data-value="4"></i><b>(4)</b>
+    return repositoryService.allMatches(            <i class="conum" data-value="1"></i><b>(1)</b>
+            Query.named(SimpleObject.class,         <i class="conum" data-value="2"></i><b>(2)</b>
+                        "findByName")               <i class="conum" data-value="3"></i><b>(3)</b>
+                   .withParameter("name", name)     <i class="conum" data-value="4"></i><b>(4)</b>
             );
 }
 
@@ -687,19 +752,6 @@ RepositoryService repositoryService;</code></pre>
 </tr>
 </table>
 </div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>See the <a href="../../../../pjdo/latest/about.html" class="page">JDO/DataNucleus object store</a> for further information on annotating domain entities.</p>
-</div>
-</td>
-</tr>
-</table>
 </div>
 </div>
 </div>
@@ -720,7 +772,7 @@ RepositoryService repositoryService;</code></pre>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M5.20210405-0430-3efc8bc8</p>
+            <p>Revision: 2.0.0-M5.20210407-0431-7933b5d8</p>
         </div>
     </div>
 </footer>

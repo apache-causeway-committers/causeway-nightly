@@ -305,14 +305,6 @@ page.parent doesn't seem to be set...
       </ul>
     </li>
     <li class="component">
-      <span class="title">Legacy Catalog</span>
-      <ul class="versions">
-        <li class="version is-latest">
-          <a href="../../../legacy/latest/about.html">latest</a>
-        </li>
-      </ul>
-    </li>
-    <li class="component">
       <span class="title">Reference Guide</span>
       <ul class="versions">
         <li class="version is-latest">
@@ -548,8 +540,10 @@ For this reason, in Apache Isis it&#8217;s therefore quite common to have a sing
 <p>to provide additional non-UI functionality; an example being to perform an address geocoding lookup against the google-maps API, or to perform some calculation, or attach a barcode, send an email etc</p>
 </li>
 <li>
-<p>to act as a subscribers to the event bus, potentially influencing events fired by some other module (a key technique for decoupling large applications)<br>
-+ This is discussed in more detail below, in the section on <a href="#events">events</a>.</p>
+<p>to act as a subscribers to the event bus, potentially influencing events fired by some other module (a key technique for decoupling large applications)</p>
+<div class="paragraph">
+<p>This is discussed in more detail below, in the section on <a href="#events">events</a>.</p>
+</div>
 </li>
 <li>
 <p>to implement an <a href="https://en.wikipedia.org/wiki/Service_provider_interface">SPI</a> of the Apache Isis framework, most notably cross-cutting concerns such as security, command profiling, auditing and publishing.</p>
@@ -1636,39 +1630,11 @@ The <code>customers</code> module for its part does not know anything about this
 We want the invoices to know about customers, but not vice versa.
 We could surface the set of invoices for a customer using a <code>Customer_invoices</code> mixin:</p>
 </div>
-<div class="listingblock kroki-error">
-<div class="title"><code>invoices</code> module contributes to <code>customers</code></div>
+<div class="imageblock kroki">
 <div class="content">
-<pre>hide empty pathsToInclude
-'hide methods
-
-skinparam class {
-    BackgroundColor&lt;&lt;desc&gt;&gt; Cyan
-    BackgroundColor&lt;&lt;ppt&gt;&gt; LightGreen
-    BackgroundColor&lt;&lt;mi&gt;&gt; LightPink
-    BackgroundColor&lt;&lt;role&gt;&gt; LightYellow
-    BackgroundColor&lt;&lt;strategy&gt;&gt; White
-    BackgroundColor&lt;&lt;api&gt;&gt; White
-    BackgroundColor&lt;&lt;spi&gt;&gt; White
-    BackgroundColor&lt;&lt;internal&gt;&gt; LightGrey
-    BackgroundColor&lt;&lt;value&gt;&gt; White
-
-    BackgroundColor&lt;&lt;entity&gt;&gt; LightGreen
-    BackgroundColor&lt;&lt;viewmodel&gt;&gt; LightPink
-    BackgroundColor&lt;&lt;mixin&gt;&gt; LightYellow
-}
-
-package invoice {
-    class Customer_invoices &lt;&lt;mixin&gt;&gt;
-    class Invoice &lt;&lt;mi&gt;&gt;
-}
-Customer_invoices --&gt; "0.*" Invoice: invoices
-
-package customers {
-    class Customer &lt;&lt;ppt&gt;&gt;
-}
-Customer_invoices -.r-&gt; Customer: "contributes to"</pre>
+<object type="image/svg+xml" data="_images/diag-1e6be3ab94573991b764958ec88db5a8beb17408.svg"><span class="alt">`invoices` module contributes to `customers`</span></object>
 </div>
+<div class="title">Figure 2. <code>invoices</code> module contributes to <code>customers</code></div>
 </div>
 <div class="paragraph">
 <p>In the UI, when rendering a <code>Customer</code>, we would also be presented with the associated set of <code>Invoice</code>s.</p>
@@ -1679,43 +1645,11 @@ For example, suppose we have a mechanism to attach <code>Document</code>s to arb
 The documents module does not depend on any other modules, but provides a <code>DocumentHolder</code> marker interface.
 We can therefore attach documents to a <code>Customer</code> by having <code>Customer</code> implement this marker interface:</p>
 </div>
-<div class="listingblock kroki-error">
-<div class="title"><code>customers</code> depends upon contributions of <code>documents</code></div>
+<div class="imageblock kroki">
 <div class="content">
-<pre>hide empty pathsToInclude
-'hide methods
-
-skinparam class {
-    BackgroundColor&lt;&lt;desc&gt;&gt; Cyan
-    BackgroundColor&lt;&lt;ppt&gt;&gt; LightGreen
-    BackgroundColor&lt;&lt;mi&gt;&gt; LightPink
-    BackgroundColor&lt;&lt;role&gt;&gt; LightYellow
-    BackgroundColor&lt;&lt;strategy&gt;&gt; White
-    BackgroundColor&lt;&lt;api&gt;&gt; White
-    BackgroundColor&lt;&lt;spi&gt;&gt; White
-    BackgroundColor&lt;&lt;internal&gt;&gt; LightGrey
-    BackgroundColor&lt;&lt;value&gt;&gt; White
-
-    BackgroundColor&lt;&lt;entity&gt;&gt; LightGreen
-    BackgroundColor&lt;&lt;viewmodel&gt;&gt; LightPink
-    BackgroundColor&lt;&lt;mixin&gt;&gt; LightYellow
-}
-
-package documents {
-    interface DocumentHolder &lt;&lt;role&gt;&gt;
-    class DocumentHolder_documents &lt;&lt;mixin&gt;&gt;
-    class DocumentHolder_attachDocument &lt;&lt;mixin&gt;&gt;
-    class Document &lt;&lt;ppt&gt;&gt;
-}
-DocumentHolder_documents -d-&gt; "0..*" Document: documents
-DocumentHolder_documents -.l-&gt; DocumentHolder: "contributes to"
-DocumentHolder_attachDocument -.l-&gt; DocumentHolder: "contributes to"
-
-package customers {
-    class Customer &lt;&lt;ppt&gt;&gt;
-}
-Customer -u.-^ DocumentHolder</pre>
+<object type="image/svg+xml" data="_images/diag-3c9c462c5d1913ae10a71f94738a70175be7f380.svg"><span class="alt">`customers` depends upon contributions of `documents`</span></object>
 </div>
+<div class="title">Figure 3. <code>customers</code> depends upon contributions of <code>documents</code></div>
 </div>
 </div>
 <div class="sect2">
@@ -1840,7 +1774,7 @@ The only real fundamental that can&#8217;t be changed is the notion that objects
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M5.20210405-0430-3efc8bc8</p>
+            <p>Revision: 2.0.0-M5.20210407-0431-7933b5d8</p>
         </div>
     </div>
 </footer>

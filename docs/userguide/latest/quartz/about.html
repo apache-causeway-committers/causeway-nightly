@@ -304,14 +304,6 @@ page.parent doesn't seem to be set...
       </ul>
     </li>
     <li class="component">
-      <span class="title">Legacy Catalog</span>
-      <ul class="versions">
-        <li class="version is-latest">
-          <a href="../../../legacy/latest/about.html">latest</a>
-        </li>
-      </ul>
-    </li>
-    <li class="component">
       <span class="title">Reference Guide</span>
       <ul class="versions">
         <li class="version is-latest">
@@ -423,6 +415,198 @@ page.parent doesn't seem to be set...
 <article class="doc">
     <a name="section-top"></a>
 <h1 class="page">Quartz</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Quartz is (according to their <a href="https://www.quartz-scheduler.org/">website</a>) a richly featured, open source job scheduling library that can be integrated within virtually any Java application.</p>
+</div>
+<div class="paragraph">
+<p>We can configure Quartz to run <code>Job</code>s using <a href="../btb/headless-access.html" class="page">headless access</a>, for numerous use cases, most commonly involving the polling of work to be performed in the background.
+For example:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>period archiving of data to another system, eg blob images to S3</p>
+</li>
+<li>
+<p>aggregating data</p>
+</li>
+<li>
+<p>proactively monitoring health/status</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>In simple use cases, Spring Boot&#8217;s <a href="https://docs.spring.io/spring-boot/docs/current/reference/html/spring-boot-features.html#boot-features-quartz">integration</a> with Quartz can be used without bringing in a dependency on this extension.</p>
+</div>
+<div class="paragraph">
+<p>This extension supports the use case where there is a requirement to pass state from one invocation of a <code>Job</code> to the next.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="simple-use-case"><a class="anchor" href="#simple-use-case"></a>Simple use case</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The simple use case (that <em>doesn&#8217;t</em> require a dependeny on this extension) is demonstrated in the <a href="../../../docs/latest/starters/simpleapp.html" class="page">SimpleApp</a> starter app.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>add the dependency (eg to the webapp module):</p>
+<div class="listingblock">
+<div class="title">pom.xml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-quartz&lt;/artifactId&gt;
+&lt;/dependency&gt;
+
+&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter&lt;/artifactId&gt;
+    &lt;exclusions&gt;
+        &lt;exclusion&gt;                                         <i class="conum" data-value="1"></i><b>(1)</b>
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-starter-logging&lt;/artifactId&gt;
+        &lt;/exclusion&gt;
+    &lt;/exclusions&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>to avoid Slf4j &#8592;&#8594; log4j2 cyclic dependency</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>implement quartz&#8217;s <code>Job</code> interface:</p>
+<div class="listingblock">
+<div class="title">SampleJob.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Component
+@RequiredArgsConstructor(onConstructor_ = {@Inject})
+@Slf4j
+public class SampleJob implements Job {
+
+    private final InteractionFactory interactionFactory;         <i class="conum" data-value="1"></i><b>(1)</b>
+    private final TransactionalProcessor transactionalProcessor; <i class="conum" data-value="1"></i><b>(1)</b>
+
+    @Override
+    public void execute(JobExecutionContext context) throws JobExecutionException {
+        // ...
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>for <a href="../btb/headless-access.html" class="page">headless access</a> to the domain object model.</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>Set up beans to act as the trigger factory and a job factory:</p>
+<div class="listingblock">
+<div class="title">QuartzModule.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Configuration
+@ComponentScan
+public class QuartzModule {
+
+    private static final int REPEAT_INTERVAL_SECS = 60;
+    private static final int START_DELAY_SECS = 20;
+    private static final int MILLIS_PER_SEC = 1000;
+
+    @Bean
+    public JobDetailFactoryBean jobDetail() {
+        val jobDetailFactory = new JobDetailFactoryBean();
+        jobDetailFactory.setJobClass(SampleJob.class);
+        jobDetailFactory.setDescription("Invoke Sample Job service...");
+        jobDetailFactory.setDurability(true);
+        return jobDetailFactory;
+    }
+
+    @Bean
+    public SimpleTriggerFactoryBean trigger(JobDetail job) {
+        val trigger = new SimpleTriggerFactoryBean();
+        trigger.setJobDetail(job);
+        trigger.setStartDelay(START_DELAY_SECS * MILLIS_PER_SEC);
+        trigger.setRepeatInterval(REPEAT_INTERVAL_SECS * MILLIS_PER_SEC);
+        trigger.setRepeatCount(SimpleTrigger.REPEAT_INDEFINITELY);
+        return trigger;
+    }
+}</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>include the <code>QuartzModule</code> in the application&#8217;s top-level <code>AppManifest</code>.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="more-complex-use-cases"><a class="anchor" href="#more-complex-use-cases"></a>More complex use cases</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This extension supports a couple of slightly more advanced use cases.</p>
+</div>
+<div class="paragraph">
+<p>If either are used:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>update the <code>pom.xml</code> dependencies:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
+    &lt;groupId&gt;org.apache.isis.extensions&lt;/groupId&gt;
+    &lt;artifactId&gt;isis-extensions-quartz-impl&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>import the extension&#8217;s module in your application&#8217;s top-level <code>AppManifest</code>:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Configuration
+@Import({
+        // ...
+        IsisModuleExtQuartzImpl.class,
+})
+// ...
+public class AppManifest {
+    // ...
+}</code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+<div class="sect2">
+<h3 id="preserving-job-state"><a class="anchor" href="#preserving-job-state"></a>Preserving job state</h3>
+<div class="paragraph">
+<p>Sometimes there is a requirement to pass state from one invocation of a job to another.
+For example, if some external service is unavailable, then we wouldn&#8217;t necessarily want to a periodic job to keep trying to connect, creating noise in the logs.</p>
+</div>
+<div class="paragraph">
+<p>To support this use case, this extension provides the <a href="../../../refguide/latest/extensions/index/quartz/context/JobExecutionData.html" class="page">JobExecutionData</a> class, which simplifies the API of Quartz&#8217;s job data map.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="injecting-domain-services-into-jobs"><a class="anchor" href="#injecting-domain-services-into-jobs"></a>Injecting domain services into jobs</h3>
 <div class="admonitionblock caution">
 <table>
 <tr>
@@ -430,117 +614,70 @@ page.parent doesn't seem to be set...
 <i class="fa icon-caution" title="Caution"></i>
 </td>
 <td class="content">
-TODO v2 - to document.  AbstractIsisInteractionTemplate has been removed.
+TODO - it&#8217;s possible this boilerplate may be unnecessary?
+<a href="../../../docs/latest/starters/simpleapp.html" class="page">SimpleApp</a>'s job seems to be injected into without this extra rigamorole.
 </td>
 </tr>
 </table>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p>Implementation of a Quartz <code>Job</code> interface:</p>
-<div class="listingblock">
-<div class="title">DemoJob.java</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Log4j2
-public class DemoJob implements Job {
-
-    public void execute(final JobExecutionContext context) {
-
-        final Authentication authentication = newAuthentication(context);
-        new DemoIsisInteractionTemplate().execute(authentication, null);
-
-    }
-
-    protected Authentication newAuthentication(JobExecutionContext context) {
-
-        val user = UserMemento.ofNameAndRoleNames(
-                "isisModuleExtQuartzDemoUser",
-                Stream.of("isisModuleExtQuartzDemoRole"));
-
-        return SimpleAuthentication.ofValid(user);
-    }
-
-    @Inject IsisConfiguration isisConfiguration;
-
-}</code></pre>
-</div>
-</div>
 <div class="paragraph">
-<p>Domain services (such as <code>IsisConfiguration</code>) can be injected into this class.</p>
+<p>If we want to inject domain services into the Quartz <code>Job</code>, then we should define a number of additional beans.
+These instantiate <a href="../../../refguide/latest/extensions/index/quartz/spring/AutowiringSpringBeanJobFactory.html" class="page">AutowiringSpringBeanJobFactory</a> as the job factory:</p>
 </div>
-</li>
-<li>
-<p>The job calls a subclass of <code>AbstractIsisInteractionTemplate</code> to perform the work.
-This runs within a transactionm under the user and role specified by <code>DemoJob</code>, above:</p>
 <div class="listingblock">
-<div class="title">DemoIsisInteractionTemplate.java</div>
+<div class="title">QuartzModule.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Log4j2
-class DemoIsisInteractionTemplate extends AbstractIsisInteractionTemplate {
-    @Override
-    protected void doExecuteWithTransaction(Object context) {
-        log.debug("Running session via quartz as '{}'", userService.getUser().getName());
-    }
-    @Inject UserService userService;
-}</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>Finally, the job is configured to run using Spring:</p>
-<div class="listingblock">
-<div class="title">DemoJobQuartzConfigurerModule.java</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Configuration
-@Log4j2
-public class DemoJobQuartzConfigurerModule {
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.apache.isis.extensions.quartz.spring.AutowiringSpringBeanJobFactory;
+
+@Configuration
+@ComponentScan
+public class QuartzModule {
+
+    // ...
 
     @Bean
-    public JobDetailFactoryBean jobDetail() {
-        val jobDetailFactory = new JobDetailFactoryBean();
-        jobDetailFactory.setJobClass(DemoJob.class);
-        jobDetailFactory.setDescription("Run demo job");
-        jobDetailFactory.setDurability(true);
-        return jobDetailFactory;
+    public SpringBeanJobFactory springBeanJobFactory() {
+        val jobFactory = new AutowiringSpringBeanJobFactory();  <i class="conum" data-value="1"></i><b>(1)</b>
+        jobFactory.setApplicationContext(applicationContext);
+        return jobFactory;
     }
 
     @Bean
-    public SimpleTriggerFactoryBean trigger(JobDetail job) {
-        val triggerFactory = new SimpleTriggerFactoryBean();
-        triggerFactory.setJobDetail(job);
-        triggerFactory.setRepeatInterval(10000); // 10seconds
-        triggerFactory.setStartDelay(15000);     // 15 seconds approx boot up time
-        triggerFactory.setRepeatCount(SimpleTrigger.REPEAT_INDEFINITELY);
-        return triggerFactory;
-    }
-
-    @Bean
-    public SchedulerFactoryBean scheduler(Trigger trigger, JobDetail job, SpringBeanJobFactory springBeanJobFactory) {
+    public SchedulerFactoryBean scheduler(
+            final Trigger trigger,
+            final JobDetail jobDetail,
+            final SpringBeanJobFactory sbjf) {
         val schedulerFactory = new SchedulerFactoryBean();
-        // schedulerFactory.setConfigLocation(new ClassPathResource("quartz.properties"));
 
-        schedulerFactory.setJobFactory(springBeanJobFactory);
-        schedulerFactory.setJobDetails(job);
-
+        schedulerFactory.setJobFactory(sbjf);
+        schedulerFactory.setJobDetails(jobDetail);
         schedulerFactory.setTriggers(trigger);
 
         return schedulerFactory;
     }
 
     @Bean
-    public SpringBeanJobFactory springBeanJobFactory() {
-        val jobFactory = new AutowiringSpringBeanJobFactory();
-        jobFactory.setApplicationContext(applicationContext);
-        return jobFactory;
-    }
-
-    @Inject ApplicationContext applicationContext;
-}</code></pre>
+    public Scheduler scheduler(
+            final Trigger trigger,
+            final JobDetail job,
+            final SchedulerFactoryBean factory)
+            throws SchedulerException {
+        val scheduler = factory.getScheduler();
+        scheduler.start();
+        return scheduler;
+    }</code></pre>
 </div>
 </div>
-</li>
-</ul>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>as provided by this extension</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
 </div>
 </article>
 <aside class="article-aside toc hide-for-print" role="navigation">
@@ -559,7 +696,7 @@ public class DemoJobQuartzConfigurerModule {
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M5.20210405-0430-3efc8bc8</p>
+            <p>Revision: 2.0.0-M5.20210407-0431-7933b5d8</p>
         </div>
     </div>
 </footer>

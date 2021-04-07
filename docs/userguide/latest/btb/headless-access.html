@@ -305,14 +305,6 @@ page.parent doesn't seem to be set...
       </ul>
     </li>
     <li class="component">
-      <span class="title">Legacy Catalog</span>
-      <ul class="versions">
-        <li class="version is-latest">
-          <a href="../../../legacy/latest/about.html">latest</a>
-        </li>
-      </ul>
-    </li>
-    <li class="component">
       <span class="title">Reference Guide</span>
       <ul class="versions">
         <li class="version is-latest">
@@ -433,40 +425,77 @@ page.parent doesn't seem to be set...
 <div class="ulist">
 <ul>
 <li>
-<p>integration from other systems, eg for a subscriber on a pub/sub mechanism such as Camel, pushing changes through an Apache Isis domain model.</p>
+<p>implementing a REST end point that needs to reach into the Apache Isis runtime</p>
+<div class="ulist">
+<ul>
+<li>
+<p>this could be a custom UI</p>
 </li>
 <li>
-<p>leveraging an Apache Isis application within a batch process</p>
+<p>this could be to integrate from other systems, eg a subscriber on a pub/sub event bus, pushing changes through an Apache Isis domain model.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>calling from Quartz for a background batch process</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>Note that the calling thread runs in the same process space as the Apache Isis domain object model (must be physically linked to the JAR files containing the domain classes).
-For use cases where the calling thread runs in some other process space (eg migrating data from a legacy system), then the <a href="../../../vro/latest/about.html" class="page">Restful Objects viewer</a> is usually the way to go.</p>
+<p>Note that the calling thread runs in the same process space as the Apache Isis domain object model (must be physically linked to the JAR files containing the domain classes).</p>
 </div>
 <div class="paragraph">
-<p>The key to headless access is the <code>IsisInteractionFactory</code> service, a singleton managed by Spring.
-Use it as follows:</p>
+<p>The <a href="../../../docs/latest/starters/simpleapp.html" class="page">SimpleApp</a> starter app demonstrates the pattern with a custom UI controller:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Service
-@lombok.RequiredArgsConstructor(onConstructor_ = { @Inject })
-private static class HeadlessAccess {
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@RestController
+@RequiredArgsConstructor
+class CustomController {
 
-    final IsisInteractionFactory isisInteractionFactory;
-    final TransactionService transactionService;
+    private final InteractionFactory interactionFactory;
+    private final TransactionalProcessor transactionalProcessor;
+    private final SimpleObjects simpleObjects;
 
-    @Override
-    public R call(AuthenticationSession session, Supplier&lt;R&gt; supplier) {
-        return isisInteractionFactory.callAuthenticated(session, () -&gt; {
-            return transactionService.executeWithinTransaction(() -&gt; {
-                    return supplier.get();
-                });
-        });
+    @GetMapping("/custom/simpleObjects")
+    List&lt;SimpleObject&gt; all() {
+        return callAuthenticated(newAuthentication(), () -&gt; simpleObjects.listAll())
+                .optionalElseFail() <i class="conum" data-value="1"></i><b>(1)</b>
+                .orElse(Collections.emptyList()); <i class="conum" data-value="2"></i><b>(2)</b>
+    }
+
+    private SimpleAuthentication newAuthentication() {
+        return SimpleAuthentication.validOf(UserMemento.ofName("sven")); <i class="conum" data-value="3"></i><b>(3)</b>
+    }
+
+    private &lt;T&gt; Result&lt;T&gt; callAuthenticated(
+            final Authentication authentication,
+            final Callable&lt;T&gt; task) {
+
+        return interactionFactory.callAuthenticated(
+                authentication,
+                () -&gt; transactionalProcessor
+                      .callWithinCurrentTransactionElseCreateNew(task));
     }
 }</code></pre>
 </div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>re-throws exception that has occurred, if any</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>handles null case, if required</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>a more sophisticated implementation could inspect the HTTP request</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>The API described here is reasonably low-level, allowing code to interact very directly with the Apache Isis metamodel and runtime.
@@ -489,7 +518,7 @@ Such callers should be considered trusted: they do not (by default) honour any b
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M5.20210405-0430-3efc8bc8</p>
+            <p>Revision: 2.0.0-M5.20210407-0431-7933b5d8</p>
         </div>
     </div>
 </footer>

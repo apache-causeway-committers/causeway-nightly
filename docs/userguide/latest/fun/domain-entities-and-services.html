@@ -305,14 +305,6 @@ page.parent doesn't seem to be set...
       </ul>
     </li>
     <li class="component">
-      <span class="title">Legacy Catalog</span>
-      <ul class="versions">
-        <li class="version is-latest">
-          <a href="../../../legacy/latest/about.html">latest</a>
-        </li>
-      </ul>
-    </li>
-    <li class="component">
       <span class="title">Reference Guide</span>
       <ul class="versions">
         <li class="version is-latest">
@@ -423,6 +415,27 @@ page.parent doesn't seem to be set...
 <article class="doc">
     <a name="section-top"></a>
 <h1 class="page">Domain Entities and Services</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>This section describes entities using JDO annotations, but (the more widely used) JPA (in conjunction with Spring Data) is also supported.</p>
+</div>
+<div class="paragraph">
+<p>See the <a href="../../../pjdo/latest/about.html" class="page">JDO/DataNucleus</a> and <a href="../../../pjpa/latest/about.html" class="page">JPA/Eclipselink</a> documentation for more details on how to configure one or the other.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
 <div class="sect1">
 <h2 id="domain-entities"><a class="anchor" href="#domain-entities"></a>Domain Entities</h2>
 <div class="sectionbody">
@@ -432,9 +445,18 @@ As such, they are mapped to a persistent object store, typically an RDBMS, with 
 </div>
 <div class="paragraph">
 <p>The vast majority of such entities will be annotated with <code>@DomainObject(nature=ENTITY)</code>.
-In addition they will also require ORM metadata.
-For example, <a href="../../../pjdo/latest/about.html" class="page">JDO/DataNucleus</a> requires the
+In addition they will also require ORM metadata.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>for <a href="../../../pjpa/latest/about.html" class="page">JPA/Eclipselink</a>, this requires the <code>javax.persistence.Entity</code> annotation</p>
+</li>
+<li>
+<p>for <a href="../../../pjdo/latest/about.html" class="page">JDO/DataNucleus</a>, this requires the
 <code>@javax.jdo.annotations.PersistenceCapable</code> annotation.</p>
+</li>
+</ul>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -452,9 +474,51 @@ It is also possible to specify ORM metadata using <code>.xml</code> files.
 <p>In this section we discuss the mechanics of writing domain objects that comply with Apache Isis' programming model.</p>
 </div>
 <div class="sect2">
-<h3 id="persistencecapable"><a class="anchor" href="#persistencecapable"></a>PersistenceCapable (JDO)</h3>
+<h3 id="entities-jpa"><a class="anchor" href="#entities-jpa"></a>Entities (JPA)</h3>
 <div class="paragraph">
-<p>Focusing for now on the <a href="../../../pjdo/latest/about.html" class="page">JDO API</a>, entities are flagged as being "persistence capable", indicating how the ORM should manage their identity:</p>
+<p>JPA entities are typically defined using the <code>@javax.persistence.Entity</code> annotation, with additional annotations to define their primary key, scalar properties and relationships to other entities.</p>
+</div>
+<div class="paragraph">
+<p>For some examples, see:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://www.baeldung.com/jpa-entities">Baeldung article on JPA entities</a></p>
+</li>
+<li>
+<p><a href="https://spring.io/guides/gs/accessing-data-jpa/">Spring Data tutorial</a></p>
+</li>
+<li>
+<p><a href="https://docs.jboss.org/hibernate/annotations/3.5/reference/en/html/entity.html#entity-mapping">JBoss tutorial</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>See the <a href="../../../pjpa/latest/about.html" class="page">JPA/Eclipselink object store</a> for further information on annotating domain entities.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="entities-jdo"><a class="anchor" href="#entities-jdo"></a>Entities (JDO)</h3>
+<div class="paragraph">
+<p>See the <a href="../../../pjdo/latest/about.html" class="page">JDO/DataNucleus object store</a> for further information on annotating domain entities.</p>
+</div>
+<div class="sect3">
+<h4 id="persistencecapable"><a class="anchor" href="#persistencecapable"></a>PersistenceCapable</h4>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+This section is specific to the <a href="../../../pjdo/latest/about.html" class="page">JDO API</a>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>With the <a href="../../../pjdo/latest/about.html" class="page">JDO API</a>, entities are flagged as being "persistence capable", indicating how the ORM should manage their identity:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -514,8 +578,20 @@ In particular, its strongly recommended that the <code>objectType</code> (which 
 </table>
 </div>
 </div>
-<div class="sect2">
-<h3 id="key-properties"><a class="anchor" href="#key-properties"></a>Key Properties</h3>
+<div class="sect3">
+<h4 id="key-properties-jdo"><a class="anchor" href="#key-properties-jdo"></a>Key Properties (JDO)</h4>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+This section is specific to the <a href="../../../pjdo/latest/about.html" class="page">JDO API</a>
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
 <p>All domain entities will have some sort of mandatory key properties.
 The example below is a very simple case, where the entity is identified by a <code>name</code> property.
@@ -594,8 +670,20 @@ The ORM will create a no-arg constructor to allow domain entity to be rehydrated
 </table>
 </div>
 </div>
-<div class="sect2">
-<h3 id="queries"><a class="anchor" href="#queries"></a>Queries</h3>
+<div class="sect3">
+<h4 id="queries-jdo"><a class="anchor" href="#queries-jdo"></a>Queries (JDO)</h4>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+This section is specific to the <a href="../../../pjdo/latest/about.html" class="page">JDO API</a>
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
 <p>When using JDO, it&#8217;s also common for domain entities to have queries annotated on them.
 These are used by repository domain services to query for instances of the entity:</p>
@@ -652,10 +740,10 @@ This is a generic repository for any domain class.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public List&lt;SimpleObject&gt; findByName(String name) {
-    return repositoryService.allMatches(              <i class="conum" data-value="1"></i><b>(1)</b>
-            new QueryDefault&lt;&gt;(SimpleObject.class,    <i class="conum" data-value="2"></i><b>(2)</b>
-                        "findByName",                 <i class="conum" data-value="3"></i><b>(3)</b>
-                        "name", name                  <i class="conum" data-value="4"></i><b>(4)</b>
+    return repositoryService.allMatches(            <i class="conum" data-value="1"></i><b>(1)</b>
+            Query.named(SimpleObject.class,         <i class="conum" data-value="2"></i><b>(2)</b>
+                        "findByName")               <i class="conum" data-value="3"></i><b>(3)</b>
+                   .withParameter("name", name)     <i class="conum" data-value="4"></i><b>(4)</b>
             );
 }
 
@@ -683,19 +771,6 @@ RepositoryService repositoryService;</code></pre>
 </tr>
 </table>
 </div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>See the <a href="../../../pjdo/latest/about.html" class="page">JDO/DataNucleus object store</a> for further information on annotating domain entities.</p>
-</div>
-</td>
-</tr>
-</table>
 </div>
 </div>
 </div>
@@ -779,8 +854,8 @@ public CustomerRepository {
 
     public List&lt;Customer&gt; findByName(String name) {
         return repositoryService.allMatches(                    <i class="conum" data-value="3"></i><b>(3)</b>
-                new QueryDefault&lt;&gt;(Customer.class,
-                            "findByName", "name", name);
+                Query.named(Customer.class, "findByName")
+                    .withParameter("name", name));
     }
 
     public Customer newCustomer(...) {
@@ -836,7 +911,7 @@ public CustomerRepository {
 <td class="content">
 <div class="paragraph">
 <p>JDO/Datanucleus also supports <a href="http://www.datanucleus.org:15080/products/accessplatform_5_2/jdo/query.html#jdoql_typed">type-safe queries</a>.
-These can be executed through the <a href="#pjdo:ROOT:services/IsisJdoSupport.adoc" class="page unresolved">IsisJdoSupport</a> domain service.</p>
+These can be executed through the <a href="../../../refguide/latest/persistence/index/jdo/applib/services/JdoSupportService.html" class="page">JdoSupportService</a> domain service.</p>
 </div>
 </td>
 </tr>
@@ -1576,13 +1651,13 @@ Generally therefore the lazy persistence approach works well enough.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="persistence-by-reachability"><a class="anchor" href="#persistence-by-reachability"></a>Persistence by Reachability</h4>
+<h4 id="persistence-by-reachability-jdo"><a class="anchor" href="#persistence-by-reachability-jdo"></a>Persistence by Reachability (JDO)</h4>
 <div class="paragraph">
-<p>It is also possible to configure ORM to automatically persist domain entities if they are associated with other already-persistent entities.
+<p>If using <a href="../../../pjdo/latest/about.html" class="page">JDO/DataNucleus</a>, it is possible to configure ORM to automatically persist domain entities if they are associated with other already-persistent entities.
 This avoid the need to explicitly call "persist".</p>
 </div>
 <div class="paragraph">
-<p>If using <a href="../../../pjdo/latest/about.html" class="page">JDO/DataNucleus</a>, this is done using <a href="#refguide:config:sections/jdo-datanucleus-conf.adoc#datanucleus.persistenceByReachabilityAtCommit" class="page unresolved">persistence-by-reachability</a> configuration property:</p>
+<p>This is done using <a href="#refguide:config:sections/jdo-datanucleus-conf.adoc#datanucleus.persistenceByReachabilityAtCommit" class="page unresolved">persistence-by-reachability</a> configuration property:</p>
 </div>
 <div class="listingblock">
 <div class="title">application.properties</div>
@@ -1591,15 +1666,126 @@ This avoid the need to explicitly call "persist".</p>
 </div>
 </div>
 <div class="paragraph">
-<p>One downside is that the code is arguably less easy to debug.</p>
+<p>One downside is that the code is arguably less easy to debug, and there may be performance implications.</p>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="finding"><a class="anchor" href="#finding"></a>Finding Objects (JDO)</h3>
+<h3 id="finding"><a class="anchor" href="#finding"></a>Finding Objects</h3>
 <div class="paragraph">
-<p>Retrieving domain entities depends on the ORM.
-In the case of <a href="../../../pjdo/latest/about.html" class="page">JDO/DataNucleus</a>, it typically requires a JDOQL query defined on the domain entity, and a corresponding repository service for that domain entity type.
+<p>Retrieving domain entities depends on the ORM, though the <a href="../../../refguide/latest/applib/index/services/repository/RepositoryService.html" class="page">RepositoryService</a> can be used as an abstraction over either if required.</p>
+</div>
+<div class="sect3">
+<h4 id="finding-jpa"><a class="anchor" href="#finding-jpa"></a>Finding Objects (JPA)</h4>
+<div class="paragraph">
+<p>The easiest way to retrieve domain entities if using JPA is to leverage the capabilities of Spring Data.</p>
+</div>
+<div class="paragraph">
+<p>For example, simply by declaring this interface:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public interface UserRepository extends Repository&lt;User, Long&gt; {
+
+  List&lt;User&gt; findByEmailAddressAndLastname(String emailAddress, String lastname);
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>and Spring Data will create an implementation based on naming conventions.
+See the <a href="https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#reference">Spring Data</a> documentation for further details.</p>
+</div>
+<div class="paragraph">
+<p>It is also possible to declare JPQL queries , either on the repository method (using <code>javax.persistence.Query</code>) or on the entity (using <code>javax.persistence.NamedQuery</code>).</p>
+</div>
+<div class="paragraph">
+<p>On the entity, declare a named query, eg:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@javax.persistence.Entity
+@javax.persistence.NamedQueries({
+    @javax.persistence.NamedQuery(          <i class="conum" data-value="1"></i><b>(1)</b>
+        name = "Customer.findByNameLike",   <i class="conum" data-value="2"></i><b>(2)</b>
+        query = "SELECT c " +               <i class="conum" data-value="3"></i><b>(3)</b>
+                "FROM Customer c " +        <i class="conum" data-value="4"></i><b>(4)</b>
+                "WHERE c.name LIKE :name"   <i class="conum" data-value="5"></i><b>(5)</b>
+    )
+    })
+...
+public class Customer {
+    // ...
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>There may be several <code>@NamedQuery</code> annotations, nested within a <code>@NamedQueries</code> annotation, defining queries using JPQL.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Defines the name of the query.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>The definition of the query, using JPQL syntax.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>The table name</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>The predicate, expressed using SQL syntax.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>and in the corresponding repository, use <a href="../../../refguide/latest/applib/index/services/repository/RepositoryService.html" class="page">RepositoryService</a>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.springframework.stereotype.Repository;
+import lombok.RequiredArgsConstructor;
+
+@Repository
+@RequiredArgsConstructor(onConstructor_ = {@Inject} )
+public class CustomerRepository {
+
+    private final RepositoryService repositoryService;
+
+    public List&lt;Customer&gt; findByName(String name) {
+        return repositoryService.allMatches(                            <i class="conum" data-value="1"></i><b>(1)</b>
+                Query.named(Customer.class, "Customer.findByNameLike")  <i class="conum" data-value="2"></i><b>(2)</b>
+                     .withParameter("name", "%" + name + "%");          <i class="conum" data-value="3"></i><b>(3)</b>
+    }
+
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The <a href="../../../refguide/latest/applib/index/services/repository/RepositoryService.html" class="page">RepositoryService</a> is a generic facade over the ORM API.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Specifies the class that is annotated with @NamedQuery, along with the <code>@NamedQuery#name</code> attribute</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>The <code>:name</code> parameter in the query JPQL string, and its corresponding value</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="finding-jdo"><a class="anchor" href="#finding-jdo"></a>Finding Objects (JDO)</h4>
+<div class="paragraph">
+<p>In the case of <a href="../../../pjdo/latest/about.html" class="page">JDO/DataNucleus</a>, it typically requires a JDOQL query defined on the domain entity, and a corresponding repository service for that domain entity type.
 This repository calls the framework-provided <a href="../../../refguide/latest/applib/index/services/repository/RepositoryService.html" class="page">RepositoryService</a> to actually submit the query.</p>
 </div>
 <div class="paragraph">
@@ -1607,7 +1793,8 @@ This repository calls the framework-provided <a href="../../../refguide/latest/a
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@javax.jdo.annotations.Queries({
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@javax.jdo.annotations.PersistenceCapable
+@javax.jdo.annotations.Queries({
     @javax.jdo.annotations.Query(                       <i class="conum" data-value="1"></i><b>(1)</b>
         name = "findByName",                            <i class="conum" data-value="2"></i><b>(2)</b>
         value = "SELECT "                               <i class="conum" data-value="3"></i><b>(3)</b>
@@ -1624,7 +1811,7 @@ public class Customer {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>There may be several <code>@Query</code> annotations, nested within a <code>@Queries</code> annotation) defines queries using JDOQL.</td>
+<td>There may be several <code>@Query</code> annotations, nested within a <code>@Queries</code> annotation, defining queries using JDOQL.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
@@ -1641,12 +1828,13 @@ Must correspond to the class on which the annotation is defined (the framework c
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>In this particular query, is an implementation of a LIKE "name%" query.</td>
+<td>The predicate, expressed using Java syntax.
+In this particular query, is an implementation of a LIKE "name%" query.</td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>and</p>
+<p>and in the corresponding repository, use <a href="../../../refguide/latest/applib/index/services/repository/RepositoryService.html" class="page">RepositoryService</a>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1660,11 +1848,9 @@ public class CustomerRepository {
     private final RepositoryService repositoryService;
 
     public List&lt;Customer&gt; findByName(String name) {
-        return repositoryService.allMatches(            <i class="conum" data-value="1"></i><b>(1)</b>
-                new QueryDefault&lt;&gt;(Customer.class,      <i class="conum" data-value="2"></i><b>(2)</b>
-                            "findByName",               <i class="conum" data-value="3"></i><b>(3)</b>
-                            "name",                     <i class="conum" data-value="4"></i><b>(4)</b>
-                            name);
+        return repositoryService.allMatches(                <i class="conum" data-value="1"></i><b>(1)</b>
+                Query.named(Customer.class, "findByName")   <i class="conum" data-value="2"></i><b>(2)</b>
+                     .withParameter("name", name);          <i class="conum" data-value="3"></i><b>(3)</b>
     }
 
 }</code></pre>
@@ -1674,19 +1860,15 @@ public class CustomerRepository {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The <a href="../../../refguide/latest/applib/index/services/repository/RepositoryService.html" class="page">RepositoryService</a> is a generic facade over the JDO/DataNucleus API.</td>
+<td>The <a href="../../../refguide/latest/applib/index/services/repository/RepositoryService.html" class="page">RepositoryService</a> is a generic facade over the ORM API.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Specifies the class that is annotated with @Query</td>
+<td>Specifies the class that is annotated with @Query, along with the <code>@Query#name</code> attribute</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Corresponds to the <code>@Query#name</code> attribute</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>Corresponds to the <code>:name</code> parameter in the query JDOQL string</td>
+<td>The <code>:name</code> parameter in the query JDOQL string, and its corresponding value</td>
 </tr>
 </table>
 </div>
@@ -1697,13 +1879,14 @@ This ensures that the database query runs against an up-to-date table so that al
 <div class="paragraph">
 <p>When an object is loaded from the database the framework will emit <code>ObjectLoadedEvent</code> <a href="overview.html#lifecycle-events" class="page">lifecycle event</a>.</p>
 </div>
+</div>
 <div class="sect3">
 <h4 id="type-safe-queries"><a class="anchor" href="#type-safe-queries"></a>Type-safe queries</h4>
 <div class="paragraph">
-<p>DataNucleus also supports type-safe queries; these can be executed using the <a href="#pjdo:ROOT:services/IsisJdoSupport.adoc" class="page unresolved">IsisJdoSupport</a> (JDO-specific) domain service.</p>
+<p>DataNucleus also supports type-safe queries; these can be executed using the <a href="../../../refguide/latest/persistence/index/jdo/applib/services/JdoSupportService.html" class="page">JdoSupportService</a> (JDO-specific) domain service.</p>
 </div>
 <div class="paragraph">
-<p>See <a href="#pjdo:ROOT:services/IsisJdoSupport.adoc#type-safe-jdoql-queries" class="page unresolved">here</a> for further details.</p>
+<p>See <a href="../../../refguide/latest/persistence/index/jdo/applib/services/JdoSupportService.html#type-safe-jdoql-queries" class="page">JdoSupportService</a> for further details.</p>
 </div>
 </div>
 </div>
@@ -1722,7 +1905,7 @@ Rather, the ORM (DataNucleus) automatically keeps track of the state of each obj
 <p><a href="../../../refguide/latest/applib/index/services/xactn/TransactionService.html" class="page">TransactionService</a> acts at the Apache Isis layer, and flushes any pending object persistence or object deletions</p>
 </li>
 <li>
-<p>(if using <a href="../../../pjdo/latest/about.html" class="page">JDO/DataNucleus</a>), the <a href="#pjdo:ROOT:services/IsisJdoSupport.adoc" class="page unresolved">IsisJdoSupport</a> domain service can be used reach down to the underlying JDO API, and perform a flush of pending object updates also.</p>
+<p>(if using <a href="../../../pjdo/latest/about.html" class="page">JDO/DataNucleus</a>), the <a href="../../../refguide/latest/persistence/index/jdo/applib/services/JdoSupportService.html" class="page">JdoSupportService</a> domain service can be used reach down to the underlying JDO API, and perform a flush of pending object updates also.</p>
 </li>
 </ul>
 </div>
@@ -1781,7 +1964,7 @@ This is then executed either at the end of the transaction, or if a <a href="#fi
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M5.20210405-0430-3efc8bc8</p>
+            <p>Revision: 2.0.0-M5.20210407-0431-7933b5d8</p>
         </div>
     </div>
 </footer>
