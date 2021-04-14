@@ -159,14 +159,7 @@ page.parent doesn't seem to be set...
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../domain-services-api-for-applications.html">Domain Services API</a>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="0">
-<ul class="nav-list">
-  <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../core/about.html">API</a>
+    <a class="nav-link" href="../core/about.html">Security Component SPI</a>
   </li>
   <li class="nav-item" data-depth="1">
     <a class="nav-link" href="../bypass/about.html">Bypass Implementation</a>
@@ -178,15 +171,15 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../keycloak/about.html">Keycloak Implementation</a>
   </li>
   <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../spring/about.html">Spring Implementation</a>
+  </li>
+  <li class="nav-item" data-depth="1">
     <a class="nav-link" href="../usage-by-isis-viewers.html">Usage by Isis Viewers</a>
   </li>
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
     <span class="nav-text">Extensions</span>
 <ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../shiro-realm-ldap/about.html">LDAP Realm for Shiro</a>
-  </li>
   <li class="nav-item" data-depth="2">
     <button class="nav-item-toggle"></button>
     <a class="nav-link" href="../secman/about.html">Secman</a>
@@ -211,7 +204,19 @@ page.parent doesn't seem to be set...
   </li>
 </ul>
   </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../audit-trail/about.html">Audit Trail</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../session-log/about.html">Session Log</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../shiro-realm-ldap/about.html">LDAP Realm for Shiro</a>
+  </li>
 </ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../spring/about.html">Spring Implementation</a>
   </li>
 </ul>
   </li>
@@ -233,7 +238,7 @@ page.parent doesn't seem to be set...
       </ul>
     </li>
     <li class="component">
-      <span class="title">BC Mappings Catalog</span>
+      <span class="title">BC Mapping Libraries</span>
       <ul class="versions">
         <li class="version is-latest">
           <a href="../../../mappings/latest/about.html">latest</a>
@@ -313,7 +318,7 @@ page.parent doesn't seem to be set...
       </ul>
     </li>
     <li class="component">
-      <span class="title">Restful Objects Viewer</span>
+      <span class="title">REST API (Restful Objects Viewer)</span>
       <ul class="versions">
         <li class="version is-latest">
           <a href="../../../vro/latest/about.html">latest</a>
@@ -325,9 +330,6 @@ page.parent doesn't seem to be set...
       <ul class="versions">
         <li class="version is-current is-latest">
           <a href="../about.html">latest</a>
-        </li>
-        <li class="version">
-          <a href="../../2.0.0-M5/index.html">2.0.0-M5</a>
         </li>
       </ul>
     </li>
@@ -380,7 +382,7 @@ page.parent doesn't seem to be set...
       </ul>
     </li>
     <li class="component">
-      <span class="title">Wicket Viewer</span>
+      <span class="title">Web UI (Wicket Viewer)</span>
       <ul class="versions">
         <li class="version is-latest">
           <a href="../../../vw/latest/about.html">latest</a>
@@ -402,13 +404,6 @@ page.parent doesn't seem to be set...
     <li><a href="about.html">Shiro Implementation</a></li>
   </ul>
 </nav>
-<div class="page-versions">
-  <button class="version-menu-toggle" title="Show other versions of page">latest</button>
-  <div class="version-menu">
-    <a class="version is-current" href="about.html">latest</a>
-    <a class="version is-missing" href="../../2.0.0-M5/index.html">2.0.0-M5</a>
-  </div>
-</div>
   <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/master/security/shiro/src/main/adoc/modules/shiro/pages/about.adoc">Edit</a></div>
 </div>
 <article class="doc">
@@ -416,20 +411,53 @@ page.parent doesn't seem to be set...
 <h1 class="page">Shiro Security</h1>
 <div id="preamble">
 <div class="sectionbody">
-<div class="admonitionblock warning">
+<div class="paragraph">
+<p>This guide describes the design and configuration of the Apache Shiro integration with Apache Isis.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="design"><a class="anchor" href="#design"></a>Design</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The Shiro integration provides an implementation for both the
+<a href="../../../refguide/latest/core/index/security/authentication/Authenticator.html" class="page">Authenticator</a> and <a href="../../../refguide/latest/core/index/security/authorization/Authorizor.html" class="page">Authorizor</a> SPIs.
+These both delegate to Shiro&#8217;s <code>SubjectUtils</code> class that in turn delegates to the <code>SecurityManager</code>.
+These are available as thread-locals (set up in a servlet filter):</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/shiro-design.drawio.svg" alt="shiro design.drawio">
+</div>
+<div class="title">Figure 1. High-level design of the Shiro integration</div>
+</div>
+<div class="paragraph">
+<p>Shiro&#8217;s <a href="http://shiro.apache.org/static/latest/apidocs/org/apache/shiro/subject/Subject.html">Subject</a> API defines the notion of a user, and uses the concept of a <a href="https://shiro.apache.org/static/1.7.1/apidocs/org/apache/shiro/realm/Realm.html">Realm</a> as the means to authenticate the <code>Subject</code>s and optionally populate it with permissions.</p>
+</div>
+<div class="paragraph">
+<p>Shiro ships with a simple text-based realm&#8201;&#8212;&#8201;the <code>IniRealm</code>&#8201;&#8212;&#8201;which reads users (and password), user roles and role permissions from the <code>shiro.ini</code> file.
+Configuring this realm is described <a href="#shiro-ini-realm">below</a></p>
+</div>
+<div class="admonitionblock tip">
 <table>
 <tr>
 <td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
+<i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-TODO: this content has not yet been reviewed/updated for v2.0
+The <a href="../../../docs/latest/starters/helloworld.html" class="page">HelloWorld</a> and <a href="../../../docs/latest/starters/simpleapp.html" class="page">SimpleApp</a> starter apps are both configured to use this realm.
 </td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>This guide describes the configuration of the Shiro implementation of Apache Isis' <code>Authenticator and `Authorizor</code> APIs.</p>
+<p>A more sophisticated option is the LDAP realm.
+Shiro has its own implementation which is extended in the  provides the <a href="../shiro-realm-ldap/about.html" class="page">LDAP realm</a>
+This realm also supports permissions.</p>
+</div>
+<div class="paragraph">
+<p>Permissions are ultimately represented as strings, and their interpretation of them is the responsibility of <code>AuthorizorShiro</code>.
+An enhanced "wildcard" syntax, described  <a href="#enhanced-wildcard-permission">below</a> in more detail, incorporates the notion of read and write permissions, and also of vetoing permissions (as well as the usual allow permissions).</p>
 </div>
 </div>
 </div>
@@ -438,7 +466,7 @@ TODO: this content has not yet been reviewed/updated for v2.0
 <div class="sectionbody">
 <div class="paragraph">
 <p>Apache Isis' security mechanism is configurable, specifying an <code>Authenticator</code> and an <code>Authorizor</code> (non-public) APIs.
-The Shiro security mechanism is an integration wih Apache Shiro that implements both interfaces.</p>
+The Shiro security mechanism is an integration with Apache Shiro that implements both interfaces.</p>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -454,106 +482,112 @@ The Shiro security mechanism is an integration wih Apache Shiro that implements 
 </tr>
 </table>
 </div>
-<div class="sect2">
-<h3 id="telling-apache-isis-to-use-shiro"><a class="anchor" href="#telling-apache-isis-to-use-shiro"></a>Telling Apache Isis to use Shiro</h3>
-<div class="paragraph">
-<p>To tell Apache Isis to use Shiro, include <code>IsisModuleSecurityShiro</code> module in the top-level "app manifest".</p>
 </div>
+</div>
+<div class="sect1">
+<h2 id="maven-pom-xml"><a class="anchor" href="#maven-pom-xml"></a>Maven pom.xml</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="dependency-management"><a class="anchor" href="#dependency-management"></a>Dependency Management</h3>
 <div class="paragraph">
-<p>For example, the <a href="../../../docs/latest/starters/simpleapp.html" class="page">SimpleApp</a> starter app bootstraps using:</p>
+<p>If your application inherits from the Apache Isis starter app (<code>org.apache.isis.app:isis-app-starter-parent</code> then that will define the version automatically:</p>
 </div>
 <div class="listingblock">
+<div class="title">pom.xml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;parent&gt;
+    &lt;groupId&gt;org.apache.isis.app&lt;/groupId&gt;
+    &lt;artifactId&gt;isis-app-starter-parent&lt;/artifactId&gt;
+    &lt;version&gt;2.0.0-M6&lt;/version&gt;
+    &lt;relativePath/&gt;
+&lt;/parent&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Alternatively, import the core BOM.
+This is usually done in the top-level parent pom of your application:</p>
+</div>
+<div class="listingblock">
+<div class="title">pom.xml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependencyManagement&gt;
+    &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.apache.isis.core&lt;/groupId&gt;
+            &lt;artifactId&gt;isis-core&lt;/artifactId&gt;
+            &lt;version&gt;2.0.0-M6&lt;/version&gt;
+            &lt;scope&gt;import&lt;/scope&gt;
+            &lt;type&gt;pom&lt;/type&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+&lt;/dependencyManagement&gt;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="dependency"><a class="anchor" href="#dependency"></a>Dependency</h3>
+<div class="paragraph">
+<p>In the webapp module of your application, add the following dependency:</p>
+</div>
+<div class="listingblock">
+<div class="title">pom.xml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.apache.isis.mavendeps&lt;/groupId&gt;
+        &lt;artifactId&gt;isis-mavendeps-webapp&lt;/artifactId&gt;
+        &lt;type&gt;pom&lt;/type&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="update-appmanifest"><a class="anchor" href="#update-appmanifest"></a>Update AppManifest</h3>
+<div class="paragraph">
+<p>In your application&#8217;s <code>AppManifest</code> (top-level Spring <code>@Configuration</code> used to bootstrap the app), import the</p>
+</div>
+<div class="listingblock">
+<div class="title">AppManifest.java</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Configuration
 @Import({
-        // ...
-        IsisModuleSecurityShiro.class,  <i class="conum" data-value="1"></i><b>(1)</b>
-        // ...
+        ...
+        IsisModuleSecurityShiro.class,
+        ...
 })
-// ...
 public class AppManifest {
 }</code></pre>
 </div>
 </div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>configures Shiro.</td>
-</tr>
-</table>
-</div>
 <div class="paragraph">
-<p>This installs the appropriate implementation (the <code>ShiroAuthenticatorOrAuthorizor</code> class) that use Shiro&#8217;s APIs to perform authentication and authorization:</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="_images/configuration/configure-isis-to-use-shiro.png" alt="configure isis to use shiro" width="600px">
-</div>
-</div>
-<div class="paragraph">
-<p>The figure above doesn&#8217;t tell the whole story; we haven&#8217;t yet seen how Shiro itself is configured to use realms.
-The <code>ShiroAuthenticatorOrAuthorizor</code> is in essence the glue between the Apache Isis runtime and Shiro.</p>
+<p>Make sure that no other <code>IsisModuleSecurityXxx</code> module is imported.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="configuring-shiro-authenticator"><a class="anchor" href="#configuring-shiro-authenticator"></a>Configuring Shiro Authenticator</h3>
+<h3 id="configuration-properties"><a class="anchor" href="#configuration-properties"></a>Configuration Properties</h3>
 <div class="paragraph">
-<p>The <code>ShiroAuthenticatorOrAuthorizor</code> class itself supports a single optional property.
-This can be configured in <code>authentication_shiro.properties</code> file:</p>
+<p>The Shiro integration supports the following config properties:</p>
 </div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">isis.security.shiro.autoLogoutIfAlreadyAuthenticated=false</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>This configuration property only comes into effect for the <a href="../../../vro/latest/about.html" class="page">Restful Objects viewer</a>; if set then the Shiro subject - if found to be still authenticated - will be logged out anyway and then re-authenticated.</p>
-</div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>There should generally be no need to change this property from its default (<code>false</code>).
-Setting it to <code>true</code> may cause a race condition resulting in exceptions being logged.</p>
-</div>
-</td>
-</tr>
-</table>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../../../refguide/latest/config/sections/isis.security.shiro.html#isis.security.shiro.auto-logout-if-already-authenticated" class="page">isis.security.shiro.auto-logout-if-already-authenticated</a></p>
+</li>
+</ul>
 </div>
 </div>
 <div class="sect2">
-<h3 id="bootstrapping-shiro"><a class="anchor" href="#bootstrapping-shiro"></a>Bootstrapping Shiro</h3>
+<h3 id="shiro-realms-and-shiro-ini"><a class="anchor" href="#shiro-realms-and-shiro-ini"></a>Shiro Realms and shiro.ini</h3>
 <div class="paragraph">
-<p>The Shiro environment (in essence, thread-locals holding the security credentials) needs to be bootstrapped using the following settings in the <code>WEB-INF/web.xml</code> file:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;listener&gt;
-    &lt;listener-class&gt;org.apache.shiro.web.env.EnvironmentLoaderListener&lt;/listener-class&gt;
-&lt;/listener&gt;
-&lt;filter&gt;
-    &lt;filter-name&gt;ShiroFilter&lt;/filter-name&gt;
-    &lt;filter-class&gt;org.apache.shiro.web.servlet.ShiroFilter&lt;/filter-class&gt;
-&lt;/filter&gt;
-&lt;filter-mapping&gt;
-    &lt;filter-name&gt;ShiroFilter&lt;/filter-name&gt;
-    &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
-&lt;/filter-mapping&gt;</code></pre>
-</div>
+<p>Shiro uses the <code>shiro.ini</code> file for configuration, which resides in the default package (in other words, in <code>src/main/resources</code> in the webapp module).</p>
 </div>
 <div class="paragraph">
-<p>Based on this Shiro will then read <code>shiro.ini</code> file to configure its Realm definitions for authentication and authorization.</p>
+<p>Shiro uses the concept of realms to define its own set of authenticated users and their roles, and this is the most important configuration specified in the <code>shiro.ini</code> file.
+Either one or many realms can be configured.</p>
 </div>
-</div>
-<div class="sect2">
-<h3 id="shiro-ini"><a class="anchor" href="#shiro-ini"></a><code>shiro.ini</code></h3>
 <div class="paragraph">
-<p>The <code>shiro.ini</code> file is used to specify the realm(s) that Shiro will delegate to:</p>
+<p>For example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -561,8 +595,8 @@ Setting it to <code>true</code> may cause a race condition resulting in exceptio
 </div>
 </div>
 <div class="paragraph">
-<p>Shiro&#8217;s ini file supports a "poor-man&#8217;s" dependency injection (<a href="https://shiro.apache.org/configuration.html">their words</a>), and so <code>$realmName</code> in the above example is a reference to a realm defined elsewhere in <code>shiro.ini</code>.
-The subsequent sections describe the specifics for thevarious realm implementations available to you.</p>
+<p>where <code>$realmName</code> in the above example is a reference to a realm defined elsewhere in <code>shiro.ini</code>.
+This is an example of Shiro&#8217;s "poor-man&#8217;s" dependency injection (<a href="https://shiro.apache.org/configuration.html">their words</a>).</p>
 </div>
 <div class="paragraph">
 <p>It&#8217;s also possible to configure Shiro to support multiple realms.</p>
@@ -573,7 +607,21 @@ The subsequent sections describe the specifics for thevarious realm implementati
 </div>
 </div>
 <div class="paragraph">
-<p>You can learn more about Shiro realms in the <a href="http://shiro.apache.org/realm.html">Shiro documentation</a>.</p>
+<p>How to configure the text-based ini realm is explained <a href="#shiro-ini-realm">below</a>.
+Another option alternative is the <a href="../shiro-realm-ldap/about.html" class="page">LDAP realm</a>.</p>
+</div>
+<div class="paragraph">
+<p>As noted above, as well as realms many other aspects of configuration can be specified in this file:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>enable caching for performance; discussed <a href="#caching">below</a></p>
+</li>
+<li>
+<p>leverage Apache Isis' <a href="#enhanced-wildcard-permission">enhanced wildcard permissions</a>,by specifying the Apache Isis permission resolver; discussed <a href="#permission-resolver-configuration">below</a>.</p>
+</li>
+</ul>
 </div>
 </div>
 </div>
@@ -585,24 +633,17 @@ The subsequent sections describe the specifics for thevarious realm implementati
 <p>The Shiro concept of a <code>Realm</code> allows different implementations of both the authentication and authorisation mechanism to be plugged in.</p>
 </div>
 <div class="paragraph">
-<p>Probably the simplest realm to use is Shiro&#8217;s built-in <code>IniRealm</code>, which reads from the (same) <code>shiro.ini</code> file.</p>
+<p>The simplest realm to use is Shiro&#8217;s built-in <code>IniRealm</code>, which reads from the (same) <code>shiro.ini</code> file.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/ini/shiro-ini-realm.drawio.svg" alt="shiro ini realm.drawio">
+</div>
 </div>
 <div class="paragraph">
 <p>This is suitable for prototyping, but isn&#8217;t intended for production use, if only because user/password credentials are stored in plain text.
 Nevertheless, it&#8217;s a good starting point.
 The app generated by both the <a href="../../../docs/latest/starters/helloworld.html" class="page">HelloWorld</a> and <a href="../../../docs/latest/starters/simpleapp.html" class="page">SimpleApp</a> starter apps are configured to use this realm.</p>
-</div>
-<div class="paragraph">
-<p>The diagram below shows the Isis and components involved:</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="_images/configuration/configuring-shiro/ini/configure-shiro-to-use-ini-realm.PNG" alt="configure shiro to use ini realm" width="600px">
-</div>
-</div>
-<div class="paragraph">
-<p>The realm is responsible for validating the user credentials, and then creates a Shiro <a href="http://shiro.apache.org/static/latest/apidocs/org/apache/shiro/subject/Subject.html">Subject</a> which represents the user (for the current request).
-Apache Isis <code>Authenticator</code> component then interacts with the <code>Subject</code> in order to check permissions.</p>
 </div>
 <div class="sect2">
 <h3 id="shiro-configuration"><a class="anchor" href="#shiro-configuration"></a>Shiro Configuration</h3>
@@ -674,7 +715,8 @@ admin_role = *</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>The value is a comma-separated list of permissions for the role.  The format is:</p>
+<p>The value is a comma-separated list of permissions for the role.
+The format is:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -701,7 +743,8 @@ admin_role = *</code></pre>
 <p>and where each of the parts of the permission string can be wildcarded using <code>*</code>.</p>
 </div>
 <div class="paragraph">
-<p>Because these are wildcards, a '*' can be used at any level. Additionally, missing levels assume wildcards.</p>
+<p>Because these are wildcards, a '*' can be used at any level.
+Additionally, missing levels assume wildcards.</p>
 </div>
 <div class="paragraph">
 <p>Thus:</p>
@@ -729,7 +772,7 @@ com.mycompany.myapp                          # ditto
 </td>
 <td class="content">
 <div class="paragraph">
-<p>The format of the permissions string is configurable in Shiro, and Apache Isis uses this to provide an extended wildcard format, described <a href="about/enhanced-wildcard-permission.html" class="page">here</a>.</p>
+<p>The format of the permissions string is configurable in Shiro, and Apache Isis uses this to provide an extended wildcard format, described <a href="#enhanced-wildcard-permission">here</a>.</p>
 </div>
 </td>
 </tr>
@@ -787,407 +830,10 @@ Instead, the corresponding sections from for <code>realm1.ini</code> are used in
 </div>
 </div>
 <div class="sect1">
-<h2 id="shiro-jdbc-realm"><a class="anchor" href="#shiro-jdbc-realm"></a>Shiro JDBC Realm</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>There is nothing to stop you from using some other <code>Realm</code> implementation (or indeed writing one yourself).  For example, you could use Shiro&#8217;s own JDBC realm that loads user/password details from a database.</p>
-</div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>If you are happy to use a database then we strongly recommend you use the <a href="../about.html" class="page">SecMan extension</a> instead of a vanilla JDBC; it is far more sophisticated and moreover gives you the ability to administer the system from within your Apache Isis application.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>If you go down this route, then the architecture is as follows:</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="_images/configuration/configuring-shiro/jdbc/configure-shiro-to-use-custom-jdbc-realm.png" alt="configure shiro to use custom jdbc realm" width="600px">
-</div>
-</div>
-<div class="paragraph">
-<p>There&#8217;s quite a lot of configuration required (in <code>shiro.ini</code>) to set up a JDBC realm, so we&#8217;ll break it out into sections.</p>
-</div>
-<div class="paragraph">
-<p>First, we need to set up the connection to JDBC:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">jdbcRealm=org.apache.shiro.realm.jdbc.JdbcRealm        <i class="conum" data-value="1"></i><b>(1)</b>
-
-jof = org.apache.shiro.jndi.JndiObjectFactory          <i class="conum" data-value="2"></i><b>(2)</b>
-jof.resourceName = jdbc/postgres                       <i class="conum" data-value="3"></i><b>(3)</b>
-jof.requiredType = javax.sql.DataSource
-jof.resourceRef = true
-
-jdbcRealm.dataSource = $jof                            <i class="conum" data-value="4"></i><b>(4)</b></code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>instantiate the JDBC realm</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>instantiate factory object to lookup DataSource from servlet container</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>name of the datasource (as configured in <code>web.xml</code>)</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>instruct JDBC realm to obtain datasource from the JNDI</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>We next need to tell the realm how to query the database.  Shiro supports any schema; what matters is the input search argument and the output results.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">jdbcRealm.authenticationQuery =         \              <i class="conum" data-value="1"></i><b>(1)</b>
-        select password                 \
-          from users                    \
-         where username = ?
-
-jdbcRealm.userRolesQuery =              \              <i class="conum" data-value="2"></i><b>(2)</b>
-        select r.label                  \
-          from users_roles ur           \
-    inner join roles r                  \
-            on ur.role_id = r.id        \
-         where user_id = (              \
-            select id                   \
-             from users                 \
-            where username = ?);        \
-
-jdbcRealm.permissionsQuery=             \               <i class="conum" data-value="3"></i><b>(3)</b>
-        select p.permission             \
-          from roles_permissions rp     \
-    inner join permissions p            \
-            on rp.permission_id = p.id  \
-         where rp.role_id = (           \
-            select id                   \
-             from roles                 \
-            where label = ?);
-
-jdbcRealm.permissionsLookupEnabled=true                 <i class="conum" data-value="4"></i><b>(4)</b></code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>query to find password for user</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>query to find roles for user</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>query to find permissions for role</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>enable permissions lookup</td>
-</tr>
-</table>
-</div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>The <code>permissionsLookupEnabled</code> is very important, otherwise Shiro just returns an empty list of permissions and your users will have no access to any features(!).</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>We also should ensure that the passwords are not stored as plain-text:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">dps = org.apache.shiro.authc.credential.DefaultPasswordService   <i class="conum" data-value="1"></i><b>(1)</b>
-pm = org.apache.shiro.authc.credential.PasswordMatcher           <i class="conum" data-value="2"></i><b>(2)</b>
-pm.passwordService = $dps
-jdbcRealm.credentialsMatcher = $pm                               <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>mechanism to encrypts password</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>service to match passwords</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>instruct JDBC realm to use password matching service when authenticating</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>And finally we need to tell Shiro to use the realm, in the usual fashion:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">securityManager.realms = $jdbcRealm</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Using the above configuration you will also need to setup a <code>DataSource</code>.  The details vary by servlet container, for example this is <a href="https://tomcat.apache.org/tomcat-8.0-doc/jndi-datasource-examples-howto.html">how to do the setup on Tomcat 8.0</a>.</p>
-</div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>The name of the <code>DataSource</code> can also vary by servlet container; see for example <a href="http://stackoverflow.com/questions/17441019/how-to-configure-jdbcrealm-to-obtain-its-datasource-from-jndi/23784702#23784702">this StackOverflow answer</a>.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="ldap-realm"><a class="anchor" href="#ldap-realm"></a>Ldap Realm</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Apache Isis ships with an implementation of <a href="http://shiro.apache.org">Apache Shiro</a>'s <code>Realm</code> class that allows user authentication and authorization to be performed against an LDAP server.</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="_images/configuration/configuring-shiro/ldap/configure-shiro-to-use-isis-ldap-realm.png" alt="configure shiro to use isis ldap realm" width="600px">
-</div>
-</div>
-<div class="paragraph">
-<p>The LDAP database stores the user/passwords and user groups, while the <code>shiro.ini</code> file is used to map the LDAP groups to roles, and to map the roles to permissions.</p>
-</div>
-<div class="sect2">
-<h3 id="shiro-configuration-2"><a class="anchor" href="#shiro-configuration-2"></a>Shiro Configuration</h3>
-<div class="paragraph">
-<p>To use LDAP involves telling Shiro how to instantiate the realm.  This bootstrapping info lives in the <code>shiro.ini</code>:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">contextFactory = org.apache.isis.security.shiro.IsisLdapContextFactory
-contextFactory.url = ldap://localhost:10389
-contextFactory.systemUsername = uid=admin,ou=system        <i class="conum" data-value="1"></i><b>(1)</b>
-contextFactory.systemPassword = secret
-contextFactory.authenticationMechanism = CRAM-MD5          <i class="conum" data-value="2"></i><b>(2)</b>
-contextFactory.systemAuthenticationMechanism = simple
-
-ldapRealm = org.apache.isis.security.shiro.IsisLdapRealm   <i class="conum" data-value="3"></i><b>(3)</b>
-ldapRealm.contextFactory = $contextFactory
-
-ldapRealm.searchBase = ou=groups,o=mojo                    <i class="conum" data-value="4"></i><b>(4)</b>
-ldapRealm.groupObjectClass = groupOfUniqueNames            <i class="conum" data-value="5"></i><b>(5)</b>
-ldapRealm.uniqueMemberAttribute = uniqueMember             <i class="conum" data-value="6"></i><b>(6)</b>
-ldapRealm.uniqueMemberAttributeValueTemplate = uid={0}
-
-# optional mapping from physical groups to logical application roles
-ldapRealm.rolesByGroup = \                                 <i class="conum" data-value="7"></i><b>(7)</b>
-    LDN_USERS: user_role,\
-    NYK_USERS: user_role,\
-    HKG_USERS: user_role,\
-    GLOBAL_ADMIN: admin_role,\
-    DEMOS: self-install_role
-
-ldapRealm.permissionsByRole=\                              <i class="conum" data-value="8"></i><b>(8)</b>
-   user_role = *:ToDoItemsJdo:*:*,\
-               *:ToDoItem:*:*; \
-   self-install_role = *:ToDoItemsFixturesService:install:* ; \
-   admin_role = *
-
-securityManager.realms = $ldapRealm</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>user accounts are searched using a dedicated service account</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>SASL (CRAM-MD5) authentication is used for this authentication</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Apache Isis' implementation of the LDAP realm.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>groups are searched under <code>ou=groups,o=mojo</code> (where <code>mojo</code> is the company name)</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>each group has an LDAP objectClass of <code>groupOfUniqueNames</code></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
-<td>each group has a vector attribute of <code>uniqueMember</code></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="7"></i><b>7</b></td>
-<td>groups looked up from LDAP can optionally be mapped to logical roles; otherwise groups are used as role names directly</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="8"></i><b>8</b></td>
-<td>roles are mapped in turn to permissions</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>The value of <code>uniqueMember</code> is in the form <code>uid=xxx</code>, with <code>xxx</code> being the uid of the user
-* users searched under <code>ou=system</code>
-* users have, at minimum, a <code>uid</code> attribute and a password
-* the users credentials are used to verify their user/password</p>
-</div>
-<div class="paragraph">
-<p>The above configuration has been tested against <a href="http://directory.apache.org/apacheds/">ApacheDS</a>, v1.5.7. This can be administered using <a href="http://directory.apache.org/studio/">Apache Directory Studio</a>, v1.5.3.</p>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<div class="title">Shiro Realm Mappings</div>
-<div class="paragraph">
-<p>When configuring role based permission mapping, there can only be one of these entries per realm:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">realm.groupToRolesMappings = ...</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>and</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">realm.roleToPermissionsMappings = ...</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>This forces you to put everything on one line for each of the above.  This is, unfortunately, a Shiro "feature".  And if you repeat the entries above then it&#8217;s "last one wins".)</p>
-</div>
-<div class="paragraph">
-<p>To make the configuration maintainable, use "\" to separate the mappings onto separate lines in the file.  Use this technique for both group to roles mapping and role to permission mapping. If you use the '&#39; after the "," that separates the key:value pairs it is more readable.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect2">
-<h3 id="externalizing-role-perms"><a class="anchor" href="#externalizing-role-perms"></a>Externalizing role perms</h3>
-<div class="paragraph">
-<p>As an alternative to injecting the <code>permissionsByRole</code> property, the role/permission mapping can alternatively be specified by injecting a resource path:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">ldapRealm.resourcePath=classpath:webapp/myroles.ini</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>where <code>myroles.ini</code> is in <code>src/main/resources/webapp</code>, and takes the form:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">[roles]
-user_role = *:ToDoItemsJdo:*:*,\
-            *:ToDoItem:*:*
-self-install_role = *:ToDoItemsFixturesService:install:*
-admin_role = *</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>This separation of the role/mapping can be useful if Shiro is configured to support multiple realms (eg an LdapRealm based one and also an TextRealm)</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="active-ds-ldap-tutorial"><a class="anchor" href="#active-ds-ldap-tutorial"></a>Active DS LDAP tutorial</h3>
-<div class="paragraph">
-<p>The screenshots below show how to setup LDAP accounts in ApacheDS using the Apache Directory Studio.</p>
-</div>
-<div class="paragraph">
-<p>The setup here was initially based on <a href="http://krams915.blogspot.co.uk/2011/01/ldap-apache-directory-studio-basic.html">this tutorial</a>, however we have moved the user accounts so that they are defined in a separate LDAP node.</p>
-</div>
-<div class="paragraph">
-<p>To start, create a partition in order to hold the mojo node (holding the groups):</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="_images/configuration/configuring-shiro/ldap/activeds-ldap-mojo-partition.png" alt="activeds ldap mojo partition">
-</div>
-</div>
-<div class="paragraph">
-<p>Create the <code>ou=groups,o=mojo</code> hierarchy:</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="_images/configuration/configuring-shiro/ldap/activeds-ldap-mojo-root-dse.png" alt="activeds ldap mojo root dse">
-</div>
-</div>
-<div class="paragraph">
-<p>Configure SASL authentication. This means that the checking of user/password is done implicitly by virtue of Apache Isis connecting to LDAP using these credentials:</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="_images/configuration/configuring-shiro/ldap/activeds-ldap-sasl-authentication.png" alt="activeds ldap sasl authentication">
-</div>
-</div>
-<div class="paragraph">
-<p>In order for SASL to work, it seems to be necessary to put users under <code>o=system</code>. (This is why the setup is slightly different than the tutorial mentioned above):</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="_images/configuration/configuring-shiro/ldap/activeds-ldap-users.png" alt="activeds ldap users">
-</div>
-</div>
-<div class="paragraph">
-<p>Configure the users into the groups:</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="_images/configuration/configuring-shiro/ldap/activeds-ldap-groups.png" alt="activeds ldap groups">
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
 <h2 id="enhanced-wildcard-permission"><a class="anchor" href="#enhanced-wildcard-permission"></a>Enhanced Wildcard Permission</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>If using the text-based <a href="about/ini-realm.html" class="page">IniRealm</a> or <a href="../shiro-realm-ldap/about.html" class="page">Apache Isis' LDAP realm</a>, then note that Shiro also allows the string representation of the permissions to be mapped (resolved) to alternative <code>Permission</code> instances.
+<p>If using the text-based <a href="#shiro-ini-realm">IniRealm</a> or <a href="../shiro-realm-ldap/about.html" class="page">Apache Isis' LDAP realm</a>, then note that Shiro also allows the string representation of the permissions to be mapped (resolved) to alternative <code>Permission</code> instances.
 Apache Isis provides its own <code>IsisPermission</code> which introduces the concept of a "veto".</p>
 </div>
 <div class="paragraph">
@@ -1200,7 +846,7 @@ The configuration can therefore be set up to grant fairly broad-brush permission
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">([!]?)([^/]+)[/](.+)</code></pre>
+<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">(?&lt;vetoFlag&gt;[!]?)(?:(?&lt;permissionGroup&gt;[^\/]+)[\/])?(?&lt;permission&gt;.+)</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1219,15 +865,27 @@ The configuration can therefore be set up to grant fairly broad-brush permission
 </li>
 </ul>
 </div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+Use an online regex tester, eg <a href="https://regex101.com/" class="bare">https://regex101.com/</a> to get an idea of how this works.
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
 <p>For example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">user_role   = !reg/org.estatio.api,\
-              !reg/org.estatio.webapp.services.admin,\
+<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">user_role   = !reg/com.mycompany.myapp.api,\
+              !reg/com.mycompany.myapp.webapp.services.admin,\
               reg/* ; \
-api_role    = org.estatio.api ;\
+api_role    = com.mycompany.myapp.api ;\
 admin_role = adm/*</code></pre>
 </div>
 </div>
@@ -1237,10 +895,10 @@ admin_role = adm/*</code></pre>
 <div class="ulist">
 <ul>
 <li>
-<p>the <code>user_role</code> with access to all permissions except those in <code>org.estatio.api</code> and <code>org.estatio.webapp.services.admin</code></p>
+<p>the <code>user_role</code> with access to all permissions except those in <code>com.mycompany.myapp.api</code> and <code>com.mycompany.myapp.webapp.services.admin</code></p>
 </li>
 <li>
-<p>the <code>api_role</code> with access to all permissions in <code>org.estatio.api</code></p>
+<p>the <code>api_role</code> with access to all permissions in <code>com.mycompany.myapp.api</code></p>
 </li>
 <li>
 <p>the <code>admin_role</code> with access to everything.</p>
@@ -1253,13 +911,15 @@ This is probably best explained by an example.
 Suppose that a user has both <code>admin_role</code> and <code>user_role</code>; we would want the <code>admin_role</code> to trump the vetos of the <code>user_role</code>, in other words to give the user access to everything.</p>
 </div>
 <div class="paragraph">
-<p>Because of the permission groups, the two "!reg/...+""" vetos in user_role only veto out selected permissions granted by the "reg/<strong>" permissions, but they do not veto the permissions granted by a different scope, namely "adm/</strong>+".</p>
+<p>Because of the permission groups, the two <code>!reg/&#8230;&#8203;</code> vetos in <code>user_role</code> only veto out selected permissions granted by the <code>reg/*</code> permissions, but they do not veto the permissions granted by a different scope, namely <code>adm/*</code>.</p>
 </div>
 <div class="paragraph">
 <p>The net effect is therefore what we would want: that a user with both <code>admin_role</code> and <code>user_role</code> would have access to everything, irrespective of those two veto permissions of the <code>user_role</code>.</p>
 </div>
+<div class="sect2">
+<h3 id="permission-resolver-configuration"><a class="anchor" href="#permission-resolver-configuration"></a>Configuration</h3>
 <div class="paragraph">
-<p>Finally, the Apache Isis permission resolver is specified in <code>shiro.ini</code> file:</p>
+<p>To configure Apache Isis' extended permission support requires that a custom permission resolver is specified in <code>shiro.ini</code> file:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1277,141 +937,13 @@ myRealm.permissionResolver = $permissionResolver  <i class="conum" data-value="1
 </div>
 </div>
 </div>
-<div class="sect1">
-<h2 id="run-as"><a class="anchor" href="#run-as"></a>Run-as</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>This hint shows how to temporarily change the current user as reported by Shiro.
-This can be useful to support "Run As", for example.</p>
-</div>
-<div class="paragraph">
-<p>The heavy lifting is done in <code>ShiroService</code>:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.springframework.stereotype.Service;
-
-@Service
-public class ShiroService {
-
-    public void runAs(String userName) {
-        SimplePrincipalCollection principals =
-            new SimplePrincipalCollection(userName, "jdbcRealm");                       <i class="conum" data-value="1"></i><b>(1)</b>
-        getSubject().runAs(principals);
-    }
-
-    public String releaseRunAs() {
-        final PrincipalCollection principals = getSubject().releaseRunAs();
-        String username = (String)principals.asList().get(0);
-        return username;
-    }
-
-    public String getUsername() {                                                       <i class="conum" data-value="2"></i><b>(2)</b>
-        String principalAsString = ((String)getSubject().getPrincipal());
-        return principalAsString.toLowerCase();
-    }
-
-    public String getRealUsername() {                                                   <i class="conum" data-value="3"></i><b>(3)</b>
-        return userService.getUser().getName().toLowerCase();
-    }
-
-    public boolean isRunAs() {
-        return getSubject().isRunAs();
-    }
-
-    private static Subject getSubject() {
-        return org.apache.shiro.SecurityUtils.getSubject();
-    }
-
-    @Inject
-    private UserService userService;
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>"jdbcRealm" is realm as configured in Shiro config (shiro.ini).</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>The username of the currently logged in user (by which permissions are determined).
-This could be the user name the real user is running as.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>The username of the real currently logged in user.</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>This could be exposed in the UI using a simple <code>RunAsService</code>, for example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainService(nature = NatureOfService.VIEW)
-@DomainServiceLayout(menuBar = DomainServiceLayout.MenuBar.TERTIARY)
-public class RunAsService {
-
-    public Dashboard runAs(User user) {
-        shiroService.runAs(user.getUsername());
-        return dashboardService.openDashboard();                    <i class="conum" data-value="1"></i><b>(1)</b>
-    }
-    public List&lt;User&gt; choices0RunAs() {
-        return ...                                                  <i class="conum" data-value="2"></i><b>(2)</b>
-    }
-    public boolean hideRunAs() {
-        return shiroService.isRunAs();
-    }
-
-
-
-    public User releaseRunAs() {
-        String username = shiroService.releaseRunAs();
-        return usersRepository.findByUsername(username);
-    }
-    public boolean hideReleaseRunAs() {
-        return !shiroService.isRunAs();
-    }
-
-
-    @Inject
-    private ShiroService shiroService;
-    @Inject
-    private UsersRepository usersRepository;
-    @Inject
-    private DashboardService dashboardService;                      <i class="conum" data-value="1"></i><b>(1)</b>
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>go to the home page (application-specific)</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>return a list of users to run as</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>Credits: adapted from <a href="https://gist.github.com/erikdehair/efa3005440ca982cca41ebe5347e82d8">this gist</a>.</p>
-</div>
-</div>
 </div>
 <div class="sect1">
-<h2 id="caching-and-other-shiro-features"><a class="anchor" href="#caching-and-other-shiro-features"></a>Caching and other Shiro Features</h2>
+<h2 id="caching"><a class="anchor" href="#caching"></a>Caching</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>We don&#8217;t want to repeat the entire <a href="http://shiro.apache.org/documentation.html">Shiro documentation set</a> here, but we should flag a number of other features that are worth checking out.</p>
-</div>
-<div class="sect2">
-<h3 id="caching"><a class="anchor" href="#caching"></a>Caching</h3>
-<div class="paragraph">
-<p>To ensure that security operations does not impede performance, Shiro supports caching.  For example, this sets up a simple memory-based cache manager:</p>
+<p>To ensure that security operations does not impede performance, Shiro supports caching.
+For example, this sets up a simple memory-based cache manager:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1423,8 +955,14 @@ securityManager.cacheManager = $memoryCacheManager</code></pre>
 <p>Other implementations can be plugged in; see the Shiro <a href="http://shiro.apache.org/caching.html">documentation</a> for further details.</p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="further-reading"><a class="anchor" href="#further-reading"></a>Further Reading</h3>
+</div>
+<div class="sect1">
+<h2 id="further-reading"><a class="anchor" href="#further-reading"></a>Further Reading</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Shiro provides many other features.
+Check out:</p>
+</div>
 <div class="ulist">
 <ul>
 <li>
@@ -1437,7 +975,6 @@ securityManager.cacheManager = $memoryCacheManager</code></pre>
 </div>
 </li>
 </ul>
-</div>
 </div>
 </div>
 </div>
@@ -1458,7 +995,7 @@ securityManager.cacheManager = $memoryCacheManager</code></pre>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M5.20210409-0429-dc3d9045</p>
+            <p>Revision: 2.0.0-M5.20210414-1732-4168ca3b</p>
         </div>
     </div>
 </footer>

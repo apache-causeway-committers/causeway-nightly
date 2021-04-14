@@ -152,18 +152,15 @@ page.parent doesn't seem to be set...
 </div>
 <div class="nav-panel-menu is-active" data-panel="menu">
   <nav class="nav-menu">
-    <h3 class="title"><a href="../about.html">Wicket Viewer</a></h3>
+    <h3 class="title"><a href="../about.html">Web UI (Wicket Viewer)</a></h3>
 <ul class="nav-list">
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../configuration-properties.html">Configuration Properties</a>
+    <a class="nav-link" href="../setup-and-configuration.html">Setup and Configuration</a>
   </li>
   <li class="nav-item" data-depth="1">
     <a class="nav-link" href="../features.html">End-user Features</a>
-  </li>
-  <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../security.html">Security</a>
   </li>
   <li class="nav-item" data-depth="1">
     <a class="nav-link" href="../customisation.html">Customisation</a>
@@ -175,7 +172,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../hints-and-tips.html">Hints-n-Tips</a>
   </li>
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../other-resources.html">Other Resources</a>
+    <a class="nav-link" href="../security.html">Security</a>
   </li>
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
@@ -202,7 +199,7 @@ page.parent doesn't seem to be set...
 </div>
 <div class="nav-panel-explore" data-panel="explore">
   <div class="context">
-    <span class="title">Wicket Viewer</span>
+    <span class="title">Web UI (Wicket Viewer)</span>
     <span class="version">latest</span>
   </div>
   <ul class="components">
@@ -215,7 +212,7 @@ page.parent doesn't seem to be set...
       </ul>
     </li>
     <li class="component">
-      <span class="title">BC Mappings Catalog</span>
+      <span class="title">BC Mapping Libraries</span>
       <ul class="versions">
         <li class="version is-latest">
           <a href="../../../mappings/latest/about.html">latest</a>
@@ -295,7 +292,7 @@ page.parent doesn't seem to be set...
       </ul>
     </li>
     <li class="component">
-      <span class="title">Restful Objects Viewer</span>
+      <span class="title">REST API (Restful Objects Viewer)</span>
       <ul class="versions">
         <li class="version is-latest">
           <a href="../../../vro/latest/about.html">latest</a>
@@ -307,9 +304,6 @@ page.parent doesn't seem to be set...
       <ul class="versions">
         <li class="version is-latest">
           <a href="../../../security/latest/about.html">latest</a>
-        </li>
-        <li class="version">
-          <a href="../../../security/2.0.0-M5/index.html">2.0.0-M5</a>
         </li>
       </ul>
     </li>
@@ -362,7 +356,7 @@ page.parent doesn't seem to be set...
       </ul>
     </li>
     <li class="component is-current">
-      <span class="title">Wicket Viewer</span>
+      <span class="title">Web UI (Wicket Viewer)</span>
       <ul class="versions">
         <li class="version is-current is-latest">
           <a href="../about.html">latest</a>
@@ -380,7 +374,7 @@ page.parent doesn't seem to be set...
   <a href="../../../docs/latest/about.html" class="home-link"></a>
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
-    <li><a href="../about.html">Wicket Viewer</a></li>
+    <li><a href="../about.html">Web UI (Wicket Viewer)</a></li>
     <li><a href="replacing-page-elements.html">Replacing page elements</a></li>
   </ul>
 </nav>
@@ -451,12 +445,20 @@ For example, you might switch out Apache Isis' sliding bookmark panel and replac
 </div>
 <div class="paragraph">
 <p>First, you need to write a <code>ComponentFactory</code> and corresponding <code>Component</code>.
-The recommended approach is to start with the source of the <code>Component</code> you want to switch out.
-For example:</p>
+The recommended approach is to start with the source of the <code>Component</code> you want to switch out.</p>
+</div>
+<div class="paragraph">
+<p>The <code>ComponentFactory</code> should be annotated as a Spring service, typically using Spring&#8217;s <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/stereotype/Service.html">@Service</a> annotation.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class MyBookmarkedPagesPanelFactory extends ComponentFactoryAbstract {
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.springframework.stereotype.Service;
+
+@Service
+public class MyBookmarkedPagesPanelFactory extends ComponentFactoryAbstract {
     public MyBookmarkedPagesPanelFactory() {
         super(ComponentType.BOOKMARKED_PAGES);
     }
@@ -488,60 +490,7 @@ For example:</p>
 Your new <code>Component</code> uses the information in the provided model (eg <code>BookmarkedPagesModel</code>) to know what to render.</p>
 </div>
 <div class="paragraph">
-<p>Next, you will require a custom implementation of the <code>ComponentFactoryRegistrar</code> that registers your custom <code>ComponentFactory</code> as a replacement:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Singleton
-public class MyComponentFactoryRegistrar extends ComponentFactoryRegistrarDefault {
-    @Override
-    public void addComponentFactories(ComponentFactoryList componentFactories) {
-        super.addComponentFactories(componentFactories);
-        componentFactories.add(new MyBookmarkedPagesPanelFactory());
-    }
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>This will result in the new component being used instead of (that is, discovered prior to) Isis' default implementation.</p>
-</div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>Previously we suggested using "replace" rather than "add"; however this has unclear semantics for some component types; see <a href="https://issues.apache.org/jira/browse/ISIS-996">ISIS-996</a>.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>Finally, you&#8217;ll need to subclass <code>IsisWicketApplication</code> (register in <code>web.xml</code>)and then adjust the Guice bindings returned in the Guice <code>Module</code> returned by <code>newIsisWicketModule()</code>:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class MyAppApplication extends IsisWicketApplication {
-    @Override
-    protected Module newIsisWicketModule() {
-        final Module isisDefaults = super.newIsisWicketModule();
-        final Module myAppOverrides = new AbstractModule() {
-            @Override
-            protected void configure() {
-                ...
-                bind(ComponentFactoryRegistrar.class)
-                    .to(MyComponentFactoryRegistrar.class);
-                ...
-            }
-        };
-
-        return Modules.override(isisDefaults).with(myAppOverrides);
-    }
-}</code></pre>
-</div>
+<p>Your new component will be used instead of the default implementation.</p>
 </div>
 </div>
 </div>
@@ -550,41 +499,14 @@ public class MyComponentFactoryRegistrar extends ComponentFactoryRegistrarDefaul
 <div class="sectionbody">
 <div class="paragraph">
 <p>As explained above, in most cases Apache Isis' Wicket viewer will search for the first <code>ComponentFactory</code> that can render an element, and use it.
-In the case of (either standalone or parented) collections, though, Apache Isis will show all available views.</p>
+In the case of (either standalone or parented) collections, though, the viewer will show all available views.</p>
 </div>
 <div class="paragraph">
 <p>For example, out-of-the-box Apache Isis provides a table view, a summary view (totals/sums/averages of any data), and a collapsed view.
 These are selected by clicking on the toolbar by each collection.</p>
 </div>
 <div class="paragraph">
-<p>Additional views though could render the objects in the collection as a variety of ways.
-Indeed, some third-party implementations in the (non-ASF) <a href="https://platform.incode.org" target="_blank" rel="noopener">Incode Platform</a> already exist, including:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>excel component - collection as a downloadable excel spreadsheet</p>
-</li>
-<li>
-<p>gmap3 component - render any objects with a location on a map</p>
-</li>
-<li>
-<p>pdf.js component - render Blob containined PDF as a scrollable image</p>
-</li>
-<li>
-<p>wicked charts component - barchart of any data</p>
-</li>
-<li>
-<p>full calendar - render any objects with date properties on a calendar</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Registering these custom views is just a matter of adding the appropriate Maven module to the classpath.
-Apache Isis uses the JDK <code>ServiceLoader</code> API to automatically discover and register the <code>ComponentFactory</code> of each such component.</p>
-</div>
-<div class="paragraph">
-<p>If you want to write your own alternative component and auto-register, then include a file <code>META-INF/services/org.apache.isis.viewer.wicket.ui.ComponentFactory</code> whose contents is the fully-qualified class name of the custom <code>ComponentFactory</code> that you have written.</p>
+<p>Additional views though could render the objects in the collection as a variety of ways; as illustrated by the <a href="../gmap3/about.html" class="page">Gmap3</a>, <a href="../fullcalendar/about.html" class="page">Fullcalendar</a> and <a href="../exceldownload/about.html" class="page">Excel Download</a> extensions.</p>
 </div>
 <div class="paragraph">
 <p>Wicket itself has lots of components available at its <a href="http://wicketstuff.org">wicketstuff.org</a> companion website; you might find some of these useful for your own customizations.</p>
@@ -596,26 +518,14 @@ Apache Isis uses the JDK <code>ServiceLoader</code> API to automatically discove
 <div class="sectionbody">
 <div class="paragraph">
 <p>One further use case in particular is worth highlighting; the rendering of an entire entity.
-Normally entities this is done using <code>EntityCombinedPanelFactory</code>, this being the first <code>ComponentFactory</code> for the <code>ComponentType.ENTITY</code> that is registered in Apache Isis default <code>ComponentFactoryRegistrarDefault</code>.</p>
+Normally for entities this is done using <code>Bs3GridPanelFactory</code>, this being the first <code>ComponentFactory</code> for the <code>ComponentType.ENTITY</code> that is registered in Apache Isis default <code>ComponentFactoryRegistrarDefault</code>.</p>
 </div>
 <div class="paragraph">
 <p>You could, though, register your own <code>ComponentFactory</code> for entities that is targeted at a particular class of entity - some sort of object representing a dashboard, for example.
-It can use the <code>EntityModel</code> provided to it to determine the class of the entity, checking if it is of the appropriate type.
-Your custom factory should also be registered before the <code>EntityCombinedPanelFactory</code> so that it is checked prior to the default <code>EntityCombinedPanelFactory</code>:</p>
+It can use the <code>EntityModel</code> provided to it to determine the class of the entity, checking if it is of the appropriate type.</p>
 </div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Singleton
-public class MyComponentFactoryRegistrar extends ComponentFactoryRegistrarDefault {
-    @Override
-    public void addComponentFactories(ComponentFactoryList componentFactories) {
-        componentFactories.add(new DashboardEntityFactory());
-        ...
-        super.addComponentFactories(componentFactories);
-        ...
-    }
-}</code></pre>
-</div>
+<div class="paragraph">
+<p>The <a href="https://demo-wicket.isis.incode.work">demo app</a> includes an example of this technique (<code>Featured &gt; Where in the World</code>).</p>
 </div>
 </div>
 </div>
@@ -636,7 +546,7 @@ public class MyComponentFactoryRegistrar extends ComponentFactoryRegistrarDefaul
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M5.20210409-0429-dc3d9045</p>
+            <p>Revision: 2.0.0-M5.20210414-1732-4168ca3b</p>
         </div>
     </div>
 </footer>

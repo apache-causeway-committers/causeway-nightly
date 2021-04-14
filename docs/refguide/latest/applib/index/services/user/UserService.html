@@ -325,9 +325,6 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../urlencoding/UrlEncodingService.html">UrlEncodingService</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../userprof/UserProfileService.html">UserProfileService</a>
-  </li>
-  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../userreg/UserRegistrationService.html">UserRegistrationService</a>
   </li>
   <li class="nav-item is-current-page" data-depth="2">
@@ -341,6 +338,15 @@ page.parent doesn't seem to be set...
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../xmlsnapshot/XmlSnapshotService.html">XmlSnapshotService</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Viewer (Common Applib)</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../../../viewer/index/common/applib/services/userprof/UserProfileUiModelProvider.html">UserProfileUiModelProvider</a>
+  </li>
+</ul>
   </li>
 </ul>
   </li>
@@ -685,7 +691,7 @@ page.parent doesn't seem to be set...
       </ul>
     </li>
     <li class="component">
-      <span class="title">BC Mappings Catalog</span>
+      <span class="title">BC Mapping Libraries</span>
       <ul class="versions">
         <li class="version is-latest">
           <a href="../../../../../../mappings/latest/about.html">latest</a>
@@ -765,7 +771,7 @@ page.parent doesn't seem to be set...
       </ul>
     </li>
     <li class="component">
-      <span class="title">Restful Objects Viewer</span>
+      <span class="title">REST API (Restful Objects Viewer)</span>
       <ul class="versions">
         <li class="version is-latest">
           <a href="../../../../../../vro/latest/about.html">latest</a>
@@ -777,9 +783,6 @@ page.parent doesn't seem to be set...
       <ul class="versions">
         <li class="version is-latest">
           <a href="../../../../../../security/latest/about.html">latest</a>
-        </li>
-        <li class="version">
-          <a href="../../../../../../security/2.0.0-M5/index.html">2.0.0-M5</a>
         </li>
       </ul>
     </li>
@@ -832,7 +835,7 @@ page.parent doesn't seem to be set...
       </ul>
     </li>
     <li class="component">
-      <span class="title">Wicket Viewer</span>
+      <span class="title">Web UI (Wicket Viewer)</span>
       <ul class="versions">
         <li class="version is-latest">
           <a href="../../../../../../vw/latest/about.html">latest</a>
@@ -882,6 +885,11 @@ page.parent doesn't seem to be set...
   UserMemento currentUserElseFail()     <i class="conum" data-value="3"></i><b>(3)</b>
   Optional&lt;String&gt; currentUserName()     <i class="conum" data-value="4"></i><b>(4)</b>
   String currentUserNameElseNobody()     <i class="conum" data-value="5"></i><b>(5)</b>
+  void impersonateUser(final String userName, final List&lt;String&gt; roles)     <i class="conum" data-value="6"></i><b>(6)</b>
+  void stopImpersonating()     <i class="conum" data-value="7"></i><b>(7)</b>
+  boolean supportsImpersonation()     <i class="conum" data-value="8"></i><b>(8)</b>
+  Optional&lt;UserMemento&gt; getImpersonatedUser()     <i class="conum" data-value="9"></i><b>(9)</b>
+  boolean isImpersonating()     <i class="conum" data-value="10"></i><b>(10)</b>
 }</code></pre>
 </div>
 </div>
@@ -942,6 +950,61 @@ page.parent doesn't seem to be set...
 </div>
 </div></td>
 </tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td><a href="#impersonateUser__String_List">impersonateUser(String, List)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Allows implementations to override the current user with another user.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td><a href="#stopImpersonating__">stopImpersonating()</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>For implementations that support impersonation, this is to programmatically stop impersonating a user</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td><a href="#supportsImpersonation__">supportsImpersonation()</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Whether this implementation supports impersonation.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
+<td><a href="#getImpersonatedUser__">getImpersonatedUser()</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>The impersonated user, if it has previously been set.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="10"></i><b>10</b></td>
+<td><a href="#isImpersonating__">isImpersonating()</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Whether or not the user currently reported (in <em>#currentUser()</em> and similar) is actually an impersonated user.</p>
+</div>
+</div>
+</div></td>
+</tr>
 </table>
 </div>
 </div>
@@ -979,6 +1042,42 @@ page.parent doesn't seem to be set...
 <p>Returns either the current user&#8217;s name or else <em>Nobody</em> .</p>
 </div>
 </div>
+<div class="sect2">
+<h3 id="impersonateUser__String_List"><a class="anchor" href="#impersonateUser__String_List"></a>impersonateUser(String, List)</h3>
+<div class="paragraph">
+<p>Allows implementations to override the current user with another user.</p>
+</div>
+<div class="paragraph">
+<p>This is intended for non-production environments only, where it can be invaluable (from a support perspective) to be able to quickly use the application "as if" logged in as another user.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="stopImpersonating__"><a class="anchor" href="#stopImpersonating__"></a>stopImpersonating()</h3>
+<div class="paragraph">
+<p>For implementations that support impersonation, this is to programmatically stop impersonating a user</p>
+</div>
+<div class="paragraph">
+<p>Intended to be called at some point after <em>#impersonateUser(String, List)</em> would have been called.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="supportsImpersonation__"><a class="anchor" href="#supportsImpersonation__"></a>supportsImpersonation()</h3>
+<div class="paragraph">
+<p>Whether this implementation supports impersonation.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="getImpersonatedUser__"><a class="anchor" href="#getImpersonatedUser__"></a>getImpersonatedUser()</h3>
+<div class="paragraph">
+<p>The impersonated user, if it has previously been set.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="isImpersonating__"><a class="anchor" href="#isImpersonating__"></a>isImpersonating()</h3>
+<div class="paragraph">
+<p>Whether or not the user currently reported (in <em>#currentUser()</em> and similar) is actually an impersonated user.</p>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -996,7 +1095,7 @@ page.parent doesn't seem to be set...
 <p>The roles associated with the <code>UserMemento</code> will be based on the configured <a href="../../../../../../security/latest/about.html" class="page">security</a> (typically Shiro).</p>
 </div>
 <div class="paragraph">
-<p>In addition, when using the <a href="../../../../../../vw/latest/about.html" class="page">Wicket viewer</a> there will be an additional "org.apache.isis.viewer.wicket.roles.USER" role; this is used internally to restrict access to web pages without authenticating.</p>
+<p>In addition, when using the <a href="../../../../../../vw/latest/about.html" class="page">Web UI (Wicket viewer)</a> there will be an additional "org.apache.isis.viewer.wicket.roles.USER" role; this is used internally to restrict access to web pages without authenticating.</p>
 </div>
 </div>
 </div>
@@ -1032,7 +1131,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M5.20210409-0429-dc3d9045</p>
+            <p>Revision: 2.0.0-M5.20210414-1732-4168ca3b</p>
         </div>
     </div>
 </footer>

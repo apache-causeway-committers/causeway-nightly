@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css"/>
 <link rel="home" href="../../.." title="Apache Isis">
   <link rel="next" href="../shiro/about.html" title="Shiro Implementation">
-  <link rel="prev" href="../core/about.html" title="API">
+  <link rel="prev" href="../core/about.html" title="Security Component SPI">
   </head>
   <body class="article">
 <header class="header">
@@ -144,12 +144,12 @@
   <aside class="nav">
     <div class="panels">
 <div class="nav-panel-pagination">
-  <a class="page-previous" rel="prev" href="../core/about.html" title="API"><span></span></a>
+  <a class="page-previous" rel="prev" href="../core/about.html" title="Security Component SPI"><span></span></a>
   <a class="page-next" rel="next"
      href="../shiro/about.html" title="Shiro Implementation"><span></span></a>
 <!--
 page.parent doesn't seem to be set...
-  <a class="page-parent disabled" rel="prev" href="" title="API"><span></span></a>
+  <a class="page-parent disabled" rel="prev" href="" title="Security Component SPI"><span></span></a>
 -->
 </div>
 <div class="nav-panel-menu is-active" data-panel="menu">
@@ -159,14 +159,7 @@ page.parent doesn't seem to be set...
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../domain-services-api-for-applications.html">Domain Services API</a>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="0">
-<ul class="nav-list">
-  <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../core/about.html">API</a>
+    <a class="nav-link" href="../core/about.html">Security Component SPI</a>
   </li>
   <li class="nav-item is-current-page" data-depth="1">
     <a class="nav-link" href="about.html">Bypass Implementation</a>
@@ -178,15 +171,15 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../keycloak/about.html">Keycloak Implementation</a>
   </li>
   <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../spring/about.html">Spring Implementation</a>
+  </li>
+  <li class="nav-item" data-depth="1">
     <a class="nav-link" href="../usage-by-isis-viewers.html">Usage by Isis Viewers</a>
   </li>
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
     <span class="nav-text">Extensions</span>
 <ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../shiro-realm-ldap/about.html">LDAP Realm for Shiro</a>
-  </li>
   <li class="nav-item" data-depth="2">
     <button class="nav-item-toggle"></button>
     <a class="nav-link" href="../secman/about.html">Secman</a>
@@ -211,7 +204,19 @@ page.parent doesn't seem to be set...
   </li>
 </ul>
   </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../audit-trail/about.html">Audit Trail</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../session-log/about.html">Session Log</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../shiro-realm-ldap/about.html">LDAP Realm for Shiro</a>
+  </li>
 </ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../spring/about.html">Spring Implementation</a>
   </li>
 </ul>
   </li>
@@ -233,7 +238,7 @@ page.parent doesn't seem to be set...
       </ul>
     </li>
     <li class="component">
-      <span class="title">BC Mappings Catalog</span>
+      <span class="title">BC Mapping Libraries</span>
       <ul class="versions">
         <li class="version is-latest">
           <a href="../../../mappings/latest/about.html">latest</a>
@@ -313,7 +318,7 @@ page.parent doesn't seem to be set...
       </ul>
     </li>
     <li class="component">
-      <span class="title">Restful Objects Viewer</span>
+      <span class="title">REST API (Restful Objects Viewer)</span>
       <ul class="versions">
         <li class="version is-latest">
           <a href="../../../vro/latest/about.html">latest</a>
@@ -325,9 +330,6 @@ page.parent doesn't seem to be set...
       <ul class="versions">
         <li class="version is-current is-latest">
           <a href="../about.html">latest</a>
-        </li>
-        <li class="version">
-          <a href="../../2.0.0-M5/index.html">2.0.0-M5</a>
         </li>
       </ul>
     </li>
@@ -380,7 +382,7 @@ page.parent doesn't seem to be set...
       </ul>
     </li>
     <li class="component">
-      <span class="title">Wicket Viewer</span>
+      <span class="title">Web UI (Wicket Viewer)</span>
       <ul class="versions">
         <li class="version is-latest">
           <a href="../../../vw/latest/about.html">latest</a>
@@ -402,13 +404,6 @@ page.parent doesn't seem to be set...
     <li><a href="about.html">Bypass Implementation</a></li>
   </ul>
 </nav>
-<div class="page-versions">
-  <button class="version-menu-toggle" title="Show other versions of page">latest</button>
-  <div class="version-menu">
-    <a class="version is-current" href="about.html">latest</a>
-    <a class="version is-missing" href="../../2.0.0-M5/index.html">2.0.0-M5</a>
-  </div>
-</div>
   <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/master/security/bypass/src/main/adoc/modules/bypass/pages/about.adoc">Edit</a></div>
 </div>
 <article class="doc">
@@ -416,51 +411,101 @@ page.parent doesn't seem to be set...
 <h1 class="page">Bypass</h1>
 <div id="preamble">
 <div class="sectionbody">
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-TODO: this content has not yet been reviewed/updated for v2.0
-</td>
-</tr>
-</table>
-</div>
 <div class="paragraph">
-<p>The bypass implementation, as its name suggests, allows both authentication and authorization to be bypassed.</p>
-</div>
-<div class="paragraph">
-<p>This is typically used for integration tests or for prototyping.</p>
+<p>The bypass implementation, as its name suggests, allows both authentication and authorization to be bypassed.
+This is typically used for integration tests or for prototyping.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="configuring-to-use-bypass"><a class="anchor" href="#configuring-to-use-bypass"></a>Configuring to use Bypass</h2>
+<h2 id="maven-pom-xml"><a class="anchor" href="#maven-pom-xml"></a>Maven pom.xml</h2>
 <div class="sectionbody">
+<div class="sect2">
+<h3 id="dependency-management"><a class="anchor" href="#dependency-management"></a>Dependency Management</h3>
 <div class="paragraph">
-<p>The bypass security component consists of an implementation of both the <code>AuthenticationManager</code> and <code>AuthorizationManager</code> APIs, and are intended for prototyping use only.</p>
-</div>
-<div class="paragraph">
-<p>The authentication manager allows access with any credentials (in a sense, "bypassing" authentication), while the authorization manager provides access to all class members (in a sense, "bypassing" authorization).</p>
-</div>
-<div class="paragraph">
-<p>To tell Apache Isis to bypass security, use the appropriate <code>IsisModuleSecurityBypass</code> in the <a href="../../../userguide/latest/fun/modules.html" class="page">app manifest</a>.</p>
+<p>If your application inherits from the Apache Isis starter app (<code>org.apache.isis.app:isis-app-starter-parent</code> then that will define the version automatically:</p>
 </div>
 <div class="listingblock">
+<div class="title">pom.xml</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">isis.authentication=bypass
-isis.authorization=bypass</code></pre>
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;parent&gt;
+    &lt;groupId&gt;org.apache.isis.app&lt;/groupId&gt;
+    &lt;artifactId&gt;isis-app-starter-parent&lt;/artifactId&gt;
+    &lt;version&gt;2.0.0-M6&lt;/version&gt;
+    &lt;relativePath/&gt;
+&lt;/parent&gt;</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>This installs the appropriate no-op implementations for both authentication and authorization:</p>
+<p>Alternatively, import the core BOM.
+This is usually done in the top-level parent pom of your application:</p>
 </div>
-<div class="imageblock">
+<div class="listingblock">
+<div class="title">pom.xml</div>
 <div class="content">
-<img src="_images/security/security-apis-impl/configure-isis-to-use-bypass.PNG" alt="configure isis to use bypass" width="600px">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependencyManagement&gt;
+    &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.apache.isis.core&lt;/groupId&gt;
+            &lt;artifactId&gt;isis-core&lt;/artifactId&gt;
+            &lt;version&gt;2.0.0-M6&lt;/version&gt;
+            &lt;scope&gt;import&lt;/scope&gt;
+            &lt;type&gt;pom&lt;/type&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+&lt;/dependencyManagement&gt;</code></pre>
 </div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="dependency"><a class="anchor" href="#dependency"></a>Dependency</h3>
+<div class="paragraph">
+<p>In the webapp module of your application, add the following dependency:</p>
+</div>
+<div class="listingblock">
+<div class="title">pom.xml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.apache.isis.mavendeps&lt;/groupId&gt;
+        &lt;artifactId&gt;isis-mavendeps-webapp&lt;/artifactId&gt;
+        &lt;type&gt;pom&lt;/type&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="update-appmanifest"><a class="anchor" href="#update-appmanifest"></a>Update AppManifest</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In your application&#8217;s <code>AppManifest</code> (top-level Spring <code>@Configuration</code> used to bootstrap the app), import the</p>
+</div>
+<div class="listingblock">
+<div class="title">AppManifest.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Configuration
+@Import({
+        ...
+        IsisModuleSecurityBypass.class,
+        ...
+})
+public class AppManifest {
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Make sure that no other <code>IsisModuleSecurityXxx</code> module is imported.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="in-use"><a class="anchor" href="#in-use"></a>In Use</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>With bypass installed, you should be able to login with any credentials.</p>
 </div>
 </div>
 </div>
@@ -481,7 +526,7 @@ isis.authorization=bypass</code></pre>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M5.20210409-0429-dc3d9045</p>
+            <p>Revision: 2.0.0-M5.20210414-1732-4168ca3b</p>
         </div>
     </div>
 </footer>
