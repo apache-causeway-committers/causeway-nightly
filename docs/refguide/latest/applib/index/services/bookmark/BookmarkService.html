@@ -910,12 +910,12 @@ page.parent doesn't seem to be set...
 <div class="title">BookmarkService.java</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">interface BookmarkService {
-  Bookmark bookmarkFor(Object domainObject)     <i class="conum" data-value="1"></i><b>(1)</b>
-  Bookmark bookmarkForElseThrow(Object domainObject)     <i class="conum" data-value="2"></i><b>(2)</b>
-  Bookmark bookmarkFor(Class&lt;?&gt; cls, String identifier)     <i class="conum" data-value="3"></i><b>(3)</b>
-  Object lookup(BookmarkHolder bookmarkHolder)     <i class="conum" data-value="4"></i><b>(4)</b>
-  Object lookup(Bookmark bookmark)     <i class="conum" data-value="5"></i><b>(5)</b>
-  T lookup(Bookmark bookmark, Class&lt;T&gt; cls)     <i class="conum" data-value="6"></i><b>(6)</b>
+  Optional&lt;Bookmark&gt; bookmarkFor(Object domainObject)     <i class="conum" data-value="1"></i><b>(1)</b>
+  Optional&lt;Bookmark&gt; bookmarkFor(Class&lt;?&gt; cls, String identifier)     <i class="conum" data-value="2"></i><b>(2)</b>
+  Optional&lt;Object&gt; lookup(BookmarkHolder bookmarkHolder)     <i class="conum" data-value="3"></i><b>(3)</b>
+  Optional&lt;Object&gt; lookup(Bookmark bookmark)     <i class="conum" data-value="4"></i><b>(4)</b>
+  Optional&lt;T&gt; lookup(Bookmark bookmark, Class&lt;T&gt; cls)     <i class="conum" data-value="5"></i><b>(5)</b>
+  Bookmark bookmarkForElseFail(Object domainObject)     <i class="conum" data-value="6"></i><b>(6)</b>
 }</code></pre>
 </div>
 </div>
@@ -927,39 +927,28 @@ page.parent doesn't seem to be set...
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>Returns the <a href="Bookmark.html" class="page">Bookmark</a> for the given domain object.</p>
+<p>Optionally returns the <a href="Bookmark.html" class="page">Bookmark</a> for the given domain object, based on whether can create a bookmark for it.</p>
 </div>
 </div>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><a href="#bookmarkForElseThrow__Object">bookmarkForElseThrow(Object)</a>
+<td><a href="#bookmarkFor__Class_String">bookmarkFor(Class, String)</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>As per <em>#bookmarkFor(Object)</em> , but requires that a non-null <a href="Bookmark.html" class="page">Bookmark</a> is returned.</p>
+<p>Optionally returns a <a href="Bookmark.html" class="page">Bookmark</a> created from the constituent parts, based on whether can create a bookmark from these.</p>
 </div>
 </div>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td><a href="#bookmarkFor__Class_String">bookmarkFor(Class, String)</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Utility method that creates a <a href="Bookmark.html" class="page">Bookmark</a> from the constituent parts.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
 <td><a href="#lookup__BookmarkHolder">lookup(BookmarkHolder)</a></td>
 </tr>
 <tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
 <td><a href="#lookup__Bookmark">lookup(Bookmark)</a>
 <div class="openblock">
 <div class="content">
@@ -970,12 +959,23 @@ page.parent doesn't seem to be set...
 </div></td>
 </tr>
 <tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
 <td><a href="#lookup__Bookmark_Class">lookup(Bookmark, Class)</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
 <p>As <em>#lookup(Bookmark)</em> , but down-casting to the specified type.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td><a href="#bookmarkForElseFail__Object">bookmarkForElseFail(Object)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>As per <em>#bookmarkFor(Object)</em> , but requires that a non-null <a href="Bookmark.html" class="page">Bookmark</a> is returned.</p>
 </div>
 </div>
 </div></td>
@@ -990,7 +990,7 @@ page.parent doesn't seem to be set...
 <div class="sect2">
 <h3 id="bookmarkFor__Object"><a class="anchor" href="#bookmarkFor__Object"></a>bookmarkFor(Object)</h3>
 <div class="paragraph">
-<p>Returns the <a href="Bookmark.html" class="page">Bookmark</a> for the given domain object.</p>
+<p>Optionally returns the <a href="Bookmark.html" class="page">Bookmark</a> for the given domain object, based on whether can create a bookmark for it.</p>
 </div>
 <div class="literalblock">
 <div class="content">
@@ -999,15 +999,9 @@ page.parent doesn't seem to be set...
 </div>
 </div>
 <div class="sect2">
-<h3 id="bookmarkForElseThrow__Object"><a class="anchor" href="#bookmarkForElseThrow__Object"></a>bookmarkForElseThrow(Object)</h3>
-<div class="paragraph">
-<p>As per <em>#bookmarkFor(Object)</em> , but requires that a non-null <a href="Bookmark.html" class="page">Bookmark</a> is returned.</p>
-</div>
-</div>
-<div class="sect2">
 <h3 id="bookmarkFor__Class_String"><a class="anchor" href="#bookmarkFor__Class_String"></a>bookmarkFor(Class, String)</h3>
 <div class="paragraph">
-<p>Utility method that creates a <a href="Bookmark.html" class="page">Bookmark</a> from the constituent parts.</p>
+<p>Optionally returns a <a href="Bookmark.html" class="page">Bookmark</a> created from the constituent parts, based on whether can create a bookmark from these.</p>
 </div>
 </div>
 <div class="sect2">
@@ -1024,6 +1018,12 @@ page.parent doesn't seem to be set...
 <h3 id="lookup__Bookmark_Class"><a class="anchor" href="#lookup__Bookmark_Class"></a>lookup(Bookmark, Class)</h3>
 <div class="paragraph">
 <p>As <em>#lookup(Bookmark)</em> , but down-casting to the specified type.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="bookmarkForElseFail__Object"><a class="anchor" href="#bookmarkForElseFail__Object"></a>bookmarkForElseFail(Object)</h3>
+<div class="paragraph">
+<p>As per <em>#bookmarkFor(Object)</em> , but requires that a non-null <a href="Bookmark.html" class="page">Bookmark</a> is returned.</p>
 </div>
 </div>
 </div>
@@ -1105,7 +1105,7 @@ For example the <a href="../publishing/spi/EntityPropertyChangeSubscriber.html" 
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M5.20210415-0428-f80870bd</p>
+            <p>Revision: 2.0.0-M5.20210416-0430-eb37524f</p>
         </div>
     </div>
 </footer>
