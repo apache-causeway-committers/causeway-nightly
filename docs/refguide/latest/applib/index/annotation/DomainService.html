@@ -964,82 +964,6 @@ page.parent doesn't seem to be set...
 <p>This value, if specified, is used in the serialized form of the object&#8217;s OID. An OID is used by the framework to unique identify an object over time (same concept as a URN).</p>
 </div>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="usage-notes"><a class="anchor" href="#usage-notes"></a>Usage Notes</h2>
-<div class="sectionbody">
-<div class="sect2">
-<h3 id="nature-of-service"><a class="anchor" href="#nature-of-service"></a>Nature of Service</h3>
-<div class="paragraph">
-<p>The <a href="#nature">nature()</a> element indicates the intent of the actions defined within the domain service:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>VIEW</code></p>
-<div class="paragraph">
-<p>The default; the service&#8217;s actions appear on menu bars, can be contributed, appear in the REST API</p>
-</div>
-</li>
-<li>
-<p><code>REST</code></p>
-<div class="paragraph">
-<p>The service&#8217;s actions are intended only to be listed in the REST API exposed by the <a href="../../../../../vro/latest/about.html" class="page">RestfulObjects viewer</a>.</p>
-</div>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>The actual class name of the domain service is only rendered for the <code>VIEW</code> natures.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainService( nature=NatureOfService.VIEW )
-@RequiredArgsConstructor(onConstructor_ = {@Inject} )
-public class Loans {                                   <i class="conum" data-value="1"></i><b>(1)</b>
-
-    private final LoanRepository loanRepository;       <i class="conum" data-value="2"></i><b>(2)</b>
-
-    @Action(semantics=SemanticsOf.SAFE)
-    public List&lt;Loan&gt; findOverdueLoans() {
-        // ...
-    }
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>name is intended to be rendered in the UI</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>it&#8217;s common for domain-layer domain services to be injected into presentation layer services.</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>For services that do not need to appear in the UI and do not need to be invoked using <a href="../services/wrapper/WrapperFactory.html" class="page">WrapperFactory</a> (in other words, do not need to be part of the metamodel), you can declare the service using Spring&#8217;s <code>@Service</code>, <code>@Repository</code> or <code>@Component</code> annotations.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Repository
-public class LoanRepository {
-    public List&lt;Loan&gt; findLoansFor(Borrower borrower) {
-        // ...
-    }
-}</code></pre>
-</div>
-</div>
-</div>
 <div class="sect2">
 <h3 id="object-alias"><a class="anchor" href="#object-alias"></a>Object Alias</h3>
 <div class="paragraph">
@@ -1139,6 +1063,83 @@ An error message will be printed in the log to help you determine which classes 
 </tr>
 </table>
 </div>
+<div class="sect2">
+<h3 id="nature-of-service"><a class="anchor" href="#nature-of-service"></a>Nature of Service</h3>
+<div class="paragraph">
+<p>The <a href="#nature">nature()</a> element indicates the intent of the actions defined within the domain service:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>VIEW</code></p>
+<div class="paragraph">
+<p>The default; the service&#8217;s actions appear on menu bars, can be contributed, appear in the REST API</p>
+</div>
+</li>
+<li>
+<p><code>REST</code></p>
+<div class="paragraph">
+<p>The service&#8217;s actions are intended only to be listed in the REST API exposed by the <a href="../../../../../vro/latest/about.html" class="page">RestfulObjects viewer</a>.</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The actual class name of the domain service is only rendered for the <code>VIEW</code> natures.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainService( nature=NatureOfService.VIEW )
+@RequiredArgsConstructor(onConstructor_ = {@Inject} )
+public class Loans {                                   <i class="conum" data-value="1"></i><b>(1)</b>
+
+    private final LoanRepository loanRepository;       <i class="conum" data-value="2"></i><b>(2)</b>
+
+    @Action(semantics=SemanticsOf.SAFE)
+    public List&lt;Loan&gt; findOverdueLoans() {
+        // ...
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>name is intended to be rendered in the UI</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>it&#8217;s common for domain-layer domain services to be injected into presentation layer services.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>For services that do not need to appear in the UI and do not need to be invoked using <a href="../services/wrapper/WrapperFactory.html" class="page">WrapperFactory</a> (in other words, do not need to be part of the metamodel), you can declare the service using Spring&#8217;s <code>@Service</code>, <code>@Repository</code> or <code>@Component</code> annotations.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Repository
+public class LoanRepository {
+    public List&lt;Loan&gt; findLoansFor(Borrower borrower) {
+        // ...
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="usage-notes"><a class="anchor" href="#usage-notes"></a>Usage Notes</h2>
+<div class="sectionbody">
+
 </div>
 </div>
 </article>
@@ -1158,7 +1159,7 @@ An error message will be printed in the log to help you determine which classes 
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M5.20210421-0429-8b986529</p>
+            <p>Revision: 2.0.0-M5.20210422-0429-0348bc49</p>
         </div>
     </div>
 </footer>

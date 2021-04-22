@@ -1028,7 +1028,7 @@ Param</th>
 <td class="tableblock halign-left valign-top"></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Y</p></td>
 <td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Y</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Y</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>Validate the proposed value of a property or an action parameter.</p>
@@ -1833,15 +1833,92 @@ However, if they check the first boolean parameter (ie, to ship the <code>Order<
 <div class="paragraph">
 <p>The <code>validate&#8230;&#8203;()</code> supporting method is called for properties, actions and action parameters.</p>
 </div>
-<div class="admonitionblock warning">
+<div class="paragraph">
+<p>When a validating method is returning any non-empty <em>String</em>, the validation is considered a failure, that is brought to the user&#8217;s attention.</p>
+</div>
+<div class="listingblock">
+<div class="title">using <em>validate</em> for an action parameter</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
+import lombok.Setter;
+
+public class Customer {
+
+    @Property
+    @Getter @Setter
+    private Product product;
+
+    public String validateProduct( <i class="conum" data-value="1"></i><b>(1)</b>
+            final Product product) {
+        // ...
+    }
+
+    // ...
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
 <table>
 <tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-TODO: v2 - need to document
-</td>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>validating a property&#8217;s setter argument</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">using <em>validate</em> for an action</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Customer {
+
+    public Order placeOrder(
+            final Product product,
+            final int quantity) {
+        // ...
+    }
+
+    public String validatePlaceOrder( <i class="conum" data-value="1"></i><b>(1)</b>
+            final Product product,
+            final int quantity) {
+        // ...
+    }
+
+    // ...
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>validating the action considering all its parameters</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">using <em>validate</em> for an action parameter</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Customer {
+
+    public Order placeOrder(
+            final Product product,
+            final int quantity) {
+        // ...
+    }
+
+    public String validate0PlaceOrder( <i class="conum" data-value="1"></i><b>(1)</b>
+            final Product product) {
+        // ...
+    }
+
+    // ...
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>validating the action&#8217;s first parameter</td>
 </tr>
 </table>
 </div>
@@ -1864,7 +1941,7 @@ TODO: v2 - need to document
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M5.20210421-0429-8b986529</p>
+            <p>Revision: 2.0.0-M5.20210422-0429-0348bc49</p>
         </div>
     </div>
 </footer>
