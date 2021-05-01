@@ -899,13 +899,19 @@ page.parent doesn't seem to be set...
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>Provides the ability to reorder (or suppress) columns in both parented- and standalone tables.</p>
+<p>Provides the ability to reorder columns in both parented- and standalone tables.</p>
+</div>
+<div class="paragraph">
+<p>If a property is excluded from the returned list, then no column will be rendered, so the API can also be used to suppress columns completely.</p>
 </div>
 <div class="paragraph">
 <p>There can be multiple implementations of this service registered, ordered as per the Spring <em>org.springframework.core.annotation.Order</em> annotation (or equivalent). The result of the first service implementation to return a non- <code>null</code> value will be used.</p>
 </div>
 <div class="paragraph">
 <p>If all provided implementations return <code>null</code> , then the framework will fallback to a default implementation.</p>
+</div>
+<div class="paragraph">
+<p>The similar <a href="TableColumnVisibilityService.html" class="page">TableColumnVisibilityService</a> SPI is the preferred way to suppress columns. As noted above, this <a href="TableColumnOrderService.html" class="page">TableColumnOrderService</a> can also be used to suppress columns. The reason that the <a href="TableColumnVisibilityService.html" class="page">TableColumnVisibilityService</a> is needed in addition to this SPI is because of the way that non-null values are handled; as soon as one implementation has an opinion on the order of columns, no other services are consulted. Trying to combine both responsibilities (reordering and filtering only in a single <a href="TableColumnOrderService.html" class="page">TableColumnOrderService</a> would result in the user needing to take a lot of care in the relative priority of different implementations. Separating out the filter responsibility in the <a href="TableColumnVisibilityService.html" class="page">TableColumnVisibilityService</a> SPIs eliminates these difficulties).</p>
 </div>
 </div>
 </div>
@@ -997,7 +1003,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M5.20210430-0427-920dd701</p>
+            <p>Revision: 2.0.0-M5.20210501-0428-6f20d664</p>
         </div>
     </div>
 </footer>
