@@ -1198,135 +1198,6 @@ The <a href="#restrictTo">restrictTo()</a> element specifies whether the action 
 However, it would be useful to disaply how for a test or demo system where there are only a handful of orders.</p>
 </div>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="related-spis"><a class="anchor" href="#related-spis"></a>Related SPIs</h2>
-<div class="sectionbody">
-<div class="ulist">
-<ul>
-<li>
-<p><a href="../services/publishing/spi/CommandSubscriber.html" class="page">CommandSubscriber</a> SPI</p>
-<div class="paragraph">
-<p>for actions where command publishing (as per <a href="#commandPublishing">@Action#commandPublishing()</a>) is enabled</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="../../../../../userguide/latest/command-log/about.html" class="page">Command Log</a> extension</p>
-<div class="paragraph">
-<p>provides an implementation that simply logs actions using the logging library</p>
-</div>
-</li>
-<li>
-<p><a href="../../../../../userguide/latest/command-replay/about.html" class="page">Command Replay</a> extension</p>
-<div class="paragraph">
-<p>provides an implementation to replicate commands from a primary to a secondary system.</p>
-</div>
-<div class="paragraph">
-<p>This implementation also leverages <a href="#commandDtoProcessor">commandDtoProcessor()</a> to process <code>CommandDto</code>s before being replciated</p>
-</div>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p><a href="../services/publishing/spi/ExecutionSubscriber.html" class="page">ExecutionSubscriber</a> SPI</p>
-<div class="paragraph">
-<p>for actions where execution publishing (as per <a href="#executionPublishing">@Action#executionPublishing</a>) is enabled</p>
-</div>
-</li>
-</ul>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-<div class="sectionbody">
-<div class="ulist">
-<ul>
-<li>
-<p><a href="../services/eventbus/EventBusService.html" class="page">EventBusService</a></p>
-<div class="paragraph">
-<p>which broadcasts domain events as per <a href="#domainEvent">@Action#domainEvent()</a></p>
-</div>
-</li>
-</ul>
-</div>
-<div class="sect2">
-<h3 id="associating-actions-with-properties-and-collections"><a class="anchor" href="#associating-actions-with-properties-and-collections"></a>Associating actions with properties and collections</h3>
-<div class="paragraph">
-<p>The <code>associateWith</code> element allows an action to be associated with other properties or collections of the same domain object.
-The optional <code>sequence</code> element specifies the order of the action in the UI.</p>
-</div>
-<div class="paragraph">
-<p>For example, an <code>Order</code> could have a collection of <code>OrderItem</code>s, and might provide actions to add and remove items:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Order {
-
-    @Getter @Setter
-    @Collection
-    private final SortedSet&lt;OrderItem&gt; items = ...
-
-    @Action(associateWith="items")                  <i class="conum" data-value="1"></i><b>(1)</b>
-    @ActionLayout(sequence="1" )                    <i class="conum" data-value="2"></i><b>(2)</b>
-    public Order addItem(Product p, int quantity) {
-        // ...
-    }
-
-    @Action(associateWith="items")                  <i class="conum" data-value="3"></i><b>(3)</b>
-    @ActionLayout(sequence="2" )                    <i class="conum" data-value="4"></i><b>(4)</b>
-    public Order removeItem(OrderItem item) {
-        // ...
-    }
-
-    // ...
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>matches the name of the collection</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>first action in the list of all associated actions</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>matches the name of the collection</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>second action in the list of all associated actions</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>These actions - <code>addItem()</code> and <code>removeItem()</code> can be thought of as associated with with the <code>items</code> collection because that is the state that they primarily affect.</p>
-</div>
-<div class="paragraph">
-<p>In the user interface associated actions are rendered close to the member to which they relate.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>The same effect can be accomplished using the <code>.layout.xml</code> file.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-</div>
 <div class="sect2">
 <h3 id="collection-type"><a class="anchor" href="#collection-type"></a>Collection type</h3>
 <div class="paragraph">
@@ -1351,6 +1222,202 @@ The optional <code>sequence</code> element specifies the order of the action in 
 </div>
 <div class="paragraph">
 <p>In general we recommend that you use generics instead, eg <code>List&lt;Customer&gt;</code>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="command-processing"><a class="anchor" href="#command-processing"></a>Command Processing</h3>
+<div class="paragraph">
+<p>Every action invocation (and <a href="Property.html#commandPublishing" class="page">property edit</a> for that matter) is normally reified into a concrete <a href="../services/command/Command.html" class="page">Command</a> object, basically a wrapper around the <a href="../../../schema/cmd.html" class="page">CommandDto</a> that also captures some timing metrics about the execution as well as the outcome.</p>
+</div>
+<div class="paragraph">
+<p>The main uses cases are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>as a means to allow asynchronous child commands to be executed, using the <a href="../services/wrapper/WrapperFactory.html" class="page">WrapperFactory</a> service;</p>
+</li>
+<li>
+<p>as a means to audit (persist) commands, by implementing the <a href="../services/publishing/spi/CommandSubscriber.html" class="page">CommandSubscriber</a> SPI.</p>
+<div class="paragraph">
+<p>The <a href="../../../../../userguide/latest/command-log/about.html" class="page">Command Log</a> extension <em>does</em> provide such an implementation.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+Another option to achieve this is to use the <a href="../services/publishing/spi/ExecutionSubscriber.html" class="page">ExecutionSubscriber</a> SPI.
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>to replay commands onto a secondary system, for regression testing.</p>
+<div class="paragraph">
+<p>This is implemented by the <a href="../../../../../userguide/latest/command-replay/about.html" class="page">Command Replay</a> extension, working in conjunction with the <a href="../../../../../userguide/latest/command-log/about.html" class="page">Command Log</a> extension.</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The <a href="#commandPublishing">commandPublishing()</a> element can be used to explicitly enable or disable command publishing for the action invocation.</p>
+</div>
+<div class="sect3">
+<h4 id="commanddtoprocessor-implementations"><a class="anchor" href="#commanddtoprocessor-implementations"></a>CommandDtoProcessor implementations</h4>
+<div class="paragraph">
+<p>The <a href="#commandDtoProcessor">commandDtoProcessor()</a> element allows an implementation of <code>CommandDtoProcessor</code> to be specified.
+This interface has the following API:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public interface CommandDtoProcessor {
+    CommandDto process(             <i class="conum" data-value="1"></i><b>(1)</b>
+            CommandDto dto);        <i class="conum" data-value="2"></i><b>(2)</b>
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The returned <code>CommandDto</code>.
+This will typically be the <code>CommandDto</code> passed in, but may be supplemented in some way.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The <code>CommandDto</code> obtained already from the <a href="../services/command/Command.html" class="page">Command</a>.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>This interface is used by the framework-provided implementations of <a href="../services/conmap/ContentMappingService.html" class="page">ContentMappingService</a> for the REST API, allowing <a href="../services/command/Command.html" class="page">Command</a>s implementations that also implement <code>CommandWithDto</code> to be further customised as they are serialized out.
+The primary use case for this capability is in support of primary/secondary replication.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>on the primary, <a href="../services/command/Command.html" class="page">Command</a>s are serialized to XML.
+This includes the identity of the target object and the argument values of all parameters.</p>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Any <code>Blob</code>s and <code>Clob</code>s are deliberately excluded from this XML (they are instead stored as references).
+This is to prevent the storage requirements for <a href="../services/command/Command.html" class="page">Command</a> from becoming excessive.
+A <code>CommandDtoProcessor</code> can be provided to re-attach blob information if required.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>replaying <a href="../services/command/Command.html" class="page">Command</a>s requires this missing parameter information to be reinstated.
+The <code>CommandDtoProcessor</code> therefore offers a hook to dynamically re-attach the missing <code>Blob</code> or <code>Clob</code> argument.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>As a special case, returning <code>null</code> means that the command&#8217;s DTO is effectively excluded when retrieving the list of commands.
+If replicating from master to slave, this effectively allows certain commands to be ignored.
+The <code>CommandDtoProcessor.Null</code> class provides a convenience implementation for this requirement.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>If <code>commandDtoProcessor()</code> is specified, then <code>commandPublishing()</code> is assumed to be ENABLED.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="example"><a class="anchor" href="#example"></a>Example</h4>
+<div class="paragraph">
+<p>Consider the following method:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Action(
+    domainEvent = IncomingDocumentRepository.UploadDomainEvent.class,
+    commandDtoProcessor = DeriveBlobArg0FromReturnedDocument.class
+)
+public Document upload(final Blob blob) {
+    final String name = blob.getName();
+    final DocumentType type = DocumentTypeData.INCOMING.findUsing(documentTypeRepository);
+    final ApplicationUser me = meService.me();
+    String atPath = me != null ? me.getAtPath() : null;
+    if (atPath == null) {
+        atPath = "/";
+    }
+    return incomingDocumentRepository.upsertAndArchive(type, atPath, name, blob);
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>Blob</code> argument will not be persisted in the memento of the <a href="../services/command/Command.html" class="page">Command</a>, but the information is implicitly available in the <code>Document</code> that is returned by the action.
+The <code>DeriveBlobArg0FromReturnedDocument</code> processor retrieves this information and dynamically adds:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class DeriveBlobArg0FromReturnedDocument
+        extends CommandDtoProcessorForActionAbstract {
+
+    @Override
+    public CommandDto process(Command command, CommandDto commandDto) {
+        final Bookmark result = commandWithDto.getResult();
+        if(result == null) {
+            return commandDto;
+        }
+        try {
+            final Document document = bookmarkService.lookup(result, Document.class);
+            if (document != null) {
+                ParamDto paramDto = getParamDto(commandDto, 0);
+                CommonDtoUtils.setValueOn(paramDto, ValueType.BLOB, document.getBlob(), bookmarkService);
+            }
+        } catch(Exception ex) {
+            return commandDto;
+        }
+        return commandDto;
+    }
+    @Inject
+    BookmarkService bookmarkService;
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="null-implementation"><a class="anchor" href="#null-implementation"></a>Null implementation</h4>
+<div class="paragraph">
+<p>The null implementation can be used to simply indicate that no DTO should be returned for a <a href="../services/command/Command.html" class="page">Command</a>.
+The effect is to ignore it for replay purposes:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">pubc interface CommandDtoProcessor {
+    ...
+    class Null implements CommandDtoProcessor {
+        public CommandDto process(Command command, CommandDto commandDto) {
+            return null;
+        }
+    }
+}</code></pre>
+</div>
+</div>
 </div>
 </div>
 <div class="sect2">
@@ -1658,6 +1725,61 @@ However, events can be raised programmatically either by calling the <a href="..
 </div>
 </div>
 <div class="sect1">
+<h2 id="related-spis"><a class="anchor" href="#related-spis"></a>Related SPIs</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../services/publishing/spi/CommandSubscriber.html" class="page">CommandSubscriber</a> SPI</p>
+<div class="paragraph">
+<p>for actions where command publishing (as per <a href="#commandPublishing">@Action#commandPublishing()</a>) is enabled</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../../../../../userguide/latest/command-log/about.html" class="page">Command Log</a> extension</p>
+<div class="paragraph">
+<p>provides an implementation that simply logs actions using the logging library</p>
+</div>
+</li>
+<li>
+<p><a href="../../../../../userguide/latest/command-replay/about.html" class="page">Command Replay</a> extension</p>
+<div class="paragraph">
+<p>provides an implementation to replicate commands from a primary to a secondary system.</p>
+</div>
+<div class="paragraph">
+<p>This implementation also leverages <a href="#commandDtoProcessor">commandDtoProcessor()</a> to process <code>CommandDto</code>s before being replciated</p>
+</div>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><a href="../services/publishing/spi/ExecutionSubscriber.html" class="page">ExecutionSubscriber</a> SPI</p>
+<div class="paragraph">
+<p>for actions where execution publishing (as per <a href="#executionPublishing">@Action#executionPublishing</a>) is enabled</p>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../services/eventbus/EventBusService.html" class="page">EventBusService</a></p>
+<div class="paragraph">
+<p>which broadcasts domain events as per <a href="#domainEvent">@Action#domainEvent()</a></p>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -1701,202 +1823,6 @@ However, events can be raised programmatically either by calling the <a href="..
 <div class="sect1">
 <h2 id="usage-notes"><a class="anchor" href="#usage-notes"></a>Usage Notes</h2>
 <div class="sectionbody">
-<div class="sect2">
-<h3 id="command-processing"><a class="anchor" href="#command-processing"></a>Command Processing</h3>
-<div class="paragraph">
-<p>Every action invocation (and <a href="Property.html#commandPublishing" class="page">property edit</a> for that matter) is normally reified into a concrete <a href="../services/command/Command.html" class="page">Command</a> object, basically a wrapper around the <a href="../../../schema/cmd.html" class="page">CommandDto</a> that also captures some timing metrics about the execution as well as the outcome.</p>
-</div>
-<div class="paragraph">
-<p>The main uses cases are:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>as a means to allow asynchronous child commands to be executed, using the <a href="../services/wrapper/WrapperFactory.html" class="page">WrapperFactory</a> service;</p>
-</li>
-<li>
-<p>as a means to audit (persist) commands, by implementing the <a href="../services/publishing/spi/CommandSubscriber.html" class="page">CommandSubscriber</a> SPI.</p>
-<div class="paragraph">
-<p>The <a href="../../../../../userguide/latest/command-log/about.html" class="page">Command Log</a> extension <em>does</em> provide such an implementation.</p>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-Another option to achieve this is to use the <a href="../services/publishing/spi/ExecutionSubscriber.html" class="page">ExecutionSubscriber</a> SPI.
-</td>
-</tr>
-</table>
-</div>
-</li>
-<li>
-<p>to replay commands onto a secondary system, for regression testing.</p>
-<div class="paragraph">
-<p>This is implemented by the <a href="../../../../../userguide/latest/command-replay/about.html" class="page">Command Replay</a> extension, working in conjunction with the <a href="../../../../../userguide/latest/command-log/about.html" class="page">Command Log</a> extension.</p>
-</div>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>The <a href="#commandPublishing">commandPublishing()</a> element can be used to explicitly enable or disable command publishing for the action invocation.</p>
-</div>
-<div class="sect3">
-<h4 id="commanddtoprocessor-implementations"><a class="anchor" href="#commanddtoprocessor-implementations"></a>CommandDtoProcessor implementations</h4>
-<div class="paragraph">
-<p>The <a href="#commandDtoProcessor">commandDtoProcessor()</a> element allows an implementation of <code>CommandDtoProcessor</code> to be specified.
-This interface has the following API:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public interface CommandDtoProcessor {
-    CommandDto process(             <i class="conum" data-value="1"></i><b>(1)</b>
-            CommandDto dto);        <i class="conum" data-value="2"></i><b>(2)</b>
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The returned <code>CommandDto</code>.
-This will typically be the <code>CommandDto</code> passed in, but may be supplemented in some way.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>The <code>CommandDto</code> obtained already from the <a href="../services/command/Command.html" class="page">Command</a>.</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>This interface is used by the framework-provided implementations of <a href="../services/conmap/ContentMappingService.html" class="page">ContentMappingService</a> for the REST API, allowing <a href="../services/command/Command.html" class="page">Command</a>s implementations that also implement <code>CommandWithDto</code> to be further customised as they are serialized out.
-The primary use case for this capability is in support of primary/secondary replication.</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>on the primary, <a href="../services/command/Command.html" class="page">Command</a>s are serialized to XML.
-This includes the identity of the target object and the argument values of all parameters.</p>
-<div class="admonitionblock important">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-important" title="Important"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>Any <code>Blob</code>s and <code>Clob</code>s are deliberately excluded from this XML (they are instead stored as references).
-This is to prevent the storage requirements for <a href="../services/command/Command.html" class="page">Command</a> from becoming excessive.
-A <code>CommandDtoProcessor</code> can be provided to re-attach blob information if required.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-</li>
-<li>
-<p>replaying <a href="../services/command/Command.html" class="page">Command</a>s requires this missing parameter information to be reinstated.
-The <code>CommandDtoProcessor</code> therefore offers a hook to dynamically re-attach the missing <code>Blob</code> or <code>Clob</code> argument.</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>As a special case, returning <code>null</code> means that the command&#8217;s DTO is effectively excluded when retrieving the list of commands.
-If replicating from master to slave, this effectively allows certain commands to be ignored.
-The <code>CommandDtoProcessor.Null</code> class provides a convenience implementation for this requirement.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>If <code>commandDtoProcessor()</code> is specified, then <code>commandPublishing()</code> is assumed to be ENABLED.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect3">
-<h4 id="example"><a class="anchor" href="#example"></a>Example</h4>
-<div class="paragraph">
-<p>Consider the following method:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Action(
-    domainEvent = IncomingDocumentRepository.UploadDomainEvent.class,
-    commandDtoProcessor = DeriveBlobArg0FromReturnedDocument.class
-)
-public Document upload(final Blob blob) {
-    final String name = blob.getName();
-    final DocumentType type = DocumentTypeData.INCOMING.findUsing(documentTypeRepository);
-    final ApplicationUser me = meService.me();
-    String atPath = me != null ? me.getAtPath() : null;
-    if (atPath == null) {
-        atPath = "/";
-    }
-    return incomingDocumentRepository.upsertAndArchive(type, atPath, name, blob);
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The <code>Blob</code> argument will not be persisted in the memento of the <a href="../services/command/Command.html" class="page">Command</a>, but the information is implicitly available in the <code>Document</code> that is returned by the action.
-The <code>DeriveBlobArg0FromReturnedDocument</code> processor retrieves this information and dynamically adds:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class DeriveBlobArg0FromReturnedDocument
-        extends CommandDtoProcessorForActionAbstract {
-
-    @Override
-    public CommandDto process(Command command, CommandDto commandDto) {
-        final Bookmark result = commandWithDto.getResult();
-        if(result == null) {
-            return commandDto;
-        }
-        try {
-            final Document document = bookmarkService.lookup(result, Document.class);
-            if (document != null) {
-                ParamDto paramDto = getParamDto(commandDto, 0);
-                CommonDtoUtils.setValueOn(paramDto, ValueType.BLOB, document.getBlob(), bookmarkService);
-            }
-        } catch(Exception ex) {
-            return commandDto;
-        }
-        return commandDto;
-    }
-    @Inject
-    BookmarkService bookmarkService;
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="null-implementation"><a class="anchor" href="#null-implementation"></a>Null implementation</h4>
-<div class="paragraph">
-<p>The null implementation can be used to simply indicate that no DTO should be returned for a <a href="../services/command/Command.html" class="page">Command</a>.
-The effect is to ignore it for replay purposes:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">pubc interface CommandDtoProcessor {
-    ...
-    class Null implements CommandDtoProcessor {
-        public CommandDto process(Command command, CommandDto commandDto) {
-            return null;
-        }
-    }
-}</code></pre>
-</div>
-</div>
-</div>
-</div>
 <div class="sect2">
 <h3 id="action-semantics"><a class="anchor" href="#action-semantics"></a>Action Semantics</h3>
 <div class="paragraph">
@@ -1990,6 +1916,80 @@ The "are you sure" variant requires that the user must explicitly confirm the ac
 Note though that the results of this caching will only be apparent if the action is invoked from another method using the <a href="../services/wrapper/WrapperFactory.html" class="page">WrapperFactory</a> service.</p>
 </div>
 </div>
+<div class="sect2">
+<h3 id="associating-actions-with-properties-and-collections"><a class="anchor" href="#associating-actions-with-properties-and-collections"></a>Associating actions with properties and collections</h3>
+<div class="paragraph">
+<p>The <code>associateWith</code> element allows an action to be associated with other properties or collections of the same domain object.
+The optional <code>sequence</code> element specifies the order of the action in the UI.</p>
+</div>
+<div class="paragraph">
+<p>For example, an <code>Order</code> could have a collection of <code>OrderItem</code>s, and might provide actions to add and remove items:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Order {
+
+    @Getter @Setter
+    @Collection
+    private final SortedSet&lt;OrderItem&gt; items = ...
+
+    @Action(associateWith="items")                  <i class="conum" data-value="1"></i><b>(1)</b>
+    @ActionLayout(sequence="1" )                    <i class="conum" data-value="2"></i><b>(2)</b>
+    public Order addItem(Product p, int quantity) {
+        // ...
+    }
+
+    @Action(associateWith="items")                  <i class="conum" data-value="3"></i><b>(3)</b>
+    @ActionLayout(sequence="2" )                    <i class="conum" data-value="4"></i><b>(4)</b>
+    public Order removeItem(OrderItem item) {
+        // ...
+    }
+
+    // ...
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>matches the name of the collection</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>first action in the list of all associated actions</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>matches the name of the collection</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>second action in the list of all associated actions</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>These actions - <code>addItem()</code> and <code>removeItem()</code> can be thought of as associated with with the <code>items</code> collection because that is the state that they primarily affect.</p>
+</div>
+<div class="paragraph">
+<p>In the user interface associated actions are rendered close to the member to which they relate.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The same effect can be accomplished using the <code>.layout.xml</code> file.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
 </div>
 </div>
 </article>
@@ -2009,7 +2009,7 @@ Note though that the results of this caching will only be apparent if the action
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M5.20210505-0425-5e783140</p>
+            <p>Revision: 2.0.0-M5.20210506-0427-6ae9729a</p>
         </div>
     </div>
 </footer>

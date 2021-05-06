@@ -1163,23 +1163,20 @@ page.parent doesn't seem to be set...
 </div>
 </div>
 <div class="sect2">
-<h3 id="paging"><a class="anchor" href="#paging"></a>Paging</h3>
+<h3 id="names"><a class="anchor" href="#names"></a>Names</h3>
 <div class="paragraph">
-<p>The <a href="#paged">paged()</a> element specifies the number of rows to display in a standalone collection, as returned from an action invocation.</p>
+<p>The <a href="#named">named()</a> element explicitly specifies the domain object&#8217;s name, overriding the name that would normally be inferred from the Java source code.</p>
 </div>
-<div class="admonitionblock warning">
+<div class="admonitionblock tip">
 <table>
 <tr>
 <td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
+<i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
 <div class="paragraph">
-<p>The <a href="../../../../../vro/latest/about.html" class="page">RestfulObjects viewer</a> currently does not support paging.
-The <a href="../../../../../vw/latest/about.html" class="page">Web UI (Wicket viewer)</a> <em>does</em> support paging, but note that the paging is performed client-side rather than server-side.</p>
-</div>
-<div class="paragraph">
-<p>We therefore recommend that large collections should instead be modelled as actions (to allow filtering to be applied to limit the number of rows).</p>
+<p>We recommend that you only use this element when the desired name cannot be used in Java source code.
+Examples of that include a name that would be a reserved Java keyword (eg "package"), or a name that has punctuation, eg apostrophes.</p>
 </div>
 </td>
 </tr>
@@ -1190,14 +1187,181 @@ The <a href="../../../../../vw/latest/about.html" class="page">Web UI (Wicket vi
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObjectLayout(paged=15)
-public class Order {
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObjectLayout(
+   named="Customer"
+)
+public class CustomerImpl implements Customer{
+   // ...
+}</code></pre>
+</div>
+</div>
+<div class="sect3">
+<h4 id="plural-form"><a class="anchor" href="#plural-form"></a>Plural form</h4>
+<div class="paragraph">
+<p>When Apache Isis displays a standalone collection of several objects, it will label the collection using the plural form of the object type.
+By default the plural name will be derived from the end of the singular name, with support for some basic English language defaults (eg using "ies" for names ending with a "y").</p>
+</div>
+<div class="paragraph">
+<p>For irregular plurals it&#8217;s possible to specify a plural form using the <a href="#plural">plural</a> element.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObjectLayout(plural="Children")
+public class Child {
+    // ...
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="i18n"><a class="anchor" href="#i18n"></a>i18n</h4>
+<div class="paragraph">
+<p>The framework also provides a separate, powerful mechanism for <a href="../../../../../userguide/latest/btb/i18n.html" class="page">internationalization</a>.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObjectLayout(
+    cssClass="x-key",
+    cssClassFa="fa-checklist",
+    describedAs="Capture a task that you need to do",
+    named="ToDo",
+    paged=30,
+    plural="ToDo List")
+)
+public class ToDoItem {
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Note that there is (currently) no support for specifying UI hints for domain objects through the dynamic <a href="../../../../../userguide/latest/fun/ui.html#object-layout" class="page">.layout.xml</a> file (only for properties, collections and actions are supported).</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="usage-notes"><a class="anchor" href="#usage-notes"></a>Usage Notes</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="descriptions"><a class="anchor" href="#descriptions"></a>Descriptions</h3>
+<div class="paragraph">
+<p>The <a href="#describedAs">describedAs()</a> element is used to provide a short description of the domain object to the user.
+In the <a href="../../../../../vw/latest/about.html" class="page">Web UI (Wicket viewer)</a> it is displayed as a 'tool tip'.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObjectLayout(
+    describedAs = "A customer who may have originally become"
+                + " known to us via the marketing system or who may"
+                + " have contacted us directly."
+ )
+public class ProspectiveSale {
+   ...
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="css-styling"><a class="anchor" href="#css-styling"></a>CSS Styling</h3>
+<div class="paragraph">
+<p>The <a href="#cssClass">cssClass()</a> element can be used to render additional CSS classes in the HTML (a wrapping <code>&lt;div&gt;</code>) that represents the domain object.
+<a href="../../../config/application-specific/application-css.html" class="page">Application-specific CSS</a> can then be used to target and adjust the UI representation of that particular element.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject
+@DomainObjectLayout(
+    cssClass="x-core-entity"
+)
+public class ToDoItem { /* ... */ }</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The similar <a href="#cssClassFa">@DomainObjectLayout#cssClassFa()</a> element is also used as a hint to apply CSS, but in particular to allow <a href="http://fortawesome.github.io/Font-Awesome/icons/">Font Awesome icons</a> to be rendered as the icon for classes.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="font-awesome-icons"><a class="anchor" href="#font-awesome-icons"></a>Font Awesome Icons</h3>
+<div class="paragraph">
+<p>The <a href="#cssClassFa">cssClassFa()</a> element is used to specify the name of a <a href="http://fortawesome.github.io/Font-Awesome/icons/">Font Awesome icon</a> name, to be rendered as the domain object&#8217;s icon.</p>
+</div>
+<div class="paragraph">
+<p>If necessary the icon specified can be overridden by a particular object instance using the <a href="../../../applib-methods/ui-hints.html#iconName" class="page">iconName()</a> method.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObjectLayout(
+    cssClassFa="fa-check-circle"
+)
+public class ToDoItem {
     // ...
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>It is also possible to specify a global default for the page size of standalone collections, using the <a href="../../../config/sections/isis.applib.html#isis.applib.annotation.domain-object-layout.paged" class="page">isis.applib.annotation.domain-object-layout.paged</a> configuration property.</p>
+<p>There can be multiple "fa-" classes, eg to mirror or rotate the icon.
+There is no need to include the mandatory <code>fa</code> "marker" CSS class; it will be automatically added to the list.
+The <code>fa-</code> prefix can also be omitted from the class names; it will be prepended to each if required.</p>
+</div>
+<div class="paragraph">
+<p>The related <a href="#cssClassFaPosition">cssClassFaPosition</a> element is currently unused for domain objects; the icon is always rendered to the left.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The similar <a href="#cssClass">@DomainObjectLayout#cssClass()</a> element is also used as a hint to apply CSS, but for wrapping the representation of an object or object member so that it can be styled in an application-specific way.</p>
+</div>
+</td>
+</tr>
+</table>
 </div>
 </div>
 <div class="sect2">
@@ -1437,63 +1601,24 @@ public class SomeSubscriber {
 </div>
 </div>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObjectLayout(
-    cssClass="x-key",
-    cssClassFa="fa-checklist",
-    describedAs="Capture a task that you need to do",
-    named="ToDo",
-    paged=30,
-    plural="ToDo List")
-)
-public class ToDoItem {
-    ...
-}</code></pre>
-</div>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>Note that there is (currently) no support for specifying UI hints for domain objects through the dynamic <a href="../../../../../userguide/latest/fun/ui.html#object-layout" class="page">.layout.xml</a> file (only for properties, collections and actions are supported).</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="usage-notes"><a class="anchor" href="#usage-notes"></a>Usage Notes</h2>
-<div class="sectionbody">
 <div class="sect2">
-<h3 id="names"><a class="anchor" href="#names"></a>Names</h3>
+<h3 id="paging"><a class="anchor" href="#paging"></a>Paging</h3>
 <div class="paragraph">
-<p>The <a href="#named">named()</a> element explicitly specifies the domain object&#8217;s name, overriding the name that would normally be inferred from the Java source code.</p>
+<p>The <a href="#paged">paged()</a> element specifies the number of rows to display in a standalone collection, as returned from an action invocation.</p>
 </div>
-<div class="admonitionblock tip">
+<div class="admonitionblock warning">
 <table>
 <tr>
 <td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
+<i class="fa icon-warning" title="Warning"></i>
 </td>
 <td class="content">
 <div class="paragraph">
-<p>We recommend that you only use this element when the desired name cannot be used in Java source code.
-Examples of that include a name that would be a reserved Java keyword (eg "package"), or a name that has punctuation, eg apostrophes.</p>
+<p>The <a href="../../../../../vro/latest/about.html" class="page">RestfulObjects viewer</a> currently does not support paging.
+The <a href="../../../../../vw/latest/about.html" class="page">Web UI (Wicket viewer)</a> <em>does</em> support paging, but note that the paging is performed client-side rather than server-side.</p>
+</div>
+<div class="paragraph">
+<p>We therefore recommend that large collections should instead be modelled as actions (to allow filtering to be applied to limit the number of rows).</p>
 </div>
 </td>
 </tr>
@@ -1504,106 +1629,14 @@ Examples of that include a name that would be a reserved Java keyword (eg "packa
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObjectLayout(
-   named="Customer"
-)
-public class CustomerImpl implements Customer{
-   // ...
-}</code></pre>
-</div>
-</div>
-<div class="sect3">
-<h4 id="plural-form"><a class="anchor" href="#plural-form"></a>Plural form</h4>
-<div class="paragraph">
-<p>When Apache Isis displays a standalone collection of several objects, it will label the collection using the plural form of the object type.
-By default the plural name will be derived from the end of the singular name, with support for some basic English language defaults (eg using "ies" for names ending with a "y").</p>
-</div>
-<div class="paragraph">
-<p>For irregular plurals it&#8217;s possible to specify a plural form using the <a href="#plural">plural</a> element.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObjectLayout(plural="Children")
-public class Child {
-    // ...
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="i18n"><a class="anchor" href="#i18n"></a>i18n</h4>
-<div class="paragraph">
-<p>The framework also provides a separate, powerful mechanism for <a href="../../../../../userguide/latest/btb/i18n.html" class="page">internationalization</a>.</p>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="font-awesome-icons"><a class="anchor" href="#font-awesome-icons"></a>Font Awesome Icons</h3>
-<div class="paragraph">
-<p>The <a href="#cssClassFa">cssClassFa()</a> element is used to specify the name of a <a href="http://fortawesome.github.io/Font-Awesome/icons/">Font Awesome icon</a> name, to be rendered as the domain object&#8217;s icon.</p>
-</div>
-<div class="paragraph">
-<p>If necessary the icon specified can be overridden by a particular object instance using the <a href="../../../applib-methods/ui-hints.html#iconName" class="page">iconName()</a> method.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObjectLayout(
-    cssClassFa="fa-check-circle"
-)
-public class ToDoItem {
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObjectLayout(paged=15)
+public class Order {
     // ...
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>There can be multiple "fa-" classes, eg to mirror or rotate the icon.
-There is no need to include the mandatory <code>fa</code> "marker" CSS class; it will be automatically added to the list.
-The <code>fa-</code> prefix can also be omitted from the class names; it will be prepended to each if required.</p>
-</div>
-<div class="paragraph">
-<p>The related <a href="#cssClassFaPosition">cssClassFaPosition</a> element is currently unused for domain objects; the icon is always rendered to the left.</p>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>The similar <a href="#cssClass">@DomainObjectLayout#cssClass()</a> element is also used as a hint to apply CSS, but for wrapping the representation of an object or object member so that it can be styled in an application-specific way.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect2">
-<h3 id="descriptions"><a class="anchor" href="#descriptions"></a>Descriptions</h3>
-<div class="paragraph">
-<p>The <a href="#describedAs">describedAs()</a> element is used to provide a short description of the domain object to the user.
-In the <a href="../../../../../vw/latest/about.html" class="page">Web UI (Wicket viewer)</a> it is displayed as a 'tool tip'.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObjectLayout(
-    describedAs = "A customer who may have originally become"
-                + " known to us via the marketing system or who may"
-                + " have contacted us directly."
- )
-public class ProspectiveSale {
-   ...
-}</code></pre>
-</div>
+<p>It is also possible to specify a global default for the page size of standalone collections, using the <a href="../../../config/sections/isis.applib.html#isis.applib.annotation.domain-object-layout.paged" class="page">isis.applib.annotation.domain-object-layout.paged</a> configuration property.</p>
 </div>
 </div>
 <div class="sect2">
@@ -1666,39 +1699,6 @@ public abstract class Unit {
 <p>The nesting can be done to any level.</p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="css-styling"><a class="anchor" href="#css-styling"></a>CSS Styling</h3>
-<div class="paragraph">
-<p>The <a href="#cssClass">cssClass()</a> element can be used to render additional CSS classes in the HTML (a wrapping <code>&lt;div&gt;</code>) that represents the domain object.
-<a href="../../../config/application-specific/application-css.html" class="page">Application-specific CSS</a> can then be used to target and adjust the UI representation of that particular element.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject
-@DomainObjectLayout(
-    cssClass="x-core-entity"
-)
-public class ToDoItem { /* ... */ }</code></pre>
-</div>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>The similar <a href="#cssClassFa">@DomainObjectLayout#cssClassFa()</a> element is also used as a hint to apply CSS, but in particular to allow <a href="http://fortawesome.github.io/Font-Awesome/icons/">Font Awesome icons</a> to be rendered as the icon for classes.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-</div>
 </div>
 </div>
 </article>
@@ -1718,7 +1718,7 @@ public class ToDoItem { /* ... */ }</code></pre>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M5.20210505-0425-5e783140</p>
+            <p>Revision: 2.0.0-M5.20210506-0427-6ae9729a</p>
         </div>
     </div>
 </footer>
