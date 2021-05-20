@@ -1067,38 +1067,6 @@ page.parent doesn't seem to be set...
 </div>
 </div>
 <div class="sect2">
-<h3 id="uploading-blobs-and-clobs"><a class="anchor" href="#uploading-blobs-and-clobs"></a>Uploading Blobs and Clobs</h3>
-<div class="paragraph">
-<p>The <a href="#fileAccept">fileAccept()</a> element applies only to <a href="../../../applib-classes/value-types.html#Blob" class="page">Blob</a>
-or <a href="../../../applib-classes/value-types.html#Clob" class="page">Clob</a> parameters, indicating the type of file to accept when uploading a new value.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Scanner {
-
-    public ScannedDocument newScan(
-                @Parameter(
-                    fileAccept="image/*"        <i class="conum" data-value="1"></i><b>(1)</b>
-                )
-                final Blob scannedImage) {
-        // ...
-    }
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>as per <a href="http://www.w3schools.com/tags/att_input_accept.asp">reference docs</a>, either a media type (such as <code>image/*</code>) or a file type extension (such as <code>.png</code>).</td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect2">
 <h3 id="declarative-validation"><a class="anchor" href="#declarative-validation"></a>Declarative validation</h3>
 <div class="paragraph">
 <p>The <a href="#mustSatisfy">mustSatisfy()</a> element allows arbitrary validation to be applied to parameters using an (implementation of a) <a href="../spec/Specification.html" class="page">Specification</a> object.</p>
@@ -1200,51 +1168,35 @@ This defines the API:</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="mandatory-vs-optional"><a class="anchor" href="#mandatory-vs-optional"></a>Mandatory vs Optional</h3>
+<h3 id="uploading-blobs-and-clobs"><a class="anchor" href="#uploading-blobs-and-clobs"></a>Uploading Blobs and Clobs</h3>
 <div class="paragraph">
-<p>By default, the framework assumes that all parameters of an action are required (mandatory).
-The <a href="#optionality">optionality()</a> element allows this to be relaxed.</p>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>The attribute has no meaning for a primitive type such as <code>int</code>: primitives will always have a default value (e.g. zero).
-If optionality is required, then use the corresponding wrapper class (e.g. <code>java.lang.Integer</code>) and annotate with <code>Parameter#optionality()</code> as required.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>The values for the attribute are simply <code>OPTIONAL</code> or <code>MANDATORY</code>.</p>
+<p>The <a href="#fileAccept">fileAccept()</a> element applies only to <a href="../../../applib-classes/value-types.html#Blob" class="page">Blob</a>
+or <a href="../../../applib-classes/value-types.html#Clob" class="page">Clob</a> parameters, indicating the type of file to accept when uploading a new value.</p>
 </div>
 <div class="paragraph">
 <p>For example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Customer {
-    public Order placeOrder(
-            final Product product,
-            final int quantity,
-            @Parameter(optionality = Optionality.OPTIONAL)
-            final String specialInstructions) {
-        ...
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Scanner {
+
+    public ScannedDocument newScan(
+                @Parameter(
+                    fileAccept="image/*"        <i class="conum" data-value="1"></i><b>(1)</b>
+                )
+                final Blob scannedImage) {
+        // ...
     }
-    ...
 }</code></pre>
 </div>
 </div>
-<div class="sect3">
-<h4 id="alternatives"><a class="anchor" href="#alternatives"></a>Alternatives</h4>
-<div class="paragraph">
-<p>It is also possible to specify optionality using <a href="../../../applib-ant/Nullable.html" class="page">@Nullable</a> annotation.</p>
-</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>as per <a href="http://www.w3schools.com/tags/att_input_accept.asp">reference docs</a>, either a media type (such as <code>image/*</code>) or a file type extension (such as <code>.png</code>).</td>
+</tr>
+</table>
 </div>
 </div>
 <div class="sect2">
@@ -1298,29 +1250,6 @@ The values are those that would normally be passed to <code>java.util.regex.Patt
 </table>
 </div>
 </div>
-<div class="sect2">
-<h3 id="maximum-string-length"><a class="anchor" href="#maximum-string-length"></a>Maximum string length</h3>
-<div class="paragraph">
-<p>The <a href="#maxLength">maxLength()</a> element applies only to <code>String</code> parameters, indicating the maximum number of characters that the user may enter (for example in a text field in the UI).
-It is ignored if applied to parameters of any other type.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class CustomerRepository {
-    public Customer newCustomer(
-        @Parameter(maxLength=30)
-        final String firstName,
-        @Parameter(maxLength=50)
-        final String lastName) {
-        ...
-    }
-}</code></pre>
-</div>
-</div>
-</div>
 </div>
 </div>
 <div class="sect1">
@@ -1366,7 +1295,77 @@ It is ignored if applied to parameters of any other type.</p>
 <div class="sect1">
 <h2 id="usage-notes"><a class="anchor" href="#usage-notes"></a>Usage Notes</h2>
 <div class="sectionbody">
-
+<div class="sect2">
+<h3 id="mandatory-vs-optional"><a class="anchor" href="#mandatory-vs-optional"></a>Mandatory vs Optional</h3>
+<div class="paragraph">
+<p>By default, the framework assumes that all parameters of an action are required (mandatory).
+The <a href="#optionality">optionality()</a> element allows this to be relaxed.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The attribute has no meaning for a primitive type such as <code>int</code>: primitives will always have a default value (e.g. zero).
+If optionality is required, then use the corresponding wrapper class (e.g. <code>java.lang.Integer</code>) and annotate with <code>Parameter#optionality()</code> as required.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The values for the attribute are simply <code>OPTIONAL</code> or <code>MANDATORY</code>.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Customer {
+    public Order placeOrder(
+            final Product product,
+            final int quantity,
+            @Parameter(optionality = Optionality.OPTIONAL)
+            final String specialInstructions) {
+        ...
+    }
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="sect3">
+<h4 id="alternatives"><a class="anchor" href="#alternatives"></a>Alternatives</h4>
+<div class="paragraph">
+<p>It is also possible to specify optionality using <a href="../../../applib-ant/Nullable.html" class="page">@Nullable</a> annotation.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="maximum-string-length"><a class="anchor" href="#maximum-string-length"></a>Maximum string length</h3>
+<div class="paragraph">
+<p>The <a href="#maxLength">maxLength()</a> element applies only to <code>String</code> parameters, indicating the maximum number of characters that the user may enter (for example in a text field in the UI).
+It is ignored if applied to parameters of any other type.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class CustomerRepository {
+    public Customer newCustomer(
+        @Parameter(maxLength=30)
+        final String firstName,
+        @Parameter(maxLength=50)
+        final String lastName) {
+        ...
+    }
+}</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 </article>
@@ -1386,7 +1385,7 @@ It is ignored if applied to parameters of any other type.</p>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M5.20210519-0431-6b767a91</p>
+            <p>Revision: 2.0.0-M5.20210520-0432-1cb644eb</p>
         </div>
     </div>
 </footer>
