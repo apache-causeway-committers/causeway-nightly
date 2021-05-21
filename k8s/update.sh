@@ -8,7 +8,7 @@ VARIANT_LOWER=$(echo ${VARIANT} |  tr '[:upper:]' '[:lower:]' )
 VARIANT_USAGE=$3
 
 APPNAME="app-${APPLICATION}-${VARIANT_LOWER}"
-if [[ "$VARIANT_USAGE" = 'VARIANT_IN_IMAGE_NAME' ]]; then
+if [ "$VARIANT_USAGE" = 'VARIANT_IN_IMAGE_NAME' ]; then
   IMAGE="apacheisis/${APPLICATION}-${VARIANT}:latest"
 else
   IMAGE="apacheisis/${APPLICATION}:${VARIANT}"
