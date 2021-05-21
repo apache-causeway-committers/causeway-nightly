@@ -3,13 +3,18 @@ set -e
 
 DIRNAME=$(dirname $0)
 APPLICATION=$1
-BRANCH=$2
-BRANCH_LOWER=$(echo ${BRANCH} |  tr '[:upper:]' '[:lower:]' )
+VARIANT=$2
+VARIANT_LOWER=$(echo ${VARIANT} |  tr '[:upper:]' '[:lower:]' )
+VARIANT_USAGE=$3
 
-APPNAME="app-${APPLICATION}-${BRANCH_LOWER}"
-IMAGE="apacheisis/${APPLICATION}:${BRANCH}"
-HOST="${APPLICATION}.${BRANCH_LOWER}.isis.incode.work"
-SECRET="app-${APPLICATION}-tls-${BRANCH_LOWER}"
+APPNAME="app-${APPLICATION}-${VARIANT_LOWER}"
+if [[ "$VARIANT_USAGE" = 'VARIANT_IN_IMAGE_NAME' ]]; then
+  IMAGE="apacheisis/${APPLICATION}-${VARIANT}:latest"
+else
+  IMAGE="apacheisis/${APPLICATION}:${VARIANT}"
+fi
+HOST="${APPLICATION}.${VARIANT_LOWER}.isis.incode.work"
+SECRET="app-${APPLICATION}-tls-${VARIANT_LOWER}"
 
 echo "APPNAME : $APPNAME"
 echo "IMAGE   : $IMAGE"
@@ -19,22 +24,26 @@ echo "SECRET  : $SECRET"
 cd $DIRNAME/$APPLICATION
 
 echo "---"
-yq eval -M -i ".metadata.name = \"$APPNAME\"" 010-deployment.yaml
-yq eval -M -i ".spec.selector.matchLabels.app = \"$APPNAME\"" 010-deployment.yaml
-yq eval -M -i ".spec.template.metadata.labels.app = \"$APPNAME\"" 010-deployment.yaml
-yq eval -M -i ".spec.template.spec.containers[0].image = \"$IMAGE\"" 010-deployment.yaml
-yq eval -M -i ".spec.template.spec.containers[0].name = \"$APPNAME\"" 010-deployment.yaml
-cat 010-deployment.yaml
+cp deployment.yaml deployment.yaml.BAK
+
+# all subdocuments
+yq eval -M -i ".metadata.name = \"$APPNAME\"" deployment.yaml
+
+# deployment
+yq eval -M -i "select(di == 0).spec.selector.matchLabels.app = \"$APPNAME\"" deployment.yaml
+yq eval -M -i "select(di == 0).spec.template.metadata.labels.app = \"$APPNAME\"" deployment.yaml
+yq eval -M -i "select(di == 0).spec.template.spec.containers[0].image = \"$IMAGE\"" deployment.yaml
+yq eval -M -i "select(di == 0).spec.template.spec.containers[0].name = \"$APPNAME\"" deployment.yaml
+
+# service
+yq eval -M -i "select(di == 1).spec.selector.app = \"$APPNAME\"" deployment.yaml
+
+# ingress
+yq eval -M -i "select(di==2).spec.tls[0].hosts[0] = \"$HOST\"" deployment.yaml
+yq eval -M -i "select(di==2).spec.tls[0].secretName = \"$SECRET\"" deployment.yaml
+yq eval -M -i "select(di==2).spec.rules[0].http.paths[0].backend.serviceName = \"$APPNAME\"" deployment.yaml
+yq eval -M -i "select(di==2).spec.rules[0].host = \"$HOST\"" deployment.yaml
 
 echo "---"
-yq eval -M -i ".metadata.name = \"$APPNAME\"" 020-service.yaml
-yq eval -M -i ".spec.selector.app = \"$APPNAME\"" 020-service.yaml
-cat 020-service.yaml
+cat deployment.yaml
 
-echo "---"
-yq eval -M -i ".metadata.name = \"$APPNAME\"" 030-ingress.yaml
-yq eval -M -i ".spec.tls[0].hosts[0] = \"$HOST\"" 030-ingress.yaml
-yq eval -M -i ".spec.tls[0].secretName = \"$SECRET\"" 030-ingress.yaml
-yq eval -M -i ".spec.rules[0].http.paths[0].backend.serviceName = \"$APPNAME\"" 030-ingress.yaml
-yq eval -M -i ".spec.rules[0].host = \"$HOST\"" 030-ingress.yaml
-cat 030-ingress.yaml

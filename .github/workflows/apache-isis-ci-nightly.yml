@@ -221,17 +221,32 @@ jobs:
           directory: ${{ env.NIGHTLY_ROOT_PATH }}
           github_token: ${{ secrets.PUBLISH_TOKEN }}
 
-      # -----------------------------
-      # -- (re)deploy the demo app --
-      # -----------------------------
+      # ---------------------------------------------------
+      # -- (re)deploy the demo app (x2, for jdo and jpa) --
+      # ---------------------------------------------------
 
-# don't think we need to undeploy first; the deploy will upgrade if necessary...
-#      - name: Undeploy demo-wicket from demo-wicket.isis.incode.work
-#        uses: actions-hub/kubectl@master
-#        env:
-#          KUBE_CONFIG: ${{ secrets.K3D_INCODE_WORK_KUBE_CONFIG }}
-#        with:
-#          args: delete -f isis-nightly/k8s/demo-wicket/deployment.yaml
+      - name: Install yq
+        shell: bash
+        run: |
+          sudo snap install yq
+
+      - name: Update scripts for jdo
+        shell: bash
+        run: |
+          sh k8s/update.sh demo-wicket jdo VARIANT_IN_IMAGE_NAME
+
+      - name: (Re)deploy demo-wicket to demo-wicket.isis.incode.work
+        uses: actions-hub/kubectl@master
+        env:
+          KUBE_CONFIG: ${{ secrets.K3D_INCODE_WORK_KUBE_CONFIG }}
+        with:
+          args: apply -f isis-nightly/k8s/demo-wicket/deployment.yaml
+
+      - name: Update scripts for jpa
+        shell: bash
+        run: |
+          sh cp demo-wicket/deployment.yaml.BAK demo-wicket/deployment.yaml
+          sh k8s/update.sh demo-wicket jpa VARIANT_IN_IMAGE_NAME
 
       - name: (Re)deploy demo-wicket to demo-wicket.isis.incode.work
         uses: actions-hub/kubectl@master

@@ -38,23 +38,9 @@ jobs:
         run: |
           sh k8s/update.sh $APPNAME ${{ matrix.branch }}
 
-      - name: "kubectl delete -f ingress.yml"
-        uses: actions-hub/kubectl@master
-        env:
-          KUBE_CONFIG: ${{ secrets.K3D_INCODE_WORK_KUBE_CONFIG }}
-        with:
-          args: delete -f k8s/${{ steps.appname.outputs.appname }}/030-ingress.yaml --force --grace-period=0
-
-      - name: "kubectl delete -f service.yml"
-        uses: actions-hub/kubectl@master
-        env:
-          KUBE_CONFIG: ${{ secrets.K3D_INCODE_WORK_KUBE_CONFIG }}
-        with:
-          args: delete -f k8s/${{ steps.appname.outputs.appname }}/020-service.yaml --force --grace-period=0
-
       - name: "kubectl delete -f deployment.yml"
         uses: actions-hub/kubectl@master
         env:
           KUBE_CONFIG: ${{ secrets.K3D_INCODE_WORK_KUBE_CONFIG }}
         with:
-          args: delete -f k8s/${{ steps.appname.outputs.appname }}/010-deployment.yaml --force --grace-period=0
+          args: delete -f k8s/${{ steps.appname.outputs.appname }}/deployment.yaml --force --grace-period=0
