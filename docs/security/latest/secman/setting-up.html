@@ -3,15 +3,15 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>API :: Apache Isis</title>
+    <title>Setting up :: Apache Isis</title>
     <meta name="generator" content="Antora 2.3.4">
     <link rel="stylesheet" href="../../../_/css/site.css">
     <link rel="stylesheet" href="../../../_/css/site-custom.css">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Raleway:300,400,500,700,800|Montserrat:300,400,700" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css"/>
 <link rel="home" href="../../.." title="Apache Isis">
-  <link rel="next" href="model.html" title="Model">
-  <link rel="prev" href="about.html" title="Secman">
+  <link rel="next" href="../audit-trail/about.html" title="Audit Trail">
+  <link rel="prev" href="about.html" title="SecMan">
   </head>
   <body class="article">
 <header class="header">
@@ -144,12 +144,12 @@
   <aside class="nav">
     <div class="panels">
 <div class="nav-panel-pagination">
-  <a class="page-previous" rel="prev" href="about.html" title="Secman"><span></span></a>
+  <a class="page-previous" rel="prev" href="about.html" title="SecMan"><span></span></a>
   <a class="page-next" rel="next"
-     href="model.html" title="Model"><span></span></a>
+     href="../audit-trail/about.html" title="Audit Trail"><span></span></a>
 <!--
 page.parent doesn't seem to be set...
-  <a class="page-parent" rel="prev" href="about.html" title="Secman"><span></span></a>
+  <a class="page-parent" rel="prev" href="about.html" title="SecMan"><span></span></a>
 -->
 </div>
 <div class="nav-panel-menu is-active" data-panel="menu">
@@ -182,25 +182,10 @@ page.parent doesn't seem to be set...
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
     <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="about.html">Secman</a>
+    <a class="nav-link" href="about.html">SecMan</a>
 <ul class="nav-list">
   <li class="nav-item is-current-page" data-depth="3">
-    <a class="nav-link" href="api.html">API</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="model.html">Model</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="jbcrypt-encryption.html">JBCrypt Encryption</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="jdo-persistence.html">JDO Persistence</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="jpa-persistence.html">JPA Persistence</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="shiro-realm.html">Realm (for Shiro)</a>
+    <a class="nav-link" href="setting-up.html">Setting up</a>
   </li>
 </ul>
   </li>
@@ -402,17 +387,431 @@ page.parent doesn't seem to be set...
   <ul>
     <li><a href="../about.html">Security Guide</a></li>
     <li>Extensions</li>
-    <li><a href="about.html">Secman</a></li>
-    <li><a href="api.html">API</a></li>
+    <li><a href="about.html">SecMan</a></li>
+    <li><a href="setting-up.html">Setting up</a></li>
   </ul>
 </nav>
-  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/master/extensions/security/secman/adoc/modules/secman/pages/api.adoc">Edit</a></div>
+  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/master/extensions/security/secman/adoc/modules/secman/pages/setting-up.adoc">Edit</a></div>
 </div>
 <article class="doc">
     <a name="section-top"></a>
-<h1 class="page">API</h1>
+<h1 class="page">Setting up</h1>
+<div id="preamble">
+<div class="sectionbody">
 <div class="paragraph">
-<p>TODO: to document</p>
+<p>This section describes how to setup and configure SecMan for use in your Apache Isis application.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="dependency-management"><a class="anchor" href="#dependency-management"></a>Dependency Management</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If your application inherits from the Apache Isis starter app (<code>org.apache.isis.app:isis-app-starter-parent</code> then that will define the version automatically:</p>
+</div>
+<div class="listingblock">
+<div class="title">pom.xml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;parent&gt;
+    &lt;groupId&gt;org.apache.isis.app&lt;/groupId&gt;
+    &lt;artifactId&gt;isis-app-starter-parent&lt;/artifactId&gt;
+    &lt;version&gt;2.0.0-M6&lt;/version&gt;
+    &lt;relativePath/&gt;
+&lt;/parent&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Alternatively, import the core BOM.
+This is usually done in the top-level parent pom of your application:</p>
+</div>
+<div class="listingblock">
+<div class="title">pom.xml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependencyManagement&gt;
+    &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.apache.isis.core&lt;/groupId&gt;
+            &lt;artifactId&gt;isis-core&lt;/artifactId&gt;
+            &lt;version&gt;2.0.0-M6&lt;/version&gt;
+            &lt;scope&gt;import&lt;/scope&gt;
+            &lt;type&gt;pom&lt;/type&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+&lt;/dependencyManagement&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In addition, add a section for secman&#8217;s own BOM:</p>
+</div>
+<div class="listingblock">
+<div class="title">pom.xml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependencyManagement&gt;
+    &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.apache.isis.extensions&lt;/groupId&gt;
+            &lt;artifactId&gt;isis-extensions-secman&lt;/artifactId&gt;
+            &lt;scope&gt;import&lt;/scope&gt;
+            &lt;type&gt;pom&lt;/type&gt;
+            &lt;version&gt;2.0.0-M6&lt;/version&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+&lt;/dependencyManagement&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="dependencies"><a class="anchor" href="#dependencies"></a>Dependencies</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In the webapp module of your application, add the following dependency:</p>
+</div>
+<div class="listingblock">
+<div class="title">pom.xml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.apache.isis.extensions&lt;/groupId&gt;
+            &lt;artifactId&gt;isis-extensions-secman-api&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.apache.isis.extensions&lt;/groupId&gt;
+            &lt;artifactId&gt;isis-extensions-secman-model&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.apache.isis.extensions&lt;/groupId&gt;
+            &lt;artifactId&gt;isis-extensions-secman-persistence-XXX&lt;/artifactId&gt; <i class="conum" data-value="1"></i><b>(1)</b>
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.apache.isis.extensions&lt;/groupId&gt;
+            &lt;artifactId&gt;isis-extensions-secman-encryption-jbcrypt&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.apache.isis.extensions&lt;/groupId&gt;
+            &lt;artifactId&gt;isis-extensions-secman-shiro-realm&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+&lt;/dependencies&gt;</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>specify either <code>isis-extensions-secman-persistence-jpa</code> or <code>isis-extensions-secman-persistence-jdo</code>, as required</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_update-appmanifest"><a class="anchor" href="#_update-appmanifest"></a>Update AppManifest</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="import-modules"><a class="anchor" href="#import-modules"></a>Import modules</h3>
+<div class="paragraph">
+<p>In your application&#8217;s <code>AppManifest</code> (top-level Spring <code>@Configuration</code> used to bootstrap the app), import the SecMan modules.
+You will also need to import the fixture module; SecMan uses fixture scripts to seed its entities:</p>
+</div>
+<div class="listingblock">
+<div class="title">AppManifest.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Configuration
+@Import({
+        ...
+        IsisModuleSecurityShiro.class,                  <i class="conum" data-value="1"></i><b>(1)</b>
+        ...
+        IsisModuleExtSecmanApi.class,                   <i class="conum" data-value="2"></i><b>(2)</b>
+        IsisModuleExtSecmanModel.class,
+        IsisModuleExtSecmanPersistenceJpa.class,
+        IsisModuleExtSecmanRealmShiro.class,
+        IsisModuleExtSecmanEncryptionJbcrypt.class,
+
+        IsisModuleTestingFixturesApplib.class,          <i class="conum" data-value="3"></i><b>(3)</b>
+        ...
+})
+public class AppManifest {
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>enable Shiro for security.
+<div class="paragraph">
+<p>Ensure that no other <code>IsisModuleSecurityXxx</code> module is imported.</p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>SecMan dependencies</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>fixture script support</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="configure-services"><a class="anchor" href="#configure-services"></a>Configure Services</h3>
+<div class="paragraph">
+<p>It is also necessary to configure some aspects of SecMan.
+This is most easily done using <code>Bean</code> definitions within the <code>AppManifest</code>:</p>
+</div>
+<div class="listingblock">
+<div class="title">AppManifest.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">//...
+public class AppManifest {
+
+    @Bean
+    public SecmanConfiguration secmanConfiguration() {
+        return SecmanConfiguration.builder()
+                .adminUserName("sven").adminPassword("pass")      <i class="conum" data-value="1"></i><b>(1)</b>
+                .adminRoleName("isis-ext-secman-admin-role")      <i class="conum" data-value="2"></i><b>(2)</b>
+                .regularUserRoleName("isis-ext-secman-user-role") <i class="conum" data-value="3"></i><b>(3)</b>
+                .build();
+    }
+
+    @Bean
+    public PermissionsEvaluationService permissionsEvaluationService() {
+        return new PermissionsEvaluationServiceAllowBeatsVeto();    <i class="conum" data-value="4"></i><b>(4)</b>
+    }
+
+    @Bean
+    public SecurityRealmService securityRealmService() {
+        return new SecurityRealmService() {
+            @Override
+            public SecurityRealm getCurrentRealm() {
+                return () -&gt;
+                    EnumSet.noneOf(SecurityRealmCharacteristic.class); <i class="conum" data-value="5"></i><b>(5)</b>
+            }
+        };
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>indicates the security super-user and password</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>indicates the name of the role granted to this security super-user.
+This can be any name.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>indicates the name of the role that should be granted to regular users of the application.
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+This role grants regular users the ability to logout (among other things).
+</td>
+</tr>
+</table>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>indicates that only local users are supported (no delegate realm is in used).
+<div class="paragraph">
+<p>See <a href="#delegate-realms">below</a> to configure for a delegate realm.</p>
+</div></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="shiro-realm"><a class="anchor" href="#shiro-realm"></a>Shiro Realm</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>SecMan&#8217;s Shiro realm is configured using the <code>shiro.ini</code> file:</p>
+</div>
+<div class="listingblock">
+<div class="title">shiro.ini</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">[main]
+
+authenticationStrategy=org.apache.isis.extensions.secman.shiro.AuthenticationStrategyForIsisModuleSecurityRealm
+isisModuleSecurityRealm=org.apache.isis.extensions.secman.shiro.IsisModuleExtSecmanShiroRealm
+
+securityManager.authenticator.authenticationStrategy = $authenticationStrategy
+securityManager.realms = $isisModuleSecurityRealm
+
+[users]
+[roles]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>[users]</code> and <code>[roles]</code> sections are required but are unused.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="delegate-realms"><a class="anchor" href="#delegate-realms"></a>Delegate Realms</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If a delegate realm is to be used, then there are two changes required.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>first, in the <code>AppManifest</code>:</p>
+<div class="listingblock">
+<div class="title">AppManifest.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Bean
+public SecurityRealmService securityRealmService() {
+    return new SecurityRealmService() {
+        @Override
+        public SecurityRealm getCurrentRealm() {
+            return () -&gt; EnumSet.of(SecurityRealmCharacteristic.DELEGATING);
+        }
+    };
+}</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>second, specify the delegate realm implementation in the <code>shiro.ini</code> file, and "inject" it into the semcan realm.</p>
+<div class="paragraph">
+<p>For example, to use <a href="../shiro-realm-ldap/about.html" class="page">LDAP Realm for Shiro</a> as a delegate:</p>
+</div>
+<div class="listingblock">
+<div class="title">shiro.ini</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">[main]
+
+...
+ldapRealm=org.apache.isis.extensions.shirorealmldap.realm.impl.IsisLdapRealm <i class="conum" data-value="1"></i><b>(1)</b>
+ldapRealm.xxx=...                                                            <i class="conum" data-value="2"></i><b>(2)</b>
+ldapRealm.yyy=...
+
+isisModuleSecurityRealm.delegateAuthenticationRealm=$ldapRealm               <i class="conum" data-value="3"></i><b>(3)</b>
+
+...</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>instantiate the LDAP realm</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>configure the LDAP realm as required</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>specify the LDAP realm as the delegate realm for SecMan&#8217;s own realm.</td>
+</tr>
+</table>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="seed-users-and-roles"><a class="anchor" href="#seed-users-and-roles"></a>Seed Users and Roles</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>With SecMan enabled, it will automatically set up a security super-user (as described <a href="#configure-services">above</a>) and a regular role.</p>
+</div>
+<div class="paragraph">
+<p>Creating regular applications users thereafter can be done manually, but if prototyping with an in-memory database then you will most likely want to set up some fixure scripts to automatically set up application users.</p>
+</div>
+<div class="paragraph">
+<p>SecMan provides a number of convenience fixture scripts to inherit from.
+For example, these scripts can be used to set up access to the domain objects in the <a href="../../../docs/latest/starters/helloworld.html" class="page">HelloWorld</a> starter app:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>to set up a "user-rw" role with access to everything under the "hello" namespace:</p>
+<div class="listingblock">
+<div class="title">RoleAndPerms__UserRw.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class RoleAndPerms__UserRw extends AbstractRoleAndPermissionsFixtureScript {
+
+    public static final String ROLE_NAME = "user-rw";
+
+    public RoleAndPerms__UserRw() {
+        super(ROLE_NAME, "Read-write access to entire application");
+    }
+
+    @Override
+    protected void execute(ExecutionContext ec) {
+        newPermissions(
+                ApplicationPermissionRule.ALLOW,
+                ApplicationPermissionMode.CHANGING,
+                Can.of(ApplicationFeatureId.newNamespace("hello"))
+        );
+    }
+}</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>to set up a "no-delete" role that vetoes the ability to delete objects:</p>
+<div class="listingblock">
+<div class="title">RoleAndPerms__UserRw.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class RoleAndPerms__NoDelete extends AbstractRoleAndPermissionsFixtureScript {
+
+    public static final String ROLE_NAME = "no-delete";
+
+    public RoleAndPerms__NoDelete() {
+        super(ROLE_NAME, "Veto access to deleting HelloWorld objects");
+    }
+
+    @Override
+    protected void execute(ExecutionContext ec) {
+        newPermissions(
+                ApplicationPermissionRule.VETO,
+                ApplicationPermissionMode.VIEWING,
+                Can.of(ApplicationFeatureId.newFeature(ApplicationFeatureSort.MEMBER, "hello.HelloWorldObject#delete"))
+        );
+    }
+}</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>to set up a user "joe" with the "user-rw" and "no-delete" role:</p>
+<div class="listingblock">
+<div class="title">UserToRole__bob_UserRw.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class UserToRole__bob_UserRw extends AbstractUserAndRolesFixtureScript {
+
+    public UserToRole__bob_UserRw() {
+        super("joe", "pass", "bob@world.com",
+                "/ITA",
+                AccountType.LOCAL,
+                Can.of(
+                   RoleAndPerms__UserRw.ROLE_NAME,
+                   RoleAndPerms__NoDelete.ROLE_NAME
+                ));
+    }
+}</code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</div>
 </div>
 </article>
 <aside class="article-aside toc hide-for-print" role="navigation">
@@ -431,7 +830,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M5.20210523-1244-5e4f727e</p>
+            <p>Revision: 2.0.0-M5.20210524-0438-35eef771</p>
         </div>
     </div>
 </footer>

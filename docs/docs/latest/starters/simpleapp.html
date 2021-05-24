@@ -650,7 +650,7 @@ In this way your application will be a "modular monolith"; said another way it w
 See also the discussion <a href="#structure-of-the-app">below</a>.</p>
 </div>
 <div class="paragraph">
-<p>The application also includes examples of unit tests, integration tests and BDD (cucumber) specs.
+<p>The application also includes examples of unit tests and integration tests.
 You&#8217;ll find these in their own Maven modules (<code>simpleapp-&#8230;&#8203;-module-simple-tests</code> and <code>simpleapp-&#8230;&#8203;-webapp-tests</code>).
 Normally we recommend that tests should be in the same Maven module as the code that they exercise.
 The simpleapp doesn&#8217;t do it this way just to give you the option to exclude them while initially prototyping/exploring a domain.
@@ -693,8 +693,12 @@ The <a href="../../../setupguide/latest/about.html" class="page">Setup Guide</a>
 <p>Create a new directory, and <code>cd</code> into that directory.</p>
 </div>
 <div class="paragraph">
-<p>To build the app from the latest stable release, then run the following command:</p>
+<p>To build the app from the latest stable release:</p>
 </div>
+<div class="ulist">
+<ul>
+<li>
+<p>if using JDO as the ORM:</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl https://codeload.github.com/apache/isis-app-simpleapp/zip/jdo | jar xv
@@ -704,8 +708,14 @@ mvn clean install
 mvn -pl webapp spring-boot:run</code></pre>
 </div>
 </div>
+</li>
+</ul>
+</div>
 <div class="paragraph">
-<p>to use JDO for the ORM, or:</p>
+<p>if using JPA as the ORM:</p>
+</div>
+<div class="paragraph">
+<p>+</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -715,9 +725,6 @@ cd isis-app-simpleapp-jpa
 mvn clean install
 mvn -pl webapp spring-boot:run</code></pre>
 </div>
-</div>
-<div class="paragraph">
-<p>to use JPA as the ORM.</p>
 </div>
 <div class="paragraph">
 <p>This should only take a few seconds to download, compile and run.
@@ -1938,78 +1945,10 @@ JQuery is available by default.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="webapp-tests-srctestjava"><a class="anchor" href="#webapp-tests-srctestjava"></a>webapp-test&#8217;s src/test/java</h3>
+<h3 id="integration-tests"><a class="anchor" href="#integration-tests"></a>webapp-test&#8217;s src/test/java</h3>
 <div class="paragraph">
-<p>Under <code>src/test/java</code> we have different sets of tests.
-We&#8217;ll inspect each in turn.</p>
+<p>Under <code>src/test/java</code> we have a number of integration tests,</p>
 </div>
-<div class="admonitionblock important">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-important" title="Important"></i>
-</td>
-<td class="content">
-the naming convention&#8201;&#8212;&#8201;with <code>Test</code>, <code>IntegTest</code> and <code>IntegBddSpecs</code> suffixes&#8201;&#8212;&#8201;is important, because the Maven surefire plugin is configured to run multiple times, one <code>&lt;execution&gt;</code> for each suffix.
-</td>
-</tr>
-</table>
-</div>
-<div class="sect3">
-<h4 id="bdd-specs"><a class="anchor" href="#bdd-specs"></a>BDD Specs</h4>
-<div class="paragraph">
-<p>The simplapp starter app includes support for <a href="../../../testing/latest/specsupport/about.html" class="page">BDD (Cucumber)</a> specifications.
-These reside under <code>domain.webapp.bdd</code>:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code>src/test/java
-  domainapp/
-    webapp/
-      bdd/
-        glue/
-          SimpleObjectsStepDef.java                     <i class="conum" data-value="1"></i><b>(1)</b>
-        specs/
-          SimpleObjectSpec_listAllAndCreate.feature     <i class="conum" data-value="2"></i><b>(2)</b>
-        RunIntegBddSpecs.java                           <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>defines the step definitions (or "glue") which describes how to interact with the application.<br>
-This class inherits from <code>WebAppIntegTestAbstract</code>, the base class for integration tests, described in the <a href="#integration-tests">next section</a>.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>the feature file, discussed below.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>boilerplate used to run the BDD Cucumber tests using JUni5 4.x.</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>There is just one feature file: <code>SimpleObjectSpec_listAllAndCreate.feature</code>, which is pretty simple:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-feature hljs" data-lang="feature">Feature: List and Create New Simple Objects
-
-  Scenario: Existing simple objects can be listed and new ones created
-    Given there are initially 3 simple objects
-    When  I create a new simple object
-    Then  there are 4 simple objects</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The set up of the 3 initial objects is part of the step definitions.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="integration-tests"><a class="anchor" href="#integration-tests"></a>Integration Tests</h4>
 <div class="paragraph">
 <p>The integration tests are in <code>domainapp.application.integtests</code>:</p>
 </div>
@@ -2022,12 +1961,7 @@ This class inherits from <code>WebAppIntegTestAbstract</code>, the base class fo
         webapp/
           integtests/
             metamodel/
-              lockdown/
-                approved/
-                  ...
-                current/
-                  ...
-                LockDownMetaModel_IntegTest.java    <i class="conum" data-value="1"></i><b>(1)</b>
+              SwaggerExport_IntegTest.java          <i class="conum" data-value="1"></i><b>(1)</b>
               ValidateDomainModel_IntegTest.java    <i class="conum" data-value="2"></i><b>(2)</b>
             smoke/
               Smoke_IntegTest.java                  <i class="conum" data-value="3"></i><b>(3)</b>
@@ -2038,9 +1972,9 @@ This class inherits from <code>WebAppIntegTestAbstract</code>, the base class fo
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Uses approval tests to verify that the metamodel is unchanged between releases of Apache Isis.
+<td>Exports the Swagger definition file.
 <div class="paragraph">
-<p>Discussed in more detail below.</p>
+<p>This could then be used to automate generation of client stubs in various languages.</p>
 </div></td>
 </tr>
 <tr>
@@ -2061,73 +1995,22 @@ It is very similar to the base class used to bootstrap the integration tests for
 </tr>
 </table>
 </div>
-<div class="paragraph">
-<p>The purpose of the metamodel lockdown tests is to capture regressions in Apache Isis itself whenever it is updated.</p>
-</div>
-<div class="paragraph">
-<p>Normally the metamodel of the application will evolve all of the time, so the metamodel lockdown tests are disabled by default and only enabled with <code>-Dmetamodel.lockdown</code>.
-If you want to capture the current metamodel, then enable and they will likely fail.
-The new export of the metamodel will be in <code>current</code> and can simply be approved (by copying over to the <code>approved</code> directory.</p>
-</div>
-<div class="paragraph">
-<p>However, if you are upgrading Apache Isis then you may want to check that the metamodel being built by the next version of Apache Isis is the same as previous.
-In this case, update Apache Isis (by updating the `&lt;version&gt; of the parent pom) and run the lockdown tests to check for differences.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="unit-tests"><a class="anchor" href="#unit-tests"></a>Unit Tests</h4>
-<div class="paragraph">
-<p>The integration tests are in <code>domainapp.application.unittests</code>:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code>src/test/java
-  domainapp/
-    webapp/
-       unittests/
-         mavendeps/
-           lockdown/
-             approved/
-               ...
-             current/
-               ...
-             LockDownMavenDeps_Test.java                <i class="conum" data-value="1"></i><b>(1)</b>
-       util/
-         CurrentVsApprovedApprovalTextWriter.java       <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>lock down test to check the transitive set of dependencies used by the application</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>utility class used by the lock down tests (unit tests and integ tests).</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>The maven dependency lock down tests are disabled by default, only enabled using <code>-Dmavendeps.lockdown</code>.
-The <code>pom.xml</code> is configured to run the Maven <code>dependency:tree</code> and <code>dependency:list</code> goals, capturing the current dependencies.
-These are compared to the approved versions.</p>
-</div>
-<div class="paragraph">
-<p>Any time the Apache Isis version is updated, run these tests using <code>-Dmavendeps.lockdown</code> to capture and approve the new versions.</p>
-</div>
-<div class="admonitionblock tip">
+<div class="admonitionblock important">
 <table>
 <tr>
 <td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
+<i class="fa icon-important" title="Important"></i>
 </td>
 <td class="content">
-The Maven dependency lock down tests are useful to capture any accidental changes to the dependency tree, so consider enabling them all of the time.
+<div class="paragraph">
+<p>The naming convention of tests classes is important, because the starter parent pom <a href="../parent-pom/about.html#surefire-configuration" class="page">configures the Maven surefire plugin</a> to execute multiple times, based on test class suffix.</p>
+</div>
+<div class="paragraph">
+<p>The suffixes are: <code>Test</code> (unit tests, if any) and <code>IntegTest</code> (integ tests, if any).</p>
+</div>
 </td>
 </tr>
 </table>
-</div>
 </div>
 </div>
 <div class="sect2">
@@ -2385,7 +2268,7 @@ docker rm sqlserver</code></pre>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M5.20210523-1244-5e4f727e</p>
+            <p>Revision: 2.0.0-M5.20210524-0438-35eef771</p>
         </div>
     </div>
 </footer>

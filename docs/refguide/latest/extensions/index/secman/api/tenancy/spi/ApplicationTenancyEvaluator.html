@@ -908,8 +908,8 @@ page.parent doesn't seem to be set...
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">interface ApplicationTenancyEvaluator {
   boolean handles(Class&lt;?&gt; cls)     <i class="conum" data-value="1"></i><b>(1)</b>
-  String hides(Object domainObject, ApplicationUser applicationUser)
-  String disables(Object domainObject, ApplicationUser applicationUser)
+  String hides(Object domainObject, ApplicationUser applicationUser)     <i class="conum" data-value="2"></i><b>(2)</b>
+  String disables(Object domainObject, ApplicationUser applicationUser)     <i class="conum" data-value="3"></i><b>(3)</b>
 }</code></pre>
 </div>
 </div>
@@ -922,6 +922,28 @@ page.parent doesn't seem to be set...
 <div class="content">
 <div class="paragraph">
 <p>Whether this evaluator can determine the tenancy of the specified domain entity (such as <code>ToDoItem</code> ) being interacted with (the "what").</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><a href="#hides__Object_ApplicationUser">hides(Object, ApplicationUser)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Whether this domain object should not be visible to the specified <a href="../../user/dom/ApplicationUser.html" class="page">ApplicationUser</a> .</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><a href="#disables__Object_ApplicationUser">disables(Object, ApplicationUser)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Whether the object members of this domain object should be disabled/read-only for the specified <a href="../../user/dom/ApplicationUser.html" class="page">ApplicationUser</a> .</p>
 </div>
 </div>
 </div></td>
@@ -940,6 +962,33 @@ page.parent doesn't seem to be set...
 </div>
 <div class="paragraph">
 <p>This method is also called to determine if the evaluator is also able to determine the tenancy of the security module&#8217;s own <a href="../../user/dom/ApplicationUser.html" class="page">ApplicationUser</a> , ie the "who" is doing the interacting. If the evaluator does not handle the class, then the fallback behaviour is to invoke <em>ApplicationUser#getAtPath()</em> } on the <a href="../../user/dom/ApplicationUser.html" class="page">ApplicationUser</a> and use the path from that.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="hides__Object_ApplicationUser"><a class="anchor" href="#hides__Object_ApplicationUser"></a>hides(Object, ApplicationUser)</h3>
+<div class="paragraph">
+<p>Whether this domain object should not be visible to the specified <a href="../../user/dom/ApplicationUser.html" class="page">ApplicationUser</a> .</p>
+</div>
+<div class="paragraph">
+<p>The domain object will be one that is handled by this evaluator, in other words that <em>#handles(Class)</em> was previously called and the evaluator returned <code>true</code> .</p>
+</div>
+<div class="paragraph">
+<p>A non-null return value means that the object should be hidden.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="disables__Object_ApplicationUser"><a class="anchor" href="#disables__Object_ApplicationUser"></a>disables(Object, ApplicationUser)</h3>
+<div class="paragraph">
+<p>Whether the object members of this domain object should be disabled/read-only for the specified <a href="../../user/dom/ApplicationUser.html" class="page">ApplicationUser</a> .</p>
+</div>
+<div class="paragraph">
+<p>The domain object will be one that is handled by this evaluator, in other words that <em>#handles(Class)</em> was previously called and the evaluator returned <code>true</code> .</p>
+</div>
+<div class="paragraph">
+<p>This method is only called after <em>#hides(Object, ApplicationUser)</em> and only if that method returned <code>false</code> .</p>
+</div>
+<div class="paragraph">
+<p>A non-null return value means that the object should be disabled, and is used as the reason why the object member is disabled.</p>
 </div>
 </div>
 </div>
@@ -961,7 +1010,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M5.20210523-1244-5e4f727e</p>
+            <p>Revision: 2.0.0-M5.20210524-0438-35eef771</p>
         </div>
     </div>
 </footer>

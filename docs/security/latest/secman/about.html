@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Raleway:300,400,500,700,800|Montserrat:300,400,700" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css"/>
 <link rel="home" href="../../.." title="Apache Isis">
-  <link rel="next" href="api.html" title="API">
+  <link rel="next" href="setting-up.html" title="Setting up">
   <link rel="prev" href="../usage-by-isis-viewers.html" title="Usage by Isis Viewers">
   </head>
   <body class="article">
@@ -146,7 +146,7 @@
 <div class="nav-panel-pagination">
   <a class="page-previous" rel="prev" href="../usage-by-isis-viewers.html" title="Usage by Isis Viewers"><span></span></a>
   <a class="page-next" rel="next"
-     href="api.html" title="API"><span></span></a>
+     href="setting-up.html" title="Setting up"><span></span></a>
 <!--
 page.parent doesn't seem to be set...
   <a class="page-parent disabled" rel="prev" href="" title="Usage by Isis Viewers"><span></span></a>
@@ -182,25 +182,10 @@ page.parent doesn't seem to be set...
 <ul class="nav-list">
   <li class="nav-item is-current-page" data-depth="2">
     <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="about.html">Secman</a>
+    <a class="nav-link" href="about.html">SecMan</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="api.html">API</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="model.html">Model</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="jbcrypt-encryption.html">JBCrypt Encryption</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="jdo-persistence.html">JDO Persistence</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="jpa-persistence.html">JPA Persistence</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="shiro-realm.html">Realm (for Shiro)</a>
+    <a class="nav-link" href="setting-up.html">Setting up</a>
   </li>
 </ul>
   </li>
@@ -402,7 +387,7 @@ page.parent doesn't seem to be set...
   <ul>
     <li><a href="../about.html">Security Guide</a></li>
     <li>Extensions</li>
-    <li><a href="about.html">Secman</a></li>
+    <li><a href="about.html">SecMan</a></li>
   </ul>
 </nav>
   <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/master/extensions/security/secman/adoc/modules/secman/pages/about.adoc">Edit</a></div>
@@ -410,24 +395,459 @@ page.parent doesn't seem to be set...
 <article class="doc">
     <a name="section-top"></a>
 <h1 class="page">SecMan</h1>
-<div class="admonitionblock warning">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>The primary purpose of SecMan is provide an implementation of the <a href="../../../refguide/latest/core/index/security/authorization/Authorizor.html" class="page">Authorizor</a> SPI, to determine whether the currently logged-in user has access to a given object member</p>
+</div>
+<div class="paragraph">
+<p>This authorization is implemented using domain entities, whch means that authorizations/permissions can theybe administered from within your Apache Isis application.
+Moreover, the set of permissions (to features) is derived completely from your application&#8217;s metamodel; in essence the permissions are "type-safe".
+The domain model is explained in more detail <a href="#domain-model">below</a>.</p>
+</div>
+<div class="paragraph">
+<p>SecMan can be used just for authorization, or it can be used in conjunction with Apache Isis' <a href="../shiro/about.html" class="page">Shiro security</a> implementation to perform authentication, where a password is held for each application user.
+This integration is discussed in more detail <a href="#shiro-integration">below</a>.</p>
+</div>
+<div class="paragraph">
+<p>This guide explains these concepts in more detail, and describes how to configure secman for use.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="users-roles-and-permissions"><a class="anchor" href="#users-roles-and-permissions"></a>Users, Roles and Permissions</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>As described in the introduction, the primary purpose of SecMan is provide an implementation of the <a href="../../../refguide/latest/core/index/security/authorization/Authorizor.html" class="page">Authorizor</a> SPI, to determine whether the currently logged-in user has access to a given object member:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>the logged-in user is represented as an <a href="../../../refguide/latest/core/index/security/authentication/Authentication.html" class="page">Authentication</a></p>
+</li>
+<li>
+<p>by "object member" we mean either an action, property or collection,as represented by an <a href="../../../refguide/latest/applib/index/Identifier.html" class="page">Identifier</a></p>
+</li>
+<li>
+<p>by "access", we mean whether the object member is <a href="../../../refguide/latest/core/index/security/authorization/Authorizor.html#isVisible<em>Authentication_Identifier" class="page">visible</a> to the user, and if so whether it is <a href="../../../refguide/latest/core/index/security/authorization/Authorizor.html#isUsable</em>Authentication_Identifier" class="page">usable</a> (not disabled) by the user.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>SecMan&#8217;s <a href="../../../refguide/latest/core/index/security/authorization/Authorizor.html" class="page">Authorizor</a> implementation uses domain entities to model users, roles and permissions.
+Each permission relates to an "object feature".
+Object features themselves come in three varieties:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>the most fine-grained object feature is an object member</p>
+<div class="paragraph">
+<p>for example <code>myapp.customer.CustomerAddress#zipCode</code></p>
+</div>
+</li>
+<li>
+<p>next up is an object feature representing an entire type</p>
+<div class="paragraph">
+<p>for example <code>myapp.customer.CustomerAddress</code>.
+This is usually specified using <a href="../../../refguide/latest/applib/index/annotation/DomainObject.html#objectType" class="page">@DomainObject#objectType()</a></p>
+</div>
+</li>
+<li>
+<p>most general is an object feature representing a namespace</p>
+<div class="paragraph">
+<p>These consist of the portion of the <a href="../../../refguide/latest/applib/index/annotation/DomainObject.html#objectType" class="page">object type</a> up to but excluding the local type name, for example <code>myapp.customer</code>.</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Permissions are inferred: a permission granted at the type level implies a permission for all of the object members of the type, and a permission granted to a namespace implies a permission for all of the object members of all of the object types within that namespace.</p>
+</div>
+<div class="paragraph">
+<p>Multipart namespaces also imply a hierarchy and permissions can be inferred through that hierarchy.
+For example the <code>myapp.customer</code> namespace has a parent <code>myapp</code> namespace.
+Permissions granted to the <code>myapp</code> namespace will be inferred by types in the child <code>myapp.customer</code> namespace.</p>
+</div>
+<div class="paragraph">
+<p>Permissions are also either additive or subtractive: they can indicate the user has been <code>ALLOW</code>ed access to an object member, or they have been <code>VETO</code>ed access.</p>
+</div>
+<div class="paragraph">
+<p>Because of permission inference, there could be more than one permission that applies to an object member, where one permission is an <code>ALLOW</code> and another permission is a <code>VETO</code>.
+SecMan uses the most specific permission to determine whether access should be granted or not.
+For example:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>if there is an <code>VETO</code> on <code>mycompany.customer</code>, but an <code>ADDRESS</code> on <code>mycompany.customer.CustomerProfile</code>, then access will be given to the object members in <code>mycompany.customer.CustomerProfile</code> because the type-level <code>ALLOW</code> takes precedence over the namespace-level <code>VETO</code>.</p>
+</li>
+<li>
+<p>if there is an <code>ALLOW</code> on <code>mycompany.customer.CustomerAddress</code>, but a <code>VETO</code> on <code>mycompany.customer.CustomerAddress#zipCode</code>, then access will be given to all the object members of <code>CustomerAddress</code> <em>except for</em> <code>zipCode</code>.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="domain-model"><a class="anchor" href="#domain-model"></a>Domain Model</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The diagram below shows the domain model for SecMan, and how it relates to the features obtained from the core metamodel:</p>
+</div>
+<div class="paragraph">
+<div class="title">SecMan domain model</div>
+<p><span class="image"><img src="_images/secman-domain-model.drawio.svg" alt="secman domain model.drawio"></span></p>
+</div>
+<div class="paragraph">
+<p>SecMan&#8217;s users, roles and permissions are entities, but application features are serializable value types that are derived from the Apache Isis metamodel.</p>
+</div>
+<div class="paragraph">
+<p>Thus:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>a user (represented by <a href="#refguide:extensions:index/secman/api/user/ApplicationUser.adoc" class="page unresolved">ApplicationUser</a>) can belong to many roles (<a href="#refguide:extensions:index/secman/api/role/ApplicationRole.adoc" class="page unresolved">ApplicationRole</a>)</p>
+</li>
+<li>
+<p>a role in turn holds a set of permissions (<a href="#refguide:extensions:index/secman/api/permission/ApplicationPermission.adoc" class="page unresolved">ApplicationPermission</a>).
+Each such permission is either an <code>ALLOW</code> or a <code>VETO</code> to an application feature, represented by a fully qualified name</p>
+</li>
+<li>
+<p>this resolves to an <a href="../../../refguide/latest/applib/index/services/appfeat/ApplicationFeatureId.html" class="page">ApplicationFeatureId</a> (from the core metamodel).
+That feature will be either a namespace, a type or a member.</p>
+<div class="paragraph">
+<p>The core metamodel also provides <a href="../../../refguide/latest/applib/index/services/appfeat/ApplicationFeature.html" class="page">ApplicationFeature</a> (each being identified with an <a href="../../../refguide/latest/applib/index/services/appfeat/ApplicationFeatureId.html" class="page">ApplicationFeatureId</a> that makes it easier to navigate around the application feature hierarchy.</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The domain model also shows the <a href="#refguide:extensions:index/secman/api/tenancy/ApplicationTenancyEvaluator.adoc" class="page unresolved">ApplicationTenancyEvaluator</a> interface and <a href="#refguide:extensions:index/secman/api/tenancy/ApplicationTenancy.adoc" class="page unresolved">ApplicationTenancy</a> entity.
+These are to support multitenancy, discussed in the section <a href="#multitenancy">below</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="multitenancy"><a class="anchor" href="#multitenancy"></a>Multitenancy</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In addition to users, roles and permissions, SecMan also supports <a href="https://en.wikipedia.org/wiki/Multitenancy">multitenancy</a>.
+The idea is that the ownership of domain objects is logically partitioned into tenants; one tenant cannot see or access the data owned by another tenant.</p>
+</div>
+<div class="paragraph">
+<p>Implementing multitenancy requires that both data and the user is "tagged" in some way, and that these tags are compared against each other to determine if the user has access to the tagged data.
+This is represented in the domain model through the <a href="#refguide:extensions:index/secman/api/tenancy/ApplicationTenancyEvaluator.adoc" class="page unresolved">ApplicationTenancyEvaluator</a> SPI interface.
+The idea is that the application provides its own implementation of this interface, that performs the evaluation of whether the current user can view the domain object or not (and if they can, whether the domain object members are disabled/read-only).</p>
+</div>
+<div class="paragraph">
+<p>One simple implementation is to tag domain objects with a "path", and similarly to store a "path" for each application user.
+The idea behind the <a href="#refguide:extensions:index/secman/api/tenancy/ApplicationTenancy.adoc" class="page unresolved">ApplicationTenancy</a> is simply to name these tenancies; its <code>atPath</code> property is intended to be a primary key.
+The <a href="#refguide:extensions:index/secman/api/user/ApplicationUser.adoc" class="page unresolved">ApplicationUser</a> entity also has an <code>atPath</code> property.
+We could therefore use this "atPath" to represent a country, eg "/GBR", "/ITA", "/FRA", "/BEL" and so on.</p>
+</div>
+<div class="paragraph">
+<p>For example, the example below uses implements the rule that a user can always view an object within (above or below) their place in the path "hierarchy", and can edit any object "under" them in the hierarchy:</p>
+</div>
+<div class="listingblock">
+<div class="title">ApplicationTenancyEvaluatorUsingAtPath.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Service
+public class ApplicationTenancyEvaluatorUsingAtPath implements ApplicationTenancyEvaluator {
+
+    @Override
+    public boolean handles(Class&lt;?&gt; cls) {
+        return HasAtPath.class.isAssignableFrom(cls);   <i class="conum" data-value="1"></i><b>(1)</b>
+    }
+    @Override
+    public String hides(Object domainObject, ApplicationUser applicationUser) {
+        final String objAtPath = ((HasAtPath) domainObject).getAtPath();
+        if(objAtPath == null) { return null; } // show
+        final String userAtPath = applicationUser.getAtPath();
+        if(userAtPath == null) { return "user does not have atPath"; } // hide
+        return objAtPath.startsWith(userAtPath) || userAtPath.startsWith(objAtPath) <i class="conum" data-value="2"></i><b>(2)</b>
+                ? null
+                : "object not visible within user's tenancy";
+    }
+    @Override
+    public String disables(Object domainObject, ApplicationUser applicationUser) {
+        final String objAtPath = ((HasAtPath) domainObject).getAtPath();
+        if(objAtPath == null) { return null; } // enable
+        final String userAtPath = applicationUser.getAtPath();
+        if(userAtPath == null) { return "user does not have atPath"; } // disable
+        return objAtPath.startsWith(userAtPath) <i class="conum" data-value="3"></i><b>(3)</b>
+                ? null
+                : "object not enabled within user's tenancy";
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
 <table>
 <tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-TODO: this content has not yet been reviewed/updated for v2.0
-</td>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>SecMan provides the <a href="#refguide:extensions:index/secman/api/tenancy/HasAtPath.adoc" class="page unresolved">HasAtPath</a> interface to standardize the way in which domain objects expose their "tag" (atPath) to the evaluator.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>can view all objects (above and below) within the user&#8217;s hierarchy
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Object atPath</th>
+<th class="tableblock halign-left valign-top">User atPath</th>
+<th class="tableblock halign-left valign-top">Visibility</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>/</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>/ITA</code></p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>visible</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>/ITA</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>/ITA</code></p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>visible</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>/ITA/MIL</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>/ITA</code></p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>visible</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>/FRA</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>/ITA</code></p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>not visible</p>
+</div></div></td>
+</tr>
+</tbody>
+</table></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>can edit only objects at or below the user&#8217;s hierarchy
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Object atPath</th>
+<th class="tableblock halign-left valign-top">User atPath</th>
+<th class="tableblock halign-left valign-top">Outcome</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>/</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>/ITA</code></p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>disabled</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>/ITA</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>/ITA</code></p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>enabled</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>/ITA/MIL</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>/ITA</code></p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>enabled</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>/FRA</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>/ITA</code></p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>n/a (not visible)</p>
+</div></div></td>
+</tr>
+</tbody>
+</table></td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>This SecMan module provides a complete security subdomain for users, roles, permissions; all are persisted as domain entities.</p>
+<p>More complex implementations are possible: ultimately the "atPath" properties are just strings and so can be interpreted in whatever way makes sense.
+For example, to allow a user to be able to access objects from multiple countries, we could use a format such as "/ITA;/BEL".
+The implementation would parse the string and allow access for any country.</p>
 </div>
 <div class="paragraph">
-<p>What that means, of course, that they can also be administered through your Apache Isis application.
-Moreover, the set of permissions (to features) is derived completely from your application&#8217;s metamodel; in essence the permissions are "type-safe".</p>
+<p>For this reason, the <a href="#refguide:extensions:index/secman/api/user/ApplicationUser.adoc" class="page unresolved">ApplicationUser</a>'s <code>atPath</code> property is <em>not</em> a foreign key to the <a href="#refguide:extensions:index/secman/api/tenancy/ApplicationTenancy.adoc" class="page unresolved">ApplicationTenancy</a> entity.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+Another implementation of <a href="#refguide:extensions:index/secman/api/tenancy/ApplicationTenancyEvaluator.adoc" class="page unresolved">ApplicationTenancyEvaluator</a> can be found in the <a href="../../../docs/latest/demo/about.html" class="page">Demo App</a>..
+</td>
+</tr>
+</table>
+</div>
+<div class="sidebarblock">
+<div class="content">
+<div class="title">Apache Isis' multi-tenancy is only skin deep</div>
+<div class="paragraph">
+<p>It&#8217;s important to realize that Apache Isis' multi-tenancy support is only skin deep.
+What we mean by that is that the restricting of access to data is only performed at the presentation layer.
+If a user is not permitted to view/edit an object, then it is only the viewer component prevents them from doing so; the restricted object could still have been retrieved into memory from the database.</p>
+</div>
+<div class="paragraph">
+<p>You may therefore wish to implement multi-tenancy at a "deeper" level, at the persistence layer).
+This would prevent the object from being retrieved into memory in the first place, almost certainly more performant and obviously also secure because the viewer cannot render an object that hasn&#8217;t been retrieved.
+One implementation (for multi-tenancy at the persistence layer) is to use capabilities of the ORM.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../../../pjdo/latest/about.html" class="page">JDO/DataNucleus</a> supports link:<a href="https://www.datanucleus.org/products/accessplatform/jdo/persistence.html#multitenancy">multi-tenancy</a> through the <a href="https://www.datanucleus.org/products/accessplatform_5_1/jdo/annotations.html#MultiTenant_Class">@MultiTenant</a> annotation and <code>datanucleus.tenantId</code> or <code>datanucleus.tenantProvider</code> configuration properties.</p>
+</li>
+<li>
+<p><a href="../../../pjpa/latest/about.html" class="page">JPA/Eclipselink</a> supports 3 different types of multi-tenancy, described in the documentation for the link <a href="https://www.eclipse.org/eclipselink/documentation/2.4/jpa/extensions/a_multitenant.htm">@Multitenant</a> annotation.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Another alternative is to move the responsibility for managing tenancy into the relational database itself.
+This will obviously vary by vendor.</p>
+</div>
+<div class="paragraph">
+<p>Another option again is rather simple: just run multiple instances of the application, one per tenancy.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="shiro-integration"><a class="anchor" href="#shiro-integration"></a>Shiro Integration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>While SecMan is primarily designed for authorization (as per the <a href="../../../refguide/latest/core/index/security/authorization/Authorizor.html" class="page">Authorizor</a> SPI), it is necessary when running an Apache Isis application to specify an authenticator.
+SecMan provides specific support so that Apache Isis' <a href="../shiro/about.html" class="page">Shiro security</a> integration can be used for authentication.</p>
+</div>
+<div class="paragraph">
+<p>This is implemented through the SecMan&#8217;s shiro realm submodule, which provides an implementation of Apache Shiro&#8217;s <code>Realm</code> interface that then calls back into SecMan.</p>
+</div>
+<div class="paragraph">
+<p>The diagram below sketches the high-level architecture:</p>
+</div>
+<div class="paragraph">
+<div class="title">SecMan&#8217;s Shiro architecture</div>
+<p><span class="image"><img src="_images/secman-shiro-architecture.drawio.svg" alt="secman shiro architecture.drawio"></span></p>
+</div>
+<div class="paragraph">
+<p>Thus:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Apache Isis' <a href="../shiro/about.html" class="page">Shiro security</a> integration sets up Shiro web filters to intercept every http request, as well as the <a href="../../../refguide/latest/security/index/shiro/authentication/AuthenticatorShiro.html" class="page">AuthenticatorShiro</a> implementation.</p>
+</li>
+<li>
+<p>The <code>AuthenticatorShiro</code> calls to the Shiro Security Manager to obtain the authenticated principal.</p>
+</li>
+<li>
+<p>The Shiro Security Manager uses the <code>shiro.ini</code> configuration file to look up the realm to perform the authentication; in this case we configure it to use Secman&#8217;s realm (<a href="../../../refguide/latest/extensions/index/secman/shiro/IsisModuleExtSecmanShiroRealm.html" class="page">IsisModuleExtSecmanShiroRealm</a>).</p>
+</li>
+<li>
+<p>Secman&#8217;s realm implementation queries the database and uses this to create an instance of <code>PrincipalForApplicationUser</code>, where the <code>Principal</code> interface is Shiro&#8217;s representation of an authenticated user.
+The <code>PrincipalForApplicationUser</code> is backed by <a href="#refguide:extensions:index/secman/api/user/ApplicationUser.adoc" class="page unresolved">ApplicationUser</a>, which all of the permissions to object members for this particular user.</p>
+</li>
+<li>
+<p>to render a page, the Apache Isis viewer uses configured <code>Authorizor</code>, in this case
+Secman&#8217;s own <a href="../../../refguide/latest/extensions/index/secman/api/authorizor/AuthorizorSecman.html" class="page">AuthorizorSecman</a>.
+This looks up the current <a href="#refguide:extensions:index/secman/api/user/ApplicationUser.adoc" class="page unresolved">ApplicationUser</a> (which will already reside in-memory) and renders the page according to which object members are visible or not.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The above configuration allows Secman to be used to authenticate users; the password is stored as an (typically) encrypted property of the <a href="#refguide:extensions:index/secman/api/user/ApplicationUser.adoc" class="page unresolved">ApplicationUser</a>.
+These are called "local" users, as per the <a href="#refguide:extensions:index/secman/api/user/ApplicationUser.adoc" class="page unresolved">ApplicationUser</a>'s <code>accountType</code> property.</p>
+</div>
+<div class="paragraph">
+<p>Secman&#8217;s <a href="../../../refguide/latest/extensions/index/secman/shiro/IsisModuleExtSecmanShiroRealm.html" class="page">Realm implementation</a> also allows a "delegate" realm to be configured.
+In such cases the authentication of "delegated" users is performed by the delegate realm rather than locally.</p>
+</div>
+<div class="paragraph">
+<p>The diagram below shows where this delegation occurs:</p>
+</div>
+<div class="paragraph">
+<div class="title">SecMan&#8217;s Shiro delegate architecture</div>
+<p><span class="image"><img src="_images/secman-shiro-delegate-architecture.drawio.svg" alt="secman shiro delegate architecture.drawio"></span></p>
+</div>
+<div class="paragraph">
+<p>Configuring the delegate realm is performed using Shiro&#8217;s "poor man&#8217;s dependency injection" syntax in its <code>shiro.ini</code> file.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="password-encryption"><a class="anchor" href="#password-encryption"></a>Password encryption</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Secman provides the <a href="../../../refguide/latest/extensions/index/secman/api/encryption/PasswordEncryptionService.html" class="page">PasswordEncryptionService</a> SPI to allow different algorithms to encrypt the user&#8217;s password.</p>
+</div>
+<div class="paragraph">
+<p>The <code>encryption-jbcrypt</code> module provides an implementation using the <a href="https://www.mindrot.org/projects/jBCrypt/">jBCrypt</a> library.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="secmans-structure"><a class="anchor" href="#secmans-structure"></a>SecMan&#8217;s structure</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>SecMan consists of a number of Maven submodules:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>the API module (<code>isis-extensions-secman-api</code>) defines a set of interfaces for the <a href="#refguide:extensions:index/secman/api/user/ApplicationUser.adoc" class="page unresolved">ApplicationUser</a>, <a href="#refguide:extensions:index/secman/api/role/ApplicationRole.adoc" class="page unresolved">ApplicationRole</a>,
+<a href="#refguide:extensions:index/secman/api/permission/ApplicationPermission.adoc" class="page unresolved">ApplicationPermission</a> and <a href="#refguide:extensions:index/secman/api/tenancy/ApplicationTenancy.adoc" class="page unresolved">ApplicationTenancy</a> entities.</p>
+</li>
+<li>
+<p>the two persistence modules (<code>isis-extensions-secman-persistence-jpa</code> and <code>isis-extensions-secman-persistence-jdo</code>) provide concrete implementations of the APIs for JPA and JDO respectively.
+As you might expect, they are intended for use with <a href="../../../pjpa/latest/about.html" class="page">JPA/Eclipselink</a> and <a href="../../../pjdo/latest/about.html" class="page">JDO/DataNucleus</a> persistence mechanisms respectively; use one or the other.</p>
+</li>
+<li>
+<p>the Model module (<code>isis-extensions-secman-model</code>) defines view models to represent the feature application features, and also contains business logic as mixins to the API (and therefore contributed to the appropriate concrete entity).</p>
+</li>
+<li>
+<p>the Shiro realm module (<code>isis-extensions-secman-shiro-realm</code>) provides the Shiro realm interface that delegates to the Secman database (see discussion <a href="#shiro-integration">above</a>)</p>
+</li>
+<li>
+<p>the jbcrypt encryption module (<code>isis-extensions-secman-encryption-jbcrypt</code>) provides an implementation of Secman&#8217;s <a href="../../../refguide/latest/extensions/index/secman/api/encryption/PasswordEncryptionService.html" class="page">PasswordEncryptionService</a> so that passwords are persisted securely using <a href="https://www.mindrot.org/projects/jBCrypt/">jBCrypt</a>.</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 </article>
 <aside class="article-aside toc hide-for-print" role="navigation">
@@ -446,7 +866,7 @@ Moreover, the set of permissions (to features) is derived completely from your a
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M5.20210523-1244-5e4f727e</p>
+            <p>Revision: 2.0.0-M5.20210524-0438-35eef771</p>
         </div>
     </div>
 </footer>
