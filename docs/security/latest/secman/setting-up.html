@@ -521,13 +521,11 @@ You will also need to import the fixture module; SecMan uses fixture scripts to 
         ...
         IsisModuleSecurityShiro.class,                  <i class="conum" data-value="1"></i><b>(1)</b>
         ...
-        IsisModuleExtSecmanApi.class,                   <i class="conum" data-value="2"></i><b>(2)</b>
-        IsisModuleExtSecmanModel.class,
-        IsisModuleExtSecmanPersistenceJpa.class,
-        IsisModuleExtSecmanRealmShiro.class,
-        IsisModuleExtSecmanEncryptionJbcrypt.class,
+        IsisModuleExtSecmanPersistenceXxx.class,        <i class="conum" data-value="2"></i><b>(2)</b>
+        IsisModuleExtSecmanRealmShiro.class,            <i class="conum" data-value="3"></i><b>(3)</b>
+        IsisModuleExtSecmanEncryptionJbcrypt.class,     <i class="conum" data-value="4"></i><b>(4)</b>
 
-        IsisModuleTestingFixturesApplib.class,          <i class="conum" data-value="3"></i><b>(3)</b>
+        IsisModuleTestingFixturesApplib.class,          <i class="conum" data-value="5"></i><b>(5)</b>
         ...
 })
 public class AppManifest {
@@ -545,10 +543,18 @@ public class AppManifest {
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>SecMan dependencies</td>
+<td>specify either <code>IsisModuleExtSecmanPersistenceJdo</code> or <code>IsisModuleExtSecmanPersistenceJpa</code>, as required</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>enable Shiro integration (so that Shiro delegates to Secman for authentication)</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>use Jbcrypt to encrypt locally-held password</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
 <td>fixture script support</td>
 </tr>
 </table>
@@ -569,9 +575,9 @@ public class AppManifest {
     @Bean
     public SecmanConfiguration secmanConfiguration() {
         return SecmanConfiguration.builder()
-                .adminUserName("sven").adminPassword("pass")      <i class="conum" data-value="1"></i><b>(1)</b>
-                .adminRoleName("isis-ext-secman-admin-role")      <i class="conum" data-value="2"></i><b>(2)</b>
-                .regularUserRoleName("isis-ext-secman-user-role") <i class="conum" data-value="3"></i><b>(3)</b>
+                .adminUserName("sven").adminPassword("pass")     <i class="conum" data-value="1"></i><b>(1)</b>
+                // .adminRoleName("isis-ext-secman-admin")       <i class="conum" data-value="2"></i><b>(2)</b>
+                // .regularUserRoleName("isis-ext-secman-user")  <i class="conum" data-value="3"></i><b>(3)</b>
                 .build();
     }
 
@@ -602,11 +608,12 @@ public class AppManifest {
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
 <td>indicates the name of the role granted to this security super-user.
-This can be any name.</td>
+This can be any name; if not overridden will default to <code>SecmanConfiguration.DEFAULT_ADMIN_ROLE_NAME</code></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
 <td>indicates the name of the role that should be granted to regular users of the application.
+This can be any name; if not overridden will default to <code>SecmanConfiguration.DEFAULT_REGULAR_USER_ROLE_NAME</code>
 <div class="admonitionblock important">
 <table>
 <tr>
@@ -633,94 +640,110 @@ This role grants regular users the ability to logout (among other things).
 </div>
 </div>
 <div class="sect1">
-<h2 id="shiro-realm"><a class="anchor" href="#shiro-realm"></a>Shiro Realm</h2>
+<h2 id="configuration"><a class="anchor" href="#configuration"></a>Configuration</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>SecMan&#8217;s Shiro realm is configured using the <code>shiro.ini</code> file:</p>
+<p>Add the database schema used by the SecMan entities to the configuration file:</p>
 </div>
 <div class="listingblock">
-<div class="title">shiro.ini</div>
+<div class="title">application.yml</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">[main]
-
-authenticationStrategy=org.apache.isis.extensions.secman.shiro.AuthenticationStrategyForIsisModuleSecurityRealm
-isisModuleSecurityRealm=org.apache.isis.extensions.secman.shiro.IsisModuleExtSecmanShiroRealm
-
-securityManager.authenticator.authenticationStrategy = $authenticationStrategy
-securityManager.realms = $isisModuleSecurityRealm
-
-[users]
-[roles]</code></pre>
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">isis:
+  persistence:
+    schema:
+      auto-create-schemas: isisExtensionsSecman</code></pre>
 </div>
-</div>
-<div class="paragraph">
-<p>The <code>[users]</code> and <code>[roles]</code> sections are required but are unused.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="delegate-realms"><a class="anchor" href="#delegate-realms"></a>Delegate Realms</h2>
+<h2 id="default-roles"><a class="anchor" href="#default-roles"></a>Default Roles</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>If a delegate realm is to be used, then there are two changes required.</p>
+<p>With SecMan enabled, it will automatically set up a security super-user (as described <a href="#configure-services">above</a>) and a regular role.
+It also defines a number of other roles to provide access to specific features of the framework (or its extensions).
+These are summarised here:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>first, in the <code>AppManifest</code>:</p>
-<div class="listingblock">
-<div class="title">AppManifest.java</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Bean
-public SecurityRealmService securityRealmService() {
-    return new SecurityRealmService() {
-        @Override
-        public SecurityRealm getCurrentRealm() {
-            return () -&gt; EnumSet.of(SecurityRealmCharacteristic.DELEGATING);
-        }
-    };
-}</code></pre>
-</div>
+<p>Available in both production and prototype mode</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>SecmanConfiguration#getAdminRoleName()</code></p>
+<div class="paragraph">
+<p>Admin permissions for Secman itself.
+This is the role granted to the security super-user, and whose exact name is configured using .
+This role should therefore be extremely tightly locked down.</p>
 </div>
 </li>
 <li>
-<p>second, specify the delegate realm implementation in the <code>shiro.ini</code> file, and "inject" it into the semcan realm.</p>
+<p><code>SecmanConfiguration#getRegularUserRoleName()</code></p>
 <div class="paragraph">
-<p>For example, to use <a href="../shiro-realm-ldap/about.html" class="page">LDAP Realm for Shiro</a> as a delegate:</p>
+<p>Regular user permissions for Secman.
+This should be granted to all users (in particular, it includes the ability to logout!)</p>
 </div>
-<div class="listingblock">
-<div class="title">shiro.ini</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">[main]
-
-...
-ldapRealm=org.apache.isis.extensions.shirorealmldap.realm.impl.IsisLdapRealm <i class="conum" data-value="1"></i><b>(1)</b>
-ldapRealm.xxx=...                                                            <i class="conum" data-value="2"></i><b>(2)</b>
-ldapRealm.yyy=...
-
-isisModuleSecurityRealm.delegateAuthenticationRealm=$ldapRealm               <i class="conum" data-value="3"></i><b>(3)</b>
-
-...</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>instantiate the LDAP realm</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>configure the LDAP realm as required</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>specify the LDAP realm as the delegate realm for SecMan&#8217;s own realm.</td>
-</tr>
-</table>
+</li>
+<li>
+<p><code>IsisConfigurationRoleAndPermissions.ROLE_NAME</code></p>
+<div class="paragraph">
+<p>Access the configuration properties (from the tertiary menu))</p>
 </div>
 </li>
 </ul>
+</div>
+</li>
+<li>
+<p>Available only in prototype mode:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>IsisAppFeatureRoleAndPermissions.ROLE_NAME</code></p>
+<div class="paragraph">
+<p>Browse the application features + permissions (from the "Prototyping" menu).</p>
+</div>
+</li>
+<li>
+<p><code>IsisPersistenceJdoMetaModelRoleAndPermissions.ROLE_NAME</code></p>
+<div class="paragraph">
+<p>Download the JDO metamodel (from the "Prototyping" menu).</p>
+</div>
+</li>
+<li>
+<p><code>IsisExtH2ConsoleRoleAndPermissions.ROLE_NAME</code></p>
+<div class="paragraph">
+<p>Access the h2 console (from the "Prototyping" menu)</p>
+</div>
+</li>
+<li>
+<p><code>IsisViewerRestfulObjectsSwaggerRoleAndPermissions.ROLE_NAME</code></p>
+<div class="paragraph">
+<p>Access the swagger UI (from the "Prototyping" menu)</p>
+</div>
+</li>
+<li>
+<p><code>IsisSudoImpersonateRoleAndPermissions.ROLE_NAME</code></p>
+<div class="paragraph">
+<p>Impersonate other users (from the "Prototyping" menu, and mixins)</p>
+</div>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The full list can be found by searching for subclasses of <code>AbstractRoleAndPermissionsFixtureScript</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="creating-users"><a class="anchor" href="#creating-users"></a>Creating Users</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Creating regular applications users in production use can be done manually by the security super-user, or can be done programmatically through <a href="../../../refguide/latest/extensions/index/secman/api/user/dom/ApplicationUserRepository.html" class="page">ApplicationUserRepository</a>.
+This will return an <a href="../../../refguide/latest/extensions/index/secman/api/user/dom/ApplicationUser.html" class="page">ApplicationUser</a> which can then be granted roles, for example using <code>addRoleToUser()</code> API of <a href="../../../refguide/latest/extensions/index/secman/api/role/dom/ApplicationRoleRepository.html" class="page">ApplicationRoleRepository</a>.</p>
 </div>
 </div>
 </div>
@@ -728,14 +751,14 @@ isisModuleSecurityRealm.delegateAuthenticationRealm=$ldapRealm               <i 
 <h2 id="seed-users-and-roles"><a class="anchor" href="#seed-users-and-roles"></a>Seed Users and Roles</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>With SecMan enabled, it will automatically set up a security super-user (as described <a href="#configure-services">above</a>) and a regular role.</p>
+<p>If prototyping with an in-memory database then you will most likely want to set up some fixture scripts to automatically set up application users.</p>
 </div>
 <div class="paragraph">
-<p>Creating regular applications users thereafter can be done manually, but if prototyping with an in-memory database then you will most likely want to set up some fixure scripts to automatically set up application users.</p>
+<p>SecMan provides the <code>AbstractRoleAndPermissionsFixtureScript</code> and <code>AbstractUserAndRolesFixtureScript</code> convenience fixture scripts
+to inherit from.</p>
 </div>
 <div class="paragraph">
-<p>SecMan provides a number of convenience fixture scripts to inherit from.
-For example, these scripts can be used to set up access to the domain objects in the <a href="../../../docs/latest/starters/helloworld.html" class="page">HelloWorld</a> starter app:</p>
+<p>For example, these scripts can be used to set up access to the domain objects in the <a href="../../../docs/latest/starters/helloworld.html" class="page">HelloWorld</a> starter app:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -792,21 +815,151 @@ For example, these scripts can be used to set up access to the domain objects in
 <li>
 <p>to set up a user "joe" with the "user-rw" and "no-delete" role:</p>
 <div class="listingblock">
-<div class="title">UserToRole__bob_UserRw.java</div>
+<div class="title">UserToRole__joe_UserRw_but_NoDelete.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class UserToRole__bob_UserRw extends AbstractUserAndRolesFixtureScript {
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class UserToRole__joe_UserRw_but_NoDelete
+        extends AbstractUserAndRolesFixtureScript {
 
-    public UserToRole__bob_UserRw() {
-        super("joe", "pass", "bob@world.com",
-                "/ITA",
-                AccountType.LOCAL,
-                Can.of(
-                   RoleAndPerms__UserRw.ROLE_NAME,
-                   RoleAndPerms__NoDelete.ROLE_NAME
-                ));
+    public UserToRole__joe_UserRw_but_NoDelete_or_isis2619Prop() {
+        super(
+          "joe", "pass",                                               <i class="conum" data-value="1"></i><b>(1)</b>
+          "joe@italy.com",                                             <i class="conum" data-value="2"></i><b>(2)</b>
+          "/ITA",                                                      <i class="conum" data-value="3"></i><b>(3)</b>
+          AccountType.LOCAL,                                           <i class="conum" data-value="4"></i><b>(4)</b>
+          Can.of(
+            RoleAndPerms__UserRw.ROLE_NAME                             <i class="conum" data-value="5"></i><b>(5)</b>
+            , RoleAndPerms__NoDelete.ROLE_NAME                         <i class="conum" data-value="5"></i><b>(5)</b>
+            , SecmanConfiguration.DEFAULT_REGULAR_USER_ROLE_NAME       <i class="conum" data-value="6"></i><b>(6)</b>
+            , IsisExtH2ConsoleRoleAndPermissions.ROLE_NAME             <i class="conum" data-value="7"></i><b>(7)</b>
+            , IsisPersistenceJdoMetaModelRoleAndPermissions.ROLE_NAME  <i class="conum" data-value="7"></i><b>(7)</b>
+          ));
     }
 }</code></pre>
 </div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>username and password</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>email address</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>application tenancy</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>local account (rather than delegated, see <a href="#delegate-realms">below</a>)</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>application-specific roles</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>regular user access (always required)</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>specific access to framework features, see <a href="#default-roles">above</a></td>
+</tr>
+</table>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="shiro-realm"><a class="anchor" href="#shiro-realm"></a>Shiro Realm</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>SecMan&#8217;s Shiro realm is configured using the <code>shiro.ini</code> file:</p>
+</div>
+<div class="listingblock">
+<div class="title">shiro.ini</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">[main]
+
+authenticationStrategy=org.apache.isis.extensions.secman.shiro.AuthenticationStrategyForIsisModuleSecurityRealm
+isisModuleSecurityRealm=org.apache.isis.extensions.secman.shiro.IsisModuleExtSecmanShiroRealm
+
+securityManager.authenticator.authenticationStrategy = $authenticationStrategy
+securityManager.realms = $isisModuleSecurityRealm
+
+[users]
+[roles]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>[users]</code> and <code>[roles]</code> sections are required but are unused.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="delegate-realms"><a class="anchor" href="#delegate-realms"></a>Delegate Realms</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If a delegate realm is to be used, then there are two changes required.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>first, in the <code>AppManifest</code>:</p>
+<div class="listingblock">
+<div class="title">AppManifest.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Bean
+public SecurityRealmService securityRealmService() {
+    return new SecurityRealmService() {
+        @Override
+        public SecurityRealm getCurrentRealm() {
+            return () -&gt; EnumSet.of(SecurityRealmCharacteristic.DELEGATING);
+        }
+    };
+}</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>second, specify the delegate realm implementation in the <code>shiro.ini</code> file, and "inject" it into the Secman realm.</p>
+<div class="paragraph">
+<p>For example, to use <a href="../shiro-realm-ldap/about.html" class="page">LDAP Realm for Shiro</a> as a delegate:</p>
+</div>
+<div class="listingblock">
+<div class="title">shiro.ini</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">[main]
+
+...
+ldapRealm=org.apache.isis.extensions.shirorealmldap.realm.impl.IsisLdapRealm <i class="conum" data-value="1"></i><b>(1)</b>
+ldapRealm.xxx=...                                                            <i class="conum" data-value="2"></i><b>(2)</b>
+ldapRealm.yyy=...
+
+isisModuleSecurityRealm.delegateAuthenticationRealm=$ldapRealm               <i class="conum" data-value="3"></i><b>(3)</b>
+
+...</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>instantiate the LDAP realm</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>configure the LDAP realm as required</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>specify the LDAP realm as the delegate realm for SecMan&#8217;s own realm.</td>
+</tr>
+</table>
 </div>
 </li>
 </ul>
@@ -830,7 +983,7 @@ For example, these scripts can be used to set up access to the domain objects in
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M5.20210524-0438-35eef771</p>
+            <p>Revision: 2.0.0-M5.20210525-0446-6e02e7e5</p>
         </div>
     </div>
 </footer>
