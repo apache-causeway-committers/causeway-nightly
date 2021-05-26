@@ -899,7 +899,13 @@ page.parent doesn't seem to be set...
 <p>Value type representing a namespace, type or member.</p>
 </div>
 <div class="paragraph">
-<p>This value is <em>Comparable</em> , the implementation of which considers <em>#getSort() (feature) sort</em> , <em>#getNamespace() namespace</em> , <em>#getTypeSimpleName() type simple name</em> and <em>#getMemberName() member name</em> .</p>
+<p>This value is <em>Comparable</em> , the implementation of which considers <em>#getSort() (feature) sort</em> , <em>#getNamespace() namespace</em> , <em>#getTypeSimpleName() type simple name</em> and <em>#getLogicalMemberName() member-logical-name</em> .</p>
+</div>
+<div class="paragraph">
+<p>If the represented member is an <em>action</em> , then <em>#getLogicalMemberName() member-logical-name</em> must <strong>not</strong> include any parameter list or parentheses. Consequently method overloading is not supported.</p>
+</div>
+<div class="paragraph">
+<p>If there is a member name clash involving an <em>action</em> and an <em>association</em> , then consequently any permissions defined automatically apply to both and one cannot separate these.</p>
 </div>
 </div>
 </div>
@@ -916,7 +922,7 @@ page.parent doesn't seem to be set...
   ApplicationFeatureId newFeature(final String namespace, final String logicalTypeSimpleName, final String memberName)
   ApplicationFeatureId newNamespace(final String namespace)
   ApplicationFeatureId newType(final String logicalTypeName)
-  ApplicationFeatureId newMember(final String logicalTypeName, final String memberName)
+  ApplicationFeatureId newMember(final String logicalTypeName, final String memberLogicalName)
   ApplicationFeatureId newMember(String fullyQualifiedName)
   String title()     <i class="conum" data-value="1"></i><b>(1)</b>
   ApplicationFeatureId getParentTypeFeatureId()     <i class="conum" data-value="2"></i><b>(2)</b>
@@ -934,7 +940,6 @@ page.parent doesn't seem to be set...
   int hashCode()
   String toString()
   ApplicationFeatureId withNamespace(final String namespace)     <i class="conum" data-value="6"></i><b>(6)</b>
-  ApplicationFeatureId asNonOverloaded()     <i class="conum" data-value="7"></i><b>(7)</b>
 }</code></pre>
 </div>
 </div>
@@ -1006,17 +1011,6 @@ page.parent doesn't seem to be set...
 </div>
 </div></td>
 </tr>
-<tr>
-<td><i class="conum" data-value="7"></i><b>7</b></td>
-<td><a href="#asNonOverloaded__">asNonOverloaded()</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>For action members, returns a variant of the featureId that strips off the parameter types.</p>
-</div>
-</div>
-</div></td>
-</tr>
 </table>
 </div>
 </div>
@@ -1060,15 +1054,6 @@ page.parent doesn't seem to be set...
 <p>Returns a new instance that is a clone of this, except for the namespace, which is taken from the argument.</p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="asNonOverloaded__"><a class="anchor" href="#asNonOverloaded__"></a>asNonOverloaded()</h3>
-<div class="paragraph">
-<p>For action members, returns a variant of the featureId that strips off the parameter types.</p>
-</div>
-<div class="paragraph">
-<p>This is for use cases where distinguishing between overloaded versions of an action (which is itself strongly discouraged) is unimportant. One example is the permissions management of SecMan.</p>
-</div>
-</div>
 </div>
 </div>
 </article>
@@ -1088,7 +1073,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M5.20210525-0446-6e02e7e5</p>
+            <p>Revision: 2.0.0-M5.20210526-0456-eb399525</p>
         </div>
     </div>
 </footer>
