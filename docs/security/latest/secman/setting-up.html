@@ -560,87 +560,10 @@ public class AppManifest {
 </table>
 </div>
 </div>
-<div class="sect2">
-<h3 id="configure-services"><a class="anchor" href="#configure-services"></a>Configure Services</h3>
-<div class="paragraph">
-<p>It is also necessary to configure some aspects of SecMan.
-This is most easily done using <code>Bean</code> definitions within the <code>AppManifest</code>:</p>
-</div>
-<div class="listingblock">
-<div class="title">AppManifest.java</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">//...
-public class AppManifest {
-
-    @Bean
-    public SecmanConfiguration secmanConfiguration() {
-        return SecmanConfiguration.builder()
-                .adminUserName("sven").adminPassword("pass")     <i class="conum" data-value="1"></i><b>(1)</b>
-                // .adminRoleName("isis-ext-secman-admin")       <i class="conum" data-value="2"></i><b>(2)</b>
-                // .regularUserRoleName("isis-ext-secman-user")  <i class="conum" data-value="3"></i><b>(3)</b>
-                .build();
-    }
-
-    @Bean
-    public PermissionsEvaluationService permissionsEvaluationService() {
-        return new PermissionsEvaluationServiceAllowBeatsVeto();    <i class="conum" data-value="4"></i><b>(4)</b>
-    }
-
-    @Bean
-    public SecurityRealmService securityRealmService() {
-        return new SecurityRealmService() {
-            @Override
-            public SecurityRealm getCurrentRealm() {
-                return () -&gt;
-                    EnumSet.noneOf(SecurityRealmCharacteristic.class); <i class="conum" data-value="5"></i><b>(5)</b>
-            }
-        };
-    }
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>indicates the security super-user and password</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>indicates the name of the role granted to this security super-user.
-This can be any name; if not overridden will default to <code>SecmanConfiguration.DEFAULT_ADMIN_ROLE_NAME</code></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>indicates the name of the role that should be granted to regular users of the application.
-This can be any name; if not overridden will default to <code>SecmanConfiguration.DEFAULT_REGULAR_USER_ROLE_NAME</code>
-<div class="admonitionblock important">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-important" title="Important"></i>
-</td>
-<td class="content">
-This role grants regular users the ability to logout (among other things).
-</td>
-</tr>
-</table>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>indicates that only local users are supported (no delegate realm is in used).
-<div class="paragraph">
-<p>See <a href="#delegate-realms">below</a> to configure for a delegate realm.</p>
-</div></td>
-</tr>
-</table>
-</div>
-</div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="configuration"><a class="anchor" href="#configuration"></a>Configuration</h2>
+<h2 id="configure-properties"><a class="anchor" href="#configure-properties"></a>Configuration Properties</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Add the database schema used by the SecMan entities to the configuration file:</p>
@@ -653,6 +576,77 @@ This role grants regular users the ability to logout (among other things).
     schema:
       auto-create-schemas: isisExtensionsSecman</code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>Optionally, modify the configuration properties for Secman itself:</p>
+</div>
+<div class="listingblock">
+<div class="title">application.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">isis:
+  extensions:
+    secman:
+      seed:
+        admin:
+          user-name: "secman-admin"                     <i class="conum" data-value="1"></i><b>(1)</b>
+          password: "pass"                              <i class="conum" data-value="1"></i><b>(1)</b>
+          role-name: "isis-ext-secman-admin"            <i class="conum" data-value="2"></i><b>(2)</b>
+          namespace-permissions:
+            sticky: ...                                 <i class="conum" data-value="3"></i><b>(3)</b>
+            additional: ...                             <i class="conum" data-value="4"></i><b>(4)</b>
+        regular-user:
+          role-name: "isis-ext-secman-user"             <i class="conum" data-value="5"></i><b>(5)</b>
+      permissionsEvaluationPolicy: ALLOW_BEATS_VETO     <i class="conum" data-value="6"></i><b>(6)</b>
+      delegated-users:
+        auto-create-policy: AUTO_CREATE_AS_LOCKED       <i class="conum" data-value="7"></i><b>(7)</b>
+      user-registration:
+        initial-role-names: ...                         <i class="conum" data-value="8"></i><b>(8)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>indicates the security super-user and password</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>indicates the name of the role granted to this security super-user.
+This can be any name.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>the "sticky" namespace permissions granted to the admin role.
+These cannot be removed (through the UI).</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>any additional namespace permissions to be granted to the admin role.
+These can be removed (through the UI).</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>indicates the name of the role that should be granted to regular users of the application.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>if there are conflicted (allow vs veto) permissions at the same scope, then whether the allow wins or the veto wins</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>indicates that only local users are supported (no delegate realm is in used).
+<div class="paragraph">
+<p>See <a href="#delegate-realms">below</a> to configure for a delegate realm.</p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td>if self-user registration is enabled in the viewer, this defines the set of roles to be granted to said user.
+<div class="paragraph">
+<p>This is discussed in more detail <a href="#user-registration-aka-sign-up">below</a>.</p>
+</div></td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -671,7 +665,7 @@ These are summarised here:</p>
 <div class="ulist">
 <ul>
 <li>
-<p><code>SecmanConfiguration#getAdminRoleName()</code></p>
+<p>Admin role (as defined in the configuration, see <a href="#configure-properties">above</a>)</p>
 <div class="paragraph">
 <p>Admin permissions for Secman itself.
 This is the role granted to the security super-user, and whose exact name is configured using .
@@ -679,7 +673,7 @@ This role should therefore be extremely tightly locked down.</p>
 </div>
 </li>
 <li>
-<p><code>SecmanConfiguration#getRegularUserRoleName()</code></p>
+<p>Regular user role (as defined in the configuration, see <a href="#configure-properties">above</a>)</p>
 <div class="paragraph">
 <p>Regular user permissions for Secman.
 This should be granted to all users (in particular, it includes the ability to logout!)</p>
@@ -981,12 +975,12 @@ The Secman implementation sets up the user with appropriate initial roles.</p>
 <div class="title">application.yaml</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">isis:
-    extensions:
-        secman:
-            user-registration:
-                initial-roles:
-                    - "self-registered-user-role"
-                    - "regular-user-role"</code></pre>
+  extensions:
+    secman:
+      user-registration:
+        initial-roles:
+          - "self-registered-user-role"
+          - "regular-user-role"</code></pre>
 </div>
 </div>
 </div>
@@ -1008,7 +1002,7 @@ The Secman implementation sets up the user with appropriate initial roles.</p>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M5.20210529-0603-801802dc</p>
+            <p>Revision: 2.0.0-M5.20210531-0551-643cdd85</p>
         </div>
     </div>
 </footer>
