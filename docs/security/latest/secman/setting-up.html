@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Raleway:300,400,500,700,800|Montserrat:300,400,700" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css"/>
 <link rel="home" href="../../.." title="Apache Isis">
-  <link rel="next" href="../audit-trail/about.html" title="Audit Trail">
+  <link rel="next" href="setting-up-with-shiro.html" title="Setting up with Shiro">
   <link rel="prev" href="about.html" title="SecMan">
   </head>
   <body class="article">
@@ -146,7 +146,7 @@
 <div class="nav-panel-pagination">
   <a class="page-previous" rel="prev" href="about.html" title="SecMan"><span></span></a>
   <a class="page-next" rel="next"
-     href="../audit-trail/about.html" title="Audit Trail"><span></span></a>
+     href="setting-up-with-shiro.html" title="Setting up with Shiro"><span></span></a>
 <!--
 page.parent doesn't seem to be set...
   <a class="page-parent" rel="prev" href="about.html" title="SecMan"><span></span></a>
@@ -186,6 +186,9 @@ page.parent doesn't seem to be set...
 <ul class="nav-list">
   <li class="nav-item is-current-page" data-depth="3">
     <a class="nav-link" href="setting-up.html">Setting up</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="setting-up-with-shiro.html">Setting up with Shiro</a>
   </li>
 </ul>
   </li>
@@ -399,7 +402,12 @@ page.parent doesn't seem to be set...
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>This section describes how to setup and configure SecMan for use in your Apache Isis application.</p>
+<p>This section describes how to setup and configure SecMan for use in your Apache Isis application, for both authentication (<code>Authenticator</code> SPI) and authorization (<code>Authorizor</code> SPI).</p>
+</div>
+<div class="paragraph">
+<p>It is also possible to use SecMan in conjunction with the framework&#8217;s <a href="../shiro/about.html" class="page">integration with Shiro</a>, where Shiro takes primary responsibility for authentication, while still using Secman for authorization.
+This mode allows a separate authentication mechanism such as LDAP to be used.
+For more details, see <a href="setting-up-with-shiro.html" class="page">setting up with Shiro</a>.</p>
 </div>
 </div>
 </div>
@@ -473,23 +481,11 @@ This is usually done in the top-level parent pom of your application:</p>
 <pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependencies&gt;
         &lt;dependency&gt;
             &lt;groupId&gt;org.apache.isis.extensions&lt;/groupId&gt;
-            &lt;artifactId&gt;isis-extensions-secman-api&lt;/artifactId&gt;
-        &lt;/dependency&gt;
-        &lt;dependency&gt;
-            &lt;groupId&gt;org.apache.isis.extensions&lt;/groupId&gt;
-            &lt;artifactId&gt;isis-extensions-secman-model&lt;/artifactId&gt;
-        &lt;/dependency&gt;
-        &lt;dependency&gt;
-            &lt;groupId&gt;org.apache.isis.extensions&lt;/groupId&gt;
             &lt;artifactId&gt;isis-extensions-secman-persistence-XXX&lt;/artifactId&gt; <i class="conum" data-value="1"></i><b>(1)</b>
         &lt;/dependency&gt;
         &lt;dependency&gt;
             &lt;groupId&gt;org.apache.isis.extensions&lt;/groupId&gt;
-            &lt;artifactId&gt;isis-extensions-secman-encryption-jbcrypt&lt;/artifactId&gt;
-        &lt;/dependency&gt;
-        &lt;dependency&gt;
-            &lt;groupId&gt;org.apache.isis.extensions&lt;/groupId&gt;
-            &lt;artifactId&gt;isis-extensions-secman-shiro-realm&lt;/artifactId&gt;
+            &lt;artifactId&gt;isis-extensions-secman-encryption-jbcrypt&lt;/artifactId&gt; <i class="conum" data-value="2"></i><b>(2)</b>
         &lt;/dependency&gt;
 &lt;/dependencies&gt;</code></pre>
 </div>
@@ -500,6 +496,10 @@ This is usually done in the top-level parent pom of your application:</p>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
 <td>specify either <code>isis-extensions-secman-persistence-jpa</code> or <code>isis-extensions-secman-persistence-jdo</code>, as required</td>
 </tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>provides an implementation of <code>PasswordEncryptionService</code></td>
+</tr>
 </table>
 </div>
 </div>
@@ -507,8 +507,6 @@ This is usually done in the top-level parent pom of your application:</p>
 <div class="sect1">
 <h2 id="_update-appmanifest"><a class="anchor" href="#_update-appmanifest"></a>Update AppManifest</h2>
 <div class="sectionbody">
-<div class="sect2">
-<h3 id="import-modules"><a class="anchor" href="#import-modules"></a>Import modules</h3>
 <div class="paragraph">
 <p>In your application&#8217;s <code>AppManifest</code> (top-level Spring <code>@Configuration</code> used to bootstrap the app), import the SecMan modules.
 You will also need to import the fixture module; SecMan uses fixture scripts to seed its entities:</p>
@@ -519,13 +517,10 @@ You will also need to import the fixture module; SecMan uses fixture scripts to 
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Configuration
 @Import({
         ...
-        IsisModuleSecurityShiro.class,                  <i class="conum" data-value="1"></i><b>(1)</b>
-        ...
-        IsisModuleExtSecmanPersistenceXxx.class,        <i class="conum" data-value="2"></i><b>(2)</b>
-        IsisModuleExtSecmanRealmShiro.class,            <i class="conum" data-value="3"></i><b>(3)</b>
-        IsisModuleExtSecmanEncryptionJbcrypt.class,     <i class="conum" data-value="4"></i><b>(4)</b>
+        IsisModuleExtSecmanPersistenceXxx.class,        <i class="conum" data-value="1"></i><b>(1)</b>
+        IsisModuleExtSecmanEncryptionJbcrypt.class,     <i class="conum" data-value="2"></i><b>(2)</b>
 
-        IsisModuleTestingFixturesApplib.class,          <i class="conum" data-value="5"></i><b>(5)</b>
+        IsisModuleTestingFixturesApplib.class,          <i class="conum" data-value="3"></i><b>(3)</b>
         ...
 })
 public class AppManifest {
@@ -536,29 +531,17 @@ public class AppManifest {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>enable Shiro for security.
-<div class="paragraph">
-<p>Ensure that no other <code>IsisModuleSecurityXxx</code> module is imported.</p>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
 <td>specify either <code>IsisModuleExtSecmanPersistenceJdo</code> or <code>IsisModuleExtSecmanPersistenceJpa</code>, as required</td>
 </tr>
 <tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>use Jbcrypt to encrypt passwords</td>
+</tr>
+<tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>enable Shiro integration (so that Shiro delegates to Secman for authentication)</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>use Jbcrypt to encrypt locally-held password</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
 <td>fixture script support</td>
 </tr>
 </table>
-</div>
 </div>
 </div>
 </div>
@@ -597,10 +580,8 @@ public class AppManifest {
         regular-user:
           role-name: "isis-ext-secman-user"             <i class="conum" data-value="5"></i><b>(5)</b>
       permissionsEvaluationPolicy: ALLOW_BEATS_VETO     <i class="conum" data-value="6"></i><b>(6)</b>
-      delegated-users:
-        auto-create-policy: AUTO_CREATE_AS_LOCKED       <i class="conum" data-value="7"></i><b>(7)</b>
       user-registration:
-        initial-role-names: ...                         <i class="conum" data-value="8"></i><b>(8)</b></code></pre>
+        initial-role-names: ...                         <i class="conum" data-value="7"></i><b>(7)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -634,13 +615,6 @@ These can be removed (through the UI).</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="7"></i><b>7</b></td>
-<td>indicates that only local users are supported (no delegate realm is in used).
-<div class="paragraph">
-<p>See <a href="#delegate-realms">below</a> to configure for a delegate realm.</p>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="8"></i><b>8</b></td>
 <td>if self-user registration is enabled in the viewer, this defines the set of roles to be granted to said user.
 <div class="paragraph">
 <p>This is discussed in more detail <a href="#user-registration-aka-sign-up">below</a>.</p>
@@ -654,7 +628,7 @@ These can be removed (through the UI).</td>
 <h2 id="default-roles"><a class="anchor" href="#default-roles"></a>Default Roles</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>With SecMan enabled, it will automatically set up a security super-user (as described <a href="#configure-services">above</a>) and a regular role.
+<p>With SecMan enabled, it will automatically seed a security super-user and a regular role.
 It also defines a number of other roles to provide access to specific features of the framework (or its extensions).
 These are summarised here:</p>
 </div>
@@ -736,13 +710,13 @@ This should be granted to all users (in particular, it includes the ability to l
 <h2 id="creating-users"><a class="anchor" href="#creating-users"></a>Creating Users</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Creating regular applications users in production use can be done manually by the security super-user, or can be done programmatically through <a href="#refguide:extensions:index/secman/api/user/dom/ApplicationUserRepository.adoc" class="page unresolved">ApplicationUserRepository</a>.
-This will return an <a href="#refguide:extensions:index/secman/api/user/dom/ApplicationUser.adoc" class="page unresolved">ApplicationUser</a> which can then be granted roles, for example using <code>addRoleToUser()</code> API of <a href="#refguide:extensions:index/secman/api/role/dom/ApplicationRoleRepository.adoc" class="page unresolved">ApplicationRoleRepository</a>.</p>
+<p>Creating regular applications users in production use can be done manually by the security super-user, or can be done programmatically through <a href="../../../refguide/latest/extensions/index/secman/applib/user/dom/ApplicationUserRepository.html" class="page">ApplicationUserRepository</a>.
+This will return an <a href="../../../refguide/latest/extensions/index/secman/applib/user/dom/ApplicationUser.html" class="page">ApplicationUser</a> which can then be granted roles, for example using <code>addRoleToUser()</code> API of <a href="../../../refguide/latest/extensions/index/secman/applib/role/dom/ApplicationRoleRepository.html" class="page">ApplicationRoleRepository</a>.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="seed-users-and-roles"><a class="anchor" href="#seed-users-and-roles"></a>Seed Users and Roles</h2>
+<h2 id="fixture-scripts-to-setup-users-and-roles"><a class="anchor" href="#fixture-scripts-to-setup-users-and-roles"></a>Fixture scripts to setup users and roles</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>If prototyping with an in-memory database then you will most likely want to set up some fixture scripts to automatically set up application users.</p>
@@ -847,7 +821,7 @@ to inherit from.</p>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>local account (rather than delegated, see <a href="#delegate-realms">below</a>)</td>
+<td>local account (rather than delegated, see <a href="setting-up-with-shiro.html" class="page">Setting up with Shiro</a>)</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
@@ -860,98 +834,6 @@ to inherit from.</p>
 <tr>
 <td><i class="conum" data-value="7"></i><b>7</b></td>
 <td>specific access to framework features, see <a href="#default-roles">above</a></td>
-</tr>
-</table>
-</div>
-</li>
-</ul>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="shiro-realm"><a class="anchor" href="#shiro-realm"></a>Shiro Realm</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>SecMan&#8217;s Shiro realm is configured using the <code>shiro.ini</code> file:</p>
-</div>
-<div class="listingblock">
-<div class="title">shiro.ini</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">[main]
-
-authenticationStrategy=org.apache.isis.extensions.secman.shiro.AuthenticationStrategyForIsisModuleSecurityRealm
-isisModuleSecurityRealm=org.apache.isis.extensions.secman.shiro.IsisModuleExtSecmanShiroRealm
-
-securityManager.authenticator.authenticationStrategy = $authenticationStrategy
-securityManager.realms = $isisModuleSecurityRealm
-
-[users]
-[roles]</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The <code>[users]</code> and <code>[roles]</code> sections are required but are unused.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="delegate-realms"><a class="anchor" href="#delegate-realms"></a>Delegate Realms</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>If a delegate realm is to be used, then there are two changes required.</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>first, in the <code>AppManifest</code>:</p>
-<div class="listingblock">
-<div class="title">AppManifest.java</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Bean
-public SecurityRealmService securityRealmService() {
-    return new SecurityRealmService() {
-        @Override
-        public SecurityRealm getCurrentRealm() {
-            return () -&gt; EnumSet.of(SecurityRealmCharacteristic.DELEGATING);
-        }
-    };
-}</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>second, specify the delegate realm implementation in the <code>shiro.ini</code> file, and "inject" it into the Secman realm.</p>
-<div class="paragraph">
-<p>For example, to use <a href="../shiro-realm-ldap/about.html" class="page">LDAP Realm for Shiro</a> as a delegate:</p>
-</div>
-<div class="listingblock">
-<div class="title">shiro.ini</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">[main]
-
-...
-ldapRealm=org.apache.isis.extensions.shirorealmldap.realm.impl.IsisLdapRealm <i class="conum" data-value="1"></i><b>(1)</b>
-ldapRealm.xxx=...                                                            <i class="conum" data-value="2"></i><b>(2)</b>
-ldapRealm.yyy=...
-
-isisModuleSecurityRealm.delegateAuthenticationRealm=$ldapRealm               <i class="conum" data-value="3"></i><b>(3)</b>
-
-...</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>instantiate the LDAP realm</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>configure the LDAP realm as required</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>specify the LDAP realm as the delegate realm for SecMan&#8217;s own realm.</td>
 </tr>
 </table>
 </div>
@@ -1002,7 +884,7 @@ The Secman implementation sets up the user with appropriate initial roles.</p>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M5.20210531-0551-643cdd85</p>
+            <p>Revision: 2.0.0-M5.20210602-0611-6e46c5d3</p>
         </div>
     </div>
 </footer>

@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Setting up with Shiro :: Apache Isis</title>
+    <meta name="generator" content="Antora 2.3.4">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+    <link rel="stylesheet" href="../../../_/css/site-custom.css">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Raleway:300,400,500,700,800|Montserrat:300,400,700" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css"/>
+<link rel="home" href="../../.." title="Apache Isis">
+  <link rel="next" href="../audit-trail/about.html" title="Audit Trail">
+  <link rel="prev" href="setting-up.html" title="Setting up">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="../../..">
+          <span class="icon">
+            <img src="../../../_/img/isis-logo-48x48.png"></img>
+          </span>
+        <span>Apache Isis</span>
+      </a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <a class="navbar-end">
+        <div class="navbar-item hide-for-print">
+          <span>
+            <input id="algolia-search-input" placeholder="Search"></span>
+          </span>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Quick Start</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Starter Apps</span>
+            <a class="navbar-item" href="../../../docs/2.0.0-M6/starters/helloworld.html">Hello World</a>
+            <a class="navbar-item" href="../../../docs/2.0.0-M6/starters/simpleapp.html">Simple App</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Demos &amp; Tutorials</span>
+            <a class="navbar-item" href="../../../docs/2.0.0-M6/demo/about.html">Demo App</a>
+            <a class="navbar-item" href="https://danhaywood.gitlab.io/isis-petclinic-tutorial-docs/petclinic/1.16.2/intro.html">Petclinic (tutorial)</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Resources</span>
+            <a class="navbar-item" href="../../../docs/2.0.0-M6/resources/cheatsheet.html">Cheatsheet</a>
+            <a class="navbar-item" href="../../../docs/2.0.0-M6/resources/icons.html">Icons</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Guides</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Development</span>
+            <a class="navbar-item" href="../../../setupguide/2.0.0-M6/about.html">Setup Guide</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Core</span>
+            <a class="navbar-item" href="../../../userguide/2.0.0-M6/about.html">User Guide</a>
+            <a class="navbar-item" href="../../../refguide/2.0.0-M6/about.html">Reference Guide</a>
+            <a class="navbar-item" href="../../../testing/2.0.0-M6/about.html">Testing Guide</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Libraries</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">For Use in Apps</span>
+            <a class="navbar-item" href="../../../subdomains/2.0.0-M6/about.html">Subdomain Libraries</a>
+            <a class="navbar-item" href="../../../valuetypes/2.0.0-M6/about.html">Value Types</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Integrate between Apps</span>
+            <a class="navbar-item" href="../../../mappings/2.0.0-M6/about.html">Bounded Context Mapping Libraries</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Other</span>
+            <a class="navbar-item" href="../../../incubator/2.0.0-M6/about.html">Incubator</a>
+            <a class="navbar-item" href="../../../legacy/2.0.0-M6/about.html">Legacy</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Components</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Viewers</span>
+            <a class="navbar-item" href="../../../vw/2.0.0-M6/about.html">Web UI (Wicket)</a>
+            <a class="navbar-item" href="../../../vro/2.0.0-M6/about.html">REST API (Restful Objects)</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Security</span>
+            <a class="navbar-item" href="../../../security/2.0.0-M6/about.html">Security Guide</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Persistence</span>
+            <a class="navbar-item" href="../../../pjpa/2.0.0-M6/about.html">JPA (EclipseLink)</a>
+            <a class="navbar-item" href="../../../pjdo/2.0.0-M6/about.html">JDO (DataNucleus)</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Extensions</span>
+            <a class="navbar-item" href="../../../extensions/2.0.0-M6/about.html">Extensions Catalog</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Support</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Contact</span>
+            <a class="navbar-item" href="../../../docs/2.0.0-M6/support/slack-channel.html">Slack</a>
+            <a class="navbar-item" href="../../../docs/2.0.0-M6/support/mailing-list.html">Mailing Lists</a>
+            <a class="navbar-item" href="https://issues.apache.org/jira/browse/ISIS">JIRA</a>
+            <a class="navbar-item" href="https://stackoverflow.com/questions/tagged/isis">Stack Overflow</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Releases</span>
+            <a class="navbar-item" href="../../../docs/2.0.0-M6/downloads/how-to.html">Downloads</a>
+            <a class="navbar-item" href="../../../relnotes/2.0.0-M6/about.html">Release Notes</a>
+            <a class="navbar-item" href="../../../docs/2.0.0-M6/archive/1-x.html">Archive (1.x)</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Framework</span>
+            <a class="navbar-item" href="../../../conguide/2.0.0-M6/about.html">Contributors' Guide</a>
+            <a class="navbar-item" href="../../../comguide/2.0.0-M6/about.html">Committers' Guide</a>
+            <a class="navbar-item" href="../../../core/2.0.0-M6/about.html">Core Design</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">ASF</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://www.apache.org/">Apache Homepage</a>
+            <a class="navbar-item" href="https://www.apache.org/events/current-event">Events</a>
+            <a class="navbar-item" href="https://www.apache.org/licenses/">Licenses</a>
+            <a class="navbar-item" href="https://www.apache.org/security/">Security</a>
+            <a class="navbar-item" href="https://www.apache.org/foundation/sponsorship.html">Sponsorship</a>
+            <a class="navbar-item" href="https://www.apache.org/foundation/thanks.html">Thanks</a>
+            <hr class="navbar-divider"/>
+            <a class="navbar-item" href="https://whimsy.apache.org/board/minutes/Isis.html">PMC board minutes</a>
+          </div>
+        </div>
+        <a class="navbar-item" href="../../../docs/2.0.0-M6/about.html">
+          <span class="icon">
+            <img src="../../../_/img/home.png"></img>
+          </span>
+        </a>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body ">
+<div class="nav-container" data-component="security" data-version="latest">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-pagination">
+  <a class="page-previous" rel="prev" href="setting-up.html" title="Setting up"><span></span></a>
+  <a class="page-next" rel="next"
+     href="../audit-trail/about.html" title="Audit Trail"><span></span></a>
+<!--
+page.parent doesn't seem to be set...
+  <a class="page-parent" rel="prev" href="about.html" title="Setting up"><span></span></a>
+-->
+</div>
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../about.html">Security Guide</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../core/about.html">Security Component SPI</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../bypass/about.html">Bypass Implementation</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../shiro/about.html">Shiro Implementation</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../keycloak/about.html">Keycloak Implementation</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../spring/about.html">Spring Implementation</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../usage-by-isis-viewers.html">Usage by Isis Viewers</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Extensions</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="about.html">SecMan</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="setting-up.html">Setting up</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="setting-up-with-shiro.html">Setting up with Shiro</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../audit-trail/about.html">Audit Trail</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../session-log/about.html">Session Log</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../shiro-realm-ldap/about.html">LDAP Realm for Shiro</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../spring/about.html">Spring Implementation</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Security Guide</span>
+    <span class="version">latest</span>
+  </div>
+  <ul class="components">
+    <li class="component">
+      <span class="title"> </span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../docs/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">BC Mapping Libraries</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../mappings/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Committers' Guide</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../comguide/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Contributors' Guide</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../conguide/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Design Docs</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../core/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Extensions Catalog</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../extensions/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Incubator Catalog</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../incubator/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">JDO/DataNucleus</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../pjdo/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">JPA</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../pjpa/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Reference Guide</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../refguide/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Release Notes</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../relnotes/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">REST API (Restful Objects Viewer)</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../vro/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component is-current">
+      <span class="title">Security Guide</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Setup Guide</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../setupguide/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Subdomains Catalog</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../subdomains/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Testing Guide</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../testing/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Tooling</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../tooling/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">User Guide</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../userguide/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Value Types Catalog</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../valuetypes/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Web UI (Wicket Viewer)</span>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../../vw/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main role="main">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../docs/latest/about.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../about.html">Security Guide</a></li>
+    <li>Extensions</li>
+    <li><a href="about.html">SecMan</a></li>
+    <li><a href="setting-up-with-shiro.html">Setting up with Shiro</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/master/extensions/security/secman/adoc/modules/secman/pages/setting-up-with-shiro.adoc">Edit</a></div>
+</div>
+<article class="doc">
+    <a name="section-top"></a>
+<h1 class="page">Setting up with Shiro</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This section describes how to setup and configure SecMan with framework&#8217;s <a href="../shiro/about.html" class="page">Shiro integration</a> being used for primary authentication.</p>
+</div>
+<div class="paragraph">
+<p>The primary use case this enables is for authentication to be performed through an external mechanism, for example LDAP.</p>
+</div>
+<div class="paragraph">
+<p>If delegate authentication has been set up, this means that authentication may pass for a user that Secman knows nothing about.
+In this case Secman will automatically create an <code>ApplicationUser</code> for this externally delegated authenticated user, with its <code>type</code> set to "DELEGATED".</p>
+</div>
+<div class="paragraph">
+<p>The integration <em>does</em> still allow for local logins (<code>type</code> set to "LOCAL")  of <code>ApplicationUser</code>s if required.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="dependencies"><a class="anchor" href="#dependencies"></a>Dependencies</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In addition to the <a href="setting-up.html#dependencies" class="page">regular dependencies</a> required by Secman, also add in Secman&#8217;s Shiro Realm implementation:</p>
+</div>
+<div class="listingblock">
+<div class="title">pom.xml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.apache.isis.extensions&lt;/groupId&gt;
+            &lt;artifactId&gt;isis-extensions-secman-persistence-XXX&lt;/artifactId&gt; <i class="conum" data-value="1"></i><b>(1)</b>
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.apache.isis.extensions&lt;/groupId&gt;
+            &lt;artifactId&gt;isis-extensions-secman-encryption-jbcrypt&lt;/artifactId&gt; <i class="conum" data-value="2"></i><b>(2)</b>
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.apache.isis.extensions&lt;/groupId&gt;
+            &lt;artifactId&gt;isis-extensions-secman-shiro-realm&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+&lt;/dependencies&gt;</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>specify either <code>isis-extensions-secman-persistence-jpa</code> or <code>isis-extensions-secman-persistence-jdo</code>, as required</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>provides an implementation of <code>PasswordEncryptionService</code></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_update-appmanifest"><a class="anchor" href="#_update-appmanifest"></a>Update AppManifest</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In addition to the <a href="setting-up.html#_update-appmanifest" class="page">other modules</a> that Secman requires to be added to your  application&#8217;s <code>AppManifest</code>, also add:
+You will also need to import the fixture module; SecMan uses fixture scripts to seed its entities:</p>
+</div>
+<div class="listingblock">
+<div class="title">AppManifest.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Configuration
+@Import({
+        ...
+        IsisModuleExtSecmanRealmShiro.class,    <i class="conum" data-value="1"></i><b>(1)</b>
+        ...
+})
+public class AppManifest {
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>enables Shiro integration (so that Shiro delegates to Secman for authentication).
+<div class="paragraph">
+<p>This brings in a transitive dependency on the <code>IsisModuleSecurityShiro</code> module.</p>
+</div></td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Ensure that no other <code>IsisModuleSecurityXxx</code> module is imported into the AppManifest.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="delegate-realms"><a class="anchor" href="#delegate-realms"></a>Shiro (Delegate) Realm</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>SecMan&#8217;s Shiro realm is configured using the <code>shiro.ini</code> file.
+The following sets up Shiro <em>without</em> delegation:</p>
+</div>
+<div class="listingblock">
+<div class="title">shiro.ini</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">[main]
+
+authenticationStrategy=org.apache.isis.extensions.secman.shiro.AuthenticationStrategyForIsisModuleSecurityRealm
+isisModuleSecurityRealm=org.apache.isis.extensions.secman.shiro.IsisModuleExtSecmanShiroRealm
+
+securityManager.authenticator.authenticationStrategy = $authenticationStrategy
+securityManager.realms = $isisModuleSecurityRealm
+
+[users]
+[roles]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>[users]</code> and <code>[roles]</code> sections are required but are unused.</p>
+</div>
+<div class="paragraph">
+<p>The main point of introducing Shiro though is to introduce support for authentication by external mechanisms such as LDAP.
+In this case we configure Shiro to use the external realm as the primary realm, with Secman&#8217;s Shiro realm set up as a "delegate" realm.
+We specify the delegate realm implementation in the <code>shiro.ini</code> file, and "inject" it into the Secman realm.</p>
+</div>
+<div class="paragraph">
+<p>For example, to use <a href="../shiro-realm-ldap/about.html" class="page">LDAP Realm for Shiro</a> as a delegate:</p>
+</div>
+<div class="listingblock">
+<div class="title">shiro.ini</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">[main]
+
+...
+ldapRealm=org.apache.isis.extensions.shirorealmldap.realm.impl.IsisLdapRealm <i class="conum" data-value="1"></i><b>(1)</b>
+ldapRealm.xxx=...                                                            <i class="conum" data-value="2"></i><b>(2)</b>
+ldapRealm.yyy=...
+
+isisModuleSecurityRealm.delegateAuthenticationRealm=$ldapRealm               <i class="conum" data-value="3"></i><b>(3)</b>
+
+...</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>instantiate the LDAP realm</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>configure the LDAP realm as required</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>specify the LDAP realm as the delegate realm for SecMan&#8217;s own realm.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="configure-properties"><a class="anchor" href="#configure-properties"></a>Configuration Properties</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>As mentioned in the introduction, if delegate authentication has been set up, this means that authentication may pass for a user that Secman knows nothing about.
+In this case Secman will automatically create an <code>ApplicationUser</code> for this externally delegated authenticated user, with the type set to "DELEGATED".</p>
+</div>
+<div class="paragraph">
+<p>We can configure whether such automatically created accounts should be unlocked or locked by default:</p>
+</div>
+<div class="listingblock">
+<div class="title">application.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">isis:
+  extensions:
+    secman:
+      delegated-users:
+        auto-create-policy: AUTO_CREATE_AS_LOCKED</code></pre>
+</div>
+</div>
+</div>
+</div>
+</article>
+<aside class="article-aside toc hide-for-print" role="navigation">
+    <p class="toc-title">On this page</p>
+    <div id="article-toc"></div>
+</aside>
+</main>
+</div>
+<footer class="footer">
+    <div class="content">
+        <div class="copyright">
+            <p>
+                Copyright © 2010~2021 The Apache Software Foundation, licensed under the Apache License, v2.0.
+                <br/>
+                Apache, the Apache feather logo, Apache Isis, and the Apache Isis project logo are all trademarks of The Apache Software Foundation.
+            </p>
+        </div>
+        <div class="revision">
+            <p>Revision: 2.0.0-M5.20210602-0611-6e46c5d3</p>
+        </div>
+    </div>
+</footer>
+<script src="../../../_/js/site.js"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/jquery-3.4.1.min.js"></script>
+<script src="../../../_/js/vendor/jquery-ui-1.12.1.custom.widget-only.min.js"></script>
+<script src="../../../_/js/vendor/jquery.tocify.min.js"></script>
+
+<script>
+    $(function() {
+        $("#article-toc").tocify( {
+            showEffect: "slideDown",
+            hashGenerator: "pretty",
+            hideEffect: "slideUp",
+            selectors: "h2, h3",
+            scrollTo: 120,
+            smoothScroll: true,
+            theme: "jqueryui",
+            highlightOnScroll: true
+        } );
+    });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.js"></script>
+<script>
+  function focusSearchInput () { document.querySelector('#algolia-search-input').focus() }
+  var search = docsearch({
+    appId: '5ISP5TFAEN',
+    apiKey: '0fc51c28b4ad46e7318e96d4e97fab7c',
+    indexName: 'isis-apache-org',
+    inputSelector: '#algolia-search-input',
+    autocompleteOptions: { hint: false, keyboardShortcuts: ['s'] },
+    debug: false,
+  }).autocomplete
+  search.on('autocomplete:closed', function () { search.autocomplete.setVal() })
+  focusSearchInput()
+  window.addEventListener('load', focusSearchInput);
+</script>
+
+<!--
+  docsearch options:
+  https://docsearch.algolia.com/docs/behavior/
+-->
+<!--
+  https://www.algolia.com/doc/api-reference/api-parameters/
+  algoliaOptions: { hitsPerPage: 6 },
+-->
+  </body>
+</html>
