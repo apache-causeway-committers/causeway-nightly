@@ -3,8 +3,8 @@ name: Apache Isis framework (CI Nightly)
 on:
   workflow_dispatch:
   schedule:
-    ## daily 04:00 (UTC) in the morning
-    - cron: '0 4 * * *'
+    ## daily 02:00 (UTC) in the morning
+    - cron: '0 2 * * *'
 
 jobs:
   build:
@@ -235,7 +235,14 @@ jobs:
         run: |
           sh isis-nightly/k8s/update.sh demo-wicket jdo VARIANT_IN_IMAGE_NAME
 
-      - name: (Re)deploy demo-wicket to demo-wicket.isis.incode.work
+      - name: Undeploy demo-wicket-jdo from demo-wicket.jdo.isis.incode.work
+        uses: actions-hub/kubectl@master
+        env:
+          KUBE_CONFIG: ${{ secrets.K3D_INCODE_WORK_KUBE_CONFIG }}
+        with:
+          args: delete -f isis-nightly/k8s/demo-wicket/deployment.yaml --force --grace-period=0
+
+      - name: Deploy demo-wicket-jdo to demo-wicket.jdo.isis.incode.work
         uses: actions-hub/kubectl@master
         env:
           KUBE_CONFIG: ${{ secrets.K3D_INCODE_WORK_KUBE_CONFIG }}
@@ -248,7 +255,14 @@ jobs:
           cp isis-nightly/k8s/demo-wicket/deployment.yaml.BAK isis-nightly/k8s/demo-wicket/deployment.yaml
           sh isis-nightly/k8s/update.sh demo-wicket jpa VARIANT_IN_IMAGE_NAME
 
-      - name: (Re)deploy demo-wicket to demo-wicket.isis.incode.work
+      - name: Undeploy demo-wicket-jpa from demo-wicket.jpa.isis.incode.work
+        uses: actions-hub/kubectl@master
+        env:
+          KUBE_CONFIG: ${{ secrets.K3D_INCODE_WORK_KUBE_CONFIG }}
+        with:
+          args: delete -f isis-nightly/k8s/demo-wicket/deployment.yaml --force --grace-period=0
+
+      - name: Deploy demo-wicket-jpa to demo-wicket.jpa.isis.incode.work
         uses: actions-hub/kubectl@master
         env:
           KUBE_CONFIG: ${{ secrets.K3D_INCODE_WORK_KUBE_CONFIG }}
