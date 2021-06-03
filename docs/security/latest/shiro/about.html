@@ -692,13 +692,9 @@ bob  = pass, user_role, self-install_role</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">user_role = *:ToDoItems:*:*,\
-            *:ToDoItem:*:*,\
-            *:TodoAppDashboard:*:*
-analysis_role = *:ToDoItemAnalysis:*:*,\
-            *:ToDoItemsByCategoryViewModel:*:*,\
-            *:ToDoItemsByDateRangeViewModel:*:*
-self-install_role = *:ToDoItemsFixturesService:install:*
+<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">user_role = myapp.*,\
+            isis.security:*,\
+            isis.applib:*
 admin_role = *</code></pre>
 </div>
 </div>
@@ -708,7 +704,7 @@ The format is:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">packageName:className:memberName:r,w</code></pre>
+<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">logicalTypeNamespace:logicalTypeSimpleName:memberName:r,w</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -716,6 +712,15 @@ The format is:</p>
 </div>
 <div class="ulist">
 <ul>
+<li>
+<p><code>logicalTypeNamespace</code> is the namespace portion of the domain object&#8217;s logical type name &#8230;&#8203;</p>
+</li>
+<li>
+<p>... and <code>logicalTypeSimpleName</code> is the last portion of hte domain object&#8217;s logical type name.</p>
+<div class="paragraph">
+<p>For example, if <code>@DomainObject(logicalTypeName = "myapp.customer.Customer")</code>, then the the namespace is "myapp.customer" and the simple type name is "Customer".</p>
+</div>
+</li>
 <li>
 <p><code>memberName</code> is the property, collection or action name.</p>
 </li>
@@ -728,28 +733,37 @@ The format is:</p>
 </ul>
 </div>
 <div class="paragraph">
-<p>and where each of the parts of the permission string can be wildcarded using <code>*</code>.</p>
+<p>Note that:</p>
 </div>
-<div class="paragraph">
-<p>Because these are wildcards, a '*' can be used at any level.
-Additionally, missing levels assume wildcards.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>each part of the permission string can be wildcarded using <code>*</code>.</p>
+</li>
+<li>
+<p>The namespace can also be wildcarded at any level (for example <code>myapp.*</code>).</p>
+</li>
+<li>
+<p>Missing levels assume wildcards.</p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
 <p>Thus:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">com.mycompany.myapp:Customer:firstName:r,w   # view or edit customer's firstName
-com.mycompany.myapp:Customer:lastName:r      # view customer's lastName only
-com.mycompany.myapp:Customer:placeOrder:*    # view and invoke placeOrder action
-com.mycompany.myapp:Customer:placeOrder      # ditto
-com.mycompany.myapp:Customer:*:r             # view all customer class members
-com.mycompany.myapp:*:*:r                    # view-only access for all classes in myapp package
-com.mycompany.myapp:*:*:*                    # view/edit for all classes in myapp package
-com.mycompany.myapp:*:*                      # ditto
-com.mycompany.myapp:*                        # ditto
-com.mycompany.myapp                          # ditto
-*                                            # view/edit access to everything</code></pre>
+<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">myapp.customer:Customer:firstName:r,w   # view or edit customer's firstName
+myapp.customer:Customer:lastName:r      # view customer's lastName only
+myapp.customer:Customer:placeOrder:*    # view and invoke placeOrder action
+myapp.customer:Customer:placeOrder      # ditto
+myapp.customer:Customer:*:r             # view all customer class members
+myapp.customer:*:*:r                    # view-only access for myapp.customer namespace
+myapp.customer:*:*:*                    # view/edit for myapp.customer namespace
+myapp:*:*                               # view/edit for myapp namespace
+myapp:*                                 # ditto
+myapp                                   # ditto
+*                                       # view/edit access to everything</code></pre>
 </div>
 </div>
 <div class="admonitionblock tip">
@@ -767,6 +781,54 @@ com.mycompany.myapp                          # ditto
 </table>
 </div>
 </div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="providing-permissions-to-framework-provided-features"><a class="anchor" href="#providing-permissions-to-framework-provided-features"></a>Providing permissions to Framework-provided Features</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Some features of the framework are exposed as actions that must be provided as permissions.
+In particular, permission to the features in <code>isis.security</code> must be granted in order that end-users can logout.</p>
+</div>
+<div class="paragraph">
+<p>The snippet below defines a role for each framework feature:</p>
+</div>
+<div class="listingblock">
+<div class="title">shiro.ini</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">[roles]
+default_role   = isis.applib,\
+                 isis.security
+fixtures_role  = isis.ext.fixtures
+features_role  = isis.feat
+metamodel_role = isis.metamodel
+h2_role        = isis.ext.h2Console
+jdo_role       = isis.persistence.jdo
+swagger_role   = isis.viewer.restfulobjects
+conf_role      = isis.conf
+sudo_role      = isis.sudo</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Notes:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>all users should be granted the <code>default_role</code>.</p>
+</li>
+<li>
+<p><code>conf_role</code> provides access to the configuration menu (in production mode), which is potentially sensitive</p>
+</li>
+<li>
+<p><code>sudo_role</code> provides the ability to impersonate any user, so is <em>extremely</em> sensitive; however it is prototype mode only</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Most of the features protected by these roles are only available in prototype mode.
+The exceptions are those under <code>default_role</code> and <code>conf_role</code>.</p>
 </div>
 <div class="sect2">
 <h3 id="externalized-inirealm"><a class="anchor" href="#externalized-inirealm"></a>Externalized IniRealm</h3>
@@ -870,10 +932,10 @@ Use an online regex tester, eg <a href="https://regex101.com/" class="bare">http
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">user_role   = !reg/com.mycompany.myapp.api,\
-              !reg/com.mycompany.myapp.webapp.services.admin,\
+<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">user_role   = !reg/myapp.api,\
+              !reg/myapp.webapp.services.admin,\
               reg/* ; \
-api_role    = com.mycompany.myapp.api ;\
+api_role    = myapp.api ;\
 admin_role = adm/*</code></pre>
 </div>
 </div>
@@ -883,10 +945,10 @@ admin_role = adm/*</code></pre>
 <div class="ulist">
 <ul>
 <li>
-<p>the <code>user_role</code> with access to all permissions except those in <code>com.mycompany.myapp.api</code> and <code>com.mycompany.myapp.webapp.services.admin</code></p>
+<p>the <code>user_role</code> with access to all permissions except those with a logical type&#8217;s namespace of <code>myapp.api</code> or <code>myapp.webapp.services.admin</code></p>
 </li>
 <li>
-<p>the <code>api_role</code> with access to all permissions in <code>com.mycompany.myapp.api</code></p>
+<p>the <code>api_role</code> with access to all permissions to logical types under the namespace <code>myapp.api</code></p>
 </li>
 <li>
 <p>the <code>admin_role</code> with access to everything.</p>
@@ -983,7 +1045,7 @@ Check out:</p>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M5.20210602-0611-6e46c5d3</p>
+            <p>Revision: 2.0.0-M5.20210603-0642-1e6b039a</p>
         </div>
     </div>
 </footer>
