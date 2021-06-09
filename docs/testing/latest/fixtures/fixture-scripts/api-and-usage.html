@@ -175,25 +175,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../../specsupport/about.html">BDD Spec Support</a>
   </li>
   <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
     <a class="nav-link" href="../about.html">Fixture Scripts</a>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <button class="nav-item-toggle"></button>
-    <span class="nav-text">Domain Services</span>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../services/ExecutionParametersService.html">ExecutionParametersService</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../services/FixtureScripts.html">FixtureScripts</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="../services/FixtureScriptsSpecificationProvider.html">FixtureScriptsSpecificationProvider</a>
-  </li>
-</ul>
-  </li>
-</ul>
   </li>
   <li class="nav-item" data-depth="1">
     <a class="nav-link" href="../../fakedata/about.html">Fakedata</a>
@@ -422,21 +404,28 @@ page.parent doesn't seem to be set...
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>There are two main parts to using fixture scripts: the <code>FixtureScripts</code> domain service class, and the <code>FixtureScript</code> view model class:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>The role of the <code>FixtureScripts</code> domain service is to locate all fixture scripts from the classpath and to let them be invoked, either from an integration test/BDD spec or from the UI of your Isis app.</p>
-</li>
-<li>
-<p>The role of <code>FixtureScript</code> meanwhile is to subclass for each of the scenarios that you want to define.
-You can also subclass from <code>FixtureScript</code> to create helpers; more on this below.</p>
-</li>
-</ul>
+<p>Fixture scripts are used to set up the system into a known state, which almost always means to populate the database.
+The most common use case is for integration testing, but they are also useful while prototyping/demo&#8217;ing.
+In both cases the system is almost always running against an in-memory database, meaning that the entire state of the system needs to be setup.
+As it wouldn&#8217;t be scalable to have one huge fixture script for this purpose, fixture scripts are usually organised hierarchically, with higher-level fixture scripts calling child fixture scripts that set up the
+individual parts the system (eg rows into a specific entity).</p>
 </div>
 <div class="paragraph">
-<p>Let&#8217;s look at <code>FixtureScripts</code> domain service in more detail first.</p>
+<p>Fixture scripts are usually implemented by calling the business logic of the domain application.
+This is preferable to, for example, <code>INSERT</code>ing rows directly into database tables, because they are robust to implementation changes over time.</p>
+</div>
+<div class="paragraph">
+<p>Fixture scripts are implemented by subclassing from the <a href="../../../../refguide/latest/testing/index/fixtures/applib/fixturescripts/FixtureScript.html" class="page">FixtureScript</a> abstract class.
+In most cases you&#8217;ll want to use one of the variants provided by the framework; these are described in more detail <a href="#fixturescript">below</a>.</p>
+</div>
+<div class="paragraph">
+<p>Fixture scripts are executed using the  <a href="../../../../refguide/latest/testing/index/fixtures/applib/fixturescripts/FixtureScripts.html" class="page">FixtureScripts</a> domain service class.
+This provides menu actions in the UI of your application (when running in prototype mode).
+Typically it will only make sense for a small subset of the available fixture scripts to be exposed through the UI, for example those representing scenarios to be explored/demo&#8217;ed.
+The behaviour of the <code>FixtureScripts</code> domain service and the discovery of scenario fixture scripts is managed by configuration properties.</p>
+</div>
+<div class="paragraph">
+<p>Let&#8217;s look at <code>FixtureScripts</code> domain service in more detail <a href="#fixturescripts">first</a>, <a href="#fixturescript">then</a> move onto exploring <code>FixtureScript</code>.</p>
 </div>
 </div>
 </div>
@@ -444,55 +433,8 @@ You can also subclass from <code>FixtureScript</code> to create helpers; more on
 <h2 id="fixturescripts"><a class="anchor" href="#fixturescripts"></a><code>FixtureScripts</code></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The framework provides a default implementation of <code>FixtureScripts</code> domain service, namely the <a href="../services/FixtureScripts.html" class="page">FixtureScriptsDefault</a> domain service.
-This is annotated to be rendered on the secondary "Prototyping" menu.</p>
-</div>
-<div class="paragraph">
-<p>The behaviour of this domain menu service can be refined by providing an implementation of the optional <a href="../services/FixtureScriptsSpecificationProvider.html" class="page">FixtureScriptsSpecificationProvider</a> SPI.</p>
-</div>
-<div class="paragraph">
-<p>For example, here&#8217;s the <code>FixtureScriptsSpecificationProvider</code> service that&#8217;s generated by the <a href="../../../../docs/latest/starters/simpleapp.html" class="page">SimpleApp</a> starter apps:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainService( nature = NatureOfService.DOMAIN )
-public class DomainAppFixtureScriptsSpecificationProvider
-                    implements FixtureScriptsSpecificationProvider {
-    public FixtureScriptsSpecification getSpecification() {
-        return FixtureScriptsSpecification
-            .builder(DomainAppFixtureScriptsSpecificationProvider.class)               <i class="conum" data-value="1"></i><b>(1)</b>
-            .with(FixtureScripts.MultipleExecutionStrategy.EXECUTE)                    <i class="conum" data-value="2"></i><b>(2)</b>
-            .withRunScriptDefault(DomainAppDemo.class)                                 <i class="conum" data-value="3"></i><b>(3)</b>
-            .withRunScriptDropDown(FixtureScriptsSpecification.DropDownPolicy.CHOICES) <i class="conum" data-value="4"></i><b>(4)</b>
-            .withRecreate(DomainAppDemo.class)                                         <i class="conum" data-value="5"></i><b>(5)</b>
-            .build();
-    }
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>search for all fixture scripts under the package containing this class</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>if the same fixture script (class) is encountered more than once, then run anyway; more on this in <a href="#testing:fixtures:about/api-and-usage.adoc#organizing" class="page unresolved">Organizing Fixture scripts</a>, below.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>specify the fixture script class to provide as the default for the service&#8217;s "run fixture script" action</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>whether the service&#8217;s "run fixture script" action should display other fixture scripts using a choices drop down or (if there are very many of them) using an auto-complete</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>if present, enables a "recreate objects and return first" action to be displayed in the UI</td>
-</tr>
-</table>
+<p>The <a href="../../../../refguide/latest/testing/index/fixtures/applib/fixturescripts/FixtureScripts.html" class="page">FixtureScripts</a> domain service.
+This is annotated to be part of on the secondary "Prototyping" menu.</p>
 </div>
 <div class="paragraph">
 <p>Here&#8217;s how the domain service looks like in the UI:</p>
@@ -519,35 +461,77 @@ public class DomainAppFixtureScriptsSpecificationProvider
 </div>
 </div>
 <div class="paragraph">
-<p>If you had defined many fixture scripts then a drop-down might become unwieldy, in which case your code would probably override the <code>autoComplete&#8230;&#8203;())</code> instead:</p>
+<p>The <code>FixtureScripts</code> domain service also provides the <code>recreateObjectsAndReturnFirst</code> action.
+This is a convenience, saving a few clicks: it will run a nominated fixture script and return the first object created by that fixture script.</p>
+</div>
+<div class="sect2">
+<h3 id="configuration-properties"><a class="anchor" href="#configuration-properties"></a>Configuration Properties</h3>
+<div class="paragraph">
+<p>The behaviour of this domain menu service can be configured using the <code>isis.testing.fixtures.fixture-script-specification</code> configuration properties.
+For example, here&#8217;s the configuration used by the <a href="../../../../docs/latest/starters/simpleapp.html" class="page">SimpleApp</a> starter apps:</p>
 </div>
 <div class="listingblock">
+<div class="title">application.yml</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">    @Override
-    public List&lt;FixtureScript&gt; autoComplete0RunFixtureScript(final @MinLength(1) String searchArg) {
-        return super.autoComplete0RunFixtureScript(searchArg);
-    }</code></pre>
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">isis:
+  testing:
+    fixtures:
+      fixture-scripts-specification:
+        context-class: domainapp.webapp.application.fixture.scenarios.DomainAppDemo <i class="conum" data-value="1"></i><b>(1)</b>
+        multiple-execution-strategy: execute <i class="conum" data-value="2"></i><b>(2)</b>
+        run-script-default: domainapp.webapp.application.fixture.scenarios.DomainAppDemo <i class="conum" data-value="3"></i><b>(3)</b>
+        recreate: domainapp.webapp.application.fixture.scenarios.DomainAppDemo <i class="conum" data-value="4"></i><b>(4)</b>
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>search for all fixture scripts under the package containing this class</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>if the same fixture script (class) is encountered more than once, then run anyway.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>specify the fixture script class to provide as the default for the service&#8217;s "run fixture script" action</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>if present, enables a "recreate objects and return first" action to be displayed in the UI</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>For more details, see <a href="../../../../refguide/latest/config/sections/isis.testing.html#isis.testing.fixtures.fixture-scripts-specification.context-class" class="page">isis.testing.fixtures.fixture-scripts-specification</a> config properties in the configuration guide.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="menubars"><a class="anchor" href="#menubars"></a>Menubars</h3>
+<div class="paragraph">
+<p>The actions of <code>FixtureScripts</code> domain service are automatically placed on the "Prototyping" menu.
+This can be fine-tuned using <code>menubars.layout.xml</code>:</p>
+</div>
+<div class="listingblock">
+<div class="title">menubars.layout.xml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;mb3:section&gt;
+    &lt;mb3:named&gt;Fixtures&lt;/mb3:named&gt;
+    &lt;mb3:serviceAction
+        objectType="isis.testing.fixtures.FixtureScripts"
+        id="runFixtureScript"/&gt;
+    &lt;mb3:serviceAction
+        objectType="isis.testing.fixtures.FixtureScripts"
+        id="recreateObjectsAndReturnFirst"/&gt;
+&lt;/mb3:section&gt;</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>You are free, of course, to add additional "convenience" actions into it if you wish for the most commonly used/demo&#8217;d setups ; you&#8217;ll find that the <a href="../../../../docs/latest/starters/simpleapp.html" class="page">SimpleApp archetype</a> adds this additional action:</p>
+<p>Let&#8217;s now look at the <code>FixtureScript</code> class, where there&#8217;s a bit more to discuss.</p>
 </div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">    @Action(
-            restrictTo = RestrictTo.PROTOTYPING
-    )
-    @ActionLayout(
-            cssClassFa="fa fa-sync"
-    )
-    public Object recreateObjectsAndReturnFirst() {
-        final List&lt;FixtureResult&gt; run = findFixtureScriptFor(RecreateSimpleObjects.class).run(null);
-        return run.get(0).getObject();
-    }</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Let&#8217;s now look at the <code>FixtureScript</code> class, where there&#8217;s a bit more going on.</p>
 </div>
 </div>
 </div>
@@ -555,8 +539,10 @@ public class DomainAppFixtureScriptsSpecificationProvider
 <h2 id="fixturescript"><a class="anchor" href="#fixturescript"></a><code>FixtureScript</code></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>A fixture script is ultimately just a block of code that can be executed, so it&#8217;s up to you how you implement it to set up the system.
-However, we strongly recommend that you use it to invoke actions on business objects, in essence to replay what a real-life user would have done.
+<p>A <a href="../../../../refguide/latest/testing/index/fixtures/applib/fixturescripts/FixtureScript.html" class="page">FixtureScript</a> is responsible for setting up the system (or more likely, one small part of the overall system) into a known state, either for prototyping or for integration testing.</p>
+</div>
+<div class="paragraph">
+<p>The normal idiom is for the fixture script to invoke actions on business objects, in essence to replay what a real-life user would have done.
 That way, the fixture script will remain valid even if the underlying implementation of the system changes in the future.</p>
 </div>
 <div class="paragraph">
@@ -570,30 +556,35 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Accessors(chain = true)
-public class RecreateSimpleObjects extends FixtureScript {                   <i class="conum" data-value="1"></i><b>(1)</b>
+public class RecreateSimpleObjects extends FixtureScript {       <i class="conum" data-value="1"></i><b>(1)</b>
 
-    public final List&lt;String&gt; NAMES = Collections.unmodifiableList(Arrays.asList(
+    public final List&lt;String&gt; NAMES =
+        Collections.unmodifiableList(Arrays.asList(
             "Foo", "Bar", "Baz", "Frodo", "Froyo",
-            "Fizz", "Bip", "Bop", "Bang", "Boo"));                           <i class="conum" data-value="2"></i><b>(2)</b>
+            "Fizz", "Bip", "Bop", "Bang", "Boo"));               <i class="conum" data-value="2"></i><b>(2)</b>
     public RecreateSimpleObjects() {
-        withDiscoverability(Discoverability.DISCOVERABLE);                   <i class="conum" data-value="3"></i><b>(3)</b>
+        withDiscoverability(Discoverability.DISCOVERABLE);       <i class="conum" data-value="3"></i><b>(3)</b>
     }
 
     @Getter @Setter
-    private Integer number;                                                  <i class="conum" data-value="4"></i><b>(4)</b>
+    private Integer number;                                      <i class="conum" data-value="4"></i><b>(4)</b>
 
     @Getter
-    private final List&lt;SimpleObject&gt; simpleObjects = Lists.newArrayList();   <i class="conum" data-value="5"></i><b>(5)</b>
+    private final List&lt;SimpleObject&gt; simpleObjects =
+                                        Lists.newArrayList();    <i class="conum" data-value="5"></i><b>(5)</b>
 
     @Override
     protected void execute(final ExecutionContext ec) {          <i class="conum" data-value="6"></i><b>(6)</b>
+
         // defaults
         final int number = defaultParam("number", ec, 3);        <i class="conum" data-value="7"></i><b>(7)</b>
+
         // validate
         if(number &lt; 0 || number &gt; NAMES.size()) {
             throw new IllegalArgumentException(
                 String.format("number must be in range [0,%d)", NAMES.size()));
         }
+
         // execute
         ec.executeChild(this, new SimpleObjectsTearDown());      <i class="conum" data-value="8"></i><b>(8)</b>
         for (int i = 0; i &lt; number; i++) {
@@ -610,7 +601,7 @@ public class RecreateSimpleObjects extends FixtureScript {                   <i 
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>inherit from <code>org.apache.isis.applib.fixturescripts.FixtureScript</code></td>
+<td>inherit from <a href="../../../../refguide/latest/testing/index/fixtures/applib/fixturescripts/FixtureScript.html" class="page">FixtureScript</a></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
@@ -619,7 +610,7 @@ Note that the <a href="../../fakedata/about.html" class="page">Fakedata</a> test
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>whether the script is "discoverable"; in other words whether it should be rendered in the drop-down by the <code>FixtureScripts</code> service</td>
+<td>whether the script is "discoverable"; in other words whether it should be rendered in the drop-down by the <a href="../../../../refguide/latest/testing/index/fixtures/applib/fixturescripts/FixtureScripts.html" class="page">FixtureScripts</a> domain service</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
@@ -632,7 +623,8 @@ It&#8217;s important that a wrapper class is used (ie <code>java.lang.Integer</c
 </tr>
 <tr>
 <td><i class="conum" data-value="6"></i><b>6</b></td>
-<td>the mandatory execute(&#8230;&#8203;) API</td>
+<td>the mandatory <code>execute(&#8230;&#8203;)</code> API.
+The <a href="../../../../refguide/latest/testing/index/fixtures/applib/fixturescripts/FixtureScript~ExecutionContext.html" class="page">ExecutionContext</a> parameter is discussed in more detail in the <a href="#executioncontext">next section</a>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="7"></i><b>7</b></td>
@@ -640,12 +632,12 @@ It&#8217;s important that a wrapper class is used (ie <code>java.lang.Integer</c
 </tr>
 <tr>
 <td><i class="conum" data-value="8"></i><b>8</b></td>
-<td>call another fixture script (<code>SimpleObjectsTearDown</code>) using the provided <code>ExecutionContext</code>.
-Note that although the fixture script is a view model, it&#8217;s fine to simply instantiate it (rather than using <code>FactoryService#create(&#8230;&#8203;)</code>).</td>
+<td>call another fixture script (<code>SimpleObjectsTearDown</code>) using the provided <a href="../../../../refguide/latest/testing/index/fixtures/applib/fixturescripts/FixtureScript~ExecutionContext.html" class="page">ExecutionContext</a>.
+There&#8217;s no need to instantiate using the <a href="../../../../refguide/latest/applib/index/services/factory/FactoryService.html" class="page">FactoryService</a>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="9"></i><b>9</b></td>
-<td>calling another fixture script (<code>SimpleObjectCreate</code>) using the provided <code>ExecutionContext</code></td>
+<td>calling another fixture script (<code>SimpleObjectCreate</code>) using the provided <a href="../../../../refguide/latest/testing/index/fixtures/applib/fixturescripts/FixtureScript~ExecutionContext.html" class="page">ExecutionContext</a></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="10"></i><b>10</b></td>
@@ -669,67 +661,27 @@ So, in this case, when the fixture script is executed we actually get 6 objects 
 </div>
 </div>
 <div class="sect1">
-<h2 id="using-within-tests"><a class="anchor" href="#using-within-tests"></a>Using within Tests</h2>
+<h2 id="executioncontext"><a class="anchor" href="#executioncontext"></a>ExecutionContext</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Fixture scripts can be called from integration tests just the same way that fixture scripts can call one another.</p>
+<p>The <a href="../../../../refguide/latest/testing/index/fixtures/applib/fixturescripts/FixtureScript~ExecutionContext.html" class="page">ExecutionContext</a> is passed to each <code>FixtureScript</code> as it is executed.
+It supports two main use cases:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>to allow child fixture scripts to be executed, using <a href="../../../../refguide/latest/testing/index/fixtures/applib/fixturescripts/FixtureScript~ExecutionContext.html#executeChildT__FixtureScript_T" class="page">executeChild(&#8230;&#8203;)</a> and its brethren.</p>
+<div class="paragraph">
+<p>This was demonstrated in the <a href="#fixturescript">previous section</a></p>
+</div>
+</li>
+<li>
+<p>to read parameters obtained when the fixture script was first executed by the <a href="../../../../refguide/latest/testing/index/fixtures/applib/fixturescripts/FixtureScripts.html" class="page">FixtureScripts</a> domain service, discussed <a href="#fixturescripts">above</a>.</p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
-<p>For example, here&#8217;s an integration test from the <a href="../../../../docs/latest/starters/simpleapp.html" class="page">SimpleApp</a> starter app:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class SimpleObjectIntegTest extends SimpleAppIntegTest {
-    SimpleObject simpleObjectWrapped;
-    @Before
-    public void setUp() throws Exception {
-        // given
-        RecreateSimpleObjects fs =
-             new RecreateSimpleObjects().setNumber(1);  <i class="conum" data-value="1"></i><b>(1)</b>
-        fixtureScripts.runFixtureScript(fs, null);      <i class="conum" data-value="2"></i><b>(2)</b>
-
-        SimpleObject simpleObjectPojo =
-            fs.getSimpleObjects().get(0);               <i class="conum" data-value="3"></i><b>(3)</b>
-        assertThat(simpleObjectPojo).isNotNull();
-
-        simpleObjectWrapped = wrap(simpleObjectPojo);   <i class="conum" data-value="4"></i><b>(4)</b>
-    }
-    @Test
-    public void accessible() throws Exception {
-        // when
-        final String name = simpleObjectWrapped.getName();
-        // then
-        assertThat(name).isEqualTo(fs.NAMES.get(0));
-    }
-    ...
-    @Inject
-    FixtureScripts fixtureScripts;                      <i class="conum" data-value="5"></i><b>(5)</b>
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>instantiate the fixture script for this test, and configure</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>execute the fixture script</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>obtain the object under test from the fixture</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>wrap the object (to simulate being interacted with through the UI)</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>inject the <code>FixtureScripts</code> domain service (just like any other domain service)</td>
-</tr>
-</table>
+<p>The latter use case is much less frequently used, but can be helpful for example in demos, where the number of objects can be specified in the <code>parameters</code> parameter of the <a href="../../../../refguide/latest/testing/index/fixtures/applib/fixturescripts/FixtureScripts.html#runFixtureScript__String_String" class="page">run fixture script</a> action.</p>
 </div>
 </div>
 </div>
@@ -746,7 +698,9 @@ For example, "Steve Single" the Customer might be 21, single and no kids, wherea
 Using "Steve" vs "Meghan" immediately informs the developer about the particular scenario being explored.</p>
 </div>
 <div class="paragraph">
-<p>The <code>PersonaWithBuilderScript</code> and <code>PersonaWithFinder</code> interfaces are intended to be implemented typically by "persona" enums, where each enum instance captures the essential data of some persona.
+<p>The <a href="../../../../refguide/latest/testing/index/fixtures/applib/personas/PersonaWithBuilderScript.html" class="page">PersonaWithBuilderScript</a> and
+<a href="../../../../refguide/latest/testing/index/fixtures/applib/personas/PersonaWithFinder.html" class="page">PersonaWithFinder</a>
+ interfaces are intended to be implemented typically by "persona" enums, where each enum instance captures the essential data of some persona.
 So, going back to the previous example, we might have:</p>
 </div>
 <div class="listingblock">
@@ -761,7 +715,7 @@ So, going back to the previous example, we might have:</p>
 </div>
 </div>
 <div class="paragraph">
-<p>The <code>PersonaWithBuilderScript</code> interface means that this enum is able to act as a factory for a <code>BuilderScriptAbstract</code>.
+<p>The <a href="../../../../refguide/latest/testing/index/fixtures/applib/personas/PersonaWithBuilderScript.html" class="page">PersonaWithBuilderScript</a> interface means that this enum is able to act as a factory for a <a href="../../../../refguide/latest/testing/index/fixtures/applib/personas/BuilderScriptAbstract.html" class="page">BuilderScriptAbstract</a>.
 This is a specialization of <code>FixtureScript</code> that is used to actually create the entity (customer, or whatever), using the data taken out of the enum instance:</p>
 </div>
 <div class="listingblock">
@@ -772,7 +726,7 @@ This is a specialization of <code>FixtureScript</code> that is used to actually 
 </div>
 </div>
 <div class="paragraph">
-<p>The <code>PersonaWithFinder</code> interface meanwhile indicates that the enum can "lookup" its corresponding entity from the appropriate repository domain service:</p>
+<p>The <a href="../../../../refguide/latest/testing/index/fixtures/applib/personas/PersonaWithFinder.html" class="page">PersonaWithFinder</a> interface meanwhile indicates that the enum can "lookup" its corresponding entity from the appropriate repository domain service:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -865,43 +819,67 @@ public class SimpleObjectBuilder
 </tr>
 </table>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="using-within-tests"><a class="anchor" href="#using-within-tests"></a>Using within Tests</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>This simplifies the integration tests considerably:</p>
+<p>Fixture scripts can be called from integration tests just the same way that fixture scripts can call one another.</p>
+</div>
+<div class="paragraph">
+<p>For example, here&#8217;s part of an integration test from the <a href="../../../../docs/latest/starters/simpleapp.html" class="page">SimpleApp</a> starter app:</p>
 </div>
 <div class="listingblock">
+<div class="title">SimpleObject_IntegTest.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class SimpleObject_IntegTest extends SimpleModuleIntegTestAbstract {
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Transactional
+public class SimpleObject_IntegTest extends SimpleModuleIntegTestAbstract {
 
     SimpleObject simpleObject;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         // given
-        simpleObject = fixtureScripts.runBuilderScript(SimpleObject_persona.FOO.builder());
+        simpleObject = fixtureScripts.runPersona(SimpleObject_persona.FOO); <i class="conum" data-value="1"></i><b>(1)</b>
     }
 
-    @Test
-    public void accessible() {
-        // when
-        final String name = wrap(simpleObject).getName();
+    public static class updateName extends SimpleObject_IntegTest {
 
-        // then
-        assertThat(name).isEqualTo(simpleObject.getName());
+        @Test
+        public void can_be_updated_directly() {
+
+            // when
+            wrap(simpleObject).updateName("new name");
+            transactionService.flushTransaction();
+
+            // then
+            assertThat(wrap(simpleObject).getName()).isEqualTo("new name");
+        }
+
+        // ...
     }
-    ...
 }</code></pre>
 </div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>runs a persona fixture script and stores the resultant domain object for testing.</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>Put together, the persona enums provide the "what" - hard-coded values for certain key data that the developer becomes very familiar with - while the builder provides the "how-to".</p>
 </div>
 <div class="paragraph">
-<p>These builder scripts (<code>BuilderScriptAbstract</code> implementations) can be used independently of the enum personas.
+<p>These builder scripts (<a href="../../../../refguide/latest/testing/index/fixtures/applib/personas/BuilderScriptAbstract.html" class="page">BuilderScriptAbstract</a> implementations) can be used independently of the enum personas.
 And for more complex entity -where there might be many potential values that need to be provided
 - the builder script can automatically default some or even all of these values.</p>
 </div>
 <div class="paragraph">
-<p>For example, for a customer&#8217;s date of birth, the buider could default to a date making the customer an adult, aged between 18 and 65, say.
+<p>For example, for a customer&#8217;s date of birth, the builder could default to a date making the customer an adult, aged between 18 and 65, say.
 For an email address or postal address, or an image, or some "lorem ipsum" text, the <a href="../../fakedata/about.html" class="page">Fakedata</a> testing module could provide randomised values.</p>
 </div>
 <div class="paragraph">
@@ -928,7 +906,7 @@ Because non-specified values are randomised and change on each run, it also decr
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M5.20210608-0315-04a2d0df</p>
+            <p>Revision: 2.0.0-M5.20210609-0250-02b3e24b</p>
         </div>
     </div>
 </footer>
