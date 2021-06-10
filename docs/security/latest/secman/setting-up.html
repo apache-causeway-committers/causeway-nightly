@@ -629,7 +629,7 @@ These can be removed (through the UI).</td>
 <div class="sectionbody">
 <div class="paragraph">
 <p>With SecMan enabled, it will automatically seed a security super-user and a regular role.
-It also defines a number of other roles to provide access to specific features of the framework (or its extensions).
+It also creates a number of other roles to provide access to specific features of the framework (or its extensions).
 These are summarised here:</p>
 </div>
 <div class="ulist">
@@ -716,14 +716,16 @@ This will return an <a href="../../../refguide/latest/extensions/index/secman/ap
 </div>
 </div>
 <div class="sect1">
-<h2 id="fixture-scripts-to-setup-users-and-roles"><a class="anchor" href="#fixture-scripts-to-setup-users-and-roles"></a>Fixture scripts to setup users and roles</h2>
+<h2 id="fixture-scripts-and-seed-service-to-setup-users-and-roles"><a class="anchor" href="#fixture-scripts-and-seed-service-to-setup-users-and-roles"></a>Fixture scripts and seed service, to setup users and roles</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>If prototyping with an in-memory database then you will most likely want to set up some fixture scripts to automatically set up application users.</p>
 </div>
 <div class="paragraph">
-<p>SecMan provides the <code>AbstractRoleAndPermissionsFixtureScript</code> and <code>AbstractUserAndRolesFixtureScript</code> convenience fixture scripts
-to inherit from.</p>
+<p>SecMan automatically seeds the built-in roles and users, so it is only necessary to setup roles and users specific to the application.</p>
+</div>
+<div class="paragraph">
+<p>In addition to the <a href="#default-roles">default roles and users</a>, you will of course need to define custom roles/perms for your own application.</p>
 </div>
 <div class="paragraph">
 <p>For example, these scripts can be used to set up access to the domain objects in the <a href="../../../docs/latest/starters/helloworld.html" class="page">HelloWorld</a> starter app:</p>
@@ -840,6 +842,58 @@ to inherit from.</p>
 </li>
 </ul>
 </div>
+<div class="paragraph">
+<p>You will probably want to ensure that the roles and (perhaps) users are automatically seeded into the database.
+One option is to use the <a href="../../../refguide/latest/config/sections/isis.testing.html#isis.testing.fixtures.initial-script" class="page">isis.testing.fixtures.initial-script</a> configuration property, but the purpose of that config property is meant to be to specify a demo scenario for demoing/prototyping.</p>
+</div>
+<div class="paragraph">
+<p>Better is to write a little domain service to do the seeding of security data for you.
+The service below will set up the default roles and permissions for the framework&#8217;s own modules:</p>
+</div>
+<div class="listingblock">
+<div class="title">SeedUsersAndRoles.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Service
+@Order(OrderPrecedence.MIDPOINT + 10)
+@RequiredArgsConstructor(onConstructor_ = {@Inject})
+public class SeedSecurityService {
+
+    private final FixtureScripts fixtureScripts;
+    private final TransactionService transactionService;
+
+    @EventListener(MetamodelEvent.class)
+    public void onMetamodelEvent(final MetamodelEvent event) {
+        if (event.isPostMetamodel()) {
+            runScripts();
+            transactionService.flushTransaction();
+        }
+    }
+
+    private void runScripts() {
+        fixtureScripts.run(new CustomRolesAndUsers());
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>where <code>CustomRolesAndUsers</code> is application-specific, for example:</p>
+</div>
+<div class="listingblock">
+<div class="title">CustomRolesAndUsers.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class CustomRolesAndUsers extends FixtureScript {
+
+    @Override protected void execute(ExecutionContext executionContext) {
+        executionContext.executeChildren(this,
+                // roles
+                new RoleAndPerms__HelloRw(),
+                // users
+                new UserToRole__joe_UserRw_but_NoDelete()
+        );
+    }
+}</code></pre>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -884,7 +938,7 @@ The Secman implementation sets up the user with appropriate initial roles.</p>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M5.20210609-0250-02b3e24b</p>
+            <p>Revision: 2.0.0-M5.20210610-0246-d44233b6</p>
         </div>
     </div>
 </footer>
