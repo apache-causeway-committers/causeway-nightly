@@ -3,13 +3,15 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Docx Library :: Apache Isis</title>
+    <title>Docx Subdomain :: Apache Isis</title>
     <meta name="generator" content="Antora 2.3.4">
     <link rel="stylesheet" href="../../../_/css/site.css">
     <link rel="stylesheet" href="../../../_/css/site-custom.css">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Raleway:300,400,500,700,800|Montserrat:300,400,700" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css"/>
 <link rel="home" href="../../.." title="Apache Isis">
+  <link rel="next" href="../excel/about.html" title="Excel Library">
+  <link rel="prev" href="../base/about.html" title="Base Library">
   </head>
   <body class="article">
 <header class="header">
@@ -142,12 +144,12 @@
   <aside class="nav">
     <div class="panels">
 <div class="nav-panel-pagination">
-  <a class="page-previous disabled" rel="prev" href="" title=""><span></span></a>
-  <a class="page-next disabled" rel="next"
-     href="" title=""><span></span></a>
+  <a class="page-previous" rel="prev" href="../base/about.html" title="Base Library"><span></span></a>
+  <a class="page-next" rel="next"
+     href="../excel/about.html" title="Excel Library"><span></span></a>
 <!--
 page.parent doesn't seem to be set...
-  <a class="page-parent disabled" rel="prev" href="" title=""><span></span></a>
+  <a class="page-parent disabled" rel="prev" href="" title="Base Library"><span></span></a>
 -->
 </div>
 <div class="nav-panel-menu is-active" data-panel="menu">
@@ -159,10 +161,9 @@ page.parent doesn't seem to be set...
   <li class="nav-item" data-depth="1">
     <a class="nav-link" href="../base/about.html">Base Library</a>
   </li>
-</ul>
+  <li class="nav-item is-current-page" data-depth="1">
+    <a class="nav-link" href="about.html">Docx Library</a>
   </li>
-  <li class="nav-item" data-depth="0">
-<ul class="nav-list">
   <li class="nav-item" data-depth="1">
     <a class="nav-link" href="../excel/about.html">Excel Library</a>
   </li>
@@ -171,7 +172,7 @@ page.parent doesn't seem to be set...
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../spring/about.html">Spring</a>
+    <a class="nav-link" href="../spring/about.html">Spring Library</a>
   </li>
   <li class="nav-item" data-depth="1">
     <a class="nav-link" href="../xdocreport/about.html">XDocReport Library</a>
@@ -366,18 +367,249 @@ page.parent doesn't seem to be set...
 </div>
 <article class="doc">
     <a name="section-top"></a>
-<h1 class="page">Docx Library</h1>
-<div class="admonitionblock warning">
+<h1 class="page">Docx Subdomain</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This module provides a mail-merge capability of input data into an MS Word <code>.docx</code> templates.
+The generated output document is either Word <code>.docx</code> or Acrobat <code>.pdf</code>.
+(Be aware that exporting to PDF requires more memory).</p>
+</div>
+<div class="paragraph">
+<p>The module consists of a single domain service, <code>DocxService</code>.
+This provides an API to merge a <code>.docx</code> template against its input data. The input data is represented as a simple HTML file.</p>
+</div>
+<div class="paragraph">
+<p>The service supports several data types:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>plain text</p>
+</li>
+<li>
+<p>rich text</p>
+</li>
+<li>
+<p>date</p>
+</li>
+<li>
+<p>bulleted list</p>
+</li>
+<li>
+<p>tables</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The implementation uses <a href="http://www.docx4java.org">docx4j</a> and <a href="http://www.jdom.org">jdom2</a>.
+Databinding to custom XML parts (the <code>.docx</code> file format&#8217;s in-built support) is <strong>not</strong> used (as repeating datasets - required for lists and tables - was not supported prior to Word 2013).</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="dependency-management"><a class="anchor" href="#dependency-management"></a>Dependency Management</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If your application inherits from the Apache Isis starter app (<code>org.apache.isis.app:isis-app-starter-parent</code>) then that will define the version automatically:</p>
+</div>
+<div class="listingblock">
+<div class="title">pom.xml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;parent&gt;
+    &lt;groupId&gt;org.apache.isis.app&lt;/groupId&gt;
+    &lt;artifactId&gt;isis-app-starter-parent&lt;/artifactId&gt;
+    &lt;version&gt;2.0.0-M6&lt;/version&gt;
+    &lt;relativePath/&gt;
+&lt;/parent&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Alternatively, import the core BOM.
+This is usually done in the top-level parent pom of your application:</p>
+</div>
+<div class="listingblock">
+<div class="title">pom.xml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependencyManagement&gt;
+    &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.apache.isis.core&lt;/groupId&gt;
+            &lt;artifactId&gt;isis-core&lt;/artifactId&gt;
+            &lt;version&gt;2.0.0-M6&lt;/version&gt;
+            &lt;scope&gt;import&lt;/scope&gt;
+            &lt;type&gt;pom&lt;/type&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+&lt;/dependencyManagement&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In addition, add a section for the BOM of all subdomains:</p>
+</div>
+<div class="listingblock">
+<div class="title">pom.xml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependencyManagement&gt;
+    &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.apache.isis.subdomains&lt;/groupId&gt;
+            &lt;artifactId&gt;isis-subdomains&lt;/artifactId&gt;
+            &lt;scope&gt;import&lt;/scope&gt;
+            &lt;type&gt;pom&lt;/type&gt;
+            &lt;version&gt;2.0.0-M6&lt;/version&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+&lt;/dependencyManagement&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="dependencies"><a class="anchor" href="#dependencies"></a>Dependencies</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In the domain module(s) of your application, add the following dependency:</p>
+</div>
+<div class="listingblock">
+<div class="title">pom.xml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.apache.isis.subdomains&lt;/groupId&gt;
+        &lt;artifactId&gt;isis-subdomains-docx-applib&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To output to PDF, the following dependency must also be added:</p>
+</div>
+<div class="listingblock">
+<div class="title">pom.xml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
+    &lt;groupId&gt;org.docx4j&lt;/groupId&gt;
+    &lt;artifactId&gt;docx4j-export-fo&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="usage"><a class="anchor" href="#usage"></a>Usage</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>.docx</code> templates use Word custom content controls as placeholders.
+The actions to work with these placeholders can be enabled by toggling on the "Developer" menu:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/word-enable-developer-ribbon.png" alt="word enable developer ribbon" width="400px">
+</div>
+</div>
+<div class="paragraph">
+<p>You can then toggle on <em>Design Mode</em> to create/edit/remove custom content controls.</p>
+</div>
+<div id="template-docx" class="paragraph">
+<p>For example, see <a href="_attachments/Template.docx">Template.docx</a>.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/template-docx.png" alt="template docx" width="600px">
+</div>
+</div>
+<div class="paragraph">
+<p>To programmatically mail-merge into the template, we create a HTML document that provides the input.
+For example:</p>
+</div>
+<div id="input-html" class="listingblock">
+<div class="title">input HTML</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xhtml hljs" data-lang="xhtml">&lt;?xml version="1.0" encoding="UTF-8" standalone="yes"?&gt;
+&lt;html&gt;
+  &lt;body&gt;
+    &lt;p id="PPSN" class="plain"&gt;1234567A&lt;/p&gt;
+    &lt;p id="CustomerName" class="plain"&gt;Mrs Fidelma O'Leary&lt;/p&gt;
+    &lt;p id="Date" class="date"&gt;31/1/2012&lt;/p&gt;
+    &lt;p id="Decision" class="rich"&gt;
+      I am writing to you about your claim for jobseeker's credits. I have
+      decided that you are not entitled to this benefit.
+    &lt;/p&gt;
+    &lt;p id="Decision2" class="rich"&gt;
+      What follows below is a table that has been merged in, adding
+      additional rows dynamically as necessary based on the input data.
+    &lt;/p&gt;
+    &lt;ul id="Reasons2"&gt;
+      &lt;li&gt;
+        &lt;p&gt;This is some reason text (without a following
+          paragraph)&lt;/p&gt;
+      &lt;/li&gt;
+      &lt;li&gt;
+        &lt;p&gt;This would be some additional the reason text&lt;/p&gt;
+        &lt;p&gt;This reason has one additional text paragraph, eg documenting
+          the grounds&lt;/p&gt;
+      &lt;/li&gt;
+			&lt;!-- ... --&gt;
+    &lt;/ul&gt;
+    &lt;table id="Relatives"&gt;
+      &lt;tr&gt;
+        &lt;td&gt;Charlie O'Leary&lt;/td&gt;
+        &lt;td&gt;Husband&lt;/td&gt;
+        &lt;td&gt;&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+        &lt;td&gt;Mary O'Leary&lt;/td&gt;
+        &lt;td&gt;Daughter&lt;/td&gt;
+        &lt;td&gt;14&lt;/td&gt;
+      &lt;/tr&gt;
+			&lt;!-- ... --&gt;
+    &lt;/table&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We also parse the template into an internal data structure.
+This is usually done during bootstrapping as it is almost certainly immutable, and the parsing can take a second or two:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">WordprocessingMLPackage docxTemplate =
+    docxService.loadPackage(io.openInputStream("Template.docx"));</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We then merge in the input to the template as follows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">val baos = new ByteArrayOutputStream();
+val params = DocxService.MergeParams.builder()
+        .docxTemplateAsWpMlPackage(docxTemplate)            <i class="conum" data-value="1"></i><b>(1)</b>
+        .inputAsHtml(inputHtml)                             <i class="conum" data-value="2"></i><b>(2)</b>
+        .matchingPolicy(DocxService.MatchingPolicy.STRICT)
+        .outputType(DocxService.OutputType.DOCX)
+        .output(baos)
+        .build();
+docxService.merge(params);
+
+final byte[] docxActual = baos.toByteArray();</code></pre>
+</div>
+</div>
+<div class="colist arabic">
 <table>
 <tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-TODO
-</td>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>docx template, as shown <a href="#template-docx">above</a></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>input HTML, as shown <a href="#input-html">above</a></td>
 </tr>
 </table>
+</div>
+</div>
 </div>
 </article>
 <aside class="article-aside toc hide-for-print" role="navigation">
@@ -396,7 +628,7 @@ TODO
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M5.20210611-0241-42d29aad</p>
+            <p>Revision: 2.0.0-M5.20210612-0232-69f3aaf4</p>
         </div>
     </div>
 </footer>

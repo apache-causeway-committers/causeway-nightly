@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>SudoService :: Apache Isis</title>
+    <title>Mocking the Clock or User :: Apache Isis</title>
     <meta name="generator" content="Antora 2.3.4">
     <link rel="stylesheet" href="../../../../_/css/site.css">
     <link rel="stylesheet" href="../../../../_/css/site-custom.css">
@@ -393,74 +393,131 @@ page.parent doesn't seem to be set...
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="../../about.html">Testing Guide</a></li>
-    <li><a href="sudo-service.html"><code>SudoService</code></a></li>
+    <li><a href="mocking-the-clock-or-user.html">Mocking the Clock or User</a></li>
   </ul>
 </nav>
-  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/master/testing/fixtures/adoc/modules/fixtures/pages/fixture-scripts/sudo-service.adoc">Edit</a></div>
+  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/master/testing/fixtures/adoc/modules/fixtures/pages/fixture-scripts/mocking-the-clock-or-user.adoc">Edit</a></div>
 </div>
 <article class="doc">
     <a name="section-top"></a>
-<h1 class="page"><code>SudoService</code></h1>
+<h1 class="page">Mocking the Clock or User</h1>
+<div id="preamble">
+<div class="sectionbody">
 <div class="paragraph">
-<p>Sometimes in our fixture scripts we want to perform a business action running as a particular user.
-This might be for the usual reason - so that our fixtures accurately reflect the reality of the system with all business constraints enforced using the <code>WrapperFactory</code> - or more straightforwardly it might be simply that the action depends on the identity of the user invoking the action.</p>
+<p>The <a href="../../../../refguide/latest/applib/index/services/sudo/SudoService.html" class="page">SudoService</a> provides the mechanism to run an arbitrary block of code, but changing the effective user executing the block, or the effective time that the block was run.</p>
 </div>
 <div class="paragraph">
-<p>For example, consider this code that creates a todo item:</p>
+<p>This is a general purpose capability, but is especially useful for fixtures.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="mocking-the-clock"><a class="anchor" href="#mocking-the-clock"></a>Mocking the Clock</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>It&#8217;s sometimes necessary to change the effective time that a fixture or test runs.
+This can be done by calling <a href="../../../../refguide/latest/applib/index/services/sudo/SudoService.html" class="page">SudoService</a> with an <a href="../../../../refguide/latest/applib/index/services/iactnlayer/InteractionContext.html" class="page">InteractionContext</a> that has switched the clock.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
 </div>
 <div class="listingblock">
-<div class="title">Production code that depends on current user</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">// annotations omitted for clarity
-public ToDoItem newToDo(
-        final String description,
-        final Category category,
-        final Subcategory subcategory,
-        final LocalDate dueBy,
-        final BigDecimal cost) {
-    return newToDo(description, category, subcategory, currentUserName(), dueBy, cost);
-}
-private String currentUserName() {
-    return container.getUser().getName();       <i class="conum" data-value="1"></i><b>(1)</b>
-}</code></pre>
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">val when = VirtualClock.nowAt(Instant.parse("2017-02-03T09:00:00.00Z")); <i class="conum" data-value="1"></i><b>(1)</b>
+
+simpleObject =
+    sudoService.call(
+        InteractionContext.switchClock(when),                            <i class="conum" data-value="2"></i><b>(2)</b>
+        ()-&gt; fixtureScripts.runPersona(SimpleObject_persona.FOO)         <i class="conum" data-value="3"></i><b>(3)</b>
+    );</code></pre>
 </div>
 </div>
 <div class="colist arabic">
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>is the current user.</td>
+<td>the effective time, in other words the date/time we want the <a href="../../../../refguide/latest/applib/index/services/clock/ClockService.html" class="page">ClockService</a> to report</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Unary operator on <a href="../../../../refguide/latest/applib/index/services/iactnlayer/InteractionContext.html" class="page">InteractionContext</a> to switch the effective time</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>the block of code to run within this modified <a href="../../../../refguide/latest/applib/index/services/iactnlayer/InteractionContext.html" class="page">InteractionContext</a>.</td>
 </tr>
 </table>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="switching-the-user-sudo"><a class="anchor" href="#switching-the-user-sudo"></a>Switching the User ("Sudo")</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>The fixture for this can use the <code>SudoService</code> to run a block of code as a specified user:</p>
+<p>Sometimes in our fixture scripts we want to perform a business action running as a particular user.
+This might be for the usual reason - so that our fixtures accurately reflect the reality of the system with all business constraints enforced using the <code>WrapperFactory</code> - or more straightforwardly it might be simply that the action depends on the identity of the user invoking the action.
+Either way, this can be done by calling <a href="../../../../refguide/latest/applib/index/services/sudo/SudoService.html" class="page">SudoService</a> with an <a href="../../../../refguide/latest/applib/index/services/iactnlayer/InteractionContext.html" class="page">InteractionContext</a> that has switched the effective user.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
 </div>
 <div class="listingblock">
-<div class="title">Fixture Script</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">final String description = ...
-final Category category = ...
-final Subcategory subcategory = ...
-final LocalDate dueBy = ...
-final BigDecimal cost = ...
-final Location location = ...
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">val who = UserMemento.ofName("fred");                            <i class="conum" data-value="1"></i><b>(1)</b>
 
-toDoItem = sudoService.sudo(username,
-        new Callable&lt;ToDoItem&gt;() {
-            @Override
-            public ToDoItem call() {
-                final ToDoItem toDoItem = wrap(toDoItems).newToDo(
-                        description, category, subcategory, dueBy, cost);
-                wrap(toDoItem).setLocation(location);
-                return toDoItem;
-            }
-        });</code></pre>
+simpleObject =
+    sudoService.call(
+        InteractionContext.switchUser(who),                      <i class="conum" data-value="2"></i><b>(2)</b>
+        ()-&gt; fixtureScripts.runPersona(SimpleObject_persona.FOO) <i class="conum" data-value="3"></i><b>(3)</b>
+    );</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>the effective user, in other words the user that we want <a href="../../../../refguide/latest/applib/index/services/user/UserService.html" class="page">UserService</a> to report</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Unary operator on <a href="../../../../refguide/latest/applib/index/services/iactnlayer/InteractionContext.html" class="page">InteractionContext</a> to switch the effective user</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>the block of code to run within this modified <a href="../../../../refguide/latest/applib/index/services/iactnlayer/InteractionContext.html" class="page">InteractionContext</a>.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="mocking-the-clock-and-the-user"><a class="anchor" href="#mocking-the-clock-and-the-user"></a>Mocking the Clock and the User</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If we want to change both the effective time <em>and</em> the effective user, then we just need to combine the <code>UnaryOperator</code>s passed into <a href="../../../../refguide/latest/applib/index/services/sudo/SudoService.html" class="page">SudoService</a>.</p>
+</div>
+<div class="paragraph">
+<p>As a convenience, <a href="../../../../refguide/latest/applib/index/services/iactnlayer/InteractionContext.html" class="page">InteractionContext</a> provides a helper method for just this purpose:</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">val who = UserMemento.ofName("fred");
+val when = VirtualClock.nowAt(Instant.parse("2017-02-03T09:00:00.00Z"));
+
+val switchWhoAndWhen =
+        InteractionContext.combine(
+            InteractionContext.switchUser(who),
+            InteractionContext.switchClock(when)
+        );</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Behind the scenes the <code>SudoService</code> simply talks to the <code>UserService</code> to override the user returned by the <code>getUser()</code> API.
-It is possible to override both users and roles.</p>
+<p>This can then be passed in as the first argument to `SudoService&#8217;s <a href="../../../../refguide/latest/applib/index/services/sudo/SudoService.html#call<em>UnaryOperator_Callable" class="page">call(&#8230;&#8203;)</a> or <a href="../../../../refguide/latest/applib/index/services/sudo/SudoService.html#run</em>UnaryOperator_ThrowingRunnable" class="page">run(&#8230;&#8203;)</a> methods.</p>
+</div>
+</div>
 </div>
 </article>
 <aside class="article-aside toc hide-for-print" role="navigation">
@@ -479,7 +536,7 @@ It is possible to override both users and roles.</p>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M5.20210611-0241-42d29aad</p>
+            <p>Revision: 2.0.0-M5.20210612-0232-69f3aaf4</p>
         </div>
     </div>
 </footer>

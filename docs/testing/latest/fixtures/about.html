@@ -453,7 +453,7 @@ This means that fixture scripts can actually help all the way through the develo
 </ul>
 </div>
 <div class="paragraph">
-<p>The following  sections explain the API and how to go about using the API.</p>
+<p>The following sections explain the API and how to go about using the API.</p>
 </div>
 </div>
 </div>
@@ -937,149 +937,115 @@ Because non-specified values are randomised and change on each run, it also decr
 </div>
 </div>
 <div class="sect1">
-<h2 id="mocking-the-clock"><a class="anchor" href="#mocking-the-clock"></a>Mocking the Clock</h2>
+<h2 id="mocking-the-clock-or-user"><a class="anchor" href="#mocking-the-clock-or-user"></a>Mocking the Clock or User</h2>
 <div class="sectionbody">
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-TODO: v2 - this documentation has not yet been updated.
-In particular, the <code>Clock</code> singleton has been removed, the <code>ClockService</code> has been refactored.
-</td>
-</tr>
-</table>
+<div class="paragraph">
+<p>The <a href="../../../refguide/latest/applib/index/services/sudo/SudoService.html" class="page">SudoService</a> provides the mechanism to run an arbitrary block of code, but changing the effective user executing the block, or the effective time that the block was run.</p>
 </div>
 <div class="paragraph">
-<p>It&#8217;s often useful to be able to change the effective time that a test runs.
-The framework itself uses the <a href="../../../refguide/latest/applib/index/services/clock/ClockService.html" class="page">ClockService</a> to obtain the current time, and applications should also use this domain service for a consistent view of the current time.</p>
-</div>
-<div class="paragraph">
-<p>This page describes how to change the current time, and how to set up tests using fixture scripts with a mocked time.</p>
+<p>This is a general purpose capability, but is especially useful for fixtures.</p>
 </div>
 <div class="sect2">
-<h3 id="fixtureclock"><a class="anchor" href="#fixtureclock"></a>FixtureClock</h3>
+<h3 id="mocking-the-clock"><a class="anchor" href="#mocking-the-clock"></a>Mocking the Clock</h3>
 <div class="paragraph">
-<p>The default <a href="../../../refguide/latest/applib/index/services/clock/ClockService.html" class="page">ClockService</a> implementation in fact simply delegates to another class defined in the API, namely the <code>o.a.i.applib.clock.Clock</code>, an abstract singleton class.
-It is not recommended that your code use the <code>Clock</code> directly, but it&#8217;s worth understanding how this all works.</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>If running in <a href="../../../refguide/latest/config/about.html#deployment-types" class="page">production</a> (server) mode, then the framework will (lazily) instantiate the <code>`SystemClock</code> when first required.
-This is a read-only clock that reads from the system time.
-The instance registers itself as the singleton and cannot be replaced.</p>
-</li>
-<li>
-<p>If running in <a href="../../../refguide/latest/config/about.html#deployment-types" class="page">prototype</a> mode, though, then the framework (using <code>FixturesLifecycleService</code>) will instead instantiate <code>FixtureClock</code>.
-This is a read-write clock that will behave as the system clock, unless it is explicitly set using eg, <code>FixtureClock#setDate(&#8230;&#8203;)</code> or <code>FixtureClock#setTime(&#8230;&#8203;)</code> etc.</p>
-</li>
-</ul>
+<p>It&#8217;s sometimes necessary to change the effective time that a fixture or test runs.
+This can be done by calling <a href="../../../refguide/latest/applib/index/services/sudo/SudoService.html" class="page">SudoService</a> with an <a href="../../../refguide/latest/applib/index/services/iactnlayer/InteractionContext.html" class="page">InteractionContext</a> that has switched the clock.</p>
 </div>
 <div class="paragraph">
-<p>Moreover, the <code>FixtureClock</code> singleton can be replaced with another implementation.
-And, it is sometimes useful to replace it using <code>TickingFixtureClock</code>, a subclass that is very similar to <code>FixtureClock</code> (in that the time can be changed) but which will continue to tick once set.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="tickingclockfixture"><a class="anchor" href="#tickingclockfixture"></a>TickingClockFixture</h3>
-<div class="paragraph">
-<p>The <code>TickingClockFixture</code> is a pre-built fixture script that resets the date/time returned by the <a href="../../../refguide/latest/applib/index/services/clock/ClockService.html" class="page">ClockService</a> to a known value.</p>
-</div>
-<div class="paragraph">
-<p>Thereafter the time returned continues to tick forward (as would the real clock) until reset once more.</p>
-</div>
-<div class="paragraph">
-<p>For example, to set the clock to return "3 Sept 2014", use:</p>
+<p>For example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">executionContext.executeChild(this, new TickingClockFixture().setTo("2014-09-03"));</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>A variety of format strings are supported; the format "YYYY-MM-DD" (as shown above) will work in every locale.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-This fixture script requires that a <code>TickingFixtureClock</code> is initialized during bootstrapping.
-</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="sudoservice"><a class="anchor" href="#sudoservice"></a><code>SudoService</code></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Sometimes in our fixture scripts we want to perform a business action running as a particular user.
-This might be for the usual reason - so that our fixtures accurately reflect the reality of the system with all business constraints enforced using the <code>WrapperFactory</code> - or more straightforwardly it might be simply that the action depends on the identity of the user invoking the action.</p>
-</div>
-<div class="paragraph">
-<p>For example, consider this code that creates a todo item:</p>
-</div>
-<div class="listingblock">
-<div class="title">Production code that depends on current user</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">// annotations omitted for clarity
-public ToDoItem newToDo(
-        final String description,
-        final Category category,
-        final Subcategory subcategory,
-        final LocalDate dueBy,
-        final BigDecimal cost) {
-    return newToDo(description, category, subcategory, currentUserName(), dueBy, cost);
-}
-private String currentUserName() {
-    return container.getUser().getName();       <i class="conum" data-value="1"></i><b>(1)</b>
-}</code></pre>
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">val when = VirtualClock.nowAt(Instant.parse("2017-02-03T09:00:00.00Z")); <i class="conum" data-value="1"></i><b>(1)</b>
+
+simpleObject =
+    sudoService.call(
+        InteractionContext.switchClock(when),                            <i class="conum" data-value="2"></i><b>(2)</b>
+        ()-&gt; fixtureScripts.runPersona(SimpleObject_persona.FOO)         <i class="conum" data-value="3"></i><b>(3)</b>
+    );</code></pre>
 </div>
 </div>
 <div class="colist arabic">
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>is the current user.</td>
+<td>the effective time, in other words the date/time we want the <a href="../../../refguide/latest/applib/index/services/clock/ClockService.html" class="page">ClockService</a> to report</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Unary operator on <a href="../../../refguide/latest/applib/index/services/iactnlayer/InteractionContext.html" class="page">InteractionContext</a> to switch the effective time</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>the block of code to run within this modified <a href="../../../refguide/latest/applib/index/services/iactnlayer/InteractionContext.html" class="page">InteractionContext</a>.</td>
 </tr>
 </table>
 </div>
+</div>
+<div class="sect2">
+<h3 id="switching-the-user-sudo"><a class="anchor" href="#switching-the-user-sudo"></a>Switching the User ("Sudo")</h3>
 <div class="paragraph">
-<p>The fixture for this can use the <code>SudoService</code> to run a block of code as a specified user:</p>
+<p>Sometimes in our fixture scripts we want to perform a business action running as a particular user.
+This might be for the usual reason - so that our fixtures accurately reflect the reality of the system with all business constraints enforced using the <code>WrapperFactory</code> - or more straightforwardly it might be simply that the action depends on the identity of the user invoking the action.
+Either way, this can be done by calling <a href="../../../refguide/latest/applib/index/services/sudo/SudoService.html" class="page">SudoService</a> with an <a href="../../../refguide/latest/applib/index/services/iactnlayer/InteractionContext.html" class="page">InteractionContext</a> that has switched the effective user.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
 </div>
 <div class="listingblock">
-<div class="title">Fixture Script</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">final String description = ...
-final Category category = ...
-final Subcategory subcategory = ...
-final LocalDate dueBy = ...
-final BigDecimal cost = ...
-final Location location = ...
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">val who = UserMemento.ofName("fred");                            <i class="conum" data-value="1"></i><b>(1)</b>
 
-toDoItem = sudoService.sudo(username,
-        new Callable&lt;ToDoItem&gt;() {
-            @Override
-            public ToDoItem call() {
-                final ToDoItem toDoItem = wrap(toDoItems).newToDo(
-                        description, category, subcategory, dueBy, cost);
-                wrap(toDoItem).setLocation(location);
-                return toDoItem;
-            }
-        });</code></pre>
+simpleObject =
+    sudoService.call(
+        InteractionContext.switchUser(who),                      <i class="conum" data-value="2"></i><b>(2)</b>
+        ()-&gt; fixtureScripts.runPersona(SimpleObject_persona.FOO) <i class="conum" data-value="3"></i><b>(3)</b>
+    );</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>the effective user, in other words the user that we want <a href="../../../refguide/latest/applib/index/services/user/UserService.html" class="page">UserService</a> to report</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Unary operator on <a href="../../../refguide/latest/applib/index/services/iactnlayer/InteractionContext.html" class="page">InteractionContext</a> to switch the effective user</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>the block of code to run within this modified <a href="../../../refguide/latest/applib/index/services/iactnlayer/InteractionContext.html" class="page">InteractionContext</a>.</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="mocking-the-clock-and-the-user"><a class="anchor" href="#mocking-the-clock-and-the-user"></a>Mocking the Clock and the User</h3>
+<div class="paragraph">
+<p>If we want to change both the effective time <em>and</em> the effective user, then we just need to combine the <code>UnaryOperator</code>s passed into <a href="../../../refguide/latest/applib/index/services/sudo/SudoService.html" class="page">SudoService</a>.</p>
+</div>
+<div class="paragraph">
+<p>As a convenience, <a href="../../../refguide/latest/applib/index/services/iactnlayer/InteractionContext.html" class="page">InteractionContext</a> provides a helper method for just this purpose:</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">val who = UserMemento.ofName("fred");
+val when = VirtualClock.nowAt(Instant.parse("2017-02-03T09:00:00.00Z"));
+
+val switchWhoAndWhen =
+        InteractionContext.combine(
+            InteractionContext.switchUser(who),
+            InteractionContext.switchClock(when)
+        );</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Behind the scenes the <code>SudoService</code> simply talks to the <code>UserService</code> to override the user returned by the <code>getUser()</code> API.
-It is possible to override both users and roles.</p>
+<p>This can then be passed in as the first argument to `SudoService&#8217;s <a href="../../../refguide/latest/applib/index/services/sudo/SudoService.html#call<em>UnaryOperator_Callable" class="page">call(&#8230;&#8203;)</a> or <a href="../../../refguide/latest/applib/index/services/sudo/SudoService.html#run</em>UnaryOperator_ThrowingRunnable" class="page">run(&#8230;&#8203;)</a> methods.</p>
+</div>
 </div>
 </div>
 </div>
@@ -1100,7 +1066,7 @@ It is possible to override both users and roles.</p>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M5.20210611-0241-42d29aad</p>
+            <p>Revision: 2.0.0-M5.20210612-0232-69f3aaf4</p>
         </div>
     </div>
 </footer>

@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>UserService (interface) :: Apache Isis</title>
+    <title>UserService :: Apache Isis</title>
     <meta name="generator" content="Antora 2.3.4">
     <link rel="stylesheet" href="../../../../../../_/css/site.css">
     <link rel="stylesheet" href="../../../../../../_/css/site-custom.css">
@@ -895,14 +895,17 @@ page.parent doesn't seem to be set...
 </div>
 <article class="doc">
     <a name="section-top"></a>
-<h1 class="page">UserService <em>(interface)</em></h1>
+<h1 class="page">UserService</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
 <p>Allows the domain object to obtain the identity of the user interacting with said object.</p>
 </div>
 <div class="paragraph">
-<p>If <a href="../sudo/SudoService.html" class="page">SudoService</a> has been used to temporarily override the user and/or roles, then this service will report the overridden values instead.</p>
+<p>If <a href="../sudo/SudoService.html" class="page">SudoService</a> has been used to temporarily override the user and/or roles, then this service will report the overridden values instead. This is within the context of a thread.</p>
+</div>
+<div class="paragraph">
+<p>In addition, if impersonation has been invoked through the <a href="ImpersonateMenu.html" class="page">ImpersonateMenu</a> , then this service will report the impersonated user, with the companion <a href="ImpersonatedUserHolder.html" class="page">ImpersonatedUserHolder</a> taking responsibilty for remembering the impersonated user over multiple (http) requests, eg using an http session. It&#8217;s important to note that under these circumstances the user reported by this service (the "effective" user) will <em>not</em> be the same as the user held in the <a href="../iactnlayer/InteractionContext.html" class="page">InteractionContext</a> , as obtained by <em>InteractionLayerTracker#currentInteractionContext() InteractionLayerTracker</em> (the "real" user).</p>
 </div>
 </div>
 </div>
@@ -912,17 +915,17 @@ page.parent doesn't seem to be set...
 <div class="listingblock">
 <div class="title">UserService.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">interface UserService {
-  Optional&lt;UserMemento&gt; currentUser()     <i class="conum" data-value="1"></i><b>(1)</b>
-  UserMemento getUser()     <i class="conum" data-value="2"></i><b>(2)</b>
-  UserMemento currentUserElseFail()     <i class="conum" data-value="3"></i><b>(3)</b>
-  Optional&lt;String&gt; currentUserName()     <i class="conum" data-value="4"></i><b>(4)</b>
-  String currentUserNameElseNobody()     <i class="conum" data-value="5"></i><b>(5)</b>
-  void impersonateUser(final String userName, final List&lt;String&gt; roles)     <i class="conum" data-value="6"></i><b>(6)</b>
-  void stopImpersonating()     <i class="conum" data-value="7"></i><b>(7)</b>
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">class UserService {
+  public static final String NOBODY;     <i class="conum" data-value="1"></i><b>(1)</b>
+  Optional&lt;UserMemento&gt; currentUser()     <i class="conum" data-value="2"></i><b>(2)</b>
+  UserMemento getUser()     <i class="conum" data-value="3"></i><b>(3)</b>
+  UserMemento currentUserElseFail()     <i class="conum" data-value="4"></i><b>(4)</b>
+  Optional&lt;String&gt; currentUserName()     <i class="conum" data-value="5"></i><b>(5)</b>
+  String currentUserNameElseNobody()     <i class="conum" data-value="6"></i><b>(6)</b>
+  boolean isImpersonating()     <i class="conum" data-value="7"></i><b>(7)</b>
   boolean supportsImpersonation()     <i class="conum" data-value="8"></i><b>(8)</b>
-  Optional&lt;UserMemento&gt; getImpersonatedUser()     <i class="conum" data-value="9"></i><b>(9)</b>
-  boolean isImpersonating()     <i class="conum" data-value="10"></i><b>(10)</b>
+  void impersonateUser(final String userName, final List&lt;String&gt; roles)     <i class="conum" data-value="9"></i><b>(9)</b>
+  void stopImpersonating()     <i class="conum" data-value="10"></i><b>(10)</b>
 }</code></pre>
 </div>
 </div>
@@ -930,77 +933,77 @@ page.parent doesn't seem to be set...
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><a href="#currentUser__">currentUser()</a>
+<td><a href="#NOBODY">NOBODY</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>Optionally gets the details about the current user, based on whether an <a href="../iactnlayer/InteractionContext.html" class="page">InteractionContext</a> can be found with the current thread&#8217;s context.</p>
+<p>Default returned from <em>#currentUserNameElseNobody()</em> .</p>
 </div>
 </div>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><a href="#getUser__">getUser()</a>
+<td><a href="#currentUser__">currentUser()</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>Gets the details about the current user.</p>
+<p>Returns the details about the current user, either the "effective" user (if being <em>#impersonateUser(String, List) impersonated</em> ) otherwise the "real" user (as obtained from the <a href="../iactnlayer/InteractionContext.html" class="page">InteractionContext</a> of the current thread).</p>
 </div>
 </div>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td><a href="#currentUserElseFail__">currentUserElseFail()</a>
+<td><a href="#getUser__">getUser()</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>Gets the details about the current user.</p>
+<p>Gets the details about the <em>#currentUser()</em> current user, if any (and returning <code>null</code> if there is none).</p>
 </div>
 </div>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td><a href="#currentUserName__">currentUserName()</a>
+<td><a href="#currentUserElseFail__">currentUserElseFail()</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>Optionally gets the the current user&#8217;s name, based on whether an <a href="../iactnlayer/InteractionContext.html" class="page">InteractionContext</a> can be found with the current thread&#8217;s context.</p>
+<p>Gets the details about the <em>#currentUser()</em> current user, throwing an exception if there is none.</p>
 </div>
 </div>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
-<td><a href="#currentUserNameElseNobody__">currentUserNameElseNobody()</a>
+<td><a href="#currentUserName__">currentUserName()</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>Returns either the current user&#8217;s name or else <em>Nobody</em> .</p>
+<p>Optionally gets the <em>#currentUser() current user</em> 's name, obtained from <a href="UserMemento.html" class="page">UserMemento</a> .</p>
 </div>
 </div>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="6"></i><b>6</b></td>
-<td><a href="#impersonateUser__String_List">impersonateUser(String, List)</a>
+<td><a href="#currentUserNameElseNobody__">currentUserNameElseNobody()</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>Allows implementations to override the current user with another user.</p>
+<p>Returns either the current user&#8217;s name or else <em>#NOBODY</em> .</p>
 </div>
 </div>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="7"></i><b>7</b></td>
-<td><a href="#stopImpersonating__">stopImpersonating()</a>
+<td><a href="#isImpersonating__">isImpersonating()</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>For implementations that support impersonation, this is to programmatically stop impersonating a user</p>
+<p>Whether or not the user currently reported (in <em>#currentUser()</em> and similar) is actually an impersonated user.</p>
 </div>
 </div>
 </div></td>
@@ -1011,29 +1014,29 @@ page.parent doesn't seem to be set...
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>Whether this implementation supports impersonation.</p>
+<p>Whether impersonation is available for this request.</p>
 </div>
 </div>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="9"></i><b>9</b></td>
-<td><a href="#getImpersonatedUser__">getImpersonatedUser()</a>
+<td><a href="#impersonateUser__String_List">impersonateUser(String, List)</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>The impersonated user, if it has previously been set.</p>
+<p>Allows implementations to override the current user with another user.</p>
 </div>
 </div>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="10"></i><b>10</b></td>
-<td><a href="#isImpersonating__">isImpersonating()</a>
+<td><a href="#stopImpersonating__">stopImpersonating()</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>Whether or not the user currently reported (in <em>#currentUser()</em> and similar) is actually an impersonated user.</p>
+<p>For implementations that support impersonation, this is to programmatically stop impersonating a user</p>
 </div>
 </div>
 </div></td>
@@ -1046,33 +1049,54 @@ page.parent doesn't seem to be set...
 <h2 id="members"><a class="anchor" href="#members"></a>Members</h2>
 <div class="sectionbody">
 <div class="sect2">
+<h3 id="NOBODY"><a class="anchor" href="#NOBODY"></a>NOBODY</h3>
+<div class="paragraph">
+<p>Default returned from <em>#currentUserNameElseNobody()</em> .</p>
+</div>
+</div>
+<div class="sect2">
 <h3 id="currentUser__"><a class="anchor" href="#currentUser__"></a>currentUser()</h3>
 <div class="paragraph">
-<p>Optionally gets the details about the current user, based on whether an <a href="../iactnlayer/InteractionContext.html" class="page">InteractionContext</a> can be found with the current thread&#8217;s context.</p>
+<p>Returns the details about the current user, either the "effective" user (if being <em>#impersonateUser(String, List) impersonated</em> ) otherwise the "real" user (as obtained from the <a href="../iactnlayer/InteractionContext.html" class="page">InteractionContext</a> of the current thread).</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="getUser__"><a class="anchor" href="#getUser__"></a>getUser()</h3>
 <div class="paragraph">
-<p>Gets the details about the current user.</p>
+<p>Gets the details about the <em>#currentUser()</em> current user, if any (and returning <code>null</code> if there is none).</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="currentUserElseFail__"><a class="anchor" href="#currentUserElseFail__"></a>currentUserElseFail()</h3>
 <div class="paragraph">
-<p>Gets the details about the current user.</p>
+<p>Gets the details about the <em>#currentUser()</em> current user, throwing an exception if there is none.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="currentUserName__"><a class="anchor" href="#currentUserName__"></a>currentUserName()</h3>
 <div class="paragraph">
-<p>Optionally gets the the current user&#8217;s name, based on whether an <a href="../iactnlayer/InteractionContext.html" class="page">InteractionContext</a> can be found with the current thread&#8217;s context.</p>
+<p>Optionally gets the <em>#currentUser() current user</em> 's name, obtained from <a href="UserMemento.html" class="page">UserMemento</a> .</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="currentUserNameElseNobody__"><a class="anchor" href="#currentUserNameElseNobody__"></a>currentUserNameElseNobody()</h3>
 <div class="paragraph">
-<p>Returns either the current user&#8217;s name or else <em>Nobody</em> .</p>
+<p>Returns either the current user&#8217;s name or else <em>#NOBODY</em> .</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="isImpersonating__"><a class="anchor" href="#isImpersonating__"></a>isImpersonating()</h3>
+<div class="paragraph">
+<p>Whether or not the user currently reported (in <em>#currentUser()</em> and similar) is actually an impersonated user.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="supportsImpersonation__"><a class="anchor" href="#supportsImpersonation__"></a>supportsImpersonation()</h3>
+<div class="paragraph">
+<p>Whether impersonation is available for this request.</p>
+</div>
+<div class="paragraph">
+<p>The typical implementation uses an HTTP session, which is not guaranteed to be available for all viewers. Specifically, the Wicket viewer <em>does</em> use HTTP sessions and therefore supports impersonation, but the RestfulObjects viewer does <em>not</em> . This means that the result of this call varies on a request-by-request basis.</p>
 </div>
 </div>
 <div class="sect2">
@@ -1081,7 +1105,19 @@ page.parent doesn't seem to be set...
 <p>Allows implementations to override the current user with another user.</p>
 </div>
 <div class="paragraph">
-<p>This is intended for non-production environments only, where it can be invaluable (from a support perspective) to be able to quickly use the application "as if" logged in as another user.</p>
+<p>If this service (for this request) does not <em>#supportsImpersonation() support impersonation</em> , then the request is just ignored.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+this is intended for non-production environments only, where it can be invaluable (from a support perspective) to be able to quickly use the application "as if" logged in as another user.
+</td>
+</tr>
+</table>
 </div>
 </div>
 <div class="sect2">
@@ -1090,25 +1126,10 @@ page.parent doesn't seem to be set...
 <p>For implementations that support impersonation, this is to programmatically stop impersonating a user</p>
 </div>
 <div class="paragraph">
+<p>If this service (for this request) does not <em>#supportsImpersonation() support impersonation</em> , then the request is just ignored.</p>
+</div>
+<div class="paragraph">
 <p>Intended to be called at some point after <em>#impersonateUser(String, List)</em> would have been called.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="supportsImpersonation__"><a class="anchor" href="#supportsImpersonation__"></a>supportsImpersonation()</h3>
-<div class="paragraph">
-<p>Whether this implementation supports impersonation.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="getImpersonatedUser__"><a class="anchor" href="#getImpersonatedUser__"></a>getImpersonatedUser()</h3>
-<div class="paragraph">
-<p>The impersonated user, if it has previously been set.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="isImpersonating__"><a class="anchor" href="#isImpersonating__"></a>isImpersonating()</h3>
-<div class="paragraph">
-<p>Whether or not the user currently reported (in <em>#currentUser()</em> and similar) is actually an impersonated user.</p>
 </div>
 </div>
 </div>
@@ -1164,7 +1185,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M5.20210611-0241-42d29aad</p>
+            <p>Revision: 2.0.0-M5.20210612-0232-69f3aaf4</p>
         </div>
     </div>
 </footer>
