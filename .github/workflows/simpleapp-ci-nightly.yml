@@ -88,6 +88,8 @@ jobs:
     - name: Update Maven version
       shell: bash
       run: |
+        CURR=$(grep "<version>" pom.xml | head -1 | cut -d'>' -f2 | cut -d'<' -f1)
+        sed -i "s|<version>$CURR</version>|<version>$REVISION</version>|g" pom.xml
         mvn versions:set -DnewVersion=$REVISION
 
     - name: Print pom.xml
