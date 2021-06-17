@@ -1211,63 +1211,6 @@ page.parent doesn't seem to be set...
 </div>
 </div>
 <div class="sect2">
-<h3 id="hiding-actions"><a class="anchor" href="#hiding-actions"></a>Hiding actions</h3>
-<div class="paragraph">
-<p>The <a href="#hidden">hidden()</a> attribute indicates where (in the UI) the action should be hidden from the user.</p>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>It is also possible to use <a href="Action.html#hidden" class="page">@Action#hidden</a> to hide an action at the domain layer.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Customer {
-
-    @ActionLayout(hidden=Where.EVERYWHERE)
-    public void updateStatus() {
-        // ...
-    }
-    ...
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The acceptable values for the <code>where</code> parameter are:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>Where.EVERYWHERE</code> or <code>Where.ANYWHERE</code></p>
-<div class="paragraph">
-<p>The action should be hidden at all times.</p>
-</div>
-</li>
-<li>
-<p><code>Where.NOWHERE</code></p>
-<div class="paragraph">
-<p>The action should not be hidden.</p>
-</div>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>The other values of the <code>Where</code> enum have no meaning for a collection.</p>
-</div>
-</div>
-<div class="sect2">
 <h3 id="css-styling"><a class="anchor" href="#css-styling"></a>CSS Styling</h3>
 <div class="paragraph">
 <p>The <a href="#cssClass">cssClass()</a> element can be used to render additional CSS classes in the HTML (a wrapping <code>&lt;div&gt;</code>) that represents the action.
@@ -1298,6 +1241,148 @@ page.parent doesn't seem to be set...
 </td>
 </tr>
 </table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="bookmarking-2"><a class="anchor" href="#bookmarking-2"></a>Bookmarking</h3>
+<div class="paragraph">
+<p>The <a href="#bookmarking">bookmarking()</a> element indicates if an action (with safe <a href="Action.html#semantics" class="page">action semantics</a>) is automatically bookmarked.</p>
+</div>
+<div class="paragraph">
+<p>In the <a href="../../../../../vw/latest/about.html" class="page">Web UI (Wicket viewer)</a>, a link to a bookmarked object is shown in the bookmarks panel.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The <a href="../../../../../vw/latest/about.html" class="page">Web UI (Wicket viewer)</a> supports <code>alt-[</code> as a shortcut for opening the bookmark panel.  <code>Esc</code> will close.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class ToDoItems {
+    @Action(semantics=SemanticsOf.SAFE)
+    @ActionLayout(
+        bookmarking=BookmarkPolicy.AS_ROOT,
+        sequence = "1")
+    public List&lt;ToDoItem&gt; notYetComplete() {
+        ...
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>indicates that the <code>notYetComplete()</code> action is bookmarkable.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The enum value <code>AS_CHILD</code> has no meaning for actions; it relates only to bookmarked <a href="DomainObjectLayout.html#bookmarking" class="page">domain object</a>s.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="smoother-ui"><a class="anchor" href="#smoother-ui"></a>Smoother UI</h3>
+<div class="paragraph">
+<p>Often an action, when invoked, will return the target (in other words, will "return this").
+The <a href="#redirectPolicy">redirectPolicy()</a> element is used to control how the object is re-rendered.</p>
+</div>
+<div class="paragraph">
+<p>There are three options:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>if set to <code>ONLY_IF_DIFFERS</code>, then the existing web page will not be re-rendered, rather it will be updated in-place (using Ajax).</p>
+<div class="paragraph">
+<p>This makes for a smoother UI.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Any properties with <a href="PropertyLayout.html#repainting" class="page">@PropertyLayout#repainting</a> set to <code>NO_REPAINT</code> are then <em>not</em> updated.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>if set to <code>EVEN_IF_SAME</code>, then a redirect occurs and a new web page is rendered.</p>
+</li>
+<li>
+<p>if set to <code>AS_CONFIGURED</code>, then the default behaviour is as specified by the <code>isis.viewer.wicket.redirectEvenIfSameObject</code> <a href="../../../../../vw/latest/setup-and-configuration.html" class="page">configuration property</a>).</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>One use case for choosing <code>EVEN_IF_SAME</code> is if the action "returning this" is intended in some way to require that the object use a different layout, as per multiple layout support, as specified using the <a href="../../../applib-methods/ui-hints.html#layout" class="page">layout()</a> method.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
+import lombok.Setter;
+
+public class Customer {
+
+    @Getter @Setter
+    @PropertyLayout(hidden=ALWAYS)
+    private String layout;
+
+    public String layout() {                <i class="conum" data-value="1"></i><b>(1)</b>
+        return layout;
+    }
+
+    @ActionLayout(
+        redirect=EVEN_IF_SAME               <i class="conum" data-value="2"></i><b>(2)</b>
+    )
+    public Customer switchToEditMode() {
+        setLayout("edit");
+        return this;
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>specifies the alternate layout to use, eg <code>Customer-edit.layout.xml</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>even though this action returns the same target object, still re-render the page.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>If <code>switchToEditMode()</code> action is invoked, then the UI will attempt to render the customer using a <code>Customer.layout.edit.xml</code> layout file (instead of the default <code>Customer.layout.xml</code>).</p>
 </div>
 </div>
 <div class="sect2">
@@ -1349,22 +1434,83 @@ Examples of that include a name that would be a reserved Java keyword (eg "packa
 </div>
 </div>
 <div class="sect2">
-<h3 id="descriptions"><a class="anchor" href="#descriptions"></a>Descriptions</h3>
+<h3 id="positioning"><a class="anchor" href="#positioning"></a>Positioning</h3>
 <div class="paragraph">
-<p>The <a href="#describedAs">describedAs()</a> attribute is used to provide a short description of the action to the user.
-In the <a href="../../../../../vw/latest/about.html" class="page">Web UI (Wicket viewer)</a> it is displayed as a 'tool tip'.</p>
+<p>The <a href="#position">position()</a> element pertains only to actions that have been associated with properties using <a href="Action.html#associateWith" class="page">@Action#associateWith()</a>.
+For these actions, it specifies the positioning of the action&#8217;s button with respect to the field representing the object property.</p>
+</div>
+<div class="paragraph">
+<p>The attribute can take one of four values: <code>BELOW</code>, <code>RIGHT</code>, <code>PANEL</code> or <code>PANEL_DROPDOWN</code>.</p>
 </div>
 <div class="paragraph">
 <p>For example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Customer {
-    @ActionLayout(describedAs=
-        "Place a repeat order of the last (most recently placed) order")
-    public Order placeRepeatOrder(...) { /* ... */ }
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
+import lombok.Setter;
+
+public class Customer {
+
+    @Property( editing=Editing.DISABLED )
+    @Getter @Setter
+    private BigDecimal cost;
+
+    @Property( editing=Editing.DISABLED )
+    @Getter @Setter
+    private String location;
+
+    @Action( associateWith="cost" )                     <i class="conum" data-value="1"></i><b>(1)</b>
+    @ActionLayout(
+        named="Update",                                 <i class="conum" data-value="2"></i><b>(2)</b>
+        position=Position.BELOW                         <i class="conum" data-value="3"></i><b>(3)</b>
+    )
+    public Customer updateCost(BigDecimal cost ) {
+        // ...
+    }
+
+    @Action( associateWith="location" )
+    @ActionLayout(
+        named="Update",
+        position=Position.BELOW
+    )
+    public Customer updateLocation(String latitude, String longitude) {
+        // ...
+    }
 }</code></pre>
 </div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>associate the "updateCost" action with the "cost" property</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>give the action an abbreviated name, because the fact that the "cost" property is to be updated is implied by its positioning</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>positioning of the action&#8217;s button</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The default is <code>BELOW</code>.</p>
+</div>
+<div class="paragraph">
+<p>If the action is positioned as <code>RIGHT</code>, then the action&#8217;s button is rendered to the right of the property&#8217;s field, in a compact drop-down.</p>
+</div>
+<div class="paragraph">
+<p>If the action is positioned as <code>PANEL</code>, then the action&#8217;s button is rendered on the header of the panel that contains the property.</p>
+</div>
+<div class="paragraph">
+<p>And finally, if the action is positioned as <code>PANEL_DROPDOWN</code>, then the action&#8217;s button is again rendered on the panel header.</p>
+</div>
+<div class="paragraph">
+<p>If there are multiple actions associated with a single property then the positioning can be mix&#8217;ed-and-match&#8217;ed as required.
+If the <code>PANEL</code> or <code>PANEL_DROPDOWN</code> are used, then (as the screenshots above show) the actions from potentially multiple properties grouped by that panel will be shown together.</p>
 </div>
 </div>
 <div class="sect2">
@@ -1456,169 +1602,118 @@ The net effect is that a property conceptually consisting of different parts (eg
 </div>
 </div>
 <div class="sect2">
-<h3 id="positioning"><a class="anchor" href="#positioning"></a>Positioning</h3>
+<h3 id="hiding-actions"><a class="anchor" href="#hiding-actions"></a>Hiding actions</h3>
 <div class="paragraph">
-<p>The <a href="#position">position()</a> element pertains only to actions that have been associated with properties using <a href="Action.html#associateWith" class="page">@Action#associateWith()</a>.
-For these actions, it specifies the positioning of the action&#8217;s button with respect to the field representing the object property.</p>
+<p>The <a href="#hidden">hidden()</a> attribute indicates where (in the UI) the action should be hidden from the user.</p>
 </div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
 <div class="paragraph">
-<p>The attribute can take one of four values: <code>BELOW</code>, <code>RIGHT</code>, <code>PANEL</code> or <code>PANEL_DROPDOWN</code>.</p>
+<p>It is also possible to use <a href="Action.html#hidden" class="page">@Action#hidden</a> to hide an action at the domain layer.</p>
+</div>
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>For example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
-import lombok.Setter;
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Customer {
 
-public class Customer {
-
-    @Property( editing=Editing.DISABLED )
-    @Getter @Setter
-    private BigDecimal cost;
-
-    @Property( editing=Editing.DISABLED )
-    @Getter @Setter
-    private String location;
-
-    @Action( associateWith="cost" )                     <i class="conum" data-value="1"></i><b>(1)</b>
-    @ActionLayout(
-        named="Update",                                 <i class="conum" data-value="2"></i><b>(2)</b>
-        position=Position.BELOW                         <i class="conum" data-value="3"></i><b>(3)</b>
-    )
-    public Customer updateCost(BigDecimal cost ) {
+    @ActionLayout(hidden=Where.EVERYWHERE)
+    public void updateStatus() {
         // ...
     }
-
-    @Action( associateWith="location" )
-    @ActionLayout(
-        named="Update",
-        position=Position.BELOW
-    )
-    public Customer updateLocation(String latitude, String longitude) {
-        // ...
-    }
+    ...
 }</code></pre>
 </div>
 </div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>associate the "updateCost" action with the "cost" property</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>give the action an abbreviated name, because the fact that the "cost" property is to be updated is implied by its positioning</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>positioning of the action&#8217;s button</td>
-</tr>
-</table>
-</div>
 <div class="paragraph">
-<p>The default is <code>BELOW</code>.</p>
-</div>
-<div class="paragraph">
-<p>If the action is positioned as <code>RIGHT</code>, then the action&#8217;s button is rendered to the right of the property&#8217;s field, in a compact drop-down.</p>
-</div>
-<div class="paragraph">
-<p>If the action is positioned as <code>PANEL</code>, then the action&#8217;s button is rendered on the header of the panel that contains the property.</p>
-</div>
-<div class="paragraph">
-<p>And finally, if the action is positioned as <code>PANEL_DROPDOWN</code>, then the action&#8217;s button is again rendered on the panel header.</p>
-</div>
-<div class="paragraph">
-<p>If there are multiple actions associated with a single property then the positioning can be mix&#8217;ed-and-match&#8217;ed as required.
-If the <code>PANEL</code> or <code>PANEL_DROPDOWN</code> are used, then (as the screenshots above show) the actions from potentially multiple properties grouped by that panel will be shown together.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="smoother-ui"><a class="anchor" href="#smoother-ui"></a>Smoother UI</h3>
-<div class="paragraph">
-<p>Often an action, when invoked, will return the target (in other words, will "return this").
-The <a href="#redirectPolicy">redirectPolicy()</a> element is used to control how the object is re-rendered.</p>
-</div>
-<div class="paragraph">
-<p>There are three options:</p>
+<p>The acceptable values for the <code>where</code> parameter are:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>if set to <code>ONLY_IF_DIFFERS</code>, then the existing web page will not be re-rendered, rather it will be updated in-place (using Ajax).</p>
+<p><code>Where.EVERYWHERE</code> or <code>Where.ANYWHERE</code></p>
 <div class="paragraph">
-<p>This makes for a smoother UI.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>Any properties with <a href="PropertyLayout.html#repainting" class="page">@PropertyLayout#repainting</a> set to <code>NO_REPAINT</code> are then <em>not</em> updated.</p>
-</div>
-</td>
-</tr>
-</table>
+<p>The action should be hidden at all times.</p>
 </div>
 </li>
 <li>
-<p>if set to <code>EVEN_IF_SAME</code>, then a redirect occurs and a new web page is rendered.</p>
-</li>
-<li>
-<p>if set to <code>AS_CONFIGURED</code>, then the default behaviour is as specified by the <code>isis.viewer.wicket.redirectEvenIfSameObject</code> <a href="../../../../../vw/latest/setup-and-configuration.html" class="page">configuration property</a>).</p>
+<p><code>Where.NOWHERE</code></p>
+<div class="paragraph">
+<p>The action should not be hidden.</p>
+</div>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>One use case for choosing <code>EVEN_IF_SAME</code> is if the action "returning this" is intended in some way to require that the object use a different layout, as per multiple layout support, as specified using the <a href="../../../applib-methods/ui-hints.html#layout" class="page">layout()</a> method.</p>
+<p>The other values of the <code>Where</code> enum have no meaning for a collection.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="descriptions"><a class="anchor" href="#descriptions"></a>Descriptions</h3>
+<div class="paragraph">
+<p>The <a href="#describedAs">describedAs()</a> attribute is used to provide a short description of the action to the user.
+In the <a href="../../../../../vw/latest/about.html" class="page">Web UI (Wicket viewer)</a> it is displayed as a 'tool tip'.</p>
 </div>
 <div class="paragraph">
 <p>For example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
-import lombok.Setter;
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Customer {
+    @ActionLayout(describedAs=
+        "Place a repeat order of the last (most recently placed) order")
+    public Order placeRepeatOrder(...) { /* ... */ }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="font-icons"><a class="anchor" href="#font-icons"></a>Font Icons</h3>
+<div class="paragraph">
+<p>The <a href="#cssClassFa">cssClassFa()</a> element is used to specify the name of a <a href="http://fortawesome.github.io/Font-Awesome/icons/">Font Awesome icon</a> name, to be rendered on the action&#8217;s representation as a button or menu item.
+The related <a href="#cssClassFaPosition">cssClassFaPosition()</a> element specifies the positioning of the icon, to the left or the right of the text.</p>
+</div>
+<div class="paragraph">
+<p>These attributes can also be applied to <a href="DomainObjectLayout.html#cssClassFa" class="page">domain objects</a> to specify the object&#8217;s icon.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class ToDoItem {
 
-public class Customer {
-
-    @Getter @Setter
-    @PropertyLayout(hidden=ALWAYS)
-    private String layout;
-
-    public String layout() {                <i class="conum" data-value="1"></i><b>(1)</b>
-        return layout;
+    @ActionLayout(
+        cssClassFa="fa-step-backward"
+    )
+    public ToDoItem previous() {
+        // ...
     }
 
     @ActionLayout(
-        redirect=EVEN_IF_SAME               <i class="conum" data-value="2"></i><b>(2)</b>
+        cssClassFa="fa-step-forward",
+        cssClassFaPosition=ActionLayout.CssClassFaPosition.RIGHT
     )
-    public Customer switchToEditMode() {
-        setLayout("edit");
-        return this;
+    public ToDoItem next() {
+        // ...
     }
 }</code></pre>
 </div>
 </div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>specifies the alternate layout to use, eg <code>Customer-edit.layout.xml</code>.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>even though this action returns the same target object, still re-render the page.</td>
-</tr>
-</table>
-</div>
 <div class="paragraph">
-<p>If <code>switchToEditMode()</code> action is invoked, then the UI will attempt to render the customer using a <code>Customer.layout.edit.xml</code> layout file (instead of the default <code>Customer.layout.xml</code>).</p>
+<p>There can be multiple "fa-" classes, eg to mirror or rotate the icon.
+There is no need to include the mandatory <code>fa</code> "marker" CSS class; it will be automatically added to the list.
+The <code>fa-</code> prefix can also be omitted from the class names; it will be prepended to each if required.</p>
 </div>
 </div>
 </div>
@@ -1681,101 +1776,6 @@ public class Customer {
 <div class="paragraph">
 <p>As alternative to using the annotation, the dynamic <a href="../../../../../userguide/latest/fun/ui.html#object-layout" class="page">file-based layout</a> can generally be used instead.</p>
 </div>
-<div class="sect2">
-<h3 id="font-icons"><a class="anchor" href="#font-icons"></a>Font Icons</h3>
-<div class="paragraph">
-<p>The <a href="#cssClassFa">cssClassFa()</a> element is used to specify the name of a <a href="http://fortawesome.github.io/Font-Awesome/icons/">Font Awesome icon</a> name, to be rendered on the action&#8217;s representation as a button or menu item.
-The related <a href="#cssClassFaPosition">cssClassFaPosition()</a> element specifies the positioning of the icon, to the left or the right of the text.</p>
-</div>
-<div class="paragraph">
-<p>These attributes can also be applied to <a href="DomainObjectLayout.html#cssClassFa" class="page">domain objects</a> to specify the object&#8217;s icon.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class ToDoItem {
-
-    @ActionLayout(
-        cssClassFa="fa-step-backward"
-    )
-    public ToDoItem previous() {
-        // ...
-    }
-
-    @ActionLayout(
-        cssClassFa="fa-step-forward",
-        cssClassFaPosition=ActionLayout.CssClassFaPosition.RIGHT
-    )
-    public ToDoItem next() {
-        // ...
-    }
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>There can be multiple "fa-" classes, eg to mirror or rotate the icon.
-There is no need to include the mandatory <code>fa</code> "marker" CSS class; it will be automatically added to the list.
-The <code>fa-</code> prefix can also be omitted from the class names; it will be prepended to each if required.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="bookmarking-2"><a class="anchor" href="#bookmarking-2"></a>Bookmarking</h3>
-<div class="paragraph">
-<p>The <a href="#bookmarking">bookmarking()</a> element indicates if an action (with safe <a href="Action.html#semantics" class="page">action semantics</a>) is automatically bookmarked.</p>
-</div>
-<div class="paragraph">
-<p>In the <a href="../../../../../vw/latest/about.html" class="page">Web UI (Wicket viewer)</a>, a link to a bookmarked object is shown in the bookmarks panel.</p>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>The <a href="../../../../../vw/latest/about.html" class="page">Web UI (Wicket viewer)</a> supports <code>alt-[</code> as a shortcut for opening the bookmark panel.  <code>Esc</code> will close.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class ToDoItems {
-    @Action(semantics=SemanticsOf.SAFE)
-    @ActionLayout(
-        bookmarking=BookmarkPolicy.AS_ROOT,
-        sequence = "1")
-    public List&lt;ToDoItem&gt; notYetComplete() {
-        ...
-    }
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>indicates that the <code>notYetComplete()</code> action is bookmarkable.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>The enum value <code>AS_CHILD</code> has no meaning for actions; it relates only to bookmarked <a href="DomainObjectLayout.html#bookmarking" class="page">domain object</a>s.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-</div>
 </div>
 </div>
 </article>
@@ -1795,7 +1795,7 @@ The <code>fa-</code> prefix can also be omitted from the class names; it will be
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M5.20210615-0239-326ea7d2</p>
+            <p>Revision: 2.0.0-M5.20210617-0233-b34f49ac</p>
         </div>
     </div>
 </footer>
