@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>OrderPrecedence :: Apache Isis</title>
+    <title>PriorityPrecedence :: Apache Isis</title>
     <meta name="generator" content="Antora 2.3.4">
     <link rel="stylesheet" href="../../../../../_/css/site.css">
     <link rel="stylesheet" href="../../../../../_/css/site-custom.css">
@@ -885,26 +885,33 @@ page.parent doesn't seem to be set...
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="../../../about.html">Reference Guide</a></li>
-    <li><a href="OrderPrecedence.html">OrderPrecedence</a></li>
+    <li><a href="PriorityPrecedence.html">PriorityPrecedence</a></li>
   </ul>
 </nav>
-  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/master/antora/components/refguide-index/modules/applib/pages/index/annotation/OrderPrecedence.adoc">Edit</a></div>
+  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/master/antora/components/refguide-index/modules/applib/pages/index/annotation/PriorityPrecedence.adoc">Edit</a></div>
 </div>
 <article class="doc">
     <a name="section-top"></a>
-<h1 class="page">OrderPrecedence</h1>
+<h1 class="page">PriorityPrecedence</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Constants for use with <em>javax.annotation.Priority</em> , used both to determine which service to inject into a scalar field when there are multiple candidates, and also to order services if injecting into a vector field (in other words, into a <em>java.util.List</em> ).</p>
+</div>
+</div>
+</div>
 <div class="sect1">
 <h2 id="api"><a class="anchor" href="#api"></a>API</h2>
 <div class="sectionbody">
 <div class="listingblock">
-<div class="title">OrderPrecedence.java</div>
+<div class="title">PriorityPrecedence.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">class OrderPrecedence {
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">class PriorityPrecedence {
   public static final int FIRST;     <i class="conum" data-value="1"></i><b>(1)</b>
-  public static final int EARLY;     <i class="conum" data-value="2"></i><b>(2)</b>
+  public static final int LAST;     <i class="conum" data-value="2"></i><b>(2)</b>
   public static final int MIDPOINT;     <i class="conum" data-value="3"></i><b>(3)</b>
-  public static final int LATE;     <i class="conum" data-value="4"></i><b>(4)</b>
-  public static final int LAST;     <i class="conum" data-value="5"></i><b>(5)</b>
+  public static final int EARLY;     <i class="conum" data-value="4"></i><b>(4)</b>
+  public static final int LATE;     <i class="conum" data-value="5"></i><b>(5)</b>
 }</code></pre>
 </div>
 </div>
@@ -916,18 +923,18 @@ page.parent doesn't seem to be set...
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>For domain services with the highest precedence value. No framework services use this constant, but some very fundamental services (eg for security) that are not expected to be overridden use a value that is only a little after this first value.</p>
+<p>For domain services with the highest precedence (priority) value.</p>
 </div>
 </div>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><a href="#EARLY">EARLY</a>
+<td><a href="#LAST">LAST</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>For framework for services that are unlikely to be overridden by application code.</p>
+<p>For domain services that act as a fallback, and which will typically be overridden.</p>
 </div>
 </div>
 </div></td>
@@ -945,22 +952,22 @@ page.parent doesn't seem to be set...
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td><a href="#LATE">LATE</a>
+<td><a href="#EARLY">EARLY</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>For framework services that are expected to be overridden by application code, or that act as a fallback.</p>
+<p>For framework for services that are unlikely to be overridden by application code.</p>
 </div>
 </div>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
-<td><a href="#LAST">LAST</a>
+<td><a href="#LATE">LATE</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>For domain services that act as a fallback, and which will typically be overridden.</p>
+<p>For framework services that are expected to be overridden by application code, or that act as a fallback.</p>
 </div>
 </div>
 </div></td>
@@ -975,13 +982,19 @@ page.parent doesn't seem to be set...
 <div class="sect2">
 <h3 id="FIRST"><a class="anchor" href="#FIRST"></a>FIRST</h3>
 <div class="paragraph">
-<p>For domain services with the highest precedence value. No framework services use this constant, but some very fundamental services (eg for security) that are not expected to be overridden use a value that is only a little after this first value.</p>
+<p>For domain services with the highest precedence (priority) value.</p>
+</div>
+<div class="paragraph">
+<p>No framework services use this constant, but some very fundamental services (eg for security) that are not expected to be overridden use a value that is only a little after this first value.</p>
+</div>
+<div class="paragraph">
+<p>Note that this is a non-negative value, because <em>javax.annotation.Priority</em> 's javadoc states: "priority values should generally be non-negative, with negative values * reserved for special meanings such as <em>undefined</em> or <em>not specified</em> .". In particular, it is <em>not</em> the same as <em>Ordered#HIGHEST_PRECEDENCE</em> .</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="EARLY"><a class="anchor" href="#EARLY"></a>EARLY</h3>
+<h3 id="LAST"><a class="anchor" href="#LAST"></a>LAST</h3>
 <div class="paragraph">
-<p>For framework for services that are unlikely to be overridden by application code.</p>
+<p>For domain services that act as a fallback, and which will typically be overridden.</p>
 </div>
 </div>
 <div class="sect2">
@@ -991,15 +1004,15 @@ page.parent doesn't seem to be set...
 </div>
 </div>
 <div class="sect2">
-<h3 id="LATE"><a class="anchor" href="#LATE"></a>LATE</h3>
+<h3 id="EARLY"><a class="anchor" href="#EARLY"></a>EARLY</h3>
 <div class="paragraph">
-<p>For framework services that are expected to be overridden by application code, or that act as a fallback.</p>
+<p>For framework for services that are unlikely to be overridden by application code.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="LAST"><a class="anchor" href="#LAST"></a>LAST</h3>
+<h3 id="LATE"><a class="anchor" href="#LATE"></a>LATE</h3>
 <div class="paragraph">
-<p>For domain services that act as a fallback, and which will typically be overridden.</p>
+<p>For framework services that are expected to be overridden by application code, or that act as a fallback.</p>
 </div>
 </div>
 </div>
@@ -1021,7 +1034,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M5.20210618-0236-fe7448d2</p>
+            <p>Revision: 2.0.0-M5.20210618-1927-23529850</p>
         </div>
     </div>
 </footer>
