@@ -1216,6 +1216,135 @@ page.parent doesn't seem to be set...
 <p>The value should be of the form "file_extension|audio/<strong>|video/</strong>|image/*|media_type".</p>
 </div>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="related-spis"><a class="anchor" href="#related-spis"></a>Related SPIs</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../services/publishing/spi/CommandSubscriber.html" class="page">CommandSubscriber</a> SPI</p>
+<div class="paragraph">
+<p>for actions where command publishing (as per <a href="#commandPublishing">@Action#commandPublishing()</a>) is enabled</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../../../../../userguide/latest/command-log/about.html" class="page">Command Log</a> extension</p>
+<div class="paragraph">
+<p>provides an implementation that simply logs actions using the logging library</p>
+</div>
+</li>
+<li>
+<p><a href="../../../../../userguide/latest/command-replay/about.html" class="page">Command Replay</a> extension</p>
+<div class="paragraph">
+<p>provides an implementation to replicate commands from a primary to a secondary system.</p>
+</div>
+<div class="paragraph">
+<p>This implementation also leverages <a href="#commandDtoProcessor">commandDtoProcessor()</a> to process <code>CommandDto</code>s before being replciated</p>
+</div>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><a href="../services/publishing/spi/ExecutionSubscriber.html" class="page">ExecutionSubscriber</a> SPI</p>
+<div class="paragraph">
+<p>for actions where execution publishing (as per <a href="#executionPublishing">@Action#executionPublishing</a>) is enabled</p>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../services/eventbus/EventBusService.html" class="page">EventBusService</a></p>
+<div class="paragraph">
+<p>which broadcasts domain events as per <a href="#domainEvent">@Action#domainEvent()</a></p>
+</div>
+</li>
+</ul>
+</div>
+<div class="sect2">
+<h3 id="associating-actions-with-properties-and-collections"><a class="anchor" href="#associating-actions-with-properties-and-collections"></a>Associating actions with properties and collections</h3>
+<div class="paragraph">
+<p>The <code>associateWith</code> element allows an action to be associated with other properties or collections of the same domain object.
+The optional <code>sequence</code> element specifies the order of the action in the UI.</p>
+</div>
+<div class="paragraph">
+<p>For example, an <code>Order</code> could have a collection of <code>OrderItem</code>s, and might provide actions to add and remove items:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Order {
+
+    @Getter @Setter
+    @Collection
+    private final SortedSet&lt;OrderItem&gt; items = ...
+
+    @Action(associateWith="items")                  <i class="conum" data-value="1"></i><b>(1)</b>
+    @ActionLayout(sequence="1" )                    <i class="conum" data-value="2"></i><b>(2)</b>
+    public Order addItem(Product p, int quantity) {
+        // ...
+    }
+
+    @Action(associateWith="items")                  <i class="conum" data-value="3"></i><b>(3)</b>
+    @ActionLayout(sequence="2" )                    <i class="conum" data-value="4"></i><b>(4)</b>
+    public Order removeItem(OrderItem item) {
+        // ...
+    }
+
+    // ...
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>matches the name of the collection</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>first action in the list of all associated actions</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>matches the name of the collection</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>second action in the list of all associated actions</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>These actions - <code>addItem()</code> and <code>removeItem()</code> can be thought of as associated with with the <code>items</code> collection because that is the state that they primarily affect.</p>
+</div>
+<div class="paragraph">
+<p>In the user interface associated actions are rendered close to the member to which they relate.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The same effect can be accomplished using the <code>.layout.xml</code> file.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
 <div class="sect2">
 <h3 id="collection-type"><a class="anchor" href="#collection-type"></a>Collection type</h3>
 <div class="paragraph">
@@ -1350,6 +1479,247 @@ page.parent doesn't seem to be set...
 </div>
 </div>
 <div class="sect2">
+<h3 id="domain-events"><a class="anchor" href="#domain-events"></a>Domain events</h3>
+<div class="paragraph">
+<p>Whenever a domain object (or list of domain objects) is to be rendered, the framework fires off multiple domain events for every property, collection and action of the domain object.
+In the cases of the domain object&#8217;s actions, the events that are fired are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>hide phase: to check that the action is visible (has not been hidden)</p>
+</li>
+<li>
+<p>disable phase: to check that the action is usable (has not been disabled)</p>
+</li>
+<li>
+<p>validate phase: to check that the action&#8217;s arguments are valid</p>
+</li>
+<li>
+<p>pre-execute phase: before the invocation of the action</p>
+</li>
+<li>
+<p>post-execute: after the invocation of the action</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Subscribers subscribe through the <a href="../services/eventbus/EventBusService.html" class="page">EventBusService</a> and can influence each of these phases.</p>
+</div>
+<div class="paragraph">
+<p>By default the event raised is <code>ActionDomainEvent.Default</code>.
+For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class ToDoItem {
+
+    @Action()
+    public ToDoItem completed() {
+        // ...
+    }
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <a href="#domainEvent">domainEvent()</a> element allows a custom subclass to be emitted allowing more precise subscriptions (to those subclasses) to be defined instead.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class ToDoItem {
+    public static class CompletedEvent extends ActionDomainEvent&lt;ToDoItem&gt; { }  <i class="conum" data-value="1"></i><b>(1)</b>
+    @Action(domainEvent=CompletedEvent.class)
+    public ToDoItem completed() { /* ... */ }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The benefit is that subscribers can be more targeted as to the events that they subscribe to.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The framework provides a no-arg constructor and will initialize the domain event using (non-API) setters rather than through the constructor.
+This substantially reduces the boilerplate required in subclasses because no explicit constructor is required.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="sect3">
+<h4 id="subscribers"><a class="anchor" href="#subscribers"></a>Subscribers</h4>
+<div class="paragraph">
+<p>Subscribers (which must be domain services) subscribe to events posted through the <a href="../services/eventbus/EventBusService.html" class="page">EventBusService</a>.</p>
+</div>
+<div class="paragraph">
+<p>Subscribers can be either coarse-grained (if they subscribe to the top-level event type):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Service;
+
+@Service
+public class SomeSubscriber {
+    @EventListener(ActionDomainEvent.class)
+    public void on(ActionDomainEvent ev) {
+        ...
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>or can be fine-grained (by subscribing to specific event subtypes):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Service;
+
+@Service
+public class SomeSubscriber {
+    @EventListener(ToDoItem.CompletedEvent.class)
+    public void on(ToDoItem.CompletedEvent ev) {
+        ...
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The subscriber&#8217;s method is called (up to) 5 times:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>whether to veto visibility (hide)</p>
+</li>
+<li>
+<p>whether to veto usability (disable)</p>
+</li>
+<li>
+<p>whether to veto execution (validate)</p>
+</li>
+<li>
+<p>steps to perform prior to the action being invoked</p>
+</li>
+<li>
+<p>steps to perform after the action has been invoked</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The subscriber can distinguish these by calling <code>ev.getEventPhase()</code>.
+Thus the general form is:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Service;
+
+@Service
+public class SomeSubscriber {
+
+    @EventListener(ActionDomainEvent.class)
+    public void on(ActionDomainEvent ev) {
+        switch(ev.getEventPhase()) {
+
+            case HIDE:                      <i class="conum" data-value="1"></i><b>(1)</b>
+                break;
+            case DISABLE:                   <i class="conum" data-value="2"></i><b>(2)</b>
+                break;
+            case VALIDATE:                  <i class="conum" data-value="3"></i><b>(3)</b>
+                break;
+
+            case EXECUTING:
+                break;
+            case EXECUTED:
+                break;
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>call <code>ev.hide()</code> or <code>ev.veto("")</code> to hide the action</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>call <code>ev.disable("&#8230;&#8203;")</code> or <code>ev.veto("&#8230;&#8203;")</code> to disable the action</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>call ev.invalidate("&#8230;&#8203;") or ev.veto("&#8230;&#8203;") if action arguments are invalid</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>It is also possible to abort the transaction during the executing or executed phases by throwing an exception.
+If the exception is a subtype of <code>RecoverableException</code> then the exception will be rendered as a user-friendly warning (eg Growl/toast) rather than an error.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="default-doop-and-noop-events"><a class="anchor" href="#default-doop-and-noop-events"></a>Default, Doop and Noop events</h4>
+<div class="paragraph">
+<p>If the <a href="#domainEvent">domainEvent()</a> element is not explicitly specified (is left as its default value, <code>ActionDomainEvent.Default</code>), then the framework will, by default, post an event.</p>
+</div>
+<div class="paragraph">
+<p>If this is not required, then the <a href="../../../config/sections/isis.applib.html#isis.applib.annotation.action.domain-event.post-for-default" class="page">isis.applib.annotation.action.domain-event.post-for-default</a> configuration property can be set to "false"; this will disable posting.</p>
+</div>
+<div class="paragraph">
+<p>On the other hand, if the <code>domainEvent</code> has been explicitly specified to some subclass, then an event will be posted.
+The framework provides <code>ActionDomainEvent.Doop</code> as such a subclass, so setting the <code>domainEvent</code> element to this class will ensure that the event to be posted, irrespective of the configuration property setting.</p>
+</div>
+<div class="paragraph">
+<p>And, conversely, the framework also provides <code>ActionDomainEvent.Noop</code>; if <code>domainEvent</code> element is set to this class, then no event will be posted.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="class-level-default"><a class="anchor" href="#class-level-default"></a>Class-level default</h4>
+<div class="paragraph">
+<p>Sometimes a subscriber is interested in all of the actions of a given class, though not any individual action.
+A common use case is to hide or disable all actions for some particular object for some particular user group.</p>
+</div>
+<div class="paragraph">
+<p>For this use, the default action domain event can be annotated using <code>@DomainObject</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(
+    actionDomainEvent=ToDoItem.ActionDomainEvent.class
+)
+public class ToDoItem {
+    public static class ActionDomainEvent extends
+        org.apache.isis.applib.events.domain.ActionDomainEvent&lt;Object&gt; { }
+    // ...
+
+    public void updateDescription(final String description) {
+        this.description = description;
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="raising-events-programmatically"><a class="anchor" href="#raising-events-programmatically"></a>Raising events programmatically</h4>
+<div class="paragraph">
+<p>Normally events are only raised for interactions through the UI.
+However, events can be raised programmatically either by calling the <a href="../services/eventbus/EventBusService.html" class="page">EventBusService</a> API directly, or by emulating the UI by wrapping the target object using the <a href="../services/wrapper/WrapperFactory.html" class="page">WrapperFactory</a> domain service.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
 <h3 id="deployment-modes"><a class="anchor" href="#deployment-modes"></a>Deployment modes</h3>
 <div class="paragraph">
 <p>By default actions are available irrespective of the <a href="../../../config/about.html#deployment-types" class="page">deployment mode</a>.
@@ -1390,80 +1760,6 @@ The <a href="#restrictTo">restrictTo()</a> element specifies whether the action 
 <div class="paragraph">
 <p>In this case the listing of all orders (in the <code>listAllOrders()</code> action) probably doesn&#8217;t make sense for production; there could be thousands or millions.
 However, it would be useful to disaply how for a test or demo system where there are only a handful of orders.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="associating-actions-with-properties-and-collections"><a class="anchor" href="#associating-actions-with-properties-and-collections"></a>Associating actions with properties and collections</h3>
-<div class="paragraph">
-<p>The <code>associateWith</code> element allows an action to be associated with other properties or collections of the same domain object.
-The optional <code>sequence</code> element specifies the order of the action in the UI.</p>
-</div>
-<div class="paragraph">
-<p>For example, an <code>Order</code> could have a collection of <code>OrderItem</code>s, and might provide actions to add and remove items:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Order {
-
-    @Getter @Setter
-    @Collection
-    private final SortedSet&lt;OrderItem&gt; items = ...
-
-    @Action(associateWith="items")                  <i class="conum" data-value="1"></i><b>(1)</b>
-    @ActionLayout(sequence="1" )                    <i class="conum" data-value="2"></i><b>(2)</b>
-    public Order addItem(Product p, int quantity) {
-        // ...
-    }
-
-    @Action(associateWith="items")                  <i class="conum" data-value="3"></i><b>(3)</b>
-    @ActionLayout(sequence="2" )                    <i class="conum" data-value="4"></i><b>(4)</b>
-    public Order removeItem(OrderItem item) {
-        // ...
-    }
-
-    // ...
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>matches the name of the collection</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>first action in the list of all associated actions</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>matches the name of the collection</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>second action in the list of all associated actions</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>These actions - <code>addItem()</code> and <code>removeItem()</code> can be thought of as associated with with the <code>items</code> collection because that is the state that they primarily affect.</p>
-</div>
-<div class="paragraph">
-<p>In the user interface associated actions are rendered close to the member to which they relate.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>The same effect can be accomplished using the <code>.layout.xml</code> file.</p>
-</div>
-</td>
-</tr>
-</table>
 </div>
 </div>
 <div class="sect2">
@@ -1757,302 +2053,6 @@ The effect is to ignore it for replay purposes:</p>
 </div>
 </div>
 </div>
-<div class="sect1">
-<h2 id="related-spis"><a class="anchor" href="#related-spis"></a>Related SPIs</h2>
-<div class="sectionbody">
-<div class="ulist">
-<ul>
-<li>
-<p><a href="../services/publishing/spi/CommandSubscriber.html" class="page">CommandSubscriber</a> SPI</p>
-<div class="paragraph">
-<p>for actions where command publishing (as per <a href="#commandPublishing">@Action#commandPublishing()</a>) is enabled</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="../../../../../userguide/latest/command-log/about.html" class="page">Command Log</a> extension</p>
-<div class="paragraph">
-<p>provides an implementation that simply logs actions using the logging library</p>
-</div>
-</li>
-<li>
-<p><a href="../../../../../userguide/latest/command-replay/about.html" class="page">Command Replay</a> extension</p>
-<div class="paragraph">
-<p>provides an implementation to replicate commands from a primary to a secondary system.</p>
-</div>
-<div class="paragraph">
-<p>This implementation also leverages <a href="#commandDtoProcessor">commandDtoProcessor()</a> to process <code>CommandDto</code>s before being replciated</p>
-</div>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p><a href="../services/publishing/spi/ExecutionSubscriber.html" class="page">ExecutionSubscriber</a> SPI</p>
-<div class="paragraph">
-<p>for actions where execution publishing (as per <a href="#executionPublishing">@Action#executionPublishing</a>) is enabled</p>
-</div>
-</li>
-</ul>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-<div class="sectionbody">
-<div class="ulist">
-<ul>
-<li>
-<p><a href="../services/eventbus/EventBusService.html" class="page">EventBusService</a></p>
-<div class="paragraph">
-<p>which broadcasts domain events as per <a href="#domainEvent">@Action#domainEvent()</a></p>
-</div>
-</li>
-</ul>
-</div>
-<div class="sect2">
-<h3 id="domain-events"><a class="anchor" href="#domain-events"></a>Domain events</h3>
-<div class="paragraph">
-<p>Whenever a domain object (or list of domain objects) is to be rendered, the framework fires off multiple domain events for every property, collection and action of the domain object.
-In the cases of the domain object&#8217;s actions, the events that are fired are:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>hide phase: to check that the action is visible (has not been hidden)</p>
-</li>
-<li>
-<p>disable phase: to check that the action is usable (has not been disabled)</p>
-</li>
-<li>
-<p>validate phase: to check that the action&#8217;s arguments are valid</p>
-</li>
-<li>
-<p>pre-execute phase: before the invocation of the action</p>
-</li>
-<li>
-<p>post-execute: after the invocation of the action</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Subscribers subscribe through the <a href="../services/eventbus/EventBusService.html" class="page">EventBusService</a> and can influence each of these phases.</p>
-</div>
-<div class="paragraph">
-<p>By default the event raised is <code>ActionDomainEvent.Default</code>.
-For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class ToDoItem {
-
-    @Action()
-    public ToDoItem completed() {
-        // ...
-    }
-    ...
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The <a href="#domainEvent">domainEvent()</a> element allows a custom subclass to be emitted allowing more precise subscriptions (to those subclasses) to be defined instead.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class ToDoItem {
-    public static class CompletedEvent extends ActionDomainEvent&lt;ToDoItem&gt; { }  <i class="conum" data-value="1"></i><b>(1)</b>
-    @Action(domainEvent=CompletedEvent.class)
-    public ToDoItem completed() { /* ... */ }
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The benefit is that subscribers can be more targeted as to the events that they subscribe to.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>The framework provides a no-arg constructor and will initialize the domain event using (non-API) setters rather than through the constructor.
-This substantially reduces the boilerplate required in subclasses because no explicit constructor is required.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="sect3">
-<h4 id="subscribers"><a class="anchor" href="#subscribers"></a>Subscribers</h4>
-<div class="paragraph">
-<p>Subscribers (which must be domain services) subscribe to events posted through the <a href="../services/eventbus/EventBusService.html" class="page">EventBusService</a>.</p>
-</div>
-<div class="paragraph">
-<p>Subscribers can be either coarse-grained (if they subscribe to the top-level event type):</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.springframework.context.event.EventListener;
-import org.springframework.stereotype.Service;
-
-@Service
-public class SomeSubscriber {
-    @EventListener(ActionDomainEvent.class)
-    public void on(ActionDomainEvent ev) {
-        ...
-    }
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>or can be fine-grained (by subscribing to specific event subtypes):</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.springframework.context.event.EventListener;
-import org.springframework.stereotype.Service;
-
-@Service
-public class SomeSubscriber {
-    @EventListener(ToDoItem.CompletedEvent.class)
-    public void on(ToDoItem.CompletedEvent ev) {
-        ...
-    }
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The subscriber&#8217;s method is called (up to) 5 times:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>whether to veto visibility (hide)</p>
-</li>
-<li>
-<p>whether to veto usability (disable)</p>
-</li>
-<li>
-<p>whether to veto execution (validate)</p>
-</li>
-<li>
-<p>steps to perform prior to the action being invoked</p>
-</li>
-<li>
-<p>steps to perform after the action has been invoked</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>The subscriber can distinguish these by calling <code>ev.getEventPhase()</code>.
-Thus the general form is:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.springframework.context.event.EventListener;
-import org.springframework.stereotype.Service;
-
-@Service
-public class SomeSubscriber {
-
-    @EventListener(ActionDomainEvent.class)
-    public void on(ActionDomainEvent ev) {
-        switch(ev.getEventPhase()) {
-
-            case HIDE:                      <i class="conum" data-value="1"></i><b>(1)</b>
-                break;
-            case DISABLE:                   <i class="conum" data-value="2"></i><b>(2)</b>
-                break;
-            case VALIDATE:                  <i class="conum" data-value="3"></i><b>(3)</b>
-                break;
-
-            case EXECUTING:
-                break;
-            case EXECUTED:
-                break;
-        }
-    }
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>call <code>ev.hide()</code> or <code>ev.veto("")</code> to hide the action</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>call <code>ev.disable("&#8230;&#8203;")</code> or <code>ev.veto("&#8230;&#8203;")</code> to disable the action</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>call ev.invalidate("&#8230;&#8203;") or ev.veto("&#8230;&#8203;") if action arguments are invalid</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>It is also possible to abort the transaction during the executing or executed phases by throwing an exception.
-If the exception is a subtype of <code>RecoverableException</code> then the exception will be rendered as a user-friendly warning (eg Growl/toast) rather than an error.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="default-doop-and-noop-events"><a class="anchor" href="#default-doop-and-noop-events"></a>Default, Doop and Noop events</h4>
-<div class="paragraph">
-<p>If the <a href="#domainEvent">domainEvent()</a> element is not explicitly specified (is left as its default value, <code>ActionDomainEvent.Default</code>), then the framework will, by default, post an event.</p>
-</div>
-<div class="paragraph">
-<p>If this is not required, then the <a href="../../../config/sections/isis.applib.html#isis.applib.annotation.action.domain-event.post-for-default" class="page">isis.applib.annotation.action.domain-event.post-for-default</a> configuration property can be set to "false"; this will disable posting.</p>
-</div>
-<div class="paragraph">
-<p>On the other hand, if the <code>domainEvent</code> has been explicitly specified to some subclass, then an event will be posted.
-The framework provides <code>ActionDomainEvent.Doop</code> as such a subclass, so setting the <code>domainEvent</code> element to this class will ensure that the event to be posted, irrespective of the configuration property setting.</p>
-</div>
-<div class="paragraph">
-<p>And, conversely, the framework also provides <code>ActionDomainEvent.Noop</code>; if <code>domainEvent</code> element is set to this class, then no event will be posted.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="class-level-default"><a class="anchor" href="#class-level-default"></a>Class-level default</h4>
-<div class="paragraph">
-<p>Sometimes a subscriber is interested in all of the actions of a given class, though not any individual action.
-A common use case is to hide or disable all actions for some particular object for some particular user group.</p>
-</div>
-<div class="paragraph">
-<p>For this use, the default action domain event can be annotated using <code>@DomainObject</code>:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(
-    actionDomainEvent=ToDoItem.ActionDomainEvent.class
-)
-public class ToDoItem {
-    public static class ActionDomainEvent extends
-        org.apache.isis.applib.events.domain.ActionDomainEvent&lt;Object&gt; { }
-    // ...
-
-    public void updateDescription(final String description) {
-        this.description = description;
-    }
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="raising-events-programmatically"><a class="anchor" href="#raising-events-programmatically"></a>Raising events programmatically</h4>
-<div class="paragraph">
-<p>Normally events are only raised for interactions through the UI.
-However, events can be raised programmatically either by calling the <a href="../services/eventbus/EventBusService.html" class="page">EventBusService</a> API directly, or by emulating the UI by wrapping the target object using the <a href="../services/wrapper/WrapperFactory.html" class="page">WrapperFactory</a> domain service.</p>
-</div>
-</div>
-</div>
-</div>
-</div>
 </article>
 <aside class="article-aside toc hide-for-print" role="navigation">
     <p class="toc-title">On this page</p>
@@ -2070,7 +2070,7 @@ However, events can be raised programmatically either by calling the <a href="..
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M5.20210625-0230-4bfabb27</p>
+            <p>Revision: 2.0.0-M5.20210626-0225-800d5c55</p>
         </div>
     </div>
 </footer>
