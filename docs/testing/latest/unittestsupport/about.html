@@ -411,6 +411,79 @@ page.parent doesn't seem to be set...
 </div>
 </div>
 <div class="sect1">
+<h2 id="maven-configuration"><a class="anchor" href="#maven-configuration"></a>Maven Configuration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>TODO: move this earlier, standard format.</p>
+</div>
+<div class="paragraph">
+<p>Apache Isis' unit test support is most easily configured through a dependency on the <code>isis-mavendeps-testing</code> module:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
+    &lt;groupId&gt;org.apache.isis.mavendeps&lt;/groupId&gt;
+    &lt;artifactId&gt;isis-mavendeps-unittests&lt;/artifactId&gt;
+    &lt;scope&gt;test&lt;/scope&gt;                             <i class="conum" data-value="1"></i><b>(1)</b>
+    &lt;type&gt;pom&lt;/type&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Normally <code>test</code>; usual Maven scoping rules apply.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>This will set up unit testing support.
+There is no need to specify the version if you inherit from from the <a href="../../../docs/latest/parent-pom/about.html" class="page">Parent POM</a>.</p>
+</div>
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-caution" title="Caution"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The <a href="../../../docs/latest/parent-pom/about.html" class="page">Parent POM</a> configures the Maven surefire plugin in two separate executions for unit test and fo integ tests.
+This relies on a naming convention:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>unit tests, which must have a suffix <code>Test</code>, but excluding &#8230;&#8203;</p>
+</li>
+<li>
+<p>integ tests, which must have the suffix <code>IntegTest</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Not following this convention is likely to cause integ tests to fail.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>If you just want to set up unit testing support, then use:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
+    &lt;groupId&gt;org.apache.isis.core&lt;/groupId&gt;
+    &lt;artifactId&gt;isis-core-unittestsupport&lt;/artifactId&gt;
+    &lt;scope&gt;test&lt;/scope&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="contract-tests"><a class="anchor" href="#contract-tests"></a>Contract Tests</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -540,6 +613,13 @@ If no <code>Instantiator</code> is provided, then the contract test simply attem
 <div class="paragraph">
 <p>To see what&#8217;s going on (and to identify any skipped relationships), use the <code>withLoggingTo()</code> method call.
 If any assertion fails then the error should be descriptive enough to figure out the problem (without enabling logging).</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="comparable"><a class="anchor" href="#comparable"></a>Comparable</h3>
+<div class="paragraph">
+<p>TODO
+ComparableContractTest_compareTo</p>
 </div>
 </div>
 <div class="sect2">
@@ -681,8 +761,7 @@ It provides a simpler API and also providing support for autowiring.</p>
 <h2 id="soap-fake-endpoints"><a class="anchor" href="#soap-fake-endpoints"></a>SOAP Fake Endpoints</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>No man is an island, so the saying goes, and neither are most applications.
-Chances are that at some point you may need to integrate your Apache Isis application to other external systems, possibly using old-style SOAP web services.
+<p>Chances are that at some point you may need to integrate your Apache Isis application to other external systems, possibly using old-style SOAP web services.
 The SOAP client in this case could be a domain service within your app, or it might be externalized, eg invoked through a scheduler or using <a href="http://camel.apache.org">Apache Camel</a>.</p>
 </div>
 <div class="paragraph">
@@ -690,6 +769,18 @@ The SOAP client in this case could be a domain service within your app, or it mi
 </div>
 <div class="paragraph">
 <p>The <code>SoapEndpointPublishingRule</code> is a simple JUnit rule that allows you to run a fake SOAP endpoint within an unit test.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+although originally intended for use with JUnit4, it can also used in JUnit5 tests; details below.
+</td>
+</tr>
+</table>
 </div>
 <div class="sect2">
 <h3 id="soapendpointpublishingrule"><a class="anchor" href="#soapendpointpublishingrule"></a><code>SoapEndpointPublishingRule</code></h3>
@@ -742,12 +833,15 @@ Therefore the unit tests should clear up any state on the fake server endpoints.
         // given
         final Update update = new Update();                              <i class="conum" data-value="7"></i><b>(7)</b>
         ...
+
         // expect
         final UpdateResponse response = new UpdateResponse();            <i class="conum" data-value="8"></i><b>(8)</b>
         ...
         fakeServerEndpoint.control().setResponse(updateResponse);
+
         // when
         PostResponse response = externalSystemContract.post(update);     <i class="conum" data-value="9"></i><b>(9)</b>
+
         // then
         final List&lt;Update&gt; updates =                                     <i class="conum" data-value="10"></i><b>(10)</b>
             fakeServerEndpoint.control().getUpdates();
@@ -837,73 +931,9 @@ These are useful if you have exampler XML-serialized representations of the SOAP
 </div>
 </div>
 <div class="sect1">
-<h2 id="maven-configuration"><a class="anchor" href="#maven-configuration"></a>Maven Configuration</h2>
+<h2 id="files"><a class="anchor" href="#files"></a>Files</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p>Apache Isis' unit test support is most easily configured through a dependency on the <code>isis-mavendeps-testing</code> module:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
-    &lt;groupId&gt;org.apache.isis.mavendeps&lt;/groupId&gt;
-    &lt;artifactId&gt;isis-mavendeps-unittests&lt;/artifactId&gt;
-    &lt;scope&gt;test&lt;/scope&gt;                             <i class="conum" data-value="1"></i><b>(1)</b>
-    &lt;type&gt;pom&lt;/type&gt;
-&lt;/dependency&gt;</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Normally <code>test</code>; usual Maven scoping rules apply.</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>This will set up unit testing support.
-There is no need to specify the version if you inherit from from the <a href="../../../docs/latest/parent-pom/about.html" class="page">Parent POM</a>.</p>
-</div>
-<div class="admonitionblock caution">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-caution" title="Caution"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>The <a href="../../../docs/latest/parent-pom/about.html" class="page">Parent POM</a> configures the Maven surefire plugin in two separate executions for unit test and fo integ tests.
-This relies on a naming convention:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>unit tests, which must have a suffix <code>Test</code>, but excluding &#8230;&#8203;</p>
-</li>
-<li>
-<p>integ tests, which must have the suffix <code>IntegTest</code></p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Not following this convention is likely to cause integ tests to fail.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>If you just want to set up unit testing support, then use:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
-    &lt;groupId&gt;org.apache.isis.core&lt;/groupId&gt;
-    &lt;artifactId&gt;isis-core-unittestsupport&lt;/artifactId&gt;
-    &lt;scope&gt;test&lt;/scope&gt;
-&lt;/dependency&gt;</code></pre>
-</div>
-</div>
+
 </div>
 </div>
 </article>
@@ -923,7 +953,7 @@ This relies on a naming convention:</p>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M5.20210627-0229-6500ddc4</p>
+            <p>Revision: 2.0.0-M5.20210628-0230-4df60bd1</p>
         </div>
     </div>
 </footer>
