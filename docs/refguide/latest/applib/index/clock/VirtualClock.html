@@ -907,20 +907,25 @@ page.parent doesn't seem to be set...
 <div class="title">VirtualClock.java</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">interface VirtualClock {
-  Instant now()     <i class="conum" data-value="1"></i><b>(1)</b>
+  Instant nowAsInstant()     <i class="conum" data-value="1"></i><b>(1)</b>
   VirtualClock system()     <i class="conum" data-value="2"></i><b>(2)</b>
   VirtualClock nowAt(Instant virtualNow)     <i class="conum" data-value="3"></i><b>(3)</b>
   VirtualClock frozenAt(Instant frozenAt)     <i class="conum" data-value="4"></i><b>(4)</b>
   VirtualClock frozenTestClock()     <i class="conum" data-value="5"></i><b>(5)</b>
-  long getEpochMillis()     <i class="conum" data-value="6"></i><b>(6)</b>
-  LocalDate localDate(final ZoneId zoneId)     <i class="conum" data-value="7"></i><b>(7)</b>
-  LocalDateTime localDateTime(final ZoneId zoneId)     <i class="conum" data-value="8"></i><b>(8)</b>
-  OffsetDateTime offsetDateTime(final ZoneId zoneId)     <i class="conum" data-value="9"></i><b>(9)</b>
-  java.util.Date javaUtilDate()
-  java.sql.Timestamp javaSqlTimestamp()
-  XMLGregorianCalendar xmlGregorianCalendar()
-  org.joda.time.DateTime asJodaDateTime(final ZoneId zoneId)     <i class="conum" data-value="10"></i><b>(10)</b>
-  org.joda.time.LocalDate asJodaLocalDate(final ZoneId zoneId)     <i class="conum" data-value="11"></i><b>(11)</b>
+  long nowAsEpochMilli()     <i class="conum" data-value="6"></i><b>(6)</b>
+  LocalDate nowAsLocalDate(final ZoneId zoneId)     <i class="conum" data-value="7"></i><b>(7)</b>
+  LocalDate nowAsLocalDate()     <i class="conum" data-value="8"></i><b>(8)</b>
+  LocalDateTime nowAsLocalDateTime(final ZoneId zoneId)     <i class="conum" data-value="9"></i><b>(9)</b>
+  LocalDateTime nowAsLocalDateTime()     <i class="conum" data-value="10"></i><b>(10)</b>
+  OffsetDateTime nowAsOffsetDateTime(final ZoneId zoneId)     <i class="conum" data-value="11"></i><b>(11)</b>
+  OffsetDateTime nowAsOffsetDateTime()     <i class="conum" data-value="12"></i><b>(12)</b>
+  java.util.Date nowAsJavaUtilDate()     <i class="conum" data-value="13"></i><b>(13)</b>
+  java.sql.Timestamp nowAsJavaSqlTimestamp()     <i class="conum" data-value="14"></i><b>(14)</b>
+  XMLGregorianCalendar nowAsXmlGregorianCalendar()     <i class="conum" data-value="15"></i><b>(15)</b>
+  org.joda.time.DateTime nowAsJodaDateTime(final ZoneId zoneId)     <i class="conum" data-value="16"></i><b>(16)</b>
+  org.joda.time.DateTime nowAsJodaDateTime()     <i class="conum" data-value="17"></i><b>(17)</b>
+  org.joda.time.LocalDate nowAsJodaLocalDate(final ZoneId zoneId)     <i class="conum" data-value="18"></i><b>(18)</b>
+  org.joda.time.LocalDate nowAsJodaLocalDate()     <i class="conum" data-value="19"></i><b>(19)</b>
 }</code></pre>
 </div>
 </div>
@@ -928,7 +933,7 @@ page.parent doesn't seem to be set...
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><a href="#now__">now()</a>
+<td><a href="#nowAsInstant__">nowAsInstant()</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
@@ -943,7 +948,7 @@ page.parent doesn't seem to be set...
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>Returns a the system&#8217;s default ticking clock.</p>
+<p>Returns the system&#8217;s default ticking clock.</p>
 </div>
 </div>
 </div></td>
@@ -983,7 +988,7 @@ page.parent doesn't seem to be set...
 </tr>
 <tr>
 <td><i class="conum" data-value="6"></i><b>6</b></td>
-<td><a href="#getEpochMillis__">getEpochMillis()</a>
+<td><a href="#nowAsEpochMilli__">nowAsEpochMilli()</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
@@ -994,7 +999,7 @@ page.parent doesn't seem to be set...
 </tr>
 <tr>
 <td><i class="conum" data-value="7"></i><b>7</b></td>
-<td><a href="#localDate__ZoneId">localDate(ZoneId)</a>
+<td><a href="#nowAsLocalDate__ZoneId">nowAsLocalDate(ZoneId)</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
@@ -1005,7 +1010,18 @@ page.parent doesn't seem to be set...
 </tr>
 <tr>
 <td><i class="conum" data-value="8"></i><b>8</b></td>
-<td><a href="#localDateTime__ZoneId">localDateTime(ZoneId)</a>
+<td><a href="#nowAsLocalDate__">nowAsLocalDate()</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Returns the (virtual) time as <em>LocalDate</em> , using the <em>ZoneId#systemDefault() system default</em> timezone.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
+<td><a href="#nowAsLocalDateTime__ZoneId">nowAsLocalDateTime(ZoneId)</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
@@ -1015,8 +1031,19 @@ page.parent doesn't seem to be set...
 </div></td>
 </tr>
 <tr>
-<td><i class="conum" data-value="9"></i><b>9</b></td>
-<td><a href="#offsetDateTime__ZoneId">offsetDateTime(ZoneId)</a>
+<td><i class="conum" data-value="10"></i><b>10</b></td>
+<td><a href="#nowAsLocalDateTime__">nowAsLocalDateTime()</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Returns the (virtual) time as <em>LocalDateTime</em> , using the <em>ZoneId#systemDefault() system default</em> timezone.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="11"></i><b>11</b></td>
+<td><a href="#nowAsOffsetDateTime__ZoneId">nowAsOffsetDateTime(ZoneId)</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
@@ -1026,27 +1053,65 @@ page.parent doesn't seem to be set...
 </div></td>
 </tr>
 <tr>
-<td><i class="conum" data-value="10"></i><b>10</b></td>
-<td><a href="#asJodaDateTime__ZoneId">asJodaDateTime(ZoneId)</a>
+<td><i class="conum" data-value="12"></i><b>12</b></td>
+<td><a href="#nowAsOffsetDateTime__">nowAsOffsetDateTime()</a>
 <div class="openblock">
 <div class="content">
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
 <div class="paragraph">
-<p><span class="red"><em>deprecated:</em></span></p>
+<p>Returns the (virtual) time as <em>OffsetDateTime</em> , using the <em>ZoneId#systemDefault() system default</em> timezone.</p>
 </div>
-<div class="paragraph">
-<p>please migrate to java.time.*</p>
 </div>
-</td>
+</div></td>
 </tr>
-</table>
+<tr>
+<td><i class="conum" data-value="13"></i><b>13</b></td>
+<td><a href="#nowAsJavaUtilDate__">nowAsJavaUtilDate()</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Returns the (virtual)time as <em>java.util.Date</em> .</p>
 </div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="14"></i><b>14</b></td>
+<td><a href="#nowAsJavaSqlTimestamp__">nowAsJavaSqlTimestamp()</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Returns the (virtual) time as <em>java.sql.Timestamp</em> .</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="15"></i><b>15</b></td>
+<td><a href="#nowAsXmlGregorianCalendar__">nowAsXmlGregorianCalendar()</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Returns the (virtual) time as <em>XMLGregorianCalendar</em> .</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="16"></i><b>16</b></td>
+<td><a href="#nowAsJodaDateTime__ZoneId">nowAsJodaDateTime(ZoneId)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Returns the time as a Joda <em>org.joda.time.DateTime</em> , using the specified <em>ZoneId</em> timezone.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="17"></i><b>17</b></td>
+<td><a href="#nowAsJodaDateTime__">nowAsJodaDateTime()</a>
+<div class="openblock">
+<div class="content">
 <div class="paragraph">
 <p>Returns the time as a Joda <em>org.joda.time.DateTime</em> , using the <em>ZoneId#systemDefault() system default</em> timezone.</p>
 </div>
@@ -1054,27 +1119,21 @@ page.parent doesn't seem to be set...
 </div></td>
 </tr>
 <tr>
-<td><i class="conum" data-value="11"></i><b>11</b></td>
-<td><a href="#asJodaLocalDate__ZoneId">asJodaLocalDate(ZoneId)</a>
+<td><i class="conum" data-value="18"></i><b>18</b></td>
+<td><a href="#nowAsJodaLocalDate__ZoneId">nowAsJodaLocalDate(ZoneId)</a>
 <div class="openblock">
 <div class="content">
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
 <div class="paragraph">
-<p><span class="red"><em>deprecated:</em></span></p>
+<p>Returns the time as a Joda <em>DateTime</em> , using the specified <em>ZoneId</em> timezone.</p>
 </div>
-<div class="paragraph">
-<p>please migrate to java.time.*</p>
 </div>
-</td>
+</div></td>
 </tr>
-</table>
-</div>
+<tr>
+<td><i class="conum" data-value="19"></i><b>19</b></td>
+<td><a href="#nowAsJodaLocalDate__">nowAsJodaLocalDate()</a>
+<div class="openblock">
+<div class="content">
 <div class="paragraph">
 <p>Returns the time as a Joda <em>DateTime</em> , using the <em>ZoneId#systemDefault() system default</em> timezone.</p>
 </div>
@@ -1089,7 +1148,7 @@ page.parent doesn't seem to be set...
 <h2 id="members"><a class="anchor" href="#members"></a>Members</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="now__"><a class="anchor" href="#now__"></a>now()</h3>
+<h3 id="nowAsInstant__"><a class="anchor" href="#nowAsInstant__"></a>nowAsInstant()</h3>
 <div class="paragraph">
 <p>Returns the (virtual) time as an <em>Instant</em> .</p>
 </div>
@@ -1097,7 +1156,7 @@ page.parent doesn't seem to be set...
 <div class="sect2">
 <h3 id="system__"><a class="anchor" href="#system__"></a>system()</h3>
 <div class="paragraph">
-<p>Returns a the system&#8217;s default ticking clock.</p>
+<p>Returns the system&#8217;s default ticking clock.</p>
 </div>
 </div>
 <div class="sect2">
@@ -1119,71 +1178,85 @@ page.parent doesn't seem to be set...
 </div>
 </div>
 <div class="sect2">
-<h3 id="getEpochMillis__"><a class="anchor" href="#getEpochMillis__"></a>getEpochMillis()</h3>
+<h3 id="nowAsEpochMilli__"><a class="anchor" href="#nowAsEpochMilli__"></a>nowAsEpochMilli()</h3>
 <div class="paragraph">
 <p>Returns the (virtual) time as the number of milliseconds since the epoch start.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="localDate__ZoneId"><a class="anchor" href="#localDate__ZoneId"></a>localDate(ZoneId)</h3>
+<h3 id="nowAsLocalDate__ZoneId"><a class="anchor" href="#nowAsLocalDate__ZoneId"></a>nowAsLocalDate(ZoneId)</h3>
 <div class="paragraph">
 <p>Returns the (virtual) time as <em>LocalDate</em> , using the <em>ZoneId</em> timezone.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="localDateTime__ZoneId"><a class="anchor" href="#localDateTime__ZoneId"></a>localDateTime(ZoneId)</h3>
+<h3 id="nowAsLocalDate__"><a class="anchor" href="#nowAsLocalDate__"></a>nowAsLocalDate()</h3>
+<div class="paragraph">
+<p>Returns the (virtual) time as <em>LocalDate</em> , using the <em>ZoneId#systemDefault() system default</em> timezone.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="nowAsLocalDateTime__ZoneId"><a class="anchor" href="#nowAsLocalDateTime__ZoneId"></a>nowAsLocalDateTime(ZoneId)</h3>
 <div class="paragraph">
 <p>Returns the (virtual) time as <em>LocalDateTime</em> , using the <em>ZoneId</em> timezone.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="offsetDateTime__ZoneId"><a class="anchor" href="#offsetDateTime__ZoneId"></a>offsetDateTime(ZoneId)</h3>
+<h3 id="nowAsLocalDateTime__"><a class="anchor" href="#nowAsLocalDateTime__"></a>nowAsLocalDateTime()</h3>
+<div class="paragraph">
+<p>Returns the (virtual) time as <em>LocalDateTime</em> , using the <em>ZoneId#systemDefault() system default</em> timezone.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="nowAsOffsetDateTime__ZoneId"><a class="anchor" href="#nowAsOffsetDateTime__ZoneId"></a>nowAsOffsetDateTime(ZoneId)</h3>
 <div class="paragraph">
 <p>Returns the (virtual) time as <em>OffsetDateTime</em> , using the <em>ZoneId</em> timezone.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="asJodaDateTime__ZoneId"><a class="anchor" href="#asJodaDateTime__ZoneId"></a>asJodaDateTime(ZoneId)</h3>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
+<h3 id="nowAsOffsetDateTime__"><a class="anchor" href="#nowAsOffsetDateTime__"></a>nowAsOffsetDateTime()</h3>
 <div class="paragraph">
-<p><span class="red"><em>deprecated:</em></span></p>
+<p>Returns the (virtual) time as <em>OffsetDateTime</em> , using the <em>ZoneId#systemDefault() system default</em> timezone.</p>
 </div>
+</div>
+<div class="sect2">
+<h3 id="nowAsJavaUtilDate__"><a class="anchor" href="#nowAsJavaUtilDate__"></a>nowAsJavaUtilDate()</h3>
 <div class="paragraph">
-<p>please migrate to java.time.*</p>
+<p>Returns the (virtual)time as <em>java.util.Date</em> .</p>
 </div>
-</td>
-</tr>
-</table>
 </div>
+<div class="sect2">
+<h3 id="nowAsJavaSqlTimestamp__"><a class="anchor" href="#nowAsJavaSqlTimestamp__"></a>nowAsJavaSqlTimestamp()</h3>
+<div class="paragraph">
+<p>Returns the (virtual) time as <em>java.sql.Timestamp</em> .</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="nowAsXmlGregorianCalendar__"><a class="anchor" href="#nowAsXmlGregorianCalendar__"></a>nowAsXmlGregorianCalendar()</h3>
+<div class="paragraph">
+<p>Returns the (virtual) time as <em>XMLGregorianCalendar</em> .</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="nowAsJodaDateTime__ZoneId"><a class="anchor" href="#nowAsJodaDateTime__ZoneId"></a>nowAsJodaDateTime(ZoneId)</h3>
+<div class="paragraph">
+<p>Returns the time as a Joda <em>org.joda.time.DateTime</em> , using the specified <em>ZoneId</em> timezone.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="nowAsJodaDateTime__"><a class="anchor" href="#nowAsJodaDateTime__"></a>nowAsJodaDateTime()</h3>
 <div class="paragraph">
 <p>Returns the time as a Joda <em>org.joda.time.DateTime</em> , using the <em>ZoneId#systemDefault() system default</em> timezone.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="asJodaLocalDate__ZoneId"><a class="anchor" href="#asJodaLocalDate__ZoneId"></a>asJodaLocalDate(ZoneId)</h3>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
+<h3 id="nowAsJodaLocalDate__ZoneId"><a class="anchor" href="#nowAsJodaLocalDate__ZoneId"></a>nowAsJodaLocalDate(ZoneId)</h3>
 <div class="paragraph">
-<p><span class="red"><em>deprecated:</em></span></p>
+<p>Returns the time as a Joda <em>DateTime</em> , using the specified <em>ZoneId</em> timezone.</p>
 </div>
-<div class="paragraph">
-<p>please migrate to java.time.*</p>
 </div>
-</td>
-</tr>
-</table>
-</div>
+<div class="sect2">
+<h3 id="nowAsJodaLocalDate__"><a class="anchor" href="#nowAsJodaLocalDate__"></a>nowAsJodaLocalDate()</h3>
 <div class="paragraph">
 <p>Returns the time as a Joda <em>DateTime</em> , using the <em>ZoneId#systemDefault() system default</em> timezone.</p>
 </div>
@@ -1207,7 +1280,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M5.20210629-0228-7575753d</p>
+            <p>Revision: 2.0.0-M5.20210629-1818-de2d8452</p>
         </div>
     </div>
 </footer>

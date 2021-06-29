@@ -1117,10 +1117,27 @@ Class sortedBy() default Comparator.class;     <i class="conum" data-value="9"><
 </div>
 </div>
 <div class="sect2">
-<h3 id="css-styling"><a class="anchor" href="#css-styling"></a>CSS Styling</h3>
+<h3 id="paging"><a class="anchor" href="#paging"></a>Paging</h3>
 <div class="paragraph">
-<p>The <a href="#cssClass">cssClass()</a> element can be used to render additional CSS classes in the HTML (a wrapping <code>&lt;div&gt;</code>) that represents the collection.
-<a href="../../../config/application-specific/application-css.html" class="page">Application-specific CSS</a> can then be used to target and adjust the UI representation of that particular element.</p>
+<p>The <a href="#paged">paged()</a> element specifies the number of rows to display in a (parented) collection.</p>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The <a href="../../../../../vro/latest/about.html" class="page">RestfulObjects viewer</a> currently does not support paging.
+The <a href="../../../../../vw/latest/about.html" class="page">Web UI (Wicket viewer)</a> <em>does</em> support paging, but note that the paging is performed client-side rather than server-side.</p>
+</div>
+<div class="paragraph">
+<p>We therefore recommend that large collections should instead be modelled as actions (to allow filtering to be applied to limit the number of rows).</p>
+</div>
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>For example:</p>
@@ -1130,16 +1147,16 @@ Class sortedBy() default Comparator.class;     <i class="conum" data-value="9"><
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
 import lombok.Setter;
 
-public class ToDoItem {
+public class Order {
 
-    @CollectionLayout(
-        cssClass="x-important"
-    )
+    @CollectionLayout(paged=15)
     @Getter @Setter
-    private SortedSet&lt;ToDoItem&gt; dependencies = ...;
-
+    private SortedSet&lt;OrderLine&gt; details = ...
 }</code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>It is also possible to specify a global default for the page size of parented collections, using the <a href="../../../config/sections/isis.applib.html#isis.applib.annotation.collection-layout.paged" class="page">isis.applib.annotation.collection-layout.paged</a> configuration property.</p>
 </div>
 </div>
 <div class="sect2">
@@ -1206,120 +1223,6 @@ public class ToDoItem {
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="default-view"><a class="anchor" href="#default-view"></a>Default view</h3>
-<div class="paragraph">
-<p>The <a href="#defaultView">`defaultView()</a> element is used to select which of views should be used by default for a given collection.
-Without any hint the collection is shown collapsed (to save real estate and reduce load time).</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
-import lombok.Setter;
-
-
-public class BusRoute {
-
-    @CollectionLayout( defaultView="table" )    <i class="conum" data-value="1"></i><b>(1)</b>
-    @Getter @Setter
-    private SortedSet&lt;BusStop&gt; stops = ...
-
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>renders the collection as a table view.</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>The <a href="../../../../../vw/latest/about.html" class="page">Web UI (Wicket viewer)</a> allows additional views to be configured to render collections of objects, eg <a href="../../../../../vw/latest/exceldownload/about.html" class="page">Excel Download</a> ("excel"), <a href="../../../../../vw/latest/fullcalendar/about.html" class="page">Fullcalendar</a> ("fullcalendar") and <a href="../../../../../vw/latest/gmap3/about.html" class="page">Gmap3</a> ("map") extensions.
-This attribute can be used to select any of these alternative views instead.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="client-side-sorting"><a class="anchor" href="#client-side-sorting"></a>Client-side Sorting</h3>
-<div class="paragraph">
-<p>The <a href="#sortedBy">sortedBy()</a> element specifies that the collection be ordered using the specified comparator, rather than the natural ordering of the entity (as would usually be the case).</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
-import lombok.Setter;
-
-public class ToDoItem implements Comparable&lt;ToDoItem&gt; {         <i class="conum" data-value="1"></i><b>(1)</b>
-
-    public static class DescriptionComparator                   <i class="conum" data-value="2"></i><b>(2)</b>
-                            implements Comparator&lt;ToDoItem&gt; {
-        @Override
-        public int compare(ToDoItem o1, ToDoItem o2) {
-            return Comparator.comparing(ToDoItem::getDescription)
-                             .compare(o1, o2);
-        }
-    }
-
-    @CollectionLayout(sortedBy=DependenciesComparator.class)    <i class="conum" data-value="3"></i><b>(3)</b>
-    @Getter @Setter
-    private SortedSet&lt;ToDoItem&gt; dependencies = ...
-
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>the class has a natural ordering (implementation not shown)</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>declaration of an alternative comparator class, using the object&#8217;s <code>description</code> property</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>ordering of the collection defined as being by this comparator</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>When the <code>dependencies</code> collection is rendered, the elements are sorted by the <code>description</code> property first.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="descriptions"><a class="anchor" href="#descriptions"></a>Descriptions</h3>
-<div class="paragraph">
-<p>The <a href="#describedAs">describedAs()</a> element is used to provide a short description of the collection to the user.
-In the <a href="../../../../../vw/latest/about.html" class="page">Web UI (Wicket viewer)</a> it is displayed as a 'tool tip'.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
-import lombok.Setter;
-
-public class ToDoItem {
-
-    @CollectionLayout(
-        describedAs = "Todo items to be completed before this one"
-    )
-    @Getter @Setter
-    private SortedSet&lt;ToDoItem&gt; dependencies = ...
-
-}</code></pre>
-</div>
-</div>
-</div>
 </div>
 </div>
 <div class="sect1">
@@ -1381,6 +1284,120 @@ This is specifically so that boilerplate-busting tools such as <a href="https://
 <p>As alternative to using the annotation, the dynamic <a href="../../../../../userguide/latest/fun/ui.html#object-layout" class="page">file-based layout</a> can generally be used instead.</p>
 </div>
 <div class="sect2">
+<h3 id="client-side-sorting"><a class="anchor" href="#client-side-sorting"></a>Client-side Sorting</h3>
+<div class="paragraph">
+<p>The <a href="#sortedBy">sortedBy()</a> element specifies that the collection be ordered using the specified comparator, rather than the natural ordering of the entity (as would usually be the case).</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
+import lombok.Setter;
+
+public class ToDoItem implements Comparable&lt;ToDoItem&gt; {         <i class="conum" data-value="1"></i><b>(1)</b>
+
+    public static class DescriptionComparator                   <i class="conum" data-value="2"></i><b>(2)</b>
+                            implements Comparator&lt;ToDoItem&gt; {
+        @Override
+        public int compare(ToDoItem o1, ToDoItem o2) {
+            return Comparator.comparing(ToDoItem::getDescription)
+                             .compare(o1, o2);
+        }
+    }
+
+    @CollectionLayout(sortedBy=DependenciesComparator.class)    <i class="conum" data-value="3"></i><b>(3)</b>
+    @Getter @Setter
+    private SortedSet&lt;ToDoItem&gt; dependencies = ...
+
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>the class has a natural ordering (implementation not shown)</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>declaration of an alternative comparator class, using the object&#8217;s <code>description</code> property</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>ordering of the collection defined as being by this comparator</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>When the <code>dependencies</code> collection is rendered, the elements are sorted by the <code>description</code> property first.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="css-styling"><a class="anchor" href="#css-styling"></a>CSS Styling</h3>
+<div class="paragraph">
+<p>The <a href="#cssClass">cssClass()</a> element can be used to render additional CSS classes in the HTML (a wrapping <code>&lt;div&gt;</code>) that represents the collection.
+<a href="../../../config/application-specific/application-css.html" class="page">Application-specific CSS</a> can then be used to target and adjust the UI representation of that particular element.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
+import lombok.Setter;
+
+public class ToDoItem {
+
+    @CollectionLayout(
+        cssClass="x-important"
+    )
+    @Getter @Setter
+    private SortedSet&lt;ToDoItem&gt; dependencies = ...;
+
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="default-view"><a class="anchor" href="#default-view"></a>Default view</h3>
+<div class="paragraph">
+<p>The <a href="#defaultView">`defaultView()</a> element is used to select which of views should be used by default for a given collection.
+Without any hint the collection is shown collapsed (to save real estate and reduce load time).</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
+import lombok.Setter;
+
+
+public class BusRoute {
+
+    @CollectionLayout( defaultView="table" )    <i class="conum" data-value="1"></i><b>(1)</b>
+    @Getter @Setter
+    private SortedSet&lt;BusStop&gt; stops = ...
+
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>renders the collection as a table view.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The <a href="../../../../../vw/latest/about.html" class="page">Web UI (Wicket viewer)</a> allows additional views to be configured to render collections of objects, eg <a href="../../../../../vw/latest/exceldownload/about.html" class="page">Excel Download</a> ("excel"), <a href="../../../../../vw/latest/fullcalendar/about.html" class="page">Fullcalendar</a> ("fullcalendar") and <a href="../../../../../vw/latest/gmap3/about.html" class="page">Gmap3</a> ("map") extensions.
+This attribute can be used to select any of these alternative views instead.</p>
+</div>
+</div>
+<div class="sect2">
 <h3 id="names"><a class="anchor" href="#names"></a>Names</h3>
 <div class="paragraph">
 <p>The <a href="#named">named()</a> element explicitly specifies the collection&#8217;s name, overriding the name that would normally be inferred from the Java source code.</p>
@@ -1431,27 +1448,10 @@ public class ToDoItem {
 </div>
 </div>
 <div class="sect2">
-<h3 id="paging"><a class="anchor" href="#paging"></a>Paging</h3>
+<h3 id="descriptions"><a class="anchor" href="#descriptions"></a>Descriptions</h3>
 <div class="paragraph">
-<p>The <a href="#paged">paged()</a> element specifies the number of rows to display in a (parented) collection.</p>
-</div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>The <a href="../../../../../vro/latest/about.html" class="page">RestfulObjects viewer</a> currently does not support paging.
-The <a href="../../../../../vw/latest/about.html" class="page">Web UI (Wicket viewer)</a> <em>does</em> support paging, but note that the paging is performed client-side rather than server-side.</p>
-</div>
-<div class="paragraph">
-<p>We therefore recommend that large collections should instead be modelled as actions (to allow filtering to be applied to limit the number of rows).</p>
-</div>
-</td>
-</tr>
-</table>
+<p>The <a href="#describedAs">describedAs()</a> element is used to provide a short description of the collection to the user.
+In the <a href="../../../../../vw/latest/about.html" class="page">Web UI (Wicket viewer)</a> it is displayed as a 'tool tip'.</p>
 </div>
 <div class="paragraph">
 <p>For example:</p>
@@ -1461,16 +1461,16 @@ The <a href="../../../../../vw/latest/about.html" class="page">Web UI (Wicket vi
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
 import lombok.Setter;
 
-public class Order {
+public class ToDoItem {
 
-    @CollectionLayout(paged=15)
+    @CollectionLayout(
+        describedAs = "Todo items to be completed before this one"
+    )
     @Getter @Setter
-    private SortedSet&lt;OrderLine&gt; details = ...
+    private SortedSet&lt;ToDoItem&gt; dependencies = ...
+
 }</code></pre>
 </div>
-</div>
-<div class="paragraph">
-<p>It is also possible to specify a global default for the page size of parented collections, using the <a href="../../../config/sections/isis.applib.html#isis.applib.annotation.collection-layout.paged" class="page">isis.applib.annotation.collection-layout.paged</a> configuration property.</p>
 </div>
 </div>
 </div>
@@ -1492,7 +1492,7 @@ public class Order {
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M5.20210629-0228-7575753d</p>
+            <p>Revision: 2.0.0-M5.20210629-1818-de2d8452</p>
         </div>
     </div>
 </footer>

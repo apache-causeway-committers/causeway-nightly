@@ -1067,84 +1067,24 @@ page.parent doesn't seem to be set...
 </div>
 </div>
 <div class="sect2">
-<h3 id="regular-expressions"><a class="anchor" href="#regular-expressions"></a>Regular Expressions</h3>
+<h3 id="uploading-blobs-and-clobs"><a class="anchor" href="#uploading-blobs-and-clobs"></a>Uploading Blobs and Clobs</h3>
 <div class="paragraph">
-<p>String parameters can be checked to ensure that they match a regular expression.
-There are three elements involved in this:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>The <a href="#regexPattern">regexPattern()</a> element validates the contents of any string parameter with respect to a regular expression pattern.
-It is ignored if applied to parameters of any other type.</p>
-</li>
-<li>
-<p>The <a href="#regexPatternFlags">regexPatternFlags()</a> element specifies flags that modify the handling of the pattern.
-The values are those that would normally be passed to <code>java.util.regex.Pattern#compile(String,int)</code>.</p>
-</li>
-<li>
-<p>The <a href="#regexPatternReplacement">regexPatternReplacement()</a> element specifies the error message to show if the provided argument does not match the regex pattern.</p>
-</li>
-</ul>
+<p>The <a href="#fileAccept">fileAccept()</a> element applies only to <a href="../../../applib-classes/value-types.html#Blob" class="page">Blob</a>
+or <a href="../../../applib-classes/value-types.html#Clob" class="page">Clob</a> parameters, indicating the type of file to accept when uploading a new value.</p>
 </div>
 <div class="paragraph">
 <p>For example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Customer {
-    public void updateEmail(
-            @Parameter(
-                regexPattern = "(\\w+\\.)*\\w+@(\\w+\\.)+[A-Za-z]+",
-                regexPatternFlags = Pattern.CASE_INSENSITIVE,
-                regexPatternReplacement =
-                    "Must be valid email address " +
-                    "(containing a '@') symbol"                     <i class="conum" data-value="1"></i><b>(1)</b>
-            )
-            @ParameterLayout(named = "Email")
-            final String email) {
-        ...
-    }
-)</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Note that there is currently no i18n support for this phrase.</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Customer {
-    public static class EmailSpecification extends AbstractSpecification&lt;String&gt; {
-        public String satisfiesSafely(String proposed) {
-            return EmailUtil.ensureValidEmail(proposed);    <i class="conum" data-value="1"></i><b>(1)</b>
-        }
-    }
-    @Action(semantics=SemanticsOf.IDEMPOTENT)
-    public Customer updateEmail(
-        @Parameter(
-            maxLength=30,
-            mustSatisfy=EmailSpecification.class,
-            optionality=Optionality.OPTIONAL,
-            regexPattern = "(\\w+\\.)*\\w+@(\\w+\\.)+[A-Za-z]+",
-            regexPatternFlags=Pattern.CASE_INSENSITIVE
-        )
-        @ParameterLayout(named="New Email Address")
-        final String newEmailAddress
-        ...
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Scanner {
+
+    public ScannedDocument newScan(
+                @Parameter(
+                    fileAccept="image/*"        <i class="conum" data-value="1"></i><b>(1)</b>
+                )
+                final Blob scannedImage) {
+        // ...
     }
 }</code></pre>
 </div>
@@ -1153,15 +1093,11 @@ The values are those that would normally be passed to <code>java.util.regex.Patt
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>the (fictitious) <code>EmailUtil.ensureValid(&#8230;&#8203;)</code> (omitted for brevity) returns a string explaining if an email is invalid</td>
+<td>as per <a href="http://www.w3schools.com/tags/att_input_accept.asp">reference docs</a>, either a media type (such as <code>image/*</code>) or a file type extension (such as <code>.png</code>).</td>
 </tr>
 </table>
 </div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="usage-notes"><a class="anchor" href="#usage-notes"></a>Usage Notes</h2>
-<div class="sectionbody">
 <div class="sect2">
 <h3 id="maximum-string-length"><a class="anchor" href="#maximum-string-length"></a>Maximum string length</h3>
 <div class="paragraph">
@@ -1231,38 +1167,6 @@ If optionality is required, then use the corresponding wrapper class (e.g. <code
 <div class="paragraph">
 <p>It is also possible to specify optionality using <a href="../../../applib-ant/Nullable.html" class="page">@Nullable</a> annotation.</p>
 </div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="uploading-blobs-and-clobs"><a class="anchor" href="#uploading-blobs-and-clobs"></a>Uploading Blobs and Clobs</h3>
-<div class="paragraph">
-<p>The <a href="#fileAccept">fileAccept()</a> element applies only to <a href="../../../applib-classes/value-types.html#Blob" class="page">Blob</a>
-or <a href="../../../applib-classes/value-types.html#Clob" class="page">Clob</a> parameters, indicating the type of file to accept when uploading a new value.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Scanner {
-
-    public ScannedDocument newScan(
-                @Parameter(
-                    fileAccept="image/*"        <i class="conum" data-value="1"></i><b>(1)</b>
-                )
-                final Blob scannedImage) {
-        // ...
-    }
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>as per <a href="http://www.w3schools.com/tags/att_input_accept.asp">reference docs</a>, either a media type (such as <code>image/*</code>) or a file type extension (such as <code>.png</code>).</td>
-</tr>
-</table>
 </div>
 </div>
 <div class="sect2">
@@ -1366,6 +1270,103 @@ This defines the API:</p>
 </div>
 </div>
 </div>
+<div class="sect2">
+<h3 id="regular-expressions"><a class="anchor" href="#regular-expressions"></a>Regular Expressions</h3>
+<div class="paragraph">
+<p>String parameters can be checked to ensure that they match a regular expression.
+There are three elements involved in this:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The <a href="#regexPattern">regexPattern()</a> element validates the contents of any string parameter with respect to a regular expression pattern.
+It is ignored if applied to parameters of any other type.</p>
+</li>
+<li>
+<p>The <a href="#regexPatternFlags">regexPatternFlags()</a> element specifies flags that modify the handling of the pattern.
+The values are those that would normally be passed to <code>java.util.regex.Pattern#compile(String,int)</code>.</p>
+</li>
+<li>
+<p>The <a href="#regexPatternReplacement">regexPatternReplacement()</a> element specifies the error message to show if the provided argument does not match the regex pattern.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Customer {
+    public void updateEmail(
+            @Parameter(
+                regexPattern = "(\\w+\\.)*\\w+@(\\w+\\.)+[A-Za-z]+",
+                regexPatternFlags = Pattern.CASE_INSENSITIVE,
+                regexPatternReplacement =
+                    "Must be valid email address " +
+                    "(containing a '@') symbol"                     <i class="conum" data-value="1"></i><b>(1)</b>
+            )
+            @ParameterLayout(named = "Email")
+            final String email) {
+        ...
+    }
+)</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Note that there is currently no i18n support for this phrase.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Customer {
+    public static class EmailSpecification extends AbstractSpecification&lt;String&gt; {
+        public String satisfiesSafely(String proposed) {
+            return EmailUtil.ensureValidEmail(proposed);    <i class="conum" data-value="1"></i><b>(1)</b>
+        }
+    }
+    @Action(semantics=SemanticsOf.IDEMPOTENT)
+    public Customer updateEmail(
+        @Parameter(
+            maxLength=30,
+            mustSatisfy=EmailSpecification.class,
+            optionality=Optionality.OPTIONAL,
+            regexPattern = "(\\w+\\.)*\\w+@(\\w+\\.)+[A-Za-z]+",
+            regexPatternFlags=Pattern.CASE_INSENSITIVE
+        )
+        @ParameterLayout(named="New Email Address")
+        final String newEmailAddress
+        ...
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>the (fictitious) <code>EmailUtil.ensureValid(&#8230;&#8203;)</code> (omitted for brevity) returns a string explaining if an email is invalid</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="usage-notes"><a class="anchor" href="#usage-notes"></a>Usage Notes</h2>
+<div class="sectionbody">
+
 </div>
 </div>
 </article>
@@ -1385,7 +1386,7 @@ This defines the API:</p>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M5.20210629-0228-7575753d</p>
+            <p>Revision: 2.0.0-M5.20210629-1818-de2d8452</p>
         </div>
     </div>
 </footer>
