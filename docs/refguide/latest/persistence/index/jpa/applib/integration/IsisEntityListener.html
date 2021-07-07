@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>JpaEntityInjectionPointResolver :: Apache Isis</title>
+    <title>IsisEntityListener :: Apache Isis</title>
     <meta name="generator" content="Antora 2.3.4">
     <link rel="stylesheet" href="../../../../../../../_/css/site.css">
     <link rel="stylesheet" href="../../../../../../../_/css/site-custom.css">
@@ -885,18 +885,18 @@ page.parent doesn't seem to be set...
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="../../../../../about.html">Reference Guide</a></li>
-    <li><a href="JpaEntityInjectionPointResolver.html">JpaEntityInjectionPointResolver</a></li>
+    <li><a href="IsisEntityListener.html">IsisEntityListener</a></li>
   </ul>
 </nav>
-  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/master/antora/components/refguide-index/modules/persistence/pages/index/jpa/applib/integration/JpaEntityInjectionPointResolver.adoc">Edit</a></div>
+  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/master/antora/components/refguide-index/modules/persistence/pages/index/jpa/applib/integration/IsisEntityListener.adoc">Edit</a></div>
 </div>
 <article class="doc">
     <a name="section-top"></a>
-<h1 class="page">JpaEntityInjectionPointResolver</h1>
+<h1 class="page">IsisEntityListener</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>EntityListener class for listing with the <em>javax.persistence.EntityListeners</em> annotation, to support injection point resolving for entities.</p>
+<p>EntityListener class for listing with the <em>javax.persistence.EntityListeners</em> annotation, to support injection point resolving for entities, and to notify <a href="../../../../../core/index/transaction/changetracking/EntityChangeTracker.html" class="page">EntityChangeTracker</a> of changes.</p>
 </div>
 <div class="paragraph">
 <p>Instances of this class are not managed by Spring, but by the persistence layer.</p>
@@ -910,9 +910,16 @@ page.parent doesn't seem to be set...
 <h2 id="api"><a class="anchor" href="#api"></a>API</h2>
 <div class="sectionbody">
 <div class="listingblock">
-<div class="title">JpaEntityInjectionPointResolver.java</div>
+<div class="title">IsisEntityListener.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">class JpaEntityInjectionPointResolver {
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">class IsisEntityListener {
+  void onPrePersist(Object entityPojo)
+  void onPreUpdate(Object entityPojo)
+  void onPreRemove(Object entityPojo)
+  void onPostPersist(Object entityPojo)
+  void onPostUpdate(Object entityPojo)
+  void onPostRemove(Object entityPojo)
+  void onPostLoad(Object entityPojo)
 }</code></pre>
 </div>
 </div>
@@ -935,7 +942,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M5.20210706-0225-e3658bcc</p>
+            <p>Revision: 2.0.0-M5.20210707-0226-46cb701c</p>
         </div>
     </div>
 </footer>
