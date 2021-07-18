@@ -367,6 +367,8 @@ page.parent doesn't seem to be set...
 <article class="doc">
     <a name="section-top"></a>
 <h1 class="page">Mapping Guide</h1>
+<div id="preamble">
+<div class="sectionbody">
 <div class="paragraph">
 <p>There are plenty of resources for learning JPA annotations.
 Take a look at:</p>
@@ -393,6 +395,147 @@ Take a look at:</p>
 </li>
 </ul>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="custom-value-types"><a class="anchor" href="#custom-value-types"></a>Custom Value Types</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The framework provides a number of custom value types.
+Some of these are wrappers around a single value (eg <code>AsciiDoc</code> or <code>Password</code>) while others map onto multiple values (eg <code>Blob</code>).</p>
+</div>
+<div class="paragraph">
+<p>This section shows how to map each (and can be adapted for your own custom types or <code>@Embedded</code> values).</p>
+</div>
+<div class="sect2">
+<h3 id="mapping-asciidoc"><a class="anchor" href="#mapping-asciidoc"></a>Mapping AsciiDoc</h3>
+<div class="paragraph">
+<p>TODO: not really sufficient to use <code>@Lob</code>; should provide a custom converter.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="mapping-blobs-and-clobs"><a class="anchor" href="#mapping-blobs-and-clobs"></a>Mapping Blobs and Clobs</h3>
+<div class="paragraph">
+<p>While the JPA standard does provide a standardised mechanism to marshall single valued types, but does not (currently) provide a standardised mechanism to marshall multiple valued types.</p>
+</div>
+<div class="paragraph">
+<p>There are two alternatives:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>use EclipseLink-specific extensions, specifically its <a href="https://www.eclipse.org/eclipselink/documentation/2.5/jpa/extensions/a_transformation.htm">@Transformation</a> annotation and the related <a href="https://www.eclipse.org/eclipselink/documentation/2.5/jpa/extensions/a_writetransformer.htm#BGBGGAEA">@WriteTransformer</a> and <a href="https://www.eclipse.org/eclipselink/documentation/2.5/jpa/extensions/a_readtransformer.htm#CHDGHHBA">@ReadTransformer</a>.</p>
+</li>
+<li>
+<p>manually map the class to an <a href="https://www.eclipse.org/eclipselink/documentation/3.0/concepts/entities005.htm#BABGBFDG">@Embeddable</a> class.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>We think the second approach is less boilerplate overall, and is easier to understand what is going on.
+The framework provides an <code>@Embeddable</code> classes for each of <code>Blob</code> and <code>Clob</code>, explained in the sections below.</p>
+</div>
+<div class="sect3">
+<h4 id="blobs"><a class="anchor" href="#blobs"></a>Blobs</h4>
+<div class="paragraph">
+<p>To map a <a href="../../refguide/latest/applib/index/value/Blob.html" class="page">Blob</a>, use the <a href="#refguide:persistence:index/jpa/applib/types/BlobJpaEmbedded.adoc" class="page unresolved">BlobJpaEmbedded</a> class:</p>
+</div>
+<div class="listingblock">
+<div class="title">MyEntity.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code>public class MyEntity ... {
+
+    @Embedded
+    private BlobJpaEmbeddable pdf;              <i class="conum" data-value="1"></i><b>(1)</b>
+
+    @Property()
+    @PropertyLayout()
+    public Blob getPdf() {                      <i class="conum" data-value="2"></i><b>(2)</b>
+        return BlobJpaEmbeddable.toBlob(pdf);
+    }
+    public void setPdf(final Blob pdf) {
+        this.pdf = BlobJpaEmbeddable.fromBlob(pdf);
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>the field as it is persisted by the ORM</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>the property as it is understood by Apache Isis.</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+if you have multiple instancs of an <code>@Embedded</code> type, the <code>@javax.persistence.AttributeOverrides</code> and <code>@javax.persistence.AttributeOverride</code> provide a standardised way of fine-tuning the column definitions.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="clobs"><a class="anchor" href="#clobs"></a>Clobs</h4>
+<div class="paragraph">
+<p>To map a <a href="../../refguide/latest/applib/index/value/Clob.html" class="page">Clob</a>, use the <a href="#refguide:persistence:index/jpa/applib/types/ClobJpaEmbedded.adoc" class="page unresolved">ClobJpaEmbedded</a> class:</p>
+</div>
+<div class="listingblock">
+<div class="title">MyEntity.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code>public class MyEntity ... {
+
+    @Embedded
+    private ClobJpaEmbeddable xml;              <i class="conum" data-value="1"></i><b>(1)</b>
+
+    @Property()
+    @PropertyLayout()
+    public Clob getXml() {                      <i class="conum" data-value="2"></i><b>(2)</b>
+        return ClobJpaEmbeddable.toClob(xml);
+    }
+    public void setXml(final Clob xml) {
+        this.xml = ClobJpaEmbeddable.fromClob(xml);
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>the field as it is persisted by the ORM</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>the property as it is understood by Apache Isis.</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+if you have multiple instances of an <code>@Embedded</code> type, the <code>@javax.persistence.AttributeOverrides</code> and <code>@javax.persistence.AttributeOverride</code> provide a standardised way of fine-tuning the column definitions.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
 </article>
 <aside class="article-aside toc hide-for-print" role="navigation">
     <p class="toc-title">On this page</p>
@@ -410,7 +553,7 @@ Take a look at:</p>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M5.20210717-0226-a361d182</p>
+            <p>Revision: 2.0.0-M5.20210718-0225-936b0da3</p>
         </div>
     </div>
 </footer>
