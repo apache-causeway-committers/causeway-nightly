@@ -400,52 +400,17 @@ page.parent doesn't seem to be set...
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>This guide describes the configuration of the Keycloak implementation of Apache Isis' <code>Authenticator and `Authorizor</code> APIs.</p>
+<p>This guide describes the configuration of the Keycloak implementation of Apache Isis' <code>Authenticator</code> API.</p>
+</div>
+<div class="paragraph">
+<p>It does <em>not</em> however provide any implementation of <a href="../../../refguide/latest/core/index/security/authorization/Authorizor.html" class="page">Authorizor</a> SPI.
+You will therefore need to configure an alternative implementation, eg the <a href="../bypass/about.html" class="page">Bypass</a> implementation (to disable authorisation checks completely), or use the <a href="../secman/about.html" class="page">SecMan</a> implementation.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="maven-pom-xml"><a class="anchor" href="#maven-pom-xml"></a>Maven pom.xml</h2>
+<h2 id="dependency"><a class="anchor" href="#dependency"></a>Dependency</h2>
 <div class="sectionbody">
-<div class="sect2">
-<h3 id="dependency-management"><a class="anchor" href="#dependency-management"></a>Dependency Management</h3>
-<div class="paragraph">
-<p>If your application inherits from the Apache Isis starter app (<code>org.apache.isis.app:isis-app-starter-parent</code>) then that will define the version automatically:</p>
-</div>
-<div class="listingblock">
-<div class="title">pom.xml</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;parent&gt;
-    &lt;groupId&gt;org.apache.isis.app&lt;/groupId&gt;
-    &lt;artifactId&gt;isis-app-starter-parent&lt;/artifactId&gt;
-    &lt;version&gt;2.0.0-M6&lt;/version&gt;
-    &lt;relativePath/&gt;
-&lt;/parent&gt;</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Alternatively, import the core BOM.
-This is usually done in the top-level parent pom of your application:</p>
-</div>
-<div class="listingblock">
-<div class="title">pom.xml</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependencyManagement&gt;
-    &lt;dependencies&gt;
-        &lt;dependency&gt;
-            &lt;groupId&gt;org.apache.isis.core&lt;/groupId&gt;
-            &lt;artifactId&gt;isis-core&lt;/artifactId&gt;
-            &lt;version&gt;2.0.0-M6&lt;/version&gt;
-            &lt;scope&gt;import&lt;/scope&gt;
-            &lt;type&gt;pom&lt;/type&gt;
-        &lt;/dependency&gt;
-    &lt;/dependencies&gt;
-&lt;/dependencyManagement&gt;</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="dependency"><a class="anchor" href="#dependency"></a>Dependency</h3>
 <div class="paragraph">
 <p>In the webapp module of your application, add the following dependency:</p>
 </div>
@@ -454,12 +419,10 @@ This is usually done in the top-level parent pom of your application:</p>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependencies&gt;
     &lt;dependency&gt;
-        &lt;groupId&gt;org.apache.isis.mavendeps&lt;/groupId&gt;
-        &lt;artifactId&gt;isis-mavendeps-webapp&lt;/artifactId&gt;
-        &lt;type&gt;pom&lt;/type&gt;
+        &lt;groupId&gt;org.apache.isis.security&lt;/groupId&gt;
+        &lt;artifactId&gt;isis-security-keycloak&lt;/artifactId&gt;
     &lt;/dependency&gt;
 &lt;/dependencies&gt;</code></pre>
-</div>
 </div>
 </div>
 </div>
@@ -468,7 +431,7 @@ This is usually done in the top-level parent pom of your application:</p>
 <h2 id="update-appmanifest"><a class="anchor" href="#update-appmanifest"></a>Update AppManifest</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>In your application&#8217;s <code>AppManifest</code> (top-level Spring <code>@Configuration</code> used to bootstrap the app), import the</p>
+<p>In your application&#8217;s <code>AppManifest</code> (top-level Spring <code>@Configuration</code> used to bootstrap the app), import the <code>IsisModuleSecurityKeycloak</code> module and remove any other <code>IsisModuleSecurityXxx</code> modules.</p>
 </div>
 <div class="listingblock">
 <div class="title">AppManifest.java</div>
@@ -484,51 +447,332 @@ public class AppManifest {
 </div>
 </div>
 <div class="paragraph">
-<p>Make sure that no other <code>IsisModuleSecurityXxx</code> module is imported.</p>
+<p>Also, as this module provides no implementation of the <a href="../../../refguide/latest/core/index/security/authorization/Authorizor.html" class="page">Authorizor</a> SPI, instead you will need some an alternative implementation, such as the <a href="../bypass/about.html" class="page">Bypass</a> implementation.
+(Note: this will in effect disable authorisation checks).</p>
+</div>
+<div class="listingblock">
+<div class="title">AppManifest.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Configuration
+@Import({
+        ...
+        IsisModuleSecurityKeycloak.class,   <i class="conum" data-value="1"></i><b>(1)</b>
+        AuthorizorBypass.class,             <i class="conum" data-value="2"></i><b>(2)</b>
+        ...
+})
+public class AppManifest {
+}</code></pre>
 </div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="design"><a class="anchor" href="#design"></a>Design</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The module configures a filter that expects Keycloak to set three <code>X-Auth-Xxx</code> headers:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>X-Auth-Userid</code> - is used as the username</p>
-</li>
-<li>
-<p><code>X-Auth-Roles</code> - is a comma-separated set of roles.</p>
-<div class="paragraph">
-<p>The <code>org.apache.isis.viewer.wicket.roles.USER</code> role&#8201;&#8212;&#8201;as required by <a href="../../../vw/latest/about.html" class="page">Web UI (Wicket viewer)</a> &#8201;&#8212;&#8201;is automatically added to this list of roles.</p>
-</div>
-</li>
-<li>
-<p><code>X-Auth-Subject</code> - is unused</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>The user and roles are accessible programmatically from the <a href="../../../refguide/latest/applib/index/services/user/UserMemento.html" class="page">UserMemento</a> obtained from <a href="../../../refguide/latest/applib/index/services/user/UserService.html" class="page">UserService</a> domain service.</p>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>make sure that no other <code>IsisModuleSecurityXxx</code> module is imported.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>or some other implementation of <code>Authorizor</code>.</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="walk-through"><a class="anchor" href="#walk-through"></a>Walk-through</h2>
 <div class="sectionbody">
-<div class="admonitionblock warning">
+<div class="paragraph">
+<p>For simplicity, we&#8217;ll run Keycloak in Docker with an in-memory database.
+Obviously in production you would need a persistent database.</p>
+</div>
+<div class="admonitionblock note">
 <table>
 <tr>
 <td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
+<i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-TODO - show how this fits together.
+These notes were adapted from the tutorial provided on <a href="https://www.keycloak.org/getting-started/getting-started-docker">keycloak&#8217;s website</a>.
 </td>
 </tr>
 </table>
+</div>
+<div class="sect2">
+<h3 id="startup-keycloak-and-login-as-keycloak-admin"><a class="anchor" href="#startup-keycloak-and-login-as-keycloak-admin"></a>Startup keycloak and login as keycloak admin</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Start up keycloak; we&#8217;ll run on port <em>9090</em>:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">docker run -p 9090:8080 \
+    -e KEYCLOAK_USER=admin \
+    -e KEYCLOAK_PASSWORD=admin \
+    quay.io/keycloak/keycloak:14.0.0</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>login to the Admin console:</p>
+<div class="imageblock">
+<div class="content">
+<img src="_images/login-to-admin-console.png" alt="login to admin console" width="300px">
+</div>
+</div>
+<div class="paragraph">
+<p>and</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/login-to-admin-console-prompt.png" alt="login to admin console prompt" width="300px">
+</div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="create-a-realm-for-simpleapp"><a class="anchor" href="#create-a-realm-for-simpleapp"></a>Create a realm for simpleapp</h3>
+<div class="paragraph">
+<p>It&#8217;s good practice to use a separate realm for each application:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>create a realm:</p>
+<div class="imageblock">
+<div class="content">
+<img src="_images/add-realm-prompt.png" alt="add realm prompt" width="250px">
+</div>
+</div>
+<div class="paragraph">
+<p>and:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/define-simpleapp-realm.png" alt="define simpleapp realm" width="400px">
+</div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="create-a-keycloak-client-for-the-application"><a class="anchor" href="#create-a-keycloak-client-for-the-application"></a>Create a Keycloak client for the application</h3>
+<div class="paragraph">
+<p>From the perspective of Keycloak, the Apache Isis domain application is a client: the domain app redirects its login page to Keycloak (and be redirected back on success).
+We therefore need to create the Keycloak client for our app:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>create the client:</p>
+<div class="imageblock">
+<div class="content">
+<img src="_images/create-simpleapp-client.png" alt="create simpleapp client" width="400px">
+</div>
+</div>
+</li>
+<li>
+<p>specify <em>Access Type</em> = confidential, and <em>Valid Redirect URI</em> for the client:</p>
+<div class="imageblock">
+<div class="content">
+<img src="_images/client-app-config.png" alt="client app config" width="400px">
+</div>
+</div>
+</li>
+<li>
+<p>copy the secret from the "credentials" tab:</p>
+<div class="imageblock">
+<div class="content">
+<img src="_images/client-secret.png" alt="client secret" width="600px">
+</div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="configure-the-application-as-a-keycloak-client"><a class="anchor" href="#configure-the-application-as-a-keycloak-client"></a>Configure the application as a Keycloak client</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>the keycloak config:</p>
+<div class="listingblock">
+<div class="title">config/application.properties</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">isis.security.keycloak.realm=simpleapp                                  <i class="conum" data-value="1"></i><b>(1)</b>
+isis.security.keycloak.base-url=http://localhost:9090/auth              <i class="conum" data-value="2"></i><b>(2)</b>
+
+kc.realm-url=${isis.security.keycloak.base-url}/realms/${isis.security.keycloak.realm} <i class="conum" data-value="3"></i><b>(3)</b>
+
+spring.security.oauth2.client.registration.simpleapp.client-id=simpleapp-client <i class="conum" data-value="4"></i><b>(4)</b>
+spring.security.oauth2.client.registration.simpleapp.client-name=Simple App
+spring.security.oauth2.client.registration.simpleapp.client-secret=a04b1b32-3e8a-4803-b7ec-70bfb7e8ec2b <i class="conum" data-value="5"></i><b>(5)</b>
+
+spring.security.oauth2.client.registration.simpleapp.provider=keycloak       <i class="conum" data-value="6"></i><b>(6)</b>
+spring.security.oauth2.client.registration.simpleapp.authorization-grant-type=authorization_code
+spring.security.oauth2.client.registration.simpleapp.scope=openid, profile
+spring.security.oauth2.client.registration.simpleapp.redirect-uri={baseUrl}/login/oauth2/code/{registrationId}
+spring.security.oauth2.client.provider.keycloak.authorization-uri=${kc.realm-url}/protocol/openid-connect/auth
+spring.security.oauth2.client.provider.keycloak.jwk-set-uri=${kc.realm-url}/protocol/openid-connect/certs
+spring.security.oauth2.client.provider.keycloak.token-uri=${kc.realm-url}/protocol/openid-connect/token
+spring.security.oauth2.client.provider.keycloak.user-name-attribute=preferred_username</code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>as defined in keycloak.
+The registration properties below must specify this property as the <code>registration</code> key.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>URL where keycloak is running</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>application-defined property, just to reduce the boilerplate below</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>must match the client name entered in the admin console.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>as taken from the credential tab of the realm</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>remaining property values are boilerplate and should not need to change.</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+Make sure that with the key prefix <code>spring.security.oauth2.client.registration.xxx</code>, the "xxx" is the name of the realm being registered to Spring Security.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="create-sven-user-in-the-realm"><a class="anchor" href="#create-sven-user-in-the-realm"></a>Create sven user in the realm</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>add sven user:</p>
+<div class="imageblock">
+<div class="content">
+<img src="_images/add-sven-user-prompt.png" alt="add sven user prompt" width="400px">
+</div>
+</div>
+</li>
+<li>
+<p>add credentials (password):</p>
+<div class="imageblock">
+<div class="content">
+<img src="_images/sven-credentials.png" alt="sven credentials" width="400px">
+</div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="check-the-account"><a class="anchor" href="#check-the-account"></a>Check the account</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>check that the account is setup by navigating to <a href="http://localhost:9090/auth/realms/simpleapp/account/" class="bare">http://localhost:9090/auth/realms/simpleapp/account/</a>:</p>
+<div class="imageblock">
+<div class="content">
+<img src="_images/account-mgmt.png" alt="account mgmt" width="800px">
+</div>
+</div>
+<div class="paragraph">
+<p>sign-in:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/test-sven-login.png" alt="test sven login" width="300px">
+</div>
+</div>
+</li>
+<li>
+<p>should be logged in ok:</p>
+<div class="imageblock">
+<div class="content">
+<img src="_images/logged-in-as-sven.png" alt="logged in as sven" width="800px">
+</div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="test"><a class="anchor" href="#test"></a>Test</h3>
+<div class="paragraph">
+<p>Finally, start the Apache Isis application:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>and confirm that navigating to <a href="http://localhost:8080" class="bare">http://localhost:8080</a> redirects to the keycloak login:</p>
+<div class="imageblock">
+<div class="content">
+<img src="_images/keycloak-login-page.png" alt="keycloak login page" width="400px">
+</div>
+</div>
+</li>
+<li>
+<p>you should be able to log into the app:</p>
+<div class="imageblock">
+<div class="content">
+<img src="_images/logged-into-app-as-sven.png" alt="logged into app as sven" width="300px">
+</div>
+</div>
+</li>
+<li>
+<p>if running in prototype mode, you should still be able to impersonate other users:</p>
+<div class="imageblock">
+<div class="content">
+<img src="_images/impersonate-as-fred.png" alt="impersonate as fred" width="300px">
+</div>
+</div>
+</li>
+<li>
+<p>Logout should of course take you back to the login page.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="resources"><a class="anchor" href="#resources"></a>Resources:</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://www.keycloak.org/docs/latest/securing_apps/index.html#_spring_boot_adapter">Keycloak documentation</a>.</p>
+</li>
+<li>
+<p><a href="https://www.baeldung.com/spring-boot-keycloak">baeldung article</a>.</p>
+</li>
+<li>
+<p><a href="https://dzone.com/articles/secure-spring-boot-application-with-keycloak">Dzone article</a></p>
+</li>
+</ul>
 </div>
 </div>
 </div>
@@ -549,7 +793,7 @@ TODO - show how this fits together.
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M5.20210718-0225-936b0da3</p>
+            <p>Revision: 2.0.0-M5.20210719-0903-f55e1cf3</p>
         </div>
     </div>
 </footer>
