@@ -496,7 +496,7 @@ public class ModuleTests {
 </div>
 </div>
 <div class="sect1">
-<h2 id="package-tests"><a class="anchor" href="#package-tests"></a>Package Tests</h2>
+<h2 id="module-package-tests"><a class="anchor" href="#module-package-tests"></a>Module Package Tests</h2>
 <div class="sectionbody">
 <div class="admonitionblock caution">
 <table>
@@ -510,42 +510,17 @@ TODO - to flesh out
 </tr>
 </table>
 </div>
+<div class="paragraph">
+<p>Defines the rules for which subpackages or a module to check and whether the classes in those subpackages can access the classes in other subpackages either for the same module, or for modules that are referenced (`Import`ed) directly or transitively.</p>
+</div>
 <div class="listingblock">
 <div class="title">Subpackage</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public interface Subpackage {
-    String getName();
 
-    SubpackageType getSubpackageType();
-
-    String packageIdentifierWithin(Class&lt;?&gt; moduleClass);
-
-    default void defineLayer(Architectures.LayeredArchitecture layeredArchitecture, Class&lt;?&gt; moduleClass) {
-        val layerDefinition = getSubpackageType().defineLayer(this, moduleClass, layeredArchitecture);
-        layerDefinition.definedBy(packageIdentifierWithin(moduleClass));
-    }
-
-    boolean canReference(Subpackage referenced);
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The <code>SubpackageEnum</code> provides an off the shelf implementation.</p>
-</div>
-<div class="listingblock">
-<div class="title">PackageTestsForCustomerModule.java</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@AnalyzeClasses(
-    packagesOf = {CustomerModule.class},                                            <i class="conum" data-value="1"></i><b>(1)</b>
-    importOptions = {ImportOption.DoNotIncludeTests.class}
-)
-public class PackageTestsForCustomerModule {
-
-    @ArchTest public static ArchRule code_dependencies_follow_module_subpackages =
-      ArchitecturePackageRules.code_dependencies_follow_module_subpackages(         <i class="conum" data-value="2"></i><b>(2)</b>
-        CustomerModule.class,                                                       <i class="conum" data-value="1"></i><b>(1)</b>
-        Arrays.asList(SubpackageEnum.values()));                                    <i class="conum" data-value="3"></i><b>(3)</b>
-
+    String getName();                                               <i class="conum" data-value="1"></i><b>(1)</b>
+    List&lt;String&gt; mayBeAccessedBySubpackagesInSameModule();          <i class="conum" data-value="2"></i><b>(2)</b>
+    List&lt;String&gt; mayBeAccessedBySubpackagesInReferencingModules();  <i class="conum" data-value="3"></i><b>(3)</b>
 }</code></pre>
 </div>
 </div>
@@ -553,23 +528,57 @@ public class PackageTestsForCustomerModule {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>the module to be analyzed.
-A similar test should be created for each and every module in the app.</td>
+<td>The name of the subpackage, for example &quot;dom&quot;, &quot;api&amp;quot, &quot;spi&quot; or &quot;fixtures&quot;.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>xxx</td>
+<td>A list of the (names of the) subpackages where classes in the same module as this package have access.
+<div class="paragraph">
+<p>For example, the &quot;dom&quot; subpackage can probably be referenced from the &quot;menu&quot; subpackage, but not vice versa.</p>
+</div>
+<div class="paragraph">
+<p>The special value of &quot;*&quot; is a wildcard meaning that all subpackages (in the same module) can access.</p>
+</div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>xxx</td>
+<td>A list of the (names of the) subpackages where classes in the packages of other referencing modules may have access.
+<div class="paragraph">
+<p>For example, in some cases the the &quot;dom&quot; subpackage may &lt;i&gt;not&lt;/i&gt; be accessible from other modules if the intention is to require all programmatic access through an &quot;api&quot; subpackage (where the classes in <code>dom</code> implement interfaces defined in <code>api</code>).</p>
+</div>
+<div class="paragraph">
+<p>The special value of &quot;*&quot; is a wildcard meaning that all subpackages (in other modules) can access.</p>
+</div></td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The <code>SubpackageEnum</code> provides an off the shelf implementation.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="entity-tests"><a class="anchor" href="#entity-tests"></a>Entity Tests</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>These are provided for both JPA and JDO.</p>
+</div>
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-caution" title="Caution"></i>
+</td>
+<td class="content">
+TODO - to flesh out
+</td>
 </tr>
 </table>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="class-tests"><a class="anchor" href="#class-tests"></a>Class Tests</h2>
+<h2 id="domainobjecttests"><a class="anchor" href="#domainobjecttests"></a>DomainObjectTests</h2>
 <div class="sectionbody">
 <div class="admonitionblock caution">
 <table>
@@ -583,49 +592,20 @@ TODO - to flesh out
 </tr>
 </table>
 </div>
-<div class="listingblock">
-<div class="title">ClassTests.java</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@AnalyzeClasses(
-        packagesOf = {
-                CustomerModule.class                                                <i class="conum" data-value="1"></i><b>(1)</b>
-                , OrderModule.class
-                , ProductModule.class
-        },
-        importOptions = { ImportOption.DoNotIncludeTests.class }
-)
-public class ClassTests {
-
-    @ArchTest
-    static ArchRule classes_annotated_with_Entity_are_also_annotated_with_DomainObject =
-      ArchitectureClassRules.classes_annotated_with_Entity_must_also_be_annotated_with_DomainObject();  <i class="conum" data-value="2"></i><b>(2)</b>
-
-    @ArchTest
-    static ArchRule classes_annotated_with_Entity_are_also_annotated_with_XmlJavaTypeAdapter =
-      ArchitectureClassRules.classes_annotated_with_Entity_must_also_be_annotated_with_XmlJavaAdapter(); <i class="conum" data-value="3"></i><b>(3)</b>
-
-    @ArchTest
-    static ArchRule classes_annotated_with_DomainObject_are_also_annotated_with_DomainObjectLayout =
-      ArchitectureClassRules.classes_annotated_with_DomainObject_must_also_be_annotated_with_DomainObjectLayout(); <i class="conum" data-value="4"></i><b>(4)</b></code></pre>
 </div>
 </div>
-<div class="colist arabic">
+<div class="sect1">
+<h2 id="domainservicetests"><a class="anchor" href="#domainservicetests"></a>DomainServiceTests</h2>
+<div class="sectionbody">
+<div class="admonitionblock caution">
 <table>
 <tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>the modules of the application to be scanned</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>xxx</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>xxx</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>xxx</td>
+<td class="icon">
+<i class="fa icon-caution" title="Caution"></i>
+</td>
+<td class="content">
+TODO - to flesh out
+</td>
 </tr>
 </table>
 </div>
@@ -648,7 +628,7 @@ public class ClassTests {
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M5.20210721-0228-3223efed</p>
+            <p>Revision: 2.0.0-M5.20210721-0955-9b6fa3cc</p>
         </div>
     </div>
 </footer>
