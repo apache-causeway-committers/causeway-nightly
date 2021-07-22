@@ -1197,6 +1197,90 @@ The <a href="../../../vw/latest/about.html" class="page">Web UI (Wicket viewer)<
 </div>
 </div>
 </div>
+<div class="sect1">
+<h2 id="column-order"><a class="anchor" href="#column-order"></a>Column Order</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <a href="../applib/index/services/tablecol/TableColumnOrderService.html" class="page">TableColumnOrderService</a> SPI allows applications to define the order in which property columns appear in tables, for both parented and standalone collections.</p>
+</div>
+<div class="paragraph">
+<p>Although this is an SPI, the framework also provides an out-of-the-box implementation that uses simple text files to specify the column order.
+These simple files can be reloaded dynamically during prototyping, so make it easy to change the order of columns (or hide columns completely).</p>
+</div>
+<div class="sect2">
+<h3 id="parented-collections"><a class="anchor" href="#parented-collections"></a>Parented Collections</h3>
+<div class="paragraph">
+<p>For parented collections, the file should be called <code>ParentedClass#collectionId.columnOrder.txt</code>.</p>
+</div>
+<div class="paragraph">
+<p>For example, suppose that <code>Customer</code> has an <code>orders</code> collection consisting of <code>Order</code>s, where the default ordering of properties (from the <a href="../applib/index/annotation/PropertyLayout.html#sequence" class="page">@PropertyLayout#sequence</a> annotation) is (say) "orderNum", "orderStatus", "orderDate", "orderAmount".</p>
+</div>
+<div class="paragraph">
+<p>This order can be changed using this file:</p>
+</div>
+<div class="listingblock">
+<div class="title">Customer#orders.columnOrder.txt</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">orderNum
+orderDate
+orderStatus</code></pre>
+</div>
+</div>
+<div class="sect3">
+<h4 id="commented-out-and-unknown-properties"><a class="anchor" href="#commented-out-and-unknown-properties"></a>Commented out and unknown properties</h4>
+<div class="paragraph">
+<p>Note also that the following would return the same result:</p>
+</div>
+<div class="listingblock">
+<div class="title">Customer#orders.columnOrder.txt</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">orderNum
+#orderAmount
+orderDate
+orderStatus
+nonsense</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Here the "orderAmount" is commented out and so is excluded because the line is not an exact match.
+The same is true for "nonsense"; it doesn&#8217;t match any of the original properties of the <code>Order</code> class.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="standalone-collections"><a class="anchor" href="#standalone-collections"></a>Standalone Collections</h3>
+<div class="paragraph">
+<p>For parented collections, the file should be called <code>Class.columnOrder.txt</code>.</p>
+</div>
+<div class="paragraph">
+<p>For example, suppose that the <code>Order</code> entity is returned from various repository queries as a standalone collection, where (as in the example above) the default ordering of properties (from the <a href="../applib/index/annotation/PropertyLayout.html#sequence" class="page">@PropertyLayout#sequence</a> annotation) is (say) "orderNum", "orderStatus", "orderDate", "orderAmount".</p>
+</div>
+<div class="paragraph">
+<p>This order can be changed using this file:</p>
+</div>
+<div class="listingblock">
+<div class="title">Order.columnOrder.txt</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">orderNum
+orderDate
+orderStatus</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="customising-the-implementation"><a class="anchor" href="#customising-the-implementation"></a>Customising the Implementation</h3>
+<div class="paragraph">
+<p>The above behaviour is provided by the <a href="../core/index/metamodel/services/tablecol/TableColumnOrderServiceUsingTxtFile.html" class="page">TableColumnOrderServiceUsingTxtFile</a> implementation of the <a href="../applib/index/services/tablecol/TableColumnOrderService.html" class="page">TableColumnOrderService</a> SPI.</p>
+</div>
+<div class="paragraph">
+<p>If necessary, the class can be subclassed to change the convention for searching for class files; just make sure that the subclass has an earlier <code>Precedence</code> than the framework so that it is picked up first.</p>
+</div>
+<div class="paragraph">
+<p>You could of course also use it as the inspiration of your own more sophisticated implementation.</p>
+</div>
+</div>
+</div>
+</div>
 </article>
 <aside class="article-aside toc hide-for-print" role="navigation">
     <p class="toc-title">On this page</p>
@@ -1214,7 +1298,7 @@ The <a href="../../../vw/latest/about.html" class="page">Web UI (Wicket viewer)<
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M5.20210722-0229-da10cb4d</p>
+            <p>Revision: 2.0.0-M5.20210722-0819-4bdbc4eb</p>
         </div>
     </div>
 </footer>
