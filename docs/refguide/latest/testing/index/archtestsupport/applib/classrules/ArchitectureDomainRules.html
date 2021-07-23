@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>ArchitectureDomainObjectRules :: Apache Isis</title>
+    <title>ArchitectureDomainRules :: Apache Isis</title>
     <meta name="generator" content="Antora 2.3.4">
     <link rel="stylesheet" href="../../../../../../../_/css/site.css">
     <link rel="stylesheet" href="../../../../../../../_/css/site-custom.css">
@@ -885,18 +885,18 @@ page.parent doesn't seem to be set...
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="../../../../../about.html">Reference Guide</a></li>
-    <li><a href="ArchitectureDomainObjectRules.html">ArchitectureDomainObjectRules</a></li>
+    <li><a href="ArchitectureDomainRules.html">ArchitectureDomainRules</a></li>
   </ul>
 </nav>
-  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/master/antora/components/refguide-index/modules/testing/pages/index/archtestsupport/applib/classrules/ArchitectureDomainObjectRules.adoc">Edit</a></div>
+  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/master/antora/components/refguide-index/modules/testing/pages/index/archtestsupport/applib/classrules/ArchitectureDomainRules.adoc">Edit</a></div>
 </div>
 <article class="doc">
     <a name="section-top"></a>
-<h1 class="page">ArchitectureDomainObjectRules</h1>
+<h1 class="page">ArchitectureDomainRules</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>A library of architecture tests to ensure coding conventions are followed for classes annotated with <a href="../../../../../applib/index/annotation/DomainObject.html" class="page">DomainObject</a> .</p>
+<p>A library of architecture tests to ensure coding conventions are followed for domain classes, for example as annotated with <a href="../../../../../applib/index/annotation/DomainObject.html" class="page">DomainObject</a> or <a href="../../../../../applib/index/annotation/DomainService.html" class="page">DomainService</a> but also more generally, for example repositories that are not necessarily part of the framework&#8217;s metamodel.</p>
 </div>
 </div>
 </div>
@@ -904,12 +904,26 @@ page.parent doesn't seem to be set...
 <h2 id="api"><a class="anchor" href="#api"></a>API</h2>
 <div class="sectionbody">
 <div class="listingblock">
-<div class="title">ArchitectureDomainObjectRules.java</div>
+<div class="title">ArchitectureDomainRules.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">class ArchitectureDomainObjectRules {
-  ArchRule classes_annotated_with_DomainObject_must_specify_logicalTypeName()     <i class="conum" data-value="1"></i><b>(1)</b>
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">class ArchitectureDomainRules {
+  ArchRule every_DomainObject_must_specify_logicalTypeName()     <i class="conum" data-value="1"></i><b>(1)</b>
+  ArchRule every_DomainService_must_specify_logicalTypeName()     <i class="conum" data-value="2"></i><b>(2)</b>
+  ArchRule every_DomainObject_must_also_be_annotated_with_DomainObjectLayout()     <i class="conum" data-value="3"></i><b>(3)</b>
+  ArchRule every_DomainService_must_also_be_annotated_with_DomainServiceLayout()     <i class="conum" data-value="4"></i><b>(4)</b>
+  DescribedPredicate&lt;JavaAnnotation&lt;?&gt;&gt; DomainService_logicalTypeName()
   DescribedPredicate&lt;JavaAnnotation&lt;?&gt;&gt; DomainObject_logicalTypeName()
-  ArchRule classes_annotated_with_DomainObject_must_also_be_annotated_with_DomainObjectLayout()     <i class="conum" data-value="2"></i><b>(2)</b>
+  DescribedPredicate&lt;JavaAnnotation&lt;?&gt;&gt; DomainXxx_logicalTypeName(final Class&lt;? extends Annotation&gt; annotationClass)
+  ArchRule every_Action_mixin_must_follow_naming_convention()     <i class="conum" data-value="5"></i><b>(5)</b>
+  ArchRule every_Property_mixin_must_follow_naming_convention()     <i class="conum" data-value="6"></i><b>(6)</b>
+  ArchRule every_Collection_mixin_must_follow_naming_convention()     <i class="conum" data-value="7"></i><b>(7)</b>
+  ArchRule every_Repository_must_follow_naming_conventions()     <i class="conum" data-value="8"></i><b>(8)</b>
+  ArchRule every_Controller_must_be_follow_naming_conventions()     <i class="conum" data-value="9"></i><b>(9)</b>
+  ArchRule every_class_named_Repository_must_be_annotated_correctly()     <i class="conum" data-value="10"></i><b>(10)</b>
+  ArchRule every_class_named_Controller_must_be_annotated_correctly()     <i class="conum" data-value="11"></i><b>(11)</b>
+  ArchRule every_injected_field_of_jaxb_view_model_must_be_annotated_with_XmlTransient()     <i class="conum" data-value="12"></i><b>(12)</b>
+  ArchRule every_injected_field_of_serializable_view_model_must_be_transient()     <i class="conum" data-value="13"></i><b>(13)</b>
+  ArchRule every_finder_method_in_Repository_must_return_either_Collection_or_Optional()     <i class="conum" data-value="14"></i><b>(14)</b>
 }</code></pre>
 </div>
 </div>
@@ -917,7 +931,7 @@ page.parent doesn't seem to be set...
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><a href="#classes_annotated_with_DomainObject_must_specify_logicalTypeName__">classes_annotated_with_DomainObject_must_specify_logicalTypeName()</a>
+<td><a href="#every_DomainObject_must_specify_logicalTypeName__">every_DomainObject_must_specify_logicalTypeName()</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
@@ -928,11 +942,143 @@ page.parent doesn't seem to be set...
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><a href="#classes_annotated_with_DomainObject_must_also_be_annotated_with_DomainObjectLayout__">classes_annotated_with_DomainObject_must_also_be_annotated_with_DomainObjectLayout()</a>
+<td><a href="#every_DomainService_must_specify_logicalTypeName__">every_DomainService_must_specify_logicalTypeName()</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>This rule requires that classes annotated with the <a href="../../../../../applib/index/annotation/DomainService.html" class="page">DomainService</a> annotation must specify their <em>DomainService#logicalTypeName() logicalTypeName</em> .</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><a href="#every_DomainObject_must_also_be_annotated_with_DomainObjectLayout__">every_DomainObject_must_also_be_annotated_with_DomainObjectLayout()</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
 <p>This rule requires that classes annotated with the <a href="../../../../../applib/index/annotation/DomainObject.html" class="page">DomainObject</a> annotation must also be annotated with the <a href="../../../../../applib/index/annotation/DomainObjectLayout.html" class="page">DomainObjectLayout</a> annotation.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><a href="#every_DomainService_must_also_be_annotated_with_DomainServiceLayout__">every_DomainService_must_also_be_annotated_with_DomainServiceLayout()</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>This rule requires that classes annotated with the <a href="../../../../../applib/index/annotation/DomainService.html" class="page">DomainService</a> annotation must also be annotated with the <a href="../../../../../applib/index/annotation/DomainServiceLayout.html" class="page">DomainServiceLayout</a> annotation.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><a href="#every_Action_mixin_must_follow_naming_convention__">every_Action_mixin_must_follow_naming_convention()</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>This rule requires that action mixin classes should follow the naming convention <code>ClassName_actionId</code> , where the <code>ClassName</code> is the parameter type of a 1-arg constructor. In addition, there should be a method to be invoked for the method (typically "act", but checked against <em>DomainObject#mixinMethod() @DomainObject#mixinMethod</em> if overridden.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td><a href="#every_Property_mixin_must_follow_naming_convention__">every_Property_mixin_must_follow_naming_convention()</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>This rule requires that action mixin classes should follow the naming convention <code>ClassName_propertyId</code> , where the <code>ClassName</code> is the parameter type of a 1-arg constructor. In addition, there should be a method to be invoked for the method (typically "prop", but checked against <em>DomainObject#mixinMethod() @DomainObject#mixinMethod</em> if overridden.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td><a href="#every_Collection_mixin_must_follow_naming_convention__">every_Collection_mixin_must_follow_naming_convention()</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>This rule requires that action mixin classes should follow the naming convention <code>ClassName_collectionId</code> , where the <code>ClassName</code> is the parameter type of a 1-arg constructor. In addition, there should be a method to be invoked for the method (typically "coll", but checked against <em>DomainObject#mixinMethod() @DomainObject#mixinMethod</em> if overridden.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td><a href="#every_Repository_must_follow_naming_conventions__">every_Repository_must_follow_naming_conventions()</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>This rule requires that classes annotated with the <em>Repository</em> annotation should follow the naming convention <code>XxxRepository</code> .</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
+<td><a href="#every_Controller_must_be_follow_naming_conventions__">every_Controller_must_be_follow_naming_conventions()</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>This rule requires that classes annotated with the <em>org.springframework.stereotype.Controller</em> annotation should follow the naming convention <code>XxxController</code> .</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="10"></i><b>10</b></td>
+<td><a href="#every_class_named_Repository_must_be_annotated_correctly__">every_class_named_Repository_must_be_annotated_correctly()</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>This rule requires that classes named <code>XxxRepository</code> should also be annotated with the <em>org.springframework.stereotype.Repository</em> annotation.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="11"></i><b>11</b></td>
+<td><a href="#every_class_named_Controller_must_be_annotated_correctly__">every_class_named_Controller_must_be_annotated_correctly()</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>This rule requires that classes named <code>XxxController</code> should also be annotated with the <em>org.springframework.stereotype.Controller</em> annotation.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="12"></i><b>12</b></td>
+<td><a href="#every_injected_field_of_jaxb_view_model_must_be_annotated_with_XmlTransient__">every_injected_field_of_jaxb_view_model_must_be_annotated_with_XmlTransient()</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>This rule requires that injected fields in jaxb view models (that is, classes annotated with the JAXB <em>javax.xml.bind.annotation.XmlRootElement</em> annotation) must also be annotated with JAXB <em>javax.xml.bind.annotation.XmlTransient</em> annotation.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="13"></i><b>13</b></td>
+<td><a href="#every_injected_field_of_serializable_view_model_must_be_transient__">every_injected_field_of_serializable_view_model_must_be_transient()</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>This rule requires that injected fields in jaxb view models (that is, classes annotated with the JAXB <em>javax.xml.bind.annotation.XmlRootElement</em> annotation) must also be annotated with JAXB <em>javax.xml.bind.annotation.XmlTransient</em> annotation.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="14"></i><b>14</b></td>
+<td><a href="#every_finder_method_in_Repository_must_return_either_Collection_or_Optional__">every_finder_method_in_Repository_must_return_either_Collection_or_Optional()</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>This rule requires that finders of repos reutrn either <em>java.util.Collection</em> s or <em>java.util.Optional</em> s.</p>
 </div>
 </div>
 </div></td>
@@ -945,15 +1091,117 @@ page.parent doesn't seem to be set...
 <h2 id="members"><a class="anchor" href="#members"></a>Members</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="classes_annotated_with_DomainObject_must_specify_logicalTypeName__"><a class="anchor" href="#classes_annotated_with_DomainObject_must_specify_logicalTypeName__"></a>classes_annotated_with_DomainObject_must_specify_logicalTypeName()</h3>
+<h3 id="every_DomainObject_must_specify_logicalTypeName__"><a class="anchor" href="#every_DomainObject_must_specify_logicalTypeName__"></a>every_DomainObject_must_specify_logicalTypeName()</h3>
 <div class="paragraph">
 <p>This rule requires that classes annotated with the <a href="../../../../../applib/index/annotation/DomainObject.html" class="page">DomainObject</a> annotation must specify their <em>DomainObject#logicalTypeName() logicalTypeName</em> .</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="classes_annotated_with_DomainObject_must_also_be_annotated_with_DomainObjectLayout__"><a class="anchor" href="#classes_annotated_with_DomainObject_must_also_be_annotated_with_DomainObjectLayout__"></a>classes_annotated_with_DomainObject_must_also_be_annotated_with_DomainObjectLayout()</h3>
+<h3 id="every_DomainService_must_specify_logicalTypeName__"><a class="anchor" href="#every_DomainService_must_specify_logicalTypeName__"></a>every_DomainService_must_specify_logicalTypeName()</h3>
+<div class="paragraph">
+<p>This rule requires that classes annotated with the <a href="../../../../../applib/index/annotation/DomainService.html" class="page">DomainService</a> annotation must specify their <em>DomainService#logicalTypeName() logicalTypeName</em> .</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="every_DomainObject_must_also_be_annotated_with_DomainObjectLayout__"><a class="anchor" href="#every_DomainObject_must_also_be_annotated_with_DomainObjectLayout__"></a>every_DomainObject_must_also_be_annotated_with_DomainObjectLayout()</h3>
 <div class="paragraph">
 <p>This rule requires that classes annotated with the <a href="../../../../../applib/index/annotation/DomainObject.html" class="page">DomainObject</a> annotation must also be annotated with the <a href="../../../../../applib/index/annotation/DomainObjectLayout.html" class="page">DomainObjectLayout</a> annotation.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="every_DomainService_must_also_be_annotated_with_DomainServiceLayout__"><a class="anchor" href="#every_DomainService_must_also_be_annotated_with_DomainServiceLayout__"></a>every_DomainService_must_also_be_annotated_with_DomainServiceLayout()</h3>
+<div class="paragraph">
+<p>This rule requires that classes annotated with the <a href="../../../../../applib/index/annotation/DomainService.html" class="page">DomainService</a> annotation must also be annotated with the <a href="../../../../../applib/index/annotation/DomainServiceLayout.html" class="page">DomainServiceLayout</a> annotation.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="every_Action_mixin_must_follow_naming_convention__"><a class="anchor" href="#every_Action_mixin_must_follow_naming_convention__"></a>every_Action_mixin_must_follow_naming_convention()</h3>
+<div class="paragraph">
+<p>This rule requires that action mixin classes should follow the naming convention <code>ClassName_actionId</code> , where the <code>ClassName</code> is the parameter type of a 1-arg constructor. In addition, there should be a method to be invoked for the method (typically "act", but checked against <em>DomainObject#mixinMethod() @DomainObject#mixinMethod</em> if overridden.</p>
+</div>
+<div class="paragraph">
+<p>The rationale is so that the pattern is easy to spot and to search for, with common programming model errors detected during unit testing rather tha relying on integration testing.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="every_Property_mixin_must_follow_naming_convention__"><a class="anchor" href="#every_Property_mixin_must_follow_naming_convention__"></a>every_Property_mixin_must_follow_naming_convention()</h3>
+<div class="paragraph">
+<p>This rule requires that action mixin classes should follow the naming convention <code>ClassName_propertyId</code> , where the <code>ClassName</code> is the parameter type of a 1-arg constructor. In addition, there should be a method to be invoked for the method (typically "prop", but checked against <em>DomainObject#mixinMethod() @DomainObject#mixinMethod</em> if overridden.</p>
+</div>
+<div class="paragraph">
+<p>The rationale is so that the pattern is easy to spot and to search for, with common programming model errors detected during unit testing rather tha relying on integration testing.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="every_Collection_mixin_must_follow_naming_convention__"><a class="anchor" href="#every_Collection_mixin_must_follow_naming_convention__"></a>every_Collection_mixin_must_follow_naming_convention()</h3>
+<div class="paragraph">
+<p>This rule requires that action mixin classes should follow the naming convention <code>ClassName_collectionId</code> , where the <code>ClassName</code> is the parameter type of a 1-arg constructor. In addition, there should be a method to be invoked for the method (typically "coll", but checked against <em>DomainObject#mixinMethod() @DomainObject#mixinMethod</em> if overridden.</p>
+</div>
+<div class="paragraph">
+<p>The rationale is so that the pattern is easy to spot and to search for, with common programming model errors detected during unit testing rather tha relying on integration testing.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="every_Repository_must_follow_naming_conventions__"><a class="anchor" href="#every_Repository_must_follow_naming_conventions__"></a>every_Repository_must_follow_naming_conventions()</h3>
+<div class="paragraph">
+<p>This rule requires that classes annotated with the <em>Repository</em> annotation should follow the naming convention <code>XxxRepository</code> .</p>
+</div>
+<div class="paragraph">
+<p>The rationale is so that the pattern is easy to spot and to search for,</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="every_Controller_must_be_follow_naming_conventions__"><a class="anchor" href="#every_Controller_must_be_follow_naming_conventions__"></a>every_Controller_must_be_follow_naming_conventions()</h3>
+<div class="paragraph">
+<p>This rule requires that classes annotated with the <em>org.springframework.stereotype.Controller</em> annotation should follow the naming convention <code>XxxController</code> .</p>
+</div>
+<div class="paragraph">
+<p>The rationale is so that the pattern is easy to spot and to search for,</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="every_class_named_Repository_must_be_annotated_correctly__"><a class="anchor" href="#every_class_named_Repository_must_be_annotated_correctly__"></a>every_class_named_Repository_must_be_annotated_correctly()</h3>
+<div class="paragraph">
+<p>This rule requires that classes named <code>XxxRepository</code> should also be annotated with the <em>org.springframework.stereotype.Repository</em> annotation.</p>
+</div>
+<div class="paragraph">
+<p>The rationale is so that the pattern is easy to spot and to search for,</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="every_class_named_Controller_must_be_annotated_correctly__"><a class="anchor" href="#every_class_named_Controller_must_be_annotated_correctly__"></a>every_class_named_Controller_must_be_annotated_correctly()</h3>
+<div class="paragraph">
+<p>This rule requires that classes named <code>XxxController</code> should also be annotated with the <em>org.springframework.stereotype.Controller</em> annotation.</p>
+</div>
+<div class="paragraph">
+<p>The rationale is so that the pattern is easy to spot and to search for,</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="every_injected_field_of_jaxb_view_model_must_be_annotated_with_XmlTransient__"><a class="anchor" href="#every_injected_field_of_jaxb_view_model_must_be_annotated_with_XmlTransient__"></a>every_injected_field_of_jaxb_view_model_must_be_annotated_with_XmlTransient()</h3>
+<div class="paragraph">
+<p>This rule requires that injected fields in jaxb view models (that is, classes annotated with the JAXB <em>javax.xml.bind.annotation.XmlRootElement</em> annotation) must also be annotated with JAXB <em>javax.xml.bind.annotation.XmlTransient</em> annotation.</p>
+</div>
+<div class="paragraph">
+<p>The rationale here is that injected services are managed by the runtime and are not/cannot be serialized to XML.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="every_injected_field_of_serializable_view_model_must_be_transient__"><a class="anchor" href="#every_injected_field_of_serializable_view_model_must_be_transient__"></a>every_injected_field_of_serializable_view_model_must_be_transient()</h3>
+<div class="paragraph">
+<p>This rule requires that injected fields in jaxb view models (that is, classes annotated with the JAXB <em>javax.xml.bind.annotation.XmlRootElement</em> annotation) must also be annotated with JAXB <em>javax.xml.bind.annotation.XmlTransient</em> annotation.</p>
+</div>
+<div class="paragraph">
+<p>The rationale here is that injected services are managed by the runtime and are not/cannot be serialized to XML.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="every_finder_method_in_Repository_must_return_either_Collection_or_Optional__"><a class="anchor" href="#every_finder_method_in_Repository_must_return_either_Collection_or_Optional__"></a>every_finder_method_in_Repository_must_return_either_Collection_or_Optional()</h3>
+<div class="paragraph">
+<p>This rule requires that finders of repos reutrn either <em>java.util.Collection</em> s or <em>java.util.Optional</em> s.</p>
+</div>
+<div class="paragraph">
+<p>In particular, this excludes the option of returning a simple scalar, such as <code>Customer</code> ; they must return an <code>Optional&lt;Customer&gt;</code> instead. This forces the caller to handle the fact that the result might be empty (ie no result).</p>
 </div>
 </div>
 </div>
@@ -975,7 +1223,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M5.20210723-1002-1cadd2a3</p>
+            <p>Revision: 2.0.0-M5.20210723-1850-192d9360</p>
         </div>
     </div>
 </footer>

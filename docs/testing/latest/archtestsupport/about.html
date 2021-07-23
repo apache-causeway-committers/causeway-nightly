@@ -414,66 +414,121 @@ page.parent doesn't seem to be set...
 </div>
 </div>
 <div class="sect1">
-<h2 id="setup"><a class="anchor" href="#setup"></a>Setup</h2>
+<h2 id="dependency-management"><a class="anchor" href="#dependency-management"></a>Dependency Management</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>TODO: explain using similar format to elsewhere.</p>
+<p>If your application inherits from the Apache Isis starter app (<code>org.apache.isis.app:isis-app-starter-parent</code>) then that will define the version automatically:</p>
 </div>
-<div class="sect2">
-<h3 id="maven-configuration"><a class="anchor" href="#maven-configuration"></a>Maven Configuration</h3>
-<div class="admonitionblock caution">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-caution" title="Caution"></i>
-</td>
-<td class="content">
-TODO
-</td>
-</tr>
-</table>
+<div class="listingblock">
+<div class="title">pom.xml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;parent&gt;
+    &lt;groupId&gt;org.apache.isis.app&lt;/groupId&gt;
+    &lt;artifactId&gt;isis-app-starter-parent&lt;/artifactId&gt;
+    &lt;version&gt;2.0.0-M6&lt;/version&gt;
+    &lt;relativePath/&gt;
+&lt;/parent&gt;</code></pre>
 </div>
 </div>
-<div class="sect2">
-<h3 id="recommended-naming-convention"><a class="anchor" href="#recommended-naming-convention"></a>Recommended Naming Convention</h3>
 <div class="paragraph">
-<p>Architecture tests run quickly, so it generally makes sense to name them as <a href="../unittestsupport/about.html" class="page">unit tests</a> (with a <code>Test</code> suffix, to be picked up by surefire).</p>
+<p>Alternatively, import the core BOM.
+This is usually done in the top-level parent pom of your application:</p>
+</div>
+<div class="listingblock">
+<div class="title">pom.xml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependencyManagement&gt;
+    &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.apache.isis.core&lt;/groupId&gt;
+            &lt;artifactId&gt;isis-core&lt;/artifactId&gt;
+            &lt;version&gt;2.0.0-M6&lt;/version&gt;
+            &lt;scope&gt;import&lt;/scope&gt;
+            &lt;type&gt;pom&lt;/type&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+&lt;/dependencyManagement&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In addition, add a section for the BOM of all subdomains:</p>
+</div>
+<div class="listingblock">
+<div class="title">pom.xml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependencyManagement&gt;
+    &lt;dependencies&gt;
+        &lt;dependency&gt;
+        	&lt;groupId&gt;org.apache.isis.testing&lt;/groupId&gt;
+	        &lt;artifactId&gt;isis-testing&lt;/artifactId&gt;
+            &lt;scope&gt;import&lt;/scope&gt;
+            &lt;type&gt;pom&lt;/type&gt;
+            &lt;version&gt;2.0.0-M6&lt;/version&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+&lt;/dependencyManagement&gt;</code></pre>
 </div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="module-tests"><a class="anchor" href="#module-tests"></a>Module Tests</h2>
+<h2 id="dependencies"><a class="anchor" href="#dependencies"></a>Dependencies</h2>
 <div class="sectionbody">
-<div class="admonitionblock caution">
+<div class="paragraph">
+<p>In the webapp module(s) of your application, add the following dependency:</p>
+</div>
+<div class="listingblock">
+<div class="title">pom.xml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.apache.isis.testing&lt;/groupId&gt;
+        &lt;artifactId&gt;isis-testing-archtestsupport-applib&lt;/artifactId&gt;
+        &lt;scope&gt;test&lt;/scope&gt;     <i class="conum" data-value="1"></i><b>(1)</b>
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;</code></pre>
+</div>
+</div>
+<div class="colist arabic">
 <table>
 <tr>
-<td class="icon">
-<i class="fa icon-caution" title="Caution"></i>
-</td>
-<td class="content">
-TODO - to flesh out
-</td>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>this assumes that the architecture tests reside in <code>src/test/java</code> (but see notes on excluding tests, in the <a href="#architecture-test-support">next section</a>).</td>
 </tr>
 </table>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="architecture_test-boilerplate"><a class="anchor" href="#architecture_test-boilerplate"></a>Architecture_Test Boilerplate</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>It&#8217;s generally sufficient to have a single <code>Architecture_Test</code> class that runs all architecture tests against all classes.
+This should look something like:</p>
+</div>
 <div class="listingblock">
-<div class="title">ModuleTests.java</div>
+<div class="title">ArchitectureTests.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@AnalyzeClasses(
-        packagesOf = {
-                CustomerModule.class                                                <i class="conum" data-value="1"></i><b>(1)</b>
-                , OrderModule.class
-                , ProductModule.class
-        },
-        importOptions = { ImportOption.DoNotIncludeTests.class }
-)
-public class ModuleTests {
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import com.tngtech.archunit.junit.ArchTest;
+import com.tngtech.archunit.lang.ArchRule;
 
-    @ArchTest
-    public static ArchRule code_dependencies_follow_module_Imports =
-        ArchitectureModuleRules.code_dependencies_follow_module_Imports(            <i class="conum" data-value="2"></i><b>(2)</b>
-            ArchitectureModuleRules.analyzeClasses_packagesOf(ModuleTests.class));  <i class="conum" data-value="3"></i><b>(3)</b>
+import static org.apache.isis.testing.archtestsupport.applib.domainrules.ArchitectureDomainRules.*;
+
+@AnalyzeClasses(
+    packagesOf = {
+        CustomerModule.class                                                <i class="conum" data-value="1"></i><b>(1)</b>
+        , OrderModule.class                                                 <i class="conum" data-value="1"></i><b>(1)</b>
+        , ProductModule.class                                               <i class="conum" data-value="1"></i><b>(1)</b>
+    },
+    importOptions = { ImportOption.DoNotIncludeTests.class }                <i class="conum" data-value="2"></i><b>(2)</b>
+)
+public class Architecture_Test {                                            <i class="conum" data-value="3"></i><b>(3)</b>
+
+  @ArchTest                                                                 <i class="conum" data-value="4"></i><b>(4)</b>
+  public static ArchRule every_DomainObject_must_specify_logicalTypeName =  <i class="conum" data-value="5"></i><b>(5)</b>
+      every_DomainObject_must_specify_logicalTypeName();                    <i class="conum" data-value="6"></i><b>(6)</b>
+
+  ...
 }</code></pre>
 </div>
 </div>
@@ -485,33 +540,419 @@ public class ModuleTests {
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>invoke the rule</td>
+<td>excludes running against the tests themselves.
+But see caveat, below.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>just obtains the list of modules</td>
+<td>Recommended name.
+Architecture tests run quickly, so it generally makes sense to name them as <a href="../unittestsupport/about.html" class="page">unit tests</a> (with a <code>Test</code> suffix, to be picked up by surefire).</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>indicates this is an architecture test.
+There can be many such tests in a single file; all are expressed as <code>static</code> fields.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>the field name is unimportant (but must be unique, of course).</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>the architecture test itself, imported from <code>ArchitectureXxxRules</code></td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="title">Don&#8217;t architecture check your tests</div>
+<div class="paragraph">
+<p>In theory tests can be skipped from checking using the <code>ImportOption.DoNotIncludeTests</code> annotation shown above.</p>
+</div>
+<div class="paragraph">
+<p>If this does not work for you, consider creating a separate Maven module as a peer of your webapp, and place the architecture tests in <code>src/main/java</code>.
+Also remember to change the <code>&lt;scope&gt;test&lt;/scope&gt;</code> to <code>&lt;scope&gt;compile&lt;/scope&gt;</code>.</p>
+</div>
+</td>
 </tr>
 </table>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="module-package-tests"><a class="anchor" href="#module-package-tests"></a>Module Package Tests</h2>
+<h2 id="domain-rules"><a class="anchor" href="#domain-rules"></a>Domain rules</h2>
 <div class="sectionbody">
-<div class="admonitionblock caution">
+<div class="paragraph">
+<p>Checks for rules defined against domain classes reside in the <code>ArchitectureDomainRules</code> library.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>logical type name:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>every_DomainObject_must_specify_logicalTypeName()</code></p>
+</li>
+<li>
+<p><code>every_DomainService_must_specify_logicalTypeName()</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>layout annotations:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>every_DomainObject_must_also_be_annotated_with_DomainObjectLayout()</code></p>
+</li>
+<li>
+<p><code>every_DomainService_must_also_be_annotated_with_DomainServiceLayout()</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>mixin naming and coding conventions</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>every_Action_mixin_must_follow_naming_convention()</code></p>
+</li>
+<li>
+<p><code>every_Property_mixin_must_follow_naming_convention()</code></p>
+</li>
+<li>
+<p><code>every_Collection_mixin_must_follow_naming_convention()</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>repository class naming/annotation conventions</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>every_Repository_must_follow_naming_conventions()</code></p>
+</li>
+<li>
+<p><code>every_class_named_Repository_must_be_annotated_correctly()</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>controller class naming/annotation conventions</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>every_Controller_must_be_follow_naming_conventions()</code></p>
+</li>
+<li>
+<p><code>every_class_named_Controller_must_be_annotated_correctly()</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>allow injected fields in view models:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>every_injected_field_of_jaxb_view_model_must_be_annotated_with_XmlTransient()</code></p>
+</li>
+<li>
+<p><code>every_injected_field_of_serializable_view_model_must_be_transient()</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>consistency with repository finders:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>every_finder_method_in_Repository_must_return_either_Collection_or_Optional()</code></p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>None of these rules take any arguments, so simply include (as a static field) those that you wish to enforce.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="entity-checks"><a class="anchor" href="#entity-checks"></a>Entity Checks</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Entity rule checks are provided for both <a href="../../../pjpa/latest/about.html" class="page">JPA/Eclipselink</a> and <a href="../../../pjdo/latest/about.html" class="page">JDO/DataNucleus</a>, in <code>ArchitectureJpaRules</code> and <code>ArchitectureJdoRules</code> respectively:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>ensure conformance of persistence vs Isis annotations:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>every_jpa_Entity_must_be_annotated_with_DomainObject_nature_of_ENTITY()</code></p>
+</li>
+<li>
+<p><code>every_jdo_PersistenceCapable_must_be_annotated_with_DomainObject_nature_of_ENTITY</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>ensure entities can be referenced in JAXB view models:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>every_jpa_Entity_must_be_annotated_with_XmlJavaAdapter_of_PersistentEntityAdapter()</code></p>
+</li>
+<li>
+<p><code>every_jdo_PersistenceCapable_must_be_annotated_as_XmlJavaAdapter_PersistentEntityAdapter()</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>ensure JPA entities can support auditing and dependency injection:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>every_jpa_Entity_must_be_annotated_as_an_IsisEntityListener()</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>ensure JPA enum fields are persisted as strings:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>every_enum_field_of_jpa_Entity_must_be_annotated_with_Enumerable_STRING()</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>ensure entities can be used in <code>SortedSet</code> parented collections (so render in a sensible manner):</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>every_jpa_Entity_must_implement_Comparable()</code></p>
+</li>
+<li>
+<p><code>every_jdo_PersistenceCapable_must_implement_Comparable()</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>ensure entities have a unique business key:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>every_jpa_Entity_must_be_annotated_as_Table_with_uniqueConstraints()</code></p>
+</li>
+<li>
+<p><code>every_jdo_PersistenceCapable_must_be_annotated_as_Uniques_or_Unique()</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>ensure JPA entity defines a surrogate key:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>every_jpa_Entity_must_have_an_id_field()</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>ensure if JDO entity has a surrogate key then its annotations are consistent:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>every_jdo_PersistenceCapable_with_DATASTORE_identityType_must_be_annotated_as_DataStoreIdentity()</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>enable injected fields in entities:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>every_injected_field_of_jpa_Entity_must_be_annotated_with_Transient()</code></p>
+</li>
+<li>
+<p><code>every_injected_field_of_jdo_PersistenceCapable_must_be_annotated_with_NotPersistent()</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>encourage entities be organised into schemas:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>every_jpa_Entity_must_be_annotated_as_Table_with_schema()</code></p>
+</li>
+<li>
+<p><code>every_jdo_PersistenceCapable_must_have_schema()</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>encourage optimistic locking:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>every_jpa_Entity_must_have_a_version_field()</code></p>
+</li>
+<li>
+<p><code>every_jdo_PersistenceCapable_must_be_annotated_with_Version()</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>encourage static factory methods for entities:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>every_jpa_Entity_must_have_protected_no_arg_constructor()</code></p>
+</li>
+<li>
+<p><code>every_jdo_PersistenceCapable_must_have_protected_no_arg_constructor()</code></p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>None of these rules take any arguments, so simply include (as a static field) those that you wish to enforce.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="module-rules"><a class="anchor" href="#module-rules"></a>Module Rules</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The module rules, residing in <code>ArchitectureModuleRules</code> class, are used to check the coarse-grained dependencies between modules <sup class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup>, to ensure proper layering.
+A further check checks at a more fine-grained level for the placement of classes into subpackages of those modules.</p>
+</div>
+<div class="sect2">
+<h3 id="code_dependencies_follow_module_imports"><a class="anchor" href="#code_dependencies_follow_module_imports"></a>code_dependencies_follow_module_Imports</h3>
+<div class="paragraph">
+<p>The <code>@Import</code> statements between modules form an acyclic dependency graph.
+If there is a cycle between those modules, then Spring itself will fail to boot.</p>
+</div>
+<div class="paragraph">
+<p>This architecture check doesn&#8217;t check the the modules' graph itself, but rather ensures that the dependencies between classes that live within each module honour the direction of the module graph.</p>
+</div>
+<div class="paragraph">
+<p>For example, if the <code>OrderModule</code> depends on (<code>@Import</code>s) the <code>CustomerModule</code>, then we allow for the <code>Order</code> entity to reference the <code>Customer</code> entity.
+However, we do not allow the opposite reference.</p>
+</div>
+<div class="paragraph">
+<p>To run the test, use:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@ArchTest
+public static ArchRule code_dependencies_follow_module_Imports =
+    code_dependencies_follow_module_Imports(                        <i class="conum" data-value="1"></i><b>(1)</b>
+        analyzeClasses_packagesOf(Architecture_Test.class));        <i class="conum" data-value="2"></i><b>(2)</b>
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
 <table>
 <tr>
-<td class="icon">
-<i class="fa icon-caution" title="Caution"></i>
-</td>
-<td class="content">
-TODO - to flesh out
-</td>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>architecture test itself, imported from <code>ArchitectureModuleRules</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>utility that passes in for all analysis all of the module classes that are annotated on <code>Architecture_Test</code>.</td>
 </tr>
 </table>
 </div>
+<div class="sect3">
+<h4 id="aside"><a class="anchor" href="#aside"></a>Aside</h4>
 <div class="paragraph">
-<p>Defines the rules for which subpackages or a module to check and whether the classes in those subpackages can access the classes in other subpackages either for the same module, or for modules that are referenced (`Import`ed) directly or transitively.</p>
+<p>You might well ask: if deleting a customer requires deleting its orders, then how is this done if a customer does not "know" abouts its related orders?</p>
+</div>
+<div class="paragraph">
+<p>There are two main options:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>use a mixin.
+Provide a <code>Customer_delete</code> action, but place it in the <code>OrderModule</code>.
+That way the mixin code has access to delete the associated <code>Order</code>s</p>
+<div class="paragraph">
+<p>However, this trick won&#8217;t work if there are multiple referencing modules to customer, all of which need to do their work but none of which know about the other.
+For example, if there is also an <code>AddressModule</code> that maintains the customer&#8217;s address, and neither <code>OrderModule</code> nor <code>AddressModule</code> know about the other, then there is no one place to put the mixin that has knowledge of all of the related "stuff" of customer to be dealt with.</p>
+</div>
+</li>
+<li>
+<p>use a domain event.</p>
+<div class="paragraph">
+<p>Here we keep the <code>Customer_delete</code> mixin in the <code>CustomerModule</code> (indeed, it could even be a regular action) and instead it emits a domain event:</p>
+</div>
+<div class="listingblock">
+<div class="title">Customer_delete.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Action(domainEvent = Customer_delete.ActionEvent.class)
+@RequiredArgsConstructor
+public class Customer_delete {
+    public static class ActionEvent                     <i class="conum" data-value="1"></i><b>(1)</b>
+        extends ActionDomainEvent&lt;Customer_delete&gt;{}
+    private final Customer customer;
+    public void act() {
+        customerRepo.delete(customer);
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>event to be fired.</td>
+</tr>
+</table>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="module-package-tests"><a class="anchor" href="#module-package-tests"></a>Module Package Tests</h3>
+<div class="paragraph">
+<p>The module package tests builds upon the module layering tests and <em>also</em> checks that that each class is in the appropriate subpackage within each module, and that those subpackages access only the allowed subpackages of its own module or of other modules.
+Different sets of subpackages can be defined for both the "local" (same) module and "foreign" (referencing) modules.</p>
+</div>
+<div class="paragraph">
+<p>Because different teams will undoubtedly have different standards, the exact rules for subpackages are pluggable, with the <code>Subpackage</code> interface defining the information that the architecture test requires:</p>
 </div>
 <div class="listingblock">
 <div class="title">Subpackage</div>
@@ -521,6 +962,10 @@ TODO - to flesh out
     String getName();                                               <i class="conum" data-value="1"></i><b>(1)</b>
     List&lt;String&gt; mayBeAccessedBySubpackagesInSameModule();          <i class="conum" data-value="2"></i><b>(2)</b>
     List&lt;String&gt; mayBeAccessedBySubpackagesInReferencingModules();  <i class="conum" data-value="3"></i><b>(3)</b>
+
+    default String packageIdentifier() {                            <i class="conum" data-value="4"></i><b>(4)</b>
+        return "." + getName() + "..";
+    }
 }</code></pre>
 </div>
 </div>
@@ -528,87 +973,148 @@ TODO - to flesh out
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The name of the subpackage, for example &quot;dom&quot;, &quot;api&amp;quot, &quot;spi&quot; or &quot;fixtures&quot;.</td>
+<td>The name of the subpackage, for example "dom", "api", "spi" or "fixtures".</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
 <td>A list of the (names of the) subpackages where classes in the same module as this package have access.
 <div class="paragraph">
-<p>For example, the &quot;dom&quot; subpackage can probably be referenced from the &quot;menu&quot; subpackage, but not vice versa.</p>
+<p>For example, the "dom" subpackage can probably be referenced from the "menu" subpackage, but not vice versa.</p>
 </div>
 <div class="paragraph">
-<p>The special value of &quot;*&quot; is a wildcard meaning that all subpackages (in the same module) can access.</p>
+<p>The special value of "*" is a wildcard meaning that all subpackages (in the same module) can access.</p>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
 <td>A list of the (names of the) subpackages where classes in the packages of other referencing modules may have access.
 <div class="paragraph">
-<p>For example, in some cases the the &quot;dom&quot; subpackage may &lt;i&gt;not&lt;/i&gt; be accessible from other modules if the intention is to require all programmatic access through an &quot;api&quot; subpackage (where the classes in <code>dom</code> implement interfaces defined in <code>api</code>).</p>
+<p>For example, in some cases the the "dom" subpackage may &lt;i&gt;not&lt;/i&gt; be accessible from other modules if the intention is to require all programmatic access through an "api" subpackage (where the classes in <code>dom</code> implement interfaces defined in <code>api</code>).</p>
 </div>
 <div class="paragraph">
-<p>The special value of &quot;*&quot; is a wildcard meaning that all subpackages (in other modules) can access.</p>
+<p>The special value of "*" is a wildcard meaning that all subpackages (in other modules) can access.</p>
 </div></td>
 </tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>allows a subpackage to more precisely control the classes that it includes.
+Useful if want to declare a subpackage representing that of the module&#8217;s own package (where the <code>XxxModule</code> class resides).</td>
+</tr>
 </table>
 </div>
 <div class="paragraph">
-<p>The <code>SubpackageEnum</code> provides an off the shelf implementation.</p>
+<p>The <code>SubpackageEnum</code> provides an off the shelf implementation; you will probably want to copy this and adjust as necessary.</p>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="entity-tests"><a class="anchor" href="#entity-tests"></a>Entity Tests</h2>
-<div class="sectionbody">
 <div class="paragraph">
-<p>These are provided for both JPA and JDO.</p>
+<p>To run the test, use:</p>
 </div>
-<div class="admonitionblock caution">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@ArchTest
+public static ArchRule code_deps_follow_module_Imports_and_subpackage_rules =
+      code_dependencies_follow_module_Imports_and_subpackage_rules(     <i class="conum" data-value="1"></i><b>(1)</b>
+          analyzeClasses_packagesOf(ModulesArchTests.class),            <i class="conum" data-value="2"></i><b>(2)</b>
+          asList(SimplifiedSubpackageEnum.values()));                   <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
 <table>
 <tr>
-<td class="icon">
-<i class="fa icon-caution" title="Caution"></i>
-</td>
-<td class="content">
-TODO - to flesh out
-</td>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>architecture test itself, imported from <code>ArchitectureModuleRules</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>utility that passes in for all analysis all of the module classes that are annotated on <code>Architecture_Test</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>list of the <code>Subpackage</code>s whose relationships are to be checked</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>where for example <code>Subpackage</code> is implemented using with:</p>
+</div>
+<div class="listingblock">
+<div class="title">SimplifiedSubpackageEnum.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@RequiredArgsConstructor
+public enum SimplifiedSubpackageEnum implements Subpackage {
+
+    dom(
+            singletonList("*"),         <i class="conum" data-value="1"></i><b>(1)</b>
+            emptyList()                 <i class="conum" data-value="2"></i><b>(2)</b>
+    ),
+    api(
+            singletonList("*"),         <i class="conum" data-value="1"></i><b>(1)</b>
+            singletonList("*")          <i class="conum" data-value="3"></i><b>(3)</b>
+    ),
+    spi(
+            singletonList("dom"),       <i class="conum" data-value="4"></i><b>(4)</b>
+            singletonList("spiimpl")    <i class="conum" data-value="5"></i><b>(5)</b>
+    ),
+    spiimpl(
+            emptyList(),                <i class="conum" data-value="6"></i><b>(6)</b>
+            emptyList()                 <i class="conum" data-value="2"></i><b>(2)</b>
+    ),
+    ;
+
+    final List&lt;String&gt; local;
+    final List&lt;String&gt; referencing;
+
+    @Override
+    public String getName() { return name(); }
+
+    @Override
+    public List&lt;String&gt; mayBeAccessedBySubpackagesInSameModule() {
+        return local;
+    }
+    @Override
+    public List&lt;String&gt; mayBeAccessedBySubpackagesInReferencingModules() {
+        return referencing;
+    }
+    private static String[] asArray(List&lt;String&gt; list) {
+        return list != null ? list.toArray(new String[] {}) : null;
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>wildcard means that all subpackages in this module can access this module</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>no direct access from other modules</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>wildcard means that all subpackages in other modules can access this module</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>callers of a module&#8217;s own SPI</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>other modules should only implement the SPI</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>no direct access from <em>this</em> module</td>
 </tr>
 </table>
 </div>
 </div>
 </div>
-<div class="sect1">
-<h2 id="domainobjecttests"><a class="anchor" href="#domainobjecttests"></a>DomainObjectTests</h2>
-<div class="sectionbody">
-<div class="admonitionblock caution">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-caution" title="Caution"></i>
-</td>
-<td class="content">
-TODO - to flesh out
-</td>
-</tr>
-</table>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="domainservicetests"><a class="anchor" href="#domainservicetests"></a>DomainServiceTests</h2>
-<div class="sectionbody">
-<div class="admonitionblock caution">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-caution" title="Caution"></i>
-</td>
-<td class="content">
-TODO - to flesh out
-</td>
-</tr>
-</table>
-</div>
+<div id="footnotes">
+<hr>
+<div class="footnote" id="_footnotedef_1">
+<a href="#_footnoteref_1">1</a>. By "module" we mean a classes annotated with <code>@Configuration</code>
 </div>
 </div>
 </article>
@@ -628,7 +1134,7 @@ TODO - to flesh out
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M5.20210723-1002-1cadd2a3</p>
+            <p>Revision: 2.0.0-M5.20210723-1850-192d9360</p>
         </div>
     </div>
 </footer>
