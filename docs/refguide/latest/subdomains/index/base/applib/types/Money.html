@@ -896,7 +896,7 @@ page.parent doesn't seem to be set...
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>Meta-annotation for a <em>java.math.BigDecimal</em> property or parameter representing a monetary amount.</p>
+<p>Meta-annotation for an optional <em>java.math.BigDecimal</em> property or parameter representing a monetary amount.</p>
 </div>
 </div>
 </div>
@@ -907,7 +907,21 @@ page.parent doesn't seem to be set...
 <div class="title">Money.java</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@interface Money {
-  int SCALE;
+  String NAMED;
+  int INTEGER;
+  int FRACTION;
+  @AliasFor(annotation = Property.class, attribute = "optionality")
+Optionality propertyOptionality() default Optionality.OPTIONAL;
+  @AliasFor(annotation = Parameter.class, attribute = "optionality")
+Optionality parameterOptionality() default Optionality.OPTIONAL;
+  @AliasFor(annotation = PropertyLayout.class, attribute = "named")
+String propertyLayoutNamed() default NAMED;
+  @AliasFor(annotation = ParameterLayout.class, attribute = "named")
+String parameterLayoutNamed() default NAMED;
+  @AliasFor(annotation = javax.validation.constraints.Digits.class, attribute = "integer")
+int digitsInteger() default Money.INTEGER;
+  @AliasFor(annotation = javax.validation.constraints.Digits.class, attribute = "fraction")
+int digitsFraction() default Money.FRACTION;
 }</code></pre>
 </div>
 </div>
@@ -930,7 +944,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M5.20210723-0227-36ccf8ff</p>
+            <p>Revision: 2.0.0-M5.20210723-0802-1b8d43d9</p>
         </div>
     </div>
 </footer>

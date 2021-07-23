@@ -896,7 +896,7 @@ page.parent doesn't seem to be set...
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>Meta-annotation for a <em>String</em> property or parameter representing a description of some sort.</p>
+<p>Meta-annotation for an optional <em>String</em> property or parameter representing a description of some sort.</p>
 </div>
 </div>
 </div>
@@ -907,8 +907,25 @@ page.parent doesn't seem to be set...
 <div class="title">Description.java</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@interface Description {
-  int MAX_LEN;
+  int MAX_LENGTH;
+  String NAMED;
   int MULTI_LINE;
+  @AliasFor(annotation = Property.class, attribute = "maxLength")
+int propertyMaxLength() default MAX_LENGTH;
+  @AliasFor(annotation = Parameter.class, attribute = "maxLength")
+int parameterMaxLength() default MAX_LENGTH;
+  @AliasFor(annotation = Property.class, attribute = "optionality")
+Optionality propertyOptionality() default Optionality.OPTIONAL;
+  @AliasFor(annotation = Parameter.class, attribute = "optionality")
+Optionality parameterOptionality() default Optionality.OPTIONAL;
+  @AliasFor(annotation = PropertyLayout.class, attribute = "named")
+String propertyLayoutNamed() default NAMED;
+  @AliasFor(annotation = ParameterLayout.class, attribute = "named")
+String parameterLayoutNamed() default NAMED;
+  @AliasFor(annotation = PropertyLayout.class, attribute = "multiLine")
+int propertyLayoutMultiLine() default MULTI_LINE;
+  @AliasFor(annotation = ParameterLayout.class, attribute = "multiLine")
+int parameterLayoutMultiLine() default MULTI_LINE;
 }</code></pre>
 </div>
 </div>
@@ -931,7 +948,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M5.20210723-0227-36ccf8ff</p>
+            <p>Revision: 2.0.0-M5.20210723-0802-1b8d43d9</p>
         </div>
     </div>
 </footer>

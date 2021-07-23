@@ -896,7 +896,7 @@ page.parent doesn't seem to be set...
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>Meta-annotation for a <em>String</em> property or parameter representing A unique reference code of some sort.</p>
+<p>Meta-annotation for a mandatory <em>String</em> property or parameter representing A unique reference code of some sort, restricted to capitals, numbers and '_', '/' and '-'.</p>
 </div>
 </div>
 </div>
@@ -907,9 +907,30 @@ page.parent doesn't seem to be set...
 <div class="title">Reference.java</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@interface Reference {
-  int MAX_LEN;
-  String REGEX;
-  String REGEX_DESCRIPTION;
+  int MAX_LENGTH;
+  String REGEX_PATTERN;
+  String REGEX_PATTERN_REPLACEMENT;
+  String NAMED;
+  @AliasFor(annotation = Property.class, attribute = "maxLength")
+int propertyMaxLength() default MAX_LENGTH;
+  @AliasFor(annotation = Parameter.class, attribute = "maxLength")
+int parameterMaxLength() default MAX_LENGTH;
+  @AliasFor(annotation = Property.class, attribute = "optionality")
+Optionality propertyOptionality() default Optionality.OPTIONAL;
+  @AliasFor(annotation = Parameter.class, attribute = "optionality")
+Optionality parameterOptionality() default Optionality.OPTIONAL;
+  @AliasFor(annotation = Property.class, attribute = "regexPattern")
+String propertyRegexPattern() default REGEX_PATTERN;
+  @AliasFor(annotation = Parameter.class, attribute = "regexPattern")
+String parameterRegexPattern() default REGEX_PATTERN;
+  @AliasFor(annotation = Property.class, attribute = "regexPatternReplacement")
+String propertyRegexPatternReplacement() default REGEX_PATTERN_REPLACEMENT;
+  @AliasFor(annotation = Parameter.class, attribute = "regexPatternReplacement")
+String parameterRegexPatternReplacement() default REGEX_PATTERN_REPLACEMENT;
+  @AliasFor(annotation = PropertyLayout.class, attribute = "named")
+String propertyLayoutNamed() default NAMED;
+  @AliasFor(annotation = ParameterLayout.class, attribute = "named")
+String parameterLayoutNamed() default NAMED;
 }</code></pre>
 </div>
 </div>
@@ -932,7 +953,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M5.20210723-0227-36ccf8ff</p>
+            <p>Revision: 2.0.0-M5.20210723-0802-1b8d43d9</p>
         </div>
     </div>
 </footer>
