@@ -593,7 +593,10 @@ Also remember to change the <code>&lt;scope&gt;test&lt;/scope&gt;</code> to <cod
 <div class="ulist">
 <ul>
 <li>
-<p>logical type name:</p>
+<p>logical type name (strongly recommended)</p>
+<div class="paragraph">
+<p>This ensures that persisted/serialized bookmarks of domain objects are stable even if the domain class' physical canonical name changes over time due to refactoring etc.:</p>
+</div>
 <div class="ulist">
 <ul>
 <li>
@@ -606,20 +609,39 @@ Also remember to change the <code>&lt;scope&gt;test&lt;/scope&gt;</code> to <cod
 </div>
 </li>
 <li>
-<p>layout annotations:</p>
+<p>allow injected fields in view models (strongly recommended)</p>
+<div class="paragraph">
+<p>Ensures that view models safely ignore injected services.</p>
+</div>
 <div class="ulist">
 <ul>
 <li>
-<p><code>every_DomainObject_must_also_be_annotated_with_DomainObjectLayout()</code></p>
+<p><code>every_injected_field_of_jaxb_view_model_must_be_annotated_with_XmlTransient()</code></p>
 </li>
 <li>
-<p><code>every_DomainService_must_also_be_annotated_with_DomainServiceLayout()</code></p>
+<p><code>every_injected_field_of_serializable_view_model_must_be_transient()</code></p>
 </li>
 </ul>
 </div>
 </li>
 <li>
-<p>mixin naming and coding conventions</p>
+<p>consistency with repository finders (recommended)</p>
+<div class="paragraph">
+<p>Requires that the caller of a repository finder handle the case that there may be no such object in the database:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>every_finder_method_in_Repository_must_return_either_Collection_or_Optional()</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>mixin naming and coding conventions (recommended)</p>
+<div class="paragraph">
+<p>For teams that rely on the <code>Mixee_memberName</code> convention to find mixins of domain objects:</p>
+</div>
 <div class="ulist">
 <ul>
 <li>
@@ -635,7 +657,26 @@ Also remember to change the <code>&lt;scope&gt;test&lt;/scope&gt;</code> to <cod
 </div>
 </li>
 <li>
-<p>repository class naming/annotation conventions</p>
+<p>layout annotations (optional)</p>
+<div class="paragraph">
+<p>For teams that prefer to use annotations instead of layout files:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>every_DomainObject_must_also_be_annotated_with_DomainObjectLayout()</code></p>
+</li>
+<li>
+<p><code>every_DomainService_must_also_be_annotated_with_DomainServiceLayout()</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>repository class naming/annotation conventions (optional)</p>
+<div class="paragraph">
+<p>For teams that prefer that repositories are easily identifiable by their name <code>XxxRepository</code>, (and are annotated accordingly):</p>
+</div>
 <div class="ulist">
 <ul>
 <li>
@@ -648,7 +689,10 @@ Also remember to change the <code>&lt;scope&gt;test&lt;/scope&gt;</code> to <cod
 </div>
 </li>
 <li>
-<p>controller class naming/annotation conventions</p>
+<p>controller class naming/annotation conventions (optional)</p>
+<div class="paragraph">
+<p>For teams that prefer that custom controllers are easily identifiable by their name <code>XxxController</code>, (and are annotated accordingly):</p>
+</div>
 <div class="ulist">
 <ul>
 <li>
@@ -656,29 +700,6 @@ Also remember to change the <code>&lt;scope&gt;test&lt;/scope&gt;</code> to <cod
 </li>
 <li>
 <p><code>every_class_named_Controller_must_be_annotated_correctly()</code></p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p>allow injected fields in view models:</p>
-<div class="ulist">
-<ul>
-<li>
-<p><code>every_injected_field_of_jaxb_view_model_must_be_annotated_with_XmlTransient()</code></p>
-</li>
-<li>
-<p><code>every_injected_field_of_serializable_view_model_must_be_transient()</code></p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p>consistency with repository finders:</p>
-<div class="ulist">
-<ul>
-<li>
-<p><code>every_finder_method_in_Repository_must_return_either_Collection_or_Optional()</code></p>
 </li>
 </ul>
 </div>
@@ -699,20 +720,23 @@ Also remember to change the <code>&lt;scope&gt;test&lt;/scope&gt;</code> to <cod
 <div class="ulist">
 <ul>
 <li>
-<p>ensure conformance of persistence vs Isis annotations:</p>
+<p>ensure JPA entities can support auditing and dependency injection (strongly recommended):</p>
+<div class="paragraph">
+<p>Required in almost all cases:</p>
+</div>
 <div class="ulist">
 <ul>
 <li>
-<p><code>every_jpa_Entity_must_be_annotated_with_DomainObject_nature_of_ENTITY()</code></p>
-</li>
-<li>
-<p><code>every_jdo_PersistenceCapable_must_be_annotated_with_DomainObject_nature_of_ENTITY</code></p>
+<p><code>every_jpa_Entity_must_be_annotated_as_an_IsisEntityListener()</code></p>
 </li>
 </ul>
 </div>
 </li>
 <li>
-<p>ensure entities can be referenced in JAXB view models:</p>
+<p>ensure entities can be referenced in JAXB view models (strongly recommended)</p>
+<div class="paragraph">
+<p>Required to allow JAXB view models to transparently reference entities:</p>
+</div>
 <div class="ulist">
 <ul>
 <li>
@@ -725,53 +749,10 @@ Also remember to change the <code>&lt;scope&gt;test&lt;/scope&gt;</code> to <cod
 </div>
 </li>
 <li>
-<p>ensure JPA entities can support auditing and dependency injection:</p>
-<div class="ulist">
-<ul>
-<li>
-<p><code>every_jpa_Entity_must_be_annotated_as_an_IsisEntityListener()</code></p>
-</li>
-</ul>
+<p>ensure JPA entity defines a surrogate key (strongly recommended):</p>
+<div class="paragraph">
+<p>Enforces a very common convention for JPA entities:</p>
 </div>
-</li>
-<li>
-<p>ensure JPA enum fields are persisted as strings:</p>
-<div class="ulist">
-<ul>
-<li>
-<p><code>every_enum_field_of_jpa_Entity_must_be_annotated_with_Enumerable_STRING()</code></p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p>ensure entities can be used in <code>SortedSet</code> parented collections (so render in a sensible manner):</p>
-<div class="ulist">
-<ul>
-<li>
-<p><code>every_jpa_Entity_must_implement_Comparable()</code></p>
-</li>
-<li>
-<p><code>every_jdo_PersistenceCapable_must_implement_Comparable()</code></p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p>ensure entities have a unique business key:</p>
-<div class="ulist">
-<ul>
-<li>
-<p><code>every_jpa_Entity_must_be_annotated_as_Table_with_uniqueConstraints()</code></p>
-</li>
-<li>
-<p><code>every_jdo_PersistenceCapable_must_be_annotated_as_Uniques_or_Unique()</code></p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p>ensure JPA entity defines a surrogate key:</p>
 <div class="ulist">
 <ul>
 <li>
@@ -781,30 +762,10 @@ Also remember to change the <code>&lt;scope&gt;test&lt;/scope&gt;</code> to <cod
 </div>
 </li>
 <li>
-<p>ensure if JDO entity has a surrogate key then its annotations are consistent:</p>
-<div class="ulist">
-<ul>
-<li>
-<p><code>every_jdo_PersistenceCapable_with_DATASTORE_identityType_must_be_annotated_as_DataStoreIdentity()</code></p>
-</li>
-</ul>
+<p>encourage entities be organised into schemas (recommended):</p>
+<div class="paragraph">
+<p>for teams adopting a "(micro) service-oriented" mindset:</p>
 </div>
-</li>
-<li>
-<p>enable injected fields in entities:</p>
-<div class="ulist">
-<ul>
-<li>
-<p><code>every_injected_field_of_jpa_Entity_must_be_annotated_with_Transient()</code></p>
-</li>
-<li>
-<p><code>every_injected_field_of_jdo_PersistenceCapable_must_be_annotated_with_NotPersistent()</code></p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p>encourage entities be organised into schemas:</p>
 <div class="ulist">
 <ul>
 <li>
@@ -817,7 +778,100 @@ Also remember to change the <code>&lt;scope&gt;test&lt;/scope&gt;</code> to <cod
 </div>
 </li>
 <li>
-<p>encourage optimistic locking:</p>
+<p>ensure JPA enum fields are persisted as strings (recommended):</p>
+<div class="paragraph">
+<p>For teams that prefer to query the database with enum values persisted as strings rather than as ordinal numbers:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>every_enum_field_of_jpa_Entity_must_be_annotated_with_Enumerable_STRING()</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>ensure entities can be used in <code>SortedSet</code> parented collections (recommended):</p>
+<div class="paragraph">
+<p>For teams that like to use <code>SortedSet</code> for parented collections, and rely on the entity to render itself in a "sensible" order:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>every_jpa_Entity_must_implement_Comparable()</code></p>
+</li>
+<li>
+<p><code>every_jdo_PersistenceCapable_must_implement_Comparable()</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>ensure entities have a unique business key (recommended):</p>
+<div class="paragraph">
+<p>For teams that insist on business keys in addition to surrogate keys</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>every_jpa_Entity_must_be_annotated_as_Table_with_uniqueConstraints()</code></p>
+</li>
+<li>
+<p><code>every_jdo_PersistenceCapable_must_be_annotated_as_Uniques_or_Unique()</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>ensure conformance of persistence vs Isis annotations (optional)</p>
+<div class="paragraph">
+<p>For teams that like to emphasise entities vs view models:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>every_jpa_Entity_must_be_annotated_with_DomainObject_nature_of_ENTITY()</code></p>
+</li>
+<li>
+<p><code>every_jdo_PersistenceCapable_must_be_annotated_with_DomainObject_nature_of_ENTITY</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>ensure if JDO entity has a surrogate key then its annotations are consistent (optional):</p>
+<div class="paragraph">
+<p>For teams that like to be explicit about the use of surrogate keys:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>every_jdo_PersistenceCapable_with_DATASTORE_identityType_must_be_annotated_as_DataStoreIdentity()</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>enable injected fields in entities (optional):</p>
+<div class="paragraph">
+<p>For teams that use type-safe queries (and want to ensure that services do not appear superfluously as fields in the "QXxx" classes):</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>every_injected_field_of_jpa_Entity_must_be_annotated_with_Transient()</code></p>
+</li>
+<li>
+<p><code>every_injected_field_of_jdo_PersistenceCapable_must_be_annotated_with_NotPersistent()</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>encourage optimistic locking (optional):</p>
+<div class="paragraph">
+<p>For teams that prefer optimistic locking as a standard everywhere:</p>
+</div>
 <div class="ulist">
 <ul>
 <li>
@@ -830,7 +884,10 @@ Also remember to change the <code>&lt;scope&gt;test&lt;/scope&gt;</code> to <cod
 </div>
 </li>
 <li>
-<p>encourage static factory methods for entities:</p>
+<p>encourage static factory methods for entities (optional):</p>
+<div class="paragraph">
+<p>For teams that prefer the use of factory methods to vanilla constructors:</p>
+</div>
 <div class="ulist">
 <ul>
 <li>
@@ -1131,7 +1188,7 @@ public enum SimplifiedSubpackageEnum implements Subpackage {
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M5.20210726-1246-449f3463</p>
+            <p>Revision: 2.0.0-M5.20210727-0228-1003d179</p>
         </div>
     </div>
 </footer>
