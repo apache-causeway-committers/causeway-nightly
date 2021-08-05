@@ -63,35 +63,32 @@
           </div>
         </div>
         <div class="navbar-item has-dropdown is-hoverable">
-          <a class="navbar-link" href="#">Libraries</a>
-          <div class="navbar-dropdown">
-            <span class="navbar-item navbar-heading">For Use in Apps</span>
-            <a class="navbar-item" href="../../../../../../../../subdomains/2.0.0-M6/about.html">Subdomain Libraries</a>
-            <a class="navbar-item" href="../../../../../../../../valuetypes/2.0.0-M6/about.html">Value Types</a>
-            <hr class="navbar-divider"/>
-            <span class="navbar-item navbar-heading">Integrate between Apps</span>
-            <a class="navbar-item" href="../../../../../../../../mappings/2.0.0-M6/about.html">Bounded Context Mapping Libraries</a>
-            <hr class="navbar-divider"/>
-            <span class="navbar-item navbar-heading">Other</span>
-            <a class="navbar-item" href="../../../../../../../../incubator/2.0.0-M6/about.html">Incubator</a>
-            <a class="navbar-item" href="../../../../../../../../legacy/2.0.0-M6/about.html">Legacy</a>
-          </div>
-        </div>
-        <div class="navbar-item has-dropdown is-hoverable">
           <a class="navbar-link" href="#">Components</a>
           <div class="navbar-dropdown">
             <span class="navbar-item navbar-heading">Viewers</span>
             <a class="navbar-item" href="../../../../../../../../vw/2.0.0-M6/about.html">Web UI (Wicket)</a>
             <a class="navbar-item" href="../../../../../../../../vro/2.0.0-M6/about.html">REST API (Restful Objects)</a>
             <hr class="navbar-divider"/>
-            <span class="navbar-item navbar-heading">Security</span>
-            <a class="navbar-item" href="../../../../../../../../security/2.0.0-M6/about.html">Security Guide</a>
-            <hr class="navbar-divider"/>
             <span class="navbar-item navbar-heading">Persistence</span>
             <a class="navbar-item" href="../../../../../../../../pjpa/2.0.0-M6/about.html">JPA (EclipseLink)</a>
             <a class="navbar-item" href="../../../../../../../../pjdo/2.0.0-M6/about.html">JDO (DataNucleus)</a>
             <hr class="navbar-divider"/>
-            <span class="navbar-item navbar-heading">Extensions</span>
+            <span class="navbar-item navbar-heading">Security</span>
+            <a class="navbar-item" href="../../../../../../../../security/2.0.0-M6/about.html">Security Guide</a>
+            <hr class="navbar-divider"/>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Libraries</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">For Use in Apps</span>
+            <a class="navbar-item" href="../../../../../../../../subdomains/2.0.0-M6/about.html">Subdomain Libraries</a>
+            <a class="navbar-item" href="../../../../../../../../valuetypes/2.0.0-M6/about.html">Value Type Catalog</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Integrate between Apps</span>
+            <a class="navbar-item" href="../../../../../../../../mappings/2.0.0-M6/about.html">Bounded Context Mapping Libraries</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Extending the framework itself</span>
             <a class="navbar-item" href="../../../../../../../../extensions/2.0.0-M6/about.html">Extensions Catalog</a>
           </div>
         </div>
@@ -647,6 +644,9 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../../../../../../config/sections/isis.security.shiro.html">Shiro Security Implementation</a>
   </li>
   <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../../../../../config/sections/isis.security.keycloak.html">Keycloak Security Implementation</a>
+  </li>
+  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../../../../../../config/sections/isis.security.spring.html">Spring Security Implementation</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -893,6 +893,16 @@ page.parent doesn't seem to be set...
 <article class="doc">
     <a name="section-top"></a>
 <h1 class="page">PojoTester</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Exercises the getters and setters of the provided pojo, ensuring that there are no side-effects.</p>
+</div>
+<div class="paragraph">
+<p>As getters and setters are so simple, the intention of automating their testing is not to discover defects (though if there are unintentional side-effects, then these will be found). Instead, the rationale of testing getters and setters is to increase code coverage. Any substantial gap away from 100% would therefore due to significant functionality not having tests (as opposed to merely getters and setters not being tested).</p>
+</div>
+</div>
+</div>
 <div class="sect1">
 <h2 id="api"><a class="anchor" href="#api"></a>API</h2>
 <div class="sectionbody">
@@ -900,13 +910,135 @@ page.parent doesn't seem to be set...
 <div class="title">PojoTester.java</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">class PojoTester {
-  PojoTester create()
-  AtomicInteger getCounter()
-  PojoTester usingData(Class&lt;T&gt; c, final T... data)
-  PojoTester usingData(DatumFactory&lt;T&gt; factory)
-  void exercise(Object bean)
-  void exercise(Object bean, FilterSet filterSet)
+  PojoTester create()     <i class="conum" data-value="1"></i><b>(1)</b>
+  PojoTester usingData(DatumFactory&lt;T&gt; factory)     <i class="conum" data-value="2"></i><b>(2)</b>
+  PojoTester usingData(final Class&lt;?&gt; type, DatumFactory&lt;T&gt; factory)
+  PojoTester usingData(Class&lt;T&gt; c, final T... data)     <i class="conum" data-value="3"></i><b>(3)</b>
+  PojoTester usingData(Class&lt;T&gt; c, final List&lt;T&gt; data)
+  PojoTester usingData(Class&lt;T&gt; compileTimeType, Class&lt;? extends T&gt; runtimeType)     <i class="conum" data-value="4"></i><b>(4)</b>
+  void exercise(Object bean)     <i class="conum" data-value="5"></i><b>(5)</b>
+  void exercise(Object bean, FilterSet filterSet)     <i class="conum" data-value="6"></i><b>(6)</b>
 }</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><a href="#create__">create()</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Factory method for the tester itself.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><a href="#usingData__DatumFactory">usingData(DatumFactory)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Provides a <em>DatumFactory</em> to the <a href="PojoTester.html" class="page">PojoTester</a> in order to exercise any getter/setters of this type.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><a href="#usingData__Class_T">usingData(Class, T)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Convenience overload to provide a <em>DatumFactory</em> to the <a href="PojoTester.html" class="page">PojoTester</a> , specifying both the type and a number of instances of that type.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><a href="#usingData__Class_Class">usingData(Class, Class)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Convenience overload to provide a <em>DatumFactory</em> to the <a href="PojoTester.html" class="page">PojoTester</a> for the specified compile time type, with the runtime type providing a no-arg constructor so that instances can be generated as required.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><a href="#exercise__Object">exercise(Object)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Exercises all of the getters and setters of the provided bean, using the built-in <em>DatumFactory</em> and any additional configured through previous calls to <em>#usingData(Class, Object[])</em> (or its overloads).</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td><a href="#exercise__Object_FilterSet">exercise(Object, FilterSet)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>As for <em>#exercise(Object)</em> , however only exercising the properties as defined by the provided <em>FilterSet</em> , and omitting any others.</p>
+</div>
+</div>
+</div></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="members"><a class="anchor" href="#members"></a>Members</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="create__"><a class="anchor" href="#create__"></a>create()</h3>
+<div class="paragraph">
+<p>Factory method for the tester itself.</p>
+</div>
+<div class="paragraph">
+<p>This method is usually followed by several calls to <em>#usingData(DatumFactory)</em> or <em>#usingData(Class, Object[])</em> (for all data types that are not built-in), and finally by <em>#exercise(Object)</em> (or one of its overloads) which actually exercises the provided pojo.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="usingData__DatumFactory"><a class="anchor" href="#usingData__DatumFactory"></a>usingData(DatumFactory)</h3>
+<div class="paragraph">
+<p>Provides a <em>DatumFactory</em> to the <a href="PojoTester.html" class="page">PojoTester</a> in order to exercise any getter/setters of this type.</p>
+</div>
+<div class="paragraph">
+<p>The <a href="PojoTester.html" class="page">PojoTester</a> already knows how to exercise primitives, strings, enums and a number of other built-ins, so this is typically only necessary for custom value types.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="usingData__Class_T"><a class="anchor" href="#usingData__Class_T"></a>usingData(Class, T)</h3>
+<div class="paragraph">
+<p>Convenience overload to provide a <em>DatumFactory</em> to the <a href="PojoTester.html" class="page">PojoTester</a> , specifying both the type and a number of instances of that type.</p>
+</div>
+<div class="paragraph">
+<p>There should be at least two and ideally three different data instances.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="usingData__Class_Class"><a class="anchor" href="#usingData__Class_Class"></a>usingData(Class, Class)</h3>
+<div class="paragraph">
+<p>Convenience overload to provide a <em>DatumFactory</em> to the <a href="PojoTester.html" class="page">PojoTester</a> for the specified compile time type, with the runtime type providing a no-arg constructor so that instances can be generated as required.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="exercise__Object"><a class="anchor" href="#exercise__Object"></a>exercise(Object)</h3>
+<div class="paragraph">
+<p>Exercises all of the getters and setters of the provided bean, using the built-in <em>DatumFactory</em> and any additional configured through previous calls to <em>#usingData(Class, Object[])</em> (or its overloads).</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="exercise__Object_FilterSet"><a class="anchor" href="#exercise__Object_FilterSet"></a>exercise(Object, FilterSet)</h3>
+<div class="paragraph">
+<p>As for <em>#exercise(Object)</em> , however only exercising the properties as defined by the provided <em>FilterSet</em> , and omitting any others.</p>
 </div>
 </div>
 </div>
@@ -928,7 +1060,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M5.20210805-0225-0918255e</p>
+            <p>Revision: 2.0.0-M5.20210805-1637-ae1e2f24</p>
         </div>
     </div>
 </footer>
