@@ -1036,6 +1036,71 @@ public void Customer {
 </div>
 </div>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class ToDoItem {
+    public static class DependenciesChangedEvent
+            extends CollectionDomainEvent&lt;ToDoItem, ToDoItem&gt; { } <i class="conum" data-value="1"></i><b>(1)</b>
+    @Collection(
+        domainEvent=DependenciesChangedEvent.class,
+        editing = Editing.ENABLED,
+        hidden = Where.NOWHERE,                                   <i class="conum" data-value="2"></i><b>(2)</b>
+        notPersisted = false,                                     <i class="conum" data-value="3"></i><b>(3)</b>
+        typeOf = ToDoItem.class                                   <i class="conum" data-value="4"></i><b>(4)</b>
+    )
+    public SortedSet&lt;ToDoItem&gt; getDependencies() { /* ... */ }
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>can use no-arg constructor.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>default value, so could be omitted</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>default value, so could be omitted</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>default value, so could be omitted</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The annotation is one of a handful (others including <a href="CollectionLayout.html" class="page">@CollectionLayout</a>, <a href="Property.html" class="page">@Property</a> and <a href="PropertyLayout.html" class="page">@PropertyLayout</a>) that can also be applied to the field, rather than the getter method.
+This is so that boilerplate-busting tools such as <a href="https://projectlombok.org/">Project Lombok</a> can be used.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="usage-notes"><a class="anchor" href="#usage-notes"></a>Usage Notes</h2>
+<div class="sectionbody">
 <div class="sect2">
 <h3 id="domain-events"><a class="anchor" href="#domain-events"></a>Domain events</h3>
 <div class="paragraph">
@@ -1287,71 +1352,6 @@ However, events can be raised programmatically either by calling the <a href="..
 </div>
 </div>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class ToDoItem {
-    public static class DependenciesChangedEvent
-            extends CollectionDomainEvent&lt;ToDoItem, ToDoItem&gt; { } <i class="conum" data-value="1"></i><b>(1)</b>
-    @Collection(
-        domainEvent=DependenciesChangedEvent.class,
-        editing = Editing.ENABLED,
-        hidden = Where.NOWHERE,                                   <i class="conum" data-value="2"></i><b>(2)</b>
-        notPersisted = false,                                     <i class="conum" data-value="3"></i><b>(3)</b>
-        typeOf = ToDoItem.class                                   <i class="conum" data-value="4"></i><b>(4)</b>
-    )
-    public SortedSet&lt;ToDoItem&gt; getDependencies() { /* ... */ }
-    ...
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>can use no-arg constructor.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>default value, so could be omitted</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>default value, so could be omitted</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>default value, so could be omitted</td>
-</tr>
-</table>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>The annotation is one of a handful (others including <a href="CollectionLayout.html" class="page">@CollectionLayout</a>, <a href="Property.html" class="page">@Property</a> and <a href="PropertyLayout.html" class="page">@PropertyLayout</a>) that can also be applied to the field, rather than the getter method.
-This is so that boilerplate-busting tools such as <a href="https://projectlombok.org/">Project Lombok</a> can be used.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="usage-notes"><a class="anchor" href="#usage-notes"></a>Usage Notes</h2>
-<div class="sectionbody">
 <div class="sect2">
 <h3 id="hiding-collections"><a class="anchor" href="#hiding-collections"></a>Hiding Collections</h3>
 <div class="paragraph">
@@ -1435,7 +1435,7 @@ public class Customer {
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M5.20210805-1637-ae1e2f24</p>
+            <p>Revision: 2.0.0-M5.20210806-1210-a70517ba</p>
         </div>
     </div>
 </footer>
