@@ -385,7 +385,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../../annotation/DomainServiceLayout.html">@DomainServiceLayout</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../../annotation/Facets.html">@Facets</a>
+    <a class="nav-link" href="#refguide:applib:index/annotation/Facets.adoc">@Facets</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../../annotation/HomePage.html">@HomePage</a>
@@ -916,10 +916,9 @@ page.parent doesn't seem to be set...
   T detachedEntity(T entity)     <i class="conum" data-value="4"></i><b>(4)</b>
   T mixin(Class&lt;T&gt; mixinClass, Object mixedIn)     <i class="conum" data-value="5"></i><b>(5)</b>
   T viewModel(Class&lt;T&gt; viewModelClass, String mementoStr)     <i class="conum" data-value="6"></i><b>(6)</b>
-  T viewModel(Class&lt;T&gt; viewModelClass)     <i class="conum" data-value="7"></i><b>(7)</b>
+  T viewModel(final Class&lt;T&gt; viewModelClass)     <i class="conum" data-value="7"></i><b>(7)</b>
   T viewModel(T viewModel)     <i class="conum" data-value="8"></i><b>(8)</b>
   T create(Class&lt;T&gt; domainClass)     <i class="conum" data-value="9"></i><b>(9)</b>
-  T instantiate(Class&lt;T&gt; domainClass)     <i class="conum" data-value="10"></i><b>(10)</b>
 }</code></pre>
 </div>
 </div>
@@ -1024,34 +1023,6 @@ page.parent doesn't seem to be set...
 </div>
 </div></td>
 </tr>
-<tr>
-<td><i class="conum" data-value="10"></i><b>10</b></td>
-<td><a href="#instantiate__Class">instantiate(Class)</a>
-<div class="openblock">
-<div class="content">
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p><span class="red"><em>deprecated:</em></span></p>
-</div>
-<div class="paragraph">
-<p>with semantic changes since 2.0 previous behavior is no longer guaranteed, instead consider use of @ <em>#detachedEntity(Class)</em> or <em>#getOrCreate(Class)</em> if applicable</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>Creates a new instance of the specified class, but does not persist it.</p>
-</div>
-</div>
-</div></td>
-</tr>
 </table>
 </div>
 </div>
@@ -1114,48 +1085,6 @@ page.parent doesn't seem to be set...
 <h3 id="create__Class"><a class="anchor" href="#create__Class"></a>create(Class)</h3>
 <div class="paragraph">
 <p>Creates a new instance of the specified class, with injection points resolved and defaults applied.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="instantiate__Class"><a class="anchor" href="#instantiate__Class"></a>instantiate(Class)</h3>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p><span class="red"><em>deprecated:</em></span></p>
-</div>
-<div class="paragraph">
-<p>with semantic changes since 2.0 previous behavior is no longer guaranteed, instead consider use of @ <em>#detachedEntity(Class)</em> or <em>#getOrCreate(Class)</em> if applicable</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>Creates a new instance of the specified class, but does not persist it.</p>
-</div>
-<div class="paragraph">
-<p>It is recommended that the object be initially instantiated using this method, though the framework will also handle the case when the object is simply <em>new()</em> ed up. The benefits of using <em>#instantiate(Class)</em> are:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>any services will be injected into the object immediately (otherwise they will not be injected until the framework becomes aware of the object, typically when it is <em>RepositoryService#persist(Object) persist</em> ed</p>
-</li>
-<li>
-<p>the default value for any properties (usually as specified by <code>default <em>Xxx</em> ()</code> supporting methods) will (since 2.0) be used</p>
-</li>
-<li>
-<p>the <code>created()</code> callback will not be called.</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>The corollary is: if your code never uses <code>default <em>Xxx</em> ()</code> supporting methods or the <code>created()</code> callback, then you can alternatively just <em>new()</em> up the object rather than call this method.</p>
 </div>
 </div>
 </div>
@@ -1238,7 +1167,7 @@ repositoryService.persist(cust);</code></pre>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M5.20210824-0222-ee21b6cc</p>
+            <p>Revision: 2.0.0-M5.20210825-0224-5c306f58</p>
         </div>
     </div>
 </footer>
