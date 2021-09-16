@@ -901,32 +901,6 @@ page.parent doesn't seem to be set...
 <div class="paragraph">
 <p>Indicates that the class has value semantics.</p>
 </div>
-<div class="paragraph">
-<p>By "value semantics" all we actually mean that the class is aggregated (or embedded) and so therefore (conceptually) is not shared between instances of classes. However, values very often have other semantics, and so this annotation allows these to also be specified:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>it may be parseable</p>
-</li>
-<li>
-<p>it may be encodeable</p>
-</li>
-<li>
-<p>it may be immutable, and by default is presumed that it is</p>
-</li>
-<li>
-<p>it may follow the equal-by-content contract (as per <a href="EqualByContent.html" class="page">EqualByContent</a> ), and by default is presumed that it does.</p>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Note also that though a value is conceptually not shared, if it is also immutable then it is in fact safe to share objects (as in the flyweight pattern). In addition, the <a href="EqualByContent.html" class="page">EqualByContent</a> semantic means that we needn&#8217;t care whether value types are being shared or not.</p>
-</div>
-</div>
-</div>
-</li>
-</ul>
-</div>
 </div>
 </div>
 <div class="sect1">
@@ -937,8 +911,6 @@ page.parent doesn't seem to be set...
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@interface Value {
   String logicalTypeName() default "";     <i class="conum" data-value="1"></i><b>(1)</b>
-  String semanticsProviderName() default "";     <i class="conum" data-value="2"></i><b>(2)</b>
-  Class&lt;?&gt; semanticsProviderClass() default Value.class;     <i class="conum" data-value="3"></i><b>(3)</b>
 }</code></pre>
 </div>
 </div>
@@ -951,28 +923,6 @@ page.parent doesn't seem to be set...
 <div class="content">
 <div class="paragraph">
 <p>The logical name of this value&#8217;s type, that uniquely and fully qualifies it. The logical name is analogous to - but independent of - the actual fully qualified class name. eg. <em>sales.Customer</em> for a class 'org.mycompany.dom.Customer'</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><a href="#semanticsProviderName">semanticsProviderName</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>The fully qualified name of a class that implements the <a href="../adapters/ValueSemanticsProvider.html" class="page">ValueSemanticsProvider</a> interface.</p>
-</div>
-</div>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td><a href="#semanticsProviderClass">semanticsProviderClass</a>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>As per <em>#semanticsProviderName()</em> , but specifying a class literal rather than a fully qualified class name.</p>
 </div>
 </div>
 </div></td>
@@ -991,30 +941,6 @@ page.parent doesn't seem to be set...
 </div>
 <div class="paragraph">
 <p>If not specified, the fully qualified class name is used instead.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="semanticsProviderName"><a class="anchor" href="#semanticsProviderName"></a>semanticsProviderName</h3>
-<div class="paragraph">
-<p>The fully qualified name of a class that implements the <a href="../adapters/ValueSemanticsProvider.html" class="page">ValueSemanticsProvider</a> interface.</p>
-</div>
-<div class="paragraph">
-<p>This is optional because some implementations may pick up encodeability via a configuration file, or via the equivalent <em>#semanticsProviderClass()</em> .</p>
-</div>
-<div class="paragraph">
-<p>It is possible for value classes to act as their own semantics providers, and may in particular implement the <a href="../adapters/EncoderDecoder.html" class="page">EncoderDecoder</a> interface. The framework requires that the nominated class provides a <code>public</code> no-arg constructor on the class, and will instantiates an instance of the class to interact with it. In the case of encoding, the framework uses the result of discards the instantiated object. What that means in particular is that a self-encoding class shouldn&#8217;t encode its own state, it should encode the state of the object passed to it.</p>
-</div>
-<div class="paragraph">
-<p>Implementation note: the default value provided here is simply an empty string because <code>null</code> is not a valid default.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="semanticsProviderClass"><a class="anchor" href="#semanticsProviderClass"></a>semanticsProviderClass</h3>
-<div class="paragraph">
-<p>As per <em>#semanticsProviderName()</em> , but specifying a class literal rather than a fully qualified class name.</p>
-</div>
-<div class="paragraph">
-<p>Implementation note: the default value provided here is simply the <a href="Value.html" class="page">Value</a> 's own class, because <code>null</code> is not a valid default.</p>
 </div>
 </div>
 </div>
@@ -1036,7 +962,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M6.20210915-0225-01abd63c</p>
+            <p>Revision: 2.0.0-M6.20210916-0229-47d609ad</p>
         </div>
     </div>
 </footer>
