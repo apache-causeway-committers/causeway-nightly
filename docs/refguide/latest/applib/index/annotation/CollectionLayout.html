@@ -1098,6 +1098,57 @@ Class sortedBy() default Comparator.class;     <i class="conum" data-value="8"><
 </div>
 </div>
 <div class="sect2">
+<h3 id="client-side-sorting"><a class="anchor" href="#client-side-sorting"></a>Client-side Sorting</h3>
+<div class="paragraph">
+<p>The <a href="#sortedBy">sortedBy()</a> element specifies that the collection be ordered using the specified comparator, rather than the natural ordering of the entity (as would usually be the case).</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
+import lombok.Setter;
+
+public class ToDoItem implements Comparable&lt;ToDoItem&gt; {         <i class="conum" data-value="1"></i><b>(1)</b>
+
+    public static class DescriptionComparator                   <i class="conum" data-value="2"></i><b>(2)</b>
+                            implements Comparator&lt;ToDoItem&gt; {
+        @Override
+        public int compare(ToDoItem o1, ToDoItem o2) {
+            return Comparator.comparing(ToDoItem::getDescription)
+                             .compare(o1, o2);
+        }
+    }
+
+    @CollectionLayout(sortedBy=DependenciesComparator.class)    <i class="conum" data-value="3"></i><b>(3)</b>
+    @Getter @Setter
+    private SortedSet&lt;ToDoItem&gt; dependencies = ...
+
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>the class has a natural ordering (implementation not shown)</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>declaration of an alternative comparator class, using the object&#8217;s <code>description</code> property</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>ordering of the collection defined as being by this comparator</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>When the <code>dependencies</code> collection is rendered, the elements are sorted by the <code>description</code> property first.</p>
+</div>
+</div>
+<div class="sect2">
 <h3 id="hiding-collections"><a class="anchor" href="#hiding-collections"></a>Hiding collections</h3>
 <div class="paragraph">
 <p>The <a href="#hidden">hidden()</a> element indicates where (in the UI) the collection should be hidden from the user.</p>
@@ -1162,6 +1213,32 @@ public class ToDoItem {
 </div>
 </div>
 <div class="sect2">
+<h3 id="css-styling"><a class="anchor" href="#css-styling"></a>CSS Styling</h3>
+<div class="paragraph">
+<p>The <a href="#cssClass">cssClass()</a> element can be used to render additional CSS classes in the HTML (a wrapping <code>&lt;div&gt;</code>) that represents the collection.
+<a href="../../../config/application-specific/application-css.html" class="page">Application-specific CSS</a> can then be used to target and adjust the UI representation of that particular element.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
+import lombok.Setter;
+
+public class ToDoItem {
+
+    @CollectionLayout(
+        cssClass="x-important"
+    )
+    @Getter @Setter
+    private SortedSet&lt;ToDoItem&gt; dependencies = ...;
+
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
 <h3 id="default-view"><a class="anchor" href="#default-view"></a>Default view</h3>
 <div class="paragraph">
 <p>The <a href="#defaultView">`defaultView()</a> element is used to select which of views should be used by default for a given collection.
@@ -1196,32 +1273,6 @@ public class BusRoute {
 <div class="paragraph">
 <p>The <a href="../../../../../vw/latest/about.html" class="page">Web UI (Wicket viewer)</a> allows additional views to be configured to render collections of objects, eg <a href="../../../../../vw/latest/exceldownload/about.html" class="page">Excel Download</a> ("excel"), <a href="../../../../../vw/latest/fullcalendar/about.html" class="page">Fullcalendar</a> ("fullcalendar") and <a href="../../../../../vw/latest/gmap3/about.html" class="page">Gmap3</a> ("map") extensions.
 This attribute can be used to select any of these alternative views instead.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="css-styling"><a class="anchor" href="#css-styling"></a>CSS Styling</h3>
-<div class="paragraph">
-<p>The <a href="#cssClass">cssClass()</a> element can be used to render additional CSS classes in the HTML (a wrapping <code>&lt;div&gt;</code>) that represents the collection.
-<a href="../../../config/application-specific/application-css.html" class="page">Application-specific CSS</a> can then be used to target and adjust the UI representation of that particular element.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
-import lombok.Setter;
-
-public class ToDoItem {
-
-    @CollectionLayout(
-        cssClass="x-important"
-    )
-    @Getter @Setter
-    private SortedSet&lt;ToDoItem&gt; dependencies = ...;
-
-}</code></pre>
-</div>
 </div>
 </div>
 <div class="sect2">
@@ -1268,57 +1319,6 @@ public class Order {
 </div>
 </div>
 <div class="sect2">
-<h3 id="client-side-sorting"><a class="anchor" href="#client-side-sorting"></a>Client-side Sorting</h3>
-<div class="paragraph">
-<p>The <a href="#sortedBy">sortedBy()</a> element specifies that the collection be ordered using the specified comparator, rather than the natural ordering of the entity (as would usually be the case).</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
-import lombok.Setter;
-
-public class ToDoItem implements Comparable&lt;ToDoItem&gt; {         <i class="conum" data-value="1"></i><b>(1)</b>
-
-    public static class DescriptionComparator                   <i class="conum" data-value="2"></i><b>(2)</b>
-                            implements Comparator&lt;ToDoItem&gt; {
-        @Override
-        public int compare(ToDoItem o1, ToDoItem o2) {
-            return Comparator.comparing(ToDoItem::getDescription)
-                             .compare(o1, o2);
-        }
-    }
-
-    @CollectionLayout(sortedBy=DependenciesComparator.class)    <i class="conum" data-value="3"></i><b>(3)</b>
-    @Getter @Setter
-    private SortedSet&lt;ToDoItem&gt; dependencies = ...
-
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>the class has a natural ordering (implementation not shown)</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>declaration of an alternative comparator class, using the object&#8217;s <code>description</code> property</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>ordering of the collection defined as being by this comparator</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>When the <code>dependencies</code> collection is rendered, the elements are sorted by the <code>description</code> property first.</p>
-</div>
-</div>
-<div class="sect2">
 <h3 id="descriptions"><a class="anchor" href="#descriptions"></a>Descriptions</h3>
 <div class="paragraph">
 <p>The <a href="#describedAs">describedAs()</a> element is used to provide a short description of the collection to the user.
@@ -1341,6 +1341,56 @@ public class ToDoItem {
     private SortedSet&lt;ToDoItem&gt; dependencies = ...
 
 }</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="names"><a class="anchor" href="#names"></a>Names</h3>
+<div class="paragraph">
+<p>The <a href="#named">named()</a> element explicitly specifies the collection&#8217;s name, overriding the name that would normally be inferred from the Java source code.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>We recommend that you only use this element when the desired name cannot be used in Java source code.
+Examples of that include a name that would be a reserved Java keyword (eg "package"), or a name that has punctuation, eg apostrophes.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>By default the name is HTML escaped.
+To allow HTML markup, set the related <a href="#namedEscaped">namedEscaped()</a> element to <code>false</code>.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
+import lombok.Setter;
+
+public class ToDoItem {
+    @CollectionLayout(
+        named="Todo items that are &lt;i&gt;dependencies&lt;/i&gt; of this item",
+        namedEscaped=false
+    )
+    @Getter @Setter
+    private SortedSet&lt;ToDoItem&gt; dependencies = ...
+
+}</code></pre>
+</div>
+</div>
+<div class="sect3">
+<h4 id="alternatives-2"><a class="anchor" href="#alternatives-2"></a>Alternatives</h4>
+<div class="paragraph">
+<p>The framework also provides a separate, powerful mechanism for <a href="../../../../../userguide/latest/btb/i18n.html" class="page">internationalization</a>.</p>
 </div>
 </div>
 </div>
@@ -1404,56 +1454,6 @@ This is specifically so that boilerplate-busting tools such as <a href="https://
 <div class="paragraph">
 <p>As alternative to using the annotation, the dynamic <a href="../../../../../userguide/latest/fun/ui.html#object-layout" class="page">file-based layout</a> can generally be used instead.</p>
 </div>
-<div class="sect2">
-<h3 id="names"><a class="anchor" href="#names"></a>Names</h3>
-<div class="paragraph">
-<p>The <a href="#named">named()</a> element explicitly specifies the collection&#8217;s name, overriding the name that would normally be inferred from the Java source code.</p>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>We recommend that you only use this element when the desired name cannot be used in Java source code.
-Examples of that include a name that would be a reserved Java keyword (eg "package"), or a name that has punctuation, eg apostrophes.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>By default the name is HTML escaped.
-To allow HTML markup, set the related <a href="#namedEscaped">namedEscaped()</a> element to <code>false</code>.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
-import lombok.Setter;
-
-public class ToDoItem {
-    @CollectionLayout(
-        named="Todo items that are &lt;i&gt;dependencies&lt;/i&gt; of this item",
-        namedEscaped=false
-    )
-    @Getter @Setter
-    private SortedSet&lt;ToDoItem&gt; dependencies = ...
-
-}</code></pre>
-</div>
-</div>
-<div class="sect3">
-<h4 id="alternatives-2"><a class="anchor" href="#alternatives-2"></a>Alternatives</h4>
-<div class="paragraph">
-<p>The framework also provides a separate, powerful mechanism for <a href="../../../../../userguide/latest/btb/i18n.html" class="page">internationalization</a>.</p>
-</div>
-</div>
-</div>
 </div>
 </div>
 </article>
@@ -1473,7 +1473,7 @@ public class ToDoItem {
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M6.20210916-0229-47d609ad</p>
+            <p>Revision: 2.0.0-M6.20210917-0229-65669d1a</p>
         </div>
     </div>
 </footer>

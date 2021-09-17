@@ -999,6 +999,70 @@ page.parent doesn't seem to be set...
 </div>
 </div>
 <div class="sect2">
+<h3 id="hiding-collections"><a class="anchor" href="#hiding-collections"></a>Hiding Collections</h3>
+<div class="paragraph">
+<p>Collections can be hidden at the domain-level, indicating that they are not visible to the end-user.
+This is accomplished using the <a href="#hidden">hidden</a> element.</p>
+</div>
+<div class="paragraph">
+<p>The acceptable values are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>Where.EVERYWHERE</code> or <code>Where.ANYWHERE</code></p>
+<div class="paragraph">
+<p>The collection should be hidden everywhere.</p>
+</div>
+</li>
+<li>
+<p><code>Where.ANYWHERE</code></p>
+<div class="paragraph">
+<p>Synonym for everywhere.</p>
+</div>
+</li>
+<li>
+<p><code>Where.OBJECT_FORMS</code></p>
+<div class="paragraph">
+<p>The collection should be hidden when displayed within an object form.</p>
+</div>
+</li>
+<li>
+<p><code>Where.NOWHERE</code></p>
+<div class="paragraph">
+<p>The collection should not be hidden.</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The other values of the <code>Where</code> enum have no meaning for a collection.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
+import lombok.Setter;
+
+public class Customer {
+
+    @Collection(where=Where.EVERYWHERE)
+    @Getter @Setter
+    private SortedSet&lt;Address&gt; addresses = ...
+
+}</code></pre>
+</div>
+</div>
+<div class="sect3">
+<h4 id="alternatives"><a class="anchor" href="#alternatives"></a>Alternatives</h4>
+<div class="paragraph">
+<p>It is also possible to use <a href="CollectionLayout.html#hidden" class="page">@CollectionLayout#hidden</a> or using <a href="../../../../../userguide/latest/fun/ui.html#object-layout" class="page">file-based layout</a> such that the collection can be hidden at the view layer.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
 <h3 id="collection-type"><a class="anchor" href="#collection-type"></a>Collection type</h3>
 <div class="paragraph">
 <p>The <a href="#typeOf">typeOf</a> element specifies the expected type of an element contained within a collection when for whatever reason the type cannot be inferred from the generic type, or to provide a hint about the actual run-time (as opposed to compile-time) type.</p>
@@ -1036,71 +1100,6 @@ public void Customer {
 </div>
 </div>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class ToDoItem {
-    public static class DependenciesChangedEvent
-            extends CollectionDomainEvent&lt;ToDoItem, ToDoItem&gt; { } <i class="conum" data-value="1"></i><b>(1)</b>
-    @Collection(
-        domainEvent=DependenciesChangedEvent.class,
-        editing = Editing.ENABLED,
-        hidden = Where.NOWHERE,                                   <i class="conum" data-value="2"></i><b>(2)</b>
-        notPersisted = false,                                     <i class="conum" data-value="3"></i><b>(3)</b>
-        typeOf = ToDoItem.class                                   <i class="conum" data-value="4"></i><b>(4)</b>
-    )
-    public SortedSet&lt;ToDoItem&gt; getDependencies() { /* ... */ }
-    ...
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>can use no-arg constructor.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>default value, so could be omitted</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>default value, so could be omitted</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>default value, so could be omitted</td>
-</tr>
-</table>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>The annotation is one of a handful (others including <a href="CollectionLayout.html" class="page">@CollectionLayout</a>, <a href="Property.html" class="page">@Property</a> and <a href="PropertyLayout.html" class="page">@PropertyLayout</a>) that can also be applied to the field, rather than the getter method.
-This is so that boilerplate-busting tools such as <a href="https://projectlombok.org/">Project Lombok</a> can be used.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="usage-notes"><a class="anchor" href="#usage-notes"></a>Usage Notes</h2>
-<div class="sectionbody">
 <div class="sect2">
 <h3 id="domain-events"><a class="anchor" href="#domain-events"></a>Domain events</h3>
 <div class="paragraph">
@@ -1352,70 +1351,72 @@ However, events can be raised programmatically either by calling the <a href="..
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="hiding-collections"><a class="anchor" href="#hiding-collections"></a>Hiding Collections</h3>
-<div class="paragraph">
-<p>Collections can be hidden at the domain-level, indicating that they are not visible to the end-user.
-This is accomplished using the <a href="#hidden">hidden</a> element.</p>
 </div>
-<div class="paragraph">
-<p>The acceptable values are:</p>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>Where.EVERYWHERE</code> or <code>Where.ANYWHERE</code></p>
-<div class="paragraph">
-<p>The collection should be hidden everywhere.</p>
-</div>
-</li>
-<li>
-<p><code>Where.ANYWHERE</code></p>
-<div class="paragraph">
-<p>Synonym for everywhere.</p>
-</div>
-</li>
-<li>
-<p><code>Where.OBJECT_FORMS</code></p>
-<div class="paragraph">
-<p>The collection should be hidden when displayed within an object form.</p>
-</div>
-</li>
-<li>
-<p><code>Where.NOWHERE</code></p>
-<div class="paragraph">
-<p>The collection should not be hidden.</p>
-</div>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>The other values of the <code>Where</code> enum have no meaning for a collection.</p>
-</div>
+<div class="sect1">
+<h2 id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>For example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
-import lombok.Setter;
-
-public class Customer {
-
-    @Collection(where=Where.EVERYWHERE)
-    @Getter @Setter
-    private SortedSet&lt;Address&gt; addresses = ...
-
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class ToDoItem {
+    public static class DependenciesChangedEvent
+            extends CollectionDomainEvent&lt;ToDoItem, ToDoItem&gt; { } <i class="conum" data-value="1"></i><b>(1)</b>
+    @Collection(
+        domainEvent=DependenciesChangedEvent.class,
+        editing = Editing.ENABLED,
+        hidden = Where.NOWHERE,                                   <i class="conum" data-value="2"></i><b>(2)</b>
+        notPersisted = false,                                     <i class="conum" data-value="3"></i><b>(3)</b>
+        typeOf = ToDoItem.class                                   <i class="conum" data-value="4"></i><b>(4)</b>
+    )
+    public SortedSet&lt;ToDoItem&gt; getDependencies() { /* ... */ }
+    ...
 }</code></pre>
 </div>
 </div>
-<div class="sect3">
-<h4 id="alternatives"><a class="anchor" href="#alternatives"></a>Alternatives</h4>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>can use no-arg constructor.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>default value, so could be omitted</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>default value, so could be omitted</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>default value, so could be omitted</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
 <div class="paragraph">
-<p>It is also possible to use <a href="CollectionLayout.html#hidden" class="page">@CollectionLayout#hidden</a> or using <a href="../../../../../userguide/latest/fun/ui.html#object-layout" class="page">file-based layout</a> such that the collection can be hidden at the view layer.</p>
+<p>The annotation is one of a handful (others including <a href="CollectionLayout.html" class="page">@CollectionLayout</a>, <a href="Property.html" class="page">@Property</a> and <a href="PropertyLayout.html" class="page">@PropertyLayout</a>) that can also be applied to the field, rather than the getter method.
+This is so that boilerplate-busting tools such as <a href="https://projectlombok.org/">Project Lombok</a> can be used.</p>
+</div>
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
+<div class="sect1">
+<h2 id="usage-notes"><a class="anchor" href="#usage-notes"></a>Usage Notes</h2>
+<div class="sectionbody">
+
 </div>
 </div>
 </article>
@@ -1435,7 +1436,7 @@ public class Customer {
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M6.20210916-0229-47d609ad</p>
+            <p>Revision: 2.0.0-M6.20210917-0229-65669d1a</p>
         </div>
     </div>
 </footer>

@@ -1080,6 +1080,72 @@ page.parent doesn't seem to be set...
 </div>
 </div>
 <div class="sect2">
+<h3 id="text-boxes"><a class="anchor" href="#text-boxes"></a>Text boxes</h3>
+<div class="paragraph">
+<p>The <a href="#multiLine">multiLine()</a> element specifies that the text field for a string parameter should span multiple lines.
+It is ignored for other parameter types.</p>
+</div>
+<div class="paragraph">
+<p>If set &gt; 1 (as would normally be the case), then the default <a href="#labelPosition">labelPosition</a> defaults to <code>TOP</code> (rather than <code>LEFT</code>, as would normally be the case).</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class BugReport {
+
+    public BugReport updateStepsToReproduce(
+            @ParameterLayout(
+                numberOfLines=10
+            )
+            final String steps) {
+        // ...
+    }
+
+    // ...
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="date-intervals"><a class="anchor" href="#date-intervals"></a>Date intervals</h3>
+<div class="paragraph">
+<p>The <a href="#renderDay">renderDay()</a> element applies only to date parameters whereby the date will be rendered as the day before the value actually held in the domain object.
+It is ignored for parameters of other types.</p>
+</div>
+<div class="paragraph">
+<p>This behaviour might at first glance appear odd, but the rationale is to support the use case of a sequence of instances that represent adjacent intervals of time.
+In such cases there would typically be <code>startDate</code> and <code>endDate</code> properties, eg for all of Q2. Storing this as a half-closed interval&#8201;&#8212;&#8201;eg <code>[1-Apr-2015, 1-July-2015)</code>&#8201;&#8212;&#8201;can substantially simplify internal algorithms; the <code>endDate</code> of one interval will correspond to the <code>startDate</code> of the next.</p>
+</div>
+<div class="paragraph">
+<p>However, from an end-user perspective the requirement may be to render the interval as a fully closed interval; eg the end date should be shown as <code>30-Jun-2015</code>.</p>
+</div>
+<div class="paragraph">
+<p>This attribute therefore bridges the gap; it presents the information in a way that makes sense to an end-user, but also stores the domain object in a way that is easy work with internally.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Tenancy {
+
+    public void changeDates(
+                    LocalDate startDate,
+                    @ParameterLayout(
+                        renderDay = RenderDay.AS_DAY_BEFORE
+                    )
+                    LocalDate endDate) {
+        // ...
+    }
+
+    // ...
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
 <h3 id="label-positioning"><a class="anchor" href="#label-positioning"></a>Label Positioning</h3>
 <div class="paragraph">
 <p>The <a href="#labelPosition">labelPosition()</a> element determines the positioning of labels for parameters.</p>
@@ -1191,6 +1257,32 @@ At the time of writing, this means labels are to the left for all datatypes exce
 <h2 id="usage-notes"><a class="anchor" href="#usage-notes"></a>Usage Notes</h2>
 <div class="sectionbody">
 <div class="sect2">
+<h3 id="css-styling"><a class="anchor" href="#css-styling"></a>CSS Styling</h3>
+<div class="paragraph">
+<p>The <a href="#cssClass">cssClass()</a> element can be used to render additional CSS classes in the HTML (a wrapping <code>&lt;div&gt;</code>) that represents the action parameter.
+<a href="../../../config/application-specific/application-css.html" class="page">Application-specific CSS</a> can then be used to target and adjust the UI representation of that particular element.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class ToDoItem {
+
+    public ToDoItem postpone(
+            @ParameterLayout(
+                cssClass="x-key"
+            )
+            LocalDate until ) {
+        // ...
+    }
+
+    // ...
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
 <h3 id="typical-string-length"><a class="anchor" href="#typical-string-length"></a>Typical (string) length</h3>
 <div class="paragraph">
 <p>The <a href="#typicalLength">typicalLength()</a> element indicates the typical length of a string parameter.
@@ -1235,6 +1327,35 @@ All that said, the <a href="../../../../../vw/latest/about.html" class="page">We
 </td>
 </tr>
 </table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="descriptions"><a class="anchor" href="#descriptions"></a>Descriptions</h3>
+<div class="paragraph">
+<p>The <a href="#describedAs">describedAs()</a> element is used to provide a short description of the action parameter to the user.</p>
+</div>
+<div class="paragraph">
+<p>In the <a href="../../../../../vw/latest/about.html" class="page">Web UI (Wicket viewer)</a> it is displayed as a 'tool tip'.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Customer {
+
+    public Order placeOrder(
+          Product product,
+          @ParameterLayout(
+              describedAs = "The quantity of the product being ordered"
+          )
+          int quantity) {
+        // ...
+    }
+
+    // ...
+}</code></pre>
+</div>
 </div>
 </div>
 <div class="sect2">
@@ -1290,127 +1411,6 @@ To allow HTML markup, set the related <a href="#namedEscaped">namedEscaped()</a>
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="date-intervals"><a class="anchor" href="#date-intervals"></a>Date intervals</h3>
-<div class="paragraph">
-<p>The <a href="#renderDay">renderDay()</a> element applies only to date parameters whereby the date will be rendered as the day before the value actually held in the domain object.
-It is ignored for parameters of other types.</p>
-</div>
-<div class="paragraph">
-<p>This behaviour might at first glance appear odd, but the rationale is to support the use case of a sequence of instances that represent adjacent intervals of time.
-In such cases there would typically be <code>startDate</code> and <code>endDate</code> properties, eg for all of Q2. Storing this as a half-closed interval&#8201;&#8212;&#8201;eg <code>[1-Apr-2015, 1-July-2015)</code>&#8201;&#8212;&#8201;can substantially simplify internal algorithms; the <code>endDate</code> of one interval will correspond to the <code>startDate</code> of the next.</p>
-</div>
-<div class="paragraph">
-<p>However, from an end-user perspective the requirement may be to render the interval as a fully closed interval; eg the end date should be shown as <code>30-Jun-2015</code>.</p>
-</div>
-<div class="paragraph">
-<p>This attribute therefore bridges the gap; it presents the information in a way that makes sense to an end-user, but also stores the domain object in a way that is easy work with internally.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Tenancy {
-
-    public void changeDates(
-                    LocalDate startDate,
-                    @ParameterLayout(
-                        renderDay = RenderDay.AS_DAY_BEFORE
-                    )
-                    LocalDate endDate) {
-        // ...
-    }
-
-    // ...
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="css-styling"><a class="anchor" href="#css-styling"></a>CSS Styling</h3>
-<div class="paragraph">
-<p>The <a href="#cssClass">cssClass()</a> element can be used to render additional CSS classes in the HTML (a wrapping <code>&lt;div&gt;</code>) that represents the action parameter.
-<a href="../../../config/application-specific/application-css.html" class="page">Application-specific CSS</a> can then be used to target and adjust the UI representation of that particular element.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class ToDoItem {
-
-    public ToDoItem postpone(
-            @ParameterLayout(
-                cssClass="x-key"
-            )
-            LocalDate until ) {
-        // ...
-    }
-
-    // ...
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="descriptions"><a class="anchor" href="#descriptions"></a>Descriptions</h3>
-<div class="paragraph">
-<p>The <a href="#describedAs">describedAs()</a> element is used to provide a short description of the action parameter to the user.</p>
-</div>
-<div class="paragraph">
-<p>In the <a href="../../../../../vw/latest/about.html" class="page">Web UI (Wicket viewer)</a> it is displayed as a 'tool tip'.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Customer {
-
-    public Order placeOrder(
-          Product product,
-          @ParameterLayout(
-              describedAs = "The quantity of the product being ordered"
-          )
-          int quantity) {
-        // ...
-    }
-
-    // ...
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="text-boxes"><a class="anchor" href="#text-boxes"></a>Text boxes</h3>
-<div class="paragraph">
-<p>The <a href="#multiLine">multiLine()</a> element specifies that the text field for a string parameter should span multiple lines.
-It is ignored for other parameter types.</p>
-</div>
-<div class="paragraph">
-<p>If set &gt; 1 (as would normally be the case), then the default <a href="#labelPosition">labelPosition</a> defaults to <code>TOP</code> (rather than <code>LEFT</code>, as would normally be the case).</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class BugReport {
-
-    public BugReport updateStepsToReproduce(
-            @ParameterLayout(
-                numberOfLines=10
-            )
-            final String steps) {
-        // ...
-    }
-
-    // ...
-}</code></pre>
-</div>
-</div>
-</div>
 </div>
 </div>
 </article>
@@ -1430,7 +1430,7 @@ It is ignored for other parameter types.</p>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M6.20210916-0229-47d609ad</p>
+            <p>Revision: 2.0.0-M6.20210917-0229-65669d1a</p>
         </div>
     </div>
 </footer>
