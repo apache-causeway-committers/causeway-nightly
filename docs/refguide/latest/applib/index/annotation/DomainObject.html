@@ -1378,76 +1378,6 @@ public class Order {
 </div>
 </div>
 <div class="sect2">
-<h3 id="reference-data"><a class="anchor" href="#reference-data"></a>Reference Data</h3>
-<div class="paragraph">
-<p>Some domain classes are immutable to the user, and moreover have only a fixed number of instances.
-Often these are "reference" ("standing") data, or lookup data/pick lists.
-Typical examples could include categories, countries, states, and tax or interest rate tables.</p>
-</div>
-<div class="paragraph">
-<p>Where the number of instances is relatively small, ie bounded, then the <a href="#bounding">bounding()</a> element can be used as a hint.
-For such domain objects the framework will automatically allow instances to be selected; <a href="../../../../../vw/latest/about.html" class="page">Web UI (Wicket viewer)</a> displays these as a drop-down list.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(
-    bounding=Bounding.BOUNDED,
-    editing=Editing.DISABLED        <i class="conum" data-value="1"></i><b>(1)</b>
-)
-public class Currency {
-    ...
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>This attribute is commonly combined with <code>editing=DISABLED</code> to enforce the fact that reference data is immutable</td>
-</tr>
-</table>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>There is nothing to prevent you from using this attribute for regular mutable entities, and indeed this is sometimes worth doing during early prototyping.
-However, if there is no realistic upper bound to the number of instances of an entity that might be created, generally you should use <a href="../../../applib-methods/prefixes.html#autoComplete" class="page">autoComplete&#8230;&#8203;()</a> supporting method or the <a href="#autoCompleteRepository">@DomainObject#autoCompleteRepository</a> attribute instead.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-<div class="sectionbody">
-<div class="ulist">
-<ul>
-<li>
-<p><a href="../services/publishing/spi/EntityPropertyChangeSubscriber.html" class="page">EntityPropertyChangeSubscriber</a> SPI</p>
-<div class="paragraph">
-<p>(only applies to entity objects)</p>
-</div>
-</li>
-<li>
-<p><a href="../services/publishing/spi/EntityChangesSubscriber.html" class="page">EntityChangesSubscriber</a> SPI</p>
-<div class="paragraph">
-<p>(only applies to entity objects)</p>
-</div>
-</li>
-</ul>
-</div>
-<div class="sect2">
 <h3 id="mixin-method"><a class="anchor" href="#mixin-method"></a>Mixin method</h3>
 <div class="paragraph">
 <p>The <a href="#mixinMethod">mixinMethod()</a> element specifies the name of the method to be treated as a "reserved" method name, meaning that the mixin&#8217;s name should instead be inferred from the mixin&#8217;s type.</p>
@@ -1622,362 +1552,223 @@ If you are using view models heavily, you may wish to restrict yourself to just 
 <h2 id="usage-notes"><a class="anchor" href="#usage-notes"></a>Usage Notes</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="nature-2"><a class="anchor" href="#nature-2"></a>Nature</h3>
+<h3 id="auditing"><a class="anchor" href="#auditing"></a>Auditing</h3>
 <div class="paragraph">
-<p>The <a href="#nature">nature()</a> element is used to characterize the domain object as either an entity (part of the domain layer) or as a view model (part of the application layer).
-If the domain object should be thought of as an entity, it also captures how the persistence of that entity is managed.</p>
+<p>The <a href="#entityChangePublishing">entityChangePublishing()</a> element indicates that if the object is modified, then each of its changed properties should be submitted to the registered <a href="../services/publishing/spi/EntityPropertyChangeSubscriber.html" class="page">EntityPropertyChangeSubscriber</a>(s).</p>
+</div>
+<div class="paragraph">
+<p>The default value for the element is <code>AS_CONFIGURED</code>, meaning that the <a href="../../../config/sections/isis.applib.html#isis.applib.annotation.domain-object.entity-change-publishing" class="page">isis.applib.annotation.domain-object.entity-change-publishing</a> configuration property is used to determine the whether the action is audited:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>all</code><br></p>
+<div class="paragraph">
+<p>all changed properties of objects are audited</p>
+</div>
+</li>
+<li>
+<p><code>none</code><br></p>
+<div class="paragraph">
+<p>no changed properties of objects are audited</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>If there is no configuration property in <code>application.properties</code> then auditing is automatically enabled for domain objects.</p>
+</div>
+<div class="paragraph">
+<p>This default can be overridden on an object-by-object basis; if <code>entityChangePublishing()</code> is set to <code>ENABLED</code> then changed properties of instances of the domain class are audited irrespective of the configured value; if set to <code>DISABLED</code> then the changed properties of instances are <em>not</em> audited, again irrespective of the configured value.</p>
 </div>
 <div class="paragraph">
 <p>For example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(nature=Nature.VIEW_MODEL)
-public class PieChartAnalysis {
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(
+    entityChangePublishing=Publishing.ENABLED  <i class="conum" data-value="1"></i><b>(1)</b>
+)
+public class Customer {
     ...
 }</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>Specifically, the nature must be one of:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>NOT_SPECIFIED,</code></p>
-<div class="paragraph">
-<p>(the default); specifies no paricular semantics for the domain class.</p>
-</div>
-</li>
-<li>
-<p><code>ENTITY</code></p>
-<div class="paragraph">
-<p>indicates that the domain object is an entity whose persistence is managed internally by Apache Isis, using the JDO/DataNucleus objectstore.</p>
-</div>
-</li>
-<li>
-<p><code>MIXIN</code></p>
-<div class="paragraph">
-<p>indicates that the domain object is part of the domain layer, and is contributing behaviour to objects of some other type as a mixin (also known as a trait).</p>
-</div>
-<div class="paragraph">
-<p>For further discussion on using mixins, see <a href="../../../../../userguide/latest/fun/overview.html#mixins" class="page">mixins</a> in the user guide.</p>
-</div>
-</li>
-<li>
-<p><code>VIEW_MODEL</code></p>
-<div class="paragraph">
-<p>indicates that the domain object is conceptually part of the application layer, and exists to surfaces behaviour and/or state that is aggregate of one or more domain entities.</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><em>Variant: External Entity</em></p>
-<div class="paragraph">
-<p>Or indicates that the domain object is a wrapper/proxy/stub (choose your term) to an entity that is managed by some related external system.
-For example, the domain object may hold just the URI to a RESTful resource of some third party REST service, or the id of some system accessible over SOAP.</p>
-</div>
-<div class="paragraph">
-<p>The identity of an external entity is determined solely by the state of entity&#8217;s properties.
-The framework will automatically recreate the domain object each time it is interacted with.</p>
-</div>
-</li>
-<li>
-<p><em>Variant: In-Memory Entity</em></p>
-<div class="paragraph">
-<p>Or indicates that the domain object is a wrapper/proxy/stub to a "synthetic" entity, for example one that is constructed from some sort of internal memory data structure.</p>
-</div>
-<div class="paragraph">
-<p>The identity of an in-memory entity is determined solely by the state of entity&#8217;s properties.
-The framework will automatically recreate the domain object each time it is interacted with.</p>
-</div>
-</li>
-</ul>
-</div>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Those natures that indicate the domain object is an entity (of some sort or another) mean then that the domain object is considered to be part of the domain model layer.</p>
-</div>
-<div class="admonitionblock note">
+<div class="colist arabic">
 <table>
 <tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>For <code>VIEW_MODEL</code> domain objects the state of the object is encoded into its internal OID (represented ultimately as its URL), and is recreated directly from that URL.</p>
-</div>
-<div class="paragraph">
-<p>Because this particular implementation was originally added to Apache Isis in support of view models, the term was also used for the logically different external entities and in-memory entities.</p>
-</div>
-<div class="paragraph">
-<p>The benefit of <code>nature()</code> is that it allows the developer to properly characterize the layer (domain vs application) that an entity lives, thus avoiding confusion as "view model" (the implementation technique) and "view model" (the application layer concept).</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>On the other hand, view models defined in this way do have some limitations; see <a href="#view-models">View Models</a> for further discussion.</p>
-</div>
-<div class="paragraph">
-<p>These limitations do <em>not</em> apply to <a href="../../../../../userguide/latest/fun/view-models.html#jaxb" class="page">JAXB</a> view models.
-If you are using view models heavily, you may wish to restrict yourself to just the JAXB flavour.</p>
-</div>
-</td>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>because set to enabled, will be audited irrespective of the configured value.</td>
 </tr>
 </table>
 </div>
 </div>
 <div class="sect2">
-<h3 id="domain-event-defaults"><a class="anchor" href="#domain-event-defaults"></a>Domain Event Defaults</h3>
+<h3 id="editing-2"><a class="anchor" href="#editing-2"></a>Editing</h3>
 <div class="paragraph">
-<p>Whenever an member of a domain object is interacted with then a domain event will be fired, for each of the various phases (hidden, disabled, validated, executing, executed).</p>
-</div>
-<div class="paragraph">
-<p>For each of the three types of members (action, property and collection), the <a href="DomainObject.html" class="page">DomainObject</a> provides an element that defines a common event domain class to be fired whenever interacting with members of that type.
-This default event type can be overridden with a more specific event type if necessary.</p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 18.75%;">
-<col style="width: 37.5%;">
-<col style="width: 43.75%;">
-</colgroup>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Type</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>@DomainObject default</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Overridden with</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Actions</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><a href="#actionDomainEvent">actionDomainEvent()</a></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><a href="Action.html#domainEvent" class="page">@Action#domainEvent</a>.</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Properties</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><a href="#propertyDomainEvent">propertyDomainEvent()</a></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><a href="Property.html#domainEvent" class="page">@Property#domainEvent()</a>.</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Collections</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><a href="#collectionDomainEvent">collectionDomainEvent()</a></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><a href="Collection.html#domainEvent" class="page">@Collection#domainEvent()</a>.</p>
-</div></div></td>
-</tr>
-</tbody>
-</table>
-<div class="sect3">
-<h4 id="action-example"><a class="anchor" href="#action-example"></a>Action example</h4>
-<div class="paragraph">
-<p>For an action:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(
-    actionDomainEvent=ToDoItem.ActionDomainEventDefault.class
-)
-public class ToDoItem {
-
-    public static class ActionDomainEventDefault extends
-        org.apache.isis.applib.events.domain.ActionDomainEvent&lt;Object&gt; { }
-    // ...
-
-    public void updateDescription(final String description) {
-        this.description = description;
-    }
-
-}</code></pre>
-</div>
+<p>The <a href="#editing">editing()</a> element determines whether a domain object&#8217;s properties and collections are not editable (are read-only).</p>
 </div>
 <div class="paragraph">
-<p>The specified class will also be used as the event for any mixin action contributed to the class.</p>
+<p>The default is <code>AS_CONFIGURED</code>, meaning that the <a href="../../../config/sections/isis.applib.html#isis.applib.annotation.domain-object.editing" class="page">isis.applib.annotation.domain-object.editing</a>
+configuration property is used to determine the whether the object is modifiable:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>true</code></p>
+<div class="paragraph">
+<p>the object&#8217;s properties and collections are modifiable.</p>
+</div>
+</li>
+<li>
+<p><code>false</code></p>
+<div class="paragraph">
+<p>the object&#8217;s properties and collections are read-only, ie <em>not</em> modifiable.</p>
+</div>
+</li>
+</ul>
 </div>
 <div class="paragraph">
-<p>Note though one small difference between the events emitted by a "regular" action and a contributed action is that the source of the event (as in <code>event#getSource()</code> will be different.
-In the former case it will be the domain object instance, in the latter it will be the mixin object instantiated automatically by the framework.</p>
+<p>If there is no configuration property in <code>application.properties</code> then object are assumed to be modifiable.</p>
 </div>
-<div class="paragraph">
-<p>However, the domain object is available using <code>event#getMixedIn()</code>.
-Even easier, <code>event#getSubject()</code> will always return the domain object (it returns the <code>#getMixedIn()</code> if present, otherwise the <code>#getSource()</code>.</p>
-</div>
-<div class="admonitionblock note">
+<div class="admonitionblock tip">
 <table>
 <tr>
 <td class="icon">
-<i class="fa icon-note" title="Note"></i>
+<i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
 <div class="paragraph">
-<p>Action domain events have generic types, with the (first and only) generic type indicating the event&#8217;s source&#8217;s type.</p>
+<p>In other words, editing can be disabled globally by setting the <a href="../../../config/sections/isis.applib.html#isis.applib.annotation.domain-object.editing" class="page">isis.applib.adoc#isis.applib.annotation.domain-object.editing</a> configuration property:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">isis.applib.annotation.domain-object.editing=false</code></pre>
+</div>
 </div>
 <div class="paragraph">
-<p>Because an event specified at the class level might have either the domain object or a mixin for the domain object as its source, they should therefore use simply <code>Object</code> as their generic type.</p>
+<p>We recommend this setting; it will help drive out the underlying business operations (processes and procedures) that require objects to change; these can then be captured as business actions.</p>
 </div>
 </td>
 </tr>
 </table>
 </div>
+<div class="paragraph">
+<p>This default can be overridden on an object-by-object basis; if <code>editing()</code> is set to <code>ENABLED</code> then the object&#8217;s properties and collections are editable irrespective of the configured value; if set to <code>DISABLED</code> then the object&#8217;s properties and collections are not editable irrespective of the configured value.</p>
 </div>
-<div class="sect3">
-<h4 id="property-example"><a class="anchor" href="#property-example"></a>Property example</h4>
 <div class="paragraph">
 <p>For example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(
-    propertyDomainEvent=ToDoItem.PropertyDomainEventDefault.class
+    editing=Editing.DISABLED,
+    editingDisabledReason="Reference data, so cannot be modified"
 )
-public class ToDoItem {
-    public static class PropertyDomainEventDefault
-        extends org.apache.isis.applib.events.domain.PropertyDomainEvent&lt;Object&gt; { }
+public class Country {
     ...
-
-    @Getter @Setter
-    private String description;
 }</code></pre>
 </div>
 </div>
+</div>
+<div class="sect2">
+<h3 id="auto-complete"><a class="anchor" href="#auto-complete"></a>Auto-complete</h3>
 <div class="paragraph">
-<p>If there is a mixin for the domain object, then this will also honour the domain event.
-For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Property(
-	propertyDomainEvent=ToDoItem_priority.PropertyDomainEventDefault.class
-)
-public class ToDoItem_priority {
-    private final ToDoItem todoItem;
-    // constructor omitted
-
-    public static class PropertyDomainEventDefault
-        extends org.apache.isis.applib.events.domain.PropertyDomainEvent&lt;Object&gt; { }
-
-    public Integer prop() { /* ... */ }
-}</code></pre>
-</div>
+<p>The <a href="#autoCompleteRepository">autoCompleteRepository()</a> element nominates a single method on a domain service as the fallback means for looking up instances of the domain object using a simple string.</p>
 </div>
 <div class="paragraph">
-<p>Interactions with the property contributed by this mixin will emit the domain event of the subject (<code>ToDoItem</code>).</p>
+<p>For example, this might search for a customer by their name or number.
+Or it could search for a country based on its ISO-3 code or user-friendly name.</p>
 </div>
-<div class="paragraph">
-<p>One small difference between the events emitted by a "regular" property and a contributed property is that the source of the event (as in <code>event#getSource()</code> will be different.
-In the former case it will be the domain object instance, in the latter it will be the mixin object instantiated automatically by the framework.</p>
-</div>
-<div class="paragraph">
-<p>However, the domain object is available using <code>event#getMixedIn()</code>.
-Even easier, <code>event#getSubject()</code> will always return the domain object (it returns the <code>#getMixedIn()</code> if present, otherwise the <code>#getSource()</code>.</p>
-</div>
-<div class="admonitionblock note">
+<div class="admonitionblock tip">
 <table>
 <tr>
 <td class="icon">
-<i class="fa icon-note" title="Note"></i>
+<i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
 <div class="paragraph">
-<p>Property domain events have generic types, with the first generic type indicating the event&#8217;s source&#8217;s type, and the second generic type indicating the property return type.</p>
-</div>
-<div class="paragraph">
-<p>Because an event specified at the class level might have either the domain object or a mixin for the domain object as its source, they should therefore use simply <code>Object</code> as their first generic type.</p>
-</div>
-<div class="paragraph">
-<p>They should <em>also</em> have <code>Object</code> for their second generic type, because the return type of the various properties of the domain object will or could be different.</p>
+<p>If you require additional control - for example restricting the returned results based on the object being interacted with - then use the <a href="../../../applib-methods/prefixes.html#autoComplete" class="page">autoComplete&#8230;&#8203;()</a> supporting method instead.</p>
 </div>
 </td>
 </tr>
 </table>
 </div>
-</div>
-<div class="sect3">
-<h4 id="collection-example"><a class="anchor" href="#collection-example"></a>Collection example</h4>
 <div class="paragraph">
 <p>For example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
-import lombok.Setter;
-
-@DomainObject(
-    collectionDomainEvent=ToDoItem.CollectionDomainEventDefault.class
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(
+    autoCompleteRepository=CustomerRepository.class
 )
-public class ToDoItem {
-    public static class CollectionDomainEventDefault extends
-            org.apache.isis.applib.events.domain.CollectionDomainEvent&lt;Object&gt; { }
-    ...
-
-    @Getter @Setter
-    private Set&lt;Category&gt; categories = new TreeSet&lt;&gt;();
+public class Customer {
+   ....
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>If there is a mixin for the domain object, then this will also honour the domain event.
-For example:</p>
+<p>where:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class ToDoItem {
-
-    @Collection
-    @CollectionLayout(defaultView = "table")
-    public class related {
-
-        public List&lt;ToDoItem&gt; coll() {
-            // ...
-        }
-    }
-
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainService
+public class CustomerRepository {
+    List&lt;Customer&gt; autoComplete(String search);  <i class="conum" data-value="1"></i><b>(1)</b>
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>is assumed to be called "autoComplete", and accepts a single string</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>(As noted above) the method invoked on the repository is assumed to be called "autoComplete".
+The optional <a href="#autoCompleteAction">autoCompleteAction()</a> element allows the name of this method to be overridden.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(
+    autoCompleteRepository=Customers.class,
+    autoCompleteAction="findByName"
+)
+public class Customer {
+   ....
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Interactions with the collection contributed by this mixin will emit the domain event of the subject (<code>ToDoItem</code>).</p>
+<p>where in this case <code>findByName</code> might be an existing action already defined:</p>
 </div>
-<div class="paragraph">
-<p>One small difference between the events emitted by a "regular" collection and a contributed action is that the source of the event (as in <code>event#getSource()</code> will be different.
-In the former case it will be the domain object instance, in the latter it will be the mixin object instantiated automatically by the framework.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainService(nature = NatureOfService.VIEW)
+public class Customers {
+
+    @Action(semantics=SemanticsOf.SAFE)
+    public List&lt;Customer&gt; findByName(
+        @MinLength(3)                       <i class="conum" data-value="1"></i><b>(1)</b>
+        @ParameterLayout(named="name")
+        String name);
+    ...
+}</code></pre>
 </div>
-<div class="paragraph">
-<p>However, the domain object is available using <code>event#getMixedIn()</code>.
-Even easier, <code>event#getSubject()</code> will always return the domain object (it returns the <code>#getMixedIn()</code> if present, otherwise the <code>#getSource()</code>.</p>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>end-user must enter minimum number of characters to trigger the query</td>
+</tr>
+</table>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -1986,18 +1777,25 @@ Even easier, <code>event#getSubject()</code> will always return the domain objec
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-<div class="paragraph">
-<p>Collection domain events have generic types, with the first generic type indicating the event&#8217;s source&#8217;s type, and the second generic type indicating the element type.</p>
-</div>
-<div class="paragraph">
-<p>Because an event specified at the class level might have either the domain object or a mixin for the domain object as its source, they should therefore use simply <code>Object</code> as their first generic type.</p>
-</div>
-<div class="paragraph">
-<p>They should <em>also</em> have <code>Object</code> for their second generic type, because the element type of the various collections of the domain object will or could be different.</p>
-</div>
+The autocomplete "action" can also be a regular method, annotated using <a href="Programmatic.html" class="page">@Programmatic</a>.
+That is, it does not need to be part of the metamodel:
 </td>
 </tr>
 </table>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainService(nature = NatureOfService.VIEW)
+public class Customers {
+    @Programmatic
+    public List&lt;Customer&gt; findByName(
+        @MinLength(3)
+        String name);
+    ...
+}</code></pre>
 </div>
 </div>
 </div>
@@ -2411,254 +2209,6 @@ public class ToDoItem {
 </div>
 </div>
 <div class="sect2">
-<h3 id="auditing"><a class="anchor" href="#auditing"></a>Auditing</h3>
-<div class="paragraph">
-<p>The <a href="#entityChangePublishing">entityChangePublishing()</a> element indicates that if the object is modified, then each of its changed properties should be submitted to the registered <a href="../services/publishing/spi/EntityPropertyChangeSubscriber.html" class="page">EntityPropertyChangeSubscriber</a>(s).</p>
-</div>
-<div class="paragraph">
-<p>The default value for the element is <code>AS_CONFIGURED</code>, meaning that the <a href="../../../config/sections/isis.applib.html#isis.applib.annotation.domain-object.entity-change-publishing" class="page">isis.applib.annotation.domain-object.entity-change-publishing</a> configuration property is used to determine the whether the action is audited:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>all</code><br></p>
-<div class="paragraph">
-<p>all changed properties of objects are audited</p>
-</div>
-</li>
-<li>
-<p><code>none</code><br></p>
-<div class="paragraph">
-<p>no changed properties of objects are audited</p>
-</div>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>If there is no configuration property in <code>application.properties</code> then auditing is automatically enabled for domain objects.</p>
-</div>
-<div class="paragraph">
-<p>This default can be overridden on an object-by-object basis; if <code>entityChangePublishing()</code> is set to <code>ENABLED</code> then changed properties of instances of the domain class are audited irrespective of the configured value; if set to <code>DISABLED</code> then the changed properties of instances are <em>not</em> audited, again irrespective of the configured value.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(
-    entityChangePublishing=Publishing.ENABLED  <i class="conum" data-value="1"></i><b>(1)</b>
-)
-public class Customer {
-    ...
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>because set to enabled, will be audited irrespective of the configured value.</td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect2">
-<h3 id="auto-complete"><a class="anchor" href="#auto-complete"></a>Auto-complete</h3>
-<div class="paragraph">
-<p>The <a href="#autoCompleteRepository">autoCompleteRepository()</a> element nominates a single method on a domain service as the fallback means for looking up instances of the domain object using a simple string.</p>
-</div>
-<div class="paragraph">
-<p>For example, this might search for a customer by their name or number.
-Or it could search for a country based on its ISO-3 code or user-friendly name.</p>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>If you require additional control - for example restricting the returned results based on the object being interacted with - then use the <a href="../../../applib-methods/prefixes.html#autoComplete" class="page">autoComplete&#8230;&#8203;()</a> supporting method instead.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(
-    autoCompleteRepository=CustomerRepository.class
-)
-public class Customer {
-   ....
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>where:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainService
-public class CustomerRepository {
-    List&lt;Customer&gt; autoComplete(String search);  <i class="conum" data-value="1"></i><b>(1)</b>
-    ...
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>is assumed to be called "autoComplete", and accepts a single string</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>(As noted above) the method invoked on the repository is assumed to be called "autoComplete".
-The optional <a href="#autoCompleteAction">autoCompleteAction()</a> element allows the name of this method to be overridden.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(
-    autoCompleteRepository=Customers.class,
-    autoCompleteAction="findByName"
-)
-public class Customer {
-   ....
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>where in this case <code>findByName</code> might be an existing action already defined:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainService(nature = NatureOfService.VIEW)
-public class Customers {
-
-    @Action(semantics=SemanticsOf.SAFE)
-    public List&lt;Customer&gt; findByName(
-        @MinLength(3)                       <i class="conum" data-value="1"></i><b>(1)</b>
-        @ParameterLayout(named="name")
-        String name);
-    ...
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>end-user must enter minimum number of characters to trigger the query</td>
-</tr>
-</table>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-The autocomplete "action" can also be a regular method, annotated using <a href="Programmatic.html" class="page">@Programmatic</a>.
-That is, it does not need to be part of the metamodel:
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>+</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainService(nature = NatureOfService.VIEW)
-public class Customers {
-    @Programmatic
-    public List&lt;Customer&gt; findByName(
-        @MinLength(3)
-        String name);
-    ...
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="editing-2"><a class="anchor" href="#editing-2"></a>Editing</h3>
-<div class="paragraph">
-<p>The <a href="#editing">editing()</a> element determines whether a domain object&#8217;s properties and collections are not editable (are read-only).</p>
-</div>
-<div class="paragraph">
-<p>The default is <code>AS_CONFIGURED</code>, meaning that the <a href="../../../config/sections/isis.applib.html#isis.applib.annotation.domain-object.editing" class="page">isis.applib.annotation.domain-object.editing</a>
-configuration property is used to determine the whether the object is modifiable:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>true</code></p>
-<div class="paragraph">
-<p>the object&#8217;s properties and collections are modifiable.</p>
-</div>
-</li>
-<li>
-<p><code>false</code></p>
-<div class="paragraph">
-<p>the object&#8217;s properties and collections are read-only, ie <em>not</em> modifiable.</p>
-</div>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>If there is no configuration property in <code>application.properties</code> then object are assumed to be modifiable.</p>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>In other words, editing can be disabled globally by setting the <a href="../../../config/sections/isis.applib.html#isis.applib.annotation.domain-object.editing" class="page">isis.applib.adoc#isis.applib.annotation.domain-object.editing</a> configuration property:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">isis.applib.annotation.domain-object.editing=false</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>We recommend this setting; it will help drive out the underlying business operations (processes and procedures) that require objects to change; these can then be captured as business actions.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>This default can be overridden on an object-by-object basis; if <code>editing()</code> is set to <code>ENABLED</code> then the object&#8217;s properties and collections are editable irrespective of the configured value; if set to <code>DISABLED</code> then the object&#8217;s properties and collections are not editable irrespective of the configured value.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(
-    editing=Editing.DISABLED,
-    editingDisabledReason="Reference data, so cannot be modified"
-)
-public class Country {
-    ...
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
 <h3 id="object-aliases"><a class="anchor" href="#object-aliases"></a>Object aliases</h3>
 <div class="paragraph">
 <p>The <a href="#logicalTypeName">logicalTypeName()</a> element is used to provide a unique alias for the object&#8217;s class name.</p>
@@ -2763,6 +2313,456 @@ At best this will require a data migration in the database; at worst it could ca
 <p>If the object type is not unique across all domain classes then the framework will fail-fast and fail to boot.
 An error message will be printed in the log to help you determine which classes have duplicate object tyoes.</p>
 </div>
+<div class="sect2">
+<h3 id="nature-2"><a class="anchor" href="#nature-2"></a>Nature</h3>
+<div class="paragraph">
+<p>The <a href="#nature">nature()</a> element is used to characterize the domain object as either an entity (part of the domain layer) or as a view model (part of the application layer).
+If the domain object should be thought of as an entity, it also captures how the persistence of that entity is managed.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(nature=Nature.VIEW_MODEL)
+public class PieChartAnalysis {
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Specifically, the nature must be one of:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>NOT_SPECIFIED,</code></p>
+<div class="paragraph">
+<p>(the default); specifies no paricular semantics for the domain class.</p>
+</div>
+</li>
+<li>
+<p><code>ENTITY</code></p>
+<div class="paragraph">
+<p>indicates that the domain object is an entity whose persistence is managed internally by Apache Isis, using the JDO/DataNucleus objectstore.</p>
+</div>
+</li>
+<li>
+<p><code>MIXIN</code></p>
+<div class="paragraph">
+<p>indicates that the domain object is part of the domain layer, and is contributing behaviour to objects of some other type as a mixin (also known as a trait).</p>
+</div>
+<div class="paragraph">
+<p>For further discussion on using mixins, see <a href="../../../../../userguide/latest/fun/overview.html#mixins" class="page">mixins</a> in the user guide.</p>
+</div>
+</li>
+<li>
+<p><code>VIEW_MODEL</code></p>
+<div class="paragraph">
+<p>indicates that the domain object is conceptually part of the application layer, and exists to surfaces behaviour and/or state that is aggregate of one or more domain entities.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><em>Variant: External Entity</em></p>
+<div class="paragraph">
+<p>Or indicates that the domain object is a wrapper/proxy/stub (choose your term) to an entity that is managed by some related external system.
+For example, the domain object may hold just the URI to a RESTful resource of some third party REST service, or the id of some system accessible over SOAP.</p>
+</div>
+<div class="paragraph">
+<p>The identity of an external entity is determined solely by the state of entity&#8217;s properties.
+The framework will automatically recreate the domain object each time it is interacted with.</p>
+</div>
+</li>
+<li>
+<p><em>Variant: In-Memory Entity</em></p>
+<div class="paragraph">
+<p>Or indicates that the domain object is a wrapper/proxy/stub to a "synthetic" entity, for example one that is constructed from some sort of internal memory data structure.</p>
+</div>
+<div class="paragraph">
+<p>The identity of an in-memory entity is determined solely by the state of entity&#8217;s properties.
+The framework will automatically recreate the domain object each time it is interacted with.</p>
+</div>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Those natures that indicate the domain object is an entity (of some sort or another) mean then that the domain object is considered to be part of the domain model layer.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>For <code>VIEW_MODEL</code> domain objects the state of the object is encoded into its internal OID (represented ultimately as its URL), and is recreated directly from that URL.</p>
+</div>
+<div class="paragraph">
+<p>Because this particular implementation was originally added to Apache Isis in support of view models, the term was also used for the logically different external entities and in-memory entities.</p>
+</div>
+<div class="paragraph">
+<p>The benefit of <code>nature()</code> is that it allows the developer to properly characterize the layer (domain vs application) that an entity lives, thus avoiding confusion as "view model" (the implementation technique) and "view model" (the application layer concept).</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>On the other hand, view models defined in this way do have some limitations; see <a href="#view-models">View Models</a> for further discussion.</p>
+</div>
+<div class="paragraph">
+<p>These limitations do <em>not</em> apply to <a href="../../../../../userguide/latest/fun/view-models.html#jaxb" class="page">JAXB</a> view models.
+If you are using view models heavily, you may wish to restrict yourself to just the JAXB flavour.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="domain-event-defaults"><a class="anchor" href="#domain-event-defaults"></a>Domain Event Defaults</h3>
+<div class="paragraph">
+<p>Whenever an member of a domain object is interacted with then a domain event will be fired, for each of the various phases (hidden, disabled, validated, executing, executed).</p>
+</div>
+<div class="paragraph">
+<p>For each of the three types of members (action, property and collection), the <a href="DomainObject.html" class="page">DomainObject</a> provides an element that defines a common event domain class to be fired whenever interacting with members of that type.
+This default event type can be overridden with a more specific event type if necessary.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 18.75%;">
+<col style="width: 37.5%;">
+<col style="width: 43.75%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Type</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>@DomainObject default</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Overridden with</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Actions</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="#actionDomainEvent">actionDomainEvent()</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="Action.html#domainEvent" class="page">@Action#domainEvent</a>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Properties</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="#propertyDomainEvent">propertyDomainEvent()</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="Property.html#domainEvent" class="page">@Property#domainEvent()</a>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Collections</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="#collectionDomainEvent">collectionDomainEvent()</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="Collection.html#domainEvent" class="page">@Collection#domainEvent()</a>.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="sect3">
+<h4 id="action-example"><a class="anchor" href="#action-example"></a>Action example</h4>
+<div class="paragraph">
+<p>For an action:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(
+    actionDomainEvent=ToDoItem.ActionDomainEventDefault.class
+)
+public class ToDoItem {
+
+    public static class ActionDomainEventDefault extends
+        org.apache.isis.applib.events.domain.ActionDomainEvent&lt;Object&gt; { }
+    // ...
+
+    public void updateDescription(final String description) {
+        this.description = description;
+    }
+
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The specified class will also be used as the event for any mixin action contributed to the class.</p>
+</div>
+<div class="paragraph">
+<p>Note though one small difference between the events emitted by a "regular" action and a contributed action is that the source of the event (as in <code>event#getSource()</code> will be different.
+In the former case it will be the domain object instance, in the latter it will be the mixin object instantiated automatically by the framework.</p>
+</div>
+<div class="paragraph">
+<p>However, the domain object is available using <code>event#getMixedIn()</code>.
+Even easier, <code>event#getSubject()</code> will always return the domain object (it returns the <code>#getMixedIn()</code> if present, otherwise the <code>#getSource()</code>.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Action domain events have generic types, with the (first and only) generic type indicating the event&#8217;s source&#8217;s type.</p>
+</div>
+<div class="paragraph">
+<p>Because an event specified at the class level might have either the domain object or a mixin for the domain object as its source, they should therefore use simply <code>Object</code> as their generic type.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="property-example"><a class="anchor" href="#property-example"></a>Property example</h4>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(
+    propertyDomainEvent=ToDoItem.PropertyDomainEventDefault.class
+)
+public class ToDoItem {
+    public static class PropertyDomainEventDefault
+        extends org.apache.isis.applib.events.domain.PropertyDomainEvent&lt;Object&gt; { }
+    ...
+
+    @Getter @Setter
+    private String description;
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If there is a mixin for the domain object, then this will also honour the domain event.
+For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Property(
+	propertyDomainEvent=ToDoItem_priority.PropertyDomainEventDefault.class
+)
+public class ToDoItem_priority {
+    private final ToDoItem todoItem;
+    // constructor omitted
+
+    public static class PropertyDomainEventDefault
+        extends org.apache.isis.applib.events.domain.PropertyDomainEvent&lt;Object&gt; { }
+
+    public Integer prop() { /* ... */ }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Interactions with the property contributed by this mixin will emit the domain event of the subject (<code>ToDoItem</code>).</p>
+</div>
+<div class="paragraph">
+<p>One small difference between the events emitted by a "regular" property and a contributed property is that the source of the event (as in <code>event#getSource()</code> will be different.
+In the former case it will be the domain object instance, in the latter it will be the mixin object instantiated automatically by the framework.</p>
+</div>
+<div class="paragraph">
+<p>However, the domain object is available using <code>event#getMixedIn()</code>.
+Even easier, <code>event#getSubject()</code> will always return the domain object (it returns the <code>#getMixedIn()</code> if present, otherwise the <code>#getSource()</code>.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Property domain events have generic types, with the first generic type indicating the event&#8217;s source&#8217;s type, and the second generic type indicating the property return type.</p>
+</div>
+<div class="paragraph">
+<p>Because an event specified at the class level might have either the domain object or a mixin for the domain object as its source, they should therefore use simply <code>Object</code> as their first generic type.</p>
+</div>
+<div class="paragraph">
+<p>They should <em>also</em> have <code>Object</code> for their second generic type, because the return type of the various properties of the domain object will or could be different.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="collection-example"><a class="anchor" href="#collection-example"></a>Collection example</h4>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.Getter;
+import lombok.Setter;
+
+@DomainObject(
+    collectionDomainEvent=ToDoItem.CollectionDomainEventDefault.class
+)
+public class ToDoItem {
+    public static class CollectionDomainEventDefault extends
+            org.apache.isis.applib.events.domain.CollectionDomainEvent&lt;Object&gt; { }
+    ...
+
+    @Getter @Setter
+    private Set&lt;Category&gt; categories = new TreeSet&lt;&gt;();
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If there is a mixin for the domain object, then this will also honour the domain event.
+For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class ToDoItem {
+
+    @Collection
+    @CollectionLayout(defaultView = "table")
+    public class related {
+
+        public List&lt;ToDoItem&gt; coll() {
+            // ...
+        }
+    }
+
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Interactions with the collection contributed by this mixin will emit the domain event of the subject (<code>ToDoItem</code>).</p>
+</div>
+<div class="paragraph">
+<p>One small difference between the events emitted by a "regular" collection and a contributed action is that the source of the event (as in <code>event#getSource()</code> will be different.
+In the former case it will be the domain object instance, in the latter it will be the mixin object instantiated automatically by the framework.</p>
+</div>
+<div class="paragraph">
+<p>However, the domain object is available using <code>event#getMixedIn()</code>.
+Even easier, <code>event#getSubject()</code> will always return the domain object (it returns the <code>#getMixedIn()</code> if present, otherwise the <code>#getSource()</code>.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Collection domain events have generic types, with the first generic type indicating the event&#8217;s source&#8217;s type, and the second generic type indicating the element type.</p>
+</div>
+<div class="paragraph">
+<p>Because an event specified at the class level might have either the domain object or a mixin for the domain object as its source, they should therefore use simply <code>Object</code> as their first generic type.</p>
+</div>
+<div class="paragraph">
+<p>They should <em>also</em> have <code>Object</code> for their second generic type, because the element type of the various collections of the domain object will or could be different.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../services/publishing/spi/EntityPropertyChangeSubscriber.html" class="page">EntityPropertyChangeSubscriber</a> SPI</p>
+<div class="paragraph">
+<p>(only applies to entity objects)</p>
+</div>
+</li>
+<li>
+<p><a href="../services/publishing/spi/EntityChangesSubscriber.html" class="page">EntityChangesSubscriber</a> SPI</p>
+<div class="paragraph">
+<p>(only applies to entity objects)</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="sect2">
+<h3 id="reference-data"><a class="anchor" href="#reference-data"></a>Reference Data</h3>
+<div class="paragraph">
+<p>Some domain classes are immutable to the user, and moreover have only a fixed number of instances.
+Often these are "reference" ("standing") data, or lookup data/pick lists.
+Typical examples could include categories, countries, states, and tax or interest rate tables.</p>
+</div>
+<div class="paragraph">
+<p>Where the number of instances is relatively small, ie bounded, then the <a href="#bounding">bounding()</a> element can be used as a hint.
+For such domain objects the framework will automatically allow instances to be selected; <a href="../../../../../vw/latest/about.html" class="page">Web UI (Wicket viewer)</a> displays these as a drop-down list.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(
+    bounding=Bounding.BOUNDED,
+    editing=Editing.DISABLED        <i class="conum" data-value="1"></i><b>(1)</b>
+)
+public class Currency {
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>This attribute is commonly combined with <code>editing=DISABLED</code> to enforce the fact that reference data is immutable</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>There is nothing to prevent you from using this attribute for regular mutable entities, and indeed this is sometimes worth doing during early prototyping.
+However, if there is no realistic upper bound to the number of instances of an entity that might be created, generally you should use <a href="../../../applib-methods/prefixes.html#autoComplete" class="page">autoComplete&#8230;&#8203;()</a> supporting method or the <a href="#autoCompleteRepository">@DomainObject#autoCompleteRepository</a> attribute instead.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
 </div>
 </div>
 </article>
@@ -2782,7 +2782,7 @@ An error message will be printed in the log to help you determine which classes 
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M6.20211117-0229-ddf3bd18</p>
+            <p>Revision: 2.0.0-M6.20211117-1812-e82715eb</p>
         </div>
     </div>
 </footer>
