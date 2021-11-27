@@ -435,6 +435,14 @@ for non-public class member introspection.</p>
 <p>moved to <code>org.apache.isis.valuetypes.jodatime.applib.jaxb</code></p>
 </div></div></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><em>SecMan&#8217;s</em> <code>PasswordEncryptionService</code> was removed</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Using Spring&#8217;s <code>org.springframework.security.crypto.password.PasswordEncoder</code> instead.</p>
+</div></div></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -455,6 +463,34 @@ isis.core.meta-model.introspector.policy=ANNOTATION_OPTIONAL
 
 // semantic equivalent replacement for i.c.m.a.action.explicit=true
 isis.core.meta-model.introspector.policy=ANNOTATION_REQUIRED</code></pre>
+</div>
+</div>
+<div class="sect2">
+<h3 id="password-hashing"><a class="anchor" href="#password-hashing"></a>Password Hashing</h3>
+<div class="paragraph">
+<p><em>SecMan</em> provides a <em>Jbcrypt</em> based password encryption service.
+We added an alternative based on <em>Spring-Security</em>.
+To switch out the old vs the new replace <code>IsisModuleExtSecmanEncryptionJbcrypt</code> with
+<code>IsisModuleExtSecmanEncryptionSpring</code>. However note, that the new password hashes are
+not compatible with the old ones.</p>
+</div>
+<div class="listingblock">
+<div class="title">IsisModuleExtSecmanEncryptionJbcrypt</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
+  &lt;groupId&gt;org.apache.isis.extensions&lt;/groupId&gt;
+  &lt;artifactId&gt;isis-extensions-secman-encryption-jbcrypt&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">IsisModuleExtSecmanEncryptionSpring</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
+  &lt;groupId&gt;org.apache.isis.extensions&lt;/groupId&gt;
+  &lt;artifactId&gt;isis-extensions-secman-encryption-spring&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -509,7 +545,7 @@ isis.core.meta-model.introspector.policy=ANNOTATION_REQUIRED</code></pre>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M6.20211123-0229-2f7a53e7</p>
+            <p>Revision: 2.0.0-M6.20211127-1534-465da26f</p>
         </div>
     </div>
 </footer>
