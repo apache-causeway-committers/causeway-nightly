@@ -670,13 +670,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../../../config/sections/isis.extensions.html">Extensions</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../../../config/sections/isis.value-types.html">Value types</a>
-  </li>
-  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../../../config/sections/isis.testing.html">Testing</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../../../config/sections/isis.legacy.html">Legacy</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../../../config/sections/Other.html">Other</a>
@@ -1388,32 +1382,63 @@ public class Order {
 </div>
 </div>
 <div class="sect1">
-<h2 id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+<h2 id="example"><a class="anchor" href="#example"></a>Example</h2>
 <div class="sectionbody">
-<div class="ulist">
-<ul>
-<li>
-<p><a href="../services/publishing/spi/EntityPropertyChangeSubscriber.html" class="page">EntityPropertyChangeSubscriber</a> SPI</p>
 <div class="paragraph">
-<p>(only applies to entity objects)</p>
+<p>For example:</p>
 </div>
-</li>
-<li>
-<p><a href="../services/publishing/spi/EntityChangesSubscriber.html" class="page">EntityChangesSubscriber</a> SPI</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(
+    auditing=Auditing.ENABLED,
+    autoCompleteRepository=CustomerRepository.class
+    editing=Editing.ENABLED,
+    updatedLifecycleEvent=Customer.UpdatedEvent.class
+
+)
+public class Customer {
+    ...
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="view-models"><a class="anchor" href="#view-models"></a>View Models</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>(only applies to entity objects)</p>
-</div>
-</li>
-</ul>
-</div>
-<div class="sect2">
-<h3 id="auto-complete"><a class="anchor" href="#auto-complete"></a>Auto-complete</h3>
-<div class="paragraph">
-<p>The <a href="#autoCompleteRepository">autoCompleteRepository()</a> element nominates a single method on a domain service as the fallback means for looking up instances of the domain object using a simple string.</p>
+<p>The <code>@DomainObject(nature=VIEW_MODEL)</code> annotation, applied to a class, indicates that the class is a view model.</p>
 </div>
 <div class="paragraph">
-<p>For example, this might search for a customer by their name or number.
-Or it could search for a country based on its ISO-3 code or user-friendly name.</p>
+<p>View models are not persisted to the database, instead their state is encoded within their identity (ultimately represented in the URL).</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(nature=VIEW_MODEL)
+public class CustomerViewModel {
+    public CustomerViewModel() {}
+    public CustomerViewModel(String firstName, int lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Although there are several ways to instantiate a view model, we recommend that they are instantiated using an N-arg constructor that initializes all relevant state.
+The <a href="../services/registry/ServiceRegistry.html" class="page">ServiceRegistry</a> can then be used to inject dependencies into the view model.
+For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Customer cust = ...
+CustomerViewModel vm = factoryService.viewModel(
+    new CustomerViewModel(cust.getFirstName(), cust.getLastName()));</code></pre>
+</div>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -1423,169 +1448,45 @@ Or it could search for a country based on its ISO-3 code or user-friendly name.<
 </td>
 <td class="content">
 <div class="paragraph">
-<p>If you require additional control - for example restricting the returned results based on the object being interacted with - then use the <a href="../../../applib-methods/prefixes.html#autoComplete" class="page">autoComplete&#8230;&#8203;()</a> supporting method instead.</p>
+<p>See this <a href="../../../../../userguide/latest/btb/hints-and-tips/view-model-instantiation.html" class="page">tip</a> for further discussion about instantiating view models.</p>
 </div>
 </td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(
-    autoCompleteRepository=CustomerRepository.class
-)
-public class Customer {
-   ....
-}</code></pre>
-</div>
+<p>View models must have a no-arg constructor; this is used internally by the framework for subsequent "recreation".</p>
 </div>
 <div class="paragraph">
-<p>where:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainService
-public class CustomerRepository {
-    List&lt;Customer&gt; autoComplete(String search);  <i class="conum" data-value="1"></i><b>(1)</b>
-    ...
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>is assumed to be called "autoComplete", and accepts a single string</td>
-</tr>
-</table>
+<p>The view model&#8217;s memento will be derived from the value of the view model object&#8217;s properties.
+Any properties annotated with <a href="Programmatic.html" class="page">@Programmatic</a> will be excluded from the memento.
+Properties that are merely <a href="Property.html#hidden" class="page">hidden</a> <em>are</em> included in the memento.</p>
 </div>
 <div class="paragraph">
-<p>(As noted above) the method invoked on the repository is assumed to be called "autoComplete".
-The optional <a href="#autoCompleteAction">autoCompleteAction()</a> element allows the name of this method to be overridden.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(
-    autoCompleteRepository=Customers.class,
-    autoCompleteAction="findByName"
-)
-public class Customer {
-   ....
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>where in this case <code>findByName</code> might be an existing action already defined:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainService(nature = NatureOfService.VIEW)
-public class Customers {
-
-    @Action(semantics=SemanticsOf.SAFE)
-    public List&lt;Customer&gt; findByName(
-        @MinLength(3)                       <i class="conum" data-value="1"></i><b>(1)</b>
-        @ParameterLayout(named="name")
-        String name);
-    ...
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>end-user must enter minimum number of characters to trigger the query</td>
-</tr>
-</table>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-The autocomplete "action" can also be a regular method, annotated using <a href="Programmatic.html" class="page">@Programmatic</a>.
-That is, it does not need to be part of the metamodel:
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>+</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainService(nature = NatureOfService.VIEW)
-public class Customers {
-    @Programmatic
-    public List&lt;Customer&gt; findByName(
-        @MinLength(3)
-        String name);
-    ...
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="auditing"><a class="anchor" href="#auditing"></a>Auditing</h3>
-<div class="paragraph">
-<p>The <a href="#entityChangePublishing">entityChangePublishing()</a> element indicates that if the object is modified, then each of its changed properties should be submitted to the registered <a href="../services/publishing/spi/EntityPropertyChangeSubscriber.html" class="page">EntityPropertyChangeSubscriber</a>(s).</p>
-</div>
-<div class="paragraph">
-<p>The default value for the element is <code>AS_CONFIGURED</code>, meaning that the <a href="../../../config/sections/isis.applib.html#isis.applib.annotation.domain-object.entity-change-publishing" class="page">isis.applib.annotation.domain-object.entity-change-publishing</a> configuration property is used to determine the whether the action is audited:</p>
+<p>View models when defined using <code>@DomainObject(nature=VIEW_MODEL)</code> have some limitations:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p><code>all</code><br></p>
-<div class="paragraph">
-<p>all changed properties of objects are audited</p>
-</div>
+<p>view models cannot hold collections other view models (simple properties <em>are</em> supported, though)</p>
 </li>
 <li>
-<p><code>none</code><br></p>
-<div class="paragraph">
-<p>no changed properties of objects are audited</p>
-</div>
+<p>collections (of either view models or entities) are ignored.</p>
+</li>
+<li>
+<p>not every data type is supported,</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>If there is no configuration property in <code>application.properties</code> then auditing is automatically enabled for domain objects.</p>
-</div>
-<div class="paragraph">
-<p>This default can be overridden on an object-by-object basis; if <code>entityChangePublishing()</code> is set to <code>ENABLED</code> then changed properties of instances of the domain class are audited irrespective of the configured value; if set to <code>DISABLED</code> then the changed properties of instances are <em>not</em> audited, again irrespective of the configured value.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(
-    entityChangePublishing=Publishing.ENABLED  <i class="conum" data-value="1"></i><b>(1)</b>
-)
-public class Customer {
-    ...
-}</code></pre>
+<p>However, these limitations do <em>not</em> apply to <a href="../../../../../userguide/latest/fun/view-models.html#jaxb" class="page">JAXB</a> view models.
+If you are using view models heavily, you may wish to restrict yourself to just the JAXB flavour.</p>
 </div>
 </div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>because set to enabled, will be audited irrespective of the configured value.</td>
-</tr>
-</table>
 </div>
-</div>
+<div class="sect1">
+<h2 id="usage-notes"><a class="anchor" href="#usage-notes"></a>Usage Notes</h2>
+<div class="sectionbody">
 <div class="sect2">
 <h3 id="object-aliases"><a class="anchor" href="#object-aliases"></a>Object aliases</h3>
 <div class="paragraph">
@@ -1690,6 +1591,124 @@ At best this will require a data migration in the database; at worst it could ca
 <div class="paragraph">
 <p>If the object type is not unique across all domain classes then the framework will fail-fast and fail to boot.
 An error message will be printed in the log to help you determine which classes have duplicate object tyoes.</p>
+</div>
+<div class="sect2">
+<h3 id="nature-2"><a class="anchor" href="#nature-2"></a>Nature</h3>
+<div class="paragraph">
+<p>The <a href="#nature">nature()</a> element is used to characterize the domain object as either an entity (part of the domain layer) or as a view model (part of the application layer).
+If the domain object should be thought of as an entity, it also captures how the persistence of that entity is managed.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(nature=Nature.VIEW_MODEL)
+public class PieChartAnalysis {
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Specifically, the nature must be one of:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>NOT_SPECIFIED,</code></p>
+<div class="paragraph">
+<p>(the default); specifies no paricular semantics for the domain class.</p>
+</div>
+</li>
+<li>
+<p><code>ENTITY</code></p>
+<div class="paragraph">
+<p>indicates that the domain object is an entity whose persistence is managed internally by Apache Isis, using the JDO/DataNucleus objectstore.</p>
+</div>
+</li>
+<li>
+<p><code>MIXIN</code></p>
+<div class="paragraph">
+<p>indicates that the domain object is part of the domain layer, and is contributing behaviour to objects of some other type as a mixin (also known as a trait).</p>
+</div>
+<div class="paragraph">
+<p>For further discussion on using mixins, see <a href="../../../../../userguide/latest/fun/overview.html#mixins" class="page">mixins</a> in the user guide.</p>
+</div>
+</li>
+<li>
+<p><code>VIEW_MODEL</code></p>
+<div class="paragraph">
+<p>indicates that the domain object is conceptually part of the application layer, and exists to surfaces behaviour and/or state that is aggregate of one or more domain entities.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><em>Variant: External Entity</em></p>
+<div class="paragraph">
+<p>Or indicates that the domain object is a wrapper/proxy/stub (choose your term) to an entity that is managed by some related external system.
+For example, the domain object may hold just the URI to a RESTful resource of some third party REST service, or the id of some system accessible over SOAP.</p>
+</div>
+<div class="paragraph">
+<p>The identity of an external entity is determined solely by the state of entity&#8217;s properties.
+The framework will automatically recreate the domain object each time it is interacted with.</p>
+</div>
+</li>
+<li>
+<p><em>Variant: In-Memory Entity</em></p>
+<div class="paragraph">
+<p>Or indicates that the domain object is a wrapper/proxy/stub to a "synthetic" entity, for example one that is constructed from some sort of internal memory data structure.</p>
+</div>
+<div class="paragraph">
+<p>The identity of an in-memory entity is determined solely by the state of entity&#8217;s properties.
+The framework will automatically recreate the domain object each time it is interacted with.</p>
+</div>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Those natures that indicate the domain object is an entity (of some sort or another) mean then that the domain object is considered to be part of the domain model layer.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>For <code>VIEW_MODEL</code> domain objects the state of the object is encoded into its internal OID (represented ultimately as its URL), and is recreated directly from that URL.</p>
+</div>
+<div class="paragraph">
+<p>Because this particular implementation was originally added to Apache Isis in support of view models, the term was also used for the logically different external entities and in-memory entities.</p>
+</div>
+<div class="paragraph">
+<p>The benefit of <code>nature()</code> is that it allows the developer to properly characterize the layer (domain vs application) that an entity lives, thus avoiding confusion as "view model" (the implementation technique) and "view model" (the application layer concept).</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>On the other hand, view models defined in this way do have some limitations; see <a href="#view-models">View Models</a> for further discussion.</p>
+</div>
+<div class="paragraph">
+<p>These limitations do <em>not</em> apply to <a href="../../../../../userguide/latest/fun/view-models.html#jaxb" class="page">JAXB</a> view models.
+If you are using view models heavily, you may wish to restrict yourself to just the JAXB flavour.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
 </div>
 <div class="sect2">
 <h3 id="editing-2"><a class="anchor" href="#editing-2"></a>Editing</h3>
@@ -2431,6 +2450,235 @@ public class ToDoItem {
 </div>
 </div>
 <div class="sect2">
+<h3 id="auditing"><a class="anchor" href="#auditing"></a>Auditing</h3>
+<div class="paragraph">
+<p>The <a href="#entityChangePublishing">entityChangePublishing()</a> element indicates that if the object is modified, then each of its changed properties should be submitted to the registered <a href="../services/publishing/spi/EntityPropertyChangeSubscriber.html" class="page">EntityPropertyChangeSubscriber</a>(s).</p>
+</div>
+<div class="paragraph">
+<p>The default value for the element is <code>AS_CONFIGURED</code>, meaning that the <a href="../../../config/sections/isis.applib.html#isis.applib.annotation.domain-object.entity-change-publishing" class="page">isis.applib.annotation.domain-object.entity-change-publishing</a> configuration property is used to determine the whether the action is audited:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>all</code><br></p>
+<div class="paragraph">
+<p>all changed properties of objects are audited</p>
+</div>
+</li>
+<li>
+<p><code>none</code><br></p>
+<div class="paragraph">
+<p>no changed properties of objects are audited</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>If there is no configuration property in <code>application.properties</code> then auditing is automatically enabled for domain objects.</p>
+</div>
+<div class="paragraph">
+<p>This default can be overridden on an object-by-object basis; if <code>entityChangePublishing()</code> is set to <code>ENABLED</code> then changed properties of instances of the domain class are audited irrespective of the configured value; if set to <code>DISABLED</code> then the changed properties of instances are <em>not</em> audited, again irrespective of the configured value.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(
+    entityChangePublishing=Publishing.ENABLED  <i class="conum" data-value="1"></i><b>(1)</b>
+)
+public class Customer {
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>because set to enabled, will be audited irrespective of the configured value.</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="reference-data"><a class="anchor" href="#reference-data"></a>Reference Data</h3>
+<div class="paragraph">
+<p>Some domain classes are immutable to the user, and moreover have only a fixed number of instances.
+Often these are "reference" ("standing") data, or lookup data/pick lists.
+Typical examples could include categories, countries, states, and tax or interest rate tables.</p>
+</div>
+<div class="paragraph">
+<p>Where the number of instances is relatively small, ie bounded, then the <a href="#bounding">bounding()</a> element can be used as a hint.
+For such domain objects the framework will automatically allow instances to be selected; <a href="../../../../../vw/latest/about.html" class="page">Web UI (Wicket viewer)</a> displays these as a drop-down list.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(
+    bounding=Bounding.BOUNDED,
+    editing=Editing.DISABLED        <i class="conum" data-value="1"></i><b>(1)</b>
+)
+public class Currency {
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>This attribute is commonly combined with <code>editing=DISABLED</code> to enforce the fact that reference data is immutable</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>There is nothing to prevent you from using this attribute for regular mutable entities, and indeed this is sometimes worth doing during early prototyping.
+However, if there is no realistic upper bound to the number of instances of an entity that might be created, generally you should use <a href="../../../applib-methods/prefixes.html#autoComplete" class="page">autoComplete&#8230;&#8203;()</a> supporting method or the <a href="#autoCompleteRepository">@DomainObject#autoCompleteRepository</a> attribute instead.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="auto-complete"><a class="anchor" href="#auto-complete"></a>Auto-complete</h3>
+<div class="paragraph">
+<p>The <a href="#autoCompleteRepository">autoCompleteRepository()</a> element nominates a single method on a domain service as the fallback means for looking up instances of the domain object using a simple string.</p>
+</div>
+<div class="paragraph">
+<p>For example, this might search for a customer by their name or number.
+Or it could search for a country based on its ISO-3 code or user-friendly name.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>If you require additional control - for example restricting the returned results based on the object being interacted with - then use the <a href="../../../applib-methods/prefixes.html#autoComplete" class="page">autoComplete&#8230;&#8203;()</a> supporting method instead.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(
+    autoCompleteRepository=CustomerRepository.class
+)
+public class Customer {
+   ....
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>where:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainService
+public class CustomerRepository {
+    List&lt;Customer&gt; autoComplete(String search);  <i class="conum" data-value="1"></i><b>(1)</b>
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>is assumed to be called "autoComplete", and accepts a single string</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>(As noted above) the method invoked on the repository is assumed to be called "autoComplete".
+The optional <a href="#autoCompleteAction">autoCompleteAction()</a> element allows the name of this method to be overridden.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(
+    autoCompleteRepository=Customers.class,
+    autoCompleteAction="findByName"
+)
+public class Customer {
+   ....
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>where in this case <code>findByName</code> might be an existing action already defined:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainService(nature = NatureOfService.VIEW)
+public class Customers {
+
+    @Action(semantics=SemanticsOf.SAFE)
+    public List&lt;Customer&gt; findByName(
+        @MinLength(3)                       <i class="conum" data-value="1"></i><b>(1)</b>
+        @ParameterLayout(named="name")
+        String name);
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>end-user must enter minimum number of characters to trigger the query</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The autocomplete "action" can also be a regular method, annotated using <a href="Programmatic.html" class="page">@Programmatic</a>.
+That is, it does not need to be part of the metamodel:
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainService(nature = NatureOfService.VIEW)
+public class Customers {
+    @Programmatic
+    public List&lt;Customer&gt; findByName(
+        @MinLength(3)
+        String name);
+    ...
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
 <h3 id="mixin-method"><a class="anchor" href="#mixin-method"></a>Mixin method</h3>
 <div class="paragraph">
 <p>The <a href="#mixinMethod">mixinMethod()</a> element specifies the name of the method to be treated as a "reserved" method name, meaning that the mixin&#8217;s name should instead be inferred from the mixin&#8217;s type.</p>
@@ -2496,282 +2744,27 @@ Alternatively, when using <a href="Action.html" class="page">@Action</a> then me
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="reference-data"><a class="anchor" href="#reference-data"></a>Reference Data</h3>
-<div class="paragraph">
-<p>Some domain classes are immutable to the user, and moreover have only a fixed number of instances.
-Often these are "reference" ("standing") data, or lookup data/pick lists.
-Typical examples could include categories, countries, states, and tax or interest rate tables.</p>
-</div>
-<div class="paragraph">
-<p>Where the number of instances is relatively small, ie bounded, then the <a href="#bounding">bounding()</a> element can be used as a hint.
-For such domain objects the framework will automatically allow instances to be selected; <a href="../../../../../vw/latest/about.html" class="page">Web UI (Wicket viewer)</a> displays these as a drop-down list.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(
-    bounding=Bounding.BOUNDED,
-    editing=Editing.DISABLED        <i class="conum" data-value="1"></i><b>(1)</b>
-)
-public class Currency {
-    ...
-}</code></pre>
 </div>
 </div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>This attribute is commonly combined with <code>editing=DISABLED</code> to enforce the fact that reference data is immutable</td>
-</tr>
-</table>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>There is nothing to prevent you from using this attribute for regular mutable entities, and indeed this is sometimes worth doing during early prototyping.
-However, if there is no realistic upper bound to the number of instances of an entity that might be created, generally you should use <a href="../../../applib-methods/prefixes.html#autoComplete" class="page">autoComplete&#8230;&#8203;()</a> supporting method or the <a href="#autoCompleteRepository">@DomainObject#autoCompleteRepository</a> attribute instead.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect2">
-<h3 id="nature-2"><a class="anchor" href="#nature-2"></a>Nature</h3>
-<div class="paragraph">
-<p>The <a href="#nature">nature()</a> element is used to characterize the domain object as either an entity (part of the domain layer) or as a view model (part of the application layer).
-If the domain object should be thought of as an entity, it also captures how the persistence of that entity is managed.</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(nature=Nature.VIEW_MODEL)
-public class PieChartAnalysis {
-    ...
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Specifically, the nature must be one of:</p>
-</div>
+<div class="sect1">
+<h2 id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+<div class="sectionbody">
 <div class="ulist">
 <ul>
 <li>
-<p><code>NOT_SPECIFIED,</code></p>
+<p><a href="../services/publishing/spi/EntityPropertyChangeSubscriber.html" class="page">EntityPropertyChangeSubscriber</a> SPI</p>
 <div class="paragraph">
-<p>(the default); specifies no paricular semantics for the domain class.</p>
+<p>(only applies to entity objects)</p>
 </div>
 </li>
 <li>
-<p><code>ENTITY</code></p>
+<p><a href="../services/publishing/spi/EntityChangesSubscriber.html" class="page">EntityChangesSubscriber</a> SPI</p>
 <div class="paragraph">
-<p>indicates that the domain object is an entity whose persistence is managed internally by Apache Isis, using the JDO/DataNucleus objectstore.</p>
-</div>
-</li>
-<li>
-<p><code>MIXIN</code></p>
-<div class="paragraph">
-<p>indicates that the domain object is part of the domain layer, and is contributing behaviour to objects of some other type as a mixin (also known as a trait).</p>
-</div>
-<div class="paragraph">
-<p>For further discussion on using mixins, see <a href="../../../../../userguide/latest/fun/overview.html#mixins" class="page">mixins</a> in the user guide.</p>
-</div>
-</li>
-<li>
-<p><code>VIEW_MODEL</code></p>
-<div class="paragraph">
-<p>indicates that the domain object is conceptually part of the application layer, and exists to surfaces behaviour and/or state that is aggregate of one or more domain entities.</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><em>Variant: External Entity</em></p>
-<div class="paragraph">
-<p>Or indicates that the domain object is a wrapper/proxy/stub (choose your term) to an entity that is managed by some related external system.
-For example, the domain object may hold just the URI to a RESTful resource of some third party REST service, or the id of some system accessible over SOAP.</p>
-</div>
-<div class="paragraph">
-<p>The identity of an external entity is determined solely by the state of entity&#8217;s properties.
-The framework will automatically recreate the domain object each time it is interacted with.</p>
-</div>
-</li>
-<li>
-<p><em>Variant: In-Memory Entity</em></p>
-<div class="paragraph">
-<p>Or indicates that the domain object is a wrapper/proxy/stub to a "synthetic" entity, for example one that is constructed from some sort of internal memory data structure.</p>
-</div>
-<div class="paragraph">
-<p>The identity of an in-memory entity is determined solely by the state of entity&#8217;s properties.
-The framework will automatically recreate the domain object each time it is interacted with.</p>
+<p>(only applies to entity objects)</p>
 </div>
 </li>
 </ul>
 </div>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Those natures that indicate the domain object is an entity (of some sort or another) mean then that the domain object is considered to be part of the domain model layer.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>For <code>VIEW_MODEL</code> domain objects the state of the object is encoded into its internal OID (represented ultimately as its URL), and is recreated directly from that URL.</p>
-</div>
-<div class="paragraph">
-<p>Because this particular implementation was originally added to Apache Isis in support of view models, the term was also used for the logically different external entities and in-memory entities.</p>
-</div>
-<div class="paragraph">
-<p>The benefit of <code>nature()</code> is that it allows the developer to properly characterize the layer (domain vs application) that an entity lives, thus avoiding confusion as "view model" (the implementation technique) and "view model" (the application layer concept).</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>On the other hand, view models defined in this way do have some limitations; see <a href="#view-models">View Models</a> for further discussion.</p>
-</div>
-<div class="paragraph">
-<p>These limitations do <em>not</em> apply to <a href="../../../../../userguide/latest/fun/view-models.html#jaxb" class="page">JAXB</a> view models.
-If you are using view models heavily, you may wish to restrict yourself to just the JAXB flavour.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="example"><a class="anchor" href="#example"></a>Example</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(
-    auditing=Auditing.ENABLED,
-    autoCompleteRepository=CustomerRepository.class
-    editing=Editing.ENABLED,
-    updatedLifecycleEvent=Customer.UpdatedEvent.class
-
-)
-public class Customer {
-    ...
-}</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="view-models"><a class="anchor" href="#view-models"></a>View Models</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The <code>@DomainObject(nature=VIEW_MODEL)</code> annotation, applied to a class, indicates that the class is a view model.</p>
-</div>
-<div class="paragraph">
-<p>View models are not persisted to the database, instead their state is encoded within their identity (ultimately represented in the URL).</p>
-</div>
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(nature=VIEW_MODEL)
-public class CustomerViewModel {
-    public CustomerViewModel() {}
-    public CustomerViewModel(String firstName, int lastName) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-    }
-    ...
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Although there are several ways to instantiate a view model, we recommend that they are instantiated using an N-arg constructor that initializes all relevant state.
-The <a href="../services/registry/ServiceRegistry.html" class="page">ServiceRegistry</a> can then be used to inject dependencies into the view model.
-For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Customer cust = ...
-CustomerViewModel vm = factoryService.viewModel(
-    new CustomerViewModel(cust.getFirstName(), cust.getLastName()));</code></pre>
-</div>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>See this <a href="../../../../../userguide/latest/btb/hints-and-tips/view-model-instantiation.html" class="page">tip</a> for further discussion about instantiating view models.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>View models must have a no-arg constructor; this is used internally by the framework for subsequent "recreation".</p>
-</div>
-<div class="paragraph">
-<p>The view model&#8217;s memento will be derived from the value of the view model object&#8217;s properties.
-Any properties annotated with <a href="Programmatic.html" class="page">@Programmatic</a> will be excluded from the memento.
-Properties that are merely <a href="Property.html#hidden" class="page">hidden</a> <em>are</em> included in the memento.</p>
-</div>
-<div class="paragraph">
-<p>View models when defined using <code>@DomainObject(nature=VIEW_MODEL)</code> have some limitations:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>view models cannot hold collections other view models (simple properties <em>are</em> supported, though)</p>
-</li>
-<li>
-<p>collections (of either view models or entities) are ignored.</p>
-</li>
-<li>
-<p>not every data type is supported,</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>However, these limitations do <em>not</em> apply to <a href="../../../../../userguide/latest/fun/view-models.html#jaxb" class="page">JAXB</a> view models.
-If you are using view models heavily, you may wish to restrict yourself to just the JAXB flavour.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="usage-notes"><a class="anchor" href="#usage-notes"></a>Usage Notes</h2>
-<div class="sectionbody">
-
 </div>
 </div>
 </article>
@@ -2791,7 +2784,7 @@ If you are using view models heavily, you may wish to restrict yourself to just 
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M6.20220212-0235-c9e836eb</p>
+            <p>Revision: 2.0.0-M6.20220213-0229-68c5ca15</p>
         </div>
     </div>
 </footer>

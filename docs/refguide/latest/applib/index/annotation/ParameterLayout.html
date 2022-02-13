@@ -670,13 +670,7 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="../../../config/sections/isis.extensions.html">Extensions</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../../../config/sections/isis.value-types.html">Value types</a>
-  </li>
-  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../../../config/sections/isis.testing.html">Testing</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../../../config/sections/isis.legacy.html">Legacy</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../../../config/sections/Other.html">Other</a>
@@ -1122,32 +1116,52 @@ RenderDay renderDay() default RenderDay.NOT_SPECIFIED;     <i class="conum" data
 <p>Note: the Wicket viewer does not use this information.</p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="css-styling"><a class="anchor" href="#css-styling"></a>CSS Styling</h3>
-<div class="paragraph">
-<p>The <a href="#cssClass">cssClass()</a> element can be used to render additional CSS classes in the HTML (a wrapping <code>&lt;div&gt;</code>) that represents the action parameter.
-<a href="../../../config/application-specific/application-css.html" class="page">Application-specific CSS</a> can then be used to target and adjust the UI representation of that particular element.</p>
 </div>
+</div>
+<div class="sect1">
+<h2 id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>For example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class ToDoItem {
-
-    public ToDoItem postpone(
-            @ParameterLayout(
-                cssClass="x-key"
-            )
-            LocalDate until ) {
-        // ...
+    public ToDoItem updateDescription(
+                        @ParameterLayout(
+                            cssClass="x-key",
+                            describedAs="What needs to be done",
+                            labelPosition=LabelPosition.LEFT,
+                            named="Description of this &lt;i&gt;item&lt;/i&gt;",
+                            namedEscaped=false,
+                            typicalLength=80)
+                        final String description) {
+        setDescription(description);
+        return this;
     }
-
-    // ...
+    ...
 }</code></pre>
 </div>
 </div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Note that there is (currently) no support for specifying UI hints for domain services through the dynamic <a href="../../../../../userguide/latest/fun/ui.html#object-layout" class="page">.layout.xml</a> file (only for properties, collections and actions are supported).</p>
 </div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="usage-notes"><a class="anchor" href="#usage-notes"></a>Usage Notes</h2>
+<div class="sectionbody">
 <div class="sect2">
 <h3 id="label-positioning"><a class="anchor" href="#label-positioning"></a>Label Positioning</h3>
 <div class="paragraph">
@@ -1272,50 +1286,29 @@ It is ignored for other parameter types.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="typical-string-length"><a class="anchor" href="#typical-string-length"></a>Typical (string) length</h3>
+<h3 id="css-styling"><a class="anchor" href="#css-styling"></a>CSS Styling</h3>
 <div class="paragraph">
-<p>The <a href="#typicalLength">typicalLength()</a> element indicates the typical length of a string parameter.
-It is ignored for parameters of other types.</p>
-</div>
-<div class="paragraph">
-<p>The information is intended as a hint to the UI to determine the space that should be given to render a particular string parameter.</p>
+<p>The <a href="#cssClass">cssClass()</a> element can be used to render additional CSS classes in the HTML (a wrapping <code>&lt;div&gt;</code>) that represents the action parameter.
+<a href="../../../config/application-specific/application-css.html" class="page">Application-specific CSS</a> can then be used to target and adjust the UI representation of that particular element.</p>
 </div>
 <div class="paragraph">
 <p>For example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Customer {
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class ToDoItem {
 
-    public Customer updateName(
-                @Parameter(maxLength=30)
-                @ParameterLayout(
-                    typicalLength=20
-                )
-                final String firstName,
-                @Parameter(maxLength=30)
-                @ParameterLayout(
-                    typicalLength=20
-                )
-                final String lastName) {
+    public ToDoItem postpone(
+            @ParameterLayout(
+                cssClass="x-key"
+            )
+            LocalDate until ) {
         // ...
     }
 
     // ...
 }</code></pre>
 </div>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-All that said, the <a href="../../../../../vw/latest/about.html" class="page">Web UI (Wicket viewer)</a> uses the maximum space available for all fields, so in effect ignores this element.
-</td>
-</tr>
-</table>
 </div>
 </div>
 <div class="sect2">
@@ -1355,52 +1348,6 @@ In such cases there would typically be <code>startDate</code> and <code>endDate<
 </div>
 </div>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class ToDoItem {
-    public ToDoItem updateDescription(
-                        @ParameterLayout(
-                            cssClass="x-key",
-                            describedAs="What needs to be done",
-                            labelPosition=LabelPosition.LEFT,
-                            named="Description of this &lt;i&gt;item&lt;/i&gt;",
-                            namedEscaped=false,
-                            typicalLength=80)
-                        final String description) {
-        setDescription(description);
-        return this;
-    }
-    ...
-}</code></pre>
-</div>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>Note that there is (currently) no support for specifying UI hints for domain services through the dynamic <a href="../../../../../userguide/latest/fun/ui.html#object-layout" class="page">.layout.xml</a> file (only for properties, collections and actions are supported).</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="usage-notes"><a class="anchor" href="#usage-notes"></a>Usage Notes</h2>
-<div class="sectionbody">
 <div class="sect2">
 <h3 id="names"><a class="anchor" href="#names"></a>Names</h3>
 <div class="paragraph">
@@ -1454,6 +1401,53 @@ To allow HTML markup, set the related <a href="#namedEscaped">namedEscaped()</a>
 </div>
 </div>
 </div>
+<div class="sect2">
+<h3 id="typical-string-length"><a class="anchor" href="#typical-string-length"></a>Typical (string) length</h3>
+<div class="paragraph">
+<p>The <a href="#typicalLength">typicalLength()</a> element indicates the typical length of a string parameter.
+It is ignored for parameters of other types.</p>
+</div>
+<div class="paragraph">
+<p>The information is intended as a hint to the UI to determine the space that should be given to render a particular string parameter.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Customer {
+
+    public Customer updateName(
+                @Parameter(maxLength=30)
+                @ParameterLayout(
+                    typicalLength=20
+                )
+                final String firstName,
+                @Parameter(maxLength=30)
+                @ParameterLayout(
+                    typicalLength=20
+                )
+                final String lastName) {
+        // ...
+    }
+
+    // ...
+}</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+All that said, the <a href="../../../../../vw/latest/about.html" class="page">Web UI (Wicket viewer)</a> uses the maximum space available for all fields, so in effect ignores this element.
+</td>
+</tr>
+</table>
+</div>
+</div>
 </div>
 </div>
 </article>
@@ -1473,7 +1467,7 @@ To allow HTML markup, set the related <a href="#namedEscaped">namedEscaped()</a>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-M6.20220212-0235-c9e836eb</p>
+            <p>Revision: 2.0.0-M6.20220213-0229-68c5ca15</p>
         </div>
     </div>
 </footer>
