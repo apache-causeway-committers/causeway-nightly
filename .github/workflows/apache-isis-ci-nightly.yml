@@ -151,6 +151,26 @@ jobs:
             -DskipTests=true
           MVN_STAGES: deploy
           REV_REVERT_FLAG: off
+
+      - name: Deploy from Local Filesystem to Github Site
+        if: steps.revision.outputs.revision != 'skip'
+        working-directory: ${{ env.PROJECT_ROOT_PATH }}
+        run: >-
+          mvn deploy
+          -s $PROJECT_ROOT_PATH/.m2/settings.xml
+          -f isis-parent/pom.xml
+          -Dreleased
+          -Dnightly-stage2
+          -Denforcer.skip=true
+          -Djacoco.skip=true
+          -DskipTests=true
+          -Dmaven.source.skip=true
+          -Dskip.git
+          -Dskip.arch
+          -DskipTests
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
           
  #    - name: Build and Push Artifacts (nexus.incode.work)
  #      if: steps.revision.outputs.revision != 'skip'
