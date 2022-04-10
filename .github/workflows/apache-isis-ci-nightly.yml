@@ -132,7 +132,11 @@ jobs:
             ${{ runner.os }}-
 
       - name: Build Artifacts and Deploy to Local Filesystem
-        run: 'bash scripts/ci/build-artifacts.sh'
+        if: steps.revision.outputs.revision != 'skip'
+        shell: bash
+        working-directory: ${{ env.PROJECT_ROOT_PATH }}
+        run: |
+          bash scripts/ci/build-artifacts.sh
         env:
           # -Dreleased ... build only the released modules
           # -Denforcer.failFast=true ... fail fast on convergence issues (enforcer plugin)
@@ -144,6 +148,7 @@ jobs:
             -Dnightly-stage1
             -Denforcer.failFast=true
             -Djacoco.skip=true
+            -DskipTests=true
           MVN_STAGES: deploy
           REV_REVERT_FLAG: off
           
