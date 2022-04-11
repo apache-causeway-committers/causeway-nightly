@@ -151,6 +151,7 @@ jobs:
             -DskipTests=true
           MVN_STAGES: deploy
           REV_REVERT_FLAG: off
+          SOURCE_MODE: attach
           
  #    - name: Build and Push Artifacts (nexus.incode.work)
  #      if: steps.revision.outputs.revision != 'skip'
@@ -235,7 +236,7 @@ jobs:
         working-directory: ${{ env.NIGHTLY_ROOT_PATH }}
         run: bash scripts/nightly/rsync-site.sh
   
-      - name: Commit Site Update
+      - name: Commit Site/Snapshot Updates (/docs, /mvn-snapshots)
         if: steps.revision.outputs.revision != 'skip'
         shell: bash
         working-directory: ${{ env.NIGHTLY_ROOT_PATH }}
@@ -243,6 +244,7 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "Apache Isis Committers (Bot)"
+          git add ./mvn-snapshots
           git add ./docs
           git diff --quiet && git diff --staged --quiet || git commit -m "CI automated site update" -a
   
