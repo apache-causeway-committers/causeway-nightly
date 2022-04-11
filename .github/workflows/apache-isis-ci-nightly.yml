@@ -149,10 +149,34 @@ jobs:
             -Denforcer.failFast=true
             -Djacoco.skip=true
             -DskipTests=true
-          MVN_STAGES: deploy
-          REV_REVERT_FLAG: off
-          SOURCE_MODE: attach
+            -Dmodule-all
           
+          # (used by build-artifacts.sh)
+          MVN_STAGES: deploy
+          
+          # when 'off' keep unique REVISION that has SHA checksum - don't revert at end of script 
+          REV_REVERT_FLAG: off
+          
+          # used to skip building incubator images
+          INCUBATOR: skip
+          
+          # possible modes are
+          # attach ... enables the 'source' profile, which brings in the maven-source-plugin
+          # (else) ... explicitly ensure that maven-source-plugin is disabled
+          SOURCE_MODE: attach
+
+ #        SETTINGS_XML: ${{ env.PROJECT_ROOT_PATH }}/.m2/settings.xml
+ #        ## hub.docker.com
+ #        DOCKER_REGISTRY_USERNAME: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
+ #        DOCKER_REGISTRY_PASSWORD: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
+ #        DOCKER_REGISTRY_URL: 'https://index.docker.io/v2/'
+
+ #        # possible modes are
+ #        # push ... push docker images to dockerhub
+ #        # tar  ... build docker images and save them locally as tar files
+ #        # skip ... skip docker image build steps
+ #        JIB_MODE: push
+           
  #    - name: Build and Push Artifacts (nexus.incode.work)
  #      if: steps.revision.outputs.revision != 'skip'
  #      shell: bash
@@ -160,23 +184,6 @@ jobs:
  #      run: |
  #        bash scripts/ci/build-artifacts.sh
  #      env:
- #        # (used by build-artifacts.sh)
- #        MVN_STAGES: deploy
- #
- #        # possible modes are
- #        # push ... push docker images to dockerhub
- #        # tar  ... build docker images and save them locally as tar files
- #        # skip ... skip docker image build steps
- #        JIB_MODE: push
- #
- #        # used to skip building incubator images
- #        INCUBATOR: skip
- #
- #        # possible modes are
- #        # attach ... enables the 'source' profile, which brings in the maven-source-plugin
- #        # (else) ... explicitly ensure that maven-source-plugin is disabled
- #        SOURCE_MODE: attach
- #
  #        ## nexus.incode.work
  #        NEXUS_INCODE_WORK_USERNAME: ${{ secrets.NEXUS_INCODE_WORK_USERNAME }}
  #        NEXUS_INCODE_WORK_PASSWORD: ${{ secrets.NEXUS_INCODE_WORK_PASSWORD }}
@@ -186,15 +193,6 @@ jobs:
  #          -Denforcer.failFast=true
  #          -DskipTests=true
  #          -Dmodule-all
- #
- #        SETTINGS_XML: ${{ env.PROJECT_ROOT_PATH }}/.m2/settings.xml
- #        ## hub.docker.com
- #        DOCKER_REGISTRY_USERNAME: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
- #        DOCKER_REGISTRY_PASSWORD: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
- #        DOCKER_REGISTRY_URL: 'https://index.docker.io/v2/'
- #
- #
- #
  #
  #    - name: Code Quality Analysis
  #      if: steps.revision.outputs.revision != 'skip'
