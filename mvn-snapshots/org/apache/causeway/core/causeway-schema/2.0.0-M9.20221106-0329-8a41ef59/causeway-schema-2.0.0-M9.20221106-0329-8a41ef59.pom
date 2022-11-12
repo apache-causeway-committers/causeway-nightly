@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Licensed to the Apache Software Foundation (ASF) under one or more contributor
+	license agreements. See the NOTICE file distributed with this work for additional
+	information regarding copyright ownership. The ASF licenses this file to
+	you under the Apache License, Version 2.0 (the "License"); you may not use
+	this file except in compliance with the License. You may obtain a copy of
+	the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required
+	by applicable law or agreed to in writing, software distributed under the
+	License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
+	OF ANY KIND, either express or implied. See the License for the specific
+	language governing permissions and limitations under the License. -->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.apache.causeway.core</groupId>
+		<artifactId>causeway-core</artifactId>
+		<version>2.0.0-M9.20221106-0329-8a41ef59</version>
+		<relativePath>../../core/pom.xml</relativePath>
+	</parent>
+
+	<artifactId>causeway-schema</artifactId>
+
+	<packaging>jar</packaging>
+	<name>Apache Causeway Api - Schemas</name>
+	<description>
+        Apache Causeway schemas, for conversion into canonical DTOs (for use in integration scenarios).
+    </description>
+
+	<properties>
+		<jar-plugin.automaticModuleName>org.apache.causeway.schema</jar-plugin.automaticModuleName>
+		<git-plugin.propertiesDir>org/apache/causeway/schema</git-plugin.propertiesDir>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.causeway.core</groupId>
+			<artifactId>causeway-jdk-supplemental</artifactId>
+			<type>pom</type>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+		</dependency>
+	</dependencies>
+
+	<profiles>
+
+		<profile>
+			<id>xsd-to-java</id>
+			<activation>
+				<property>
+					<name>!skip.xsd-to-java</name>
+				</property>
+			</activation>
+
+			<build>
+
+				<plugins>
+					<plugin>
+						<groupId>org.jvnet.jaxb2.maven2</groupId>
+						<artifactId>maven-jaxb2-plugin</artifactId>
+						<version>0.15.1</version>
+						<executions>
+							<execution>
+								<id>generate-chg-xsd</id>
+								<phase>generate-sources</phase>
+								<goals>
+									<goal>generate</goal>
+								</goals>
+								<configuration>
+									<schemaDirectory>src/main/resources/org/apache/causeway/schema</schemaDirectory>
+									<schemaIncludes>
+										<schemaInclude>common/common-2.0.xsd</schemaInclude>
+										<schemaInclude>cmd/cmd-2.0.xsd</schemaInclude>
+										<schemaInclude>ixn/ixn-2.0.xsd</schemaInclude>
+										<schemaInclude>chg/chg-2.0.xsd</schemaInclude>
+										<schemaInclude>metamodel/metamodel-2.0.xsd</schemaInclude>
+									</schemaIncludes>
+									<bindingDirectory>src/main/resources/org/apache/causeway/schema</bindingDirectory>
+									<bindingIncludes>
+										<bindingInclude>bindings.xml</bindingInclude>
+									</bindingIncludes>
+									<args>
+										<arg>-extension</arg>
+										<arg>-Xnamespace-prefix</arg>
+									</args>
+								</configuration>
+							</execution>
+						</executions>
+						<dependencies>
+							<dependency>
+								<groupId>org.jvnet.jaxb2_commons</groupId>
+								<artifactId>jaxb2-namespace-prefix</artifactId>
+								<version>1.3</version>
+							</dependency>
+							<dependency>
+								<!-- fixes build on JDK 16+ see https://github.com/highsource/maven-jaxb2-plugin/issues/201 -->
+								<groupId>org.glassfish.jaxb</groupId>
+								<artifactId>jaxb-runtime</artifactId>
+								<version>2.3.3</version>
+							</dependency>
+						</dependencies>
+					</plugin>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>build-helper-maven-plugin</artifactId>
+						<version>3.3.0</version>
+						<executions>
+							<execution>
+								<id>add-source</id>
+								<phase>generate-sources</phase>
+								<goals>
+									<goal>add-source</goal>
+								</goals>
+								<configuration>
+									<sources>
+										<source>target/generated-sources/xjc</source>
+									</sources>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
+
+</project>

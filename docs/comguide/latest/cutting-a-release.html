@@ -1,0 +1,1763 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Cutting a Release :: Apache Causeway</title>
+    <meta name="generator" content="Antora 3.1.2">
+    <link rel="stylesheet" href="../../_/css/site.css">
+    <link rel="stylesheet" href="../../_/css/site-custom.css">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Raleway:300,400,500,700,800|Montserrat:300,400,700" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css"/>
+<link rel="home" href="../.." title="Apache Causeway">
+  <link rel="next" href="verifying-releases.html" title="Verifying Releases">
+  <link rel="prev" href="updating-the-website.html" title="Updating the Website">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="../..">
+          <span class="icon">
+            <img src="../../_/img/isis-logo-48x48.png"></img>
+          </span>
+        <span>Apache Causeway</span>
+      </a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <a class="navbar-end">
+        <div class="navbar-item hide-for-print">
+          <span>
+            <input id="algolia-search-input" placeholder="Search"></span>
+          </span>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Quick Start</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Starter Apps</span>
+            <a class="navbar-item" href="../../docs//starters/helloworld.html">Hello World</a>
+            <a class="navbar-item" href="../../docs//starters/simpleapp.html">Simple App</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Demos &amp; Tutorials</span>
+            <a class="navbar-item" href="../../docs//demo/about.html">Demo App</a>
+            <a class="navbar-item" href="https://danhaywood.gitlab.io/isis-petclinic-tutorial-docs/petclinic/1.16.2/intro.html">Petclinic (tutorial)</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Resources</span>
+            <a class="navbar-item" href="../../docs//resources/cheatsheet.html">Cheatsheet</a>
+            <a class="navbar-item" href="../../docs//resources/icons.html">Icons</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Guides</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Core</span>
+            <a class="navbar-item" href="../../userguide//about.html">User Guide</a>
+            <a class="navbar-item" href="../../refguide//about.html">Reference Guide</a>
+            <a class="navbar-item" href="../../testing//about.html">Testing Guide</a>
+            <a class="navbar-item" href="../../security//about.html">Security Guide</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Development</span>
+            <a class="navbar-item" href="../../setupguide//about.html">Setup Guide</a>
+            <a class="navbar-item" href="../../conguide//about.html">Contributors' Guide</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Components</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Viewers</span>
+            <a class="navbar-item" href="../../vw//about.html">Web UI (Wicket)</a>
+            <a class="navbar-item" href="../../vro//about.html">REST API (Restful Objects)</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Persistence</span>
+            <a class="navbar-item" href="../../pjpa//about.html">JPA (EclipseLink)</a>
+            <a class="navbar-item" href="../../pjdo//about.html">JDO (DataNucleus)</a>
+            <span class="navbar-item navbar-heading">Security</span>
+            <a class="navbar-item" href="../../security//bypass/about.html">Bypass (Authenticator & Authorizor)</a>
+            <a class="navbar-item" href="../../security//shiro/about.html">Shiro (Authenticator & Authorizor)</a>
+            <a class="navbar-item" href="../../security//spring/about.html">Spring (Authenticator only)</a>
+            <a class="navbar-item" href="../../security//keycloak/about.html">Keycloak (Authenticator only)</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Catalogs</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">For Use in Apps</span>
+            <a class="navbar-item" href="../../valuetypes//about.html">Value Types</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Extending the framework itself</span>
+            <a class="navbar-item" href="../../extensions//about.html">Extensions</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Support</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Contact</span>
+            <a class="navbar-item" href="../../docs//support/slack-channel.html">Slack</a>
+            <a class="navbar-item" href="../../docs//support/mailing-list.html">Mailing Lists</a>
+            <a class="navbar-item" href="https://issues.apache.org/jira/browse/ISIS">JIRA</a>
+            <a class="navbar-item" href="https://stackoverflow.com/questions/tagged/isis">Stack Overflow</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Releases</span>
+            <a class="navbar-item" href="../../docs//downloads/how-to.html">Downloads</a>
+            <a class="navbar-item" href="../../relnotes//about.html">Release Notes</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Nightly Builds</span>
+            <a class="navbar-item" href="https://github.com/apache/isis">Packages (ASF hosted)</a>
+            <a class="navbar-item" href="https://github.com/apache-isis-committers/isis-nightly">Packages (not ASF hosted)</a>
+            <a class="navbar-item" href="https://apache-isis-committers.github.io/isis-nightly">Website Preview (not ASF hosted)</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Framework</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Process</span>
+            <a class="navbar-item" href="../../comguide//about.html">Committers' Guide</a>
+            <a class="navbar-item" href="../../tooling//about.html">Tooling</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Automated Analysis</span>
+            <a class="navbar-item" href="https://sonarcloud.io/dashboard?id=apache_isis">SonarCloud.io</a>
+            <a class="navbar-item" href="https://fisheye.apache.org/browse/~br=master/isis-git/">ASF Fisheye</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Development</span>
+            <a class="navbar-item" href="../../core//about.html">Internal Design Docs</a>
+            <a class="navbar-item" href="../../regressiontests//about.html">Regression Tests</a>
+            <a class="navbar-item" href="../../incubator//about.html">Incubator</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Thanks</span>
+            <a class="navbar-item" href="../../more-thanks//more-thanks.html">Acknowledgements</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">ASF</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://www.apache.org/">Apache Homepage</a>
+            <a class="navbar-item" href="https://www.apache.org/events/current-event">Events</a>
+            <a class="navbar-item" href="https://www.apache.org/licenses/">Licenses</a>
+            <a class="navbar-item" href="https://www.apache.org/security/">Security</a>
+            <a class="navbar-item" href="https://www.apache.org/foundation/sponsorship.html">Sponsorship</a>
+            <a class="navbar-item" href="https://www.apache.org/foundation/thanks.html">Thanks</a>
+            <hr class="navbar-divider"/>
+            <a class="navbar-item" href="https://whimsy.apache.org/board/minutes/Isis.html">PMC board minutes</a>
+          </div>
+        </div>
+        <a class="navbar-item" href="../../docs//about.html">
+          <span class="icon">
+            <img src="../../_/img/home.png"></img>
+          </span>
+        </a>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body ">
+<div class="nav-container" data-component="comguide" data-version="latest">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-pagination">
+  <a class="page-previous" rel="prev" href="updating-the-website.html" title="Updating the Website"><span></span></a>
+  <a class="page-next" rel="next"
+     href="verifying-releases.html" title="Verifying Releases"><span></span></a>
+<!--
+page.parent doesn't seem to be set...
+  <a class="page-parent disabled" rel="prev" href="" title="Updating the Website"><span></span></a>
+-->
+</div>
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="about.html">Committers&#x27; Guide</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Occasionally</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="merging-a-pull-request.html">Merging a Pull Request</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="applying-patches.html">Applying Patches</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="updating-the-website.html">Updating the Website</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Release</span>
+<ul class="nav-list">
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="cutting-a-release.html">Cutting a Release</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="verifying-releases.html">Verifying Releases</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Post Release</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="post-release-successful.html">Post Release (Successful)</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="post-release-unsuccessful.html">Post Release (Unsuccessful)</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Appendices</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="key-generation.html">Key Generation</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="algolia-search.html">Algolia Search</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="release-process-prereqs.html">Release Process Prereqs</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="policies.html">Policies</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="pmc-notes.html">PMC Notes</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Committers&#x27; Guide</span>
+    <span class="version">latest</span>
+  </div>
+  <ul class="components">
+    <li class="component">
+      <span class="title"> </span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../docs/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component is-current">
+      <span class="title">Committers' Guide</span>
+      <ul class="versions">
+        <li class="version is-current">
+          <a href="about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Contributors' Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../conguide/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Design Docs</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../core/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Extensions Catalog</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../extensions/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Incubator Catalog</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../incubator/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">JDO/DataNucleus</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../pjdo/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">JPA</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../pjpa/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Reference Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../refguide/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">regressiontests</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../regressiontests/latest/index.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Release Notes</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../relnotes/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">REST API (Restful Objects Viewer)</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../vro/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Security Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../security/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Setup Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../setupguide/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Testing Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../testing/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Tooling</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../tooling/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Tutorials</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../tutorials/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">User Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../userguide/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Value Types Catalog</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../valuetypes/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Web UI (Wicket Viewer)</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../vw/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main role="main">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../docs/latest/about.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="about.html">Committers' Guide</a></li>
+    <li>Release</li>
+    <li><a href="cutting-a-release.html">Cutting a Release</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/master/antora/components/comguide/modules/ROOT/pages/cutting-a-release.adoc">Edit</a></div>
+</div>
+<article class="doc">
+    <a name="section-top"></a>
+<h1 class="page">Cutting a Release</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>The release process consists of:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>the release manager cutting the release (documented below)</p>
+</li>
+<li>
+<p>Members of the Apache Causeway PMC <a href="verifying-releases.html" class="xref page">verifying</a> and voting on the release</p>
+</li>
+<li>
+<p>the release manager performing post-release tasks, for either a <a href="post-release-successful.html" class="xref page">successful</a> or an <a href="post-release-unsuccessful.html" class="xref page">unsuccessful</a> vote.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Apache Causeway itself is released in one go, everything is ultimately a child of <code>bom/pom.xml</code> (relative to the <a href="https://github.com/apache/causeway">source code root</a>).
+This section details the process for formally releasing this module.</p>
+</div>
+<div class="paragraph">
+<p>The subsequent sections describe how other committers can <a href="verifying-releases.html" class="xref page">verify a release</a> and how the release manager can then perform <a href="post-release-successful.html" class="xref page">post-release</a> activities and set up for the next development iteration.</p>
+</div>
+<div class="paragraph">
+<p>If you&#8217;ve not performed a release before, then note that there are some configuration <a href="release-process-prereqs.html" class="xref page">prerequisites</a> that must be configured first.
+In particular, you&#8217;ll need signed public/private keys, and the ASF Nexus staging repo inlocal <code>~/.m2/settings.xml</code> file.</p>
+</div>
+<div class="paragraph">
+<p>These release notes using bash command line tools.
+They should work on Linux and MacOS; for Windows, use mSysGit.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="preparation"><a class="anchor" href="#preparation"></a>Preparation</h2>
+<div class="sectionbody">
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The release process should be performed on Java 11.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The deploy process has been tested only with <code>gpg</code> 2.0.x ; you may need to adjust if using a later version.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="obtain-consensus"><a class="anchor" href="#obtain-consensus"></a>Obtain Consensus</h3>
+<div class="paragraph">
+<p>Before releasing the framework, ensure there is consensus on the <a href="../../docs/latest/support/mailing-list.html" class="xref page">dev mailing list</a> that this is the right time for a release.
+The discussion should include confirming the version number to be used, and to confirm content.</p>
+</div>
+<div class="paragraph">
+<p>These discussions should also confirm the version number of the module being released.
+This should be in line with our <a href="policies/versioning-policy.html#semantic-versioning" class="xref page">semantic versioning policy</a>.</p>
+</div>
+<div class="paragraph">
+<p>Make sure you have a JIRA ticket open against which to perform all commits.
+In most cases a JIRA ticket will have been created at the beginning of the previous release cycle.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="pull-down-code-to-release"><a class="anchor" href="#pull-down-code-to-release"></a>Pull down code to release</h3>
+<div class="paragraph">
+<p>Set the HEAD of your local git repo to the commit to be released.
+This will usually be the tip of the origin&#8217;s <code>master</code> branch:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git checkout master
+git pull --ff-only</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="license-headers"><a class="anchor" href="#license-headers"></a>License headers</h3>
+<div class="paragraph">
+<p>The Apache Release Audit Tool <code>RAT</code> (from the <a href="http://creadur.apache.org">Apache Creadur</a> project) checks for missing license header files.
+The parent <code>pom.xml</code> of each releasable module specifies the RAT Maven plugin, with a number of custom exclusions.</p>
+</div>
+<div class="paragraph">
+<p>We run the tool runs over all submodules, including non-released modules.
+To run the RAT tool, use:</p>
+</div>
+<div class="listingblock">
+<div class="title">find unapproved/missing licenses</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">pushd bom
+mvn -Dapache-release clean
+mvn -Dapache-release org.apache.rat:apache-rat-plugin:check -D rat.numUnapprovedLicenses=1000     <i class="conum" data-value="1"></i><b>(1)</b>
+popd
+
+for a in `/bin/find . -name rat.txt -print`; do grep '!???' $a; done &gt; /tmp/rat-qn.txt            <i class="conum" data-value="2"></i><b>(2)</b>
+for a in `/bin/find . -name rat.txt -print`; do grep '!AL' $a; done &gt; /tmp/rat-al.txt            <i class="conum" data-value="2"></i><b>(2)</b>
+
+cat /tmp/rat-qn.txt
+cat /tmp/rat-al.txt</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The command writes out a <code>target\rat.txt</code> for each submodule. missing license notes are indicated using the key <code>!???</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Collates all the errors.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Inspect the contents of the two <code>/tmp/rat-*.txt</code> files and fix any reported violations, typically by either:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>adding genuinely missing license headers from Java (or other) source files, or</p>
+</li>
+<li>
+<p>updating the <code>&lt;excludes&gt;</code> element for the <code>apache-rat-plugin</code> plugin to ignore test files, log files and any other non-source code files</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Also, look to remove any stale <code>&lt;exclude&gt;</code> entries</p>
+</div>
+<div class="paragraph">
+<p>Once you&#8217;ve fixed all issues, run the script again to confirm that all license violations have been fixed.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="missing-license-check"><a class="anchor" href="#missing-license-check"></a>Missing License Check</h3>
+<div class="paragraph">
+<p>Although Apache Causeway has no dependencies on artifacts with incompatible licenses, the POMs for some of these dependencies (in the Maven central repo) do not necessarily contain the required license information.
+Without appropriate additional configuration, this would result in the generated <code>DEPENDENCIES</code> file and generated Maven site indicating dependencies as having "unknown" licenses.</p>
+</div>
+<div class="paragraph">
+<p>Fortunately, Maven allows the missing information to be provided by configuring the <code>maven-remote-resources-plugin</code>.
+This is stored in the <code>src/main/appended-resources/supplemental-models.xml</code> file, relative to the root of each releasable module.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">pushd bom
+mvn -Dgithub clean install -T1C -DskipTests <i class="conum" data-value="1"></i><b>(1)</b>
+mvn -Dgithub license:download-licenses      <i class="conum" data-value="2"></i><b>(2)</b>
+popd
+groovy scripts/checkmissinglicenses.groovy  <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>builds the framework.
+<div class="paragraph">
+<p>It&#8217;s necessary to have built the framework locally at least once (ok to skip tests).</p>
+</div>
+<div class="paragraph">
+<p>The <code>-Dgithub</code> activates the "github" profile which references the exact same <code>&lt;module&gt;</code>s as the official "apache-release" profile.</p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Captures the missing license information.
+<div class="paragraph">
+<p>The Maven plugin creates a <code>license.xml</code> file in the <code>target/generated-resources</code> directory of each module.</p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Reports on the missing license information
+<div class="paragraph">
+<p>The script searches for these <code>licenses.xml</code> files, and compares them against the contents of the <code>supplemental-models.xml</code> file.</p>
+</div></td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>For example, the output could be something like:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">licenses to add to supplemental-models.xml:
+
+[org.slf4j, slf4j-api, 1.5.7]
+[org.codehaus.groovy, groovy-all, 1.7.2]
+
+licenses to remove from supplemental-models.xml (are spurious):
+
+[org.slf4j, slf4j-api, 1.5.2]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If any missing entries are listed or are spurious, then update <code>supplemental-models.xml</code> and try again.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="reconcile-causeway-bom-pom"><a class="anchor" href="#reconcile-causeway-bom-pom"></a>Reconcile causeway-bom pom</h3>
+<div class="paragraph">
+<p>The <code>bom/pom.xml</code> is a customisation of the <code>org.apache:apache</code> pom, with each section of customisation clearly identified.</p>
+</div>
+<div class="paragraph">
+<p>Check to see if there has been a new version of <code>org.apache:apache</code>; if so, merge in the changes.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="update-the-project-build-timestamp"><a class="anchor" href="#update-the-project-build-timestamp"></a>Update the project build timestamp</h3>
+<div class="paragraph">
+<p>For <a href="https://maven.apache.org/guides/mini/guide-reproducible-builds.html">reproducibility</a>, the <code>project.build.outputTimestamp</code> property must be updated to a hard-coded value.</p>
+</div>
+<div class="paragraph">
+<p>Locate this property in <code>bom/pom.xml</code> and update to the current date/time.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="update-and-preview-website"><a class="anchor" href="#update-and-preview-website"></a>Update and preview website</h3>
+<div class="paragraph">
+<p>The next step is to generate the website, ensuring that the config, examples, projdoc (system overview and global index) are all updated.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Make sure the tooling is built:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mvn -D module-tooling -D skip.essential install -DskipTests</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Then, generate the website:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sh preview.sh</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+this now runs <code>mvn clean install -pl core/config</code> automatically.
+</td>
+</tr>
+</table>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Check for any Asciidoc errors, and fix.
+Also double-check that the config property files are correctly formatted.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="releasing-the-framework"><a class="anchor" href="#releasing-the-framework"></a>Releasing the Framework</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="set-environment-variables"><a class="anchor" href="#set-environment-variables"></a>Set environment variables</h3>
+<div class="paragraph">
+<p>We use environment variables to parameterize as many of the steps as possible.
+For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">export CAUSEWAYJIRA=CAUSEWAY-9999                           <i class="conum" data-value="1"></i><b>(1)</b>
+export CAUSEWAYTMP=/c/tmp                               <i class="conum" data-value="2"></i><b>(2)</b>
+export CAUSEWAYREL=2.0.0-RC1                             <i class="conum" data-value="3"></i><b>(3)</b>
+export CAUSEWAYRC=RC1                                   <i class="conum" data-value="4"></i><b>(4)</b>
+export CAUSEWAYBRANCH=release-$CAUSEWAYREL-$CAUSEWAYRC
+export CAUSEWAYART=causeway
+env | grep CAUSEWAY | sort</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>set to an "umbrella" ticket for all release activities.
+(One should exist already, <a href="post-release-successful.html#create-new-jira" class="xref page">created at</a> the beginning of the development cycle now completing).</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>adjust by platform</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>adjust as required</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>adjust as necessary if this is not the first attempt to release</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The branch name is intentionally <strong>not</strong> the same as the eventual tag names (eg <code>causeway-2.0.0-RC1</code>).</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="commit-changes"><a class="anchor" href="#commit-changes"></a>Commit changes</h3>
+<div class="paragraph">
+<p>Commit any changes from the preceding steps:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git add ..
+git commit -m "$CAUSEWAYJIRA: updates to pom.xml etc for release"</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="create-a-release-branch-and-worktree"><a class="anchor" href="#create-a-release-branch-and-worktree"></a>Create a release branch and worktree</h3>
+<div class="paragraph">
+<p>The release is performed on a branch; if we are successful, this branch will be merged back into master.</p>
+</div>
+<div class="paragraph">
+<p>We also recommend performing this work in a separate git worktree.
+The original worktree can stay with the <code>master</code> branch and be used for documentation fixes, etc.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>create (but don&#8217;t checkout) a release branch for the version number being released; eg:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git branch $CAUSEWAYBRANCH</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Create a worktree for this branch:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git worktree add ../causeway-release $CAUSEWAYBRANCH</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Switch to the new worktree and push the branch:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd ../causeway-release
+git push origin $CAUSEWAYBRANCH -u</code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="switch-to-the-bom-directory"><a class="anchor" href="#switch-to-the-bom-directory"></a>Switch to the <code>bom</code> directory</h3>
+<div class="paragraph">
+<p>The remainder of the release process is performed from the context of the <code>bom</code> directory:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd bom</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="bump-projects-to-causewayrel"><a class="anchor" href="#bump-projects-to-causewayrel"></a>Bump projects to <code>$CAUSEWAYREL</code></h3>
+<div class="paragraph">
+<p>We use <code>mvn versions:set</code> to manually bump the release version.
+(After release, there is a <a href="#reset-revision-property">similar step at the end</a> to reset back to a <code>-SNAPSHOT</code> version).</p>
+</div>
+<div class="paragraph">
+<p>(Still in the <code>bom</code> directory), the steps are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>First we bump the framework&#8217;s <code>pom.xml</code> files:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mvn versions:set -DnewVersion=$CAUSEWAYREL</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>next we build the framework so that these versioned <code>pom.xml</code> files are available for the next step:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mvn install -o -DskipTests -T1C -Dgithub</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>-Dgithub</code> property activates the "github" profile that references all modules to be released.</p>
+</div>
+</li>
+<li>
+<p>next we also update the starters (as used by applications built using the framework):</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">pushd ../starters
+mvn versions:set -DnewVersion=$CAUSEWAYREL
+mvn install -DskipTests -o
+popd</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>finally we commit the changes:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git add ..
+git commit -m "$CAUSEWAYJIRA: bumps version to $CAUSEWAYREL"</code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="sanity-check"><a class="anchor" href="#sanity-check"></a>Sanity check</h3>
+<div class="paragraph">
+<p>Perform one last sanity check on the codebase.
+Delete all Causeway artifacts from your local Maven repo, then build using the <code>-o</code> offline flag.</p>
+</div>
+<div class="paragraph">
+<p>Still in the <code>bom</code> directory:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">rm -rf ~/.m2/repository/org/apache/causeway
+mvn clean install -o -T1C -Dgithub
+git clean -dfx ..</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="deploy"><a class="anchor" href="#deploy"></a>Deploy</h3>
+<div class="paragraph">
+<p>Since the <code>&lt;version&gt;</code> has already been updated, we just use <code>mvn deploy</code> to upload the artifacts.
+We activate the (inherited) <code>apache-release</code> profile to bring in the <code>gpg</code> plugin for code signing.</p>
+</div>
+<div class="sect3">
+<h4 id="prerequisites"><a class="anchor" href="#prerequisites"></a>Prerequisites</h4>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Make sure that the version of <code>gpg</code> on the <code>$PATH</code> is correct, because the configuration in the <code>pom.xml</code> assumes <code>gpg</code> v2.0, rather than v2.1+.</p>
+</div>
+<div class="paragraph">
+<p>The older version of <code>gpg</code> picks up the secret keys from <code>pubring.gpg</code> and <code>secring.gpg</code> (and does not use an agent); the newer version uses <code>pubring.pbx</code>.</p>
+</div>
+<div class="paragraph">
+<p>On Windows, be careful using git-bash as this will pick up git&#8217;s version of <code>gpg</code> in <code>/usr/bin</code>, which is <code>gpg</code> v2.1.
+Instead, consider building in a Powershell console, described below.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>If on Windows, we recommend you build under Powershell rather than git-bash, which means there are some prerequisites.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>install the correct version of choco:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-powershell hljs" data-lang="powershell">choco install gnupg -version 2.3.7</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>so that</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-powershell hljs" data-lang="powershell">gpg --version</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>returns:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-powershell hljs" data-lang="powershell">gpg (GnuPG) 2.0.30 (Gpg4win 2.3.4)
+...
+Home: C:/Users/xxx/AppData/Roaming/gnupg
+...
+Compression: Uncompressed, ZIP, ZLIB, BZIP2</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>ensure your public key is installed in <code>pubring.gpg</code>.</p>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-powershell hljs" data-lang="powershell">gpg --list-keys</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>returns:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-powershell hljs" data-lang="powershell">C:/Users/dan/AppData/Roaming/gnupg/pubring.gpg
+----------------------------------------------
+...
+pub   4096R/77AD2E23 2011-02-01
+uid       [ultimate] Dan Haywood (CODE SIGNING KEY) &lt;danhaywood@apache.org&gt;
+...</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>ensure your secret key is installed in <code>secring.gpg</code></p>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-powershell hljs" data-lang="powershell">gpg --list-secret-keys</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>returns:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-powershell hljs" data-lang="powershell">C:/Users/dan/AppData/Roaming/gnupg/secring.gpg
+----------------------------------------------
+...
+sec   4096R/77AD2E23 2011-02-01
+uid                  Dan Haywood (CODE SIGNING KEY) &lt;danhaywood@apache.org&gt;
+...</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>in <code>~/m2/settings.xml</code>, ensure that the <code>gpg.passphrase</code> server is set:</p>
+<div class="listingblock">
+<div class="title">~/.m2/settings.xml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;settings&gt;
+  ...
+  &lt;servers&gt;
+    &lt;server&gt;
+      &lt;id&gt;gpg.passphrase&lt;/id&gt;
+      &lt;passphrase&gt;XXXX&lt;/passphrase&gt;
+    &lt;/server&gt;
+    ...
+  &lt;/servers&gt;
+&lt;/settings&gt;</code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="perform-the-deploy"><a class="anchor" href="#perform-the-deploy"></a>Perform the deploy</h4>
+<div class="paragraph">
+<p>The build creates a zip of the directory, so before executing the release we remove any other files.</p>
+</div>
+<div class="paragraph">
+<p>Still in the <code>bom</code> directory, we deploy (upload the artifacts) using:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mvn deploy -Dapache-release -Dgit</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="tag-the-release"><a class="anchor" href="#tag-the-release"></a>Tag the Release</h3>
+<div class="paragraph">
+<p>Finally, tag the release:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git tag $CAUSEWAYART-$CAUSEWAYREL --force
+git tag $CAUSEWAYART-$CAUSEWAYREL-$CAUSEWAYRC --force</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="checkclose-staging-repo"><a class="anchor" href="#checkclose-staging-repo"></a>Check/Close Staging Repo</h3>
+<div class="paragraph">
+<p>The <code>mvn deploy</code> commands will have uploaded all the release artifacts into a newly created staging repository on the ASF Nexus repository server.</p>
+</div>
+<div class="paragraph">
+<p>Log onto <a href="https://repository.apache.org">repository.apache.org</a> (using your ASF LDAP account):</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/release-process/nexus-staging-0.png" alt="nexus staging 0" width="600px">
+</div>
+</div>
+<div class="paragraph">
+<p>And then check that the release has been staged (select <code>staging repositories</code> from left-hand side):</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/release-process/nexus-staging-1.png" alt="nexus staging 1" width="600px">
+</div>
+</div>
+<div class="paragraph">
+<p>If nothing appears in a staging repo you should stop here and work out why.</p>
+</div>
+<div class="paragraph">
+<p>Assuming that the repo has been populated, make a note of its repo id; this is needed for the voting thread.
+In the screenshot above the id is <code>org.apache.causeway-008</code>.</p>
+</div>
+<div class="paragraph">
+<p>After checking that the staging repository contains the artifacts that you expect you should close the staging repository.
+This will make it available so that people can check the release.</p>
+</div>
+<div class="paragraph">
+<p>Press the Close button and complete the dialog:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/release-process/nexus-staging-2.png" alt="nexus staging 2" width="600px">
+</div>
+</div>
+<div class="paragraph">
+<p>Nexus should start the process of closing the repository.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/release-process/nexus-staging-2a.png" alt="nexus staging 2a" width="600px">
+</div>
+</div>
+<div class="paragraph">
+<p>All being well, the close should (eventually) complete successfully (keep hitting refresh):</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/release-process/nexus-staging-3.png" alt="nexus staging 3" width="600px">
+</div>
+</div>
+<div class="paragraph">
+<p>The Nexus repository manager will also email you with confirmation of a successful close.</p>
+</div>
+<div class="paragraph">
+<p>If Nexus has problems with the key signature, however, then the close will be aborted:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/release-process/nexus-staging-4.png" alt="nexus staging 4" width="600px">
+</div>
+</div>
+<div class="paragraph">
+<p>Use <code>gpg --keyserver hkp://pgp.mit.edu --recv-keys nnnnnnnn</code> to confirm that the key is available.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Unfortunately, Nexus does not seem to allow subkeys to be used for signing.
+See <a href="key-generation.html" class="xref page">Key Generation</a> for more details.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="reset-revision-property"><a class="anchor" href="#reset-revision-property"></a>Reset <code>revision</code> property</h3>
+<div class="paragraph">
+<p>At the <a href="#bump-code-to-causewayrel">beginning</a> of the release process we bumped the version to the release version, ie <code>$CAUSEWAYREL</code>.
+With the release now deployed we now need to reset the revision back down to the base snapshot, ie <code>2.0.0-SNAPSHOT</code>.</p>
+</div>
+<div class="paragraph">
+<p>Therefore, still in the <code>bom</code> directory:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mvn versions:set -DnewVersion=2.0.0-SNAPSHOT
+mvn install -DskipTests -o -T1C -Dgithub
+
+pushd ../starters
+mvn versions:set -DnewVersion=2.0.0-SNAPSHOT
+mvn install -DskipTests -o
+popd
+
+git add ..
+git commit -m "$CAUSEWAYJIRA: resetting version"</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="push-branch-tag"><a class="anchor" href="#push-branch-tag"></a>Push branch &amp; tag</h3>
+<div class="paragraph">
+<p>Push the release branch to origin:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git push -u origin $CAUSEWAYBRANCH</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>and also push tag:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git push origin refs/tags/causeway-$CAUSEWAYREL:refs/tags/causeway-$CAUSEWAYREL-$CAUSEWAYRC
+git fetch</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The remote tags aren&#8217;t visible locally but can be seen <a href="https://github.com/apache/causeway/tags">online</a>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="update-starter-apps"><a class="anchor" href="#update-starter-apps"></a>Update starter apps</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>For each of the two starter apps, we maintain four branches:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>jdo</code> and <code>jpa</code></p>
+<div class="paragraph">
+<p>These are intended to reference the <em>most recently released</em> version, the first demonstrating persistence using JDO, the second using JPA.
+These are the branches referenced from the home page and getting started pages of the website.</p>
+</div>
+</li>
+<li>
+<p><code>jdo-SNAPSHOT</code> and <code>jpa-SNAPSHOT</code></p>
+<div class="paragraph">
+<p>These reference the most current snapshot nightly build.</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The general idea is that a release will fast-forward <code>jdo</code> to <code>jdo-SNAPSHOT</code> and similarly moves <code>jpa</code> up to <code>jpa-SNAPSHOT</code>, bumping to the newly released version of the framework in the process.</p>
+</div>
+<div class="paragraph">
+<p>In order that we don&#8217;t break the starter apps while a release is being voted on, we do the changes in work branches, <code>$CAUSEWAYBRANCH-jdo</code> and <code>$CAUSEWAYBRANCH-jpa</code>:</p>
+</div>
+<div class="sect2">
+<h3 id="helloworld"><a class="anchor" href="#helloworld"></a>HelloWorld</h3>
+<div class="paragraph">
+<p>For <em>helloworld</em>, we create a release branch for both variants:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>for <code>jpa</code>:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Checkout the branch, bump versions, and commit:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git checkout jpa-SNAPSHOT
+git pull --ff-only
+
+git checkout -b $CAUSEWAYBRANCH-jpa
+
+mvn versions:update-parent -DparentVersion=$CAUSEWAYREL <i class="conum" data-value="1"></i><b>(1)</b>
+mvn versions:set -DnewVersion=$CAUSEWAYREL
+
+git add .
+git commit -m "$CAUSEWAYJIRA - updates to $CAUSEWAYREL (jpa)"</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>the top-level <code>pom.xml</code> references the ASF staging repository, so this will pull down the release if not already present in <code>~/.m2/repository</code>.</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>Test the app</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mvn clean install
+mvn spring-boot:run</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Make any additional changes that might be required (eg update to <code>menubars.layout.xml</code>) commit and retest</p>
+</li>
+<li>
+<p>Push the branch to origin:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git push -u origin $CAUSEWAYBRANCH-jpa</code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>for <code>jdo</code>:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Checkout the branch, bump versions, and commit:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git checkout jdo-SNAPSHOT
+git pull --ff-only
+
+git checkout -b $CAUSEWAYBRANCH-jdo
+
+mvn versions:update-parent -DparentVersion=$CAUSEWAYREL
+mvn versions:set -DnewVersion=$CAUSEWAYREL
+
+git add .
+git commit -m "$CAUSEWAYJIRA - updates to $CAUSEWAYREL (jdo)"</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Test the app</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mvn clean install
+mvn spring-boot:run</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Make any additional changes that might be required, and re-test.</p>
+<div class="paragraph">
+<p>This might be easiest to just cherry-pick commits made on the <code>jpa</code> branch.</p>
+</div>
+</li>
+<li>
+<p>Merge in the <code>jpa</code> branch, discarding any conflicts.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git merge $CAUSEWAYBRANCH-jpa --no-commit</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The idea here is to show equivalence between the two branches.
+The merge commit should end up with no changes:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git commit -m "$CAUSEWAYJIRA - merge in jpa"</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Push the branch to origin:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git push -u origin $CAUSEWAYBRANCH-jdo</code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="simpleapp"><a class="anchor" href="#simpleapp"></a>SimpleApp</h3>
+<div class="paragraph">
+<p>For <em>simple app</em>, the steps are almost the same:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>for <code>jpa</code>:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Checkout the branch, bump versions, and commit:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git checkout jpa-SNAPSHOT
+git pull --ff-only
+
+git checkout -b $CAUSEWAYBRANCH-jpa
+
+mvn versions:update-parent -DparentVersion=$CAUSEWAYREL  <i class="conum" data-value="1"></i><b>(1)</b>
+mvn versions:set -DnewVersion=$CAUSEWAYREL
+
+git add .
+git commit -m "$CAUSEWAYJIRA - updates to $CAUSEWAYREL (jpa)"</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>the top-level <code>pom.xml</code> references the ASF staging repository, so this will pull down the release if not already present in <code>~/.m2/repository</code>.</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>Test the app</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mvn clean install
+mvn -pl webapp spring-boot:run</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Make any additional changes that might be required (eg update to <code>menubars.layout.xml</code>) commit and retest</p>
+</li>
+<li>
+<p>Push the branch to origin:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git push -u origin $CAUSEWAYBRANCH-jpa</code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>for <code>jdo</code>:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Checkout the branch, bump versions, and commit:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git checkout jdo-SNAPSHOT
+git pull --ff-only
+
+git checkout -b $CAUSEWAYBRANCH-jdo
+
+mvn versions:update-parent -DparentVersion=$CAUSEWAYREL
+mvn versions:set -DnewVersion=$CAUSEWAYREL
+
+git add .
+git commit -m "$CAUSEWAYJIRA - updates to $CAUSEWAYREL (jdo)"</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Test the app</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mvn clean install
+mvn -pl webapp spring-boot:run</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Make any additional changes that might be required, and re-test.</p>
+<div class="paragraph">
+<p>This might be easiest to just cherry-pick commits made on the <code>jpa</code> branch.</p>
+</div>
+</li>
+<li>
+<p>Merge in the <code>jpa</code> branch, discarding any conflicts.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git merge $CAUSEWAYBRANCH-jpa --no-commit</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The idea here is to show equivalence between the two branches.
+The merge commit should end up with no changes:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git commit -m "$CAUSEWAYJIRA - merge in jpa"</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Push the branch to origin:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git push -u origin $CAUSEWAYBRANCH-jdo</code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="preview-website"><a class="anchor" href="#preview-website"></a>Preview website</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>We also prepare a preview of the next version of the website, then made accessible from <a href="https://causeway.staged.apache.org" class="bare">https://causeway.staged.apache.org</a>.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Prerequisites:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>clone the <a href="https://github.com/apache/causeway-site" class="bare">https://github.com/apache/causeway-site</a> repo, alongside the <code>causeway</code> repo:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git clone https://github.com/apache/causeway-site ../causeway-site</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>in the <code>causeway-site</code> repo, check out the <code>asf-staging</code> branch:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd ../causeway-site
+
+git checkout asf-staging
+git pull --ff-only</code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>still in the <code>causeway-site</code> repo, delete all the files in <code>content/</code> <em>except</em> for the <code>schema</code> and <code>versions</code> directories:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">pushd content
+for a in $(ls -1 | grep -v schema | grep -v versions)
+do
+    rm -rf $a
+done
+popd</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Back in the <code>causeway</code> repo&#8217;s <code>release</code> worktree, generate the Antora site (from the top-level directory).</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd ../causeway-release
+
+sh preview.sh -AB</code></pre>
+</div>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>This procedure doesn&#8217;t yet work; Antora does not yet support worktrees.</p>
+</div>
+<div class="paragraph">
+<p>So instead it&#8217;s currently necessary to perform the preview in the main <code>../causeway</code> directory, switching branches.
+You&#8217;ll also need to rebuild all and then regenerate config files and tooling:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git checkout $CAUSEWAYBRANCH
+pushd bom
+mvn clean install -DskipTests -T1C -Dgithub
+popd
+mvn -D module-tooling -D skip.essential install -DskipTests</code></pre>
+</div>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>Copy the generated Antora site to <code>causeway-site</code> repo&#8217;s <code>contents</code> directory:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cp -Rf antora/target/site/* ../causeway-site/content/.</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Back in the <code>causeway-site</code> repo, commit the changes and preview:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd ../causeway-site
+
+git add .
+git commit -m "$CAUSEWAYJIRA : staging changes to website"
+
+sh preview.sh</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>If happy, then push the changes:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git push origin asf-staging -u</code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Wait a minute or two; the site should be available at <a href="https://causeway.staged.apache.org" class="bare">https://causeway.staged.apache.org</a>  (nb: 'staged', not 'staging').</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="voting"><a class="anchor" href="#voting"></a>Voting</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Once the artifacts have been uploaded, you can call a vote.</p>
+</div>
+<div class="paragraph">
+<p>In all cases, votes last for 72 hours and require a +3 (binding) vote from members.</p>
+</div>
+<div class="sect2">
+<h3 id="start-voting-thread-on-dev-mailing-list"><a class="anchor" href="#start-voting-thread-on-dev-mailing-list"></a>Start voting thread on dev mailing list</h3>
+<div class="paragraph">
+<p>That is, <a href="mailto:dev@apache.causeway.org" class="bare">mailto:dev@apache.causeway.org</a></p>
+</div>
+<div class="paragraph">
+<p>The following boilerplate is for a release of the Apache Causeway Core.
+Adapt as required:</p>
+</div>
+<div class="paragraph">
+<p>Use the following subject, eg:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">[VOTE] Apache Causeway Core release 2.0.0-RC1 RC1</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And use the following body:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">I've just cut a new release of the Apache Causeway Framework.
+
+The source code zip artifact has been uploaded to a staging repository on
+https://repository.apache.org, along with its corresponding .asc signature.
+
+In the source code repo the code has been tagged as causeway-2.0.0-RC1-RC1;
+see https://github.com/apache/causeway/tags
+
+To verify the source code itself, you can use the following commands
+(in an empty directory):
+
+----------------------------------------------------------------
+VERSION=2.0.0-RC1
+RC=RC1
+NEXUSREPONUM=11xx
+
+curl https://downloads.apache.org/causeway/KEYS &gt; /tmp/KEYS
+gpg --import /tmp/KEYS
+
+rm -rf causeway-$VERSION
+
+curl -O -L https://raw.githubusercontent.com/apache/causeway/release-$VERSION-$RC/scripts/verify-causeway-release.sh
+
+chmod +x ./verify-causeway-release.sh
+./verify-causeway-release.sh $NEXUSREPONUM $VERSION $RC
+----------------------------------------------------------------
+
+You can then test the helloworld or simpleapp starter apps, see:
+https://causeway.staged.apache.org/comguide/latest/verifying-releases.html.
+
+You can also inspect the website in general, available at:
+https://causeway.staged.apache.org.
+
+Please verify the release and cast your vote.
+The vote will be open for a minimum of 72 hours.
+
+[ ] +1
+[ ]  0
+[ ] -1</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Remember to update:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>the version number (<code>2.0.0-RC1</code> or whatever)</p>
+</li>
+<li>
+<p>the release candidate number (<code>RC1</code> or whatever)</p>
+</li>
+<li>
+<p>the <code>NEXUSREPONUM</code> to the repository id as provided by Nexus earlier (<code>11xx</code> or whatever)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Note that the email also references the procedure for other committers to <a href="verifying-releases.html" class="xref page">verify the release</a>.</p>
+</div>
+</div>
+</div>
+</div>
+</article>
+<aside class="article-aside toc hide-for-print" role="navigation">
+    <p class="toc-title">On this page</p>
+    <div id="article-toc"></div>
+</aside>
+</main>
+</div>
+<footer class="footer">
+    <div class="content">
+        <div class="copyright">
+            <p>
+                Copyright © 2010~2021 The Apache Software Foundation, licensed under the Apache License, v2.0.
+                <br/>
+                Apache, the Apache feather logo, Apache Isis, and the Apache Isis project logo are all trademarks of The Apache Software Foundation.
+            </p>
+        </div>
+        <div class="revision">
+            <p>Revision: 2.0.0-M9.20221111-0339-10c1a26c</p>
+        </div>
+    </div>
+</footer>
+<script src="../../_/js/site.js"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+<script src="../../_/js/vendor/jquery-3.4.1.min.js"></script>
+<script src="../../_/js/vendor/jquery-ui-1.12.1.custom.widget-only.min.js"></script>
+<script src="../../_/js/vendor/jquery.tocify.min.js"></script>
+
+<script>
+    $(function() {
+        $("#article-toc").tocify( {
+            showEffect: "slideDown",
+            hashGenerator: "pretty",
+            hideEffect: "slideUp",
+            selectors: "h2, h3",
+            scrollTo: 120,
+            smoothScroll: true,
+            theme: "jqueryui",
+            highlightOnScroll: true
+        } );
+    });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.js"></script>
+<script>
+  function focusSearchInput () { document.querySelector('#algolia-search-input').focus() }
+  var search = docsearch({
+    appId: '5ISP5TFAEN',
+    apiKey: '0fc51c28b4ad46e7318e96d4e97fab7c',
+    indexName: 'isis-apache-org',
+    inputSelector: '#algolia-search-input',
+    autocompleteOptions: { hint: false, keyboardShortcuts: ['s'] },
+    debug: false,
+  }).autocomplete
+  search.on('autocomplete:closed', function () { search.autocomplete.setVal() })
+  focusSearchInput()
+  window.addEventListener('load', focusSearchInput);
+</script>
+
+<!--
+  docsearch options:
+  https://docsearch.algolia.com/docs/behavior/
+-->
+<!--
+  https://www.algolia.com/doc/api-reference/api-parameters/
+  algoliaOptions: { hitsPerPage: 6 },
+-->
+  </body>
+</html>

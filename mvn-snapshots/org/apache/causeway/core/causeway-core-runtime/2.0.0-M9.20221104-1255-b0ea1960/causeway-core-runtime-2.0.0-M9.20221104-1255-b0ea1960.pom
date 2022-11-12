@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one
+  or more contributor license agreements.  See the NOTICE file
+  distributed with this work for additional information
+  regarding copyright ownership.  The ASF licenses this file
+  to you under the Apache License, Version 2.0 (the
+  "License"); you may not use this file except in compliance
+  with the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing,
+  software distributed under the License is distributed on an
+  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  KIND, either express or implied.  See the License for the
+  specific language governing permissions and limitations
+  under the License.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.apache.causeway.core</groupId>
+        <artifactId>causeway-core</artifactId>
+        <version>2.0.0-M9.20221104-1255-b0ea1960</version>
+    </parent>
+
+    <artifactId>causeway-core-runtime</artifactId>
+    <name>Apache Causeway Core - Runtime</name>
+    <description>
+    	Bundles framework internal services, utilities and events.
+    </description>
+
+    <properties>
+        <jar-plugin.automaticModuleName>org.apache.causeway.core.runtime</jar-plugin.automaticModuleName>
+        <git-plugin.propertiesDir>org/apache/causeway/core/runtime</git-plugin.propertiesDir>
+    </properties>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/java</directory>
+                <filtering>false</filtering>
+                <includes>
+                    <include>**</include>
+                </includes>
+                <excludes>
+                    <exclude>**/*.java</exclude>
+                </excludes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>causeway-version.properties</include>
+                </includes>
+                <filtering>true</filtering>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+            </resource>
+        </resources>
+    </build>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>org.apache.causeway.core</groupId>
+            <artifactId>causeway-core-metamodel</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.apache.causeway.core</groupId>
+            <artifactId>causeway-core-transaction</artifactId>
+        </dependency>
+
+		<dependency>
+            <groupId>org.apache.causeway.core</groupId>
+            <artifactId>causeway-core-interaction</artifactId>
+        </dependency>
+        
+    	<dependency>
+			<groupId>org.apache.causeway.valuetypes</groupId>
+			<artifactId>causeway-valuetypes-jodatime-integration</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<!--  TESTING -->
+
+        <dependency>
+            <groupId>org.apache.causeway.core</groupId>
+            <artifactId>causeway-core-internaltestsupport</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+    <profiles>
+        <profile>
+            <id>email-notification-service</id>
+            <activation>
+                <property>
+                    <name>!skip.email-notification-service</name>
+                </property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>org.apache.commons</groupId>
+                    <artifactId>commons-email</artifactId>
+                    <exclusions>
+                        <!--
+                        excluded because provided by javax:javaee-api
+                        note: moved javax.mail from 1.5.2 to 1.5.0
+                        note: moved activation from 1.1.1 to 1.1    ... don't know if this is significant.
+                        -->
+                        <exclusion>
+                            <groupId>com.sun.mail</groupId>
+                            <artifactId>javax.mail</artifactId>
+                        </exclusion>
+                        <exclusion>
+                            <groupId>javax.activation</groupId>
+                            <artifactId>activation</artifactId>
+                        </exclusion>
+                    </exclusions>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
+
+</project>

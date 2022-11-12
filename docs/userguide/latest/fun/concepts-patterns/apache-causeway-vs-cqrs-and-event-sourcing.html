@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Apache Causeway vs CQRS/ES :: Apache Causeway</title>
+    <meta name="generator" content="Antora 3.1.2">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+    <link rel="stylesheet" href="../../../../_/css/site-custom.css">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Raleway:300,400,500,700,800|Montserrat:300,400,700" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css"/>
+<link rel="home" href="../../../.." title="Apache Causeway">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="../../../..">
+          <span class="icon">
+            <img src="../../../../_/img/isis-logo-48x48.png"></img>
+          </span>
+        <span>Apache Causeway</span>
+      </a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <a class="navbar-end">
+        <div class="navbar-item hide-for-print">
+          <span>
+            <input id="algolia-search-input" placeholder="Search"></span>
+          </span>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Quick Start</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Starter Apps</span>
+            <a class="navbar-item" href="../../../../docs//starters/helloworld.html">Hello World</a>
+            <a class="navbar-item" href="../../../../docs//starters/simpleapp.html">Simple App</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Demos &amp; Tutorials</span>
+            <a class="navbar-item" href="../../../../docs//demo/about.html">Demo App</a>
+            <a class="navbar-item" href="https://danhaywood.gitlab.io/isis-petclinic-tutorial-docs/petclinic/1.16.2/intro.html">Petclinic (tutorial)</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Resources</span>
+            <a class="navbar-item" href="../../../../docs//resources/cheatsheet.html">Cheatsheet</a>
+            <a class="navbar-item" href="../../../../docs//resources/icons.html">Icons</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Guides</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Core</span>
+            <a class="navbar-item" href="../../../../userguide//about.html">User Guide</a>
+            <a class="navbar-item" href="../../../../refguide//about.html">Reference Guide</a>
+            <a class="navbar-item" href="../../../../testing//about.html">Testing Guide</a>
+            <a class="navbar-item" href="../../../../security//about.html">Security Guide</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Development</span>
+            <a class="navbar-item" href="../../../../setupguide//about.html">Setup Guide</a>
+            <a class="navbar-item" href="../../../../conguide//about.html">Contributors' Guide</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Components</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Viewers</span>
+            <a class="navbar-item" href="../../../../vw//about.html">Web UI (Wicket)</a>
+            <a class="navbar-item" href="../../../../vro//about.html">REST API (Restful Objects)</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Persistence</span>
+            <a class="navbar-item" href="../../../../pjpa//about.html">JPA (EclipseLink)</a>
+            <a class="navbar-item" href="../../../../pjdo//about.html">JDO (DataNucleus)</a>
+            <span class="navbar-item navbar-heading">Security</span>
+            <a class="navbar-item" href="../../../../security//bypass/about.html">Bypass (Authenticator & Authorizor)</a>
+            <a class="navbar-item" href="../../../../security//shiro/about.html">Shiro (Authenticator & Authorizor)</a>
+            <a class="navbar-item" href="../../../../security//spring/about.html">Spring (Authenticator only)</a>
+            <a class="navbar-item" href="../../../../security//keycloak/about.html">Keycloak (Authenticator only)</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Catalogs</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">For Use in Apps</span>
+            <a class="navbar-item" href="../../../../valuetypes//about.html">Value Types</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Extending the framework itself</span>
+            <a class="navbar-item" href="../../../../extensions//about.html">Extensions</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Support</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Contact</span>
+            <a class="navbar-item" href="../../../../docs//support/slack-channel.html">Slack</a>
+            <a class="navbar-item" href="../../../../docs//support/mailing-list.html">Mailing Lists</a>
+            <a class="navbar-item" href="https://issues.apache.org/jira/browse/ISIS">JIRA</a>
+            <a class="navbar-item" href="https://stackoverflow.com/questions/tagged/isis">Stack Overflow</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Releases</span>
+            <a class="navbar-item" href="../../../../docs//downloads/how-to.html">Downloads</a>
+            <a class="navbar-item" href="../../../../relnotes//about.html">Release Notes</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Nightly Builds</span>
+            <a class="navbar-item" href="https://github.com/apache/isis">Packages (ASF hosted)</a>
+            <a class="navbar-item" href="https://github.com/apache-isis-committers/isis-nightly">Packages (not ASF hosted)</a>
+            <a class="navbar-item" href="https://apache-isis-committers.github.io/isis-nightly">Website Preview (not ASF hosted)</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Framework</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Process</span>
+            <a class="navbar-item" href="../../../../comguide//about.html">Committers' Guide</a>
+            <a class="navbar-item" href="../../../../tooling//about.html">Tooling</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Automated Analysis</span>
+            <a class="navbar-item" href="https://sonarcloud.io/dashboard?id=apache_isis">SonarCloud.io</a>
+            <a class="navbar-item" href="https://fisheye.apache.org/browse/~br=master/isis-git/">ASF Fisheye</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Development</span>
+            <a class="navbar-item" href="../../../../core//about.html">Internal Design Docs</a>
+            <a class="navbar-item" href="../../../../regressiontests//about.html">Regression Tests</a>
+            <a class="navbar-item" href="../../../../incubator//about.html">Incubator</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Thanks</span>
+            <a class="navbar-item" href="../../../../more-thanks//more-thanks.html">Acknowledgements</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">ASF</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://www.apache.org/">Apache Homepage</a>
+            <a class="navbar-item" href="https://www.apache.org/events/current-event">Events</a>
+            <a class="navbar-item" href="https://www.apache.org/licenses/">Licenses</a>
+            <a class="navbar-item" href="https://www.apache.org/security/">Security</a>
+            <a class="navbar-item" href="https://www.apache.org/foundation/sponsorship.html">Sponsorship</a>
+            <a class="navbar-item" href="https://www.apache.org/foundation/thanks.html">Thanks</a>
+            <hr class="navbar-divider"/>
+            <a class="navbar-item" href="https://whimsy.apache.org/board/minutes/Isis.html">PMC board minutes</a>
+          </div>
+        </div>
+        <a class="navbar-item" href="../../../../docs//about.html">
+          <span class="icon">
+            <img src="../../../../_/img/home.png"></img>
+          </span>
+        </a>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body ">
+<div class="nav-container" data-component="userguide" data-version="latest">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-pagination">
+  <a class="page-previous disabled" rel="prev" href="" title=""><span></span></a>
+  <a class="page-next disabled" rel="next"
+     href="" title=""><span></span></a>
+<!--
+page.parent doesn't seem to be set...
+  <a class="page-parent disabled" rel="prev" href="" title=""><span></span></a>
+-->
+</div>
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../about.html">User Guide</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../about.html">Fundamentals</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../concepts-patterns.html">Concepts &amp; Patterns</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../domain-entities-and-services.html">Domain Entities &amp; Services</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../object-members.html">Properties, Collections &amp; Actions</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ui.html">UI Layout &amp; Hints</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../business-rules.html">Business Rules</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../drop-downs-and-defaults.html">Drop downs and Defaults</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../meta-annotations.html">Meta-annotations</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../view-models.html">View Models</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../mixins.html">Mixins</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../modules.html">Modules</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../../btb/about.html">Beyond the Basics</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../btb/i18n.html">i18n</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../btb/headless-access.html">Headless Access</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../btb/hints-and-tips.html">Hints-n-Tips</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../btb/programming-model.html">Programming Model</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Extensions</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../commandlog/about.html">Command Log</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../excel/about.html">Excel Library</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../executionlog/about.html">Execution Log</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../executionoutbox/about.html">Execution Outbox</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../executionrepublisher/about.html">Execution Republisher</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../flyway/about.html">Flyway</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">User Guide</span>
+    <span class="version">latest</span>
+  </div>
+  <ul class="components">
+    <li class="component">
+      <span class="title"> </span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../../docs/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Committers' Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../../comguide/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Contributors' Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../../conguide/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Design Docs</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../../core/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Extensions Catalog</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../../extensions/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Incubator Catalog</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../../incubator/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">JDO/DataNucleus</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../../pjdo/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">JPA</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../../pjpa/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Reference Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../../refguide/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">regressiontests</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../../regressiontests/latest/index.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Release Notes</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../../relnotes/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">REST API (Restful Objects Viewer)</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../../vro/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Security Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../../security/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Setup Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../../setupguide/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Testing Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../../testing/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Tooling</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../../tooling/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Tutorials</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../../tutorials/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component is-current">
+      <span class="title">User Guide</span>
+      <ul class="versions">
+        <li class="version is-current">
+          <a href="../../about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Value Types Catalog</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../../valuetypes/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Web UI (Wicket Viewer)</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../../vw/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main role="main">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../../docs/latest/about.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../about.html">User Guide</a></li>
+    <li><a href="apache-causeway-vs-cqrs-and-event-sourcing.html">Apache Causeway vs CQRS/ES</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="https://github.com/apache/isis/edit/master/antora/components/userguide/modules/fun/pages/concepts-patterns/apache-causeway-vs-cqrs-and-event-sourcing.adoc">Edit</a></div>
+</div>
+<article class="doc">
+    <a name="section-top"></a>
+<h1 class="page">Apache Causeway vs CQRS/ES</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>CQRS and Event Sourcing (ES) are two architectural patterns often used (and often used together) to implement domain driven design systems.
+This section explores the similarities and differences that Apache Causeway has with these other architectural approaches.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="cqrs"><a class="anchor" href="#cqrs"></a>CQRS</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <a href="https://martinfowler.com/bliki/CQRS.html">CQRS architectural pattern</a> (it stands for "Command Query Responsibility Separation") is the idea that the domain objects that mutate the state of the system - to which commands are sent and which then execute - should be separated from the mechanism by which the state of the system is queried (rendered).
+The former are sometimes called the "write (domain) model", the latter the "read model".</p>
+</div>
+<div class="paragraph">
+<p>In CQRS the commands correspond to the business logic that mutates the system.
+Whether this logic is part of the command class (<code>PlaceOrderCommand</code>) or whether that command delegates to methods on the domain object is an implementation detail; but it certainly is common for the business logic to be wholly within the command object and for the domain object to be merely a data holder of the data within the command/write datastore.</p>
+</div>
+<div class="paragraph">
+<p>Most CQRS implementations have separate datastores.
+The commands act upon a command/write datastore.
+The data in this datastore is then replicated in some way into the query/read datastore, usually denormalized into a projection such that it is easy to query.</p>
+</div>
+<div class="paragraph">
+<p>CQRS advocates recommend using very simple (almost naive) technology for the query/read model; it should be a simple projection of the query datastore.
+Complexity instead lives elsewhere: business logic in the command/write model, and in the transformation logic betweeen the command/write and read/query datastores.
+In particular, there is no requirement for the two datastores to use the same technology: one might be an RDBMS while the other a NoSQL datastore or even datawarehouse.</p>
+</div>
+<div class="paragraph">
+<p>In most implementations the command and query datastores are <em>not</em> updated in the same transaction; instead there is some sort of replication mechanism.
+This also means that the query datastore is eventually consistent rather than always consistent; there could be a lag of a few seconds before it is updated.
+This means in turn that CQRS implementations require mechanisms to cater for offline query datastores; usually some sort of event bus.</p>
+</div>
+<div class="paragraph">
+<p>The CQRS architecture&#8217;s extreme separation of responsibilities can result in a lot of boilerplate.
+Any given domain concept, eg <code>Customer</code>, must be represented both in the command/write model and also in the query/read model.
+Each business operation upon the command model is reified as a command object, for example <code>PlaceOrderCommand</code>.
+When invoked, this emits a corresponding <code>OrderPlacedEvent</code>.
+It is this event that is used to maintain the read model projection.</p>
+</div>
+<div class="paragraph">
+<p>Comparing CQRS to Apache Causeway, the most obvious difference is that Apache Causeway does not require that the command/write model is separated from the query/read model; there is usually just a single datastore.
+But then again, having a separate read model just so that the querying is very straightforward is pointless with Apache Causeway because, of course, Causeway provides the UI "for free".</p>
+</div>
+<div class="paragraph">
+<p>It is possible though to use Apache Causeway in a CQRS style.
+The entities would have no behaviour in and of themselves to modify their state, they would just be data structures.
+The behaviour (commands) would instead be implemented as <a href="../mixins.html" class="xref page">mixins</a> that act upon those commands.
+In the UI (surfaced by the <a href="../../../../vw/latest/about.html" class="xref page">Web UI (Wicket viewer)</a>) or in the REST API (surfaced by the <a href="../../../../vro/latest/about.html" class="xref page">RestfulObjects viewer</a>) the behaviour appears to reside on the domain object; however the behaviour actually resides on separate classes and is mixed in (like a trait), only at runtime.
+However, this wouldn&#8217;t be true CQRS because those mixins would modify those entities which would then be flushed back to the single database.</p>
+</div>
+<div class="paragraph">
+<p>Apache Causeway' cross-cutting design does allow for denormalized data stores to be implemented.
+For example, there are community implementations of <a href="https://github.com/erikdehair/causeway-module-elasticsearch">Elastic Search database</a> to enable a free-text search (this is likely to be incorporated into the Apache Causeway framework in the future, if it hasn&#8217;t already).</p>
+</div>
+<div class="paragraph">
+<p>There are other reasons why a separate read model might make sense, such as to precompute particular queries, or against denormalized data.
+In these cases Apache Causeway can often provide a reasonable alternative, namely to map domain entities against RDBMS views, either materialized views or dynamic.
+In such cases there is still only a single physical datastore, and so transactional integrity is retained.</p>
+</div>
+<div class="paragraph">
+<p>If you want to go all-in with CQRS with separate databases for the write and read model, then this could still be implemented with Apache Causeway without pulling the framework apart too much.
+Here, Apache Causeway would be used to provide the UI for the <em>read</em> model, with the entities being truly immutable.
+Mixins would decorate these entities, but would act upon a write model whose persistence is handled outside of Apache Causeway, probably using Spring Boot directly to provide a datasource.
+To synchronise the write- and read- model, the events emitted by <a href="../../../../refguide/latest/applib/index/services/publishing/spi/ExecutionSubscriber.html" class="xref page">ExecutionSubscriber</a> could be used.</p>
+</div>
+<div class="paragraph">
+<p>With respect to commands, Apache Causeway provides the <a href="../../../../refguide/latest/applib/index/services/publishing/spi/CommandSubscriber.html" class="xref page">CommandSubscriber</a> which allows each business action to be reified into a <a href="../../../../refguide/latest/applib/index/services/command/Command.html" class="xref page">Command</a>.
+However, names are misleading here: Apache Causeway' commands are relatively passive, merely recording the intent of the user to invoke some operation.
+In a CQRS architecture, commands take a more active role, locating and acting upon the domain objects.
+More significantly, in CQRS each command has its own class, such as <code>PlaceOrderCommand</code>, instantiated by the client and then executed.
+With Apache Causeway, though, the end-user merely invokes the <code>placeOrder(&#8230;&#8203;)</code> action upon the domain object; the framework itself creates the <a href="../../../../refguide/latest/applib/index/services/command/Command.html" class="xref page">Command</a> as a side-effect of this.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="event-sourcing"><a class="anchor" href="#event-sourcing"></a>Event Sourcing</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <a href="../concepts-patterns.html#cqrs" class="xref page">CQRS architecture</a> is often combined with <em>Event Sourcing</em> pattern, though they are separate ideas.</p>
+</div>
+<div class="paragraph">
+<p>With event sourcing, each business operation emits a domain event (or possibly events) that allow other objects in the system to act accordingly.
+For example, if a customer places an order then this might emit the <code>OrderPlacedEvent</code>.
+Most significantly, the subscribers to these events can include the datastore itself; the state of the system is in effect a transaction log of every event that has occurred since "the beginning of time": it is sometimes called an event store.
+With CQRS, this event datastore corresponds to the command/write datastore (the query/read datastore is of course derived from the command datastore).</p>
+</div>
+<div class="paragraph">
+<p>Although it might seem counter-intuitive to be able store persistent state in this way (as some kind of souped-up "transaction log"), the reality is that with modern compute capabilities make it quite feasible to replay many 10s or 100s of thousands of events in a second.
+And the architecture supports some interesting use cases; for example it becomes quite trivial to rewind the system back to some previous point in time.</p>
+</div>
+<div class="paragraph">
+<p>When combined with CQRS we see a command that triggers a business operation, and an event that results from it.
+So, a <code>PlaceOrderCommand</code> command can result in an <code>OrderPlacedEvent</code> event.
+A subscriber to this event might then generate a further command to act upon some other system (eg to dispatch the system).
+Note that the event might be dispatched and consumed in-process or alternatively this might occur out-of-process.
+If the latter, then the subscriber will operate within a separate transaction, meaning the usual eventual consistency concerns and also compensating actions if a rollback is required.
+CQRS/event sourcing advocates point out&#8201;&#8212;&#8201;correctly&#8201;&#8212;&#8201;that this is just how things are in the "real world" too.</p>
+</div>
+<div class="paragraph">
+<p>Comparing event sourcing with Apache Causeway, in many ways they are orthogonal and so could in theory be combined.
+An event sourced entity "rehydrate" the domain object from persistence differently than an ORM, but once that is done, the domain object is in memory to be interacted with.
+To use Apache Causeway with event sourcing would require disregarding the inbuild support for persistence though an ORM, but instead implement some other event sourced persistence mechanism to rehydrate the object.
+Because Apache Causeway runs on top of Spring Boot, such an integration ought to be comparatively easy to do.
+But in any case the roadmap is to support JPA as well as JDO, indeed as you read this the framework may already support this, and so in the future there are likely be additional SPIs to enable this trivially).</p>
+</div>
+<div class="paragraph">
+<p>As with a CQRS architecture, Apache <a href="../mixins.html" class="xref page">mixins</a> would be the obvious way to associate behaviour with an event sourced entity.
+These mixins would most likely delegate to an event sourcing framework such as <a href="https://axoniq.io/">Axon</a> to do the work.
+Also, in Apache Causeway every business action (and indeed, property and collection) emits domain events through the <a href="../../../../refguide/latest/applib/index/services/eventbus/EventBusService.html" class="xref page">EventBusService</a>, and can optionally also be published through the <a href="../../../../refguide/latest/applib/index/services/publishing/spi/ExecutionSubscriber.html" class="xref page">ExecutionSubscriber</a>.
+These features could also have a role to play in an event sourced system.</p>
+</div>
+</div>
+</div>
+</article>
+<aside class="article-aside toc hide-for-print" role="navigation">
+    <p class="toc-title">On this page</p>
+    <div id="article-toc"></div>
+</aside>
+</main>
+</div>
+<footer class="footer">
+    <div class="content">
+        <div class="copyright">
+            <p>
+                Copyright © 2010~2021 The Apache Software Foundation, licensed under the Apache License, v2.0.
+                <br/>
+                Apache, the Apache feather logo, Apache Isis, and the Apache Isis project logo are all trademarks of The Apache Software Foundation.
+            </p>
+        </div>
+        <div class="revision">
+            <p>Revision: 2.0.0-M9.20221111-0339-10c1a26c</p>
+        </div>
+    </div>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+<script src="../../../../_/js/vendor/jquery-3.4.1.min.js"></script>
+<script src="../../../../_/js/vendor/jquery-ui-1.12.1.custom.widget-only.min.js"></script>
+<script src="../../../../_/js/vendor/jquery.tocify.min.js"></script>
+
+<script>
+    $(function() {
+        $("#article-toc").tocify( {
+            showEffect: "slideDown",
+            hashGenerator: "pretty",
+            hideEffect: "slideUp",
+            selectors: "h2, h3",
+            scrollTo: 120,
+            smoothScroll: true,
+            theme: "jqueryui",
+            highlightOnScroll: true
+        } );
+    });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.js"></script>
+<script>
+  function focusSearchInput () { document.querySelector('#algolia-search-input').focus() }
+  var search = docsearch({
+    appId: '5ISP5TFAEN',
+    apiKey: '0fc51c28b4ad46e7318e96d4e97fab7c',
+    indexName: 'isis-apache-org',
+    inputSelector: '#algolia-search-input',
+    autocompleteOptions: { hint: false, keyboardShortcuts: ['s'] },
+    debug: false,
+  }).autocomplete
+  search.on('autocomplete:closed', function () { search.autocomplete.setVal() })
+  focusSearchInput()
+  window.addEventListener('load', focusSearchInput);
+</script>
+
+<!--
+  docsearch options:
+  https://docsearch.algolia.com/docs/behavior/
+-->
+<!--
+  https://www.algolia.com/doc/api-reference/api-parameters/
+  algoliaOptions: { hitsPerPage: 6 },
+-->
+  </body>
+</html>

@@ -1,0 +1,369 @@
+name: Apache Causeway Framework (CI Nightly)
+
+on:
+  workflow_dispatch:
+  schedule:
+    ## daily 02:00 (UTC) in the morning
+    - cron: '0 2 * * *'
+
+jobs:
+  build:
+    name: build, site, build/push demo app
+    runs-on: ubuntu-latest
+    env:
+      # to be shared among all steps of this job
+      BASELINE: 2.0.0-M9
+
+      PROJECT_ROOT_PATH: ${{ github.workspace }}/causeway
+      NIGHTLY_ROOT_PATH: ${{ github.workspace }}/causeway-nightly
+      MVN_SNAPSHOTS_PATH: ${{ github.workspace }}/causeway-nightly/mvn-snapshots
+      
+      PROJECT_LEGACY_ROOT_PATH: ${{ github.workspace }}/isis
+
+    steps:
+      # ------------------------
+      # -- check out repos    --
+      # ------------------------
+
+      - name: Checkout current repo
+        uses: actions/checkout@v3
+        with:
+          path: causeway-nightly
+
+      - name: Checkout Apache Causeway
+        if: steps.revision.outputs.revision != 'skip'
+        uses: actions/checkout@v3
+        with:
+          repository: apache/isis
+          ref: refs/heads/master
+          path: causeway
+
+      - name: Clone Sources for Legacy Build 
+        if: steps.revision.outputs.revision != 'skip'
+        shell: bash
+        working-directory: ${{ github.workspace }}
+        run: cp -r causeway isis
+
+      - name: Dump workshape
+        run: find /home/runner/work/causeway-nightly -print
+
+      # ------------------------
+      # -- install software   --
+      # ------------------------
+
+      - name: Set up JDK 18
+        if: steps.revision.outputs.revision != 'skip'
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: 18
+
+      - name: Install NVM
+        if: steps.revision.outputs.revision != 'skip'
+        shell: bash
+        working-directory: ${{ env.PROJECT_ROOT_PATH }}
+        run: bash scripts/ci/install-nvm.sh -x
+
+      - name: Install Antora
+        if: steps.revision.outputs.revision != 'skip'
+        shell: bash
+        working-directory: ${{ env.PROJECT_ROOT_PATH }}
+        # we install the 'node' modules into the project root under 'node_modules',
+        # because we have no privileges to install them globally with -g option
+        run: npm i @antora/cli@^3.1.1 @antora/site-generator-default@^3.1.1 asciidoctor-kroki
+
+      - name: Setup Groovy
+        if: steps.revision.outputs.revision != 'skip'
+        run: |
+          sudo apt-get update
+          sudo apt-get -f install groovy
+
+      - name: Setup Pandoc
+        if: steps.revision.outputs.revision != 'skip'
+        run: sudo apt-get -f install pandoc
+
+      - name: Calculate new $REVISION (if changed since last published, else skip)
+        id: revision
+        working-directory: ${{ env.NIGHTLY_ROOT_PATH }}
+        shell: bash
+        run: bash scripts/nightly/new-revision.sh
+
+      - name: Share $REVISION as Environment Variable
+        run: echo "REVISION=${{ steps.revision.outputs.revision }}" >> $GITHUB_ENV
+
+      # ------------------------
+      # -- print out env      --
+      # ------------------------
+
+      - name: Print Software Versions
+        if: steps.revision.outputs.revision != 'skip'
+        working-directory: ${{ env.PROJECT_ROOT_PATH }}
+        shell: bash
+        run: |
+          echo ==============  Software versions  =================
+          java --version
+          mvn --version
+          node --version
+          $(npm bin)/antora version
+          groovy --version
+          pandoc --version
+          echo ====================================================
+
+      - name: Print Environment Variables
+        if: steps.revision.outputs.revision != 'skip'
+        shell: bash
+        # prints all the (non-secret) variables as used by the build scripts to the console
+        run: |
+          echo ==============  ENV  =================
+          echo BASELINE            \: $BASELINE
+          echo PROJECT_ROOT_PATH   \: $PROJECT_ROOT_PATH
+          echo NIGHTLY_ROOT_PATH   \: $NIGHTLY_ROOT_PATH
+          echo PROJECT_LEGACY_ROOT_PATH   \: $PROJECT_LEGACY_ROOT_PATH
+          echo REVISION            \: $REVISION
+          echo ======================================
+
+      # ------------------------
+      # -- prune git history  --
+      # ------------------------
+
+      - name: Prune Git History
+        if: steps.revision.outputs.revision != 'skip'
+        shell: bash
+        working-directory: ${{ env.NIGHTLY_ROOT_PATH }}
+        # will noop if git tree has not changed (see diff commands below)
+        run: bash scripts/nightly/prune-git-history.sh
+        
+      - name: Force Push Pruned Git History
+        # uses a predefined action that does exactly this; will noop if git tree has not changed
+        uses: ad-m/github-push-action@master
+        with:
+          directory: ${{ env.NIGHTLY_ROOT_PATH }}
+          github_token: ${{ secrets.PUBLISH_TOKEN }}
+          force: true
+
+      # ------------------------
+      # -- build software     --
+      # ------------------------
+
+      - name: Activate Cache for Maven Downloads
+        if: steps.revision.outputs.revision != 'skip'
+        uses: actions/cache@v3
+        env:
+          # change the cache-name if we want to rebuild the cache
+          # can be reset via github action page
+          cache-name: maven-shared
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-${{ env.cache-name }}
+          restore-keys: |
+            ${{ runner.os }}-${{ env.cache-name }}
+            ${{ runner.os }}-
+
+      - name: Build Artifacts and Deploy to Local Filesystem
+        if: steps.revision.outputs.revision != 'skip'
+        shell: bash
+        working-directory: ${{ env.PROJECT_ROOT_PATH }}
+        run: |
+          bash scripts/ci/build-artifacts.sh
+        env:
+          # -Dmodule-all ... build all modules
+          # -Denforcer.failFast=true ... fail fast on convergence issues (enforcer plugin)
+          # -T 1C ... 1 build thread per core
+          MVN_ADDITIONAL_OPTS: >-
+            -Dmodule-examples-demo-wicket
+            -Dnightly-localfs-repo
+            -Djacoco-report-xml
+            -Denforcer.failFast=true
+            -DskipTests=false
+            -Dproject.build.outputTimestamp=1
+          
+          # (used by build-artifacts.sh)
+          MVN_STAGES: deploy
+          
+          # when 'off' keep unique REVISION that has SHA checksum - don't revert at end of script 
+          REV_REVERT_FLAG: off
+          
+          # used to skip building incubator docker images (demo vaadin)
+          INCUBATOR: skip
+          
+          # possible modes are
+          # attach ... enables the 'source' profile, which brings in the maven-source-plugin
+          # (else) ... explicitly ensure that maven-source-plugin is disabled
+          SOURCE_MODE: attach
+
+          SETTINGS_XML: ${{ env.PROJECT_ROOT_PATH }}/.m2/settings.xml
+          ## hub.docker.com
+          DOCKER_REGISTRY_USERNAME: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
+          DOCKER_REGISTRY_PASSWORD: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
+          DOCKER_REGISTRY_URL: 'https://index.docker.io/v2/'
+  
+          # possible modes are
+          # push ... push docker images to dockerhub
+          # tar  ... build docker images and save them locally as tar files
+          # skip ... skip docker image build steps
+          JIB_MODE: push
+          
+      - name: Build (Legacy Isis) Artifacts and Deploy to Local Filesystem
+        if: steps.revision.outputs.revision != 'skip'
+        shell: bash
+        working-directory: ${{ env.PROJECT_LEGACY_ROOT_PATH }}
+        run: |
+          jshell scripts/ci/rename-all-published-sources.jsh
+          bash scripts/ci/build-artifacts.sh
+        env:
+          PROJECT_ROOT_PATH: ${{ github.workspace }}/isis
+          # -Dmodule-all ... build all modules
+          # -Denforcer.failFast=true ... fail fast on convergence issues (enforcer plugin)
+          # -T 1C ... 1 build thread per core
+          MVN_ADDITIONAL_OPTS: >-
+            -Dnightly-localfs-repo
+            -Denforcer.failFast=true
+            -DskipTests=false
+            -Dproject.build.outputTimestamp=1
+          
+          # (used by build-artifacts.sh)
+          MVN_STAGES: deploy
+          
+          # when 'off' keep unique REVISION that has SHA checksum - don't revert at end of script 
+          REV_REVERT_FLAG: off
+          
+          # used to skip building incubator docker images (demo vaadin)
+          INCUBATOR: skip
+          
+          # possible modes are
+          # attach ... enables the 'source' profile, which brings in the maven-source-plugin
+          # (else) ... explicitly ensure that maven-source-plugin is disabled
+          SOURCE_MODE: attach
+
+          SETTINGS_XML: ${{ env.PROJECT_LEGACY_ROOT_PATH }}/.m2/settings.xml
+  
+          # possible modes are
+          # push ... push docker images to dockerhub
+          # tar  ... build docker images and save them locally as tar files
+          # skip ... skip docker image build steps
+          JIB_MODE: skip
+          
+      - name: Reset Environment Variables (after legacy build - just in case)
+        if: steps.revision.outputs.revision != 'skip'
+        shell: bash
+        # prints all the (non-secret) variables as used by the build scripts to the console
+        run: |
+          echo ==============  ENV  =================
+          echo BASELINE            \: $BASELINE
+          echo PROJECT_ROOT_PATH   \: $PROJECT_ROOT_PATH
+          echo NIGHTLY_ROOT_PATH   \: $NIGHTLY_ROOT_PATH
+          echo PROJECT_LEGACY_ROOT_PATH   \: $PROJECT_LEGACY_ROOT_PATH
+          echo REVISION            \: $REVISION
+          echo ======================================
+        env:
+          PROJECT_ROOT_PATH: ${{ github.workspace }}/causeway
+ 
+      - name: Code Quality Analysis
+        if: steps.revision.outputs.revision != 'skip'
+        shell: bash
+        working-directory: ${{ env.PROJECT_ROOT_PATH }}
+        # -Dreleased ... process only released modules
+        run: |
+          mvn verify sonar:sonar \
+          -Dreleased \
+          -Dsonar.projectKey=apache_isis \
+          -Dsonar.organization=apache \
+          -Dsonar.host.url=https://sonarcloud.io \
+          -Dsonar.login=$SONAR_TOKEN \
+          -Dsonar.branch.name=master \
+          -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml \
+          -DskipTests \
+          -Denforcer.skip
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+ 
+      # ------------------------
+      # -- build the site     --
+      # ------------------------
+  
+      - name: Build Apache Causeway Site
+        if: steps.revision.outputs.revision != 'skip'
+        shell: bash
+        working-directory: ${{ env.PROJECT_ROOT_PATH }}
+        # builds static web content into ${PROJECT_ROOT_PATH}/antora/target/site,
+        # as specified in the site.yml file
+        run: |
+          bash $NIGHTLY_ROOT_PATH/scripts/nightly/patch-site-config.sh $PROJECT_ROOT_PATH/antora/playbooks/site.yml
+          bash -x scripts/ci/build-site.sh $PROJECT_ROOT_PATH/antora/playbooks/site.yml
+        env:
+          REVISION: ${{ steps.revision.outputs.revision }}
+          SKIP_PROJDOC_GENERATION: true
+  
+      - name: Rsync Site Content to Nightly Working Tree
+        if: steps.revision.outputs.revision != 'skip'
+        shell: bash
+        working-directory: ${{ env.NIGHTLY_ROOT_PATH }}
+        run: bash scripts/nightly/rsync-site.sh
+        
+      - name: Remove Outdated Binaries
+        if: steps.revision.outputs.revision != 'skip'
+        shell: bash
+        working-directory: ${{ env.NIGHTLY_ROOT_PATH }}
+        run: jshell scripts/nightly/remove-binaries-older-than.jsh
+  
+      - name: Commit Site/Snapshot Updates (/docs, /mvn-snapshots)
+        if: steps.revision.outputs.revision != 'skip'
+        shell: bash
+        working-directory: ${{ env.NIGHTLY_ROOT_PATH }}
+        # will noop if git tree has not changed (see diff commands below)
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "Apache Causeway Committers (Bot)"
+          git add ./mvn-snapshots
+          git add ./docs
+          git diff --quiet && git diff --staged --quiet || git commit -m "CI automated site update" -a
+
+      - name: Push Site Update
+        # uses a predefined action that does exactly this; will noop if git tree has not changed
+        uses: ad-m/github-push-action@master
+        with:
+          directory: ${{ env.NIGHTLY_ROOT_PATH }}
+          github_token: ${{ secrets.PUBLISH_TOKEN }}
+
+
+# FOR DEBUG USE
+#   - name: Dump workshape
+#     run: find . -print
+#   - name: Dump Env context
+#     env:
+#       ENV_CONTEXT: ${{ toJson(env) }}
+#     run: echo "$ENV_CONTEXT"
+#   - name: Dump GitHub context
+#     env:
+#       GITHUB_CONTEXT: ${{ toJson(github) }}
+#     run: echo "$GITHUB_CONTEXT"
+#   - name: Dump job context
+#     env:
+#       JOB_CONTEXT: ${{ toJson(job) }}
+#     run: echo "$JOB_CONTEXT"
+#   - name: Dump steps context
+#     env:
+#       STEPS_CONTEXT: ${{ toJson(steps) }}
+#     run: echo "$STEPS_CONTEXT"
+#   - name: Dump runner context
+#     env:
+#       RUNNER_CONTEXT: ${{ toJson(runner) }}
+#     run: echo "$RUNNER_CONTEXT"
+#   - name: Dump strategy context
+#     env:
+#       STRATEGY_CONTEXT: ${{ toJson(strategy) }}
+#     run: echo "$STRATEGY_CONTEXT"
+#   - name: Dump matrix context
+#     env:
+#       MATRIX_CONTEXT: ${{ toJson(matrix) }}
+#     run: echo "$MATRIX_CONTEXT"
+#   - name: Create issue using REST API (example)
+#     run: |
+#       curl --request POST \
+#       --url https://api.github.com/repos/${{ github.repository }}/issues \
+#       --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
+#       --header 'content-type: application/json' \
+#       --data '{
+#         "title": "Automated issue for commit: ${{ github.sha }}",
+#         "body": "This issue was automatically created by the GitHub Action workflow **${{ github.workflow }}**. \n\n The commit hash was: _${{ github.sha }}_."
+#         }'

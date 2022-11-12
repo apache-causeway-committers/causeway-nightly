@@ -1,0 +1,116 @@
+name: Simpleapp (CI Nightly)
+
+on:
+  workflow_dispatch:
+  schedule:
+    # daily 04:00 (UTC) in the morning
+    - cron: '0 4 * * *'
+
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    env:
+      APPNAME: simpleapp
+      APP: isis-app-simpleapp
+
+    strategy:
+      matrix:
+        branch:
+        - jdo
+        - jpa
+        - jdo-SNAPSHOT
+        - jpa-SNAPSHOT
+
+    steps:
+    - name: Export APPNAME as output
+      id: appname
+      shell: bash
+      run: |
+        echo "##[set-output name=appname;]${APPNAME}"
+
+    - name: Checkout apache/isis-app-simpleapp repo
+      uses: actions/checkout@v3
+      with:
+        repository: apache/isis-app-simpleapp
+        ref: refs/heads/${{ matrix.branch }}
+
+    - name: Set up JDK 11
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'zulu'
+        java-version: 11
+
+    - name: Print Maven Version
+      run: mvn --version
+
+    - name: Activate Cache for Maven Downloads
+      uses: actions/cache@v3
+      env:
+        cache-name: cache-maven-modules
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-build-${{ env.cache-name }}-
+          ${{ runner.os }}-build-
+          ${{ runner.os }}-
+
+    - name: Calculate $REVISION
+      id: revision
+      shell: bash
+      run: |
+        if [[ ${{ matrix.branch }} =~ .*-SNAPSHOT ]]
+        then
+          LATEST=$(curl -X GET "https://raw.githubusercontent.com/apache-isis-committers/isis-nightly/master/mvn-snapshots/org/apache/isis/app/isis-app-starter-parent/maven-metadata.xml" | grep release | cut -f2 -d'>' | cut -f1 -d'<')
+          echo "parentVersion = $LATEST"
+          ORIG=$(grep "<version>" pom.xml | head -1 | cut -d'>' -f2 | cut -d'<' -f1)
+          ORIG_VERSION="<version>$ORIG</version>"
+          LATEST_VERSION="<version>$LATEST</version>"
+          # https://stackoverflow.com/a/11458836/56880
+          sed -i -z "s|$ORIG_VERSION|$LATEST_VERSION|1" pom.xml
+        fi
+        BASELINE=$(cat pom.xml | grep "<version>" | head -1 | awk -F'>' '{print $2}' | awk -F'<' '{print $1}')
+        SHA_ID=$(curl -s --request GET \
+                 --url https://api.github.com/repos/apache/$APP/git/ref/heads/${{ matrix.branch }} \
+                 --header 'content-type: application/json' \
+                 | grep sha | cut -d\: -f2 | cut -d\" -f2 | cut -c1-8)
+        REVISION=${BASELINE}.$(date +%Y%m%d-%H%M)-${SHA_ID}
+        cat pom.xml
+        echo "##[set-output name=revision;]${REVISION}"
+
+    - name: Share $REVISION as Environment Variable
+      run: echo "REVISION=${{ steps.revision.outputs.revision }}" >> $GITHUB_ENV
+
+    - name: Print $REVISION
+      shell: bash
+      run: |
+        echo ==============  ENV  =================
+        echo REVISION            \: $REVISION
+        echo ======================================
+
+    - name: Update Maven version
+      shell: bash
+      run: |
+        mvn versions:set -DnewVersion=$REVISION
+
+    - name: Print pom.xml
+      shell: bash
+      run: |
+        cat pom.xml
+
+    - name: Build with Maven
+      shell: bash
+      run: |
+        mvn install
+
+    - name: Build and Push Docker Image
+      shell: bash
+      run: |
+        mvn -pl webapp -Ddocker jib:build
+      env:
+        REVISION: ${{ matrix.branch }}
+        DOCKER_REGISTRY_USERNAME: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
+        DOCKER_REGISTRY_PASSWORD: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
+

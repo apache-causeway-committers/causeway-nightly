@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-helloworld
+spec:
+  selector:
+    matchLabels:
+      app: app-helloworld
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: app-helloworld
+    spec:
+      containers:
+        - image: apacheisis/helloworld:latest
+          imagePullPolicy: Always
+          name: app-helloworld
+          ports:
+            - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-helloworld
+spec:
+  ports:
+    - port: 80
+      targetPort: 8080
+      protocol: TCP
+  selector:
+    app: app-helloworld
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: app-helloworld
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    cert-manager.io/issuer: "letsencrypt-prod"
+spec:
+  tls:
+    - hosts:
+        - helloworld.isis.incode.work
+      secretName: app-helloworld-tls
+  rules:
+    - host: helloworld.isis.incode.work
+      http:
+        paths:
+          - pathType: Prefix
+            path: /
+            backend:
+              service:
+                name: app-helloworld
+                port:
+                  number: 80
+
