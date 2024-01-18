@@ -473,7 +473,7 @@ page.parent doesn't seem to be set...
 </div>
 </div>
 <div class="sect1">
-<h2 id="audittrailentryrepository-and-others-have-simplified-the-api"><a class="anchor" href="#audittrailentryrepository-and-others-have-simplified-the-api"></a>AuditTrailEntryRepository and others have simplified the API.</h2>
+<h2 id="audittrailentryrepository-and-others-have-simplified-the-api-causeway-3390"><a class="anchor" href="#audittrailentryrepository-and-others-have-simplified-the-api-causeway-3390"></a>AuditTrailEntryRepository and others have simplified the API (CAUSEWAY-3390)</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>In this release the <code>AuditTrailEntryRepository</code> and similar is no longer parameterized by the entity type, and is also an interface.</p>
@@ -521,6 +521,38 @@ page.parent doesn't seem to be set...
 </div>
 </div>
 </div>
+<div class="sect1">
+<h2 id="auto-flush-management-causeway-3675"><a class="anchor" href="#auto-flush-management-causeway-3675"></a>Auto-flush management (CAUSEWAY-3675)</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>By default any queries executed by <a href="../../../../refguide/latest/applib/index/services/repository/RepositoryService.html" class="xref page">RepositoryService</a> are preceded by a flush first.
+The rationale behind this is to make sure that everything that might have changed is in the database.</p>
+</div>
+<div class="paragraph">
+<p>However, with JDO at least, this behaviour can cause a <code>ConcurrentModificationException</code> when coupled with the  <a href="../../../../refguide/latest/persistence/index/commons/integration/changetracking/EntityChangeTrackerDefault.html" class="xref page">EntityChangeTrackerDefault</a> internal service, used by auditing.
+This grabs the value of properties, including derived properties that are evaluated using a query.</p>
+</div>
+<div class="paragraph">
+<p>So now, <a href="../../../../refguide/latest/persistence/index/commons/integration/changetracking/EntityChangeTrackerDefault.html" class="xref page">EntityChangeTrackerDefault</a> suppresses the autoflush.</p>
+</div>
+<div class="paragraph">
+<p>Changes:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>To revert to the original behaviour, use the new <code>causeway.commons.persistence.entity-change-tracker.suppress-auto-flush</code> property.</p>
+</li>
+<li>
+<p>The <code>causeway.core.runtime-services.repository=service.disable-auto-flush</code> configuration property has been renamed to <code>causeway.commons.persistence.repository-service.disable-auto-flush</code>.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>For more details, see <a href="https://issues.apache.org/jira/browse/CAUSEWAY-3675">CAUSEWAY-3675</a>.</p>
+</div>
+</div>
+</div>
 </article>
 <aside class="article-aside toc hide-for-print" role="navigation">
     <p class="toc-title">On this page</p>
@@ -538,7 +570,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.0.0-RC4.20240117-0223-5b4dbe31</p>
+            <p>Revision: 2.0.0-RC4.20240118-0223-97277cf8</p>
         </div>
     </div>
 </footer>
