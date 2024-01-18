@@ -1,0 +1,81 @@
+name: Remove Outdated Binaries 
+
+on:
+  workflow_dispatch:
+  
+jobs:
+  build:
+    name: cleanup outdated artifacts
+    runs-on: ubuntu-latest
+    env:
+      # to be shared among all steps of this job
+      BASELINE_MAIN: 2.0.0-RC4
+      BASELINE_EDGE: 3.0.0-M1
+
+      ROOT_PATH_NIGHTLY: ${{ github.workspace }}/causeway-nightly
+      MVN_SNAPSHOTS_PATH: ${{ github.workspace }}/causeway-nightly/mvn-snapshots
+
+    steps:
+
+      # ------------------------------
+      # -- check out self (nightly) --
+      # ------------------------------
+
+      - name: Checkout nightly repo
+        uses: actions/checkout@v4
+        with:
+          path: causeway-nightly
+
+      # ----------------------
+      # -- install software --
+      # ----------------------
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: 21
+
+      # ------------------------
+      # -- prune git history  --
+      # ------------------------
+
+      - name: Prune Git History
+        shell: bash
+        working-directory: ${{ env.ROOT_PATH_NIGHTLY }}
+        # will noop if git tree has not changed (see diff commands below)
+        run: bash scripts/nightly/prune-git-history.sh
+
+      - name: Force Push Pruned Git History
+        # uses a predefined action that does exactly this; will noop if git tree has not changed
+        uses: ad-m/github-push-action@master
+        with:
+          directory: ${{ env.ROOT_PATH_NIGHTLY }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          force: true
+
+      # --------------------------
+      # -- run remover & commit --
+      # --------------------------
+
+      - name: Remove Outdated Binaries
+        shell: bash
+        working-directory: ${{ env.ROOT_PATH_NIGHTLY }}
+        run: jshell scripts/nightly/remove-binaries-older-than.jsh
+
+      - name: Commit Updates (/mvn-snapshots)
+        shell: bash
+        working-directory: ${{ env.ROOT_PATH_NIGHTLY }}
+        # will noop if git tree has not changed (see diff commands below)
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "Apache Causeway Committers (Bot)"
+          git add ./mvn-snapshots
+          git diff --quiet && git diff --staged --quiet || git commit -m "CI automated site update" -a
+
+      - name: Push Site Update
+        # uses a predefined action that does exactly this; will noop if git tree has not changed
+        uses: ad-m/github-push-action@master
+        with:
+          directory: ${{ env.ROOT_PATH_NIGHTLY }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
