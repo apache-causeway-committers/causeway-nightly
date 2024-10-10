@@ -319,6 +319,14 @@ page.parent doesn't seem to be set...
       </ul>
     </li>
     <li class="component">
+      <span class="title">QueryDSL</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../querydsl/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
       <span class="title">Reference Guide</span>
       <ul class="versions">
         <li class="version">
@@ -490,6 +498,9 @@ This is usually done in the top-level parent pom of your application:</p>
 &lt;/dependencies&gt;</code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>Note that this transitively includes the Wicket viewer module (<code>org.apache.causeway.viewer:causeway-viewer-wicket-viewer</code> in your app).</p>
+</div>
 </div>
 </div>
 </div>
@@ -497,7 +508,7 @@ This is usually done in the top-level parent pom of your application:</p>
 <h2 id="update-appmanifest"><a class="anchor" href="#update-appmanifest"></a>Update AppManifest</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>In your application&#8217;s <code>AppManifest</code> (top-level Spring <code>@Configuration</code> used to bootstrap the app), import the</p>
+<p>In your application&#8217;s <code>AppManifest</code> (top-level Spring <code>@Configuration</code> used to bootstrap the app), import the module for the Wicket viewer:</p>
 </div>
 <div class="listingblock">
 <div class="title">AppManifest.java</div>
@@ -512,6 +523,9 @@ public class AppManifest {
 }</code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>Note that this transitively references the <code>CausewayModuleViewerCommonXxx</code> modules.</p>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -519,6 +533,9 @@ public class AppManifest {
 <div class="sectionbody">
 <div class="paragraph">
 <p>The <a href="../../refguide/latest/config/about.html" class="xref page">Configuration Guide</a> includes a <a href="../../refguide/latest/config/sections/causeway.viewer.wicket.html" class="xref page">section</a> for the Wicket viewer.</p>
+</div>
+<div class="paragraph">
+<p>The Wicket Viewer also honours the config properties common to all viewers, in <a href="../../refguide/latest/config/sections/causeway.viewer.common.html" class="xref page">common section</a>.</p>
 </div>
 <div class="sect2">
 <h3 id="application-identity"><a class="anchor" href="#application-identity"></a>Application Identity</h3>
@@ -528,28 +545,35 @@ public class AppManifest {
 <div class="ulist">
 <ul>
 <li>
-<p><a href="../../refguide/latest/config/sections/causeway.viewer.wicket.html#causeway.viewer.wicket.application.about" class="xref page">causeway.viewer.wicket.application.about</a></p>
+<p><a href="../../refguide/latest/config/sections/causeway.viewer.common.html#causeway.viewer.common.application.about" class="xref page">causeway.viewer.common.application.about</a></p>
 </li>
 <li>
-<p><a href="../../refguide/latest/config/sections/causeway.viewer.wicket.html#causeway.viewer.wicket.application.brand-logo-header" class="xref page">causeway.viewer.wicket.application.brand-logo-header</a></p>
+<p><a href="../../refguide/latest/config/sections/causeway.viewer.common.html#causeway.viewer.common.application.brand-logo-header" class="xref page">causeway.viewer.common.application.brand-logo-header</a></p>
 </li>
 <li>
-<p><a href="../../refguide/latest/config/sections/causeway.viewer.wicket.html#causeway.viewer.wicket.application.brand-logo-signin" class="xref page">causeway.viewer.wicket.application.brand-logo-signin</a></p>
+<p><a href="../../refguide/latest/config/sections/causeway.viewer.common.html#causeway.viewer.common.application.brand-logo-signin" class="xref page">causeway.viewer.common.application.brand-logo-signin</a></p>
 </li>
 <li>
-<p><a href="../../refguide/latest/config/sections/causeway.viewer.wicket.html#causeway.viewer.wicket.application.css" class="xref page">causeway.viewer.wicket.application.css</a></p>
+<p><a href="../../refguide/latest/config/sections/causeway.viewer.common.html#causeway.viewer.common.application.name" class="xref page">causeway.viewer.common.application.name</a></p>
 </li>
 <li>
-<p><a href="../../refguide/latest/config/sections/causeway.viewer.wicket.html#causeway.viewer.wicket.application.js" class="xref page">causeway.viewer.wicket.application.js</a></p>
-</li>
-<li>
-<p><a href="../../refguide/latest/config/sections/causeway.viewer.wicket.html#causeway.viewer.wicket.application.name" class="xref page">causeway.viewer.wicket.application.name</a></p>
-</li>
-<li>
-<p><a href="../../refguide/latest/config/sections/causeway.viewer.wicket.html#causeway.viewer.wicket.application.version" class="xref page">causeway.viewer.wicket.application.version</a></p>
+<p><a href="../../refguide/latest/config/sections/causeway.viewer.common.html#causeway.viewer.common.application.version" class="xref page">causeway.viewer.common.application.version</a></p>
 <div class="paragraph">
 <p>This is discussed in more detail <a href="#application-versioning">below</a>.</p>
 </div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Customization:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../../refguide/latest/config/sections/causeway.viewer.wicket.html#causeway.viewer.wicket.css" class="xref page">causeway.viewer.wicket.css</a></p>
+</li>
+<li>
+<p><a href="../../refguide/latest/config/sections/causeway.viewer.wicket.html#causeway.viewer.wicket.js" class="xref page">causeway.viewer.wicket.js</a></p>
 </li>
 <li>
 <p><a href="../../refguide/latest/config/sections/causeway.viewer.wicket.html#causeway.viewer.wicket.welcome.text" class="xref page">causeway.viewer.wicket.welcome.text</a></p>
@@ -559,7 +583,7 @@ public class AppManifest {
 <div class="sect3">
 <h4 id="application-versioning"><a class="anchor" href="#application-versioning"></a>Application versioning</h4>
 <div class="paragraph">
-<p>If the <a href="../../refguide/latest/config/sections/causeway.viewer.wicket.html#causeway.viewer.wicket.application.version" class="xref page">causeway.viewer.wicket.application.version</a> configuration property is present, then this will be shown in the footer on every page as well as on the about page.</p>
+<p>If the <a href="../../refguide/latest/config/sections/causeway.viewer.common.html#causeway.viewer.common.application.version" class="xref page">causeway.viewer.common.application.version</a> configuration property is present, then this will be shown in the footer on every page as well as on the about page.</p>
 </div>
 <div class="paragraph">
 <p>Maintaining this configuration property manually could be error prone, so an alternative approach is to configure your build system to generate a version identifier automatically.</p>
@@ -611,7 +635,7 @@ APPLICATION_VERSION=$DATE.$BRANCH.$GIT_SHORT_COMMIT</code></pre>
 <div class="listingblock">
 <div class="title">application-version.properties</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">causeway.viewer.wicket.application.version=$\{applicationVersion}</code></pre>
+<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">causeway.viewer.common.application.version=$\{applicationVersion}</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -678,7 +702,7 @@ public class AppManifest {
 <div class="ulist">
 <ul>
 <li>
-<p><a href="../../refguide/latest/config/sections/causeway.viewer.wicket.html#causeway.viewer.wicket.credit" class="xref page">causeway.viewer.wicket.credit</a></p>
+<p><a href="../../refguide/latest/config/sections/causeway.viewer.common.html#causeway.viewer.common.credit" class="xref page">causeway.viewer.common.credit</a></p>
 <div class="paragraph">
 <p>For example:</p>
 </div>
@@ -687,7 +711,7 @@ public class AppManifest {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">causeway:
   viewer:
-    wicket:
+    common:
       credit:
         - url:  https://causeway.apache.org
           image: images/apache-causeway/causeway-logo-65x48.png
@@ -927,7 +951,7 @@ for further details).</p>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 2.1.0.20241010-0244-3c319fdf</p>
+            <p>Revision: 2.1.0.20241010-1845-ccae92df</p>
         </div>
     </div>
 </footer>
