@@ -1,0 +1,94 @@
+= Apache Causeway - Nightly Builds
+:toc:
+:toc-title: pass:[<h3>Contents</h3>]
+:toc-placement!:
+
+____
+https://causeway.apache.org[Apache Causeway] software is a framework for rapidly developing domain-driven apps in Java.
+Write your business logic in entities, domain services and repositories, and the framework dynamically generates a representation of that domain model as a webapp or a RESTful API.
+____
+
+This repo provides access to nightly builds of _Apache Causeway_ (_Apache Isis_).
+
+[WARNING]
+====
+*These nightly builds should not be used in production.*
+
+Nightly builds are interim builds that are untested and unsupported.
+These unreleased builds may have undocumented features, known and unknown defects, and any number of other issues.
+They are intended for use by developers and others wishing to help with the development of the framework.
+
+Maven artifacts will *not* be kept around forever. Outdated ones will be regularly removed to respect available diskspace.
+====
+
+
+
+image:https://github.com/apache-causeway-committers/causeway-nightly/actions/workflows/apache-causeway-ci-nightly.yml/badge.svg[link="https://github.com/apache-causeway-committers/causeway-nightly/actions/workflows/apache-causeway-ci-nightly.yml"]
+
+
+toc::[]
+
+==  What is built here?
+
+The following are built and published nightly:
+
+Projects::
+  * link:https://github.com/apache-causeway-committers/causeway-nightly/tree/master/mvn-snapshots/org/apache/causeway[Apache Causeway]
+  ** `2.x Snapshots`: _Spring Framework_ 5.x, _Java_ 11
+  ** `3.x Snapshots`: _Spring Framework_ 6.x, _Java_ 17
+  * link:https://github.com/apache-causeway-committers/causeway-nightly/tree/master/mvn-snapshots/org/apache/isis[Apache Isis (Legacy)]
+  ** `2.x Snapshots`: _Spring Framework_ 5.x, _Java_ 11 (EOL, to be removed at some point, likely end of 2024)
+Docker Images (published on Docker Hub)::
+  * Demo (Wicket/JPA) link:https://hub.docker.com/r/apache/causeway-app-demo-jpa[apache/causeway-app-demo-jpa]
+  * Demo (Wicket/JDO) link:https://hub.docker.com/r/apache/causeway-app-demo-jdo[apache/causeway-app-demo-jdo]
+Web Sites::
+  * Apache Causeway Site link:https://apache-causeway-committers.github.io/causeway-nightly[Nightly Preview]
+
+
+Also see https://github.com/apache/causeway/tree/master/examples/demo[demo-sources]
+for details and on how to get started.
+
+== Snapshot Repository (Maven)
+____
+Notes on https://cwiki.apache.org/confluence/display/ISIS/Semantic+Versioning+of+Staged+Builds[Semantic Versioning of Staged Builds].
+____
+
+Inspect available versions::
+  * `Apache Causeway builds`: link:https://github.com/apache-causeway-committers/causeway-nightly/tree/master/mvn-snapshots/org/apache/causeway/causeway-bom[Available Build Artifacts]
+  * `Apache Isis legacy builds`: link:https://github.com/apache-causeway-committers/causeway-nightly/tree/master/mvn-snapshots/org/apache/isis/isis-bom[Available Build Artifacts]
+
+[source,xml]
+.To use the Maven artifacts _Apache Causeway_ (or former _Apache Isis_), add the following definition into your `pom.xml`:
+----
+<profiles>
+  <profile>
+    <id>causeway-nightly-snapshots</id>
+    <activation>
+      <property>
+        <name>!skip.causeway-nightly-snapshots</name>
+      </property>
+    </activation>
+    <repositories>
+      <repository>
+        <releases>
+          <enabled>true</enabled>
+          <updatePolicy>always</updatePolicy>
+          <checksumPolicy>fail</checksumPolicy>
+        </releases>
+        <snapshots>
+          <enabled>true</enabled>
+          <updatePolicy>always</updatePolicy>
+          <checksumPolicy>fail</checksumPolicy>
+        </snapshots>
+        <id>causeway-nightly-snapshots</id>
+        <name>Causeway Nightly Snapshots (maven)</name>
+        <url>https://raw.githubusercontent.com/apache-causeway-committers/causeway-nightly/master/mvn-snapshots</url>
+      </repository>
+    </repositories>
+  </profile>
+</profiles>
+----
+
+== Code Quality (Sonar)
+
+See our Sonarcloud link:https://sonarcloud.io/dashboard?id=apache_causeway[Dashboard].
