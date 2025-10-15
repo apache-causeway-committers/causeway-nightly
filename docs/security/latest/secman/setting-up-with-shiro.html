@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Setting up with Shiro :: causeway</title>
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+    <link rel="stylesheet" href="../../../_/css/site-custom.css">
+<link rel="home" href="../../.." title="causeway">
+  <link rel="next" href="setting-up-with-spring-oauth2.html" title="Setting up with Spring OAuth2">
+  <link rel="prev" href="setting-up.html" title="Setting up">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="../../..">
+          <span class="icon">
+            <img src="../../../_/img/causeway-logo-no-words-65x48.png"></img>
+          </span>
+        <span class="navbar-title">causeway</span>
+      </a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <a class="navbar-end">
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Quick Start</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Starter Apps</span>
+            <a class="navbar-item" href="../../../docs/latest/starters/helloworld.html">Hello World</a>
+            <a class="navbar-item" href="../../../docs/latest/starters/simpleapp.html">Simple App</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Learning &amp; Tutorials</span>
+            <a class="navbar-item" href="../../../docs/latest/reference/about.html">Reference App</a>
+            <a class="navbar-item" href="https://danhaywood.gitlab.io/isis-petclinic-tutorial-docs/petclinic/1.16.2/intro.html">Petclinic</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Resources</span>
+            <a class="navbar-item" href="../../../docs/latest/resources/cheatsheet.html">Cheatsheet</a>
+            <a class="navbar-item" href="../../../docs/latest/resources/icons.html">Icons</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Guides</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Core</span>
+            <a class="navbar-item" href="../../../userguide/latest/about.html">User Guide</a>
+            <a class="navbar-item" href="../../../refguide/latest/about.html">Reference Guide</a>
+            <a class="navbar-item" href="../../../testing/latest/about.html">Testing Guide</a>
+            <a class="navbar-item" href="../../../security/latest/about.html">Security Guide</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">For use in apps</span>
+            <a class="navbar-item" href="../../../valuetypes/latest/about.html">Value Types</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Development</span>
+            <a class="navbar-item" href="../../../setupguide/latest/about.html">Setup Guide</a>
+            <a class="navbar-item" href="../../../conguide/latest/about.html">Contributors' Guide</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Components</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Security</span>
+            <a class="navbar-item" href="../../../security/latest/bypass/about.html">Bypass</a>
+            <a class="navbar-item" href="../../../security/latest/simple/about.html">Simple</a>
+            <a class="navbar-item" href="../../../security/latest/shiro/about.html">Shiro</a>
+            <a class="navbar-item" href="../../../security/latest/spring/about.html">Spring</a>
+            <a class="navbar-item" href="../../../security/latest/keycloak/about.html">Keycloak</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Viewers</span>
+            <a class="navbar-item" href="../../../vw/latest/about.html">Web UI (Wicket)</a>
+            <a class="navbar-item" href="../../../gqlv/latest/about.html">GraphQL API</a>
+            <a class="navbar-item" href="../../../vro/latest/about.html">REST API (Restful Objects)</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Persistence</span>
+            <a class="navbar-item" href="../../../pjpa/latest/about.html">JPA (EclipseLink)</a>
+            <a class="navbar-item" href="../../../pjdo/latest/about.html">JDO (DataNucleus)</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Extensions</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Core</span>
+            <a class="navbar-item" href="../../../userguide/latest/commandlog/about.html">Command Log</a>
+            <a class="navbar-item" href="../../../userguide/latest/docgen/about.html">Doc Gen</a>
+            <a class="navbar-item" href="../../../userguide/latest/executionlog/about.html">Execution Log</a>
+            <a class="navbar-item" href="../../../userguide/latest/executionoutbox/about.html">Execution Outbox</a>
+            <a class="navbar-item" href="../../../userguide/latest/executionrepublisher/about.html">Execution Republisher</a>
+            <a class="navbar-item" href="../../../userguide/latest/excel/about.html">Excel</a>
+            <a class="navbar-item" href="../../../userguide/latest/flyway/about.html">Flyway</a>
+            <a class="navbar-item" href="../../../userguide/latest/layoutloaders/about.html">Layout Loaders</a>
+            <a class="navbar-item" href="../../../userguide/latest/titlecache/about.html">Title Cache</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Security</span>
+            <a class="navbar-item" href="../../../security/latest/secman/about.html">Secman</a>
+            <a class="navbar-item" href="../../../security/latest/audittrail/about.html">Audit Trail</a>
+            <a class="navbar-item" href="../../../security/latest/spring-oauth2/about.html">Spring OAuth2 Integration</a>
+            <a class="navbar-item" href="../../../security/latest/shiro-realm-ldap/about.html">LDAP Realm for Shiro</a>
+            <a class="navbar-item" href="../../../security/latest/sessionlog/about.html">Session Log</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Web UI (Wicket)</span>
+            <a class="navbar-item" href="../../../vw/latest/fullcalendar/about.html">Full Calendar</a>
+            <a class="navbar-item" href="../../../vw/latest/pdfjs/about.html">pdf.js</a>
+            <a class="navbar-item" href="../../../vw/latest/sse/about.html">Server Side Events</a>
+            <a class="navbar-item" href="../../../vw/latest/tabular/about.html">Tabular Download</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">REST API (Restful Objects)</span>
+            <a class="navbar-item" href="../../../vro/latest/cors/about.html">CORS</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Support</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Contact</span>
+            <a class="navbar-item" href="../../../docs/latest/support/slack-channel.html">Slack</a>
+            <a class="navbar-item" href="../../../docs/latest/support/mailing-list.html">Mailing Lists</a>
+            <a class="navbar-item" href="https://issues.apache.org/jira/browse/CAUSEWAY">JIRA</a>
+            <a class="navbar-item" href="https://stackoverflow.com/questions/tagged/causeway">Stack Overflow</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Releases</span>
+            <a class="navbar-item" href="../../../docs/latest/downloads/how-to.html">Downloads</a>
+            <a class="navbar-item" href="../../../relnotes/latest/about.html">Release Notes</a>
+            <hr class="navbar-divider"/>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Framework</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Process</span>
+            <a class="navbar-item" href="../../../comguide/latest/about.html">Committers' Guide</a>
+            <a class="navbar-item" href="../../../tooling/latest/about.html">Tooling</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Automated Analysis</span>
+            <a class="navbar-item" href="https://sonarcloud.io/dashboard?id=apache_causeway">SonarCloud.io</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Interim Builds</span>
+            <a class="navbar-item" href="../../../comguide/latest/nightly-builds.html">Nightly builds</a>
+            <a class="navbar-item" href="../../../comguide/latest/weekly-builds.html">Weekly builds</a>
+            <a class="navbar-item" href="https://apache-causeway-committers.github.io/causeway-nightly">Website Preview (not ASF hosted)</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Development</span>
+            <a class="navbar-item" href="../../../core/latest/about.html">Internal Design Docs</a>
+            <a class="navbar-item" href="../../../regressiontests/latest/about.html">Regression Tests</a>
+            <a class="navbar-item" href="../../../incubator/latest/about.html">Incubator</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Thanks</span>
+            <a class="navbar-item" href="../../../more-thanks/latest/more-thanks.html">Acknowledgements</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">ASF</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://www.apache.org/">Apache Homepage</a>
+            <a class="navbar-item" href="https://www.apache.org/events/current-event">Events</a>
+            <a class="navbar-item" href="https://www.apache.org/licenses/">License</a>
+            <a class="navbar-item" href="https://www.apache.org/security/">Security</a>
+            <a class="navbar-item" href="https://privacy.apache.org/policies/privacy-policy-public.html">Privacy</a>
+            <a class="navbar-item" href="https://www.apache.org/foundation/sponsorship.html">Sponsorship</a>
+            <a class="navbar-item" href="https://www.apache.org/foundation/thanks.html">Thanks</a>
+            <hr class="navbar-divider"/>
+            <a class="navbar-item" href="https://whimsy.apache.org/board/minutes/Causeway.html">PMC board minutes</a>
+          </div>
+        </div>
+        <a class="navbar-item" href="../../../docs/latest/about.html">
+          <span class="icon">
+            <img src="../../../_/img/home.png"></img>
+          </span>
+        </a>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body ">
+<div class="nav-container" data-component="security" data-version="latest">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-search hide-for-print">
+  <input id="algolia-search-input" placeholder="Search"></span>
+</div>
+<div class="nav-panel-pagination">
+  <a class="page-previous" rel="prev" href="setting-up.html" title="Setting up"><span></span></a>
+  <a class="page-next" rel="next"
+     href="setting-up-with-spring-oauth2.html" title="Setting up with Spring OAuth2"><span></span></a>
+<!--
+page.parent doesn't seem to be set...
+  <a class="page-parent" rel="prev" href="about.html" title="Setting up"><span></span></a>
+-->
+</div>
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../about.html">Security Guide</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../core/about.html">Security Component SPI</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../bypass/about.html">Bypass (Authenticator &amp; Authorizor)</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../shiro/about.html">Shiro (Authenticator &amp; Authorizor)</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../keycloak/about.html">Keycloak (Authenticator only)</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../spring/about.html">Spring (Authenticator only)</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../usage-by-causeway-viewers.html">Usage by Causeway Viewers</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Extensions</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="about.html">SecMan</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="setting-up.html">Setting up</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="setting-up-with-shiro.html">Setting up with Shiro</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="setting-up-with-spring-oauth2.html">Setting up with Spring OAuth2</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="setting-up-with-keycloak.html">Setting up with Keycloak</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../audittrail/about.html">Audit Trail</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../spring-oauth2/about.html">Spring OAuth2 Integration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../sessionlog/about.html">Session Log</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Security Guide</span>
+    <span class="version">latest</span>
+  </div>
+  <ul class="components">
+    <li class="component">
+      <span class="title"> </span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../docs/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Committers' Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../comguide/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Contributors' Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../conguide/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Design Docs</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../core/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Extensions</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../extensions/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">GraphQL Viewer</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../gqlv/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Incubator Catalog</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../incubator/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">JDO/DataNucleus</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../pjdo/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">JPA</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../pjpa/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">QueryDSL</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../querydsl/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Reference Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../refguide/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">regressiontests</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../regressiontests/latest/index.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Release Notes</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../relnotes/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">REST API (Restful Objects Viewer)</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../vro/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component is-current">
+      <span class="title">Security Guide</span>
+      <ul class="versions">
+        <li class="version is-current">
+          <a href="../about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Setup Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../setupguide/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Testing Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../testing/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Tutorials</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../tutorials/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">User Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../userguide/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Value Types Catalog</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../valuetypes/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Web UI (Wicket Viewer)</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../vw/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main role="main">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../docs/latest/about.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../about.html">Security Guide</a></li>
+    <li>Extensions</li>
+    <li><a href="about.html">SecMan</a></li>
+    <li><a href="setting-up-with-shiro.html">Setting up with Shiro</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="https://github.com/apache/causeway/edit/main/extensions/security/secman/adoc/modules/secman/pages/setting-up-with-shiro.adoc">Edit</a></div>
+</div>
+<article class="doc">
+    <a name="section-top"></a>
+<h1 class="page">Setting up with Shiro</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This section describes how to set up and configure SecMan as an <a href="../../../refguide/latest/core/index/security/authorization/Authorizor.html" class="xref page">Authorizor</a>, with framework&#8217;s <a href="../shiro/about.html" class="xref page">Shiro integration</a> being used as the <a href="../../../refguide/latest/core/index/security/authentication/Authenticator.html" class="xref page">Authenticator</a>.</p>
+</div>
+<div class="paragraph">
+<p>The primary use case this enables is for authentication to be performed through an external mechanism, for example LDAP.
+This is implemented through the SecMan&#8217;s shiro realm submodule, which provides an implementation of Apache Shiro&#8217;s <code>Realm</code> interface that then calls back into SecMan.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="local-authentication"><a class="anchor" href="#local-authentication"></a>Local Authentication</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The diagram below sketches the high-level architecture:</p>
+</div>
+<div class="paragraph">
+<div class="title">SecMan with Shiro local authentication</div>
+<p><span class="image"><img src="_images/secman-shiro-architecture.drawio.svg" alt="secman shiro architecture.drawio"></span></p>
+</div>
+<div class="paragraph">
+<p>Thus:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Apache Causeway' <a href="../shiro/about.html" class="xref page">Shiro security</a> integration sets up Shiro web filters to intercept every http request, as well as the <a href="../../../refguide/latest/security/index/shiro/authentication/AuthenticatorShiro.html" class="xref page">AuthenticatorShiro</a> implementation.</p>
+</li>
+<li>
+<p>The <code>AuthenticatorShiro</code> calls to the Shiro Security Manager to obtain the authenticated principal.</p>
+</li>
+<li>
+<p>The Shiro Security Manager uses the <code>shiro.ini</code> configuration file to look up the realm to perform the authentication; in this case we configure it to use Secman&#8217;s realm (<a href="../../../refguide/latest/extensions/index/secman/delegated/shiro/realm/CausewayModuleExtSecmanShiroRealm.html" class="xref page">CausewayModuleExtSecmanShiroRealm</a>).</p>
+</li>
+<li>
+<p>Secman&#8217;s realm implementation queries the database and uses this to create an instance of <code>PrincipalForApplicationUser</code>, where the <code>Principal</code> interface is Shiro&#8217;s representation of an authenticated user.
+The <code>PrincipalForApplicationUser</code> is backed by <a href="../../../refguide/latest/extensions/index/secman/applib/user/dom/ApplicationUser.html" class="xref page">ApplicationUser</a>, which all of the permissions to object members for this particular user.</p>
+</li>
+<li>
+<p>to render a page, the Apache Causeway viewer uses configured <code>Authorizor</code>, in this case
+Secman&#8217;s own <a href="../../../refguide/latest/extensions/index/secman/integration/authorizor/AuthorizorSecman.html" class="xref page">AuthorizorSecman</a>.
+This looks up the current <a href="../../../refguide/latest/extensions/index/secman/applib/user/dom/ApplicationUser.html" class="xref page">ApplicationUser</a> (which will already reside in-memory) and renders the page according to which object members are visible or not.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The above configuration allows Secman to be used to authenticate users; the password is stored as an (typically) encrypted property of the <a href="../../../refguide/latest/extensions/index/secman/applib/user/dom/ApplicationUser.html" class="xref page">ApplicationUser</a>.
+These are called "local" users, as per the <a href="../../../refguide/latest/extensions/index/secman/applib/user/dom/ApplicationUser.html" class="xref page">ApplicationUser</a>'s <code>accountType</code> property.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="delegate-authentication"><a class="anchor" href="#delegate-authentication"></a>Delegate Authentication</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Local authentication - as described in the previous section - does not actually accomplish much; although Shiro&#8217;s <code>Authenticator</code> implementation is in use, since the Shiro Realm just queries the SecMan database, there is no real difference from simply using SecMan&#8217;s own <code>Authenticator</code> implementation.</p>
+</div>
+<div class="paragraph">
+<p>Where things become more interesting and useful is that Secman&#8217;s <a href="../../../refguide/latest/extensions/index/secman/delegated/shiro/realm/CausewayModuleExtSecmanShiroRealm.html" class="xref page">Realm implementation</a> also allows an alternative "delegate" realm (eg LDAP) to be queried.
+In such cases Shiro can obtain authentication of "delegated" users is performed by the delegate realm rather than locally.</p>
+</div>
+<div class="paragraph">
+<p>The diagram below shows where this delegation occurs:</p>
+</div>
+<div class="paragraph">
+<div class="title">SecMan with Shiro delegate authentication</div>
+<p><span class="image"><img src="_images/secman-shiro-delegate-architecture.drawio.svg" alt="secman shiro delegate architecture.drawio"></span></p>
+</div>
+<div class="paragraph">
+<p>When a delegate realm is configured, an <code>ApplicationUser</code> entity can be automatically created in the SecMan database for an external user.
+Secman can be configured so that these users are either locked or unlocked by default, as required, see <a href="#configure-properties">below</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="dependencies"><a class="anchor" href="#dependencies"></a>Dependencies</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In addition to the <a href="setting-up.html#dependencies" class="xref page">regular dependencies</a> required by Secman, also add in Secman&#8217;s Shiro Realm implementation:</p>
+</div>
+<div class="listingblock">
+<div class="title">pom.xml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.apache.causeway.extensions&lt;/groupId&gt;
+        &lt;artifactId&gt;causeway-extensions-secman-persistence-XXX&lt;/artifactId&gt; <i class="conum" data-value="1"></i><b>(1)</b>
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.apache.causeway.extensions&lt;/groupId&gt;
+        &lt;artifactId&gt;causeway-extensions-secman-encryption-jbcrypt&lt;/artifactId&gt; <i class="conum" data-value="2"></i><b>(2)</b>
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.apache.causeway.extensions&lt;/groupId&gt;
+        &lt;artifactId&gt;causeway-extensions-secman-delegated-shiro&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>specify either <code>causeway-extensions-secman-persistence-jpa</code> or <code>causeway-extensions-secman-persistence-jdo</code>, as required</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>provides an implementation of <code>PasswordEncryptionService</code></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_update-appmanifest"><a class="anchor" href="#_update-appmanifest"></a>Update AppManifest</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In addition to the <a href="setting-up.html#_update-appmanifest" class="xref page">other modules</a> that Secman requires to be added to your  application&#8217;s <code>AppManifest</code>, also add:
+You will also need to import the fixture module; SecMan uses fixture scripts to seed its entities:</p>
+</div>
+<div class="listingblock">
+<div class="title">AppManifest.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Configuration
+@Import({
+        ...
+        CausewayModuleExtSecmanRealmShiro.class,    <i class="conum" data-value="1"></i><b>(1)</b>
+        ...
+})
+public class AppManifest {
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>enables Shiro integration (so that Shiro delegates to Secman for authentication).
+<div class="paragraph">
+<p>This brings in a transitive dependency on the <code>CausewayModuleSecurityShiro</code> module.</p>
+</div></td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Ensure that no other <code>CausewayModuleSecurityXxx</code> module is imported into the AppManifest.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="delegate-realms"><a class="anchor" href="#delegate-realms"></a>Shiro (Delegate) Realm</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>SecMan&#8217;s Shiro realm is configured using the <code>shiro.ini</code> file.
+The following sets up Shiro <em>without</em> delegation:</p>
+</div>
+<div class="listingblock">
+<div class="title">shiro.ini</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">[main]
+
+authenticationStrategy=org.apache.causeway.extensions.secman.delegated.shiro.realm.AuthenticationStrategyForSecMan
+causewayModuleSecurityRealm=org.apache.causeway.extensions.secman.delegated.shiro.realm.CausewayModuleExtSecmanShiroRealm
+
+securityManager.authenticator.authenticationStrategy = $authenticationStrategy
+securityManager.realms = $causewayModuleSecurityRealm
+
+[users]
+[roles]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>[users]</code> and <code>[roles]</code> sections are required but are unused.</p>
+</div>
+<div class="paragraph">
+<p>The main point of introducing Shiro though is to introduce support for authentication by external mechanisms such as LDAP.
+In this case we configure Shiro to use the external realm as the primary realm, with Secman&#8217;s Shiro realm set up as a "delegate" realm.
+We specify the delegate realm implementation in the <code>shiro.ini</code> file, and "inject" it into the Secman realm.</p>
+</div>
+<div class="paragraph">
+<p>For example, to use Shiro&#8217;s <a href="https://github.com/apache/shiro/blob/main/core/src/main/java/org/apache/shiro/realm/ldap/DefaultLdapRealm.java">LDAP Realm</a> as a delegate:</p>
+</div>
+<div class="listingblock">
+<div class="title">shiro.ini</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">[main]
+
+...
+contextFactory = org.apache.shiro.realm.ldap.JndiLdapContextFactory <i class="conum" data-value="1"></i><b>(1)</b>
+contextFactory.url = ldap://localhost:10389                         <i class="conum" data-value="2"></i><b>(2)</b>
+contextFactory.systemUsername = uid=admin,ou=system
+contextFactory.systemPassword = secret
+contextFactory.authenticationMechanism = CRAM-MD5
+
+ldapRealm = org.apache.shiro.realm.ldap.DefaultLdapRealm            <i class="conum" data-value="3"></i><b>(3)</b>
+ldapRealm.contextFactory = $contextFactory
+
+causewayModuleSecurityRealm.delegateAuthenticationRealm=$ldapRealm  <i class="conum" data-value="4"></i><b>(4)</b>
+
+...</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>instantiate a JNDI LDAP context &#8230;&#8203;</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>... configured with credentials to query users</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>instantiate the LDAP realm</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>specify the LDAP realm as the delegate realm for SecMan&#8217;s own realm.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The users should then be defined in the LDAP server appropriately.
+For example, if using <a href="https://directory.apache.org/apacheds">ApacheDS</a> server:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>the users are stored under the SASL <code>searchBaseDn</code> attribute</p>
+<div class="paragraph">
+<p>for ApacheDS 1.5.7 this can be found in the <code>server.xml</code> file):</p>
+</div>
+</li>
+<li>
+<p>and can be defined as an <code>inetOrgPerson</code> with the <code>uid</code> and <code>userPassword</code> defining the credentials:</p>
+<div class="imageblock">
+<div class="content">
+<img src="_images/060-create-inetOrgPerson.png" alt="060 create inetOrgPerson" width="600">
+</div>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>With this configuration, the user/password is defined in LDAP, while their users permissions are taken from their user/group/perms defined in SecMan.</p>
+</div>
+<div class="sect2">
+<h3 id="a-simpler-ldap-configuration"><a class="anchor" href="#a-simpler-ldap-configuration"></a>A simpler LDAP configuration</h3>
+<div class="paragraph">
+<p>In fact, it&#8217;s also possible to simplify matters by just configuring Shiro to use LDAP realm, and not define a secman realm at all.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="title">shiro.ini</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-ini hljs" data-lang="ini">[main]
+
+contextFactory = org.apache.shiro.realm.ldap.JndiLdapContextFactory
+contextFactory.url = ldap://localhost:10389
+contextFactory.systemUsername = uid=admin,ou=system
+contextFactory.systemPassword = secret
+contextFactory.authenticationMechanism = CRAM-MD5
+
+ldapRealm = org.apache.shiro.realm.ldap.DefaultLdapRealm
+
+ldapRealm.contextFactory = $contextFactory
+
+securityManager.realms = $ldapRealm</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Although simpler, the key difference with this approach is that will not auto-create <code>ApplicationUser</code>s within secman; they must be created by some separate means.
+If there is an entry in LDAP, but none in secman, then the end-user will be able to "login" but will have access to no features.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="configure-properties"><a class="anchor" href="#configure-properties"></a>Configuration Properties</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>As mentioned in the introduction, if delegate authentication has been set up, this means that authentication may pass for a user that Secman knows nothing about.
+In this case Secman will automatically create an <code>ApplicationUser</code> for this externally delegated authenticated user, with the type set to "DELEGATED".</p>
+</div>
+<div class="paragraph">
+<p>We can configure whether such automatically created accounts should be unlocked or locked by default:</p>
+</div>
+<div class="listingblock">
+<div class="title">application.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">causeway:
+  extensions:
+    secman:
+      delegated-users:
+        auto-create-policy: AUTO_CREATE_AS_LOCKED</code></pre>
+</div>
+</div>
+</div>
+</div>
+</article>
+<aside class="article-aside toc hide-for-print" role="navigation">
+    <p class="toc-title">On this page</p>
+    <div id="article-toc"></div>
+</aside>
+</main>
+</div>
+<footer class="footer">
+    <div class="content">
+        <div class="copyright">
+            <p>
+                Copyright © 2010~2024 The Apache Software Foundation, licensed under the Apache License, v2.0.
+                <br/>
+                Apache, the Apache feather logo, Apache Causeway, and the Apache Causeway project logo are all trademarks of The Apache Software Foundation.
+            </p>
+        </div>
+        <div class="revision">
+            <p>Revision: 3.5.0-SNAPSHOT.20251007-0250-e045730d</p>
+        </div>
+    </div>
+</footer>
+<script src="../../../_/js/site.js"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/jquery-3.4.1.min.js"></script>
+<script src="../../../_/js/vendor/jquery-ui-1.12.1.custom.widget-only.min.js"></script>
+<script src="../../../_/js/vendor/jquery.tocify.min.js"></script>
+
+<script>
+    $(function() {
+        $("#article-toc").tocify( {
+            showEffect: "slideDown",
+            hashGenerator: "pretty",
+            hideEffect: "slideUp",
+            selectors: "h2, h3",
+            scrollTo: 120,
+            smoothScroll: true,
+            theme: "jqueryui",
+            highlightOnScroll: true
+        } );
+    });
+</script>
+
+<script src="../../../_/js/vendor/docsearch.min.js"></script>
+<script>
+  function focusSearchInput () { document.querySelector('#algolia-search-input').focus() }
+  var search = docsearch({
+    appId: '5ISP5TFAEN',
+    apiKey: '0fc51c28b4ad46e7318e96d4e97fab7c',
+    indexName: 'causeway-apache-org',
+    inputSelector: '#algolia-search-input',
+    autocompleteOptions: { hint: false, keyboardShortcuts: ['s'] },
+    debug: false,
+  }).autocomplete
+  search.on('autocomplete:closed', function () { search.autocomplete.setVal() })
+  focusSearchInput()
+  window.addEventListener('load', focusSearchInput);
+</script>
+
+<!--
+  docsearch options:
+  https://docsearch.algolia.com/docs/behavior/
+-->
+<!--
+  https://www.algolia.com/doc/api-reference/api-parameters/
+  algoliaOptions: { hitsPerPage: 6 },
+-->
+  </body>
+</html>
