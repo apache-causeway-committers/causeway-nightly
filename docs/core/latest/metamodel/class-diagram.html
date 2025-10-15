@@ -4,10 +4,11 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Class Diagram :: causeway</title>
+    <link rel="canonical" href="https://apache-causeway-committers.github.io/causeway-nightly/core/latest/metamodel/class-diagram.html">
     <meta name="generator" content="Antora 3.1.14">
     <link rel="stylesheet" href="../../../_/css/site.css">
     <link rel="stylesheet" href="../../../_/css/site-custom.css">
-<link rel="home" href="../../.." title="causeway">
+<link rel="home" href="https://apache-causeway-committers.github.io/causeway-nightly" title="causeway">
   <link rel="next" href="managed-object.html" title="Managed Object">
   <link rel="prev" href="about.html" title="MetaModel">
   </head>
@@ -15,7 +16,7 @@
 <header class="header">
   <nav class="navbar">
     <div class="navbar-brand">
-      <a class="navbar-item" href="../../..">
+      <a class="navbar-item" href="https://apache-causeway-committers.github.io/causeway-nightly">
           <span class="icon">
             <img src="../../../_/img/causeway-logo-no-words-65x48.png"></img>
           </span>
@@ -325,14 +326,6 @@ page.parent doesn't seem to be set...
       </ul>
     </li>
     <li class="component">
-      <span class="title">JDO/DataNucleus</span>
-      <ul class="versions">
-        <li class="version">
-          <a href="../../../pjdo/latest/about.html">latest</a>
-        </li>
-      </ul>
-    </li>
-    <li class="component">
       <span class="title">JPA</span>
       <ul class="versions">
         <li class="version">
@@ -460,9 +453,105 @@ page.parent doesn't seem to be set...
 <div class="paragraph">
 <p>The diagram below shows a simplified version of Apache Causeway' internal metamodel.</p>
 </div>
-<div class="imageblock kroki">
+<div class="listingblock kroki-error">
 <div class="content">
-<object type="image/svg+xml" data="_images/diag-8217932abe0c80ce2edb25994afcf37a58087a47.svg"><span class="alt">Diagram</span></object>
+<pre>hide empty members
+
+skinparam class {
+    BackgroundColor&lt;&lt;desc&gt;&gt; Cyan
+    BackgroundColor&lt;&lt;ppt&gt;&gt; LightGreen
+    BackgroundColor&lt;&lt;mi&gt;&gt; LightPink
+    BackgroundColor&lt;&lt;role&gt;&gt; LightYellow
+    BackgroundColor&lt;&lt;strategy&gt;&gt; White
+    BackgroundColor&lt;&lt;api&gt;&gt; White
+    BackgroundColor&lt;&lt;spi&gt;&gt; White
+    BackgroundColor&lt;&lt;internal&gt;&gt; LightGrey
+    BackgroundColor&lt;&lt;value&gt;&gt; White
+
+    BackgroundColor&lt;&lt;entity&gt;&gt; LightGreen
+    BackgroundColor&lt;&lt;viewmodel&gt;&gt; LightPink
+    BackgroundColor&lt;&lt;mixin&gt;&gt; LightYellow
+}
+
+package metamodel {
+
+    class LogicalType&lt;&lt;value&gt;&gt; {
+        +type
+    }
+
+    class Object\nSpecification&lt;&lt;desc&gt;&gt; {
+        +objectSpecId
+        ....
+        -fullyQualifiedClassName
+    }
+
+    class Object\nMember&lt;&lt;desc&gt;&gt; {
+
+    }
+
+    class Object\nAction&lt;&lt;desc&gt;&gt; {
+
+    }
+
+    class Object\nAssociation&lt;&lt;desc&gt;&gt; {
+
+    }
+
+    class OneToOne\nAssociation&lt;&lt;desc&gt;&gt; {
+
+    }
+
+    class OneToMany\nAssociation&lt;&lt;desc&gt;&gt; {
+
+    }
+
+    interface FacetHolder&lt;&lt;desc&gt;&gt; {
+    }
+
+    class Object\nActionParameter&lt;&lt;desc&gt;&gt; {
+    }
+
+    class OneToOne\nActionParameter&lt;&lt;desc&gt;&gt; {
+    }
+
+    interface Facet&lt;&lt;desc&gt;&gt; {
+    }
+
+    class OneToMany\nActionParameter&lt;&lt;desc&gt;&gt; {
+    }
+}
+
+package runtime {
+    class ManagedObject&lt;&lt;ppt&gt;&gt; {
+        +getSpecification()
+        +getPojo()
+    }
+    class Bookmark&lt;&lt;value&gt;&gt; {
+
+    }
+}
+
+
+
+Object\nSpecification -up-&gt; LogicalType
+Object\nSpecification -down-&gt; "*" Object\nMember
+Object\nMember ^-down- Object\nAssociation
+Object\nMember ^-down- Object\nAction
+Object\nAssociation ^-down- OneToOne\nAssociation
+Object\nAssociation ^-down- OneToMany\nAssociation
+Object\nActionParameter ^-down- OneToOne\nActionParameter
+Object\nActionParameter ^-down- OneToMany\nActionParameter
+Object\nAction -left-&gt; "*" Object\nActionParameter
+
+FacetHolder ^-.left- Object\nSpecification
+FacetHolder ^-.down- Object\nMember
+FacetHolder ^-.down- Object\nActionParameter
+FacetHolder -right-&gt; "*" Facet
+
+
+ManagedObject  -up-&gt; Bookmark
+
+Bookmark -right-&gt; LogicalType</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -524,7 +613,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 3.5.0-SNAPSHOT.20251007-0250-e045730d</p>
+            <p>Revision: 4.0.0-SNAPSHOT.20251015-1619-ac4980e3</p>
         </div>
     </div>
 </footer>

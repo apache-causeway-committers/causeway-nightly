@@ -4,10 +4,11 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Content Negotiation :: causeway</title>
+    <link rel="canonical" href="https://apache-causeway-committers.github.io/causeway-nightly/vro/latest/content-negotiation.html">
     <meta name="generator" content="Antora 3.1.14">
     <link rel="stylesheet" href="../../_/css/site.css">
     <link rel="stylesheet" href="../../_/css/site-custom.css">
-<link rel="home" href="../.." title="causeway">
+<link rel="home" href="https://apache-causeway-committers.github.io/causeway-nightly" title="causeway">
   <link rel="next" href="content-negotiation/apache-causeway-v2-profile.html" title="Apache Causeway v2 Profile">
   <link rel="prev" href="ro-spec.html" title="RO Spec">
   </head>
@@ -15,7 +16,7 @@
 <header class="header">
   <nav class="navbar">
     <div class="navbar-brand">
-      <a class="navbar-item" href="../..">
+      <a class="navbar-item" href="https://apache-causeway-committers.github.io/causeway-nightly">
           <span class="icon">
             <img src="../../_/img/causeway-logo-no-words-65x48.png"></img>
           </span>
@@ -304,14 +305,6 @@ page.parent doesn't seem to be set...
       </ul>
     </li>
     <li class="component">
-      <span class="title">JDO/DataNucleus</span>
-      <ul class="versions">
-        <li class="version">
-          <a href="../../pjdo/latest/about.html">latest</a>
-        </li>
-      </ul>
-    </li>
-    <li class="component">
       <span class="title">JPA</span>
       <ul class="versions">
         <li class="version">
@@ -528,9 +521,33 @@ There can be many such implementations, each handling a different target domain 
 <div class="paragraph">
 <p>This diagram shows how these services collaborate:</p>
 </div>
-<div class="imageblock kroki">
+<div class="listingblock kroki-error">
 <div class="content">
-<object type="image/svg+xml" data="_images/diag-88f55ba38455a24f56777f6aba44239d04247336.svg"><span class="alt">Diagram</span></object>
+<pre>hide empty members
+left to right direction
+'skinparam linetype ortho
+
+class RepresentationService {}
+
+interface ContentNegotiationService {
+}
+class ContentNegotiationServiceSimplified {
+    // application/json;profile="urn:org.apache.causeway/v2"
+}
+class ContentNegotiationServiceXRoDomainType {
+    // application/xml;x-ro-domain-type="xxx"
+}
+class ContentNegotiationServiceForRestfulObjectsV1_0 {
+    // application/json
+}
+interface ContentMappingService {}
+
+ContentNegotiationServiceXRoDomainType -l-&gt; ContentMappingService : "delegates to\n(if recognizes\nx-ro-domain-type)"
+ContentNegotiationService ^-d- ContentNegotiationServiceForRestfulObjectsV1_0
+ContentNegotiationService ^-d- ContentNegotiationServiceXRoDomainType
+ContentNegotiationService ^-d- ContentNegotiationServiceSimplified
+
+RepresentationService -l-&gt; "1..*" ContentNegotiationService : delegates to\nbased on\nACCEPT header</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -575,7 +592,7 @@ There can be many such implementations, each handling a different target domain 
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 3.5.0-SNAPSHOT.20251007-0250-e045730d</p>
+            <p>Revision: 4.0.0-SNAPSHOT.20251015-1619-ac4980e3</p>
         </div>
     </div>
 </footer>

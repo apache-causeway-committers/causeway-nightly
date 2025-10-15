@@ -4,10 +4,11 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Cutting a Release :: causeway</title>
+    <link rel="canonical" href="https://apache-causeway-committers.github.io/causeway-nightly/comguide/latest/cutting-a-release.html">
     <meta name="generator" content="Antora 3.1.14">
     <link rel="stylesheet" href="../../_/css/site.css">
     <link rel="stylesheet" href="../../_/css/site-custom.css">
-<link rel="home" href="../.." title="causeway">
+<link rel="home" href="https://apache-causeway-committers.github.io/causeway-nightly" title="causeway">
   <link rel="next" href="verifying-releases.html" title="Verifying Releases">
   <link rel="prev" href="weekly-builds.html" title="Weekly Builds">
   </head>
@@ -15,7 +16,7 @@
 <header class="header">
   <nav class="navbar">
     <div class="navbar-brand">
-      <a class="navbar-item" href="../..">
+      <a class="navbar-item" href="https://apache-causeway-committers.github.io/causeway-nightly">
           <span class="icon">
             <img src="../../_/img/causeway-logo-no-words-65x48.png"></img>
           </span>
@@ -337,14 +338,6 @@ page.parent doesn't seem to be set...
       </ul>
     </li>
     <li class="component">
-      <span class="title">JDO/DataNucleus</span>
-      <ul class="versions">
-        <li class="version">
-          <a href="../../pjdo/latest/about.html">latest</a>
-        </li>
-      </ul>
-    </li>
-    <li class="component">
       <span class="title">JPA</span>
       <ul class="versions">
         <li class="version">
@@ -515,7 +508,7 @@ They should work on Linux and MacOS; for Windows, use mSysGit.</p>
 </td>
 <td class="content">
 <div class="paragraph">
-<p>The release process should be performed on Java 17.</p>
+<p>The release process should be performed on Java 21.</p>
 </div>
 </td>
 </tr>
@@ -590,23 +583,26 @@ To run the RAT tool, use:</p>
 <div class="listingblock">
 <div class="title">find unapproved/missing licenses</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">pushd bom
-mvnd -Dapache-release clean
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mvnd -Dapache-release clean
 mvnd -Dapache-release org.apache.rat:apache-rat-plugin:check -D rat.numUnapprovedLicenses=1000     <i class="conum" data-value="1"></i><b>(1)</b>
-popd
 
-for a in `/usr/bin/find . -name rat.txt -print`; do grep '!???' $a; done &gt; /tmp/rat-qn.txt            <i class="conum" data-value="2"></i><b>(2)</b>
-for a in `/usr/bin/find . -name rat.txt -print`; do grep '!AL' $a; done &gt; /tmp/rat-al.txt            <i class="conum" data-value="2"></i><b>(2)</b>
+/usr/bin/find . -name rat.xml -exec sh -c '
+  for f do
+    xmlstarlet sel -t \
+      -m "//resource[license-approval[@name=\"false\"]]" \
+      -v "@name" -n "$f"
+  done
+' sh {} + &gt;/tmp/rat-errors.txt  <i class="conum" data-value="2"></i><b>(2)</b>
 
-cat /tmp/rat-qn.txt
-cat /tmp/rat-al.txt</code></pre>
+cat /tmp/rat-errors.txt</code></pre>
 </div>
 </div>
 <div class="colist arabic">
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The command writes out a <code>target\rat.txt</code> for each submodule. missing license notes are indicated using the key <code>!???</code>.</td>
+<td>The command writes out a <code>target\rat.xml</code> for each submodule.
+Invalida licenses are flagged.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
@@ -615,7 +611,7 @@ cat /tmp/rat-al.txt</code></pre>
 </table>
 </div>
 <div class="paragraph">
-<p>Inspect the contents of the two <code>/tmp/rat-*.txt</code> files and fix any reported violations, typically by either:</p>
+<p>Inspect the contents of <code>/tmp/rat-errors.txt</code> files and fix any reported violations, typically by either:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -646,11 +642,11 @@ This is stored in the <code>src/main/appended-resources/supplemental-models.xml<
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">pushd bom
-mvnd -Dgithub clean install -T1C -DskipTests <i class="conum" data-value="1"></i><b>(1)</b>
-mvnd -Dgithub license:download-licenses      <i class="conum" data-value="2"></i><b>(2)</b>
-popd
-groovy scripts/checkmissinglicenses.groovy  <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mvnd -Dgithub clean install -T1C -DskipTests <i class="conum" data-value="1"></i><b>(1)</b>
+mvnd -Dgithub license:download-licenses \
+     -Dlicense.connectTimeout=500            <i class="conum" data-value="2"></i><b>(2)</b>
+
+groovy scripts/checkmissinglicenses.groovy   <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -923,7 +919,7 @@ git commit -m "$CAUSEWAYJIRA: bumps version to $CAUSEWAYREL"</code></pre>
 Delete all Causeway artifacts from your local Maven repo, then build using the <code>-o</code> offline flag.</p>
 </div>
 <div class="paragraph">
-<p>Still in the <code>bom</code> directory:</p>
+<p>In the top-level directory:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1742,7 +1738,7 @@ The vote will be open for a minimum of 72 hours.
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 3.5.0-SNAPSHOT.20251007-0250-e045730d</p>
+            <p>Revision: 4.0.0-SNAPSHOT.20251015-1619-ac4980e3</p>
         </div>
     </div>
 </footer>

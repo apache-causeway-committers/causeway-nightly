@@ -4,10 +4,11 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>The visit module and Visit entity :: causeway</title>
+    <link rel="canonical" href="https://apache-causeway-committers.github.io/causeway-nightly/tutorials/latest/petclinic/050-visit-entity.html">
     <meta name="generator" content="Antora 3.1.14">
     <link rel="stylesheet" href="../../../_/css/site.css">
     <link rel="stylesheet" href="../../../_/css/site-custom.css">
-<link rel="home" href="../../.." title="causeway">
+<link rel="home" href="https://apache-causeway-committers.github.io/causeway-nightly" title="causeway">
   <link rel="next" href="060-unit-testing.html" title="Unit Testing">
   <link rel="prev" href="040-pet-entity.html" title="The &lt;code&gt;Pet&lt;/code&gt; entity">
   </head>
@@ -15,7 +16,7 @@
 <header class="header">
   <nav class="navbar">
     <div class="navbar-brand">
-      <a class="navbar-item" href="../../..">
+      <a class="navbar-item" href="https://apache-causeway-committers.github.io/causeway-nightly">
           <span class="icon">
             <img src="../../../_/img/causeway-logo-no-words-65x48.png"></img>
           </span>
@@ -451,14 +452,6 @@ page.parent doesn't seem to be set...
       </ul>
     </li>
     <li class="component">
-      <span class="title">JDO/DataNucleus</span>
-      <ul class="versions">
-        <li class="version">
-          <a href="../../../pjdo/latest/about.html">latest</a>
-        </li>
-      </ul>
-    </li>
-    <li class="component">
       <span class="title">JPA</span>
       <ul class="versions">
         <li class="version">
@@ -588,9 +581,72 @@ page.parent doesn't seem to be set...
 <p>Our domain model now consists of the <code>PetOwner</code> and <code>Pet</code> entities (along with the <code>PetSpecies</code>  enum).
 In this section we&#8217;ll add in the <code>Visit</code> entity:</p>
 </div>
-<div class="imageblock kroki">
+<div class="listingblock kroki-error">
 <div class="content">
-<object type="image/svg+xml" data="_images/diag-39fc1b7da8c879b2ea17cf3104c3513911d7f8c4.svg"><span class="alt">Diagram</span></object>
+<pre>hide empty members
+hide methods
+
+skinparam class {
+	BackgroundColor&lt;&lt;desc&gt;&gt; Cyan
+	BackgroundColor&lt;&lt;ppt&gt;&gt; LightGreen
+	BackgroundColor&lt;&lt;mi&gt;&gt; LightPink
+	BackgroundColor&lt;&lt;role&gt;&gt; LightYellow
+}
+
+
+package petowner {
+
+    enum PetSpecies &lt;&lt;desc&gt;&gt; {
+        Dog
+        Cat
+        Hamster
+        Budgerigar
+    }
+
+    class Pet &lt;&lt;ppt&gt;&gt; {
+        +id
+        ..
+        #petOwner
+        #name
+        ..
+        -species
+        -notes
+        ..
+        -version
+    }
+
+
+    class PetOwner &lt;&lt;role&gt;&gt; {
+        +id
+        ..
+        #name
+        #knownAs
+        ..
+        -phoneNumber
+        -emailAddress
+        ..
+        -lastVisit
+        -/daysSinceLastVisit
+        ..
+        -notes
+    }
+}
+
+
+package visit {
+
+    class Visit &lt;&lt;mi&gt;&gt; {
+        +id
+        ..
+        #pet
+        #visitAt: LocalDateTime
+    }
+}
+
+
+PetOwner *-r--&gt; "0..*" Pet
+Visit "   \n*" -r-&gt;  Pet
+Pet  "*" -u-&gt; PetSpecies</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1050,9 +1106,72 @@ Also check that the unique index has been created correctly.</p>
 <div class="paragraph">
 <p>We can see this in the domain model:</p>
 </div>
-<div class="imageblock kroki">
+<div class="listingblock kroki-error">
 <div class="content">
-<object type="image/svg+xml" data="_images/diag-39fc1b7da8c879b2ea17cf3104c3513911d7f8c4.svg"><span class="alt">Diagram</span></object>
+<pre>hide empty members
+hide methods
+
+skinparam class {
+	BackgroundColor&lt;&lt;desc&gt;&gt; Cyan
+	BackgroundColor&lt;&lt;ppt&gt;&gt; LightGreen
+	BackgroundColor&lt;&lt;mi&gt;&gt; LightPink
+	BackgroundColor&lt;&lt;role&gt;&gt; LightYellow
+}
+
+
+package petowner {
+
+    enum PetSpecies &lt;&lt;desc&gt;&gt; {
+        Dog
+        Cat
+        Hamster
+        Budgerigar
+    }
+
+    class Pet &lt;&lt;ppt&gt;&gt; {
+        +id
+        ..
+        #petOwner
+        #name
+        ..
+        -species
+        -notes
+        ..
+        -version
+    }
+
+
+    class PetOwner &lt;&lt;role&gt;&gt; {
+        +id
+        ..
+        #name
+        #knownAs
+        ..
+        -phoneNumber
+        -emailAddress
+        ..
+        -lastVisit
+        -/daysSinceLastVisit
+        ..
+        -notes
+    }
+}
+
+
+package visit {
+
+    class Visit &lt;&lt;mi&gt;&gt; {
+        +id
+        ..
+        #pet
+        #visitAt: LocalDateTime
+    }
+}
+
+
+PetOwner *-r--&gt; "0..*" Pet
+Visit "   \n*" -r-&gt;  Pet
+Pet  "*" -u-&gt; PetSpecies</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1289,7 +1408,7 @@ public class PetOwner_visits {
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 3.5.0-SNAPSHOT.20251007-0250-e045730d</p>
+            <p>Revision: 4.0.0-SNAPSHOT.20251015-1619-ac4980e3</p>
         </div>
     </div>
 </footer>
