@@ -585,9 +585,72 @@ Let&#8217;s therefore evolve the app into a slightly more interesting domain and
 <p>The domain we&#8217;re going to work on is a version of the venerable "Pet Clinic" app.
 Here&#8217;s a sketch of (our version of) its domain:</p>
 </div>
-<div class="imageblock kroki">
+<div class="listingblock kroki-error">
 <div class="content">
-<object type="image/svg+xml" data="_images/diag-39fc1b7da8c879b2ea17cf3104c3513911d7f8c4.svg"><span class="alt">Diagram</span></object>
+<pre>hide empty members
+hide methods
+
+skinparam class {
+	BackgroundColor&lt;&lt;desc&gt;&gt; Cyan
+	BackgroundColor&lt;&lt;ppt&gt;&gt; LightGreen
+	BackgroundColor&lt;&lt;mi&gt;&gt; LightPink
+	BackgroundColor&lt;&lt;role&gt;&gt; LightYellow
+}
+
+
+package petowner {
+
+    enum PetSpecies &lt;&lt;desc&gt;&gt; {
+        Dog
+        Cat
+        Hamster
+        Budgerigar
+    }
+
+    class Pet &lt;&lt;ppt&gt;&gt; {
+        +id
+        ..
+        #petOwner
+        #name
+        ..
+        -species
+        -notes
+        ..
+        -version
+    }
+
+
+    class PetOwner &lt;&lt;role&gt;&gt; {
+        +id
+        ..
+        #name
+        #knownAs
+        ..
+        -phoneNumber
+        -emailAddress
+        ..
+        -lastVisit
+        -/daysSinceLastVisit
+        ..
+        -notes
+    }
+}
+
+
+package visit {
+
+    class Visit &lt;&lt;mi&gt;&gt; {
+        +id
+        ..
+        #pet
+        #visitAt: LocalDateTime
+    }
+}
+
+
+PetOwner *-r--&gt; "0..*" Pet
+Visit "   \n*" -r-&gt;  Pet
+Pet  "*" -u-&gt; PetSpecies</pre>
 </div>
 </div>
 <div class="admonitionblock tip">
@@ -1220,7 +1283,7 @@ from the "Prototyping" menu:</p>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 4.0.0-SNAPSHOT.20251120-0629-1533daed</p>
+            <p>Revision: 4.0.0-SNAPSHOT.20251121-0303-999ad6fc</p>
         </div>
     </div>
 </footer>

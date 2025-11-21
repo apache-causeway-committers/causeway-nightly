@@ -581,9 +581,72 @@ page.parent doesn't seem to be set...
 <p>Our domain model now consists of the <code>PetOwner</code> and <code>Pet</code> entities (along with the <code>PetSpecies</code>  enum).
 In this section we&#8217;ll add in the <code>Visit</code> entity:</p>
 </div>
-<div class="imageblock kroki">
+<div class="listingblock kroki-error">
 <div class="content">
-<object type="image/svg+xml" data="_images/diag-39fc1b7da8c879b2ea17cf3104c3513911d7f8c4.svg"><span class="alt">Diagram</span></object>
+<pre>hide empty members
+hide methods
+
+skinparam class {
+	BackgroundColor&lt;&lt;desc&gt;&gt; Cyan
+	BackgroundColor&lt;&lt;ppt&gt;&gt; LightGreen
+	BackgroundColor&lt;&lt;mi&gt;&gt; LightPink
+	BackgroundColor&lt;&lt;role&gt;&gt; LightYellow
+}
+
+
+package petowner {
+
+    enum PetSpecies &lt;&lt;desc&gt;&gt; {
+        Dog
+        Cat
+        Hamster
+        Budgerigar
+    }
+
+    class Pet &lt;&lt;ppt&gt;&gt; {
+        +id
+        ..
+        #petOwner
+        #name
+        ..
+        -species
+        -notes
+        ..
+        -version
+    }
+
+
+    class PetOwner &lt;&lt;role&gt;&gt; {
+        +id
+        ..
+        #name
+        #knownAs
+        ..
+        -phoneNumber
+        -emailAddress
+        ..
+        -lastVisit
+        -/daysSinceLastVisit
+        ..
+        -notes
+    }
+}
+
+
+package visit {
+
+    class Visit &lt;&lt;mi&gt;&gt; {
+        +id
+        ..
+        #pet
+        #visitAt: LocalDateTime
+    }
+}
+
+
+PetOwner *-r--&gt; "0..*" Pet
+Visit "   \n*" -r-&gt;  Pet
+Pet  "*" -u-&gt; PetSpecies</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1043,9 +1106,72 @@ Also check that the unique index has been created correctly.</p>
 <div class="paragraph">
 <p>We can see this in the domain model:</p>
 </div>
-<div class="imageblock kroki">
+<div class="listingblock kroki-error">
 <div class="content">
-<object type="image/svg+xml" data="_images/diag-39fc1b7da8c879b2ea17cf3104c3513911d7f8c4.svg"><span class="alt">Diagram</span></object>
+<pre>hide empty members
+hide methods
+
+skinparam class {
+	BackgroundColor&lt;&lt;desc&gt;&gt; Cyan
+	BackgroundColor&lt;&lt;ppt&gt;&gt; LightGreen
+	BackgroundColor&lt;&lt;mi&gt;&gt; LightPink
+	BackgroundColor&lt;&lt;role&gt;&gt; LightYellow
+}
+
+
+package petowner {
+
+    enum PetSpecies &lt;&lt;desc&gt;&gt; {
+        Dog
+        Cat
+        Hamster
+        Budgerigar
+    }
+
+    class Pet &lt;&lt;ppt&gt;&gt; {
+        +id
+        ..
+        #petOwner
+        #name
+        ..
+        -species
+        -notes
+        ..
+        -version
+    }
+
+
+    class PetOwner &lt;&lt;role&gt;&gt; {
+        +id
+        ..
+        #name
+        #knownAs
+        ..
+        -phoneNumber
+        -emailAddress
+        ..
+        -lastVisit
+        -/daysSinceLastVisit
+        ..
+        -notes
+    }
+}
+
+
+package visit {
+
+    class Visit &lt;&lt;mi&gt;&gt; {
+        +id
+        ..
+        #pet
+        #visitAt: LocalDateTime
+    }
+}
+
+
+PetOwner *-r--&gt; "0..*" Pet
+Visit "   \n*" -r-&gt;  Pet
+Pet  "*" -u-&gt; PetSpecies</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1282,7 +1408,7 @@ public class PetOwner_visits {
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 4.0.0-SNAPSHOT.20251120-0629-1533daed</p>
+            <p>Revision: 4.0.0-SNAPSHOT.20251121-0303-999ad6fc</p>
         </div>
     </div>
 </footer>

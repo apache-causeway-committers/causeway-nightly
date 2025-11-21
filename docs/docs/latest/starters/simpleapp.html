@@ -1267,11 +1267,18 @@ The REST API implemented by Apache Causeway is specified in the <a href="http://
 <div class="paragraph">
 <p>The application consists of five modules:</p>
 </div>
-<div class="imageblock kroki">
+<div class="listingblock kroki-error">
+<div class="title">simpleapp dependencies</div>
 <div class="content">
-<object type="image/svg+xml" data="_images/diag-05683b0a3790c23e94c7e27dc86f397ee199a5c8.svg"><span class="alt">simpleapp dependencies</span></object>
+<pre>[webapp-jpa-tests] &lt;&lt;maven module&gt;&gt; #LightBlue
+[webapp-jpa] &lt;&lt;maven module&gt;&gt;
+[module-jpa-simple-tests]  &lt;&lt;maven module&gt;&gt; #LightBlue
+[module-jpa-simple]  &lt;&lt;maven module&gt;&gt;
+
+[webapp-jpa-tests] .l-&gt; [webapp-jpa]
+[module-jpa-simple-tests] .l-&gt; [module-jpa-simple]
+[webapp-jpa] .u-&gt; [module-jpa-simple]</pre>
 </div>
-<div class="title">Figure 1. simpleapp dependencies</div>
 </div>
 <div class="paragraph">
 <p>The main business logic resides in <code>module-jpa-simple</code>, with the <code>webapp</code> module acting as an aggregator.
@@ -1286,11 +1293,18 @@ The location of this class is used for classpath scanning.</p>
 <p>In a larger application there would likely be many more modules containing these domain object modules.
 For example, you might have a <code>module-customer</code> holding a <code>Customer</code> entity and related entities/services, a <code>module-product</code> holding a <code>Product</code> catalog, and a <code>module-order</code> to hold the <code>Order</code>s placed by <code>Customer</code>s:</p>
 </div>
-<div class="imageblock kroki">
+<div class="listingblock kroki-error">
+<div class="title">Typical application dependencies</div>
 <div class="content">
-<object type="image/svg+xml" data="_images/diag-5936d1561be55d4f98b2c97cf62e09251ce1dabf.svg"><span class="alt">Typical application dependencies</span></object>
+<pre>[webapp] &lt;&lt;maven module&gt;&gt;
+[module-order]  &lt;&lt;maven module&gt;&gt;
+[module-customer]  &lt;&lt;maven module&gt;&gt;
+[module-product]  &lt;&lt;maven module&gt;&gt;
+
+[webapp] .u-&gt; [module-order]
+[module-order] .u-&gt; [module-customer]
+[module-order] .u-&gt; [module-product]</pre>
 </div>
-<div class="title">Figure 2. Typical application dependencies</div>
 </div>
 <div class="paragraph">
 <p>We can use Maven dependency management to ensure that there are no cyclic dependencies (order "knows about" product but product does not know about orders) and ensure that the codebase remains decoupled.
@@ -1317,7 +1331,7 @@ For integration tests, this uses the <a href="https://docs.spring.io/spring-boot
 <div class="content">
 <img src="_images/simpleapp/simpleapp-modules-dependencies.png" alt="simpleapp modules dependencies" width="800px">
 </div>
-<div class="title">Figure 3. Module Dependencies</div>
+<div class="title">Figure 1. Module Dependencies</div>
 </div>
 <div class="paragraph">
 <p>Let&#8217;s now review the contents of each of the modules in the simpleapp starter app.</p>
@@ -2342,7 +2356,7 @@ docker rm sqlserver-simpleapp</code></pre>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 4.0.0-SNAPSHOT.20251120-0629-1533daed</p>
+            <p>Revision: 4.0.0-SNAPSHOT.20251121-0303-999ad6fc</p>
         </div>
     </div>
 </footer>

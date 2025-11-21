@@ -466,11 +466,51 @@ page.parent doesn't seem to be set...
 <div class="paragraph">
 <p>As specified using <a href="../../../refguide/latest/applib/index/annotation/DomainObjectLayout.html" class="xref page">@DomainObjectLayout#xxxUiEvent()</a>.</p>
 </div>
-<div class="imageblock kroki">
+<div class="listingblock kroki-error">
+<div class="title">UI Events</div>
 <div class="content">
-<object type="image/svg+xml" data="_images/diag-4eed508fdfb8fbc29028ff37400ee94225e45f65.svg"><span class="alt">UI Events</span></object>
+<pre>@startuml
+
+skinparam nodesep 20
+
+(Event\nBus) as EB
+(Spring) as SPRING
+SPRING .l.&gt; EB : provides/\nmanages
+(Event\nListener) as EL
+EL --&gt; EB : listens to \n (is subscribed to)
+
+(UI\nEvent) as UIE
+UIE -r-&gt; EB : is \n published \n to
+
+(Title\nUIEvent) as TUIE
+TUIE -u-&gt; UIE : is a
+(Icon\nUIEvent) as IUIE
+IUIE -u-&gt; UIE : is a
+
+(CssClass\nUIEvent) as CCUIE
+CCUIE -u-&gt; UIE : is a
+(Layout\nUIEvent) as LUIE
+LUIE -u-&gt; UIE : is a
+
+
+(Domain\nObject) as DO
+DO "when \n rendered, \n leads to \n emission \nof"-d-&gt; UIE
+
+(Presentation) as PST
+DO -u-&gt; PST : has
+EL -u-&gt; PST : can modify
+note right of EL
+When DomainObject implements
+respective supporting methods itself (
+* title(),
+* iconName(),
+* cssClass(),
+* layout()),
+modification is not possible.
+end note
+
+@enduml</pre>
 </div>
-<div class="title">Figure 1. UI Events</div>
 </div>
 </div>
 </div>
@@ -480,11 +520,74 @@ page.parent doesn't seem to be set...
 <div class="paragraph">
 <p>As specified using <a href="../../../refguide/latest/applib/index/annotation/Action.html" class="xref page">@Action#domainEvent()</a>, <a href="../../../refguide/latest/applib/index/annotation/Property.html" class="xref page">@Property#domainEvent()</a> and <a href="../../../refguide/latest/applib/index/annotation/Collection.html" class="xref page">@Collection#domainEvent()</a>:</p>
 </div>
-<div class="imageblock kroki">
+<div class="listingblock kroki-error">
+<div class="title">Domain Events</div>
 <div class="content">
-<object type="image/svg+xml" data="_images/diag-9536c9dcb95346854b3c5327cb7af80bc0ac1edb.svg"><span class="alt">Domain Events</span></object>
+<pre>@startuml
+
+skinparam nodesep 20
+
+together {
+    (Domain\nService) as DS
+    (Domain\nObject) as DO
+    (&lt;i&gt;Domain\n&lt;i&gt;Event) as DE
+}
+(&lt;i&gt;Member&lt;/i&gt;) as MB
+together {
+    (Property) as P
+    (Action) as A
+    (Collection) as C
+}
+P -u-&gt; MB : is a
+A -u-&gt; MB : is a
+C -u-&gt; MB : is a
+
+DO -d-&gt; MB : has
+DS -d--&gt; A : has
+
+DE -d-&gt; MB : can be \n declared \n for
+
+(Execution) as EX
+P "edit \n is an"--&gt;  EX
+A "invocation \n is an"--&gt; EX
+
+(Event\nBus) as EB
+(Spring) as SPRING
+SPRING .l.&gt; EB : provides/\nmanages
+EX -&gt; EB : is published as: \n * before event (phase: EXECUTING)\n * after event (phase: EXECUTED)
+
+(Event\nListener) as EL
+EL --&gt; EB : listens \n on
+EL -u-&gt; MB : can check/modify: \nvisibility (hide), \nusability (disable), \nvalidity (validate)
+
+note right of DE
+Phases are:
+* HIDING
+* DISABLING
+* VALIDATING
+* EXECUTING
+* EXECUTED
+The framework automatically sends out
+events with the phases in the order listed.
+end note
+
+note right of MB
+&lt;i&gt;DomainEvent&lt;/i&gt; is declared as an
+annotation type element in a member annotation, e.g.
+&lt;b&gt;@Action(
+        &lt;b&gt;domainEvent=&lt;i&gt;Custom&lt;/i&gt;ActionDomainEvent.class).
+end note
+
+note right of EL
+EventListeners can be declared on
+any public Spring bean method, e.g.
+&lt;b&gt;@EventListener(
+       &lt;b&gt;&lt;i&gt;Custom&lt;/i&gt;ActionDomainEvent.class).
+Via &lt;i&gt;DomainEvent&lt;/i&gt;.getEventPhase(),
+further filtering can be applied.
+end note
+@enduml</pre>
 </div>
-<div class="title">Figure 2. Domain Events</div>
 </div>
 </div>
 </div>
@@ -494,11 +597,57 @@ page.parent doesn't seem to be set...
 <div class="paragraph">
 <p>As specified using <a href="../../../refguide/latest/applib/index/annotation/DomainObject.html" class="xref page">@DomainObject#xxxLifecycleEvent()</a>:</p>
 </div>
-<div class="imageblock kroki">
+<div class="listingblock kroki-error">
+<div class="title">Persistence Events</div>
 <div class="content">
-<object type="image/svg+xml" data="_images/diag-000c3d219763cfc6d269cca23d7a4ed8bb2740f2.svg"><span class="alt">Persistence Events</span></object>
+<pre>@startuml
+
+(Event\nBus) as EB
+(Spring) as SPRING
+SPRING .l.&gt; EB : provides/\nmanages
+(Event\nListener) as EL
+EL --&gt; EB : listens
+
+(&lt;i&gt;Object&lt;/i&gt;\nLifecyleEvent) as LCE
+LCE -&gt; EB : published to
+(Created\nEvent) as C
+C -u-&gt; LCE : is a
+(Loaded\nEvent) as L
+L -u-&gt; LCE : is a
+
+(Persisting\nEvent) as PNG
+PNG -u-&gt; LCE : is a
+(Persisted\nEvent) as PED
+PED -u-&gt; LCE : is a
+
+(Updating\nEvent) as UNG
+UNG -u-&gt; LCE : is a
+(Updated\nEvent) as UED
+UED -u-&gt; LCE : is a
+
+(Removing\nEvent) as RNG
+RNG -u-&gt; LCE : is a
+
+(Factory\nService) as FS
+FS -u-&gt; C :emits
+(Repository\nService) as RS
+RS -u-&gt; L :emits
+RS -u-&gt; PNG :emits
+RS -u-&gt; PED :emits
+RS -u-&gt; UNG :emits
+RS -u-&gt; UED :emits
+RS -u-&gt; RNG :emits
+
+note top of RNG
+JPA/Eclipselink
+does not support
+something like a
+"Removed Event".
+Hence not implemented.
+end note
+
+@enduml</pre>
 </div>
-<div class="title">Figure 3. Persistence Events</div>
 </div>
 </div>
 </div>
@@ -519,7 +668,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 4.0.0-SNAPSHOT.20251120-0629-1533daed</p>
+            <p>Revision: 4.0.0-SNAPSHOT.20251121-0303-999ad6fc</p>
         </div>
     </div>
 </footer>

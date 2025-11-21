@@ -465,11 +465,104 @@ page.parent doesn't seem to be set...
 <div class="paragraph">
 <p>The classes in this module are used to build up the metamodel from a variety of inputs sources:</p>
 </div>
-<div class="imageblock kroki">
+<div class="listingblock kroki-error">
+<div class="title">metamodel inputs</div>
 <div class="content">
-<object type="image/svg+xml" data="_images/diag-11d39f47b207da3fe291e86ec76f5da4095b334e.svg"><span class="alt">metamodel inputs</span></object>
+<pre>@startuml
+!include &lt;logos/java&gt;
+!include &lt;tupadr3/font-awesome/at&gt;
+!include &lt;tupadr3/font-awesome/envira&gt;
+!include &lt;office/Databases/database_cube&gt;
+!include &lt;material/xml.puml&gt;
+
+legend top
+|= notation |= explanation |
+| ""__underline__"" | DDD Pattern|
+endlegend
+
+together {
+    rectangle "&lt;$database_cube&gt;&lt;$at&gt;\n&lt;&lt;Annotation&gt;&gt;\nORM (JPA)" as PERS
+    rectangle "&lt;$envira&gt;&lt;$at&gt;\n&lt;&lt;Annotation&gt;&gt;\nSpring" as SPRING
+    rectangle "&lt;img:https://causeway.apache.org/_/img/home/causeway-logo-65x48.png&gt;&lt;$at&gt;\n&lt;&lt;Annotation&gt;&gt;\nApache Causeway" as FW
+    rectangle "&lt;img:https://causeway.apache.org/_/img/home/causeway-logo-65x48.png&gt;&lt;$java&gt;\n&lt;&lt;Supporting Methods&gt;&gt;\nApache Causeway" as SM
+    rectangle "&lt;$java&gt;&lt;$ma_xml&gt;&lt;$at&gt;\n&lt;&lt;Annotation&gt;&gt;\nJAXB" as JAXB
+
+    SPRING -[hidden]- PERS
+    PERS -[hidden]- FW
+    FW -[hidden]- SM
+    SM -[hidden]- JAXB
+
+    note left of SPRING
+        * __Repository__
+        * Name (@Named)
+        * Service (via FW @DomainService)
+        * Component (via FW @DomainObject)
+    end note
+
+    note left of PERS
+        * Cardinality
+        * TableName
+        * Column
+        ** Name
+        ** Length
+        ** Type
+    end note
+
+    note left of FW
+        * __Entitiy__
+        ** Property
+        ** Collection
+        ** Action
+        * __Factory__
+        * Layout
+        ** Property Sequence
+            (Table and Forms)
+        ** Action Sequence (Menu)
+        ** Styles (cssClass)
+        * ViewModel
+        * Mixin
+    end note
+
+    note left of SM
+        * autoComplete…()
+        * choices…()
+        * default…()
+        * disable…()
+        * get…()
+        * hide…()
+        * iconName()
+        * set…()
+        * title()
+        * validate…()
+    end note
+
+    note left of JAXB
+        * @XmlAccessorType
+        * @XmlJavaTypeAdapter
+        * @XmlRootElement
+    end note
+}
+
+rectangle "&lt;img:https://causeway.apache.org/_/img/home/causeway-logo-65x48.png&gt;\nMetaModel" as MM
+
+SPRING -&gt; MM
+PERS -&gt; MM
+FW -&gt; MM
+SM -&gt; MM
+JAXB -&gt; MM
+
+(MetaModelValidation) as MMV
+MM &lt;- MMV : perform \n consistency \n check
+
+rectangle "WicketViewer" as UI
+database DB
+interface "Restful\nObjects" as REST
+MM -d-&gt; UI : generate
+MM -d-&gt; DB : generate
+MM -d-&gt; REST : generate
+
+@enduml</pre>
 </div>
-<div class="title">Figure 1. metamodel inputs</div>
 </div>
 </div>
 </div>
@@ -479,11 +572,55 @@ page.parent doesn't seem to be set...
 <div class="paragraph">
 <p>The metamodel itself consists of the following parts:</p>
 </div>
-<div class="imageblock kroki">
+<div class="listingblock kroki-error">
+<div class="title">Metamodel Terminology</div>
 <div class="content">
-<object type="image/svg+xml" data="_images/diag-c3bdcb4515ac8f80bd10e1c18fab4bd1bb49f851.svg"><span class="alt">Metamodel Terminology</span></object>
+<pre>@startuml
+
+skinparam nodesep 20
+skinparam ranksep 1
+
+together {
+	(Domain\nObject) as DO
+	(Entity) as E
+	(View\nModel) as VM
+}
+(&lt;i&gt;Apache Causeway&lt;/i&gt;) as FW
+(Persistence\nLayer) as PL
+together {
+	(Mixin) as M
+	(Mixee) as ME
+}
+(Service) as S
+(Domain\nService) as DS
+(&lt;i&gt;Spring&lt;/i&gt;) as SPRING
+together {
+	(Member) as MB
+	(Property) as P
+	(Collection) as C
+	(Action) as A
+}
+
+DO &lt;-d-"is a" VM
+DO &lt;-d-"is a" E
+FW .u.&gt; VM : manages
+PL .u.&gt; E : manages
+
+P "is a"-u-&gt; MB
+C "is a"-u-&gt; MB
+A "is a"-u-&gt; MB
+
+DO --&gt; MB : has 1..*
+
+M "contributes\n a"..&gt; MB
+M "contributes\n to"-&gt; ME
+DO -&gt; ME : can \n act \n as
+
+SPRING ..&gt; S : manages
+DS "is a"-u-&gt; S
+DS --&gt; A : has 1..*
+@enduml</pre>
 </div>
-<div class="title">Figure 2. Metamodel Terminology</div>
 </div>
 <div class="paragraph">
 <p>Thus:</p>
@@ -538,7 +675,7 @@ or an <em>Action</em> to their <strong><em>Mixee</em></strong> (-type).</p>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 4.0.0-SNAPSHOT.20251120-0629-1533daed</p>
+            <p>Revision: 4.0.0-SNAPSHOT.20251121-0303-999ad6fc</p>
         </div>
     </div>
 </footer>

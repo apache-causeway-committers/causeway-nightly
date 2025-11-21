@@ -700,11 +700,34 @@ public class CausewayModuleExtExcelApplib {
 <div class="paragraph">
 <p>Looking again at the <a href="excel/about.html" class="xref page">Excel</a> library once more, this has an <code>applib</code> module and also a <code>testing</code> (artifactId of <code>causeway-extensions-excel-testing</code>), where:</p>
 </div>
-<div class="imageblock kroki">
+<div class="listingblock kroki-error">
+<div class="title">Testing submodule depends upon Applib submodule</div>
 <div class="content">
-<object type="image/svg+xml" data="_images/diag-7475ff8433e2515aa6a081d34e0fff75828cb24f.svg"><span class="alt">Testing submodule depends upon Applib submodule</span></object>
+<pre>hide empty members
+
+skinparam class {
+    BackgroundColor&lt;&lt;desc&gt;&gt; Cyan
+    BackgroundColor&lt;&lt;ppt&gt;&gt; LightGreen
+    BackgroundColor&lt;&lt;mi&gt;&gt; LightPink
+    BackgroundColor&lt;&lt;role&gt;&gt; LightYellow
+    BackgroundColor&lt;&lt;strategy&gt;&gt; White
+    BackgroundColor&lt;&lt;api&gt;&gt; White
+    BackgroundColor&lt;&lt;spi&gt;&gt; White
+    BackgroundColor&lt;&lt;internal&gt;&gt; LightGrey
+    BackgroundColor&lt;&lt;value&gt;&gt; White
+
+    BackgroundColor&lt;&lt;entity&gt;&gt; LightGreen
+    BackgroundColor&lt;&lt;viewmodel&gt;&gt; LightPink
+    BackgroundColor&lt;&lt;mixin&gt;&gt; LightYellow
+}
+
+package excel-applib {
+}
+package excel-testing {
+}
+
+"excel-applib" &lt;-.r- "excel-testing"</pre>
 </div>
-<div class="title">Figure 1. Testing submodule depends upon Applib submodule</div>
 </div>
 <div class="paragraph">
 <p>Therefore:</p>
@@ -888,11 +911,42 @@ These events can affect both the UI (eg hiding or disabling <a href="properties-
 For example, suppose the <code>customers</code> module has a <code>Customer</code> object and a <code>EmailAddress</code> object, with a customer having a collection of email addresses.
 A <code>communications</code> module might then use those email addresses to create <code>EmailCommunication</code>s.</p>
 </div>
-<div class="imageblock kroki">
+<div class="listingblock kroki-error">
+<div class="title"><code>customers</code> module and <code>communications</code> module</div>
 <div class="content">
-<object type="image/svg+xml" data="_images/diag-c3e4f3da798e9b9f0df5841d3996c65beebc5bec.svg"><span class="alt">`customers` module and `communications` module</span></object>
+<pre>hide empty members
+
+skinparam class {
+    BackgroundColor&lt;&lt;desc&gt;&gt; Cyan
+    BackgroundColor&lt;&lt;ppt&gt;&gt; LightGreen
+    BackgroundColor&lt;&lt;mi&gt;&gt; LightPink
+    BackgroundColor&lt;&lt;role&gt;&gt; LightYellow
+    BackgroundColor&lt;&lt;strategy&gt;&gt; White
+    BackgroundColor&lt;&lt;api&gt;&gt; White
+    BackgroundColor&lt;&lt;spi&gt;&gt; White
+    BackgroundColor&lt;&lt;internal&gt;&gt; LightGrey
+    BackgroundColor&lt;&lt;value&gt;&gt; White
+
+    BackgroundColor&lt;&lt;entity&gt;&gt; LightGreen
+    BackgroundColor&lt;&lt;viewmodel&gt;&gt; LightPink
+    BackgroundColor&lt;&lt;mixin&gt;&gt; LightYellow
+}
+
+package customers {
+    class Customer &lt;&lt;ppt&gt;&gt;
+    class Email\nAddress &lt;&lt;ppt&gt;&gt;
+}
+
+package communications {
+    class Email\nCommunication &lt;&lt;mi&gt;&gt;
+    class  Sender &lt;&lt;service&gt;&gt;
+}
+
+Customer --&gt; "0..*" Email\nAddress
+Sender -.l-&gt; "reads\n" Email\nAddress
+Sender -.&gt; "creates" Email\nCommunication
+Email\nCommunication --&gt; Email\nAddress</pre>
 </div>
-<div class="title">Figure 2. <code>customers</code> module and <code>communications</code> module</div>
 </div>
 <div class="paragraph">
 <p>If the <code>customers</code> module wants to delete an <code>EmailAddress</code> then the <code>communications</code> module will probably want to veto this because they are "in use" by those <code>EmailCommunication</code>s.
@@ -927,11 +981,38 @@ The <code>customers</code> module for its part does not know anything about this
 We want the invoices to know about customers, but not vice versa.
 We could surface the set of invoices for a customer using a <code>Customer_invoices</code> mixin:</p>
 </div>
-<div class="imageblock kroki">
+<div class="listingblock kroki-error">
+<div class="title"><code>invoices</code> module contributes to <code>customers</code></div>
 <div class="content">
-<object type="image/svg+xml" data="_images/diag-1e6be3ab94573991b764958ec88db5a8beb17408.svg"><span class="alt">`invoices` module contributes to `customers`</span></object>
+<pre>hide empty members
+
+skinparam class {
+    BackgroundColor&lt;&lt;desc&gt;&gt; Cyan
+    BackgroundColor&lt;&lt;ppt&gt;&gt; LightGreen
+    BackgroundColor&lt;&lt;mi&gt;&gt; LightPink
+    BackgroundColor&lt;&lt;role&gt;&gt; LightYellow
+    BackgroundColor&lt;&lt;strategy&gt;&gt; White
+    BackgroundColor&lt;&lt;api&gt;&gt; White
+    BackgroundColor&lt;&lt;spi&gt;&gt; White
+    BackgroundColor&lt;&lt;internal&gt;&gt; LightGrey
+    BackgroundColor&lt;&lt;value&gt;&gt; White
+
+    BackgroundColor&lt;&lt;entity&gt;&gt; LightGreen
+    BackgroundColor&lt;&lt;viewmodel&gt;&gt; LightPink
+    BackgroundColor&lt;&lt;mixin&gt;&gt; LightYellow
+}
+
+package invoice {
+    class Customer_invoices &lt;&lt;mixin&gt;&gt;
+    class Invoice &lt;&lt;mi&gt;&gt;
+}
+Customer_invoices --&gt; "0.*" Invoice: invoices
+
+package customers {
+    class Customer &lt;&lt;ppt&gt;&gt;
+}
+Customer_invoices -.r-&gt; Customer: "contributes to"</pre>
 </div>
-<div class="title">Figure 3. <code>invoices</code> module contributes to <code>customers</code></div>
 </div>
 <div class="paragraph">
 <p>In the UI, when rendering a <code>Customer</code>, we would also be presented with the associated set of <code>Invoice</code>s.</p>
@@ -942,11 +1023,42 @@ For example, suppose we have a mechanism to attach <code>Document</code>s to arb
 The documents module does not depend on any other modules, but provides a <code>DocumentHolder</code> marker interface.
 We can therefore attach documents to a <code>Customer</code> by having <code>Customer</code> implement this marker interface:</p>
 </div>
-<div class="imageblock kroki">
+<div class="listingblock kroki-error">
+<div class="title"><code>customers</code> depends upon contributions of <code>documents</code></div>
 <div class="content">
-<object type="image/svg+xml" data="_images/diag-3c9c462c5d1913ae10a71f94738a70175be7f380.svg"><span class="alt">`customers` depends upon contributions of `documents`</span></object>
+<pre>hide empty members
+
+skinparam class {
+    BackgroundColor&lt;&lt;desc&gt;&gt; Cyan
+    BackgroundColor&lt;&lt;ppt&gt;&gt; LightGreen
+    BackgroundColor&lt;&lt;mi&gt;&gt; LightPink
+    BackgroundColor&lt;&lt;role&gt;&gt; LightYellow
+    BackgroundColor&lt;&lt;strategy&gt;&gt; White
+    BackgroundColor&lt;&lt;api&gt;&gt; White
+    BackgroundColor&lt;&lt;spi&gt;&gt; White
+    BackgroundColor&lt;&lt;internal&gt;&gt; LightGrey
+    BackgroundColor&lt;&lt;value&gt;&gt; White
+
+    BackgroundColor&lt;&lt;entity&gt;&gt; LightGreen
+    BackgroundColor&lt;&lt;viewmodel&gt;&gt; LightPink
+    BackgroundColor&lt;&lt;mixin&gt;&gt; LightYellow
+}
+
+package documents {
+    interface DocumentHolder &lt;&lt;role&gt;&gt;
+    class DocumentHolder_documents &lt;&lt;mixin&gt;&gt;
+    class DocumentHolder_attachDocument &lt;&lt;mixin&gt;&gt;
+    class Document &lt;&lt;ppt&gt;&gt;
+}
+DocumentHolder_documents -d-&gt; "0..*" Document: documents
+DocumentHolder_documents -.l-&gt; DocumentHolder: "contributes to"
+DocumentHolder_attachDocument -.l-&gt; DocumentHolder: "contributes to"
+
+package customers {
+    class Customer &lt;&lt;ppt&gt;&gt;
+}
+Customer -u.-^ DocumentHolder</pre>
 </div>
-<div class="title">Figure 4. <code>customers</code> depends upon contributions of <code>documents</code></div>
 </div>
 </div>
 </div>
@@ -961,9 +1073,50 @@ And how does one module interact with another module?</p>
 <div class="paragraph">
 <p>The diagram below shows a set of packages for a module, for the different concerns:</p>
 </div>
-<div class="imageblock kroki">
+<div class="listingblock kroki-error">
 <div class="content">
-<object type="image/svg+xml" data="_images/diag-e8364ef7b0a08df090a63f4387de229264c2601f.svg"><span class="alt">Diagram</span></object>
+<pre>hide empty members
+
+skinparam class {
+    BackgroundColor&lt;&lt;desc&gt;&gt; Cyan
+    BackgroundColor&lt;&lt;ppt&gt;&gt; LightGreen
+    BackgroundColor&lt;&lt;mi&gt;&gt; LightPink
+    BackgroundColor&lt;&lt;role&gt;&gt; LightYellow
+    BackgroundColor&lt;&lt;strategy&gt;&gt; White
+    BackgroundColor&lt;&lt;api&gt;&gt; White
+    BackgroundColor&lt;&lt;spi&gt;&gt; White
+    BackgroundColor&lt;&lt;internal&gt;&gt; LightGrey
+    BackgroundColor&lt;&lt;value&gt;&gt; White
+
+    BackgroundColor&lt;&lt;entity&gt;&gt; LightGreen
+    BackgroundColor&lt;&lt;viewmodel&gt;&gt; LightPink
+    BackgroundColor&lt;&lt;mixin&gt;&gt; LightYellow
+}
+
+
+package ordermgmt {
+    package api     as ordermgmt.api     {}
+    package applib  as ordermgmt.applib  {}
+    package menu    as ordermgmt.menu    {}
+    package restapi as ordermgmt.restapi {}
+    package app     as ordermgmt.app     {}
+    package dom     as ordermgmt.dom     {}
+    package spi     as ordermgmt.spi     {}
+    package spiimpl as ordermgmt.spiimpl {}
+    package contrib as ordermgmt.contrib {}
+}
+
+ordermgmt.api     --&gt;  ordermgmt.dom
+ordermgmt.api     --&gt;  ordermgmt.applib
+ordermgmt.restapi --&gt;  ordermgmt.dom
+ordermgmt.menu    --&gt;  ordermgmt.dom
+ordermgmt.menu    --&gt;  ordermgmt.app
+ordermgmt.app     --&gt;  ordermgmt.dom
+ordermgmt.contrib --&gt;  ordermgmt.dom
+ordermgmt.spiimpl -r-&gt; ordermgmt.dom
+
+ordermgmt.dom     -d-&gt; ordermgmt.spi
+ordermgmt.dom     -d^  ordermgmt.applib</pre>
 </div>
 </div>
 <table class="tableblock frame-all grid-all stretch">
@@ -1074,9 +1227,65 @@ These SPI implementations will likely use the domain object functionality define
 <div class="paragraph">
 <p>The following diagram extends the previous, this time showing the interactions between modules:</p>
 </div>
-<div class="imageblock kroki">
+<div class="listingblock kroki-error">
 <div class="content">
-<object type="image/svg+xml" data="_images/diag-a5d3435a2d61f6c13bcb18abf98af776dae186bb.svg"><span class="alt">Diagram</span></object>
+<pre>hide empty members
+
+skinparam class {
+    BackgroundColor&lt;&lt;desc&gt;&gt; Cyan
+    BackgroundColor&lt;&lt;ppt&gt;&gt; LightGreen
+    BackgroundColor&lt;&lt;mi&gt;&gt; LightPink
+    BackgroundColor&lt;&lt;role&gt;&gt; LightYellow
+    BackgroundColor&lt;&lt;strategy&gt;&gt; White
+    BackgroundColor&lt;&lt;api&gt;&gt; White
+    BackgroundColor&lt;&lt;spi&gt;&gt; White
+    BackgroundColor&lt;&lt;internal&gt;&gt; LightGrey
+    BackgroundColor&lt;&lt;value&gt;&gt; White
+
+    BackgroundColor&lt;&lt;entity&gt;&gt; LightGreen
+    BackgroundColor&lt;&lt;viewmodel&gt;&gt; LightPink
+    BackgroundColor&lt;&lt;mixin&gt;&gt; LightYellow
+}
+
+package warehouse {
+    package spiimpl       as warehouse.spiimpl       {}
+}
+
+package shipping {
+    package dom           as shipping.dom           { }
+}
+
+package customer {
+    package applib        as customer.applib        { }
+}
+
+package ordermgmt {
+    package api     as ordermgmt.api     {}
+    package applib  as ordermgmt.applib  {}
+    package restapi as ordermgmt.restapi {}
+    package menu    as ordermgmt.menu    {}
+    package app     as ordermgmt.app     {}
+    package dom     as ordermgmt.dom     {}
+    package contrib as ordermgmt.contrib {}
+    package spi     as ordermgmt.spi     {}
+    package spiimpl as ordermgmt.spiimpl {}
+}
+
+ordermgmt.api     --&gt;  ordermgmt.dom
+ordermgmt.api     --&gt;  ordermgmt.applib
+ordermgmt.restapi --&gt;  ordermgmt.dom
+ordermgmt.menu    --&gt;  ordermgmt.dom
+ordermgmt.menu    --&gt;  ordermgmt.app
+ordermgmt.app     --&gt;  ordermgmt.dom
+ordermgmt.contrib -u-&gt;  ordermgmt.dom
+ordermgmt.spiimpl -r-&gt; ordermgmt.dom
+
+ordermgmt.dom     --&gt; ordermgmt.spi
+ordermgmt.dom     -^  ordermgmt.applib
+warehouse.spiimpl -u-^   ordermgmt.spi
+
+ordermgmt.contrib --&gt; customer.applib
+shipping.dom     --&gt; ordermgmt.api</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1123,7 +1332,7 @@ These SPI implementations will likely use the domain object functionality define
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 4.0.0-SNAPSHOT.20251120-0629-1533daed</p>
+            <p>Revision: 4.0.0-SNAPSHOT.20251121-0303-999ad6fc</p>
         </div>
     </div>
 </footer>

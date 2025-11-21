@@ -816,11 +816,47 @@ The default implementation of <em>this</em> interface, <a href="https://github.c
 <div class="paragraph">
 <p>The diagram below shows how these classes relate:</p>
 </div>
-<div class="imageblock kroki">
+<div class="listingblock kroki-error">
+<div class="title">Programming Model classes</div>
 <div class="content">
-<object type="image/svg+xml" data="_images/diag-419be38423032876d89d1d44c80aafe9db857a3b.svg"><span class="alt">Programming Model classes</span></object>
+<pre>hide empty members
+
+interface ProgrammingModel {
+    init(ProgrammingModelInitFilter)
+    addFactory(...)
+    addValidator(...)
+    addPostProcessor(...)
+}
+class ProgrammingModelFacetsJava8 {}
+
+interface ProgrammingModelService {
+    getProgrammingModel(): ProgrammingModel
+}
+class ProgrammingModelServiceDefault {}
+
+interface ProgrammingModelInitFilter {
+    boolean acceptFactoryType(...);
+    boolean acceptValidator(...);
+    boolean acceptPostProcessor(...);
+}
+class ProgrammingModelInitFilterDefault {
+}
+
+interface MetaModelRefiner {
+    refineProgrammingModel(ProgrammingModel)
+}
+
+MetaModelRefiner -.[norank]r&gt; ProgrammingModel
+ProgrammingModelService -.[norank]r&gt; ProgrammingModel
+
+ProgrammingModelServiceDefault -&gt; ProgrammingModelFacetsJava8 : instantiate
+ProgrammingModelServiceDefault -l-&gt; ProgrammingModelInitFilter
+ProgrammingModelServiceDefault -d-&gt; "0..*" MetaModelRefiner
+
+ProgrammingModel ^-d- ProgrammingModelFacetsJava8
+ProgrammingModelService ^-d- ProgrammingModelServiceDefault
+ProgrammingModelInitFilter ^-d- ProgrammingModelInitFilterDefault</pre>
 </div>
-<div class="title">Figure 1. Programming Model classes</div>
 </div>
 <div class="paragraph">
 <p>To summarise:</p>
@@ -855,7 +891,7 @@ The default implementation of <em>this</em> interface, <a href="https://github.c
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 4.0.0-SNAPSHOT.20251120-0629-1533daed</p>
+            <p>Revision: 4.0.0-SNAPSHOT.20251121-0303-999ad6fc</p>
         </div>
     </div>
 </footer>

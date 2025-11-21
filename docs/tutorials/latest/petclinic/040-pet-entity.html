@@ -581,9 +581,72 @@ page.parent doesn't seem to be set...
 <p>Right now our domain model still only consists of the single domain class, <code>PetOwner</code>.
 We still have the <code>Pet</code> and <code>Visit</code> entities to add, along with the <code>PetSpecies</code>  enum.</p>
 </div>
-<div class="imageblock kroki">
+<div class="listingblock kroki-error">
 <div class="content">
-<object type="image/svg+xml" data="_images/diag-39fc1b7da8c879b2ea17cf3104c3513911d7f8c4.svg"><span class="alt">Diagram</span></object>
+<pre>hide empty members
+hide methods
+
+skinparam class {
+	BackgroundColor&lt;&lt;desc&gt;&gt; Cyan
+	BackgroundColor&lt;&lt;ppt&gt;&gt; LightGreen
+	BackgroundColor&lt;&lt;mi&gt;&gt; LightPink
+	BackgroundColor&lt;&lt;role&gt;&gt; LightYellow
+}
+
+
+package petowner {
+
+    enum PetSpecies &lt;&lt;desc&gt;&gt; {
+        Dog
+        Cat
+        Hamster
+        Budgerigar
+    }
+
+    class Pet &lt;&lt;ppt&gt;&gt; {
+        +id
+        ..
+        #petOwner
+        #name
+        ..
+        -species
+        -notes
+        ..
+        -version
+    }
+
+
+    class PetOwner &lt;&lt;role&gt;&gt; {
+        +id
+        ..
+        #name
+        #knownAs
+        ..
+        -phoneNumber
+        -emailAddress
+        ..
+        -lastVisit
+        -/daysSinceLastVisit
+        ..
+        -notes
+    }
+}
+
+
+package visit {
+
+    class Visit &lt;&lt;mi&gt;&gt; {
+        +id
+        ..
+        #pet
+        #visitAt: LocalDateTime
+    }
+}
+
+
+PetOwner *-r--&gt; "0..*" Pet
+Visit "   \n*" -r-&gt;  Pet
+Pet  "*" -u-&gt; PetSpecies</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -911,9 +974,43 @@ name
 <div class="paragraph">
 <p>According to our model, <code>Pet</code>s are owned by <code>PetOwner</code>s:</p>
 </div>
-<div class="imageblock kroki">
+<div class="listingblock kroki-error">
 <div class="content">
-<object type="image/svg+xml" data="_images/diag-eaa9d52f1ae08b5e73724e105ad23df2795cf652.svg"><span class="alt">Diagram</span></object>
+<pre>hide empty members
+hide methods
+
+skinparam class {
+	BackgroundColor&lt;&lt;desc&gt;&gt; Cyan
+	BackgroundColor&lt;&lt;ppt&gt;&gt; LightGreen
+	BackgroundColor&lt;&lt;mi&gt;&gt; LightPink
+	BackgroundColor&lt;&lt;role&gt;&gt; LightYellow
+}
+
+
+package pets {
+
+    class Pet &lt;&lt;ppt&gt;&gt; {
+        +id
+        ..
+        #petOwner
+        #name
+        ..
+        version
+    }
+
+    class PetOwner &lt;&lt;role&gt;&gt; {
+        +id
+        ..
+        #lastName
+        #firstName
+        ..
+        -phoneNumber
+        -emailAddress
+    }
+}
+
+
+PetOwner *-r--&gt; "0..*" Pet</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1215,9 +1312,43 @@ public String validate0AddPet(final String name) {                      <i class
 <p>In this exercise we&#8217;ll add the remaining properties for <code>Pet</code>.
 Let&#8217;s remind ourselves of the domain:</p>
 </div>
-<div class="imageblock kroki">
+<div class="listingblock kroki-error">
 <div class="content">
-<object type="image/svg+xml" data="_images/diag-1083d8aaada0e637a3f1882a9e3121b9befe9abd.svg"><span class="alt">Diagram</span></object>
+<pre>hide empty members
+hide methods
+
+skinparam class {
+	BackgroundColor&lt;&lt;desc&gt;&gt; Cyan
+	BackgroundColor&lt;&lt;ppt&gt;&gt; LightGreen
+	BackgroundColor&lt;&lt;mi&gt;&gt; LightPink
+	BackgroundColor&lt;&lt;role&gt;&gt; LightYellow
+}
+
+
+package pets {
+
+    enum PetSpecies &lt;&lt;desc&gt;&gt; {
+        Dog
+        Cat
+        Hamster
+        Budgerigar
+    }
+
+    class Pet &lt;&lt;ppt&gt;&gt; {
+        +id
+        ..
+        #petOwner
+        #name
+        ..
+        -species
+        -notes
+        ..
+        -version
+    }
+
+}
+
+Pet  "*" -u-&gt; PetSpecies</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1430,7 +1561,7 @@ You should find that the appropriate icon is selected based upon the species of 
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 4.0.0-SNAPSHOT.20251120-0629-1533daed</p>
+            <p>Revision: 4.0.0-SNAPSHOT.20251121-0303-999ad6fc</p>
         </div>
     </div>
 </footer>

@@ -521,9 +521,33 @@ There can be many such implementations, each handling a different target domain 
 <div class="paragraph">
 <p>This diagram shows how these services collaborate:</p>
 </div>
-<div class="imageblock kroki">
+<div class="listingblock kroki-error">
 <div class="content">
-<object type="image/svg+xml" data="_images/diag-88f55ba38455a24f56777f6aba44239d04247336.svg"><span class="alt">Diagram</span></object>
+<pre>hide empty members
+left to right direction
+'skinparam linetype ortho
+
+class RepresentationService {}
+
+interface ContentNegotiationService {
+}
+class ContentNegotiationServiceSimplified {
+    // application/json;profile="urn:org.apache.causeway/v2"
+}
+class ContentNegotiationServiceXRoDomainType {
+    // application/xml;x-ro-domain-type="xxx"
+}
+class ContentNegotiationServiceForRestfulObjectsV1_0 {
+    // application/json
+}
+interface ContentMappingService {}
+
+ContentNegotiationServiceXRoDomainType -l-&gt; ContentMappingService : "delegates to\n(if recognizes\nx-ro-domain-type)"
+ContentNegotiationService ^-d- ContentNegotiationServiceForRestfulObjectsV1_0
+ContentNegotiationService ^-d- ContentNegotiationServiceXRoDomainType
+ContentNegotiationService ^-d- ContentNegotiationServiceSimplified
+
+RepresentationService -l-&gt; "1..*" ContentNegotiationService : delegates to\nbased on\nACCEPT header</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -565,7 +589,7 @@ There can be many such implementations, each handling a different target domain 
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 4.0.0-SNAPSHOT.20251120-0629-1533daed</p>
+            <p>Revision: 4.0.0-SNAPSHOT.20251121-0303-999ad6fc</p>
         </div>
     </div>
 </footer>

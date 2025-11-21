@@ -1068,11 +1068,36 @@ This simple fact becomes very powerful in that the mixin could even be in a diff
 <p>For example, suppose we have an <code>orders</code> module and a <code>customers</code> module.
 The <code>orders</code> module could provide a mixin that (so far as the end-user is concerned in the UI) would allow a customer to place an order:</p>
 </div>
-<div class="imageblock kroki">
+<div class="listingblock kroki-error">
+<div class="title"><code>orders</code> module contributes to <code>customers</code></div>
 <div class="content">
-<object type="image/svg+xml" data="_images/diag-81d30d2e501d95dee7b469a91a1fbd051ee49f95.svg"><span class="alt">`orders` module contributes to `customers`</span></object>
+<pre>hide empty members
+
+skinparam class {
+    BackgroundColor&lt;&lt;desc&gt;&gt; Cyan
+    BackgroundColor&lt;&lt;ppt&gt;&gt; LightGreen
+    BackgroundColor&lt;&lt;mi&gt;&gt; LightPink
+    BackgroundColor&lt;&lt;role&gt;&gt; LightYellow
+    BackgroundColor&lt;&lt;strategy&gt;&gt; White
+    BackgroundColor&lt;&lt;api&gt;&gt; White
+    BackgroundColor&lt;&lt;spi&gt;&gt; White
+    BackgroundColor&lt;&lt;internal&gt;&gt; LightGrey
+    BackgroundColor&lt;&lt;value&gt;&gt; White
+
+    BackgroundColor&lt;&lt;entity&gt;&gt; LightGreen
+    BackgroundColor&lt;&lt;viewmodel&gt;&gt; LightPink
+    BackgroundColor&lt;&lt;mixin&gt;&gt; LightYellow
+}
+
+package orders {
+    class Customer_placeOrder &lt;&lt;mixin&gt;&gt;
+}
+
+package customers {
+    class Customer &lt;&lt;ppt&gt;&gt;
+}
+Customer_placeOrder -.r-&gt; Customer: "contributes to"</pre>
 </div>
-<div class="title">Figure 1. <code>orders</code> module contributes to <code>customers</code></div>
 </div>
 <div class="paragraph">
 <p>In terms of code:</p>
@@ -1137,11 +1162,38 @@ A variation though is for the mixee to contribute by way of a (Java) <code>inter
 <p>For example, suppose that the <code>docmgmt</code> module provides document management capabilities, provided to any <code>DocumentHolder</code>.
 The <code>Customer</code> class might then take advantage of this, saying in effect:  "yes, I want to hold some documents, please manage that concern for me".</p>
 </div>
-<div class="imageblock kroki">
+<div class="listingblock kroki-error">
+<div class="title"><code>Customer</code> elects to have contributions made to it by <code>docmgmt</code> module</div>
 <div class="content">
-<object type="image/svg+xml" data="_images/diag-5be618c698be493ee638d224c40cba531f52f23a.svg"><span class="alt">`Customer` elects to have contributions made to it by `docmgmt` module</span></object>
+<pre>hide empty members
+
+skinparam class {
+    BackgroundColor&lt;&lt;desc&gt;&gt; Cyan
+    BackgroundColor&lt;&lt;ppt&gt;&gt; LightGreen
+    BackgroundColor&lt;&lt;mi&gt;&gt; LightPink
+    BackgroundColor&lt;&lt;role&gt;&gt; LightYellow
+    BackgroundColor&lt;&lt;strategy&gt;&gt; White
+    BackgroundColor&lt;&lt;api&gt;&gt; White
+    BackgroundColor&lt;&lt;spi&gt;&gt; White
+    BackgroundColor&lt;&lt;internal&gt;&gt; LightGrey
+    BackgroundColor&lt;&lt;value&gt;&gt; White
+
+    BackgroundColor&lt;&lt;entity&gt;&gt; LightGreen
+    BackgroundColor&lt;&lt;viewmodel&gt;&gt; LightPink
+    BackgroundColor&lt;&lt;mixin&gt;&gt; LightYellow
+}
+
+package docmgmt {
+    class DocumentHolder_documents &lt;&lt;mixin&gt;&gt;
+    interface DocumentHolder
+}
+
+package customers {
+    class Customer &lt;&lt;ppt&gt;&gt;
+}
+DocumentHolder_documents -.r-&gt; DocumentHolder: "contributes to"
+Customer -u-^ DocumentHolder</pre>
 </div>
-<div class="title">Figure 2. <code>Customer</code> elects to have contributions made to it by <code>docmgmt</code> module</div>
 </div>
 <div class="paragraph">
 <p>Therefore <code>customer</code> (mixee) --- [depends upon]&#8594; <code>docmgmt</code> (mixin).</p>
@@ -1204,11 +1256,38 @@ public class Customer implements DocumentHolder {
 <p>For example, suppose the <code>customer</code> module defines <code>HasAddress</code>, also implemented by <code>Customer</code>.
 The <code>mailmerge</code> module provides the ability to send out mailshots, but it only needs the information exposed through <code>HasAddress</code>, not all of <code>Customer</code>.</p>
 </div>
-<div class="imageblock kroki">
+<div class="listingblock kroki-error">
+<div class="title"><code>mailmerge</code> module contributes to <code>customers</code></div>
 <div class="content">
-<object type="image/svg+xml" data="_images/diag-5c81d458276ed30306743f82e10426d9d32f7439.svg"><span class="alt">`mailmerge` module contributes to `customers`</span></object>
+<pre>hide empty members
+
+skinparam class {
+    BackgroundColor&lt;&lt;desc&gt;&gt; Cyan
+    BackgroundColor&lt;&lt;ppt&gt;&gt; LightGreen
+    BackgroundColor&lt;&lt;mi&gt;&gt; LightPink
+    BackgroundColor&lt;&lt;role&gt;&gt; LightYellow
+    BackgroundColor&lt;&lt;strategy&gt;&gt; White
+    BackgroundColor&lt;&lt;api&gt;&gt; White
+    BackgroundColor&lt;&lt;spi&gt;&gt; White
+    BackgroundColor&lt;&lt;internal&gt;&gt; LightGrey
+    BackgroundColor&lt;&lt;value&gt;&gt; White
+
+    BackgroundColor&lt;&lt;entity&gt;&gt; LightGreen
+    BackgroundColor&lt;&lt;viewmodel&gt;&gt; LightPink
+    BackgroundColor&lt;&lt;mixin&gt;&gt; LightYellow
+}
+
+package mailmerge {
+    class HasAddress_mailshot &lt;&lt;mixin&gt;&gt;
+}
+
+package customers {
+    interface HasAddress
+    class Customer &lt;&lt;ppt&gt;&gt;
+}
+HasAddress_mailshot -.r-&gt; HasAddress: "contributes to"
+Customer -u-^ HasAddress</pre>
 </div>
-<div class="title">Figure 3. <code>mailmerge</code> module contributes to <code>customers</code></div>
 </div>
 <div class="paragraph">
 <p>Therefore <code>mailmerge</code> (mixin) --- [depends upon]&#8594; <code>customer</code> (mixee).</p>
@@ -1266,11 +1345,41 @@ public class HasAddress_mailshot {
 <p>With this design in the previous section, there&#8217;s nothing to prevent our "mailmerge" module from accessing the rest of <code>Customer</code>.
 We can fix this by moving the interface to some common location:</p>
 </div>
-<div class="imageblock kroki">
+<div class="listingblock kroki-error">
+<div class="title"><code>mailmerge</code> module contributes to <code>customers</code></div>
 <div class="content">
-<object type="image/svg+xml" data="_images/diag-6dba06dabeedf68fce56bfba6b934e68457ddee8.svg"><span class="alt">`mailmerge` module contributes to `customers`</span></object>
+<pre>hide empty members
+
+skinparam class {
+    BackgroundColor&lt;&lt;desc&gt;&gt; Cyan
+    BackgroundColor&lt;&lt;ppt&gt;&gt; LightGreen
+    BackgroundColor&lt;&lt;mi&gt;&gt; LightPink
+    BackgroundColor&lt;&lt;role&gt;&gt; LightYellow
+    BackgroundColor&lt;&lt;strategy&gt;&gt; White
+    BackgroundColor&lt;&lt;api&gt;&gt; White
+    BackgroundColor&lt;&lt;spi&gt;&gt; White
+    BackgroundColor&lt;&lt;internal&gt;&gt; LightGrey
+    BackgroundColor&lt;&lt;value&gt;&gt; White
+
+    BackgroundColor&lt;&lt;entity&gt;&gt; LightGreen
+    BackgroundColor&lt;&lt;viewmodel&gt;&gt; LightPink
+    BackgroundColor&lt;&lt;mixin&gt;&gt; LightYellow
+}
+
+package mailmerge {
+    class HasAddress_mailshot &lt;&lt;mixin&gt;&gt;
+}
+
+package address {
+    interface HasAddress
+}
+
+package customers {
+    class Customer &lt;&lt;ppt&gt;&gt;
+}
+HasAddress_mailshot -.r-&gt; HasAddress: "contributes to"
+Customer -u-^ HasAddress</pre>
 </div>
-<div class="title">Figure 4. <code>mailmerge</code> module contributes to <code>customers</code></div>
 </div>
 <div class="paragraph">
 <p>Therefore neither <code>mailmerge</code> (mixin) nor <code>customer</code> (mixee) depend upon each other; instead both depend upon <code>address</code>.</p>
@@ -1412,7 +1521,7 @@ You&#8217;ll need to use this method if using nested non-<code>static</code> mix
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 4.0.0-SNAPSHOT.20251120-0629-1533daed</p>
+            <p>Revision: 4.0.0-SNAPSHOT.20251121-0303-999ad6fc</p>
         </div>
     </div>
 </footer>
