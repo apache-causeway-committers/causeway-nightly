@@ -1,0 +1,1337 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Migrating from M4 to M5 :: causeway</title>
+    <link rel="canonical" href="https://apache-causeway-committers.github.io/causeway-nightly/relnotes/latest/2021/2.0.0-M5/mignotes.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+    <link rel="stylesheet" href="../../../../_/css/site-custom.css">
+<link rel="home" href="https://apache-causeway-committers.github.io/causeway-nightly" title="causeway">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://apache-causeway-committers.github.io/causeway-nightly">
+          <span class="icon">
+            <img src="../../../../_/img/causeway-logo-no-words-65x48.png"></img>
+          </span>
+        <span class="navbar-title">causeway</span>
+      </a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <a class="navbar-end">
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Quick Start</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Starter Apps</span>
+            <a class="navbar-item" href="../../../../docs/latest/starters/helloworld.html">Hello World</a>
+            <a class="navbar-item" href="../../../../docs/latest/starters/simpleapp.html">Simple App</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Learning &amp; Tutorials</span>
+            <a class="navbar-item" href="../../../../docs/latest/reference/about.html">Reference App</a>
+            <a class="navbar-item" href="https://danhaywood.gitlab.io/isis-petclinic-tutorial-docs/petclinic/1.16.2/intro.html">Petclinic</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Resources</span>
+            <a class="navbar-item" href="../../../../docs/latest/resources/cheatsheet.html">Cheatsheet</a>
+            <a class="navbar-item" href="../../../../docs/latest/resources/icons.html">Icons</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Guides</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Core</span>
+            <a class="navbar-item" href="../../../../userguide/latest/about.html">User Guide</a>
+            <a class="navbar-item" href="../../../../refguide/latest/about.html">Reference Guide</a>
+            <a class="navbar-item" href="../../../../testing/latest/about.html">Testing Guide</a>
+            <a class="navbar-item" href="../../../../security/latest/about.html">Security Guide</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">For use in apps</span>
+            <a class="navbar-item" href="../../../../valuetypes/latest/about.html">Value Types</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Development</span>
+            <a class="navbar-item" href="../../../../setupguide/latest/about.html">Setup Guide</a>
+            <a class="navbar-item" href="../../../../conguide/latest/about.html">Contributors' Guide</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Components</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Security</span>
+            <a class="navbar-item" href="../../../../security/latest/bypass/about.html">Bypass</a>
+            <a class="navbar-item" href="../../../../security/latest/simple/about.html">Simple</a>
+            <a class="navbar-item" href="../../../../security/latest/spring/about.html">Spring</a>
+            <a class="navbar-item" href="../../../../security/latest/keycloak/about.html">Keycloak</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Viewers</span>
+            <a class="navbar-item" href="../../../../vw/latest/about.html">Web UI (Wicket)</a>
+            <a class="navbar-item" href="../../../../gqlv/latest/about.html">GraphQL API</a>
+            <a class="navbar-item" href="../../../../vro/latest/about.html">REST API (Restful Objects)</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Persistence</span>
+            <a class="navbar-item" href="../../../../pjpa/latest/about.html">JPA (EclipseLink)</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Extensions</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Core</span>
+            <a class="navbar-item" href="../../../../userguide/latest/commandlog/about.html">Command Log</a>
+            <a class="navbar-item" href="../../../../userguide/latest/docgen/about.html">Doc Gen</a>
+            <a class="navbar-item" href="../../../../userguide/latest/executionlog/about.html">Execution Log</a>
+            <a class="navbar-item" href="../../../../userguide/latest/executionoutbox/about.html">Execution Outbox</a>
+            <a class="navbar-item" href="../../../../userguide/latest/executionrepublisher/about.html">Execution Republisher</a>
+            <a class="navbar-item" href="../../../../userguide/latest/excel/about.html">Excel</a>
+            <a class="navbar-item" href="../../../../userguide/latest/flyway/about.html">Flyway</a>
+            <a class="navbar-item" href="../../../../userguide/latest/layoutloaders/about.html">Layout Loaders</a>
+            <a class="navbar-item" href="../../../../userguide/latest/titlecache/about.html">Title Cache</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Security</span>
+            <a class="navbar-item" href="../../../../security/latest/secman/about.html">Secman</a>
+            <a class="navbar-item" href="../../../../security/latest/audittrail/about.html">Audit Trail</a>
+            <a class="navbar-item" href="../../../../security/latest/spring-oauth2/about.html">Spring OAuth2 Integration</a>
+            <a class="navbar-item" href="../../../../security/latest/sessionlog/about.html">Session Log</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Web UI (Wicket)</span>
+            <a class="navbar-item" href="../../../../vw/latest/fullcalendar/about.html">Full Calendar</a>
+            <a class="navbar-item" href="../../../../vw/latest/pdfjs/about.html">pdf.js</a>
+            <a class="navbar-item" href="../../../../vw/latest/sse/about.html">Server Side Events</a>
+            <a class="navbar-item" href="../../../../vw/latest/tabular/about.html">Tabular Download</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">REST API (Restful Objects)</span>
+            <a class="navbar-item" href="../../../../vro/latest/cors/about.html">CORS</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Persistence</span>
+            <a class="navbar-item" href="../../../../querydsl/latest/about.html">QueryDSL</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Support</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Contact</span>
+            <a class="navbar-item" href="../../../../docs/latest/support/slack-channel.html">Slack</a>
+            <a class="navbar-item" href="../../../../docs/latest/support/mailing-list.html">Mailing Lists</a>
+            <a class="navbar-item" href="https://issues.apache.org/jira/browse/CAUSEWAY">JIRA</a>
+            <a class="navbar-item" href="https://stackoverflow.com/questions/tagged/causeway">Stack Overflow</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Releases</span>
+            <a class="navbar-item" href="../../../../docs/latest/downloads/how-to.html">Downloads</a>
+            <a class="navbar-item" href="../../../../relnotes/latest/about.html">Release Notes</a>
+            <hr class="navbar-divider"/>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Framework</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Process</span>
+            <a class="navbar-item" href="../../../../comguide/latest/about.html">Committers' Guide</a>
+            <a class="navbar-item" href="../../../../tooling/latest/about.html">Tooling</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Automated Analysis</span>
+            <a class="navbar-item" href="https://sonarcloud.io/dashboard?id=apache_causeway">SonarCloud.io</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Interim Builds</span>
+            <a class="navbar-item" href="../../../../comguide/latest/nightly-builds.html">Nightly builds</a>
+            <a class="navbar-item" href="../../../../comguide/latest/weekly-builds.html">Weekly builds</a>
+            <a class="navbar-item" href="https://apache-causeway-committers.github.io/causeway-nightly">Website Preview (not ASF hosted)</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Development</span>
+            <a class="navbar-item" href="../../../../core/latest/about.html">Internal Design Docs</a>
+            <a class="navbar-item" href="../../../../regressiontests/latest/about.html">Regression Tests</a>
+            <a class="navbar-item" href="../../../../incubator/latest/about.html">Incubator</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Thanks</span>
+            <a class="navbar-item" href="../../../../more-thanks/latest/more-thanks.html">Acknowledgements</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">ASF</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://www.apache.org/">Apache Homepage</a>
+            <a class="navbar-item" href="https://www.apache.org/events/current-event">Events</a>
+            <a class="navbar-item" href="https://www.apache.org/licenses/">License</a>
+            <a class="navbar-item" href="https://www.apache.org/security/">Security</a>
+            <a class="navbar-item" href="https://privacy.apache.org/policies/privacy-policy-public.html">Privacy</a>
+            <a class="navbar-item" href="https://www.apache.org/foundation/sponsorship.html">Sponsorship</a>
+            <a class="navbar-item" href="https://www.apache.org/foundation/thanks.html">Thanks</a>
+            <hr class="navbar-divider"/>
+            <a class="navbar-item" href="https://whimsy.apache.org/board/minutes/Causeway.html">PMC board minutes</a>
+          </div>
+        </div>
+        <a class="navbar-item" href="../../../../docs/latest/about.html">
+          <span class="icon">
+            <img src="../../../../_/img/home.png"></img>
+          </span>
+        </a>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body ">
+<div class="nav-container" data-component="relnotes" data-version="latest">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-search hide-for-print">
+  <input id="algolia-search-input" placeholder="Search"></span>
+</div>
+<div class="nav-panel-pagination">
+  <a class="page-previous disabled" rel="prev" href="" title=""><span></span></a>
+  <a class="page-next disabled" rel="next"
+     href="" title=""><span></span></a>
+<!--
+page.parent doesn't seem to be set...
+  <a class="page-parent disabled" rel="prev" href="" title=""><span></span></a>
+-->
+</div>
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../../about.html">Release Notes</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">2025</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../2025/4.0.0-M1/relnotes.html">4.0.0-M1</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../2025/3.4.0/relnotes.html">3.4.0</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../2025/3.3.0/relnotes.html">3.3.0</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../2025/3.2.0/relnotes.html">3.2.0</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">2024</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../2024/2.1.0/relnotes.html">2.1.0</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../2024/2.0.0/relnotes.html">2.0.0</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../2024/2.0.0-RC4/relnotes.html">2.0.0-RC4</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">2023</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../2023/2.0.0-RC3/relnotes.html">2.0.0-RC3</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../2023/2.0.0-RC2/relnotes.html">2.0.0-RC2</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../2023/2.0.0-RC1/relnotes.html">2.0.0-RC1</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">2022</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../2022/2.0.0-M9/relnotes.html">2.0.0-M9</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../2022/2.0.0-M8/relnotes.html">2.0.0-M8</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../2022/2.0.0-M7/relnotes.html">2.0.0-M7</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">2021</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../2.0.0-M6/relnotes.html">2.0.0-M6</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="relnotes.html">2.0.0-M5</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">2020</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../2020/2.0.0-M4/relnotes.html">2.0.0-M4</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../2020/2.0.0-M3/relnotes.html">2.0.0-M3</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">2019</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../2019/2.0.0-M2/relnotes.html">2.0.0-M2</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">2018</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../2018/2.0.0-M1/relnotes.html">2.0.0-M1</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Release Notes</span>
+    <span class="version">latest</span>
+  </div>
+  <ul class="components">
+    <li class="component">
+      <span class="title"> </span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../../docs/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Committers' Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../../comguide/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Contributors' Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../../conguide/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Design Docs</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../../core/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Extensions</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../../extensions/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">GraphQL Viewer</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../../gqlv/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Incubator Catalog</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../../incubator/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">JPA</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../../pjpa/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">QueryDSL</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../../querydsl/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Reference Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../../refguide/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">regressiontests</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../../regressiontests/latest/index.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component is-current">
+      <span class="title">Release Notes</span>
+      <ul class="versions">
+        <li class="version is-current">
+          <a href="../../about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">REST API (Restful Objects Viewer)</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../../vro/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Security Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../../security/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Setup Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../../setupguide/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Testing Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../../testing/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Tutorials</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../../tutorials/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">User Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../../userguide/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Value Types Catalog</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../../valuetypes/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Web UI (Wicket Viewer)</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../../vw/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main role="main">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../../docs/latest/about.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../about.html">Release Notes</a></li>
+    <li><a href="mignotes.html">Migrating from M4 to M5</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="https://github.com/apache/causeway/edit/main/antora/components/relnotes/modules/ROOT/pages/2021/2.0.0-M5/mignotes.adoc">Edit</a></div>
+</div>
+<article class="doc">
+    <a name="section-top"></a>
+<h1 class="page">Migrating from M4 to M5</h1>
+<div class="sect1">
+<h2 id="removal-of-image-value-type"><a class="anchor" href="#removal-of-image-value-type"></a>Removal of Image Value Type</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Some Java classes and/or packages have been renamed/moved:</p>
+</div>
+<div class="listingblock">
+<div class="title">Applib</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">// org.apache.isis.applib.value.Image
+org.apache.isis.legacy.applib.value.Image <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>only kept to ease migration, use <code>java.awt.image.BufferedImage</code> instead, which is supported by the framework as value type</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="removal-of-deprecated-contributees"><a class="anchor" href="#removal-of-deprecated-contributees"></a>Removal of deprecated Contributees</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="title">Config</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">isis.core.metaModel.validator.serviceActionsOnly=true <i class="conum" data-value="1"></i><b>(1)</b>
+isis.core.metaModel.validator.mixins-only=true        <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><code>@DomainService(natureOfService=VIEW/REST)</code> is now solely used for UI menu action providers and REST end-points.
+There is no longer the need to validate uses of <code>natureOfService=DOMAIN</code> as this option was removed.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Support for services that contribute members to other <code>DomainObjects</code> was removed. Use <code>Mixins</code> instead.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>See the former java-doc for hints on how to migrate the previous options.</p>
+</div>
+<div class="listingblock">
+<div class="title">@DomainService(natureOfService=&#8230;&#8203;)</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">/**
+ * A &lt;em&gt;programmatic&lt;/em&gt; service.
+ * &lt;p&gt;
+ * The service's actions do not appear on any viewer and are not visible in the REST API. In other words
+ * these are not contributed to the domain-model. However, the service is injectable into domain objects.
+ * &lt;/p&gt;
+ *
+ * @deprecated will be removed with 2.0.0 release! use Spring's {@link org.springframework.stereotype.Service @Service} instead;
+ * @apiNote For now, used as synonym for {@link #REST}
+ */
+@Deprecated
+DOMAIN,
+
+/**
+ * @deprecated will be removed with 2.0.0 release! use {@link #REST} instead;
+ * @apiNote For now, used as synonym for {@link #REST}
+ */
+@Deprecated
+VIEW_REST_ONLY,
+
+/**
+ * @deprecated will be removed with 2.0.0 release! use {@link #VIEW} instead
+ * @apiNote For now, used as synonym for {@link #VIEW}
+ */
+@Deprecated
+VIEW_MENU_ONLY,
+
+/**
+ * @deprecated will be removed with 2.0.0 release!
+ * &lt;p&gt;
+ * For now, contributing actions will be gathered to show up in the 'others' menu to ease migration.
+ * These will likely not work.
+ * &lt;p&gt;
+ * Migration Note: For each {@code Action} write a new mixin class.
+ * see {@link Mixin}
+ * @apiNote For now, used as synonym for {@link #VIEW}
+ */
+@Deprecated
+VIEW_CONTRIBUTIONS_ONLY,</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="changes-to-the-configuration"><a class="anchor" href="#changes-to-the-configuration"></a>Changes to the Configuration</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. as mapped to IsisConfiguration</caption>
+<colgroup>
+<col style="width: 40%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">was</th>
+<th class="tableblock halign-left valign-top">new</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>isis.persistence.jdo-datanucleus.impl</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>removed, instead configure datasources the Spring way (eg. by providing a DataSource factory) or properties like:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">spring.datasource.platform=h2
+spring.datasource.url=jdbc:h2:mem:...</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>configure Datanucleus settings using</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">datanucleus. ...
+javax.jdo. ...</code></pre>
+</div>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>isis.core.runtimeservices.exception-recognizer.jdo</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>isis.core.runtimeservices.exception-recognizer.dae</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Framework functionality was removed to inspect the JDO meta-model for any schemas, such that these would be auto-created. This responsibility is now delegated to Spring.
+However, as a fallback we introduced configuration options, that allow explicit schema creation by the framework, for both JDO and JPA:</p>
+</div>
+<div class="listingblock">
+<div class="title">application.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">isis:
+  persistence:
+    schema:
+      auto-create-schemas: hello
+      create-schema-sql-template: "CREATE SCHEMA IF NOT EXISTS %S"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>More details, on the various configuration options can be found with <em>Javadoc</em> on <em>IsisConfiguration</em>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="changes-to-the-programming-model"><a class="anchor" href="#changes-to-the-programming-model"></a>Changes to the Programming Model</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="removed-programming-model"><a class="anchor" href="#removed-programming-model"></a>Removed (Programming Model)</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 40%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">was</th>
+<th class="tableblock halign-left valign-top">now what?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@ActionLayout(contributed=&#8230;&#8203;)</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>was only effective on mixin methods; use <code>@Action</code>, <code>@Property</code> or <code>@Collection</code> instead</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@Action/@Property(command=&#8230;&#8203;)</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>replaced with <code>commandPublishing</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@Action/@Property(publish=&#8230;&#8203;)</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>replaced with <code>executionPublishing</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@DomainObject(audit=&#8230;&#8203;)</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>replaced with <code>entityChangePublishing</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@DomainObject(nature=&#8230;&#8203;)</code></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>EXTERNAL_ENTITY</code></p>
+</li>
+<li>
+<p><code>INMEMORY_ENTITY</code></p>
+</li>
+</ul>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>use <code>@DomainObject(nature=VIEW_MODEL)</code> instead</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@DomainObject(nature=&#8230;&#8203;)</code></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>JDO_ENTITY</code></p>
+</li>
+<li>
+<p><code>JPA_ENTITY</code></p>
+</li>
+</ul>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>use <code>@DomainObject(nature=ENTITY)</code> instead</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@DomainObject(publish=&#8230;&#8203;)</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>replaced with <code>entityChangePublishing</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@DomainService(repositoryFor=&#8230;&#8203;)</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>if this domain service acts as a repository for an entity type,
+specify that entity type (was never implemented)</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@Mixin</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>use <code>@Action</code>, <code>@Property</code> or <code>@Collection</code> instead;</p>
+</div>
+<div class="paragraph">
+<p>for more fine grained control (eg. setting the mixin&#8217;s method name)
+use <code>@DomainObject(nature=MIXIN, &#8230;&#8203;)</code> combined with one of the above</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@ViewModel</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>use <code>@DomainObject(nature=VIEW_MODEL)</code> instead</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>@ViewModelLayout</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>use <code>@DomainObjectLayout</code> instead</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="added-programming-model"><a class="anchor" href="#added-programming-model"></a>Added (Programming Model)</h3>
+<div class="listingblock">
+<div class="title">Command/Execution Publishing (Member Level Annotations)</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Action/@Property(commandPublishing=ENABLED/DISABLED)   <i class="conum" data-value="1"></i><b>(1)</b>
+@Action/@Property(executionPublishing=ENABLED/DISABLED) <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>affects Command publishing</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>affects Execution publishing</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">Entity Change Publishing (Class Level Annotations)</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@DomainObject(entityChangePublishing=ENABLED/DISABLED) <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>affects EntityChange publishing (effective only for entity types)</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="renamed-programming-model"><a class="anchor" href="#renamed-programming-model"></a>Renamed (Programming Model)</h3>
+<div class="listingblock">
+<div class="title">Publishing API/SPI</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">AuditerService -&gt; EntityPropertyChangeSubscriber                  <i class="conum" data-value="1"></i><b>(1)</b>
+PublisherService -&gt; ExecutionSubscriber &amp; EntityChangesSubscriber <i class="conum" data-value="2"></i><b>(2)</b>
+CommandServiceListener -&gt; CommandSubscriber
+
+PublishedObjects -&gt; ChangingEntities</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><code>EntityPropertyChangeSubscriber</code> receives pre-post property values for each changed entity</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><code>EntityChangesSubscriber</code> receives the entire set of changed entities, serializable as <code>ChangesDto</code></td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">Loggers - each to be activated by enabling debug logging for the corresponding Logger class</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">AuditerServiceLogging -&gt; EntityPropertyChangeLogger
+PublisherServiceLogging -&gt; ExecutionLogger &amp; EntityChangesLogger
+CommandLogger (NEW)</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Internal Services</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">AuditerDispatchService -&gt; EntityPropertyChangePublisher
+PublisherDispatchService -&gt; ExecutionPublisher &amp; EntityChangesPublisher
+PublisherDispatchServiceDefault -&gt; ExecutionPublisherDefault &amp; EntityChangesPublisherDefault
+CommandServiceInternal -&gt; CommandPublisher</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="changes-to-applib-and-services"><a class="anchor" href="#changes-to-applib-and-services"></a>Changes to Applib and Services</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Interaction related classes have been moved to module <code>core/interaction</code>.</p>
+</li>
+<li>
+<p>Transaction related classes have been moved to module <code>core/transaction</code>.</p>
+</li>
+<li>
+<p>JDO classes have been split up into several modules under <code>persistence/jdo/</code>.</p>
+</li>
+<li>
+<p>Multiple <code>Exception</code> classes have been relocated at <code>org.apache.isis.applib.exceptions</code></p>
+</li>
+</ul>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">was</th>
+<th class="tableblock halign-left valign-top">new</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ApplicationException (removed)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>removed, adds no new semantics compared to the already existing RecoverableException</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>AuthenticationSession</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Authentication (no longer holds MessageBroker or session attributes, is now immutable)</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>AuthenticationSessionStrategy</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>AuthenticationStrategy</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>AuthenticationSessionStrategyBasicAuth.<sup class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>AuthenticationStrategyBasicAuth</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>AuthenticationSessionStrategyDefault.<sup class="footnote">[<a id="_footnoteref_2" class="footnote" href="#_footnotedef_2" title="View footnote.">2</a>]</sup></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>AuthenticationStrategyDefault</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>AuthenticationSessionTracker#getInteraction : Interaction</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>AuthenticationContext#currentInteraction : <strong>Optional</strong>&lt;Interaction&gt;</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Clock (moved from applib module to fixture-applib module)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>VirtualClock (introduced)</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>FatalException (removed)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>removed, adds no new semantics compared to the already existing UnrecoverableException</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>HoldsUpdatedBy, HoldsUpdatedAt, Timestampable</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>moved to 'commons' and renamed:
+ HasUpdatedBy,
+ HasUpdatedAt,
+ HasUpdatedByAndAt</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>IsisInteractionFactory</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>InteractionService</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>IsisModuleJdoDataNucleus5</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>removed, use IsisModuleJdoDatanucleus instead (symmetry with JPA/IsisModuleJpaEclipselink)</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>IsisJdoSupport, IsisJdoSupport_v3_2</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>removed, use JdoSupportService instead (symmetry with JPA/JpaSupportService)</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>InteractionClosure</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>AuthenticationLayer</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>IsisApplicationException</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ApplicationException</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>IsisException (removed)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>use one of 2 hierarchies (in support of i18n translation)</code></p>
+<p class="tableblock"><code>- RecoverableException</code></p>
+<p class="tableblock"><code>- UnrecoverableException</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>IsisInteractionTracker</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>InteractionTracker</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>MessageBroker is held by Authentication(Session)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>MessageBroker is held by InteractionSession</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NonRecoverableException</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>renamed to UnrecoverableException</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ParentedOid, PojoRecreationException, PojoRefreshException</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>removed, as no longer used</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>QueryDefault (removed)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><span class="line-through">new QueryDefault&lt;&gt;(CommandJdo.class, "findByParent",
+                        "parent", parent));</span></code></p>
+<p class="tableblock"><code>Query.named(CommandJdo.class, "findByParent")<br>
+    .withParameter("parent", parent));</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SudoService</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>redefined, see java doc for details</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>TestClock (removed)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>use factories of VirtualClock.frozenTestClock() instead</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Transaction (removed)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>no replacement (use TransactionService to get current tx id)</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>TransactionScopeListener (removed)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>use Spring&#8217;s TransactionSynchronization instead</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>TransactionService</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>improved API provides more fine grained control</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>UserService#getUser() : UserMemento</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>UserService#currentUser() : <strong>Optional</strong>&lt;UserMemento&gt;</code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="deprecations"><a class="anchor" href="#deprecations"></a>Deprecations</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="title">RepositoryService</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">&lt;T&gt; T detachedEntity(Class&lt;T&gt; ofType);     <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>if applicable use <code>&lt;T&gt; T detachedEntity(T entity)</code> instead &#8230;&#8203; "new is the new new", passing
+in a new-ed up (entity) instance is more flexible and also more error prone, eg. it allows the compiler to check
+validity of the used constructor rather than doing construction reflective at runtime</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="wicket-viewer"><a class="anchor" href="#wicket-viewer"></a>Wicket Viewer</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>All descendants of <code>PanelAbstract</code> now need 2 generic type arguments instead of 1,
+where the newly added is first and specifies the <em>IModel&#8217;s</em> generic type parameter.</p>
+</div>
+<div class="listingblock">
+<div class="title">PanelAbstract</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">// PanelAbstract&lt;T extends IModel&lt;?&gt;&gt; extends PanelBase // &lt;-- previously
+PanelAbstract&lt;T, M extends IModel&lt;T&gt;&gt; extends PanelBase&lt;T&gt; <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>solves methods clashing 'having same erasure yet neither overrides the other'</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">Example Migration</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">// MyPanel extends PanelAbstract&lt;IModel&lt;String&gt;&gt; // &lt;-- previously
+MyPanel extends PanelAbstract&lt;String, IModel&lt;String&gt;&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="extensions"><a class="anchor" href="#extensions"></a>Extensions</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Object type namespaces have been renamed.</p>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+check menubars.layout.xml for any occurrences
+</td>
+</tr>
+</table>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Old</th>
+<th class="tableblock halign-left valign-top">New</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isisApplib</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.applib</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isisMetaModel</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.metamodel</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isisSecurityApi</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.security</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isissecurity</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.ext.secman</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isisExt*</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.ext.*</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isisSub*</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis.sub.*</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="sect2">
+<h3 id="secman-extension"><a class="anchor" href="#secman-extension"></a>SecMan (Extension)</h3>
+<div class="paragraph">
+<p>Permission are now matched against logical packages, logical object types or logical object member names and use the former fully qualified names only as fallback.</p>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>SecMan database schema changed, namely the <strong>ApplicationPermission</strong> table! See table below.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">SecMan database migration // adapt to your schema and db vendor!</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-sql hljs" data-lang="sql">UPDATE ApplicationPermission
+   SET featureType='NAMESPACE'
+ WHERE featureType like 'PACKAGE';
+
+UPDATE ApplicationPermission
+   SET featureType='TYPE'
+ WHERE featureType like 'CLASS';
+
+ALTER TABLE ApplicationPermission
+    RENAME COLUMN `featureType` TO `featureSort`;</code></pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">What</th>
+<th class="tableblock halign-left valign-top">Old</th>
+<th class="tableblock halign-left valign-top">New</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ApplicationPermission table column name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>featureType</code></p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>featureSort</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ApplicationPermission#featureType/Sort entries</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>PACKAGE</code></p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>NAMESPACE</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ApplicationPermission#featureType/Sort entries</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>CLASS</code></p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><code>TYPE</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Domain Object namespaces in SecMan scope like eg. objectType = "isissecurity.ApplicationUser"</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isissecurity</code></p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>isis.ext.secman</p>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+check menubars.layout.xml for any occurrences
+</td>
+</tr>
+</table>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Default Regular User Role Name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis-module-security-regular-user</code></p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>secman-regular-user</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Default Fixture Role Name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis-module-security-fixtures</code></p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>secman-fixtures</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Default Admin Role Name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis-module-security-admin</code></p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>secman-admin</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Default Admin User Name</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isis-module-security-admin</code></p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>secman-admin</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Class</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SecurityModuleConfig</code></p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>SecmanConfiguration</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Option</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SecurityModuleConfig#adminAdditionalPackagePermission</code></p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>SecmanConfiguration#adminAdditionalNamespacePermission</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="footnotes">
+<hr>
+<div class="footnote" id="_footnotedef_1">
+<a href="#_footnoteref_1">1</a>. These might be in use with configuration files, check yours!
+</div>
+<div class="footnote" id="_footnotedef_2">
+<a href="#_footnoteref_2">2</a>. These might be in use with configuration files, check yours!
+</div>
+</div>
+</article>
+<aside class="article-aside toc hide-for-print" role="navigation">
+    <p class="toc-title">On this page</p>
+    <div id="article-toc"></div>
+</aside>
+</main>
+</div>
+<footer class="footer">
+    <div class="content">
+        <div class="copyright">
+            <p>
+                Copyright © 2010~2024 The Apache Software Foundation, licensed under the Apache License, v2.0.
+                <br/>
+                Apache, the Apache feather logo, Apache Causeway, and the Apache Causeway project logo are all trademarks of The Apache Software Foundation.
+            </p>
+        </div>
+        <div class="revision">
+            <p>Revision: 4.0.0-SNAPSHOT.20251128-0303-3aa169fe</p>
+        </div>
+    </div>
+</footer>
+<script src="../../../../_/js/site.js"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+<script src="../../../../_/js/vendor/jquery-3.4.1.min.js"></script>
+<script src="../../../../_/js/vendor/jquery-ui-1.12.1.custom.widget-only.min.js"></script>
+<script src="../../../../_/js/vendor/jquery.tocify.min.js"></script>
+
+<script>
+    $(function() {
+        $("#article-toc").tocify( {
+            showEffect: "slideDown",
+            hashGenerator: "pretty",
+            hideEffect: "slideUp",
+            selectors: "h2, h3",
+            scrollTo: 120,
+            smoothScroll: true,
+            theme: "jqueryui",
+            highlightOnScroll: true
+        } );
+    });
+</script>
+
+<script src="../../../../_/js/vendor/docsearch.min.js"></script>
+<script>
+  function focusSearchInput () { document.querySelector('#algolia-search-input').focus() }
+  var search = docsearch({
+    appId: '5ISP5TFAEN',
+    apiKey: '0fc51c28b4ad46e7318e96d4e97fab7c',
+    indexName: 'causeway-apache-org',
+    inputSelector: '#algolia-search-input',
+    autocompleteOptions: { hint: false, keyboardShortcuts: ['s'] },
+    debug: false,
+  }).autocomplete
+  search.on('autocomplete:closed', function () { search.autocomplete.setVal() })
+  focusSearchInput()
+  window.addEventListener('load', focusSearchInput);
+</script>
+
+<!--
+  docsearch options:
+  https://docsearch.algolia.com/docs/behavior/
+-->
+<!--
+  https://www.algolia.com/doc/api-reference/api-parameters/
+  algoliaOptions: { hitsPerPage: 6 },
+-->
+  </body>
+</html>

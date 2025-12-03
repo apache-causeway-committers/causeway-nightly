@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>The visit module and Visit entity :: causeway</title>
+    <link rel="canonical" href="https://apache-causeway-committers.github.io/causeway-nightly/tutorials/latest/petclinic/050-visit-entity.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+    <link rel="stylesheet" href="../../../_/css/site-custom.css">
+<link rel="home" href="https://apache-causeway-committers.github.io/causeway-nightly" title="causeway">
+  <link rel="next" href="060-unit-testing.html" title="Unit Testing">
+  <link rel="prev" href="040-pet-entity.html" title="The &lt;code&gt;Pet&lt;/code&gt; entity">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://apache-causeway-committers.github.io/causeway-nightly">
+          <span class="icon">
+            <img src="../../../_/img/causeway-logo-no-words-65x48.png"></img>
+          </span>
+        <span class="navbar-title">causeway</span>
+      </a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <a class="navbar-end">
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Quick Start</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Starter Apps</span>
+            <a class="navbar-item" href="../../../docs/latest/starters/helloworld.html">Hello World</a>
+            <a class="navbar-item" href="../../../docs/latest/starters/simpleapp.html">Simple App</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Learning &amp; Tutorials</span>
+            <a class="navbar-item" href="../../../docs/latest/reference/about.html">Reference App</a>
+            <a class="navbar-item" href="https://danhaywood.gitlab.io/isis-petclinic-tutorial-docs/petclinic/1.16.2/intro.html">Petclinic</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Resources</span>
+            <a class="navbar-item" href="../../../docs/latest/resources/cheatsheet.html">Cheatsheet</a>
+            <a class="navbar-item" href="../../../docs/latest/resources/icons.html">Icons</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Guides</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Core</span>
+            <a class="navbar-item" href="../../../userguide/latest/about.html">User Guide</a>
+            <a class="navbar-item" href="../../../refguide/latest/about.html">Reference Guide</a>
+            <a class="navbar-item" href="../../../testing/latest/about.html">Testing Guide</a>
+            <a class="navbar-item" href="../../../security/latest/about.html">Security Guide</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">For use in apps</span>
+            <a class="navbar-item" href="../../../valuetypes/latest/about.html">Value Types</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Development</span>
+            <a class="navbar-item" href="../../../setupguide/latest/about.html">Setup Guide</a>
+            <a class="navbar-item" href="../../../conguide/latest/about.html">Contributors' Guide</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Components</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Security</span>
+            <a class="navbar-item" href="../../../security/latest/bypass/about.html">Bypass</a>
+            <a class="navbar-item" href="../../../security/latest/simple/about.html">Simple</a>
+            <a class="navbar-item" href="../../../security/latest/spring/about.html">Spring</a>
+            <a class="navbar-item" href="../../../security/latest/keycloak/about.html">Keycloak</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Viewers</span>
+            <a class="navbar-item" href="../../../vw/latest/about.html">Web UI (Wicket)</a>
+            <a class="navbar-item" href="../../../gqlv/latest/about.html">GraphQL API</a>
+            <a class="navbar-item" href="../../../vro/latest/about.html">REST API (Restful Objects)</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Persistence</span>
+            <a class="navbar-item" href="../../../pjpa/latest/about.html">JPA (EclipseLink)</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Extensions</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Core</span>
+            <a class="navbar-item" href="../../../userguide/latest/commandlog/about.html">Command Log</a>
+            <a class="navbar-item" href="../../../userguide/latest/docgen/about.html">Doc Gen</a>
+            <a class="navbar-item" href="../../../userguide/latest/executionlog/about.html">Execution Log</a>
+            <a class="navbar-item" href="../../../userguide/latest/executionoutbox/about.html">Execution Outbox</a>
+            <a class="navbar-item" href="../../../userguide/latest/executionrepublisher/about.html">Execution Republisher</a>
+            <a class="navbar-item" href="../../../userguide/latest/excel/about.html">Excel</a>
+            <a class="navbar-item" href="../../../userguide/latest/flyway/about.html">Flyway</a>
+            <a class="navbar-item" href="../../../userguide/latest/layoutloaders/about.html">Layout Loaders</a>
+            <a class="navbar-item" href="../../../userguide/latest/titlecache/about.html">Title Cache</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Security</span>
+            <a class="navbar-item" href="../../../security/latest/secman/about.html">Secman</a>
+            <a class="navbar-item" href="../../../security/latest/audittrail/about.html">Audit Trail</a>
+            <a class="navbar-item" href="../../../security/latest/spring-oauth2/about.html">Spring OAuth2 Integration</a>
+            <a class="navbar-item" href="../../../security/latest/sessionlog/about.html">Session Log</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Web UI (Wicket)</span>
+            <a class="navbar-item" href="../../../vw/latest/fullcalendar/about.html">Full Calendar</a>
+            <a class="navbar-item" href="../../../vw/latest/pdfjs/about.html">pdf.js</a>
+            <a class="navbar-item" href="../../../vw/latest/sse/about.html">Server Side Events</a>
+            <a class="navbar-item" href="../../../vw/latest/tabular/about.html">Tabular Download</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">REST API (Restful Objects)</span>
+            <a class="navbar-item" href="../../../vro/latest/cors/about.html">CORS</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Persistence</span>
+            <a class="navbar-item" href="../../../querydsl/latest/about.html">QueryDSL</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Support</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Contact</span>
+            <a class="navbar-item" href="../../../docs/latest/support/slack-channel.html">Slack</a>
+            <a class="navbar-item" href="../../../docs/latest/support/mailing-list.html">Mailing Lists</a>
+            <a class="navbar-item" href="https://issues.apache.org/jira/browse/CAUSEWAY">JIRA</a>
+            <a class="navbar-item" href="https://stackoverflow.com/questions/tagged/causeway">Stack Overflow</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Releases</span>
+            <a class="navbar-item" href="../../../docs/latest/downloads/how-to.html">Downloads</a>
+            <a class="navbar-item" href="../../../relnotes/latest/about.html">Release Notes</a>
+            <hr class="navbar-divider"/>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Framework</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Process</span>
+            <a class="navbar-item" href="../../../comguide/latest/about.html">Committers' Guide</a>
+            <a class="navbar-item" href="../../../tooling/latest/about.html">Tooling</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Automated Analysis</span>
+            <a class="navbar-item" href="https://sonarcloud.io/dashboard?id=apache_causeway">SonarCloud.io</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Interim Builds</span>
+            <a class="navbar-item" href="../../../comguide/latest/nightly-builds.html">Nightly builds</a>
+            <a class="navbar-item" href="../../../comguide/latest/weekly-builds.html">Weekly builds</a>
+            <a class="navbar-item" href="https://apache-causeway-committers.github.io/causeway-nightly">Website Preview (not ASF hosted)</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Development</span>
+            <a class="navbar-item" href="../../../core/latest/about.html">Internal Design Docs</a>
+            <a class="navbar-item" href="../../../regressiontests/latest/about.html">Regression Tests</a>
+            <a class="navbar-item" href="../../../incubator/latest/about.html">Incubator</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Thanks</span>
+            <a class="navbar-item" href="../../../more-thanks/latest/more-thanks.html">Acknowledgements</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">ASF</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://www.apache.org/">Apache Homepage</a>
+            <a class="navbar-item" href="https://www.apache.org/events/current-event">Events</a>
+            <a class="navbar-item" href="https://www.apache.org/licenses/">License</a>
+            <a class="navbar-item" href="https://www.apache.org/security/">Security</a>
+            <a class="navbar-item" href="https://privacy.apache.org/policies/privacy-policy-public.html">Privacy</a>
+            <a class="navbar-item" href="https://www.apache.org/foundation/sponsorship.html">Sponsorship</a>
+            <a class="navbar-item" href="https://www.apache.org/foundation/thanks.html">Thanks</a>
+            <hr class="navbar-divider"/>
+            <a class="navbar-item" href="https://whimsy.apache.org/board/minutes/Causeway.html">PMC board minutes</a>
+          </div>
+        </div>
+        <a class="navbar-item" href="../../../docs/latest/about.html">
+          <span class="icon">
+            <img src="../../../_/img/home.png"></img>
+          </span>
+        </a>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body ">
+<div class="nav-container" data-component="tutorials" data-version="latest">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-search hide-for-print">
+  <input id="algolia-search-input" placeholder="Search"></span>
+</div>
+<div class="nav-panel-pagination">
+  <a class="page-previous" rel="prev" href="040-pet-entity.html" title="The &lt;code&gt;Pet&lt;/code&gt; entity"><span></span></a>
+  <a class="page-next" rel="next"
+     href="060-unit-testing.html" title="Unit Testing"><span></span></a>
+<!--
+page.parent doesn't seem to be set...
+  <a class="page-parent disabled" rel="prev" href="" title="The &lt;code&gt;Pet&lt;/code&gt; entity"><span></span></a>
+-->
+</div>
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../about.html">Tutorials</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="010-getting-started.html">Getting Started</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="010-getting-started.html#prereqs">Prereqs</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="010-getting-started.html#exercise-1-1-starter-apps-clone-the-repo"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>1.1</strong>: Starter apps / clone the repo</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="010-getting-started.html#exercise-1-2-explore-the-simple-app">1.2: Explore the Simple App</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="010-getting-started.html#exercise-1-3-running-from-the-ide">1.3: Running from the IDE</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="010-getting-started.html#exercise-1-4-naked-objects-pattern">1.4: Naked Objects pattern</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="010-getting-started.html#exercise-1-5-ui-hints">1.5: UI Hints</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="020-the-petclinic-domain.html">The PetClinic Domain and <code>petowner</code> module</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="020-the-petclinic-domain.html#exercise-2-1-create-a-new-petowner-module"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>2.1</strong>: Create new <code>petowner</code> module</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="020-the-petclinic-domain.html#exercise-2-2-configure-the-app-to-include-the-petowner-module"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>2.2</strong>: Include the <code>petowner</code> module</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="020-the-petclinic-domain.html#exercise-2-3-add-security-role-for-petowner-module"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>2.3</strong>: Add security role for the <code>petowner</code> module</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="020-the-petclinic-domain.html#exercise-2-4-update-menubar-for-PetOwners"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>2.4</strong>: Update menubar for <code>PetOwners</code></a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="020-the-petclinic-domain.html#exercise-2-5-setup-demo-PetOwners"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>2.5</strong>: Setup demo <code>PetOwner</code>s</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="030-petowner-entity.html">The <code>PetOwner</code> entity</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="030-petowner-entity.html#exercise-3-1-add-petowners-knownAs-property"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>3.1</strong>: Add <code>PetOwner</code>'s <code>knownAs</code> property</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="030-petowner-entity.html#exercise-3-2-define-PetOwners-title-imperatively"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>3.2</strong>: Define <code>PetOwner</code>'s title imperatively</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="030-petowner-entity.html#exercise-3-3-remaining-PetOwner-properties"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>3.3</strong>: Add remaining <code>PetOwner</code> properties</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="030-petowner-entity.html#exercise-3-4-list-new-properties-of-PetOwner"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>3.4</strong>: List new properties of <code>PetOwner</code></a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="030-petowner-entity.html#exercise-3-5-initial-fixture-script"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>3.5</strong>: Initial Fixture Script</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="030-petowner-entity.html#exercise-3-6-update-home-page-to-show-PetOwners"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>3.6</strong>:  Update Home Page to show <code>PetOwner</code>s</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="030-petowner-entity.html#exercise-3-7-modify-the-menu-action-that-creates-petowners"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>3.7</strong>: Modify the menu action that creates <code>PetOwner</code>s</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="030-petowner-entity.html#exercise-3-8-prompt-styles"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>3.8</strong>: Prompt styles</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="030-petowner-entity.html#exercise-3-9-derived-days-since-last-visit-property"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>3.9</strong>: Derived 'days since last visit' property</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="030-petowner-entity.html#exercise-3-10-use-meta-annotations-to-reduce-duplication"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>3.10</strong>: Use meta-annotations to reduce duplication</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="030-petowner-entity.html#exercise-3-11-validation"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>3.11</strong>: Validation</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="030-petowner-entity.html#exercise-3-12-more-validation"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>3.12</strong>: More validation</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="030-petowner-entity.html#exercise-3-13-scalar-custom-value-types"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>3.13</strong>: Scalar custom value types</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="030-petowner-entity.html#exercise-3-14-use-layout-xml-file-for-ui-semantics"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>3.14</strong>: Use layout xml file for UI semantics</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="030-petowner-entity.html#exercise-3-15-update-icon-for-pet-owner"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>3.15</strong>: Update icon for <code>PetOwner</code></a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="040-pet-entity.html">The <code>Pet</code> entity</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="040-pet-entity.html#exercise-4-1-pet-entitys-key-properties"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>4.1</strong>: <code>Pet</code> entity&#8217;s key properties</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="040-pet-entity.html#exercise-4-2-add-pet-ui-and-layout-semantics"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>4.2</strong>: Add <code>Pet</code>'s UI and layout semantics</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="040-pet-entity.html#exercise-4-3-add-petowners-collection-of-pets"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>4.3</strong>: Add <code>PetOwner</code>'s collection of <code>Pet</code>s</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="040-pet-entity.html#exercise-4-4-add-actions-to-add-or-remove-pets"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>4.4</strong>: Add actions to add or remove <code>Pet</code>s</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="040-pet-entity.html#exercise-4-5-extend-the-fixture-data-to-add-in-Pets"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>4.5</strong>: Extend the fixture data to add in <code>Pet</code>s</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="040-pet-entity.html#exercise-4-6-add-action-validation"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>4.6</strong>: Unique <code>Pet</code> names (action validation)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="040-pet-entity.html#exercise-4-7-add-pets-remaining-properties"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>4.7</strong>: Add <code>Pet</code>'s remaining properties</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="040-pet-entity.html#exercise-4-8-dynamic-icons-for-pet"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>4.8</strong>: Add dynamic icons for <code>Pet</code></a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item is-current-page" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="050-visit-entity.html">The <code>visit</code> module and <code>Visit</code> entity</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#exercise-5-1-the-visits-module"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>5.1</strong>: The <code>visit</code> module</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#exercise-5-2-visit-module-dependencies"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>5.2</strong>: The <code>visit</code> module dependencies</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#exercise-5-3-visit-entitys-key-properties"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>5.3</strong>: <code>Visit</code> entity&#8217;s key properties</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#exercise-5-4-book-visit-action"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>5.4</strong>: The "Book Visit" action</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="060-unit-testing.html">Unit Testing</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="060-unit-testing.html#exercise-6-1-unit-test-the-default-time-when-booking-visits"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>6.1</strong>: Unit test the default time when booking visits</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="070-modularity.html">Modularity (domain events)</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="070-modularity.html#exercise-7-1-refactor-petowners-delete-action"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>7.1</strong>: refactor <code>PetOwner</code>'s delete action</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="080-view-models.html">View Models</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="080-view-models.html#exercise-8-1-extend-the-home-page"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>8.1</strong>: Extend the Home Page.</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="080-view-models.html#exercise-8-2-add-a-convenience-action"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>8.2</strong>: Add a convenience action</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="090-integration-testing.html">Integration Testing</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="090-integration-testing.html#exercise-9-1-testing-bookvisit-using-an-integtest"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>9.1</strong>: Testing <code>bookVisit()</code> using an integtest</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="090-integration-testing.html#exercise-9-2-adds-visit-fixture"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>9.2</strong>: Adds fixtures for the <code>visit</code> module</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Tutorials</span>
+    <span class="version">latest</span>
+  </div>
+  <ul class="components">
+    <li class="component">
+      <span class="title"> </span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../docs/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Committers' Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../comguide/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Contributors' Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../conguide/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Design Docs</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../core/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Extensions</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../extensions/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">GraphQL Viewer</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../gqlv/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Incubator Catalog</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../incubator/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">JPA</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../pjpa/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">QueryDSL</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../querydsl/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Reference Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../refguide/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">regressiontests</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../regressiontests/latest/index.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Release Notes</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../relnotes/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">REST API (Restful Objects Viewer)</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../vro/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Security Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../security/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Setup Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../setupguide/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Testing Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../testing/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component is-current">
+      <span class="title">Tutorials</span>
+      <ul class="versions">
+        <li class="version is-current">
+          <a href="../about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">User Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../userguide/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Value Types Catalog</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../valuetypes/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Web UI (Wicket Viewer)</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../vw/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main role="main">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../docs/latest/about.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../about.html">Tutorials</a></li>
+    <li><a href="050-visit-entity.html">The <code>visit</code> module and <code>Visit</code> entity</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="https://github.com/apache/causeway/edit/main/antora/components/tutorials/modules/petclinic/pages/050-visit-entity.adoc">Edit</a></div>
+</div>
+<article class="doc">
+    <a name="section-top"></a>
+<h1 class="page">The visit module and Visit entity</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Our domain model now consists of the <code>PetOwner</code> and <code>Pet</code> entities (along with the <code>PetSpecies</code>  enum).
+In this section we&#8217;ll add in the <code>Visit</code> entity:</p>
+</div>
+<div class="imageblock kroki">
+<div class="content">
+<object type="image/svg+xml" data="_images/diag-39fc1b7da8c879b2ea17cf3104c3513911d7f8c4.svg"><span class="alt">Diagram</span></object>
+</div>
+</div>
+<div class="paragraph">
+<p>Also, note that the <code>Visit</code> entity is in its own module, the <code>visit</code> module.
+So in this section of exercises we&#8217;ll start to learn how Apache Causeway helps you keep your applications modular.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="exercise-5-1-the-visits-module"><a class="anchor" href="#exercise-5-1-the-visits-module"></a>Ex 5.1: The visits module</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In this exercise we&#8217;ll just create an empty visits module.</p>
+</div>
+<div class="sect2">
+<h3 id="solution"><a class="anchor" href="#solution"></a>Solution</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git checkout tags/3.2.0/05-01-visit-module
+mvn clean install
+mvn -pl webapp spring-boot:run -Dspring-boot.run.jvmArguments="-Dspring.profiles.active=dev"</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="tasks"><a class="anchor" href="#tasks"></a>Tasks</h3>
+<div class="paragraph">
+<p>To save time, just checkout the solution tag above and review the git history to see the files and classes that were created:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>A new <code>simpleapp-jpa-module-visit</code> maven module was defined in the top-level <code>pom.xml</code></p>
+</li>
+<li>
+<p>the <code>pom.xml</code> for the new visit module itself was created, and referenced from the top-level <code>pom.xml</code> as a child <code>&lt;module&gt;</code></p>
+</li>
+<li>
+<p>a <code>VisitModule</code> class was created, defining the module to Causeway as a Spring <code>@Configuration</code>:</p>
+<div class="listingblock">
+<div class="title">VisitModule.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Configuration
+@Import({
+        CausewayModuleExtPdfjsApplib.class,
+        CausewayModuleExtFullCalendarApplib.class,
+        CausewayModuleTestingFakeDataApplib.class,
+        CausewayModulePersistenceJpaApplib.class,
+})
+@ComponentScan
+@EnableJpaRepositories
+@EntityScan(basePackageClasses = {VisitModule.class})
+public class VisitModule implements ModuleWithFixtures {
+
+    public static final String NAMESPACE = "visit";
+    public static final String SCHEMA = "visit";
+
+    @Override
+    public FixtureScript getTeardownFixture() {
+        return new TeardownFixtureJpaAbstract() {
+            @Override
+            protected void execute(ExecutionContext executionContext) {
+            }
+        };
+    }
+}</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>the top-level <code>application.properties</code> was updated to ensure that the new <code>visit</code> schema is created (when running with an in-memory database)</p>
+<div class="listingblock">
+<div class="title">application.properties</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-properties hljs" data-lang="properties">causeway.persistence.schema.auto-create-schemas=\
+    petowner,visit,simple,...</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>add permissions to the new "visit" namespace.
+We could do this by adding a new security role, but for simplicity we&#8217;ll just add to the existing role (<code>PetOwnerModuleSuperuserRole</code>), renaming it as we do:</p>
+<div class="listingblock">
+<div class="title">CustomRolesAndUsers.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">private static class PetClinicSuperuserRole                         <i class="conum" data-value="1"></i><b>(1)</b>
+    extends AbstractRoleAndPermissionsFixtureScript {
+
+    public static final String ROLE_NAME = "petclinic-superuser";   <i class="conum" data-value="2"></i><b>(2)</b>
+
+    public PetClinicSuperuserRole() {
+        super(ROLE_NAME, "Permission to use everything in the 'petowner' and 'visit' modules");
+    }
+
+    @Override
+    protected void execute(ExecutionContext executionContext) {
+        newPermissions(
+                ApplicationPermissionRule.ALLOW,
+                ApplicationPermissionMode.CHANGING,
+                Can.of(ApplicationFeatureId.newNamespace("petowner"),
+                       ApplicationFeatureId.newNamespace("visit")       <i class="conum" data-value="3"></i><b>(3)</b>
+                )
+        );
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>renamed</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>renamed</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>added</td>
+</tr>
+</table>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="exercise-5-2-visit-module-dependencies"><a class="anchor" href="#exercise-5-2-visit-module-dependencies"></a>Ex 5.2: Visit Module Dependencies</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Although we have a visit module, it currently is unaware of the pet owner module.
+And similarly, the top-level application doesn&#8217;t yet know about visit module.</p>
+</div>
+<div class="paragraph">
+<p>In this exercise we&#8217;ll fix this, so that:</p>
+</div>
+<div class="paragraph">
+<p><code>application</code> module &#8594; <code>visit</code> module &#8594; <code>petowner</code> module</p>
+</div>
+<div class="sect2">
+<h3 id="solution-2"><a class="anchor" href="#solution-2"></a>Solution</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git checkout tags/3.2.0/05-02-visit-module-dependencies
+mvn clean install
+mvn -pl webapp spring-boot:run -Dspring-boot.run.jvmArguments="-Dspring.profiles.active=dev"</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="tasks-2"><a class="anchor" href="#tasks-2"></a>Tasks</h3>
+<div class="paragraph">
+<p>First, let&#8217;s consider the <code>visit</code> &#8594; <code>petowner</code> dependency:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>in the new <code>visit</code> module&#8217;s <code>pom.xml</code>, add a Maven dependency on <code>petowner</code> module:</p>
+<div class="listingblock">
+<div class="title">visit/pom.xml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
+    &lt;groupId&gt;org.apache.causeway.starters&lt;/groupId&gt;
+    &lt;artifactId&gt;simpleapp-jpa-module-petowner&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+In your IDE you may need to reload/refresh dependencies to rebuild the classpath.
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>in the <code>VisitModule</code> Causeway module, add a corresponding import on <code>PetOwnerModule</code>:</p>
+<div class="listingblock">
+<div class="title">VisitModule.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Configuration
+@Import({
+        PetOwnerModule.class,
+        // ...
+})
+// ...
+public class VisitModule ... { ... }</code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>And next, let&#8217;s consider the <code>application</code> &#8594; <code>visit</code> dependency:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>in the webapp module, add a Maven dependency on the visit module:</p>
+<div class="listingblock">
+<div class="title">visit/pom.xml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
+    &lt;groupId&gt;org.apache.causeway.starters&lt;/groupId&gt;
+    &lt;artifactId&gt;simpleapp-jpa-module-visit&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The dependency on <code>&lt;artifactId&gt;simpleapp-jpa-module-petowner&lt;/artifactId&gt;</code> can also be removed, due to transitivity.</p>
+</div>
+</li>
+<li>
+<p>And, in the webapp&#8217;s <code>ApplicationModule</code> Causeway module, add a corresponding import on <code>VisitModule</code>.</p>
+<div class="listingblock">
+<div class="title">ApplicationModule.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Configuration
+@Import({
+        VisitModule.class,
+        SimpleModule.class,
+})
+@ComponentScan
+public class ApplicationModule {
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The import of <code>PetOwnerModule.class</code> can similarly be removed, due to transitivity.</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Run the application and check that it starts ok.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="exercise-5-3-visit-entitys-key-properties"><a class="anchor" href="#exercise-5-3-visit-entitys-key-properties"></a>Ex 5.3: Visit entity&#8217;s key properties</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Now we have a visits module, we can now add in the <code>Visit</code> entity.
+We&#8217;ll start just with the key properties.</p>
+</div>
+<div class="sect2">
+<h3 id="solution-3"><a class="anchor" href="#solution-3"></a>Solution</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git checkout tags/3.2.0/05-03-visit-entity-key-properties
+mvn clean install
+mvn -pl webapp spring-boot:run -Dspring-boot.run.jvmArguments="-Dspring.profiles.active=dev"</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="tasks-3"><a class="anchor" href="#tasks-3"></a>Tasks</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>add a <code>Visit</code> entity (in the <code>dom.visit</code> subpackage), declaring the <code>pet</code> and <code>visitAt</code> key properties:</p>
+<div class="listingblock">
+<div class="title">Visit.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Entity
+@Table(
+        schema=VisitModule.SCHEMA,
+        uniqueConstraints = {
+                @UniqueConstraint(name = "Visit__pet_visitAt__UNQ", columnNames = {"pet_id", "visitAt"})
+        }
+)
+@EntityListeners(CausewayEntityListener.class)
+@Named(VisitModule.NAMESPACE + ".Visit")
+@DomainObject(entityChangePublishing = Publishing.ENABLED)
+@DomainObjectLayout()
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@XmlJavaTypeAdapter(PersistentEntityAdapter.class)
+@ToString(onlyExplicitlyIncluded = true)
+public class Visit implements Comparable&lt;Visit&gt; {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id", nullable = false)
+    @Getter @Setter
+    private Long id;
+
+    @Version
+    @Column(name = "version", nullable = false)
+    @PropertyLayout(fieldSetId = "metadata", sequence = "999")
+    @Getter @Setter
+    private long version;
+
+    public Visit(Pet pet, LocalDateTime visitAt) {
+        this.pet = pet;
+        this.visitAt = visitAt;
+    }
+
+    @ObjectSupport
+    public String title() {
+        return titleService.titleOf(getPet())       <i class="conum" data-value="1"></i><b>(1)</b>
+                + " @ "
+                + getVisitAt().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"));
+    }
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "pet_id")
+    @PropertyLayout(fieldSetId = "identity", sequence = "1")
+    @Getter @Setter
+    private Pet pet;
+
+    @Column(name = "visitAt", nullable = false)
+    @Getter @Setter
+    @PropertyLayout(fieldSetId = "identity", sequence = "2")
+    private LocalDateTime visitAt;
+
+
+    private final static Comparator&lt;Visit&gt; comparator =
+            Comparator.comparing(Visit::getPet).thenComparing(Visit::getVisitAt);
+
+    @Override
+    public int compareTo(final Visit other) {
+        return comparator.compare(this, other);
+    }
+
+    @Inject @Transient TitleService titleService;   <i class="conum" data-value="1"></i><b>(1)</b>
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>uses the injected <a href="../../../refguide/latest/applib/index/services/title/TitleService.html" class="xref page">TitleService</a> to obtain the title of the object, as determined by the framework.</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>create a <code>Visit.layout.xml</code> layout file:</p>
+<div class="listingblock">
+<div class="title">Visit.layout.xml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;?xml version="1.0" encoding="UTF-8" standalone="yes"?&gt;
+&lt;bs3:grid
+        xsi:schemaLocation="https://causeway.apache.org/applib/layout/component https://causeway.apache.org/applib/layout/component/component.xsd https://causeway.apache.org/applib/layout/grid/bootstrap3 https://causeway.apache.org/applib/layout/grid/bootstrap3/bootstrap3.xsd"
+        xmlns:cpt="https://causeway.apache.org/applib/layout/component"
+        xmlns:bs3="https://causeway.apache.org/applib/layout/grid/bootstrap3"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"&gt;
+    &lt;bs3:row&gt;
+        &lt;bs3:col span="12" unreferencedActions="true"&gt;
+            &lt;cpt:domainObject bookmarking="AS_ROOT"/&gt;
+        &lt;/bs3:col&gt;
+    &lt;/bs3:row&gt;
+    &lt;bs3:row&gt;
+        &lt;bs3:col span="6"&gt;
+            &lt;bs3:row&gt;
+                &lt;bs3:col span="12"&gt;
+                    &lt;bs3:tabGroup&gt;
+                        &lt;bs3:tab name="Identity"&gt;
+                            &lt;bs3:row&gt;
+                                &lt;bs3:col span="12"&gt;
+                                    &lt;cpt:fieldSet name="Identity" id="identity"/&gt;
+                                &lt;/bs3:col&gt;
+                            &lt;/bs3:row&gt;
+                        &lt;/bs3:tab&gt;
+                        &lt;bs3:tab name="Other"&gt;
+                            &lt;bs3:row&gt;
+                                &lt;bs3:col span="12"&gt;
+                                    &lt;cpt:fieldSet name="Other" id="other" unreferencedProperties="true"/&gt;
+                                &lt;/bs3:col&gt;
+                            &lt;/bs3:row&gt;
+                        &lt;/bs3:tab&gt;
+                        &lt;bs3:tab name="Metadata"&gt;
+                            &lt;bs3:row&gt;
+                                &lt;bs3:col span="12"&gt;
+                                    &lt;cpt:fieldSet name="Metadata" id="metadata"/&gt;
+                                &lt;/bs3:col&gt;
+                            &lt;/bs3:row&gt;
+                        &lt;/bs3:tab&gt;
+                    &lt;/bs3:tabGroup&gt;
+                &lt;/bs3:col&gt;
+                &lt;bs3:col span="12"&gt;
+                    &lt;cpt:fieldSet name="Details" id="details"/&gt;
+                &lt;/bs3:col&gt;
+            &lt;/bs3:row&gt;
+        &lt;/bs3:col&gt;
+        &lt;bs3:col span="6"&gt;
+            &lt;bs3:row&gt;
+                &lt;bs3:col span="12"&gt;
+                &lt;/bs3:col&gt;
+            &lt;/bs3:row&gt;
+            &lt;bs3:tabGroup  unreferencedCollections="true"&gt;
+            &lt;/bs3:tabGroup&gt;
+        &lt;/bs3:col&gt;
+    &lt;/bs3:row&gt;
+&lt;/bs3:grid&gt;</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>create a <code>Visit.columnOrder.txt</code> file</p>
+<div class="listingblock">
+<div class="title">Visit.columnOrder.txt</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">pet
+visitAt
+#id
+#version</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>download a <code>Visit.png</code> file.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Run the application, and login as <code>secman-admin</code>/<code>pass</code> to confirm that the table is created correctly using <span class="menuseq"><b class="menu">Prototyping</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="menuitem">H2 Console</b></span>.
+Also check that the unique index has been created correctly.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/05-02/Visit-entity.png" alt="Visit entity">
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="exercise-5-4-book-visit-action"><a class="anchor" href="#exercise-5-4-book-visit-action"></a>Ex 5.4: "Book Visit" action</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>We now want to extend our domain model so that <code>Visit</code>s to be created.</p>
+</div>
+<div class="paragraph">
+<p>However, there&#8217;s a problem:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>we would like that behaviour to reside on <code>PetOwner</code> (say)</p>
+</li>
+<li>
+<p>however the pet owner module doesn&#8217;t know about visits.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>We can see this in the domain model:</p>
+</div>
+<div class="imageblock kroki">
+<div class="content">
+<object type="image/svg+xml" data="_images/diag-39fc1b7da8c879b2ea17cf3104c3513911d7f8c4.svg"><span class="alt">Diagram</span></object>
+</div>
+</div>
+<div class="paragraph">
+<p>Causeway&#8217;s solution to this is to allow the visit module to define behaviour, but have the behaviour seem to belong to the <code>Pet</code> entity, at least so far as the user interface is concerned.
+This is done using a <a href="../../../userguide/latest/mixins.html" class="xref page">mixin</a>.</p>
+</div>
+<div class="paragraph">
+<p>Because <code>Visit</code> is its own root entity, we&#8217;re also going to need a repository to be able to look them up for a given <code>Pet</code>.</p>
+</div>
+<div class="paragraph">
+<p>In this exercise we&#8217;ll define the repository, and create the "book visit" mixin action (also sometimes called a contributed action.
+We&#8217;ll also create a mixin <em>collection</em> to be able to view the visits from a <code>PetOwner</code>'s UI, too.</p>
+</div>
+<div class="sect2">
+<h3 id="solution-4"><a class="anchor" href="#solution-4"></a>Solution</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git checkout tags/3.2.0/05-04-book-visit-action
+mvn clean install
+mvn -pl webapp spring-boot:run -Dspring-boot.run.jvmArguments="-Dspring.profiles.active=dev"</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="tasks-4"><a class="anchor" href="#tasks-4"></a>Tasks</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>create the <code>VisitRepository</code>, using Spring Data:</p>
+<div class="listingblock">
+<div class="title">VisitRepository.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.springframework.data.repository.Repository;
+
+// ...
+
+public interface VisitRepository extends Repository&lt;Visit, Long&gt; {
+
+    @Query("select v from Visit v where v.pet.petOwner = :petOwner")
+    List&lt;Visit&gt; findByPetOwner(PetOwner petOwner);
+
+}</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>define the "book visit" mixin action on <code>PetOwner</code>, in the <em>visit</em> module.</p>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+we simply use a datetime to capture when the visit occurs.
+This isn&#8217;t particularly realistic, we know - there would probably be a domain concept such as <code>AppointmentSlot</code>.
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">PetOwner_bookVisit.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Action                                                     <i class="conum" data-value="1"></i><b>(1)</b>
+@ActionLayout(associateWith = "visits")                     <i class="conum" data-value="2"></i><b>(2)</b>
+@RequiredArgsConstructor
+public class PetOwner_bookVisit {                           <i class="conum" data-value="3"></i><b>(3)</b>
+
+    private final PetOwner petOwner;                        <i class="conum" data-value="4"></i><b>(4)</b>
+
+    @MemberSupport
+    public PetOwner act(Pet pet, LocalDateTime visitAt) {
+        Visit visit = new Visit(pet, visitAt);
+        repositoryService.persistAndFlush(visit);           <i class="conum" data-value="5"></i><b>(5)</b>
+        return petOwner;
+    }
+    @MemberSupport
+    public Set&lt;Pet&gt; choices0Act() {                         <i class="conum" data-value="6"></i><b>(6)</b>
+        return petOwner.getPets();
+    }
+    @MemberSupport
+    public Pet default0Act() {                              <i class="conum" data-value="7"></i><b>(7)</b>
+        Set&lt;Pet&gt; pets = petOwner.getPets();
+        return pets.size() == 1 ? pets.iterator().next() : null;
+    }
+    @MemberSupport
+    public LocalDateTime default1Act() {                    <i class="conum" data-value="7"></i><b>(7)</b>
+        return officeHoursTomorrow();
+    }
+    @MemberSupport
+    public String validate1Act(LocalDateTime visitAt) {
+        if (visitAt.isBefore(officeHoursTomorrow())) {
+            return "Must book in the future";
+        }
+        return null;
+    }
+
+    private LocalDateTime officeHoursTomorrow() {
+        return clockService.getClock().nowAsLocalDate().atStartOfDay().plusDays(1).plusHours(9);
+    }
+
+
+    @Inject ClockService clockService;
+    @Inject RepositoryService repositoryService;            <i class="conum" data-value="5"></i><b>(5)</b>
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>indicates that this class is a mixin action</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>anticipates there being a "visits" collection also</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>the name of the contributed action is inferred from the mixin&#8217;s class name</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>the type to which this mixin is being contributed, that is, <code>PetOwner</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>injected <a href="../../../refguide/latest/applib/index/services/repository/RepositoryService.html" class="xref page">RepositoryService</a> acts as a facade to the database for all entities.
+For querying it&#8217;s usually worth defining a custom repository.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>the <a href="../../../refguide/latest/applib-methods/prefixes.html#choices" class="xref page">choices&#8230;&#8203;()</a> supporting method provides programmatic set of choices for a parameter, in this case for the 0<sup>th</sup> parameter <code>Pet</code>, rendered as a drop-down list.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>the <a href="../../../refguide/latest/applib-methods/prefixes.html#default" class="xref page">default&#8230;&#8203;()</a> supporting method returns a default value for a parameter.</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>define the "visits" mixin collection on <code>PetOwner</code>, in the <em>visit</em> module.</p>
+<div class="listingblock">
+<div class="title">PetOwner_visits.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Collection                                     <i class="conum" data-value="1"></i><b>(1)</b>
+@RequiredArgsConstructor
+public class PetOwner_visits {
+
+    private final PetOwner petOwner;            <i class="conum" data-value="2"></i><b>(2)</b>
+
+    @MemberSupport
+    public List&lt;Visit&gt; coll() {
+        return visitRepository.findByPetOwner(petOwner);
+    }
+
+    @Inject VisitRepository visitRepository;
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>indicates that this class is a mixin collection</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>the type to which this mixin is being contributed, that is, <code>PetOwner</code></td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>update <code>PetOwner</code>'s <code>.layout.xml</code>, to indicate where the contributed <code>visits</code> collection should be placed:</p>
+<div class="listingblock">
+<div class="title">PetOwner.layout.xml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;bs3:col span="12"&gt;
+    &lt;bs3:row&gt;
+        &lt;bs3:col span="12"&gt;
+            &lt;cpt:collection id="pets"/&gt;
+        &lt;/bs3:col&gt;
+    &lt;/bs3:row&gt;
+    &lt;bs3:row&gt;
+        &lt;bs3:col span="12"&gt;
+            &lt;cpt:collection id="visits"/&gt;
+        &lt;/bs3:col&gt;
+    &lt;/bs3:row&gt;
+    &lt;cpt:fieldSet name="Content" id="content"&gt;
+        ...
+    &lt;/cpt:fieldSet&gt;
+&lt;/bs3:col&gt;</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Strictly speaking, updating the <code>.layout.xml</code> <em>does</em> make the <code>petowner</code> module aware of <code>visit</code> module, albeit it in a very soft way.</p>
+</div>
+<div class="paragraph">
+<p>Alternatively, the <code>.layout.xml</code> can be left untouched in which case the contributed <code>visits</code> collection will be rendered in the same place as any other "unreferencedCollections".</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</article>
+<aside class="article-aside toc hide-for-print" role="navigation">
+    <p class="toc-title">On this page</p>
+    <div id="article-toc"></div>
+</aside>
+</main>
+</div>
+<footer class="footer">
+    <div class="content">
+        <div class="copyright">
+            <p>
+                Copyright © 2010~2024 The Apache Software Foundation, licensed under the Apache License, v2.0.
+                <br/>
+                Apache, the Apache feather logo, Apache Causeway, and the Apache Causeway project logo are all trademarks of The Apache Software Foundation.
+            </p>
+        </div>
+        <div class="revision">
+            <p>Revision: 4.0.0-SNAPSHOT.20251128-0303-3aa169fe</p>
+        </div>
+    </div>
+</footer>
+<script src="../../../_/js/site.js"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/jquery-3.4.1.min.js"></script>
+<script src="../../../_/js/vendor/jquery-ui-1.12.1.custom.widget-only.min.js"></script>
+<script src="../../../_/js/vendor/jquery.tocify.min.js"></script>
+
+<script>
+    $(function() {
+        $("#article-toc").tocify( {
+            showEffect: "slideDown",
+            hashGenerator: "pretty",
+            hideEffect: "slideUp",
+            selectors: "h2, h3",
+            scrollTo: 120,
+            smoothScroll: true,
+            theme: "jqueryui",
+            highlightOnScroll: true
+        } );
+    });
+</script>
+
+<script src="../../../_/js/vendor/docsearch.min.js"></script>
+<script>
+  function focusSearchInput () { document.querySelector('#algolia-search-input').focus() }
+  var search = docsearch({
+    appId: '5ISP5TFAEN',
+    apiKey: '0fc51c28b4ad46e7318e96d4e97fab7c',
+    indexName: 'causeway-apache-org',
+    inputSelector: '#algolia-search-input',
+    autocompleteOptions: { hint: false, keyboardShortcuts: ['s'] },
+    debug: false,
+  }).autocomplete
+  search.on('autocomplete:closed', function () { search.autocomplete.setVal() })
+  focusSearchInput()
+  window.addEventListener('load', focusSearchInput);
+</script>
+
+<!--
+  docsearch options:
+  https://docsearch.algolia.com/docs/behavior/
+-->
+<!--
+  https://www.algolia.com/doc/api-reference/api-parameters/
+  algoliaOptions: { hitsPerPage: 6 },
+-->
+  </body>
+</html>
