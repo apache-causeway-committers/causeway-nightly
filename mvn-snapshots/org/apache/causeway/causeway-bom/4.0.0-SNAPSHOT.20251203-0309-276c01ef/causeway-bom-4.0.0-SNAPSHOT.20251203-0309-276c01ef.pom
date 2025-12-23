@@ -1,0 +1,2189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one
+  or more contributor license agreements.  See the NOTICE file
+  distributed with this work for additional information
+  regarding copyright ownership.  The ASF licenses this file
+  to you under the Apache License, Version 2.0 (the
+  "License"); you may not use this file except in compliance
+  with the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing,
+  software distributed under the License is distributed on an
+  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  KIND, either express or implied.  See the License for the
+  specific language governing permissions and limitations
+  under the License.
+-->
+<!--
+This pom is the top-level parent, responsible for deploying to
+ASF using the apache-release, and as defined in org.apache:apache
+global parent.
+At the same time, we want it to inherit from
+org.springframework.boot:spring-boot-starter-parent.
+It is therefore a copy of org.apache:apache, with customisations clearly
+identified
+(though some plugins versions have been bumped to more recent versions).
+-->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <!-- based on org.apache:apache:27
+    	for more information, see the documentation of this POM:
+    http://maven.apache.org/pom/asf/ -->
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>4.0.0</version>
+        <relativePath />
+    </parent>
+    <groupId>org.apache.causeway</groupId>
+    <artifactId>causeway-bom</artifactId>
+    <version>4.0.0-SNAPSHOT.20251203-0309-276c01ef</version>
+
+    <packaging>pom</packaging>
+
+    <name>Apache Causeway</name>
+    <description>
+        Apache Causeway Bill of Material (BOM).
+        All the build configuration goes into the parent POM,
+        which inherits from this BOM and is the parent for the core framework
+        and extensions.
+    </description>
+
+    <properties>
+        <revision>4.0.0-SNAPSHOT</revision> <!-- can be overidden like mvn
+        -Drevision=2.7.8 -->
+
+        <!-- LIBRARY DEPENDENCIES -->
+
+        <archunit.version>1.4.1</archunit.version>
+        <asciidoctorj.version>3.0.1</asciidoctorj.version>
+        <asm.version>9.9</asm.version> <!-- keep in sync with
+        org.eclipse.persistence:org.eclipse.persistence.asm -->
+        <approvaltests.version>25.8.0</approvaltests.version>
+
+        <assertj-guava.version>3.27.6</assertj-guava.version>
+
+        <commons-email.version>1.6.0</commons-email.version>
+        <commons-httpclient.version>4.5.12</commons-httpclient.version>
+        <commons-io.version>2.21.0</commons-io.version>
+
+        <cucumber.version>7.32.0</cucumber.version>
+
+        <datasource-proxy-spring-boot-starter.version>2.0.0</datasource-proxy-spring-boot-starter.version>
+
+        <datatables.version>2.3.2</datatables.version> <!-- keep in sync with
+        DatatablesDotNet -->
+
+        <docx4j.version>11.3.2</docx4j.version>
+
+        <easymock.version>5.6.0</easymock.version>
+        <eclipselink.version>4.0.8</eclipselink.version>
+        <error_prone_annotations.version>2.45.0</error_prone_annotations.version>
+
+        <git-commit-id-plugin.version>4.9.10</git-commit-id-plugin.version>
+        <graaljs.version>25.0.1</graaljs.version>
+        <graphql-java-extended-scalars.version>24.0</graphql-java-extended-scalars.version>
+        <guava.version>33.5.0-jre</guava.version>
+
+        <hibernate-validator.version>9.1.0.Final</hibernate-validator.version> <!--
+        Spring Boot 4 preview, remove later -->
+        <htmlparser.version>2.1</htmlparser.version>
+
+        <javafaker.version>1.0.2</javafaker.version>
+        <javassist.version>3.30.2-GA</javassist.version>
+
+        <jakartaee.version>11.0.0</jakartaee.version>
+        <jakarta.servlet-api.version>6.1.0</jakarta.servlet-api.version>
+        <jakarta.inject-api.version>2.0.1.MR</jakarta.inject-api.version>
+        <jakarta.xml.bind-api.version>4.0.2</jakarta.xml.bind-api.version>
+
+        <jbcrypt.version>0.4</jbcrypt.version>
+        <jboss-jaxrs-api_2.1_spec.version>2.0.2.Final</jboss-jaxrs-api_2.1_spec.version>
+
+        <jdom.version>2.0.6.1</jdom.version>
+        <jmock.version>2.13.1</jmock.version>
+
+        <jquery-ui.version>1.14.1</jquery-ui.version> <!-- org.webjars:jquery-ui -->
+
+        <jspecify.version>1.0.0</jspecify.version>
+        <jsr305.version>3.0.2</jsr305.version>
+        <jsoup.version>1.21.2</jsoup.version>
+        <junit-jupiter.version>6.0.1</junit-jupiter.version> <!-- overrides
+        spring -->
+        <junit-platform.version>6.0.1</junit-platform.version>
+
+        <log4jdbc-remix.version>0.2.7</log4jdbc-remix.version>
+        <lombok.version>1.18.42</lombok.version> <!-- overriding Spring -->
+
+        <momentjs.version>2.30.1-1</momentjs.version> <!-- keep in sync:
+        org.apache.causeway.viewer.wicket.ui.components.scalars.datepicker.MomentJsReference -->
+
+        <ognl.version>3.4.9</ognl.version>
+        <osgi.version>8.0.0</osgi.version>
+
+        <pdfbox.version>3.0.6</pdfbox.version>
+        <picocontainer.version>2.15.2</picocontainer.version>
+        <poi.version>5.5.1</poi.version>
+
+        <prismjs.version>1.29.0</prismjs.version>
+
+        <quartz-scheduler.version>2.5.1</quartz-scheduler.version>
+        <querydsl.version>5.1.0</querydsl.version>
+
+        <select2.version>4.0.13</select2.version>
+        <simpleslackapi.version>1.4.0</simpleslackapi.version>
+        <slf4j-api.version>2.0.17</slf4j-api.version> <!-- also provided by
+        spring-boot-starter-logging, needed to solve convergence issues -->
+
+        <sql-formatter.version>2.0.5</sql-formatter.version>
+        <snakeyaml.version>2.0</snakeyaml.version>
+        <spring-boot.version>4.0.0</spring-boot.version>
+
+        <surefire-plugin.argLine>
+            -Xmx384m
+            -XX:+EnableDynamicAgentLoading
+        </surefire-plugin.argLine>
+        <surefire.useModulePath>false</surefire.useModulePath> <!-- disable
+        module-path for testing, that is, put everything on the class-path -->
+        <swagger-core.version>2.2.41</swagger-core.version>
+
+        <wicket.version>10.7.0</wicket.version>
+        <wicket-bootstrap.version>7.0.13</wicket-bootstrap.version> <!--
+        de.agilecoders.wicket:wicket-bootstrap... -->
+        <wicket-webjars.version>4.0.13</wicket-webjars.version> <!--
+        de.agilecoders.wicket.webjars:wicket-webjars -->
+        <wicket-viewer-jquery.version>3.7.1</wicket-viewer-jquery.version> <!--
+        as served by wicket via webjars -->
+        <wicketstuff.version>10.7.0</wicketstuff.version> <!--
+        org.wicketstuff:wicketstuff-select2 -->
+
+        <!-- OTHER -->
+
+        <distMgmtSnapshotsName>Apache Development Snapshot Repository</distMgmtSnapshotsName>
+        <distMgmtSnapshotsUrl>
+            https://repository.apache.org/content/repositories/snapshots</distMgmtSnapshotsUrl>
+        <organization.logo>https://www.apache.org/images/asf_logo_wide_2016.png</organization.logo>
+        <license.additional-notes>In addition, Apache Causeway uses some
+            JavaScript libraries:
+
+            * Twitter Bootstrap, licensed under MIT [1]
+            * Bootstrap-Growl (JQuery plugin), licensed under MIT license [2]
+            * Wicket Bootstrap, licenced under ASL 2 [3]
+            * Bootstrap Datetimepicker, licensed under MIT licence [4]
+            * Moment.js, licenced under MIT licence [5]
+
+            [1] https://github.com/twbs/bootstrap/blob/master/LICENSE
+            [2] https://github.com/mouse0270/bootstrap-growl/blob/master/LICENSE
+            [3] https://github.com/l0rdn1kk0n/wicket-bootstrap
+            [4] https://github.com/Eonasdan/bootstrap-datetimepicker/blob/master/LICENSE
+            [5] https://github.com/moment/moment/blob/develop/LICENSE</license.additional-notes>
+    </properties>
+    <dependencyManagement>
+
+        <dependencies>
+
+            <!--
+			bill of materials of ALL of the modules making up the framework
+			-->
+
+            <!-- org.apache.causeway.commons -->
+
+            <dependency>
+                <groupId>org.apache.causeway.commons</groupId>
+                <artifactId>causeway-commons</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+
+
+            <!-- org.apache.causeway.core -->
+
+            <dependency>
+                <groupId>org.apache.causeway.core</groupId>
+                <artifactId>causeway-core</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>compile</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.causeway.core</groupId>
+                <artifactId>causeway-applib</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.core</groupId>
+                <artifactId>causeway-schema</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.causeway.core</groupId>
+                <artifactId>causeway-core-codegen-bytebuddy</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.core</groupId>
+                <artifactId>causeway-core-config</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.core</groupId>
+                <artifactId>causeway-core-interaction</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.core</groupId>
+                <artifactId>causeway-core-internaltestsupport</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.core</groupId>
+                <artifactId>causeway-core-metamodel</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.core</groupId>
+                <artifactId>causeway-core-mmtestsupport</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.core</groupId>
+                <artifactId>causeway-core-mmtest</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.core</groupId>
+                <artifactId>causeway-core-runtime</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.core</groupId>
+                <artifactId>causeway-core-runtimeservices</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.core</groupId>
+                <artifactId>causeway-core-security</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.core</groupId>
+                <artifactId>causeway-core-transaction</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.core</groupId>
+                <artifactId>causeway-core-webapp</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+
+
+            <!-- org.apache.causeway.persistence -->
+
+            <dependency>
+                <groupId>org.apache.causeway.persistence</groupId>
+                <artifactId>causeway-persistence-commons</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.causeway.persistence</groupId>
+                <artifactId>causeway-persistence-jdbc</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.causeway.persistence</groupId>
+                <artifactId>causeway-persistence-jpa</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.persistence</groupId>
+                <artifactId>causeway-persistence-jpa-applib</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.persistence</groupId>
+                <artifactId>causeway-persistence-jpa-metamodel</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.persistence</groupId>
+                <artifactId>causeway-persistence-jpa-integration</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.persistence</groupId>
+                <artifactId>causeway-persistence-jpa-eclipselink</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.persistence</groupId>
+                <artifactId>causeway-persistence-querydsl</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.persistence</groupId>
+                <artifactId>causeway-persistence-querydsl-applib</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.persistence</groupId>
+                <artifactId>causeway-persistence-querydsl-integration</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.persistence</groupId>
+                <artifactId>causeway-persistence-querydsl-metamodel</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.persistence</groupId>
+                <artifactId>causeway-persistence-querydsl-jpa</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.persistence</groupId>
+                <artifactId>causeway-persistence-querydsl-testsupport</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+
+            <!-- org.apache.causeway.security -->
+
+            <dependency>
+                <groupId>org.apache.causeway.security</groupId>
+                <artifactId>causeway-security-bypass</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.security</groupId>
+                <artifactId>causeway-security-keycloak</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.security</groupId>
+                <artifactId>causeway-security-simple</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.security</groupId>
+                <artifactId>causeway-security-spring</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+
+
+            <!-- org.apache.causeway.viewer -->
+
+            <dependency>
+                <groupId>org.apache.causeway.viewer</groupId>
+                <artifactId>causeway-viewer-commons</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.viewer</groupId>
+                <artifactId>causeway-viewer-commons-applib</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.viewer</groupId>
+                <artifactId>causeway-viewer-commons-model</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.viewer</groupId>
+                <artifactId>causeway-viewer-commons-prism</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.viewer</groupId>
+                <artifactId>causeway-viewer-commons-services</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.causeway.viewer</groupId>
+                <artifactId>causeway-viewer-graphql-applib</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.viewer</groupId>
+                <artifactId>causeway-viewer-graphql-model</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.viewer</groupId>
+                <artifactId>causeway-viewer-graphql-testsupport</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.viewer</groupId>
+                <artifactId>causeway-viewer-graphql-test</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.viewer</groupId>
+                <artifactId>causeway-viewer-graphql-test2</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.viewer</groupId>
+                <artifactId>causeway-viewer-graphql-viewer</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.causeway.viewer</groupId>
+                <artifactId>causeway-viewer-restfulobjects</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.viewer</groupId>
+                <artifactId>causeway-viewer-restfulobjects-applib</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.viewer</groupId>
+                <artifactId>causeway-viewer-restfulobjects-client</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.viewer</groupId>
+                <artifactId>causeway-viewer-restfulobjects-rendering</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.viewer</groupId>
+                <artifactId>causeway-viewer-restfulobjects-test</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.viewer</groupId>
+                <artifactId>causeway-viewer-restfulobjects-viewer</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.causeway.viewer</groupId>
+                <artifactId>causeway-viewer-wicket</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.viewer</groupId>
+                <artifactId>causeway-viewer-wicket-applib</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.viewer</groupId>
+                <artifactId>causeway-viewer-wicket-model</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.viewer</groupId>
+                <artifactId>causeway-viewer-wicket-ui</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.viewer</groupId>
+                <artifactId>causeway-viewer-wicket-viewer</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+
+
+            <!-- org.apache.causeway.testing -->
+
+            <dependency>
+                <groupId>org.apache.causeway.testing</groupId>
+                <artifactId>causeway-testing</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.testing</groupId>
+                <artifactId>causeway-testing-fixtures</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.testing</groupId>
+                <artifactId>causeway-testing-fixtures-applib</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.causeway.testing</groupId>
+                <artifactId>causeway-testing-unittestsupport</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.testing</groupId>
+                <artifactId>causeway-testing-unittestsupport-applib</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.causeway.testing</groupId>
+                <artifactId>causeway-testing-integtestsupport</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.testing</groupId>
+                <artifactId>causeway-testing-integtestsupport-applib</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.causeway.testing</groupId>
+                <artifactId>causeway-testing-specsupport</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.testing</groupId>
+                <artifactId>causeway-testing-specsupport-applib</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.causeway.testing</groupId>
+                <artifactId>causeway-testing-archtestsupport</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.testing</groupId>
+                <artifactId>causeway-testing-archtestsupport-applib</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.causeway.testing</groupId>
+                <artifactId>causeway-testing-fakedata</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.testing</groupId>
+                <artifactId>causeway-testing-fakedata-applib</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.testing</groupId>
+                <artifactId>causeway-testing-fakedata-fixtures</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.testing</groupId>
+                <artifactId>causeway-testing-fakedata-integtests</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.causeway.testing</groupId>
+                <artifactId>causeway-testing-h2console</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.testing</groupId>
+                <artifactId>causeway-testing-h2console-ui</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.causeway.testing</groupId>
+                <artifactId>causeway-testing-hsqldbmgr</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.testing</groupId>
+                <artifactId>causeway-testing-hsqldbmgr-ui</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+            </dependency>
+
+            <!-- org.apache.causeway.mavendeps -->
+            <dependency>
+                <groupId>org.apache.causeway.mavendeps</groupId>
+                <artifactId>causeway-mavendeps-webapp</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+            </dependency>
+
+            <!-- org.apache.causeway.extensions (commandlog) -->
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-commandlog</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-commandlog-applib</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-commandlog-applib</artifactId>
+                <version>${project.version}</version>
+                <type>test-jar</type>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-commandlog-persistence-jpa</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+
+            <!-- org.apache.causeway.extensions (docgen) -->
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-docgen</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-docgen-help</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+
+            <!-- org.apache.causeway.extensions (excel) -->
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-excel</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-excel-applib</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-excel-fixtures</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-excel-integtests</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-excel-testing</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+
+            <!-- org.apache.causeway.extensions (executionlog) -->
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-executionlog</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-executionlog-applib</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-executionlog-applib</artifactId>
+                <version>${project.version}</version>
+                <type>test-jar</type>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-executionlog-persistence-jpa</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+
+            <!-- org.apache.causeway.extensions (executionoutbox) -->
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-executionoutbox</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-executionoutbox-applib</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-executionoutbox-persistence-jpa</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-executionoutbox-restclient</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+
+            <!-- org.apache.causeway.extensions (executionrepublisher) -->
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-executionrepublisher</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-executionoutrepublisher-applib</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+
+            <!-- org.apache.causeway.extensions (flyway) -->
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-flyway</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-flyway-impl</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+
+            <!-- org.apache.causeway.extensions (layoutloaders) -->
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-layoutloaders</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-layoutloaders-github</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+
+            <!-- org.apache.causeway.extensions (titlecache) -->
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-titlecache</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-titlecache-applib</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-titlecache-caffeine</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+
+            <!-- org.apache.causeway.extensions (audittrail) -->
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-audittrail</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-audittrail-applib</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-audittrail-applib</artifactId>
+                <version>${project.version}</version>
+                <scope>test</scope>
+                <type>test-jar</type>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-audittrail-persistence-jpa</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+
+            <!-- org.apache.causeway.extensions (secman) -->
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-secman</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-secman-applib</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-secman-applib</artifactId>
+                <version>${project.version}</version>
+                <type>test-jar</type>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-secman-delegated-springoauth2</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-secman-encryption-jbcrypt</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-secman-encryption-spring</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-secman-integration</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-secman-persistence-jpa</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+
+            <!-- org.apache.causeway.extensions (sessionlog) -->
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-sessionlog</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-sessionlog-applib</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-sessionlog-applib</artifactId>
+                <version>${project.version}</version>
+                <type>test-jar</type>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-sessionlog-persistence-jpa</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+
+            <!-- org.apache.causeway.extensions (spring security) -->
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-spring-security-oauth2</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+
+            <!-- org.apache.causeway.extensions (restful objects viewer) -->
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-cors</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-cors-impl</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+
+            <!-- org.apache.causeway.extensions (wicket viewer) -->
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-tabular</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-tabular-applib</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-tabular-excel</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-tabular-pdf</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-fullcalendar</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-fullcalendar-applib</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-fullcalendar-wicket</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-fullcalendar-wicket-integration</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-fullcalendar-wicket-ui</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-pdfjs</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-pdfjs-applib</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-pdfjs-fixtures</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-pdfjs-metamodel</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-pdfjs-wicket</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-pdfjs-wicket-integration</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-pdfjs-wicket-ui</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-sse</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-sse-applib</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-sse-metamodel</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.extensions</groupId>
+                <artifactId>causeway-extensions-sse-wicket</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+
+
+            <!-- org.apache.causeway.valuetypes -->
+
+            <dependency>
+                <groupId>org.apache.causeway.valuetypes</groupId>
+                <artifactId>causeway-valuetypes-asciidoc</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.valuetypes</groupId>
+                <artifactId>causeway-valuetypes-asciidoc-applib</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.valuetypes</groupId>
+                <artifactId>causeway-valuetypes-asciidoc-builder</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.valuetypes</groupId>
+                <artifactId>causeway-valuetypes-asciidoc-metamodel</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.valuetypes</groupId>
+                <artifactId>causeway-valuetypes-asciidoc-ui-vaa</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.valuetypes</groupId>
+                <artifactId>causeway-valuetypes-asciidoc-ui-wkt</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.valuetypes</groupId>
+                <artifactId>causeway-valuetypes-asciidoc-persistence-jpa</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.causeway.valuetypes</groupId>
+                <artifactId>causeway-valuetypes-markdown</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.valuetypes</groupId>
+                <artifactId>causeway-valuetypes-markdown-applib</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.valuetypes</groupId>
+                <artifactId>causeway-valuetypes-markdown-metamodel</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.valuetypes</groupId>
+                <artifactId>causeway-valuetypes-markdown-ui-wkt</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.valuetypes</groupId>
+                <artifactId>causeway-valuetypes-markdown-persistence-jpa</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.causeway.valuetypes</groupId>
+                <artifactId>causeway-valuetypes-vega</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.valuetypes</groupId>
+                <artifactId>causeway-valuetypes-vega-applib</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.valuetypes</groupId>
+                <artifactId>causeway-valuetypes-vega-metamodel</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.valuetypes</groupId>
+                <artifactId>causeway-valuetypes-vega-ui-vaa</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.valuetypes</groupId>
+                <artifactId>causeway-valuetypes-vega-ui-wkt</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.causeway.valuetypes</groupId>
+                <artifactId>causeway-valuetypes-vega-persistence-jpa</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+
+
+            <!-- other dependencies -->
+
+            <dependency>
+                <groupId>com.fasterxml.woodstox</groupId>
+                <artifactId>woodstox-core</artifactId>
+                <version>7.1.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.woodstox</groupId>
+                <artifactId>stax2-api</artifactId>
+                <version>4.2.2</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.persistence</groupId>
+                <artifactId>org.eclipse.persistence.jpa</artifactId>
+                <version>${eclipselink.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.persistence</groupId>
+                <artifactId>org.eclipse.persistence.moxy</artifactId>
+                <version>${eclipselink.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.eclipse.angus</groupId>
+                        <artifactId>angus-activation</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.ow2.asm</groupId>
+                        <artifactId>asm</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.ow2.asm</groupId>
+                        <artifactId>asm-tree</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.ow2.asm</groupId>
+                        <artifactId>asm-analysis</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.persistence</groupId>
+                <artifactId>org.eclipse.persistence.sdo</artifactId>
+                <version>${eclipselink.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.persistence</groupId>
+                <artifactId>org.eclipse.persistence.asm</artifactId>
+                <version>9.9.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sun.xml.bind</groupId>
+                <artifactId>jaxb-impl</artifactId>
+                <version>4.0.6</version>
+            </dependency>
+            <dependency>
+                <groupId>com.graphql-java</groupId>
+                <artifactId>graphql-java-extended-scalars</artifactId>
+                <version>${graphql-java-extended-scalars.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.ow2.asm</groupId>
+                <artifactId>asm</artifactId>
+                <version>${asm.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.ow2.asm</groupId>
+                <artifactId>asm-tree</artifactId>
+                <version>${asm.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.ow2.asm</groupId>
+                <artifactId>asm-analysis</artifactId>
+                <version>${asm.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.ow2.asm</groupId>
+                <artifactId>asm-util</artifactId>
+                <version>${asm.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.hibernate.validator</groupId>
+                <artifactId>hibernate-validator</artifactId>
+                <version>${hibernate-validator.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.jboss.logging</groupId>
+                        <artifactId>jboss-logging-processor</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.jboss.logging</groupId>
+                        <artifactId>jboss-logging-annotations</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.osgi</groupId>
+                        <artifactId>org.osgi.core</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>com.approvaltests</groupId>
+                <artifactId>approvaltests</artifactId>
+                <version>${approvaltests.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.codehaus.woodstox</groupId>
+                        <artifactId>stax2-api</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.errorprone</groupId>
+                <artifactId>error_prone_annotations</artifactId>
+                <version>${error_prone_annotations.version}</version>
+            </dependency>
+
+            <!-- provides @Nullable that's required by Spring 5.x -->
+            <dependency>
+                <groupId>com.google.code.findbugs</groupId>
+                <artifactId>jsr305</artifactId>
+                <version>${jsr305.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>commons-httpclient</groupId>
+                <artifactId>commons-httpclient</artifactId>
+                <version>${commons-httpclient.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${commons-io.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.gavlyukovskiy</groupId>
+                <artifactId>datasource-proxy-spring-boot-starter</artifactId>
+                <version>${datasource-proxy-spring-boot-starter.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.javafaker</groupId>
+                <artifactId>javafaker</artifactId>
+                <version>${javafaker.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.vertical-blank</groupId>
+                <artifactId>sql-formatter</artifactId>
+                <version>${sql-formatter.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.querydsl</groupId>
+                <artifactId>querydsl-core</artifactId>
+                <version>${querydsl.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.querydsl</groupId>
+                <artifactId>querydsl-apt</artifactId>
+                <classifier>jakarta</classifier>
+                <version>${querydsl.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.querydsl</groupId>
+                <artifactId>querydsl-jpa</artifactId>
+                <classifier>jakarta</classifier>
+                <version>${querydsl.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.tngtech.archunit</groupId>
+                <artifactId>archunit-junit5-api</artifactId>
+                <version>${archunit.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.tngtech.archunit</groupId>
+                <artifactId>archunit-junit5-engine</artifactId>
+                <version>${archunit.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.ullink.slack</groupId>
+                <artifactId>simpleslackapi</artifactId>
+                <version>${simpleslackapi.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>de.agilecoders.wicket</groupId>
+                <artifactId>wicket-bootstrap-core</artifactId>
+                <version>${wicket-bootstrap.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.agilecoders.wicket</groupId>
+                <artifactId>wicket-bootstrap-extensions</artifactId>
+                <version>${wicket-bootstrap.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.webjars</groupId>
+                        <artifactId>momentjs</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>de.agilecoders.wicket</groupId>
+                <artifactId>wicket-bootstrap-themes</artifactId>
+                <version>${wicket-bootstrap.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.agilecoders.wicket.webjars</groupId>
+                <artifactId>wicket-webjars</artifactId>
+                <version>${wicket-webjars.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.webjars</groupId>
+                <artifactId>momentjs</artifactId>
+                <version>${momentjs.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.swagger.core.v3</groupId>
+                <artifactId>swagger-core</artifactId>
+                <version>${swagger-core.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>jakarta.platform</groupId>
+                <artifactId>jakarta.jakartaee-api</artifactId>
+                <version>${jakartaee.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.inject</groupId>
+                <artifactId>jakarta.inject-api</artifactId>
+                <version>${jakarta.inject-api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.servlet</groupId>
+                <artifactId>jakarta.servlet-api</artifactId>
+                <version>${jakarta.servlet-api.version}</version>
+            </dependency>
+
+            <!-- TODO: when used, move exclusions down -->
+            <dependency>
+                <groupId>ognl</groupId>
+                <artifactId>ognl</artifactId>
+                <version>${ognl.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>javassist</groupId>
+                        <artifactId>javassist</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.pdfbox</groupId>
+                <artifactId>pdfbox</artifactId>
+                <version>${pdfbox.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi-ooxml</artifactId>
+                <version>${poi.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi-ooxml-lite</artifactId>
+                <version>${poi.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.webjars.bowergithub.prismjs</groupId>
+                <artifactId>prism</artifactId>
+                <version>${prismjs.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.graalvm.polyglot</groupId>
+                <artifactId>polyglot</artifactId>
+                <version>${graaljs.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.graalvm.polyglot</groupId>
+                <artifactId>js</artifactId>
+                <version>${graaljs.version}</version>
+                <type>pom</type>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jspecify</groupId>
+                <artifactId>jspecify</artifactId>
+                <version>${jspecify.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jsoup</groupId>
+                <artifactId>jsoup</artifactId>
+                <version>${jsoup.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.wicket</groupId>
+                <artifactId>wicket</artifactId>
+                <version>${wicket.version}</version>
+                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.wicket</groupId>
+                <artifactId>wicket-core</artifactId>
+                <version>${wicket.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.wicket</groupId>
+                <artifactId>wicket-devutils</artifactId>
+                <version>${wicket.version}</version>
+            </dependency>
+
+            <!-- TODO: when used, move exclusions down -->
+            <dependency>
+                <groupId>org.apache.wicket</groupId>
+                <artifactId>wicket-request</artifactId>
+                <version>${wicket.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-api</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <!-- TODO: when used, move exclusions down -->
+            <dependency>
+                <groupId>org.apache.wicket</groupId>
+                <artifactId>wicket-util</artifactId>
+                <version>${wicket.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-api</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.wicket</groupId>
+                <artifactId>wicket-extensions</artifactId>
+                <version>${wicket.version}</version>
+            </dependency>
+
+            <!-- TODO: when used, move exclusions down -->
+            <dependency>
+                <groupId>org.apache.wicket</groupId>
+                <artifactId>wicket-datetime</artifactId>
+                <version>${wicket.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-api</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.wicket</groupId>
+                <artifactId>wicket-auth-roles</artifactId>
+                <version>${wicket.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.wicket</groupId>
+                <artifactId>wicket-spring</artifactId>
+                <version>${wicket.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.wicket</groupId>
+                <artifactId>wicket-tester</artifactId>
+                <version>${wicket.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-guava</artifactId>
+                <version>${assertj-guava.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.docx4j</groupId>
+                <artifactId>docx4j-JAXB-internal</artifactId>
+                <version>${docx4j.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.easymock</groupId>
+                <artifactId>easymock</artifactId>
+                <version>${easymock.version}</version>
+            </dependency>
+
+            <!-- TODO: when used, move exclusions down -->
+            <dependency>
+                <groupId>org.htmlparser</groupId>
+                <artifactId>htmlparser</artifactId>
+                <version>${htmlparser.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.sun</groupId>
+                        <artifactId>tools</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>org.javassist</groupId>
+                <artifactId>javassist</artifactId>
+                <version>${javassist.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jboss.spec.javax.ws.rs</groupId>
+                <artifactId>jboss-jaxrs-api_2.1_spec</artifactId>
+                <version>${jboss-jaxrs-api_2.1_spec.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jdom</groupId>
+                <artifactId>jdom2</artifactId>
+                <version>${jdom.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-quartz</artifactId>
+                <version>${spring-boot.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jmock</groupId>
+                <artifactId>jmock</artifactId>
+                <version>${jmock.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jmock</groupId>
+                <artifactId>jmock-junit5</artifactId>
+                <version>${jmock.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.lazyluke</groupId>
+                <artifactId>log4jdbc-remix</artifactId>
+                <version>${log4jdbc-remix.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.mindrot</groupId>
+                <artifactId>jbcrypt</artifactId>
+                <version>${jbcrypt.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.osgi</groupId>
+                <artifactId>osgi.core</artifactId>
+                <version>${osgi.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.picocontainer</groupId>
+                <artifactId>picocontainer</artifactId>
+                <version>${picocontainer.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.quartz-scheduler</groupId>
+                <artifactId>quartz</artifactId>
+                <version>${quartz-scheduler.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.quartz-scheduler</groupId>
+                <artifactId>quartz-jobs</artifactId>
+                <version>${quartz-scheduler.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j-api.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-websocket</artifactId>
+                <version>${spring-boot.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.webjars</groupId>
+                <artifactId>datatables</artifactId>
+                <version>${datatables.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.webjars</groupId>
+                <artifactId>jquery</artifactId>
+                <version>${wicket-viewer-jquery.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.webjars</groupId>
+                <artifactId>jquery-ui</artifactId>
+                <version>${jquery-ui.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.webjars</groupId>
+                <artifactId>select2</artifactId>
+                <version>${select2.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.wicketstuff</groupId>
+                <artifactId>wicketstuff-select2</artifactId>
+                <version>${wicketstuff.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>cucumber-java</artifactId>
+                <version>${cucumber.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>cucumber-spring</artifactId>
+                <version>${cucumber.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>cucumber-junit</artifactId>
+                <version>${cucumber.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>cucumber-junit-platform-engine</artifactId>
+                <version>${cucumber.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-api</artifactId>
+                <version>${junit-jupiter.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.platform</groupId>
+                <artifactId>junit-platform-console</artifactId>
+                <version>${junit-platform.version}</version>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>
+
+    <!-- META DATA -->
+
+    <url>https://causeway.apache.org</url>
+    <organization>
+        <name>The Apache Software Foundation</name>
+        <url>https://www.apache.org/</url>
+    </organization>
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    <mailingLists>
+        <mailingList>
+            <name>developers</name>
+            <archive>http://mail-archives.apache.org/mod_mbox/causeway-dev/</archive>
+            <post>dev@causeway.apache.org</post>
+            <subscribe>dev-subscribe@causeway.apache.org</subscribe>
+            <unsubscribe>dev-unsubscribe@causeway.apache.org</unsubscribe>
+        </mailingList>
+        <mailingList>
+            <name>users</name>
+            <archive>http://mail-archives.apache.org/mod_mbox/causeway-users/</archive>
+            <post>users@causeway.apache.org</post>
+            <subscribe>users-subscribe@causeway.apache.org</subscribe>
+            <unsubscribe>users-unsubscribe@causeway.apache.org</unsubscribe>
+        </mailingList>
+    </mailingLists>
+    <scm>
+        <connection>scm:git:http://github.com/apache/causeway.git</connection>
+        <developerConnection>scm:git:https://github.com/apache/causeway.git</developerConnection>
+        <url>http://github.com/apache/causeway</url>
+        <tag>HEAD</tag>
+    </scm>
+    <inceptionYear>2010</inceptionYear>
+    <issueManagement>
+        <system>Jira</system>
+        <url>https://issues.apache.org/jira/browse/CAUSEWAY</url>
+    </issueManagement>
+    <ciManagement>
+        <system>CI</system>
+        <url>https://github.com/apache-causeway-committers/causeway-nightly</url>
+    </ciManagement>
+    <developers>
+        <developer>
+            <id>ahuber</id>
+            <name>Andi Huber</name>
+            <email>ahuber@apache.org</email>
+            <roles>
+                <role>pmc</role>
+                <role>committer</role>
+            </roles>
+            <timezone>+1</timezone>
+        </developer>
+        <developer>
+            <id>bibryam</id>
+            <name>Bilgin Ibryam</name>
+            <email>bibryam@apache.org</email>
+            <roles>
+                <role>pmc</role>
+                <role>committer</role>
+            </roles>
+            <timezone>+0</timezone>
+        </developer>
+        <developer>
+            <id>danhaywood</id>
+            <name>Dan Haywood</name>
+            <email>danhaywood@apache.org</email>
+            <roles>
+                <role>pmc</role>
+                <role>committer</role>
+            </roles>
+            <timezone>+0</timezone>
+        </developer>
+        <developer>
+            <id>dslaughter</id>
+            <name>Dave Slaughter</name>
+            <email>dslaughter@apache.org</email>
+            <roles>
+                <role>pmc</role>
+                <role>committer</role>
+            </roles>
+            <timezone>-6</timezone>
+        </developer>
+        <developer>
+            <id>jcvanderwal</id>
+            <name>Jeroen van der Wal</name>
+            <email>jcvanderwal@apache.org</email>
+            <roles>
+                <role>pmc</role>
+                <role>committer</role>
+            </roles>
+            <timezone>+1</timezone>
+        </developer>
+        <developer>
+            <id>jdoornenbal</id>
+            <name>Johan Doornenbal</name>
+            <email>jdoornenbal@apache.org</email>
+            <roles>
+                <role>pmc</role>
+                <role>committer</role>
+            </roles>
+            <timezone>+1</timezone>
+        </developer>
+        <developer>
+            <id>joergrade</id>
+            <name>Joerg Rade</name>
+            <email>joergrade@apache.org</email>
+            <roles>
+                <role>pmc chair</role>
+                <role>pmc</role>
+                <role>committer</role>
+            </roles>
+            <timezone>+1</timezone>
+        </developer>
+        <developer>
+            <id>kevin</id>
+            <name>Kevin Meyer</name>
+            <email>kevin@apache.org</email>
+            <roles>
+                <role>pmc</role>
+                <role>committer</role>
+            </roles>
+            <timezone>+2</timezone>
+        </developer>
+        <developer>
+            <id>madytyoo</id>
+            <name>Maurizio Taverna</name>
+            <email>madytyoo@apache.org</email>
+            <roles>
+                <role>pmc</role>
+                <role>committer</role>
+            </roles>
+            <timezone>+1</timezone>
+        </developer>
+        <developer>
+            <id>mgrigorov</id>
+            <name>Martin Grigorov</name>
+            <email>mgrigorov@apache.org</email>
+            <roles>
+                <role>pmc</role>
+                <role>committer</role>
+            </roles>
+            <timezone>+2</timezone>
+        </developer>
+        <developer>
+            <id>mnour</id>
+            <name>Mohammad Nour El-Din</name>
+            <email>mnour@apache.org</email>
+            <roles>
+                <role>pmc</role>
+                <role>mentor while incubating</role>
+            </roles>
+            <timezone>+1</timezone>
+        </developer>
+        <developer>
+            <id>mhesse</id>
+            <name>Martin Hesse</name>
+            <email>mhesse@apache.org</email>
+            <roles>
+                <role>pmc</role>
+                <role>committer</role>
+            </roles>
+            <timezone>+9</timezone>
+        </developer>
+        <developer>
+            <id>oscarbou</id>
+            <name>Oscar Bou</name>
+            <email>oscarbou@apache.org</email>
+            <roles>
+                <role>pmc</role>
+                <role>committer</role>
+            </roles>
+            <timezone>+1</timezone>
+        </developer>
+        <developer>
+            <id>rmatthews</id>
+            <name>Robert Matthews</name>
+            <email>rmatthews@apache.org</email>
+            <roles>
+                <role>pmc</role>
+                <role>committer</role>
+            </roles>
+            <timezone>+0</timezone>
+        </developer>
+        <developer>
+            <id>struberg</id>
+            <name>Mark Struberg</name>
+            <email>struberg@apache.org</email>
+            <roles>
+                <role>pmc</role>
+                <role>mentor while incubating</role>
+            </roles>
+            <timezone>+1</timezone>
+        </developer>
+        <developer>
+            <id>themalkolm</id>
+            <name>Alexander Krasnuhkin</name>
+            <email>themalkolm@apache.org</email>
+            <roles>
+                <role>pmc</role>
+                <role>committer</role>
+            </roles>
+            <timezone>+3</timezone>
+        </developer>
+    </developers>
+
+    <profiles>
+        <!--  START SNIPPET: release-profile  -->
+        <profile>
+            <id>apache-release</id>
+            <activation>
+                <property>
+                    <name>apache-release</name>
+                </property>
+            </activation>
+            <properties>
+                <skipTests>true</skipTests>
+            </properties>
+            <distributionManagement>
+                <repository>
+                    <id>apache.releases.https</id>
+                    <name>Apache Release Distribution Repository</name>
+                    <url>
+                        https://repository.apache.org/service/local/staging/deploy/maven2</url>
+                </repository>
+                <snapshotRepository>
+                    <id>apache.snapshots.https</id>
+                    <name>${distMgmtSnapshotsName}</name>
+                    <url>${distMgmtSnapshotsUrl}</url>
+                </snapshotRepository>
+            </distributionManagement>
+            <build>
+                <plugins>
+                    <!--  We want to sign the artifact, the POM, and all attached
+artifacts (except for SHA-512 checksum)  -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>sign-release-artifacts</id>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <!--  END SNIPPET: release-profile  -->
+    </profiles>
+
+</project>

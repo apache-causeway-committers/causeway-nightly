@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one
+  or more contributor license agreements.  See the NOTICE file
+  distributed with this work for additional information
+  regarding copyright ownership.  The ASF licenses this file
+  to you under the Apache License, Version 2.0 (the
+  "License"); you may not use this file except in compliance
+  with the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing,
+  software distributed under the License is distributed on an
+  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  KIND, either express or implied.  See the License for the
+  specific language governing permissions and limitations
+  under the License.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.apache</groupId>
+        <artifactId>apache</artifactId>
+        <version>35</version>
+        <relativePath/>
+    </parent>
+
+    <groupId>org.apache.causeway</groupId>
+    <artifactId>causeway-all</artifactId>
+    <version>4.0.0-SNAPSHOT.20251213-0307-09b37614</version>
+
+    <packaging>pom</packaging>
+
+    <name>Apache Causeway (Aggregator)</name>
+    <description>
+        Convenience aggregator POM that references all modules, some
+        explicitely,
+        others via profiles, that are not activiated per default.
+        The parent POM of the core framework is bom/pom.xml.
+    </description>
+
+    <properties>
+        <revision>4.0.0-SNAPSHOT</revision> <!-- can be overidden like mvn
+        -Drevision=2.7.8 -->
+
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <maven-timeline.version>2.0.3</maven-timeline.version>
+    </properties>
+
+    <scm>
+        <connection>scm:git:https://github.com/apache/causeway.git</connection>
+        <developerConnection>scm:git:https://github.com/apache/causeway.git</developerConnection>
+        <url>https://github.com/apache/causeway.git</url>
+        <tag>HEAD</tag>
+    </scm>
+
+    <build>
+        <extensions>
+            <extension>
+                <groupId>io.takari.maven</groupId>
+                <artifactId>maven-timeline</artifactId>
+                <version>${maven-timeline.version}</version>
+            </extension>
+        </extensions>
+    </build>
+
+    <profiles>
+
+        <!-- RELEASED MODULES -->
+
+        <profile>
+            <id>released</id>
+            <activation>
+                <property>
+                    <name>!skip.essential</name>
+                </property>
+            </activation>
+            <!--
+            essential modules required to run web applications and tests;
+            non-essential modules can be added to the build via profiles
+            (as defined below);
+
+            keep module declarations in alphabetical order!
+
+            also keep profiles in sync with the site documentation
+            https://github.com/apache/causeway/blob/master/antora/components/conguide/modules/ROOT/pages/building-apache-causeway.adoc
+            -->
+            <modules>
+                <module>bom</module>
+                <module>parent</module>
+                <module>core</module>
+                <module>extensions</module>
+                <module>mavendeps</module>
+                <module>starters</module>
+                <module>testing</module>
+                <module>valuetypes</module>
+            </modules>
+        </profile>
+
+        <!-- ALL MODULES -->
+
+        <profile>
+            <id>module-all</id>
+            <activation>
+                <property>
+                    <name>module-all</name>
+                </property>
+            </activation>
+            <modules>
+                <module>antora</module>
+                <module>regressiontests</module>
+            </modules>
+        </profile>
+
+        <!-- NON-ESSENTIAL MODULES -->
+
+        <profile>
+            <id>module-antora</id>
+            <activation>
+                <property>
+                    <name>module-antora</name>
+                </property>
+            </activation>
+            <modules>
+                <module>antora</module>
+            </modules>
+        </profile>
+
+        <profile>
+            <id>module-regressiontests</id>
+            <activation>
+                <property>
+                    <name>module-regressiontests</name>
+                </property>
+            </activation>
+            <modules>
+                <module>regressiontests</module>
+            </modules>
+        </profile>
+
+        <!--  START SNIPPET: release-profile  -->
+        <profile>
+            <id>apache-release</id>
+            <activation>
+                <property>
+                    <name>apache-release</name>
+                </property>
+            </activation>
+            <properties>
+                <skipTests>true</skipTests>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>dev.pcms</groupId>
+                        <artifactId>lombok-maven-plugin</artifactId>
+                        <version>1.18.36.2</version>
+                        <configuration>
+                            <sourceDirectory>${project.basedir}/src/main/java</sourceDirectory>
+                            <outputDirectory>${delombok.output}</outputDirectory>
+                            <addOutputDirectory>false</addOutputDirectory>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>generate-sources</phase>
+                                <goals>
+                                    <goal>delombok</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-toolchains-plugin</artifactId>
+                        <version>3.2.0</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>toolchain</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <toolchains>
+                                <jdk>
+                                    <version>17</version>
+                                    <vendor>openjdk</vendor>
+                                </jdk>
+                            </toolchains>
+                        </configuration>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <configuration>
+                            <attach>true</attach>
+                        </configuration>
+                    </plugin>
+
+                </plugins>
+            </build>
+
+        </profile>
+        <!--  END SNIPPET: release-profile  -->
+
+        <profile>
+            <id>github</id>
+            <activation>
+                <property>
+                    <name>github</name>
+                </property>
+            </activation>
+            <distributionManagement>
+                <repository>
+                    <id>github</id>
+                    <name>Github Releases</name>
+                    <url>https://maven.pkg.github.com/apache/causeway</url>
+                </repository>
+            </distributionManagement>
+        </profile>
+
+    </profiles>
+
+
+</project>
