@@ -1,0 +1,1725 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Domain Services :: causeway</title>
+    <link rel="canonical" href="https://apache-causeway-committers.github.io/causeway-nightly/userguide/latest/domain-services.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../_/css/site.css">
+    <link rel="stylesheet" href="../../_/css/site-custom.css">
+<link rel="home" href="https://apache-causeway-committers.github.io/causeway-nightly" title="causeway">
+  <link rel="next" href="properties-collections-actions.html" title="Properties, Collections &amp;amp; Actions">
+  <link rel="prev" href="domain-entities.html" title="Domain Entities">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://apache-causeway-committers.github.io/causeway-nightly">
+          <span class="icon">
+            <img src="../../_/img/causeway-logo-no-words-65x48.png"></img>
+          </span>
+        <span class="navbar-title">causeway</span>
+      </a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <a class="navbar-end">
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Quick Start</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Starter Apps</span>
+            <a class="navbar-item" href="../../docs/latest/starters/helloworld.html">Hello World</a>
+            <a class="navbar-item" href="../../docs/latest/starters/simpleapp.html">Simple App</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Learning &amp; Tutorials</span>
+            <a class="navbar-item" href="../../docs/latest/reference/about.html">Reference App</a>
+            <a class="navbar-item" href="https://danhaywood.gitlab.io/isis-petclinic-tutorial-docs/petclinic/1.16.2/intro.html">Petclinic</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Resources</span>
+            <a class="navbar-item" href="../../docs/latest/resources/cheatsheet.html">Cheatsheet</a>
+            <a class="navbar-item" href="../../docs/latest/resources/icons.html">Icons</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Guides</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Core</span>
+            <a class="navbar-item" href="../../userguide/latest/about.html">User Guide</a>
+            <a class="navbar-item" href="../../refguide/latest/about.html">Reference Guide</a>
+            <a class="navbar-item" href="../../testing/latest/about.html">Testing Guide</a>
+            <a class="navbar-item" href="../../security/latest/about.html">Security Guide</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">For use in apps</span>
+            <a class="navbar-item" href="../../valuetypes/latest/about.html">Value Types</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Development</span>
+            <a class="navbar-item" href="../../setupguide/latest/about.html">Setup Guide</a>
+            <a class="navbar-item" href="../../conguide/latest/about.html">Contributors' Guide</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Components</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Security</span>
+            <a class="navbar-item" href="../../security/latest/bypass/about.html">Bypass</a>
+            <a class="navbar-item" href="../../security/latest/simple/about.html">Simple</a>
+            <a class="navbar-item" href="../../security/latest/spring/about.html">Spring</a>
+            <a class="navbar-item" href="../../security/latest/keycloak/about.html">Keycloak</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Viewers</span>
+            <a class="navbar-item" href="../../vw/latest/about.html">Web UI (Wicket)</a>
+            <a class="navbar-item" href="../../gqlv/latest/about.html">GraphQL API</a>
+            <a class="navbar-item" href="../../vro/latest/about.html">REST API (Restful Objects)</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Persistence</span>
+            <a class="navbar-item" href="../../pjpa/latest/about.html">JPA (EclipseLink)</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Extensions</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Core</span>
+            <a class="navbar-item" href="../../userguide/latest/commandlog/about.html">Command Log</a>
+            <a class="navbar-item" href="../../userguide/latest/docgen/about.html">Doc Gen</a>
+            <a class="navbar-item" href="../../userguide/latest/executionlog/about.html">Execution Log</a>
+            <a class="navbar-item" href="../../userguide/latest/executionoutbox/about.html">Execution Outbox</a>
+            <a class="navbar-item" href="../../userguide/latest/executionrepublisher/about.html">Execution Republisher</a>
+            <a class="navbar-item" href="../../userguide/latest/excel/about.html">Excel</a>
+            <a class="navbar-item" href="../../userguide/latest/flyway/about.html">Flyway</a>
+            <a class="navbar-item" href="../../userguide/latest/layoutloaders/about.html">Layout Loaders</a>
+            <a class="navbar-item" href="../../userguide/latest/titlecache/about.html">Title Cache</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Security</span>
+            <a class="navbar-item" href="../../security/latest/secman/about.html">Secman</a>
+            <a class="navbar-item" href="../../security/latest/audittrail/about.html">Audit Trail</a>
+            <a class="navbar-item" href="../../security/latest/spring-oauth2/about.html">Spring OAuth2 Integration</a>
+            <a class="navbar-item" href="../../security/latest/sessionlog/about.html">Session Log</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Web UI (Wicket)</span>
+            <a class="navbar-item" href="../../vw/latest/fullcalendar/about.html">Full Calendar</a>
+            <a class="navbar-item" href="../../vw/latest/pdfjs/about.html">pdf.js</a>
+            <a class="navbar-item" href="../../vw/latest/sse/about.html">Server Side Events</a>
+            <a class="navbar-item" href="../../vw/latest/tabular/about.html">Tabular Download</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">REST API (Restful Objects)</span>
+            <a class="navbar-item" href="../../vro/latest/cors/about.html">CORS</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Persistence</span>
+            <a class="navbar-item" href="../../querydsl/latest/about.html">QueryDSL</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Support</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Contact</span>
+            <a class="navbar-item" href="../../docs/latest/support/slack-channel.html">Slack</a>
+            <a class="navbar-item" href="../../docs/latest/support/mailing-list.html">Mailing Lists</a>
+            <a class="navbar-item" href="https://issues.apache.org/jira/browse/CAUSEWAY">JIRA</a>
+            <a class="navbar-item" href="https://stackoverflow.com/questions/tagged/causeway">Stack Overflow</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Releases</span>
+            <a class="navbar-item" href="../../docs/latest/downloads/how-to.html">Downloads</a>
+            <a class="navbar-item" href="../../relnotes/latest/about.html">Release Notes</a>
+            <hr class="navbar-divider"/>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Framework</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Process</span>
+            <a class="navbar-item" href="../../comguide/latest/about.html">Committers' Guide</a>
+            <a class="navbar-item" href="../../tooling/latest/about.html">Tooling</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Automated Analysis</span>
+            <a class="navbar-item" href="https://sonarcloud.io/dashboard?id=apache_causeway">SonarCloud.io</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Interim Builds</span>
+            <a class="navbar-item" href="../../comguide/latest/nightly-builds.html">Nightly builds</a>
+            <a class="navbar-item" href="../../comguide/latest/weekly-builds.html">Weekly builds</a>
+            <a class="navbar-item" href="https://apache-causeway-committers.github.io/causeway-nightly">Website Preview (not ASF hosted)</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Development</span>
+            <a class="navbar-item" href="../../core/latest/about.html">Internal Design Docs</a>
+            <a class="navbar-item" href="../../regressiontests/latest/about.html">Regression Tests</a>
+            <a class="navbar-item" href="../../incubator/latest/about.html">Incubator</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Thanks</span>
+            <a class="navbar-item" href="../../more-thanks/latest/more-thanks.html">Acknowledgements</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">ASF</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://www.apache.org/">Apache Homepage</a>
+            <a class="navbar-item" href="https://www.apache.org/events/current-event">Events</a>
+            <a class="navbar-item" href="https://www.apache.org/licenses/">License</a>
+            <a class="navbar-item" href="https://www.apache.org/security/">Security</a>
+            <a class="navbar-item" href="https://privacy.apache.org/policies/privacy-policy-public.html">Privacy</a>
+            <a class="navbar-item" href="https://www.apache.org/foundation/sponsorship.html">Sponsorship</a>
+            <a class="navbar-item" href="https://www.apache.org/foundation/thanks.html">Thanks</a>
+            <hr class="navbar-divider"/>
+            <a class="navbar-item" href="https://whimsy.apache.org/board/minutes/Causeway.html">PMC board minutes</a>
+          </div>
+        </div>
+        <a class="navbar-item" href="../../docs/latest/about.html">
+          <span class="icon">
+            <img src="../../_/img/home.png"></img>
+          </span>
+        </a>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body ">
+<div class="nav-container" data-component="userguide" data-version="latest">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-search hide-for-print">
+  <input id="algolia-search-input" placeholder="Search"></span>
+</div>
+<div class="nav-panel-pagination">
+  <a class="page-previous" rel="prev" href="domain-entities.html" title="Domain Entities"><span></span></a>
+  <a class="page-next" rel="next"
+     href="properties-collections-actions.html" title="Properties, Collections &amp;amp; Actions"><span></span></a>
+<!--
+page.parent doesn't seem to be set...
+  <a class="page-parent disabled" rel="prev" href="" title="Domain Entities"><span></span></a>
+-->
+</div>
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="about.html">User Guide</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="overview.html">10,000ft overview</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="domain-entities.html">Domain Entities</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="1">
+    <a class="nav-link" href="domain-services.html">Domain Services</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="properties-collections-actions.html">Properties, Collections &amp; Actions</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="ui-layout-and-hints.html">UI Layout &amp; Hints</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="business-rules.html">Business Rules</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="drop-downs-and-defaults.html">Drop downs &amp; Defaults</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="view-models.html">View Models</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="mixins.html">Mixins</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="events.html">Events</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="modules.html">Modules</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="value-types.html">Value types</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="meta-annotations.html">Meta-annotations</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="background-context-and-theory.html">Background, Context &amp; Theory</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="btb/about.html">Beyond the Basics</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="btb/headless-access.html">Headless Access</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="btb/programming-model.html">Programming Model</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="btb/hints-and-tips.html">Hints-n-Tips</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="btb/logging.html">Logging</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="btb/troubleshooting-visibility-and-usability.html">Troubleshooting Visibility and Usability</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="btb/i18n.html">Internationalization (i18n)</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Extensions</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="commandlog/about.html">Command Log</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="docgen/about.html">DocGen</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="executionlog/about.html">Execution Log</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="executionoutbox/about.html">Execution Outbox</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="executionrepublisher/about.html">Execution Republisher</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="excel/about.html">Excel Library</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="flyway/about.html">Flyway</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="layoutloaders/about.html">Layout Loaders</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="titlecache/about.html">Title Cache</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">User Guide</span>
+    <span class="version">latest</span>
+  </div>
+  <ul class="components">
+    <li class="component">
+      <span class="title"> </span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../docs/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Committers' Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../comguide/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Contributors' Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../conguide/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Design Docs</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../core/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Extensions</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../extensions/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">GraphQL Viewer</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../gqlv/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Incubator Catalog</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../incubator/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">JPA</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../pjpa/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">QueryDSL</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../querydsl/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Reference Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../refguide/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">regressiontests</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../regressiontests/latest/index.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Release Notes</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../relnotes/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">REST API (Restful Objects Viewer)</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../vro/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Security Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../security/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Setup Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../setupguide/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Testing Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../testing/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Tutorials</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../tutorials/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component is-current">
+      <span class="title">User Guide</span>
+      <ul class="versions">
+        <li class="version is-current">
+          <a href="about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Value Types Catalog</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../valuetypes/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Web UI (Wicket Viewer)</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../vw/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main role="main">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../docs/latest/about.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="about.html">User Guide</a></li>
+    <li><a href="domain-services.html">Domain Services</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="https://github.com/apache/causeway/edit/main/antora/components/userguide/modules/ROOT/pages/domain-services.adoc">Edit</a></div>
+</div>
+<article class="doc">
+    <a name="section-top"></a>
+<h1 class="page">Domain Services</h1>
+<div class="sect1">
+<h2 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><em>Domain services</em> are (usually) singleton stateless services that provide act upon <a href="domain-entities.html" class="xref page">entities</a> or <a href="view-models.html" class="xref page">view models</a>.</p>
+</div>
+<div class="paragraph">
+<p>Domain services fall into two main categories: those that part of the Causeway metamodel, and those that are not.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>For the former, their actions (which follow the same conventions as other domain objects) will typically be rendered either in the menu; or they might be surfaced through the REST API.
+However, a service can only declare actions; it cannot have properties nor can it have collections.</p>
+</li>
+<li>
+<p>For the latter, these are often repositories or factories.
+Evans' <a href="http://books.google.com/books/about/Domain_Driven_Design.html?id=hHBf4YxMnWMC">Domain Driven Design</a>, draws a clear distinction between a factory (that creates object) and a repository (that is used to find existing objects).
+For example, for the <code>Customer</code> entity there may be a <code>CustomerRepository</code> and an <code>CustomerFactory</code>
+or an <code>OrderFactory</code>; .</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>On the other hand, from an end-users' perspective the act of finding an existing object vs creating a new one are quite closely related.
+For this reason, in Apache Causeway it&#8217;s therefore quite common to have a single menu domain service that delegates programmatically to other factory or repository services.</p>
+</div>
+<div class="paragraph">
+<p>Sometimes though a domain service might be holders of business logic that for whatever reason you want to keep outside an entity; perhaps it easier to test that way.
+An example might be <code>InvoiceCalculationServices</code>.</p>
+</div>
+<div class="paragraph">
+<p>The behaviour of these services is rendered in various ways, though the most obvious is as the menu actions on the top-level menu bars in the <a href="../../vw/latest/about.html" class="xref page">Web UI (Wicket viewer)</a>'s UI.</p>
+</div>
+<div class="paragraph">
+<p>Domain services can also be used for a number of other purposes:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>to provide additional non-UI functionality; an example being to perform an address geocoding lookup against the google-maps API, or to perform some calculation, or attach a barcode, send an email etc</p>
+</li>
+<li>
+<p>to act as a subscribers to the event bus, potentially influencing events fired by some other module (a key technique for decoupling large applications)</p>
+<div class="paragraph">
+<p>This is discussed in more detail below, in the section on <a href="events.html" class="xref page">events</a>.</p>
+</div>
+</li>
+<li>
+<p>to implement an <a href="https://en.wikipedia.org/wiki/Service_provider_interface">SPI</a> of the Apache Causeway framework, most notably cross-cutting concerns such as security, command profiling, auditing and publishing.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Domain objects of any type (entities, other services, view models, mixins) can also delegate to domain services; domain services are automatically injected into every other domain object.
+This injection of domain services into entities is significant: it allows business logic to be implemented in the domain entities, rather than have it "leach away" into supporting service layers.
+Said another way: it is the means by which Apache Causeway helps you avoid the anaemic domain model anti-pattern.</p>
+</div>
+<div class="paragraph">
+<p>Domain services are instantiated once and once only by the framework, and are used to centralize any domain logic that does not logically belong in a domain entity or value.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="programming-model"><a class="anchor" href="#programming-model"></a>@DomainService vs @Service/@Repository</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="declaring-a-domain-service"><a class="anchor" href="#declaring-a-domain-service"></a>Declaring a Domain Service</h3>
+<div class="paragraph">
+<p>Domain services that are visible in the UI or REST API are annotated with <a href="../../refguide/latest/applib/index/annotation/DomainService.html" class="xref page">@DomainService()</a>, while services that are <em>programmatic</em> in nature should be simply annotated using Spring&#8217;s <a href="https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/stereotype/Component.html">@Component</a> or one of its specializations, eg
+<a href="https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/stereotype/Service.html">@Service</a>
+or <a href="https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/stereotype/Repository.html">@Repository</a>.</p>
+</div>
+<div class="paragraph">
+<p>Once declared, domain services can be injected into other domain objects (<strong>including</strong> entities and view models) using <code>@jakarta.inject.Inject</code>.
+There&#8217;s more on this topic <a href="#injecting-services">below</a>.</p>
+</div>
+<div class="sect3">
+<h4 id="nature-of-service"><a class="anchor" href="#nature-of-service"></a>Nature of Service</h4>
+<div class="paragraph">
+<p>Apache Causeway uses Spring Boot to instantiate and manage the dependency injection of domain services.
+Accordingly, all domain services are annotated or meta-annotated using Spring&#8217;s <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/stereotype/Component.html">@Component</a> annotation.</p>
+</div>
+<div class="paragraph">
+<p>For domain services to be visible in the Apache Causeway UI, they must be annotated with <a href="../../refguide/latest/applib/index/annotation/DomainService.html" class="xref page">@DomainService</a>.
+Its <a href="../../refguide/latest/applib/index/annotation/DomainService.html#nature" class="xref page">#nature()</a> attribute is either:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>VIEW</code> (the default if not specified)</p>
+<div class="paragraph">
+<p>which indicates that the actions should appear on the menu of the <a href="../../vw/latest/about.html" class="xref page">Web UI (Wicket viewer)</a>, and as top-level actions for the REST API provided by the <a href="../../vro/latest/about.html" class="xref page">REST API (Restful Objects viewer)</a>.</p>
+</div>
+</li>
+<li>
+<p><code>REST</code></p>
+<div class="paragraph">
+<p>which indicates that the actions should appear in the REST API provided by the <a href="../../vro/latest/about.html" class="xref page">REST API (Restful Objects viewer)</a>, but not rendered by the <a href="../../vw/latest/about.html" class="xref page">Web UI (Wicket viewer)</a>.</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>It&#8217;s also possible to define a "programmatic" domain service, meaning one that is instantiated and injected by Spring Boot, but is not visible in the UI or REST API.
+Such programmatic services are usually annotated with Spring&#8217;s <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/stereotype/Service.html">@Service</a> annotation or <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/stereotype/Repository.html">@Repository</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="framework-defined-services"><a class="anchor" href="#framework-defined-services"></a>Framework-defined services</h3>
+<div class="paragraph">
+<p>As well as custom-defined services, the framework provides many further services that you can use within your apps.
+The <a href="../../refguide/latest/applib-svc/about.html" class="xref page">Reference Guide</a> provides full details.</p>
+</div>
+<div class="paragraph">
+<p>Two important such services are the repository/factory uses an injected <a href="../../refguide/latest/applib/index/services/repository/RepositoryService.html" class="xref page">RepositoryService</a> (to persist or retrieve domain entities) and the <a href="../../refguide/latest/applib/index/services/factory/FactoryService.html" class="xref page">FactoryService</a> (to instantiate new domain objects).</p>
+</div>
+<div class="paragraph">
+<p>It&#8217;s common to write your own domain service that wrap these framework-defined services, eg <code>CustomerRepository</code> or <code>CustomerFactory</code>.
+Generally these services are not visible in UI, and so would be <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/stereotype/Service.html">@Service</a>.
+You could if you wish also use Spring&#8217;s <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/stereotype/Repository.html">@Repository</a> for your <code>XxxRepository</code> service, as a more descriptive alternative.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="example"><a class="anchor" href="#example"></a>Example</h3>
+<div class="paragraph">
+<p>The class diagram shows how you might implement a UI menu and REST API for a "customer" module:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/domain-services/example.png" alt="example" width="800px">
+</div>
+</div>
+<div class="paragraph">
+<p>The menu service:</p>
+</div>
+<div class="paragraph">
+<p>Menu services provide actions to be rendered on the menu.</p>
+</div>
+<div class="paragraph">
+<p>For the <a href="../../vw/latest/about.html" class="xref page">Web UI (Wicket viewer)</a>, each service&#8217;s actions appear as a collection of menu items of a named menu, and this menu is on one of the three menu bars provided by the Wicket viewer.
+Although these can be organised using annotations, it&#8217;s usually easier to use a <a href="ui-layout-and-hints.html#file-based-menus" class="xref page">file-based layout file</a> (<code>menubars.layout.xml</code>).</p>
+</div>
+<div class="paragraph">
+<p>For the <a href="../../vro/latest/about.html" class="xref page">REST API (Restful Objects viewer)</a>, all menu services are shown in the services representation.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import lombok.RequiredArgsConstructor;
+
+@Named("customers.Customers")
+@DomainService                                          <i class="conum" data-value="1"></i><b>(1)</b>
+@RequiredArgsConstructor(onConstructor_ = {@Inject} )   <i class="conum" data-value="2"></i><b>(2)</b>
+public class Customers {
+
+    final CustomerRepository customerRepository;        <i class="conum" data-value="2"></i><b>(2)</b>
+
+    @Action(semantics = SemanticsOf.SAFE)
+    public List&lt;Customer&gt; findByName(                   <i class="conum" data-value="3"></i><b>(3)</b>
+            final String name ) {
+        return customerRepository.findByName(name);     <i class="conum" data-value="4"></i><b>(4)</b>
+    }
+
+    @Action(semantics = SemanticsOf.NON_IDEMPOTENT)
+    public Customer newCustomer(...) {
+        return customerRepository.newCustomer(...);
+    }
+
+    @Action( semantics = SemanticsOf.SAFE,
+             restrictTo = RestrictTo.PROTOTYPING )      <i class="conum" data-value="5"></i><b>(5)</b>
+    public List&lt;Customer&gt; listAll() {
+        return customerRepository.listAll();
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Identify the class as a domain service, to render in the menu.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The <code>CustomerRepository</code> is injected through the constructor (Lombok creates the constructor for us).</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Rendered in the UI as a "Find By Name" menu item underneath the "Customers" menu.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>the action implementation delegates to the injected repository.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><a href="../../refguide/latest/applib/index/annotation/Action.html#restrictTo" class="xref page">Prototype</a> actions are rendered only in prototyping mode.
+A "list all" action such as this can be useful when exploring the domain with a small dataset.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The <code>CustomerRepository</code> would look something like:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.springframework.stereotype.Repository;
+import lombok.RequiredArgsConstructor;
+
+@Repository                                                     <i class="conum" data-value="1"></i><b>(1)</b>
+@RequiredArgsConstructor(onConstructor_ = {@Inject} )
+public CustomerRepository {
+
+    final RepositoryService repositoryService;
+
+    public List&lt;Customer&gt; findByName(String name) {
+        return repositoryService.allMatches(                    <i class="conum" data-value="2"></i><b>(2)</b>
+                Query.named(Customer.class, "findByName")
+                    .withParameter("name", name));
+    }
+
+    public List&lt;Customer&gt; allCustomers() {                      <i class="conum" data-value="3"></i><b>(3)</b>
+        return repositoryService.allInstances(Customer.class);
+    }
+
+    // ...
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Register as a service using Spring Boot&#8217;s <code>@Repsitory</code> annotation</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>uses injected <code>RepositoryService</code> to query</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Returns all instances (useful for prototyping, probably not for production).</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The <code>CustomerFactory</code> would look something like:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.springframework.stereotype.Repository;
+import lombok.RequiredArgsConstructor;
+
+@Service                                                        <i class="conum" data-value="1"></i><b>(1)</b>
+@RequiredArgsConstructor(onConstructor_ = {@Inject} )
+public CustomerFactory {
+
+    final FactoryService factoryService;
+    final RepostiryoService factoryService;
+
+    public Customer newCustomerNotPersisted(...) {
+        Customer Customer =
+            repositoryService.detachedEntity(Customer.class);   <i class="conum" data-value="2"></i><b>(2)</b>
+        ...
+        return repositoryService.persistAndFlush(Customer);     <i class="conum" data-value="3"></i><b>(3)</b>
+    }
+
+    // ...
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Register as a service using Spring Boot&#8217;s <code>@Service</code> annotation</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>uses injected <code>RepositoryService</code> to instantiate a not-yet-persisted domain entity &#8230;&#8203;</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>... and then save into the database a new <code>Customer</code> instance.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The <code>CustomerMenu</code> is part of the Causeway metamodel and its methods will be exposed as actions.
+The <code>CustomerRepository</code> and <code>CustomerFactory</code> are <em>not</em> part of the metamodel; there is no need to mark their methods as <code>@Programmatic</code>.</p>
+</div>
+<div class="sidebarblock">
+<div class="content">
+<div class="title">Separate services, or combined?</div>
+<div class="paragraph">
+<p>Whether you separate out menu services from repository services is to some extent a matter of style.</p>
+</div>
+<div class="paragraph">
+<p>One perspective is that these two closely related domain services nevertheless have different responsibilities, and so could be kept separate.</p>
+</div>
+<div class="paragraph">
+<p>An alternative perspective is that the duplication is just unnecessary boilerplate, and conflicts with the naked objects philosophy.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="object-management-crud"><a class="anchor" href="#object-management-crud"></a>Object Management (CRUD)</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>One of the most common use cases for services is to create, read, update and delete <a href="domain-entities.html" class="xref page">domain entities</a>, leveraging the framework-provided  <a href="../../refguide/latest/applib/index/services/repository/RepositoryService.html" class="xref page">RepositoryService</a> and <a href="../../refguide/latest/applib/index/services/factory/FactoryService.html" class="xref page">FactoryService</a>.
+This page shows some of the common idioms for achieving this.</p>
+</div>
+<div class="sect2">
+<h3 id="instantiating"><a class="anchor" href="#instantiating"></a>Instantiating</h3>
+<div class="paragraph">
+<p>Domain entities can be instantiated using the <a href="../../refguide/latest/applib/index/services/factory/FactoryService.html" class="xref page">FactoryService</a> provided by the framework.
+For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Customer customer = factoryService.detachedEntity(Customer.class);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The returned domain entity is not persistent and is unknown to the ORM; hence "detached".</p>
+</div>
+<div class="paragraph">
+<p>When the framework instantiates the object, all services are injected into the framework, and an <code>ObjectCreatedEvent</code> <a href="events.html#lifecycle-events" class="xref page">lifecycle event</a> will also be emitted.</p>
+</div>
+<div class="paragraph">
+<p>You may prefer however for your domain entities to have regular constructor defining their minimum set of mandatory properties.
+For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Customer {
+
+    public Customer(String reference, String firstName, String lastName) {
+        // ...
+    }
+
+    // ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In such cases, the domain object cannot be instantiated using <a href="../../refguide/latest/applib/index/services/factory/FactoryService.html" class="xref page">FactoryService</a>.
+Instead the <a href="../../refguide/latest/applib/index/services/inject/ServiceInjector.html" class="xref page">ServiceInjector</a> service can be used to inject services:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Customer customer = new Customer(reference, firstName, lastName);
+factoryService.detachedEntity(customer);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If you prefer, this can be performed in one step:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Customer customer = factoryService.detachedEntity(
+                        new Customer(reference, firstName, lastName));</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Note though that this does <em>not</em> raise any lifecycle event.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="persisting"><a class="anchor" href="#persisting"></a>Persisting</h3>
+<div class="paragraph">
+<p>Once a domain entity has been instantiated and initialized, it can be persisted using the <a href="../../refguide/latest/applib/index/services/repository/RepositoryService.html" class="xref page">RepositoryService</a>.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Customer customer = ...
+
+repositoryService.persist(customer);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If using the no-arg form to instantiate the entity, then (to save having to inject the <code>FactoryService</code> as well), the <code>RepositoryService</code> can also be used to instantiate.
+This gives rise to this common idiom:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Customer customer = repositoryService.instantiate(Customer.class);
+customer.setReference(reference);
+customer.setFirstName(firstName);
+customer.setLastName(lastName);
+...
+repositoryService.persist(customer);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>On the other hand, there is often little need to inject services into the domain entity between its instantiation and persistence.
+If the domain entity has an N-arg constructor, then the code is often simpler:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Customer customer = repositoryService.persist(new Customer(reference, name, lastname));</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Note that the <code>persist()</code> returns the object passed to it.</p>
+</div>
+<div class="sect3">
+<h4 id="eager-persistence"><a class="anchor" href="#eager-persistence"></a>Eager Persistence</h4>
+<div class="paragraph">
+<p>It&#8217;s worth being aware that the framework does <em>not</em> eagerly persist the object.
+Rather, it queues up an internal command structure representing the object persistence request.
+This is then executed either at the end of the transaction, or if a <a href="#finding">query is run</a>, or if the internal queue is manually flushed using <a href="../../refguide/latest/applib/index/services/xactn/TransactionService.html" class="xref page">TransactionService</a>'s <code>flush()</code> method.
+Flushing also happens when a repository query is executed, so that the pending persist operation is performed first.
+Generally therefore the lazy persistence approach works well enough.</p>
+</div>
+<div class="paragraph">
+<p>Nevertheless, if you want to ensure that the persist command is flushed immediately, you can use:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">repositoryService.persistAndFlush(customer);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>When an object is persisted the framework will emit <code>ObjectPersistingEvent</code> and <code>ObjectPersistedEvent</code> <a href="events.html#lifecycle-events" class="xref page">lifecycle events</a>.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="persistence-by-reachability-jpa"><a class="anchor" href="#persistence-by-reachability-jpa"></a>Persistence by Reachability (JPA)</h4>
+<div class="paragraph">
+<p>If using <a href="../../pjpa/latest/about.html" class="xref page">JPA/Eclipselink</a>, it is possible to configure ORM to automatically persist domain entities if they are associated with other already-persistent entities.
+This avoids the need to explicitly call "persist".</p>
+</div>
+<div class="paragraph">
+<p>This is done by annotating the relationship with a <code>CascadeType</code> of <code>CascadeType.PERSIST</code> or <code>CascadeType.ALL</code>.
+For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Entity
+public class Parent {
+    @OneToMany(cascade = CascadeType.PERSIST)
+    private List&lt;Child&gt; children = new ArrayList&lt;&gt;();
+}
+
+@Entity
+public class Child {
+    @ManyToOne
+    private Parent parent;
+}
+
+// Usage:
+Parent p = new Parent();
+p.getChildren().add(new Child());
+em.persist(p);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>One downside is that the code is arguably less easy to debug, and there may be performance implications.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="finding"><a class="anchor" href="#finding"></a>Finding Objects</h3>
+<div class="paragraph">
+<p>Retrieving domain entities depends on the ORM, though the <a href="../../refguide/latest/applib/index/services/repository/RepositoryService.html" class="xref page">RepositoryService</a> can be used as an abstraction over either if required.</p>
+</div>
+<div class="sect3">
+<h4 id="finding-jpa"><a class="anchor" href="#finding-jpa"></a>Finding Objects (JPA)</h4>
+<div class="paragraph">
+<p>The easiest way to retrieve domain entities if using JPA is to leverage the capabilities of Spring Data.</p>
+</div>
+<div class="paragraph">
+<p>For example, simply by declaring this interface:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public interface UserRepository extends Repository&lt;User, Long&gt; {
+
+  List&lt;User&gt; findByEmailAddressAndLastname(String emailAddress, String lastname);
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>and Spring Data will create an implementation based on naming conventions.
+See the <a href="https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#reference">Spring Data</a> documentation for further details.</p>
+</div>
+<div class="paragraph">
+<p>It is also possible to declare JPQL queries , either on the repository method (using <code>jakarta.persistence.Query</code>) or on the entity (using <code>jakarta.persistence.NamedQuery</code>).</p>
+</div>
+<div class="paragraph">
+<p>On the entity, declare a named query, eg:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import jakarta.persistence.*;
+
+@Entity
+@NamedQueries({
+    @NamedQuery(                            <i class="conum" data-value="1"></i><b>(1)</b>
+        name = "Customer.findByNameLike",   <i class="conum" data-value="2"></i><b>(2)</b>
+        query = "SELECT c " +               <i class="conum" data-value="3"></i><b>(3)</b>
+                "FROM Customer c " +        <i class="conum" data-value="4"></i><b>(4)</b>
+                "WHERE c.name LIKE :name"   <i class="conum" data-value="5"></i><b>(5)</b>
+    )
+    })
+// ...
+public class Customer {
+    // ...
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>There may be several <code>@NamedQuery</code> annotations, nested within a <code>@NamedQueries</code> annotation, defining queries using JPQL.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Defines the name of the query.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>The definition of the query, using JPQL syntax.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>The table name</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>The predicate, expressed using SQL syntax.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>and in the corresponding repository, use <a href="../../refguide/latest/applib/index/services/repository/RepositoryService.html" class="xref page">RepositoryService</a>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.springframework.stereotype.Repository;
+import lombok.RequiredArgsConstructor;
+
+@Repository
+@RequiredArgsConstructor(onConstructor_ = {@Inject} )
+public class CustomerRepository {
+
+    private final RepositoryService repositoryService;
+
+    public List&lt;Customer&gt; findByName(String name) {
+        return repositoryService.allMatches(                            <i class="conum" data-value="1"></i><b>(1)</b>
+                Query.named(Customer.class, "Customer.findByNameLike")  <i class="conum" data-value="2"></i><b>(2)</b>
+                     .withParameter("name", "%" + name + "%");          <i class="conum" data-value="3"></i><b>(3)</b>
+    }
+
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The <a href="../../refguide/latest/applib/index/services/repository/RepositoryService.html" class="xref page">RepositoryService</a> is a generic facade over the ORM API.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Specifies the class that is annotated with @NamedQuery, along with the <code>@NamedQuery#name</code> attribute</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>The <code>:name</code> parameter in the query JPQL string, and its corresponding value</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="updating"><a class="anchor" href="#updating"></a>Updating Objects</h3>
+<div class="paragraph">
+<p>There is no specific API to update a domain entity.
+Rather, the ORM (DataNucleus) automatically keeps track of the state of each object and will update the corresponding database rows when the transaction completes.</p>
+</div>
+<div class="paragraph">
+<p>That said, it is possible to "flush" pending changes:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../../refguide/latest/applib/index/services/xactn/TransactionService.html" class="xref page">TransactionService</a> acts at the Apache Causeway layer, and flushes any pending object persistence or object deletions</p>
+</li>
+<li>
+<p>(if using <a href="../../pjpa/latest/about.html" class="xref page">JPA/Eclipselink</a>), the <a href="../../refguide/latest/persistence/index/jpa/applib/services/JpaSupportService.html" class="xref page">JpaSupportService</a> domain service can be used reach down to the underlying JPA API (<code>EntityManager</code>), and perform a flush of pending object updates also.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>When an object is updated the framework will emit <code>ObjectUpdatingEvent</code> and <code>ObjectUpdatedEvent</code> <a href="events.html#lifecycle-events" class="xref page">lifecycle events</a>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="deleting"><a class="anchor" href="#deleting"></a>Deleting Objects</h3>
+<div class="paragraph">
+<p>Domain entities can be deleted using <a href="../../refguide/latest/applib/index/services/repository/RepositoryService.html" class="xref page">RepositoryService</a>.
+For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Customer customer = ...
+repositoryService.remove(customer);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>It&#8217;s worth being aware that (as for persisting new entities) the framework does <em>not</em> eagerly delete the object.
+Rather, it queues up an internal command structure representing the object deletion request.
+This is then executed either at the end of the transaction, or if a <a href="#finding">query is run</a>, or if the internal queue is manually flushed using <a href="../../refguide/latest/applib/index/services/xactn/TransactionService.html" class="xref page">TransactionService</a>'s <code>flush()</code> method.</p>
+</div>
+<div class="paragraph">
+<p>Alternatively, you can use:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">repositoryService.removeAndFlush(customer);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>to eagerly perform the object deletion from the database.</p>
+</div>
+<div class="paragraph">
+<p>When an object is deleted the framework will emit <code>ObjectRemovingEvent</code> <a href="events.html#lifecycle-events" class="xref page">lifecycle event</a>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="injecting-services"><a class="anchor" href="#injecting-services"></a>Injecting services</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Apache Causeway runs on top of Spring Boot, and uses Spring Boot for dependency injection, both the application&#8217;s own domain services and also the many additional services defined by the framework (such as <a href="../../refguide/latest/applib/index/services/repository/RepositoryService.html" class="xref page">RepositoryService</a>).</p>
+</div>
+<div class="paragraph">
+<p>Since this is a core capability of Spring, it&#8217;s worth checking out Spring&#8217;s <a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html#beans-factory-collaborators">documentation</a> on the topic.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Injection is requested using the JEE <code>@jakarta.inject.Inject</code> annotation.
+This is described in Spring&#8217;s documentation, <a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html#beans-standard-annotations">using JSR330 standard annotations</a>.</p>
+</div>
+<div class="paragraph">
+<p>It is also possible to use Spring&#8217;s own <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/beans/factory/annotation/Autowired.html">@Autowired</a> annotation.
+Since the two annotations are for the most part equivalent, we recommend using the JEE standard.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>However, not only does Apache Causeway use Spring to autowire domain services into other services, the framework <em>also</em> ensures that services are injected into any domain object (eg <a href="domain-entities.html" class="xref page">entity</a>, <a href="view-models.html" class="xref page">view model</a>, <a href="mixins.html" class="xref page">mixins</a>, <a href="../../testing/latest/fixtures/about.html#fixture-scripts" class="xref page">fixture script</a>, <a href="../../refguide/latest/applib/index/spec/Specification.html" class="xref page">specification</a> etc).
+This is key enabler to place functionality in the "right place", eg in a domain entity/view model itself, or in a mixin.</p>
+</div>
+<div class="paragraph">
+<p>There are three ways in which to inject the domain services:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>constructor injection (further discussion in the Spring documentation, <a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html#beans-constructor-injection">here</a>)</p>
+<div class="paragraph">
+<p>This is recommended approach, but note that it is only supported for domain services and (non-JAXB) <a href="view-models.html" class="xref page">view models</a>, but not for <a href="domain-entities.html" class="xref page">entities</a>, <a href="mixins.html" class="xref page">mixins</a> or <a href="value-types.html" class="xref page">value types</a>.</p>
+</div>
+</li>
+<li>
+<p>setter injection (further discussion <a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html#beans-setter-injection">here</a>)</p>
+</li>
+<li>
+<p>field injection</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Whether you use setter or field injection for domain objects etc is a matter of style.
+Generally field injection is somewhat frowned up.</p>
+</div>
+<div class="sect2">
+<h3 id="constructor-injection"><a class="anchor" href="#constructor-injection"></a>Constructor Injection.</h3>
+<div class="paragraph">
+<p>As noted above, constructor injection is only available for domain services.
+For example:</p>
+</div>
+<div class="listingblock">
+<div class="title">CustomerRepository.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.springframework.data.repository.Repository;      <i class="conum" data-value="1"></i><b>(1)</b>
+
+@Repository
+public class CustomerRepository {
+    private final RepositoryService repositoryService;
+    public CustomerRepository(
+                final RepositoryService repositoryService) {
+        this.repositoryService = repositoryService;
+    }
+    // ...
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>indicates this is a repository service.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>If you wish, Project Lombok can be used to remove some of the boilerplate:</p>
+</div>
+<div class="listingblock">
+<div class="title">CustomerRepository.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.springframework.stereotype.Repository;
+import lombok.RequiredArgsConstructor;
+
+@Repository
+@RequiredArgsConstructor(onConstructor_ = {@Inject} )   <i class="conum" data-value="1"></i><b>(1)</b>
+public class CustomerRepository {
+    private final RepositoryService repositoryService;
+    // ...
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Generates a constructor for all <code>final</code> fields.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>If the layering between services is well defined, as in the above example (application <code>CustomerRepository</code> depends upon framework <code>RepositoryService</code>), then constructor injection should work out.</p>
+</div>
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-caution" title="Caution"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Be aware though that Spring does not support cyclic dependencies with constructor injection.
+In such cases, either use setter injection, or alternatively inject <code>Provider&lt;ServiceType&gt;</code> rather than <code>ServiceType</code>, thereby allowing the dependent bean to be lazily created.</p>
+</div>
+<div class="paragraph">
+<p>For more on this topic, see Spring&#8217;s documentation on the <a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html#beans-dependency-resolution">Dependency Resolution Process</a>, "Circular dependencies" sidebar.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="setter-and-field-injection"><a class="anchor" href="#setter-and-field-injection"></a>Setter and Field Injection</h3>
+<div class="paragraph">
+<p>Setter or field injection must be used all objects <em>other</em> than domain services.
+For example, setter injection is:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import jakarta.inject.Inject;
+
+public class Customer {
+    ...
+    OrderRepository orderRepository;
+    @Inject                                                 <i class="conum" data-value="1"></i><b>(1)</b>
+    public void setOrderRepository(orderRepository) {
+        this.orderRepository = orderRepository;
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The framework injects the domain service into the entity, before any further interactions with it.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>It&#8217;s not necessary for the visibility to be <code>public</code>, so it should be as restrictive as possible.
+In many cases, default visibility will work (assuming unit tests that mock the dependency are in the same package).</p>
+</div>
+<div class="paragraph">
+<p>Some of the boilerplate can be removed using Project Lombok:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import jakarta.inject.Inject;
+import lombok.Setter;
+
+public class Customer {
+    ...
+    @Setter(value= AccessLevel.PACKAGE, onMethod_ = {Inject.class}) <i class="conum" data-value="1"></i><b>(1)</b>
+    OrderRepository orderRepository;
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Generates a package-level setter, annotated with <code>@Inject</code></td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>If you want to use field injection, then this is simply:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import jakarta.inject.Inject;
+
+public class Customer {
+    ...
+    @Inject OrderRepository orderRepository;
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>... and live with or disable any IDE warnings relating to field injection.</p>
+</div>
+<div class="paragraph">
+<p>Using default visibility here still allows the field to be mocked out within unit tests (if placed in the same package as the code under test).</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="multiple-implementations"><a class="anchor" href="#multiple-implementations"></a>Multiple Implementations</h3>
+<div class="paragraph">
+<p>If there is more than one implementation of the service, then a specific implementation can be requested using either Spring&#8217;s <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/annotation/Primary.html">@Primary</a> annotation (further discussion <a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html#beans-autowired-annotation-primary">here</a>) or Spring&#8217;s <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/beans/factory/annotation/Qualifier.html">Qualifier</a> annotation (further discussion <a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html#beans-autowired-annotation-qualifiers">here</a>).</p>
+</div>
+<div class="paragraph">
+<p>All of the domain services provided by Apache Causeway' are annotated with <code>@Qualifier</code> to enable this.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="injecting-lists-of-services"><a class="anchor" href="#injecting-lists-of-services"></a>Injecting Lists of Services</h3>
+<div class="paragraph">
+<p>It&#8217;s also possible to inject a list of services:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import jakarta.inject.Inject;
+
+public class DocumentService {
+    ...
+    @Inject List&lt;PaperclipFactory&gt; paperclipFactories;
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>These will be in the order as defined by the <code>@jakarta.annotation.Priority</code> annotation.</p>
+</div>
+<div class="paragraph">
+<p>This pattern can be useful when implementing the <a href="https://en.wikipedia.org/wiki/Chain-of-responsibility_pattern">chain of responsibility</a> design pattern, that is, looking for the first implementation that can handle a request.</p>
+</div>
+<div class="paragraph">
+<p>It is also useful to "broadcast" or fan out an implementation.
+For example, the framework defines the <a href="../../refguide/latest/applib/index/services/publishing/spi/ExecutionSubscriber.html" class="xref page">ExecutionSubscriber</a> SPI, which is used to publish <a href="../../refguide/latest/schema/ixn.html" class="xref page">Interaction Execution</a>s to external systems.
+The framework provides a simple logging implementation, which will always be called.
+All other implementations available will also be called.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="scoped-services"><a class="anchor" href="#scoped-services"></a>Scoped Services</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>By default all domain services are application-scoped, in other words singletons.
+Such domain services are required to be thread-safe, usually satisfied by being intrinsically stateless.</p>
+</div>
+<div class="paragraph">
+<p>Sometimes though a service&#8217;s lifetime is applicable only to a single (http) request.
+The framework has a number of such services, including a <a href="../../refguide/latest/applib/index/services/scratchpad/Scratchpad.html" class="xref page">Scratchpad</a> service (to share adhoc data between methods), and <a href="../../refguide/latest/applib/index/services/queryresultscache/QueryResultsCache.html" class="xref page">QueryResultsCache</a>, which as its name suggests will cache query results.
+Such services <em>do</em> hold state, but that state is scoped per (possibly concurrent) request and should be removed afterwards.</p>
+</div>
+<div class="paragraph">
+<p>The requirement for request-scoped services is supported using Apache Causeway' own <a href="../../refguide/latest/applib/index/annotation/InteractionScope.html" class="xref page">@InteractionScope</a> annotation (named because a short-lived <code>CausewaySession</code> is created for each request).
+This is used by the framework services and can also be used for user-defined services.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Service
+@InteractionScope
+public class MyService {
+    ...
+    public void doSomething() { ... }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Unlike application-scoped services, these request-scoped services must be injected using a slightly different idiom (borrowed from CDI), using a <code>jakarta.inject.Provider</code>.
+For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import jakarta.inject.Provider;
+
+public class SomeClient {
+    ...
+    @Inject Provider&lt;MyService&gt; myServiceProvider;  <i class="conum" data-value="1"></i><b>(1)</b>
+
+    public void someMethod() {
+        myServiceProvider.get()                     <i class="conum" data-value="2"></i><b>(2)</b>
+                         .doSomething();
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Inject using <code>Provider</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Obtain an instance using <code>Provider#get()</code></td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>As mentioned above, the <a href="../../refguide/latest/applib/index/services/queryresultscache/QueryResultsCache.html" class="xref page">QueryResultsCache</a> (used for performance caching) is also scoped.
+To use that service, the idiom would be:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import jakarta.inject.Inject;
+import jakarta.inject.Provider;
+
+public class Customer {
+    ...
+    @Inject OrderRepository orderRepository;
+    @Inject Provider&lt;QueryResultsCache&gt; queryResultsCacheProvider;  <i class="conum" data-value="1"></i><b>(1)</b>
+
+    public List&lt;Order&gt; getOrders() {
+        Customer customer = this;
+        return queryResultsCacheProvider
+                .get()                                              <i class="conum" data-value="2"></i><b>(2)</b>
+                .execute(
+                    () -&gt; orderRepository.findByCustomer(customer),
+                    Customer.class, "getOrders",
+                    customer)
+        );
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>inject a <code>Provider</code> for the service, not directly</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Get the cache from the provider</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>If you accidentally inject the service directly (without being wrapped in <code>Provider</code>), then the framework will detect this and fail-fast.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="overridingreplacing-services"><a class="anchor" href="#overridingreplacing-services"></a>Overriding/Replacing Services</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Apache Causeway runs on top of Spring Boot, and relies on Spring Boot for dependency injection using <code>@jakarta.inject.Inject</code>.
+The <code>@jakarta.annotation.Priority</code> annotation is used to prioritize multiple service implementations.
+This allows any framework-provided domain service to be replaced by a user-defined one if required, simply by assigning it with an earlier precedence (= higher priority).</p>
+</div>
+<div class="paragraph">
+<p>If this is done, then you will probably also want to implement your replacement using <code>@org.springframework.context.annotation.Primary</code>, to resolve the ambiguity of there being more than one implementation of the service on the classpath.</p>
+</div>
+<div class="paragraph">
+<p>It&#8217;s also possible to inject a <code>List&lt;SomeService&gt;</code>, in which case the list will be ordered with according to their <code>@Priority</code>, lowest values first.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="initialization"><a class="anchor" href="#initialization"></a>Initialization</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Sometimes a domain service needs to perform initialization logic before it is ready to be used.</p>
+</div>
+<div class="paragraph">
+<p>In many cases, such initialization can be performed within the constructor.
+If the initialization has dependencies, then these can be injected using standard <a href="https://docs.spring.io/spring-boot/docs/current/reference/html/using-spring-boot.html#using-boot-spring-beans-and-dependency-injection">constructor injection</a>.</p>
+</div>
+<div class="paragraph">
+<p>Alternatively, initialization can be moved into a <code>@PostConstruct</code> <a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html#beans-postconstruct-and-predestroy-annotations">lifecycle callback</a>.
+Shutdown is similar; the framework will call any method annotated with <code>jakarta.annotation.PreDestroy</code>.</p>
+</div>
+<div class="paragraph">
+<p>If a domain service needs to wait until the framework is fully initialized though, it should register for the <code>MetamodelEvent</code> that is emitted by the framework itself.
+One example is if the service is to seed some reference data:</p>
+</div>
+<div class="listingblock">
+<div class="title">SimpleModule.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.springframework.context.annotation.Configuration
+
+@Service
+@Priority(99)
+@RequiredConstructor
+public class SeedCountryRefData {
+
+    final InteractionService interactionService;
+    final TransactionService transactionService;
+    final FixtureScripts fixtureScripts;
+
+    @EventListener(MetamodelEvent.class)
+    public void init(MetamodelEvent ev) {                       <i class="conum" data-value="1"></i><b>(1)</b>
+        if (ev.isPostMetamodel()) {
+            interactionService.runAnonymous(() -&gt; {
+                transactionService.runWithinCurrentTransactionElseCreateNew(
+                    () -&gt; {
+                        fixtureScripts.runFixtureScript(
+                            new SeedCountryFixture(), null);    <i class="conum" data-value="2"></i><b>(2)</b>
+                });
+            });
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>subscribe to the framework-emitted <code>MetamodelEvent</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>uses <a href="../../refguide/latest/testing/index/fixtures/applib/fixturescripts/FixtureScripts.html" class="xref page">FixtureScripts</a> to seed the data using a fixture script.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="configuration"><a class="anchor" href="#configuration"></a>Configuration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Spring provides numerous mechanisms to configure domain services, both in terms of binding or passing in the configuration property to the service, and in terms of setting the value within some sort of configuration file.</p>
+</div>
+<div class="paragraph">
+<p>The mechanism prefered by Apache Causeway itself, and which you are free to use for your own services, is the type-safe <a href="https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/context/properties/ConfigurationProperties.html">ConfigurationProperties</a>, whereby the configuration properties are expressed in a series of nested static classes.</p>
+</div>
+<div class="paragraph">
+<p>The <a href="../../docs/latest/starters/simpleapp.html" class="xref page">simpleapp starter app</a> includes an example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.springframework.validation.annotation.Validated;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
+@ConfigurationProperties("app.simple-module")
+@lombok.Data
+@Validated
+public static class Configuration {
+    private final Types types = new Types();
+    @lombok.Data
+    public static class Types {
+        private final Name name = new Name();
+        @lombok.Data
+        public static class Name {
+            private final Validation validation = new Validation();
+            @lombok.Data
+            public static class Validation {
+                private char[] prohibitedCharacters =
+                    "!&amp;%$".toCharArray();
+                private String message =
+                    "Character '{character}' is not allowed";
+            }
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This configuration property can be injected, like any other component, and makes the configuration value available in a type-safe fashion:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">val prohibitedCharacters =
+  config.getTypes().getName().getValidation().getProhibitedCharacters();</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For this configuration property service to be discovered and managed by Spring, we need to use the <a href="https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/context/properties/EnableConfigurationProperties.html">EnableConfigurationProperties</a> annotation.
+This normally would reside on the owning module (discussed in more detail <a href="modules.html" class="xref page">later</a>):</p>
+</div>
+<div class="listingblock">
+<div class="title">SimpleModule.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import org.springframework.context.annotation.Configuration
+
+@Configuration
+// ...
+@EnableConfigurationProperties({
+        SimpleModule.Configuration.class,
+})
+public class SimpleModule /* ... */ {
+    // ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>These configuration properties can then be specified using either Spring&#8217;s <code>application.yml</code> or <code>application.properties</code>.
+For example:</p>
+</div>
+<div class="listingblock">
+<div class="title">application.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yml hljs" data-lang="yml">app:
+  simple-module:
+    types:
+      name:
+        validation:
+          message: "'{character}' is invalid."
+          prohibited-characters: "&amp;%$"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Moreover, Spring is able to configure the IDE so that these configuration values can be specified using code completion.
+All that is required is this dependency:</p>
+</div>
+<div class="listingblock">
+<div class="title">pom.xml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;!-- IDE support  --&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-configuration-processor&lt;/artifactId&gt;
+    &lt;optional&gt;true&lt;/optional&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+</article>
+<aside class="article-aside toc hide-for-print" role="navigation">
+    <p class="toc-title">On this page</p>
+    <div id="article-toc"></div>
+</aside>
+</main>
+</div>
+<footer class="footer">
+    <div class="content">
+        <div class="copyright">
+            <p>
+                Copyright © 2010~2024 The Apache Software Foundation, licensed under the Apache License, v2.0.
+                <br/>
+                Apache, the Apache feather logo, Apache Causeway, and the Apache Causeway project logo are all trademarks of The Apache Software Foundation.
+            </p>
+        </div>
+        <div class="revision">
+            <p>Revision: 4.0.0-SNAPSHOT.20260126-0346-31fc0da1</p>
+        </div>
+    </div>
+</footer>
+<script src="../../_/js/site.js"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+<script src="../../_/js/vendor/jquery-3.4.1.min.js"></script>
+<script src="../../_/js/vendor/jquery-ui-1.12.1.custom.widget-only.min.js"></script>
+<script src="../../_/js/vendor/jquery.tocify.min.js"></script>
+
+<script>
+    $(function() {
+        $("#article-toc").tocify( {
+            showEffect: "slideDown",
+            hashGenerator: "pretty",
+            hideEffect: "slideUp",
+            selectors: "h2, h3",
+            scrollTo: 120,
+            smoothScroll: true,
+            theme: "jqueryui",
+            highlightOnScroll: true
+        } );
+    });
+</script>
+
+<script src="../../_/js/vendor/docsearch.min.js"></script>
+<script>
+  function focusSearchInput () { document.querySelector('#algolia-search-input').focus() }
+  var search = docsearch({
+    appId: '5ISP5TFAEN',
+    apiKey: '0fc51c28b4ad46e7318e96d4e97fab7c',
+    indexName: 'causeway-apache-org',
+    inputSelector: '#algolia-search-input',
+    autocompleteOptions: { hint: false, keyboardShortcuts: ['s'] },
+    debug: false,
+  }).autocomplete
+  search.on('autocomplete:closed', function () { search.autocomplete.setVal() })
+  focusSearchInput()
+  window.addEventListener('load', focusSearchInput);
+</script>
+
+<!--
+  docsearch options:
+  https://docsearch.algolia.com/docs/behavior/
+-->
+<!--
+  https://www.algolia.com/doc/api-reference/api-parameters/
+  algoliaOptions: { hitsPerPage: 6 },
+-->
+  </body>
+</html>

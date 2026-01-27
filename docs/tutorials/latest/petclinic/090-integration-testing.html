@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Integration Testing :: causeway</title>
+    <link rel="canonical" href="https://apache-causeway-committers.github.io/causeway-nightly/tutorials/latest/petclinic/090-integration-testing.html">
+    <meta name="generator" content="Antora 3.1.14">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+    <link rel="stylesheet" href="../../../_/css/site-custom.css">
+<link rel="home" href="https://apache-causeway-committers.github.io/causeway-nightly" title="causeway">
+  <link rel="prev" href="080-view-models.html" title="View Models">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://apache-causeway-committers.github.io/causeway-nightly">
+          <span class="icon">
+            <img src="../../../_/img/causeway-logo-no-words-65x48.png"></img>
+          </span>
+        <span class="navbar-title">causeway</span>
+      </a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <a class="navbar-end">
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Quick Start</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Starter Apps</span>
+            <a class="navbar-item" href="../../../docs/latest/starters/helloworld.html">Hello World</a>
+            <a class="navbar-item" href="../../../docs/latest/starters/simpleapp.html">Simple App</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Learning &amp; Tutorials</span>
+            <a class="navbar-item" href="../../../docs/latest/reference/about.html">Reference App</a>
+            <a class="navbar-item" href="https://danhaywood.gitlab.io/isis-petclinic-tutorial-docs/petclinic/1.16.2/intro.html">Petclinic</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Resources</span>
+            <a class="navbar-item" href="../../../docs/latest/resources/cheatsheet.html">Cheatsheet</a>
+            <a class="navbar-item" href="../../../docs/latest/resources/icons.html">Icons</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Guides</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Core</span>
+            <a class="navbar-item" href="../../../userguide/latest/about.html">User Guide</a>
+            <a class="navbar-item" href="../../../refguide/latest/about.html">Reference Guide</a>
+            <a class="navbar-item" href="../../../testing/latest/about.html">Testing Guide</a>
+            <a class="navbar-item" href="../../../security/latest/about.html">Security Guide</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">For use in apps</span>
+            <a class="navbar-item" href="../../../valuetypes/latest/about.html">Value Types</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Development</span>
+            <a class="navbar-item" href="../../../setupguide/latest/about.html">Setup Guide</a>
+            <a class="navbar-item" href="../../../conguide/latest/about.html">Contributors' Guide</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Components</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Security</span>
+            <a class="navbar-item" href="../../../security/latest/bypass/about.html">Bypass</a>
+            <a class="navbar-item" href="../../../security/latest/simple/about.html">Simple</a>
+            <a class="navbar-item" href="../../../security/latest/spring/about.html">Spring</a>
+            <a class="navbar-item" href="../../../security/latest/keycloak/about.html">Keycloak</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Viewers</span>
+            <a class="navbar-item" href="../../../vw/latest/about.html">Web UI (Wicket)</a>
+            <a class="navbar-item" href="../../../gqlv/latest/about.html">GraphQL API</a>
+            <a class="navbar-item" href="../../../vro/latest/about.html">REST API (Restful Objects)</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Persistence</span>
+            <a class="navbar-item" href="../../../pjpa/latest/about.html">JPA (EclipseLink)</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Extensions</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Core</span>
+            <a class="navbar-item" href="../../../userguide/latest/commandlog/about.html">Command Log</a>
+            <a class="navbar-item" href="../../../userguide/latest/docgen/about.html">Doc Gen</a>
+            <a class="navbar-item" href="../../../userguide/latest/executionlog/about.html">Execution Log</a>
+            <a class="navbar-item" href="../../../userguide/latest/executionoutbox/about.html">Execution Outbox</a>
+            <a class="navbar-item" href="../../../userguide/latest/executionrepublisher/about.html">Execution Republisher</a>
+            <a class="navbar-item" href="../../../userguide/latest/excel/about.html">Excel</a>
+            <a class="navbar-item" href="../../../userguide/latest/flyway/about.html">Flyway</a>
+            <a class="navbar-item" href="../../../userguide/latest/layoutloaders/about.html">Layout Loaders</a>
+            <a class="navbar-item" href="../../../userguide/latest/titlecache/about.html">Title Cache</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Security</span>
+            <a class="navbar-item" href="../../../security/latest/secman/about.html">Secman</a>
+            <a class="navbar-item" href="../../../security/latest/audittrail/about.html">Audit Trail</a>
+            <a class="navbar-item" href="../../../security/latest/spring-oauth2/about.html">Spring OAuth2 Integration</a>
+            <a class="navbar-item" href="../../../security/latest/sessionlog/about.html">Session Log</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Web UI (Wicket)</span>
+            <a class="navbar-item" href="../../../vw/latest/fullcalendar/about.html">Full Calendar</a>
+            <a class="navbar-item" href="../../../vw/latest/pdfjs/about.html">pdf.js</a>
+            <a class="navbar-item" href="../../../vw/latest/sse/about.html">Server Side Events</a>
+            <a class="navbar-item" href="../../../vw/latest/tabular/about.html">Tabular Download</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">REST API (Restful Objects)</span>
+            <a class="navbar-item" href="../../../vro/latest/cors/about.html">CORS</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Persistence</span>
+            <a class="navbar-item" href="../../../querydsl/latest/about.html">QueryDSL</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Support</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Contact</span>
+            <a class="navbar-item" href="../../../docs/latest/support/slack-channel.html">Slack</a>
+            <a class="navbar-item" href="../../../docs/latest/support/mailing-list.html">Mailing Lists</a>
+            <a class="navbar-item" href="https://issues.apache.org/jira/browse/CAUSEWAY">JIRA</a>
+            <a class="navbar-item" href="https://stackoverflow.com/questions/tagged/causeway">Stack Overflow</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Releases</span>
+            <a class="navbar-item" href="../../../docs/latest/downloads/how-to.html">Downloads</a>
+            <a class="navbar-item" href="../../../relnotes/latest/about.html">Release Notes</a>
+            <hr class="navbar-divider"/>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Framework</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Process</span>
+            <a class="navbar-item" href="../../../comguide/latest/about.html">Committers' Guide</a>
+            <a class="navbar-item" href="../../../tooling/latest/about.html">Tooling</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Automated Analysis</span>
+            <a class="navbar-item" href="https://sonarcloud.io/dashboard?id=apache_causeway">SonarCloud.io</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Interim Builds</span>
+            <a class="navbar-item" href="../../../comguide/latest/nightly-builds.html">Nightly builds</a>
+            <a class="navbar-item" href="../../../comguide/latest/weekly-builds.html">Weekly builds</a>
+            <a class="navbar-item" href="https://apache-causeway-committers.github.io/causeway-nightly">Website Preview (not ASF hosted)</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Development</span>
+            <a class="navbar-item" href="../../../core/latest/about.html">Internal Design Docs</a>
+            <a class="navbar-item" href="../../../regressiontests/latest/about.html">Regression Tests</a>
+            <a class="navbar-item" href="../../../incubator/latest/about.html">Incubator</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Thanks</span>
+            <a class="navbar-item" href="../../../more-thanks/latest/more-thanks.html">Acknowledgements</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">ASF</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://www.apache.org/">Apache Homepage</a>
+            <a class="navbar-item" href="https://www.apache.org/events/current-event">Events</a>
+            <a class="navbar-item" href="https://www.apache.org/licenses/">License</a>
+            <a class="navbar-item" href="https://www.apache.org/security/">Security</a>
+            <a class="navbar-item" href="https://privacy.apache.org/policies/privacy-policy-public.html">Privacy</a>
+            <a class="navbar-item" href="https://www.apache.org/foundation/sponsorship.html">Sponsorship</a>
+            <a class="navbar-item" href="https://www.apache.org/foundation/thanks.html">Thanks</a>
+            <hr class="navbar-divider"/>
+            <a class="navbar-item" href="https://whimsy.apache.org/board/minutes/Causeway.html">PMC board minutes</a>
+          </div>
+        </div>
+        <a class="navbar-item" href="../../../docs/latest/about.html">
+          <span class="icon">
+            <img src="../../../_/img/home.png"></img>
+          </span>
+        </a>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body ">
+<div class="nav-container" data-component="tutorials" data-version="latest">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-search hide-for-print">
+  <input id="algolia-search-input" placeholder="Search"></span>
+</div>
+<div class="nav-panel-pagination">
+  <a class="page-previous" rel="prev" href="080-view-models.html" title="View Models"><span></span></a>
+  <a class="page-next disabled" rel="next"
+     href="" title=""><span></span></a>
+<!--
+page.parent doesn't seem to be set...
+  <a class="page-parent disabled" rel="prev" href="" title="View Models"><span></span></a>
+-->
+</div>
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../about.html">Tutorials</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="010-getting-started.html">Getting Started</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="010-getting-started.html#prereqs">Prereqs</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="010-getting-started.html#exercise-1-1-starter-apps-clone-the-repo"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>1.1</strong>: Starter apps / clone the repo</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="010-getting-started.html#exercise-1-2-explore-the-simple-app">1.2: Explore the Simple App</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="010-getting-started.html#exercise-1-3-running-from-the-ide">1.3: Running from the IDE</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="010-getting-started.html#exercise-1-4-naked-objects-pattern">1.4: Naked Objects pattern</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="010-getting-started.html#exercise-1-5-ui-hints">1.5: UI Hints</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="020-the-petclinic-domain.html">The PetClinic Domain and <code>petowner</code> module</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="020-the-petclinic-domain.html#exercise-2-1-create-a-new-petowner-module"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>2.1</strong>: Create new <code>petowner</code> module</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="020-the-petclinic-domain.html#exercise-2-2-configure-the-app-to-include-the-petowner-module"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>2.2</strong>: Include the <code>petowner</code> module</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="020-the-petclinic-domain.html#exercise-2-3-add-security-role-for-petowner-module"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>2.3</strong>: Add security role for the <code>petowner</code> module</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="020-the-petclinic-domain.html#exercise-2-4-update-menubar-for-PetOwners"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>2.4</strong>: Update menubar for <code>PetOwners</code></a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="020-the-petclinic-domain.html#exercise-2-5-setup-demo-PetOwners"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>2.5</strong>: Setup demo <code>PetOwner</code>s</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="030-petowner-entity.html">The <code>PetOwner</code> entity</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="030-petowner-entity.html#exercise-3-1-add-petowners-knownAs-property"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>3.1</strong>: Add <code>PetOwner</code>'s <code>knownAs</code> property</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="030-petowner-entity.html#exercise-3-2-define-PetOwners-title-imperatively"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>3.2</strong>: Define <code>PetOwner</code>'s title imperatively</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="030-petowner-entity.html#exercise-3-3-remaining-PetOwner-properties"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>3.3</strong>: Add remaining <code>PetOwner</code> properties</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="030-petowner-entity.html#exercise-3-4-list-new-properties-of-PetOwner"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>3.4</strong>: List new properties of <code>PetOwner</code></a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="030-petowner-entity.html#exercise-3-5-initial-fixture-script"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>3.5</strong>: Initial Fixture Script</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="030-petowner-entity.html#exercise-3-6-update-home-page-to-show-PetOwners"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>3.6</strong>:  Update Home Page to show <code>PetOwner</code>s</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="030-petowner-entity.html#exercise-3-7-modify-the-menu-action-that-creates-petowners"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>3.7</strong>: Modify the menu action that creates <code>PetOwner</code>s</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="030-petowner-entity.html#exercise-3-8-prompt-styles"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>3.8</strong>: Prompt styles</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="030-petowner-entity.html#exercise-3-9-derived-days-since-last-visit-property"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>3.9</strong>: Derived 'days since last visit' property</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="030-petowner-entity.html#exercise-3-10-use-meta-annotations-to-reduce-duplication"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>3.10</strong>: Use meta-annotations to reduce duplication</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="030-petowner-entity.html#exercise-3-11-validation"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>3.11</strong>: Validation</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="030-petowner-entity.html#exercise-3-12-more-validation"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>3.12</strong>: More validation</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="030-petowner-entity.html#exercise-3-13-scalar-custom-value-types"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>3.13</strong>: Scalar custom value types</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="030-petowner-entity.html#exercise-3-14-use-layout-xml-file-for-ui-semantics"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>3.14</strong>: Use layout xml file for UI semantics</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="030-petowner-entity.html#exercise-3-15-update-icon-for-pet-owner"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>3.15</strong>: Update icon for <code>PetOwner</code></a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="040-pet-entity.html">The <code>Pet</code> entity</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="040-pet-entity.html#exercise-4-1-pet-entitys-key-properties"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>4.1</strong>: <code>Pet</code> entity&#8217;s key properties</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="040-pet-entity.html#exercise-4-2-add-pet-ui-and-layout-semantics"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>4.2</strong>: Add <code>Pet</code>'s UI and layout semantics</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="040-pet-entity.html#exercise-4-3-add-petowners-collection-of-pets"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>4.3</strong>: Add <code>PetOwner</code>'s collection of <code>Pet</code>s</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="040-pet-entity.html#exercise-4-4-add-actions-to-add-or-remove-pets"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>4.4</strong>: Add actions to add or remove <code>Pet</code>s</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="040-pet-entity.html#exercise-4-5-extend-the-fixture-data-to-add-in-Pets"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>4.5</strong>: Extend the fixture data to add in <code>Pet</code>s</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="040-pet-entity.html#exercise-4-6-add-action-validation"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>4.6</strong>: Unique <code>Pet</code> names (action validation)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="040-pet-entity.html#exercise-4-7-add-pets-remaining-properties"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>4.7</strong>: Add <code>Pet</code>'s remaining properties</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="040-pet-entity.html#exercise-4-8-dynamic-icons-for-pet"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>4.8</strong>: Add dynamic icons for <code>Pet</code></a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="050-visit-entity.html">The <code>visit</code> module and <code>Visit</code> entity</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="050-visit-entity.html#exercise-5-1-the-visits-module"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>5.1</strong>: The <code>visit</code> module</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="050-visit-entity.html#exercise-5-2-visit-module-dependencies"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>5.2</strong>: The <code>visit</code> module dependencies</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="050-visit-entity.html#exercise-5-3-visit-entitys-key-properties"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>5.3</strong>: <code>Visit</code> entity&#8217;s key properties</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="050-visit-entity.html#exercise-5-4-book-visit-action"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>5.4</strong>: The "Book Visit" action</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="060-unit-testing.html">Unit Testing</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="060-unit-testing.html#exercise-6-1-unit-test-the-default-time-when-booking-visits"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>6.1</strong>: Unit test the default time when booking visits</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="070-modularity.html">Modularity (domain events)</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="070-modularity.html#exercise-7-1-refactor-petowners-delete-action"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>7.1</strong>: refactor <code>PetOwner</code>'s delete action</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="080-view-models.html">View Models</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="080-view-models.html#exercise-8-1-extend-the-home-page"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>8.1</strong>: Extend the Home Page.</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="080-view-models.html#exercise-8-2-add-a-convenience-action"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>8.2</strong>: Add a convenience action</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item is-current-page" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="090-integration-testing.html">Integration Testing</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#exercise-9-1-testing-bookvisit-using-an-integtest"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>9.1</strong>: Testing <code>bookVisit()</code> using an integtest</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#exercise-9-2-adds-visit-fixture"><span class="image"><img src="_images/hand.png" alt="hand"></span> <strong>9.2</strong>: Adds fixtures for the <code>visit</code> module</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Tutorials</span>
+    <span class="version">latest</span>
+  </div>
+  <ul class="components">
+    <li class="component">
+      <span class="title"> </span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../docs/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Committers' Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../comguide/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Contributors' Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../conguide/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Design Docs</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../core/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Extensions</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../extensions/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">GraphQL Viewer</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../gqlv/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Incubator Catalog</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../incubator/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">JPA</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../pjpa/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">QueryDSL</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../querydsl/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Reference Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../refguide/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">regressiontests</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../regressiontests/latest/index.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Release Notes</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../relnotes/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">REST API (Restful Objects Viewer)</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../vro/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Security Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../security/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Setup Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../setupguide/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Testing Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../testing/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component is-current">
+      <span class="title">Tutorials</span>
+      <ul class="versions">
+        <li class="version is-current">
+          <a href="../about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">User Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../userguide/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Value Types Catalog</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../valuetypes/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Web UI (Wicket Viewer)</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../vw/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main role="main">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../../docs/latest/about.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../about.html">Tutorials</a></li>
+    <li><a href="090-integration-testing.html">Integration Testing</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="https://github.com/apache/causeway/edit/main/antora/components/tutorials/modules/petclinic/pages/090-integration-testing.adoc">Edit</a></div>
+</div>
+<article class="doc">
+    <a name="section-top"></a>
+<h1 class="page">Integration Testing</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>In an earlier section of this tutorial we looked at unit testing, but integration tests are at least as important, probably more so, as they exercise the entire application from an end-users perspective, rather than an individual part.</p>
+</div>
+<div class="paragraph">
+<p>We don&#8217;t write integration tests using Selenium or similar, and so avoid the fragility and maintenance effort that such tests often entail.
+Instead, the framework provides the <a href="../../../refguide/latest/applib/index/services/wrapper/WrapperFactory.html" class="xref page">WrapperFactory</a> domain service which simulates the user interface in a type-safe way.
+Another term sometimes used is <em>subcutaneous</em> testing; we execute the test "under the skin".</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="exercise-9-1-testing-bookvisit-using-an-integtest"><a class="anchor" href="#exercise-9-1-testing-bookvisit-using-an-integtest"></a>Ex 9.1: Testing bookVisit using an integtest</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In this exercise we&#8217;ll test the <code>bookVisit</code> mixin action (on <code>Pet</code> entity).</p>
+</div>
+<div class="sect2">
+<h3 id="solution"><a class="anchor" href="#solution"></a>Solution</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git checkout tags/3.2.0/09-01-bookVisit-integ-test
+mvn clean install</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="tasks"><a class="anchor" href="#tasks"></a>Tasks</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>in the <code>pom.xml</code> of the visits module, add the following dependencies:</p>
+<div class="listingblock">
+<div class="title">module-visits/pom.xml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
+    &lt;groupId&gt;org.apache.causeway.testing&lt;/groupId&gt;
+    &lt;artifactId&gt;causeway-testing-integtestsupport-applib&lt;/artifactId&gt;
+    &lt;scope&gt;test&lt;/scope&gt;
+&lt;/dependency&gt;
+
+&lt;dependency&gt;
+    &lt;groupId&gt;org.apache.causeway.persistence&lt;/groupId&gt;
+    &lt;artifactId&gt;causeway-persistence-jpa-eclipselink&lt;/artifactId&gt;
+    &lt;scope&gt;test&lt;/scope&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>add an abstract class <code>VisitModuleIntegTestAbstract</code> for the <code>visits</code> module, for other integ tests to subclass:</p>
+<div class="listingblock">
+<div class="title">VisitModuleIntegTestAbstract.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@SpringBootTest(
+        classes = VisitModuleIntegTestAbstract.TestApp.class
+)
+@ActiveProfiles("test")
+public abstract class VisitModuleIntegTestAbstract
+        extends CausewayIntegrationTestAbstractWithFixtures {
+
+    @SpringBootConfiguration
+    @EnableAutoConfiguration
+    @Import({
+
+            CausewayModuleCoreRuntimeServices.class,
+            CausewayModuleSecurityBypass.class,
+            CausewayModulePersistenceJpaEclipselink.class,
+            CausewayModuleTestingFixturesApplib.class,
+
+            VisitModule.class                           <i class="conum" data-value="1"></i><b>(1)</b>
+    })
+    @PropertySources({
+            @PropertySource(CausewayPresets.H2InMemory_withUniqueSchema),
+            @PropertySource(CausewayPresets.UseLog4j2Test),
+    })
+    public static class TestApp {
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Most of this class is boilerplate, but it does reference the module under test.</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>also update the <code>application-test.yml</code> file for the <code>visit</code> module, to ensure that the database schemas for both modules are created:</p>
+<div class="listingblock">
+<div class="title">module-visit/src/test/resources/application-test.yml</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">causeway:
+  persistence:
+    schema:
+      auto-create-schemas: petowner,visit</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>add a class <code>Bootstrap_IntegTest</code> integration test, inheriting from the `VisitsModuleIntegTestAbstract:</p>
+<div class="listingblock">
+<div class="title">Bootstrap_IntegTest.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Bootstrap_IntegTest extends VisitModuleIntegTestAbstract {
+
+    @Test
+    public void checks_can_bootstrap() {}
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Make sure this test runs and passes in both the IDE and using "mvn clean install".</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Now we can write our actual test:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Now add a class <code>PetOwner_bookVisit_IntegTest</code> integration test, also inheriting from the `VisitModuleIntegTestAbstract:</p>
+<div class="listingblock">
+<div class="title">PetOwner_bookVisit_IntegTest.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class PetOwner_bookVisit_IntegTest extends VisitModuleIntegTestAbstract {
+
+    @BeforeEach
+    void setup() {
+        fixtureScripts.run(new PetOwner_persona.PersistAll());                       <i class="conum" data-value="1"></i><b>(1)</b>
+    }
+
+    @Test
+    public void happy_case() {
+
+        // given
+        PetOwner somePetOwner = fakeDataService.enums()                             <i class="conum" data-value="2"></i><b>(2)</b>
+                .anyOf(PetOwner_persona.class)
+                .findUsing(serviceRegistry);
+        Pet somePet = fakeDataService.collections()
+                .anyOf(somePetOwner.getPets());
+
+        List&lt;Visit&gt; before = visitRepository.findByPetOwner(somePetOwner);
+        assertThat(before).isEmpty();
+
+        // when
+        LocalDateTime visitAt = clockService.getClock().nowAsLocalDateTime()        <i class="conum" data-value="3"></i><b>(3)</b>
+                .plusDays(fakeDataService.ints().between(1, 3));
+
+        wrapMixin(PetOwner_bookVisit.class, somePetOwner).act(somePet, visitAt);    <i class="conum" data-value="4"></i><b>(4)</b>
+
+        // then
+        List&lt;Visit&gt; after = visitRepository.findByPetOwner(somePetOwner);
+        assertThat(after).hasSize(1);
+
+        Visit visit = after.get(0);
+
+        assertThat(visit.getPet()).isSameAs(somePet);                               <i class="conum" data-value="5"></i><b>(5)</b>
+        assertThat(visit.getPet().getPetOwner()).isSameAs(somePetOwner);            <i class="conum" data-value="6"></i><b>(6)</b>
+        assertThat(visit.getVisitAt()).isEqualTo(visitAt);                          <i class="conum" data-value="6"></i><b>(6)</b>
+    }
+
+    @Inject FakeDataService fakeDataService;
+    @Inject VisitRepository visitRepository;
+    @Inject ClockService clockService;
+
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>uses same fixture script used for prototyping to set up <code>Pet</code>s and their <code>PetOwner</code>s.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>uses the <a href="../../../refguide/latest/testing/index/fakedata/applib/services/FakeDataService.html" class="xref page">FakeDataService</a> to select a random <code>PetOwner</code> and corresponding <code>Pet</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>sets up some randomised but valid argument values</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>invokes the action, using the <a href="../../../refguide/latest/applib/index/services/wrapper/WrapperFactory.html" class="xref page">WrapperFactory</a> to simulate the UI</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>asserts that one new <code>Visit</code> has been created for the <code>Pet</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>asserts that the state of this new <code>Visit</code> is correct
+<div class="paragraph">
+<p>Run the test and check that it passes.</p>
+</div></td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>write an error scenario which checks that the <code>visitAt</code> date cannot be in the past:</p>
+<div class="listingblock">
+<div class="title">PetOwner_bookVisit_IntegTest.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Test
+public void cannot_book_in_the_past() {
+
+    // given
+    PetOwner somePetOwner = fakeDataService.enums()
+            .anyOf(PetOwner_persona.class)
+            .findUsing(serviceRegistry);
+    Pet somePet = fakeDataService.collections()
+            .anyOf(somePetOwner.getPets());
+
+    // when, then
+    LocalDateTime visitAt = clockService.getClock().nowAsLocalDateTime();
+
+    assertThatThrownBy(() -&gt;
+            wrapMixin(PetOwner_bookVisit.class, somePetOwner).act(somePet, visitAt)
+    )
+            .isInstanceOf(InvalidException.class)
+            .hasMessage("Must book in the future");
+}</code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="exercise-9-2-adds-visit-fixture"><a class="anchor" href="#exercise-9-2-adds-visit-fixture"></a>Ex 9.2: Adds fixture for <code>Visit</code>s</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Currently we have a fixture for <code>PetOwner</code>s and their <code>Pet</code>s, but none for <code>Visit</code>s.
+If we want to write additional integration tests for <code>Visit</code>s also, then it&#8217;s a good idea to have some fixtures.
+They can also be used when prototyping.</p>
+</div>
+<div class="paragraph">
+<p>In this exercise we&#8217;ll therefore add a new fixture for the <code>visit</code> module.</p>
+</div>
+<div class="sect2">
+<h3 id="solution-2"><a class="anchor" href="#solution-2"></a>Solution</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git checkout tags/3.2.0/09-02-adds-visit-fixture
+mvn clean install</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="tasks-2"><a class="anchor" href="#tasks-2"></a>Tasks</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>copy in the following persona enum (we&#8217;ll add the <code>Builder</code> next):</p>
+<div class="listingblock">
+<div class="title">Visit_persona.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">/**
+ * Returns the most recent Visit, or the one scheduled.
+ */
+@RequiredArgsConstructor
+public enum Visit_persona
+implements Persona&lt;Visit, Visit_persona.Builder&gt; {
+
+    JAMAL_VISITS(PetOwner_persona.JAMAL),
+    CAMILA_VISITS(PetOwner_persona.CAMILA),
+    ARJUN_VISITS(PetOwner_persona.ARJUN),
+    NIA_VISITS(PetOwner_persona.NIA),
+    OLIVIA_VISITS(PetOwner_persona.OLIVIA),
+    LEILA_VISITS(PetOwner_persona.LEILA),
+    MATT_VISITS(PetOwner_persona.MATT),
+    BENJAMIN_VISITS(PetOwner_persona.BENJAMIN),
+    JESSICA_VISITS(PetOwner_persona.JESSICA),
+    DANIEL_VISITS(PetOwner_persona.DANIEL);
+
+    private final PetOwner_persona petOwner_p;
+
+    @Override
+    public Builder builder() {
+        return new Builder().setPersona(this);
+    }
+
+    @Override
+    public Visit findUsing(final ServiceRegistry serviceRegistry) {
+        final var owner = petOwner_p.findUsing(serviceRegistry);
+        final var visits = serviceRegistry.lookupService(VisitRepository.class)
+                .map(x -&gt; x.findByPetOwner(owner))
+                .orElseThrow();
+        return lastOf(visits);
+    }
+
+    private static Visit lastOf(List&lt;Visit&gt; visits) {
+        return visits.get(visits.size()-1);
+    }
+
+    // ...
+}</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>now add in the <code>Builder</code>:</p>
+<div class="listingblock">
+<div class="title">Visit_persona.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@RequiredArgsConstructor
+public enum Visit_persona
+implements Persona&lt;Visit, Visit_persona.Builder&gt; {
+    // ...
+
+    @Accessors(chain = true)
+    public static class Builder extends BuilderScriptWithResult&lt;Visit&gt; {
+
+        @Getter @Setter private Visit_persona persona;
+
+        @Override
+        protected Visit buildResult(final ExecutionContext ec) {
+
+            final var petOwner = ec.executeChildT(this, persona.petOwner_p);    <i class="conum" data-value="1"></i><b>(1)</b>
+
+            petOwner.getPets().forEach(pet -&gt; {
+
+                // in the past
+                final var numVisits = fakeDataService.ints().between(2, 4);     <i class="conum" data-value="2"></i><b>(2)</b>
+                for (var i = 0; i &lt; numVisits; i++) {
+                    final var daysAgo = fakeDataService.ints().between(5, 500);
+                    final var minsInTheDay = randomAppointmentTime();
+                    final var appointmentTime = randomAppointmentTimeFromToday(-daysAgo, minsInTheDay);
+                    wrapperFactory.wrapMixin(PetOwner_bookVisit.class, petOwner, SyncControl.control().withSkipRules()).act(pet, appointmentTime);
+                }
+
+                // in the future
+                if (fakeDataService.booleans().coinFlip()) {                    <i class="conum" data-value="3"></i><b>(3)</b>
+                    final var daysAhead = fakeDataService.ints().between(1, 10);
+                    final var minsInTheDay = randomAppointmentTime();
+                    final var appointmentTime = randomAppointmentTimeFromToday(daysAhead, minsInTheDay);
+                    wrapperFactory.wrapMixin(PetOwner_bookVisit.class, petOwner, SyncControl.control().withSkipRules()).act(pet, appointmentTime);
+                }
+            });
+
+            final var numDaysAgo = fakeDataService.ints().between(2, 100);
+            final var lastVisit = clockService.getClock().nowAsLocalDate().minusDays(numDaysAgo);
+            petOwner.setLastVisit(lastVisit);
+
+            final var visits = wrapperFactory.wrapMixin(PetOwner_visits.class, petOwner, SyncControl.control().withSkipRules()).coll();
+            return lastOf(visits);
+        }
+
+        private LocalDateTime randomAppointmentTimeFromToday(int days, int appointmentTime) {
+            return clockService.getClock().nowAsLocalDate().atStartOfDay().plusDays(days).plusMinutes(appointmentTime);
+        }
+
+        private int randomAppointmentTime() {
+            return (9 * 60) + (fakeDataService.ints().between(0, 32) * 15);
+        }
+
+        // -- DEPENDENCIES
+
+        @Inject ClockService clockService;
+        @Inject FakeDataService fakeDataService;
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Using the supplied <code>ExecutionContext</code>, we can execute any prerequisites fixtures (in this case to obtain the corresponding <code>PetOwner</code> and <code>Pet</code>s)</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>we create between 2 and 4 <code>Visit</code>s in the past for each <code>Pet</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>we create a <code>Visit</code> in the future for approximately every other <code>Pet</code>.</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>add in the <code>PersistAll</code>:</p>
+<div class="listingblock">
+<div class="title">Visit_persona.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@RequiredArgsConstructor
+public enum Visit_persona
+implements Persona&lt;Visit, Visit_persona.Builder&gt; {
+    // ...
+
+    public static class PersistAll
+            extends PersonaEnumPersistAll&lt;Visit, Visit_persona, Builder&gt; {
+        public PersistAll() {
+            super(Visit_persona.class);
+        }
+    }
+}</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>update the top-level <code>DomainAppDemo</code> fixture to create visits rather than petowners/pets:</p>
+<div class="listingblock">
+<div class="title">DomainAppDemo.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class DomainAppDemo extends FixtureScript {
+
+    @Override
+    protected void execute(final ExecutionContext ec) {
+        ec.executeChildren(this, moduleWithFixturesService.getTeardownFixture());
+        ec.executeChild(this, new Visit_persona.PersistAll());      <i class="conum" data-value="1"></i><b>(1)</b>
+    }
+
+    @Inject ModuleWithFixturesService moduleWithFixturesService;
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Because <code>Visit_persona</code> automatically creates its prereqs, there&#8217;s no need to run the <code>PetOwner_persona</code> fixture.
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Currently the <code>PetOwner_persona</code> isn&#8217;t rerunnable, so we have to take some care.
+However, it&#8217;s easy to refactor if we wanted to:</p>
+</div>
+<div class="listingblock">
+<div class="title">PetOwner_persona.java</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">val petOwner = serviceRegistry.lookupService(PetOwners.class)
+                    .map(x -&gt; x.findByNameExact(persona.name))
+                    .orElseGet(
+                        () -&gt; petOwners.create(persona.name, null, null, null)
+                    );</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Note that the above change <em>isn&#8217;t</em> one of the exercises.</p>
+</div>
+</td>
+</tr>
+</table>
+</div></td>
+</tr>
+</table>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</article>
+<aside class="article-aside toc hide-for-print" role="navigation">
+    <p class="toc-title">On this page</p>
+    <div id="article-toc"></div>
+</aside>
+</main>
+</div>
+<footer class="footer">
+    <div class="content">
+        <div class="copyright">
+            <p>
+                Copyright © 2010~2024 The Apache Software Foundation, licensed under the Apache License, v2.0.
+                <br/>
+                Apache, the Apache feather logo, Apache Causeway, and the Apache Causeway project logo are all trademarks of The Apache Software Foundation.
+            </p>
+        </div>
+        <div class="revision">
+            <p>Revision: 4.0.0-SNAPSHOT.20260126-0346-31fc0da1</p>
+        </div>
+    </div>
+</footer>
+<script src="../../../_/js/site.js"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+<script src="../../../_/js/vendor/jquery-3.4.1.min.js"></script>
+<script src="../../../_/js/vendor/jquery-ui-1.12.1.custom.widget-only.min.js"></script>
+<script src="../../../_/js/vendor/jquery.tocify.min.js"></script>
+
+<script>
+    $(function() {
+        $("#article-toc").tocify( {
+            showEffect: "slideDown",
+            hashGenerator: "pretty",
+            hideEffect: "slideUp",
+            selectors: "h2, h3",
+            scrollTo: 120,
+            smoothScroll: true,
+            theme: "jqueryui",
+            highlightOnScroll: true
+        } );
+    });
+</script>
+
+<script src="../../../_/js/vendor/docsearch.min.js"></script>
+<script>
+  function focusSearchInput () { document.querySelector('#algolia-search-input').focus() }
+  var search = docsearch({
+    appId: '5ISP5TFAEN',
+    apiKey: '0fc51c28b4ad46e7318e96d4e97fab7c',
+    indexName: 'causeway-apache-org',
+    inputSelector: '#algolia-search-input',
+    autocompleteOptions: { hint: false, keyboardShortcuts: ['s'] },
+    debug: false,
+  }).autocomplete
+  search.on('autocomplete:closed', function () { search.autocomplete.setVal() })
+  focusSearchInput()
+  window.addEventListener('load', focusSearchInput);
+</script>
+
+<!--
+  docsearch options:
+  https://docsearch.algolia.com/docs/behavior/
+-->
+<!--
+  https://www.algolia.com/doc/api-reference/api-parameters/
+  algoliaOptions: { hitsPerPage: 6 },
+-->
+  </body>
+</html>
