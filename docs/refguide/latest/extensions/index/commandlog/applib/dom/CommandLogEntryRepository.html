@@ -1047,6 +1047,14 @@ page.parent doesn't seem to be set...
       </ul>
     </li>
     <li class="component">
+      <span class="title">Web Component Viewers</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../../../../../webcomponents/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
       <span class="title">Web UI (Wicket Viewer)</span>
       <ul class="versions">
         <li class="version">
@@ -1093,7 +1101,7 @@ page.parent doesn't seem to be set...
   List&lt;CommandLogEntry&gt; findByParent(CommandLogEntry parent)
   List&lt;CommandLogEntry&gt; findByParentInteractionId(UUID parentInteractionId)
   List&lt;CommandLogEntry&gt; findByFromAndTo(LocalDate from, LocalDate to)
-  List&lt;CommandLogEntry&gt; findCurrent()
+  List&lt;CommandLogEntry&gt; findCurrent()     <i class="conum" data-value="1"></i><b>(1)</b>
   List&lt;CommandLogEntry&gt; findCompleted()
   List&lt;CommandLogEntry&gt; findByTargetAndFromAndTo(Bookmark target, LocalDate from, LocalDate to)
   List&lt;CommandLogEntry&gt; findMostRecent()
@@ -1101,19 +1109,28 @@ page.parent doesn't seem to be set...
   List&lt;CommandLogEntry&gt; findRecentByUsername(String username)
   List&lt;CommandLogEntry&gt; findRecentByTarget(Bookmark target)
   List&lt;CommandLogEntry&gt; findRecentByTargetOrResult(Bookmark targetOrResult)
-  List&lt;CommandLogEntry&gt; findSince(UUID interactionId, Integer batchSize)     <i class="conum" data-value="1"></i><b>(1)</b>
-  List&lt;CommandLogEntry&gt; findBackgroundAndNotYetStarted()     <i class="conum" data-value="2"></i><b>(2)</b>
+  List&lt;CommandLogEntry&gt; findSince(UUID interactionId, Integer batchSize)     <i class="conum" data-value="2"></i><b>(2)</b>
+  List&lt;CommandLogEntry&gt; findForegroundSinceTimestamp(Timestamp since)
+  List&lt;CommandLogEntry&gt; findForegroundSinceTimestamp(Timestamp since, Integer limitIfAny)
+  List&lt;CommandLogEntry&gt; findForegroundBeforeTimestamp(Timestamp before, Integer limitIfAny)
+  List&lt;CommandLogEntry&gt; findForegroundSinceTimestampAndCanBeExported(Timestamp since)
+  List&lt;CommandLogEntry&gt; findForegroundSinceTimestampAndHasBeenExported(Timestamp since)
+  List&lt;CommandLogEntry&gt; findForegroundSinceTimestampAndWithReplayPendingOrFailed(Timestamp since)     <i class="conum" data-value="3"></i><b>(3)</b>
+  List&lt;CommandLogEntry&gt; findForegroundSinceTimestampAndWithReplayExcluded(Timestamp since)
+  List&lt;CommandLogEntry&gt; findForegroundSinceTimestampAndWithReplayRecordedOrReplayed(Timestamp since)
+  List&lt;CommandLogEntry&gt; findSinceAndWithReplayOkOrExcluded(Timestamp since)     <i class="conum" data-value="4"></i><b>(4)</b>
+  List&lt;CommandLogEntry&gt; findBackgroundAndNotYetStarted()     <i class="conum" data-value="5"></i><b>(5)</b>
   List&lt;CommandLogEntry&gt; findRecentBackgroundByTarget(Bookmark target)
-  Optional&lt;CommandLogEntry&gt; findMostRecentReplayed()     <i class="conum" data-value="3"></i><b>(3)</b>
-  Optional&lt;CommandLogEntry&gt; findMostRecentCompleted()     <i class="conum" data-value="4"></i><b>(4)</b>
-  List&lt;CommandLogEntry&gt; findNotYetReplayed()
+  Optional&lt;CommandLogEntry&gt; findMostRecentReplayed()     <i class="conum" data-value="6"></i><b>(6)</b>
+  Optional&lt;CommandLogEntry&gt; findMostRecentCompleted()     <i class="conum" data-value="7"></i><b>(7)</b>
   CommandLogEntry saveForReplay(CommandDto dto)
+  List&lt;CommandLogEntry&gt; saveForReplay(List&lt;CommandDto&gt; commandDtoList)
   List&lt;CommandLogEntry&gt; saveForReplay(CommandsDto commandsDto)
   void persist(CommandLogEntry commandLogEntry)
   void truncateLog()
   List&lt;CommandLogEntry&gt; findCommandsOnPrimaryElseFail(UUID interactionId, Integer batchSize)
-  List&lt;CommandLogEntry&gt; findAll()     <i class="conum" data-value="5"></i><b>(5)</b>
-  void removeAll()     <i class="conum" data-value="6"></i><b>(6)</b>
+  List&lt;CommandLogEntry&gt; findAll()     <i class="conum" data-value="8"></i><b>(8)</b>
+  void removeAll()     <i class="conum" data-value="9"></i><b>(9)</b>
 }</code></pre>
 </div>
 </div>
@@ -1121,6 +1138,17 @@ page.parent doesn't seem to be set...
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><a href="#findCurrent_">findCurrent()</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Still running, not completed yet.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
 <td><a href="#findSince_UUID_Integer">findSince(UUID, Integer)</a>
 <div class="openblock">
 <div class="content">
@@ -1131,7 +1159,29 @@ page.parent doesn't seem to be set...
 </div></td>
 </tr>
 <tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><a href="#findForegroundSinceTimestampAndWithReplayPendingOrFailed_Timestamp">findForegroundSinceTimestampAndWithReplayPendingOrFailed(Timestamp)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Command Replay feature: Can replay or retry.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><a href="#findSinceAndWithReplayOkOrExcluded_Timestamp">findSinceAndWithReplayOkOrExcluded(Timestamp)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Command Replay feature: Cannot replay or retry.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
 <td><a href="#findBackgroundAndNotYetStarted_">findBackgroundAndNotYetStarted()</a>
 <div class="openblock">
 <div class="content">
@@ -1142,7 +1192,7 @@ page.parent doesn't seem to be set...
 </div></td>
 </tr>
 <tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
 <td><a href="#findMostRecentReplayed_">findMostRecentReplayed()</a>
 <div class="openblock">
 <div class="content">
@@ -1153,7 +1203,7 @@ page.parent doesn't seem to be set...
 </div></td>
 </tr>
 <tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
 <td><a href="#findMostRecentCompleted_">findMostRecentCompleted()</a>
 <div class="openblock">
 <div class="content">
@@ -1164,7 +1214,7 @@ page.parent doesn't seem to be set...
 </div></td>
 </tr>
 <tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
 <td><a href="#findAll_">findAll()</a>
 <div class="openblock">
 <div class="content">
@@ -1175,7 +1225,7 @@ page.parent doesn't seem to be set...
 </div></td>
 </tr>
 <tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
 <td><a href="#removeAll_">removeAll()</a>
 <div class="openblock">
 <div class="content">
@@ -1193,9 +1243,27 @@ page.parent doesn't seem to be set...
 <h2 id="members"><a class="anchor" href="#members"></a>Members</h2>
 <div class="sectionbody">
 <div class="sect2">
+<h3 id="findCurrent_"><a class="anchor" href="#findCurrent_"></a>findCurrent()</h3>
+<div class="paragraph">
+<p>Still running, not completed yet.</p>
+</div>
+</div>
+<div class="sect2">
 <h3 id="findSince_UUID_Integer"><a class="anchor" href="#findSince_UUID_Integer"></a>findSince(UUID, Integer)</h3>
 <div class="paragraph">
 <p>Intended to support the replay of commands on a secondary instance of the application. This finder returns all (completed) <a href="CommandLogEntry.html" class="xref page">CommandLogEntry</a> s started after the command with the specified interactionId. The number of commands returned can be limited so that they can be applied in batches. If the provided interactionId is null, then only a single <a href="CommandLogEntry.html" class="xref page">CommandLogEntry</a> is returned. This is intended to support the case when the secondary does not yet have any <a href="CommandLogEntry.html" class="xref page">CommandLogEntry</a> s replicated. In practice this is unlikely; typically we expect that the secondary will be set up to run against a copy of the primary instance&#8217;s DB (restored from a backup), in which case there will already be a <a href="CommandLogEntry.html" class="xref page">CommandLogEntry</a> representing the current high water mark on the secondary system. If the interactionId is not null but the corresponding <a href="CommandLogEntry.html" class="xref page">CommandLogEntry</a> is not found, then <code>null</code> is returned. In the replay scenario the caller will probably interpret this as an error because it means that the high water mark on the secondary is inaccurate, referring to a non-existent <a href="CommandLogEntry.html" class="xref page">CommandLogEntry</a> on the primary.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="findForegroundSinceTimestampAndWithReplayPendingOrFailed_Timestamp"><a class="anchor" href="#findForegroundSinceTimestampAndWithReplayPendingOrFailed_Timestamp"></a>findForegroundSinceTimestampAndWithReplayPendingOrFailed(Timestamp)</h3>
+<div class="paragraph">
+<p>Command Replay feature: Can replay or retry.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="findSinceAndWithReplayOkOrExcluded_Timestamp"><a class="anchor" href="#findSinceAndWithReplayOkOrExcluded_Timestamp"></a>findSinceAndWithReplayOkOrExcluded(Timestamp)</h3>
+<div class="paragraph">
+<p>Command Replay feature: Cannot replay or retry.</p>
 </div>
 </div>
 <div class="sect2">
@@ -1256,7 +1324,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 4.0.0-M3-SNAPSHOT.20260914-0716-e9f091a2</p>
+            <p>Revision: 4.0.0-M3-SNAPSHOT.20260915-0651-b696936b</p>
         </div>
     </div>
 </footer>

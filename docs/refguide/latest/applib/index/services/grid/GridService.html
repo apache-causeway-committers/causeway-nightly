@@ -1049,6 +1049,14 @@ page.parent doesn't seem to be set...
       </ul>
     </li>
     <li class="component">
+      <span class="title">Web Component Viewers</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../../../../webcomponents/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
       <span class="title">Web UI (Wicket Viewer)</span>
       <ul class="versions">
         <li class="version">
@@ -1096,9 +1104,11 @@ page.parent doesn't seem to be set...
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">interface GridService {
   boolean supportsReloading()     <i class="conum" data-value="1"></i><b>(1)</b>
   void invalidate(Class&lt;?&gt; domainClass)     <i class="conum" data-value="2"></i><b>(2)</b>
-  BSGrid load(LayoutKey layoutKey)     <i class="conum" data-value="3"></i><b>(3)</b>
+  void addPatchedLayout(LayoutKey layoutKey, LayoutResource layoutResource)     <i class="conum" data-value="3"></i><b>(3)</b>
+  BSGrid load(LayoutKey layoutKey)     <i class="conum" data-value="4"></i><b>(4)</b>
   EnumSet&lt;CommonMimeType&gt; supportedFormats()
   Optional&lt;GridMarshaller&gt; marshaller(CommonMimeType format)
+  void clearCache()     <i class="conum" data-value="5"></i><b>(5)</b>
 }</code></pre>
 </div>
 </div>
@@ -1128,11 +1138,33 @@ page.parent doesn't seem to be set...
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><a href="#addPatchedLayout_LayoutKey_LayoutResource">addPatchedLayout(LayoutKey, LayoutResource)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Allows to replace or prime layout caches with a custom layout (as provided by given <a href="../../layout/resource/LayoutResource.html" class="xref page">LayoutResource</a> ). Useful for prototyping.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
 <td><a href="#load_LayoutKey">load(LayoutKey)</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
 <p>Returns a <a href="../../layout/grid/bootstrap/BSGrid.html" class="xref page">BSGrid</a> for given <em>LayoutKey</em> .</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><a href="#clearCache_">clearCache()</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Clears any pre-calculated BSGrid instances from the cache. Useful to start with a clean slate, after the MM was initialized.</p>
 </div>
 </div>
 </div></td>
@@ -1163,6 +1195,15 @@ page.parent doesn't seem to be set...
 </div>
 </div>
 <div class="sect2">
+<h3 id="addPatchedLayout_LayoutKey_LayoutResource"><a class="anchor" href="#addPatchedLayout_LayoutKey_LayoutResource"></a>addPatchedLayout(LayoutKey, LayoutResource)</h3>
+<div class="paragraph">
+<p>Allows to replace or prime layout caches with a custom layout (as provided by given <a href="../../layout/resource/LayoutResource.html" class="xref page">LayoutResource</a> ). Useful for prototyping.</p>
+</div>
+<div class="paragraph">
+<p>This patching is potentially in conflict with layout reloading. Patched layouts must stick around even when a layout reload attempt is made.</p>
+</div>
+</div>
+<div class="sect2">
 <h3 id="load_LayoutKey"><a class="anchor" href="#load_LayoutKey"></a>load(LayoutKey)</h3>
 <div class="paragraph">
 <p>Returns a <a href="../../layout/grid/bootstrap/BSGrid.html" class="xref page">BSGrid</a> for given <em>LayoutKey</em> .</p>
@@ -1172,6 +1213,15 @@ page.parent doesn't seem to be set...
 </div>
 <div class="paragraph">
 <p>When no specific grid layout is found returns a generic fallback.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="clearCache_"><a class="anchor" href="#clearCache_"></a>clearCache()</h3>
+<div class="paragraph">
+<p>Clears any pre-calculated BSGrid instances from the cache. Useful to start with a clean slate, after the MM was initialized.</p>
+</div>
+<div class="paragraph">
+<p>The MM needs to be aware of all mixins, in order to reliably produce valid BSGrid instances. During MM initialization incomplete BSGrid instances might be created and cached, which are missing e.g. mixed-in Actions.</p>
 </div>
 </div>
 </div>
@@ -1237,7 +1287,7 @@ object).</p>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 4.0.0-M3-SNAPSHOT.20260914-0716-e9f091a2</p>
+            <p>Revision: 4.0.0-M3-SNAPSHOT.20260915-0651-b696936b</p>
         </div>
     </div>
 </footer>

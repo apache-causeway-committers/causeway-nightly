@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="../../_/css/site.css">
     <link rel="stylesheet" href="../../_/css/site-custom.css">
 <link rel="home" href="https://apache-causeway-committers.github.io/causeway-nightly" title="causeway">
-  <link rel="next" href="testsupport.html" title="Test Support">
+  <link rel="next" href="reference-application-coverage.html" title="Reference Application Coverage Analysis">
   <link rel="prev" href="about.html" title="GraphQL Viewer">
   </head>
   <body class="article">
@@ -186,7 +186,7 @@
 <div class="nav-panel-pagination">
   <a class="page-previous" rel="prev" href="about.html" title="GraphQL Viewer"><span></span></a>
   <a class="page-next" rel="next"
-     href="testsupport.html" title="Test Support"><span></span></a>
+     href="reference-application-coverage.html" title="Reference Application Coverage Analysis"><span></span></a>
 <!--
 page.parent doesn't seem to be set...
   <a class="page-parent disabled" rel="prev" href="" title="GraphQL Viewer"><span></span></a>
@@ -200,6 +200,21 @@ page.parent doesn't seem to be set...
 <ul class="nav-list">
   <li class="nav-item is-current-page" data-depth="1">
     <a class="nav-link" href="setup-and-configuration.html">Setup and Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="reference-application-coverage.html">Reference Application Coverage Analysis</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="rich-object-interactions.html">Rich Object Interaction Correctness</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="rich-value-semantics.html">Rich GraphQL value and resource semantics</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="rich-collection-windowing.html">Rich collection windows</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="rich-application-entry-points.html">Rich application entry points</a>
   </li>
   <li class="nav-item" data-depth="1">
     <a class="nav-link" href="testsupport.html">Test Support</a>
@@ -370,6 +385,14 @@ page.parent doesn't seem to be set...
       <ul class="versions">
         <li class="version">
           <a href="../../valuetypes/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Web Component Viewers</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../webcomponents/latest/about.html">latest</a>
         </li>
       </ul>
     </li>
@@ -620,6 +643,58 @@ Normally these can be left as their default:</p>
 </li>
 </ul>
 </div>
+</div>
+<div class="sect2">
+<h3 id="bounded-autocomplete-response-windows"><a class="anchor" href="#bounded-autocomplete-response-windows"></a>Bounded autocomplete response windows</h3>
+<div class="paragraph">
+<p>Every rich property or action parameter that advertises <code>autoComplete(search)</code> also advertises the additive <code>autoCompleteWindow(search, offset, size)</code> field.
+The window returns <code>items</code>, offset and requested size, returned and total counts, configured maximum, previous and next availability, and <code>APPLICATION</code> ordering.
+One request invokes the authoritative application autocomplete semantic once, preserves that execution&#8217;s encounter order, and returns only the requested response slice.
+This bounds GraphQL response transfer but does not claim persistence query pushdown, cursor stability, or a cross-request snapshot.</p>
+</div>
+<div class="paragraph">
+<p><code>autocomplete.default-window-size</code> defaults to <code>20</code> and supplies an omitted size.
+<code>autocomplete.max-window-size</code> defaults to <code>100</code> and rejects larger requests before invoking autocomplete.
+The default must not exceed the maximum.
+Existing <code>autoComplete(search)</code> documents remain compatible.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="local-rich-member-metadata"><a class="anchor" href="#local-rich-member-metadata"></a>Local rich member metadata</h3>
+<div class="paragraph">
+<p>Known rich property, collection, action, and action-parameter wrappers expose one additive non-null <code>metadata</code> object.
+Targeted introspection of <code>RichMemberMetadata</code> discovers its bounded shared shape without requesting an aggregate member list or metamodel document.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-graphql hljs" data-lang="graphql">metadata {
+  friendlyName
+  description
+  maxLength
+  pattern
+  patternFlags
+  multiLine
+  typicalLength
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>friendlyName</code> is the non-null canonical translated name.
+<code>description</code> is the independent canonical translated description and is null when absent rather than repeating the friendly name.
+The resolver uses static canonical facets at request time and does not invoke imperative domain-object naming or description methods.</p>
+</div>
+<div class="paragraph">
+<p><code>maxLength</code>, <code>pattern</code>, <code>patternFlags</code>, <code>multiLine</code>, and <code>typicalLength</code> are populated for property and action-parameter wrappers when applicable and otherwise return null.
+<code>pattern</code> is Java regular-expression text and <code>patternFlags</code> uses Java <code>Pattern</code> flag values, so clients must not assume direct JavaScript-regexp compatibility.
+GraphQL input nullability remains authoritative for requiredness, and validation operations remain authoritative for candidate acceptance.</p>
+</div>
+<div class="paragraph">
+<p>Resource <code>fileAccept</code> metadata remains in its established locations beneath Blob or Clob property <code>get</code> wrappers and directly on resource action parameters.
+Grid resources remain authoritative for rows, columns, tabs, field sets, placement, ordering, icons, CSS, and action positions.
+Menu resources remain authoritative for bars, menus, sections, entries, labels, and ordering.
+The metadata object does not expose values, disabled reasons, authorization rules, prompt style, redirects, paging, sorting, or viewer-specific behavior.
+Existing operation documents that do not select <code>metadata</code> retain their response shape unchanged.</p>
+</div>
 <div class="paragraph">
 <p>The remaining configuration properties are explained in more detail elsewhere:</p>
 </div>
@@ -678,7 +753,7 @@ Normally these can be left as their default:</p>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 4.0.0-M3-SNAPSHOT.20260914-0716-e9f091a2</p>
+            <p>Revision: 4.0.0-M3-SNAPSHOT.20260915-0651-b696936b</p>
         </div>
     </div>
 </footer>

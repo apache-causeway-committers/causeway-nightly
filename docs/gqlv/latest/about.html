@@ -201,6 +201,21 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="setup-and-configuration.html">Setup and Configuration</a>
   </li>
   <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="reference-application-coverage.html">Reference Application Coverage Analysis</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="rich-object-interactions.html">Rich Object Interaction Correctness</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="rich-value-semantics.html">Rich GraphQL value and resource semantics</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="rich-collection-windowing.html">Rich collection windows</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="rich-application-entry-points.html">Rich application entry points</a>
+  </li>
+  <li class="nav-item" data-depth="1">
     <a class="nav-link" href="testsupport.html">Test Support</a>
   </li>
   <li class="nav-item" data-depth="1">
@@ -373,6 +388,14 @@ page.parent doesn't seem to be set...
       </ul>
     </li>
     <li class="component">
+      <span class="title">Web Component Viewers</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../webcomponents/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
       <span class="title">Web UI (Wicket Viewer)</span>
       <ul class="versions">
         <li class="version">
@@ -494,7 +517,7 @@ GraphQL spec; in particular, it violates <a href="https://spec.graphql.org/June2
 </div>
 <div class="paragraph">
 <p>With the rich schema, the application logic and business domain logic remains the concern of the server, with the calling client app responsible only for presentation logic.
-In fact, the rich schemas is so rich that one could in theory implement a fully generic UI client.</p>
+The <a href="../../webcomponents/latest/about.html" class="xref page">HTMX and Vue web-component viewers</a> use this rich schema to provide generic domain-object presentation alongside application-authored pages.</p>
 </div>
 <div class="paragraph">
 <p>With the simple schema, although the main business domain logic remains the concern of the server, the application logic moves to the client.
@@ -1406,7 +1429,7 @@ The client can then make a second call to this endpoint using a simple HTTP(s) G
             "results" : {
               "photo" : {
                 "get" : {
-                  "bytes" : "///graphql/object/university.dept.StaffMember:123/photo/blobBytes"
+                  "bytes" : "/graphql/object/university.dept.StaffMember:123/photo/blobBytes"
                 }
               }
             }
@@ -1512,9 +1535,31 @@ One option is to implement a custom controller that the client can post to, anal
 </table>
 </div>
 <div class="paragraph">
-<p>Because the resource controller exposes information directly, these fields are suppressed by default.
-To enable, use the <a href="../../refguide/latest/config/sections/causeway.viewer.graphql.html#causeway.viewer.graphql.resources.response-type" class="xref page">causeway.viewer.graphql.resources.response-type</a> configuration property.
-If you do this, then you should also make sure that the resource controller is made secure in some appropriate fashion.</p>
+<p>Resource references are opaque origin-relative paths beginning with exactly one slash.
+Clients must resolve them against the current origin without adding, removing, or rewriting slash prefixes.
+The path combines the optional <a href="../../refguide/latest/config/sections/causeway.viewer.graphql.html#causeway.viewer.graphql.resources.external-path-prefix" class="xref page">external path prefix</a>, servlet context, and Spring GraphQL HTTP endpoint path.
+Applications deployed behind a path-rewriting reverse proxy should configure <code>external-path-prefix</code> with the externally visible prefix.
+The current Spring endpoint property is <code>spring.graphql.http.path</code>; the deprecated <code>spring.graphql.path</code> remains a temporary fallback for link construction and controller mapping.</p>
+</div>
+<div class="paragraph">
+<p>Resource policy is split into structural metadata and domain value content.
+The <a href="../../refguide/latest/config/sections/causeway.viewer.graphql.html#causeway.viewer.graphql.resources.structural-metadata-response-type" class="xref page">structural metadata response type</a> governs effective grids and icons.
+The <a href="../../refguide/latest/config/sections/causeway.viewer.graphql.html#causeway.viewer.graphql.resources.value-content-response-type" class="xref page">value-content response type</a> governs Blob bytes and Clob characters.
+Each accepts <code>FORBIDDEN</code>, <code>DIRECT</code>, or <code>ATTACHMENT</code>.
+When a category is <code>FORBIDDEN</code>, its link fields are omitted from the generated schema and direct endpoint attempts return HTTP 403 without content.
+Blob and Clob names and media types remain available because they are descriptive metadata rather than downloadable content.</p>
+</div>
+<div class="paragraph">
+<p>For compatibility, either category-specific setting falls back to the deprecated <a href="../../refguide/latest/config/sections/causeway.viewer.graphql.html#causeway.viewer.graphql.resources.response-type" class="xref page">global response type</a> when unset.
+Existing applications therefore retain their current behavior while they migrate each category independently.
+A manually slash-normalizing client must stop rewriting references because generated paths are now browser-valid.</p>
+</div>
+<div class="paragraph">
+<p>Every dereference executes inside a Causeway interaction derived from the request principal, configured GraphQL fallback identity, or anonymous context.
+The controller re-resolves the target and rechecks object and property visibility rather than trusting the published link.
+Hosts must still configure transport authentication appropriate to the deployment.
+Hidden, missing, stale, and unauthorized targets return bounded non-disclosing responses.
+Successful responses include the declared media type, content length, <code>X-Content-Type-Options: nosniff</code>, and <code>Cache-Control: private, no-store</code>; <code>ATTACHMENT</code> additionally supplies <code>Content-Disposition</code>.</p>
 </div>
 </div>
 </div>
@@ -1535,7 +1580,7 @@ If you do this, then you should also make sure that the resource controller is m
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 4.0.0-M3-SNAPSHOT.20260914-0716-e9f091a2</p>
+            <p>Revision: 4.0.0-M3-SNAPSHOT.20260915-0651-b696936b</p>
         </div>
     </div>
 </footer>

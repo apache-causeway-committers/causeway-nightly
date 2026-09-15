@@ -202,6 +202,21 @@ page.parent doesn't seem to be set...
     <a class="nav-link" href="setup-and-configuration.html">Setup and Configuration</a>
   </li>
   <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="reference-application-coverage.html">Reference Application Coverage Analysis</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="rich-object-interactions.html">Rich Object Interaction Correctness</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="rich-value-semantics.html">Rich GraphQL value and resource semantics</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="rich-collection-windowing.html">Rich collection windows</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="rich-application-entry-points.html">Rich application entry points</a>
+  </li>
+  <li class="nav-item" data-depth="1">
     <a class="nav-link" href="testsupport.html">Test Support</a>
   </li>
   <li class="nav-item is-current-page" data-depth="1">
@@ -374,6 +389,14 @@ page.parent doesn't seem to be set...
       </ul>
     </li>
     <li class="component">
+      <span class="title">Web Component Viewers</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../webcomponents/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
       <span class="title">Web UI (Wicket Viewer)</span>
       <ul class="versions">
         <li class="version">
@@ -475,7 +498,13 @@ This configuration property define the format of such a string for a zoned date 
 </div>
 <div class="paragraph">
 <p>The default implementations can be overridden if necessary by providing an equivalent implementation with an earlier <code>@Priority</code>.
-Additional scalar datatypes can be supporting by providing additional implementations.</p>
+Additional scalar datatypes can be supported by providing additional implementations.
+A scalar marshaller is output-only by default.
+A reversible implementation must explicitly return <code>true</code> from <code>supportsInput()</code>, or pass <code>true</code> to the corresponding <code>ScalarMarshallerAbstract</code> constructor, and must reconstruct its declared Java type deterministically.
+Existing compiled marshallers remain output-capable but do not implicitly gain input capability.
+Generated input for an output-only marshaller uses the rejecting <code>UnsupportedValue</code> scalar rather than passing through a raw string.
+Values without any explicit marshaller are redacted on output by default; the temporary <code>LEGACY_STRING</code> policy is available for migration only.
+See <a href="rich-value-semantics.html" class="xref page">Rich GraphQL value and resource semantics</a> for canonical formats, custom registration, and structured resource values.</p>
 </div>
 </div>
 </div>
@@ -496,7 +525,7 @@ Additional scalar datatypes can be supporting by providing additional implementa
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 4.0.0-M3-SNAPSHOT.20260914-0716-e9f091a2</p>
+            <p>Revision: 4.0.0-M3-SNAPSHOT.20260915-0651-b696936b</p>
         </div>
     </div>
 </footer>

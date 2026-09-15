@@ -1047,6 +1047,14 @@ page.parent doesn't seem to be set...
       </ul>
     </li>
     <li class="component">
+      <span class="title">Web Component Viewers</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../../../../../webcomponents/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
       <span class="title">Web UI (Wicket Viewer)</span>
       <ul class="versions">
         <li class="version">
@@ -1077,7 +1085,7 @@ page.parent doesn't seem to be set...
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>Provides an SPI to allow different scalar datatypes to be marshalled to and from GraphQL scalar types.</p>
+<p>Provides an SPI to allow different scalar data types to be marshalled to and from GraphQL scalar types.</p>
 </div>
 <div class="paragraph">
 <p>The implementations are called following a chain-of-responsibility pattern, first one matching is used. Use <em>jakarta.annotation.Priority</em> (with <em>org.apache.causeway.applib.annotation.PriorityPrecedence</em> values) to override the framework-provided defaults, earliest wins.</p>
@@ -1093,7 +1101,8 @@ page.parent doesn't seem to be set...
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">interface ScalarMarshaller&lt;K&gt; {
   boolean handles(Class&lt;?&gt; javaClass)     <i class="conum" data-value="1"></i><b>(1)</b>
   GraphQLScalarType getGqlScalarType()     <i class="conum" data-value="2"></i><b>(2)</b>
-  K unmarshal(Object graphValue, Class&lt;?&gt; targetType)     <i class="conum" data-value="3"></i><b>(3)</b>
+  boolean supportsInput()     <i class="conum" data-value="3"></i><b>(3)</b>
+  K unmarshal(Object graphValue, Class&lt;?&gt; targetType)     <i class="conum" data-value="4"></i><b>(4)</b>
 }</code></pre>
 </div>
 </div>
@@ -1105,7 +1114,7 @@ page.parent doesn't seem to be set...
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>Whether this marshaller is able to marshall/unmarshall the provided Java class.</p>
+<p>Whether this marshaller is able to marshall/un-marshall the provided Java class.</p>
 </div>
 </div>
 </div></td>
@@ -1123,6 +1132,17 @@ page.parent doesn't seem to be set...
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><a href="#supportsInput_">supportsInput()</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Whether this marshaller provides reversible GraphQL input coercion.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
 <td><a href="#unmarshal_Object_Class">unmarshal(Object, Class)</a>
 <div class="openblock">
 <div class="content">
@@ -1142,13 +1162,22 @@ page.parent doesn't seem to be set...
 <div class="sect2">
 <h3 id="handles_Class"><a class="anchor" href="#handles_Class"></a>handles(Class)</h3>
 <div class="paragraph">
-<p>Whether this marshaller is able to marshall/unmarshall the provided Java class.</p>
+<p>Whether this marshaller is able to marshall/un-marshall the provided Java class.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="getGqlScalarType_"><a class="anchor" href="#getGqlScalarType_"></a>getGqlScalarType()</h3>
 <div class="paragraph">
 <p>The corresponding GraphQL scalar type for the Java-class.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="supportsInput_"><a class="anchor" href="#supportsInput_"></a>supportsInput()</h3>
+<div class="paragraph">
+<p>Whether this marshaller provides reversible GraphQL input coercion.</p>
+</div>
+<div class="paragraph">
+<p>The default is <em>false</em> : registering output coercion never implicitly grants input capability. Reversible marshallers must opt in explicitly so unsupported inputs are rejected before domain invocation.</p>
 </div>
 </div>
 <div class="sect2">
@@ -1176,7 +1205,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 4.0.0-M3-SNAPSHOT.20260914-0716-e9f091a2</p>
+            <p>Revision: 4.0.0-M3-SNAPSHOT.20260915-0651-b696936b</p>
         </div>
     </div>
 </footer>

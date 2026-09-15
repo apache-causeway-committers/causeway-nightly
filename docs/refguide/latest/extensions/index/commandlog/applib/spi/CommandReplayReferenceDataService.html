@@ -1047,6 +1047,14 @@ page.parent doesn't seem to be set...
       </ul>
     </li>
     <li class="component">
+      <span class="title">Web Component Viewers</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../../../../../webcomponents/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
       <span class="title">Web UI (Wicket Viewer)</span>
       <ul class="versions">
         <li class="version">
@@ -1077,24 +1085,13 @@ page.parent doesn't seem to be set...
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>Classifies bookmarked entities whose logical type and identifier are stable and expected to exist in every command replay environment.</p>
+<p>Classifies command replay/export participants that are stable reference data.</p>
 </div>
 <div class="paragraph">
-<p>Applications can register zero or more implementations.
-Classification uses OR semantics: a bookmark is reference data when any implementation accepts it.
-A null bookmark, no services, or no accepting service returns <code>false</code>; classifier failures remain visible.</p>
+<p>Implementations must only return <em>true</em> for bookmarked entities whose logical type and identifier are expected to be stable, well-known, and present in every replay environment. Implementations classify bookmark identity only and must not require the bookmark to have appeared in a command sequence.</p>
 </div>
 <div class="paragraph">
-<p>The commandlog module registers <code>CommandReplayReferenceDataServiceForRefData</code> by default.
-It resolves the bookmark through the metamodel and accepts the corresponding class when it implements <code>RefData</code>, without loading or instantiating the bookmarked object.</p>
-</div>
-<div class="paragraph">
-<p>SecMan&#8217;s <code>ApplicationUser</code>, <code>ApplicationRole</code>, <code>ApplicationTenancy</code>, and <code>ApplicationPermission</code> abstractions implement <code>RefData</code>.
-Replay deployments therefore need to provision matching SecMan identities in every environment.</p>
-</div>
-<div class="paragraph">
-<p>Reference-data classification alone does not change exportability or command-manager collections.
-Known-participant and reachability integration is provided by the later export-reachability capability.</p>
+<p>Applications may register any number of implementations. A bookmark is reference data when any registered implementation accepts it.</p>
 </div>
 </div>
 </div>
@@ -1105,12 +1102,38 @@ Known-participant and reachability integration is provided by the later export-r
 <div class="title">CommandReplayReferenceDataService.java</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">interface CommandReplayReferenceDataService {
-  boolean isReferenceData(Bookmark bookmark);
-
-  static boolean isReferenceData(
-      List&lt;? extends CommandReplayReferenceDataService&gt; services,
-      Bookmark bookmark);
+  boolean isReferenceData(Bookmark bookmark)
+  boolean isReferenceData(List&lt;? extends CommandReplayReferenceDataService&gt; services, Bookmark bookmark)     <i class="conum" data-value="1"></i><b>(1)</b>
 }</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><a href="#isReferenceData_List_Bookmark">isReferenceData(List, Bookmark)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Combines classifiers using conservative, null-safe OR semantics.</p>
+</div>
+</div>
+</div></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="members"><a class="anchor" href="#members"></a>Members</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="isReferenceData_List_Bookmark"><a class="anchor" href="#isReferenceData_List_Bookmark"></a>isReferenceData(List, Bookmark)</h3>
+<div class="paragraph">
+<p>Combines classifiers using conservative, null-safe OR semantics.</p>
+</div>
+<div class="paragraph">
+<p>Classifier failures are deliberately propagated so configuration errors remain visible.</p>
 </div>
 </div>
 </div>
@@ -1132,7 +1155,7 @@ Known-participant and reachability integration is provided by the later export-r
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 4.0.0-M3-SNAPSHOT.20260914-0716-e9f091a2</p>
+            <p>Revision: 4.0.0-M3-SNAPSHOT.20260915-0651-b696936b</p>
         </div>
     </div>
 </footer>

@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>CommandExecutorServiceDefault :: causeway</title>
+    <title>CommandExecutorServiceDefault (record) :: causeway</title>
     <link rel="canonical" href="https://apache-causeway-committers.github.io/causeway-nightly/refguide/latest/core/index/runtimeservices/command/CommandExecutorServiceDefault.html">
     <meta name="generator" content="Antora 3.2.0">
     <link rel="stylesheet" href="../../../../../../_/css/site.css">
@@ -1047,6 +1047,14 @@ page.parent doesn't seem to be set...
       </ul>
     </li>
     <li class="component">
+      <span class="title">Web Component Viewers</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../../../../webcomponents/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
       <span class="title">Web UI (Wicket Viewer)</span>
       <ul class="versions">
         <li class="version">
@@ -1066,14 +1074,14 @@ page.parent doesn't seem to be set...
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="../../../../about.html">Reference Guide</a></li>
-    <li><a href="CommandExecutorServiceDefault.html">CommandExecutorServiceDefault</a></li>
+    <li><a href="CommandExecutorServiceDefault.html">CommandExecutorServiceDefault <em>(record)</em></a></li>
   </ul>
 </nav>
   <div class="edit-this-page"><a href="https://github.com/apache/causeway/edit/main/antora/components/refguide-index/modules/core/pages/index/runtimeservices/command/CommandExecutorServiceDefault.adoc">Edit</a></div>
 </div>
 <article class="doc">
     <a name="section-top"></a>
-<h1 class="page">CommandExecutorServiceDefault</h1>
+<h1 class="page">CommandExecutorServiceDefault <em>(record)</em></h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
@@ -1087,12 +1095,47 @@ page.parent doesn't seem to be set...
 <div class="listingblock">
 <div class="title">CommandExecutorServiceDefault.java</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">class CommandExecutorServiceDefault {
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">record CommandExecutorServiceDefault {
   Try&lt;Bookmark&gt; executeCommand(Command command)
   Try&lt;Bookmark&gt; executeCommand(InteractionContextPolicy interactionContextPolicy, Command command)
   Try&lt;Bookmark&gt; executeCommand(CommandDto dto)
   Try&lt;Bookmark&gt; executeCommand(InteractionContextPolicy interactionContextPolicy, CommandDto dto)
+  void applyActionAdvisorPolicy(InteractionAdvisorPolicy policy, ObjectAction action, ManagedObject target, InteractionHead interactionHead, Can&lt;ManagedObject&gt; arguments)
+  void applyPropertyAdvisorPolicy(InteractionAdvisorPolicy policy, OneToOneAssociation property, ManagedObject target, ManagedObject proposedValue)
+  Can&lt;ManagedObject&gt; argAdaptersForParentedCollectionNavigation(ActionDto actionDto, ObjectAction objectAction, SchemaValueMarshaller valueMarshaller)     <i class="conum" data-value="1"></i><b>(1)</b>
 }</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><a href="#argAdaptersForParentedCollectionNavigation_ActionDto_ObjectAction_SchemaValueMarshaller">argAdaptersForParentedCollectionNavigation(ActionDto, ObjectAction, SchemaValueMarshaller)</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Reconstructs replay arguments for a synthetic parented-collection selector action.</p>
+</div>
+</div>
+</div></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="members"><a class="anchor" href="#members"></a>Members</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="argAdaptersForParentedCollectionNavigation_ActionDto_ObjectAction_SchemaValueMarshaller"><a class="anchor" href="#argAdaptersForParentedCollectionNavigation_ActionDto_ObjectAction_SchemaValueMarshaller"></a>argAdaptersForParentedCollectionNavigation(ActionDto, ObjectAction, SchemaValueMarshaller)</h3>
+<div class="paragraph">
+<p>Reconstructs replay arguments for a synthetic parented-collection selector action.</p>
+</div>
+<div class="paragraph">
+<p>Such an action&#8217;s parameters are the collection&#8217;s optional column filters, which can be added, removed, or reordered between the time a command is recorded and the time it is replayed. Rather than bind positionally (which would silently mis-align on any such change), each current action parameter is matched to the recorded DTO parameter with the same stable id (falling back to friendly name); any current parameter with no corresponding recorded parameter is padded with an empty/unselected value.</p>
+</div>
+<div class="paragraph">
+<p>Package-private and static to allow focused testing.</p>
 </div>
 </div>
 </div>
@@ -1114,7 +1157,7 @@ page.parent doesn't seem to be set...
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 4.0.0-M3-SNAPSHOT.20260914-0716-e9f091a2</p>
+            <p>Revision: 4.0.0-M3-SNAPSHOT.20260915-0651-b696936b</p>
         </div>
     </div>
 </footer>

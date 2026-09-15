@@ -1049,6 +1049,14 @@ page.parent doesn't seem to be set...
       </ul>
     </li>
     <li class="component">
+      <span class="title">Web Component Viewers</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../../../../webcomponents/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
       <span class="title">Web UI (Wicket Viewer)</span>
       <ul class="versions">
         <li class="version">
@@ -1095,15 +1103,16 @@ page.parent doesn't seem to be set...
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@interface ValueSemantics {
   public final static int AS_DAY_BEFORE;     <i class="conum" data-value="1"></i><b>(1)</b>
   String provider() default "";     <i class="conum" data-value="2"></i><b>(2)</b>
-  int maxTotalDigits() default 65;     <i class="conum" data-value="3"></i><b>(3)</b>
-  int minIntegerDigits() default 1;     <i class="conum" data-value="4"></i><b>(4)</b>
-  int maxFractionalDigits() default 30;     <i class="conum" data-value="5"></i><b>(5)</b>
-  int minFractionalDigits() default 0;     <i class="conum" data-value="6"></i><b>(6)</b>
-  FormatStyle dateFormatStyle() default FormatStyle.MEDIUM;     <i class="conum" data-value="7"></i><b>(7)</b>
-  FormatStyle timeFormatStyle() default FormatStyle.MEDIUM;     <i class="conum" data-value="8"></i><b>(8)</b>
-  TimePrecision timePrecision() default TimePrecision.SECOND;     <i class="conum" data-value="9"></i><b>(9)</b>
-  TimeZoneTranslation timeZoneTranslation() default TimeZoneTranslation.TO_LOCAL_TIMEZONE;     <i class="conum" data-value="10"></i><b>(10)</b>
-  int dateRenderAdjustDays() default 0;     <i class="conum" data-value="11"></i><b>(11)</b>
+  int maxTotalDigits() default 0;     <i class="conum" data-value="3"></i><b>(3)</b>
+  int maxIntegerDigits() default 0;     <i class="conum" data-value="4"></i><b>(4)</b>
+  int minIntegerDigits() default 1;     <i class="conum" data-value="5"></i><b>(5)</b>
+  int maxFractionalDigits() default -1;     <i class="conum" data-value="6"></i><b>(6)</b>
+  int minFractionalDigits() default 0;     <i class="conum" data-value="7"></i><b>(7)</b>
+  FormatStyle dateFormatStyle() default FormatStyle.MEDIUM;     <i class="conum" data-value="8"></i><b>(8)</b>
+  FormatStyle timeFormatStyle() default FormatStyle.MEDIUM;     <i class="conum" data-value="9"></i><b>(9)</b>
+  TimePrecision timePrecision() default TimePrecision.SECOND;     <i class="conum" data-value="10"></i><b>(10)</b>
+  TimeZoneTranslation timeZoneTranslation() default TimeZoneTranslation.TO_LOCAL_TIMEZONE;     <i class="conum" data-value="11"></i><b>(11)</b>
+  int dateRenderAdjustDays() default 0;     <i class="conum" data-value="12"></i><b>(12)</b>
 }</code></pre>
 </div>
 </div>
@@ -1137,46 +1146,57 @@ page.parent doesn't seem to be set...
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>If associated with a <em>Number</em> , the maximum number of total digits accepted for this number.Can be omitted, if <em>Column#precision()</em> is used.default = <em>65</em></p>
+<p>If associated with <em>BigDecimal</em> , <em>BigInteger</em> , or any Java integer type (long, int, short, byte), the maximum number of total digits accepted for input (editing).</p>
 </div>
 </div>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td><a href="#minIntegerDigits">minIntegerDigits</a>
+<td><a href="#maxIntegerDigits">maxIntegerDigits</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>If associated with a <em>Number</em> , the minimum number of integer digits required for this number.default = <em>1</em></p>
+<p>If associated with any Java number type <em>BigDecimal</em> , <em>BigInteger</em> , long, int, short, byte, double or float, the maximum number of integer digits required for input (editing).</p>
 </div>
 </div>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
-<td><a href="#maxFractionalDigits">maxFractionalDigits</a>
+<td><a href="#minIntegerDigits">minIntegerDigits</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>If associated with a <em>BigDecimal</em> , the maximum number of fractional digits accepted for this number.Can be omitted, if <em>Column#scale()</em> is used.default = <em>30</em></p>
+<p>If associated with any Java number type <em>BigDecimal</em> , <em>BigInteger</em> , long, int, short, byte, double or float, the minimum number of integer digits required for input (editing).</p>
 </div>
 </div>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="6"></i><b>6</b></td>
-<td><a href="#minFractionalDigits">minFractionalDigits</a>
+<td><a href="#maxFractionalDigits">maxFractionalDigits</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>If associated with a <em>BigDecimal</em> , the minimum number of fractional digits required for this number.default = <em>0</em></p>
+<p>If associated with any non-integer <em>Number</em> type, the maximum number of fractional decimal digits displayed.</p>
 </div>
 </div>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="7"></i><b>7</b></td>
+<td><a href="#minFractionalDigits">minFractionalDigits</a>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>If associated with any non-integer <em>Number</em> type, the minimum number of fractional digits displayed.</p>
+</div>
+</div>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
 <td><a href="#dateFormatStyle">dateFormatStyle</a>
 <div class="openblock">
 <div class="content">
@@ -1187,7 +1207,7 @@ page.parent doesn't seem to be set...
 </div></td>
 </tr>
 <tr>
-<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
 <td><a href="#timeFormatStyle">timeFormatStyle</a>
 <div class="openblock">
 <div class="content">
@@ -1198,7 +1218,7 @@ page.parent doesn't seem to be set...
 </div></td>
 </tr>
 <tr>
-<td><i class="conum" data-value="9"></i><b>9</b></td>
+<td><i class="conum" data-value="10"></i><b>10</b></td>
 <td><a href="#timePrecision">timePrecision</a>
 <div class="openblock">
 <div class="content">
@@ -1209,18 +1229,18 @@ page.parent doesn't seem to be set...
 </div></td>
 </tr>
 <tr>
-<td><i class="conum" data-value="10"></i><b>10</b></td>
+<td><i class="conum" data-value="11"></i><b>11</b></td>
 <td><a href="#timeZoneTranslation">timeZoneTranslation</a>
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>If associated with a temporal value, that has time-zone or time-offset information, the rendering mode, as to whether to transform the rendered value to the user&#8217;s local/current time-zone or not.default = <em>TimeZoneTranslation#TO_LOCAL_TIMEZONE</em></p>
+<p>If associated with a temporal value, that has time-zone or time-offset information, the rendering mode, as to whether to transform the rendered value to the user&#8217;s local/current time-zone or not.</p>
 </div>
 </div>
 </div></td>
 </tr>
 <tr>
-<td><i class="conum" data-value="11"></i><b>11</b></td>
+<td><i class="conum" data-value="12"></i><b>12</b></td>
 <td><a href="#dateRenderAdjustDays">dateRenderAdjustDays</a>
 <div class="openblock">
 <div class="content">
@@ -1252,25 +1272,73 @@ page.parent doesn't seem to be set...
 <div class="sect2">
 <h3 id="maxTotalDigits"><a class="anchor" href="#maxTotalDigits"></a>maxTotalDigits</h3>
 <div class="paragraph">
-<p>If associated with a <em>Number</em> , the maximum number of total digits accepted for this number.Can be omitted, if <em>Column#precision()</em> is used.default = <em>65</em></p>
+<p>If associated with <em>BigDecimal</em> , <em>BigInteger</em> , or any Java integer type (long, int, short, byte), the maximum number of total digits accepted for input (editing).</p>
+</div>
+<div class="paragraph">
+<p>But input is not constrained for double/float, since those types have fixed intrinsic precision and their bit representation does not directly correspond to decimal digits. Further more, double/float may support scientific notation for input (as well as display), where the notion of 'total digits' is no longer viable.</p>
+</div>
+<div class="paragraph">
+<p>When <em>Column#precision()</em> <em>&gt;0</em> is used, while <em>ValueSemantics#maxTotalDigits()</em> is not used (&#8656;0), then <em>Column#precision()</em> is undersood as an alias for this annotation attribute.</p>
+</div>
+<div class="paragraph">
+<p>default = <em>0</em> understood as unlimited</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="maxIntegerDigits"><a class="anchor" href="#maxIntegerDigits"></a>maxIntegerDigits</h3>
+<div class="paragraph">
+<p>If associated with any Java number type <em>BigDecimal</em> , <em>BigInteger</em> , long, int, short, byte, double or float, the maximum number of integer digits required for input (editing).</p>
+</div>
+<div class="paragraph">
+<p>For double/float specifically, requires their decimal representation, to satisfy this requirement. Those types may support scientific notation for input (as well as display), where the notion of 'integer digits' is still viable.</p>
+</div>
+<div class="paragraph">
+<p><em>Digits#integer()</em> can be used as a replacement. If both are used, the stronger constraint applies.</p>
+</div>
+<div class="paragraph">
+<p>default = <em>0</em> understood as unlimited</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="minIntegerDigits"><a class="anchor" href="#minIntegerDigits"></a>minIntegerDigits</h3>
 <div class="paragraph">
-<p>If associated with a <em>Number</em> , the minimum number of integer digits required for this number.default = <em>1</em></p>
+<p>If associated with any Java number type <em>BigDecimal</em> , <em>BigInteger</em> , long, int, short, byte, double or float, the minimum number of integer digits required for input (editing).</p>
+</div>
+<div class="paragraph">
+<p>For double/float specifically, requires their decimal representation, to satisfy this requirement. Those types may support scientific notation for input (as well as display), where the notion of 'integer digits' is still viable.</p>
+</div>
+<div class="paragraph">
+<p>default = <em>1</em></p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="maxFractionalDigits"><a class="anchor" href="#maxFractionalDigits"></a>maxFractionalDigits</h3>
 <div class="paragraph">
-<p>If associated with a <em>BigDecimal</em> , the maximum number of fractional digits accepted for this number.Can be omitted, if <em>Column#scale()</em> is used.default = <em>30</em></p>
+<p>If associated with any non-integer <em>Number</em> type, the maximum number of fractional decimal digits displayed.</p>
+</div>
+<div class="paragraph">
+<p>If associated with a <em>BigDecimal</em> specifically, also governs the maximum number of fractional digits accepted for input (editing).</p>
+</div>
+<div class="paragraph">
+<p>But input is not constrained for double/float, since those types have fixed intrinsic precision and their bit representation does not directly correspond to decimal digits.</p>
+</div>
+<div class="paragraph">
+<p><em>Digits#fraction()</em> can be used as a replacement. If both are used, the stronger constraint applies.</p>
+</div>
+<div class="paragraph">
+<p>When <em>Column#scale()</em> <em>&gt;0</em> is used on a <em>BigDecimal</em> , while <em>ValueSemantics#maxFractionalDigits()</em> is not used (&lt;0), then <em>Column#scale()</em> is undersood as an alias for this annotation attribute.</p>
+</div>
+<div class="paragraph">
+<p>default = <em>-1</em> understood as unlimited</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="minFractionalDigits"><a class="anchor" href="#minFractionalDigits"></a>minFractionalDigits</h3>
 <div class="paragraph">
-<p>If associated with a <em>BigDecimal</em> , the minimum number of fractional digits required for this number.default = <em>0</em></p>
+<p>If associated with any non-integer <em>Number</em> type, the minimum number of fractional digits displayed.</p>
+</div>
+<div class="paragraph">
+<p>default = <em>0</em></p>
 </div>
 </div>
 <div class="sect2">
@@ -1294,7 +1362,10 @@ page.parent doesn't seem to be set...
 <div class="sect2">
 <h3 id="timeZoneTranslation"><a class="anchor" href="#timeZoneTranslation"></a>timeZoneTranslation</h3>
 <div class="paragraph">
-<p>If associated with a temporal value, that has time-zone or time-offset information, the rendering mode, as to whether to transform the rendered value to the user&#8217;s local/current time-zone or not.default = <em>TimeZoneTranslation#TO_LOCAL_TIMEZONE</em></p>
+<p>If associated with a temporal value, that has time-zone or time-offset information, the rendering mode, as to whether to transform the rendered value to the user&#8217;s local/current time-zone or not.</p>
+</div>
+<div class="paragraph">
+<p>default = <em>TimeZoneTranslation#TO_LOCAL_TIMEZONE</em></p>
 </div>
 </div>
 <div class="sect2">
@@ -1339,7 +1410,7 @@ public LocalDate getEndDate() { ... }</pre>
             </p>
         </div>
         <div class="revision">
-            <p>Revision: 4.0.0-M3-SNAPSHOT.20260914-0716-e9f091a2</p>
+            <p>Revision: 4.0.0-M3-SNAPSHOT.20260915-0651-b696936b</p>
         </div>
     </div>
 </footer>
