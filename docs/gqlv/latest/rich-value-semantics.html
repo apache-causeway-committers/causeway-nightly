@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Rich GraphQL value and resource semantics :: causeway</title>
+    <link rel="canonical" href="https://apache-causeway-committers.github.io/causeway-nightly/gqlv/latest/rich-value-semantics.html">
+    <meta name="generator" content="Antora 3.2.0">
+    <link rel="stylesheet" href="../../_/css/site.css">
+    <link rel="stylesheet" href="../../_/css/site-custom.css">
+<link rel="home" href="https://apache-causeway-committers.github.io/causeway-nightly" title="causeway">
+  <link rel="next" href="rich-collection-windowing.html" title="Rich collection windows">
+  <link rel="prev" href="rich-object-interactions.html" title="Rich Object Interaction Correctness">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://apache-causeway-committers.github.io/causeway-nightly">
+          <span class="icon">
+            <img src="../../_/img/causeway-logo-no-words-65x48.png"></img>
+          </span>
+        <span class="navbar-title">causeway</span>
+      </a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <a class="navbar-end">
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Quick Start</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Starter Apps</span>
+            <a class="navbar-item" href="../../docs/latest/starters/helloworld.html">Hello World</a>
+            <a class="navbar-item" href="../../docs/latest/starters/simpleapp.html">Simple App</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Learning &amp; Tutorials</span>
+            <a class="navbar-item" href="../../docs/latest/reference/about.html">Reference App</a>
+            <a class="navbar-item" href="https://danhaywood.gitlab.io/isis-petclinic-tutorial-docs/petclinic/1.16.2/intro.html">Petclinic</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Resources</span>
+            <a class="navbar-item" href="../../docs/latest/resources/cheatsheet.html">Cheatsheet</a>
+            <a class="navbar-item" href="../../docs/latest/resources/icons.html">Icons</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Guides</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Core</span>
+            <a class="navbar-item" href="../../userguide/latest/about.html">User Guide</a>
+            <a class="navbar-item" href="../../refguide/latest/about.html">Reference Guide</a>
+            <a class="navbar-item" href="../../testing/latest/about.html">Testing Guide</a>
+            <a class="navbar-item" href="../../security/latest/about.html">Security Guide</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">For use in apps</span>
+            <a class="navbar-item" href="../../valuetypes/latest/about.html">Value Types</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Development</span>
+            <a class="navbar-item" href="../../setupguide/latest/about.html">Setup Guide</a>
+            <a class="navbar-item" href="../../conguide/latest/about.html">Contributors' Guide</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Components</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Security</span>
+            <a class="navbar-item" href="../../security/latest/bypass/about.html">Bypass</a>
+            <a class="navbar-item" href="../../security/latest/simple/about.html">Simple</a>
+            <a class="navbar-item" href="../../security/latest/spring/about.html">Spring</a>
+            <a class="navbar-item" href="../../security/latest/keycloak/about.html">Keycloak</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Viewers</span>
+            <a class="navbar-item" href="../../vw/latest/about.html">Web UI (Wicket)</a>
+            <a class="navbar-item" href="../../gqlv/latest/about.html">GraphQL API</a>
+            <a class="navbar-item" href="../../vro/latest/about.html">REST API (Restful Objects)</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Persistence</span>
+            <a class="navbar-item" href="../../pjpa/latest/about.html">JPA (EclipseLink)</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Extensions</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Core</span>
+            <a class="navbar-item" href="../../userguide/latest/commandlog/about.html">Command Log</a>
+            <a class="navbar-item" href="../../userguide/latest/docgen/about.html">Doc Gen</a>
+            <a class="navbar-item" href="../../userguide/latest/executionlog/about.html">Execution Log</a>
+            <a class="navbar-item" href="../../userguide/latest/executionoutbox/about.html">Execution Outbox</a>
+            <a class="navbar-item" href="../../userguide/latest/executionrepublisher/about.html">Execution Republisher</a>
+            <a class="navbar-item" href="../../userguide/latest/excel/about.html">Excel</a>
+            <a class="navbar-item" href="../../userguide/latest/flyway/about.html">Flyway</a>
+            <a class="navbar-item" href="../../userguide/latest/layoutloaders/about.html">Layout Loaders</a>
+            <a class="navbar-item" href="../../userguide/latest/titlecache/about.html">Title Cache</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Security</span>
+            <a class="navbar-item" href="../../security/latest/secman/about.html">Secman</a>
+            <a class="navbar-item" href="../../security/latest/audittrail/about.html">Audit Trail</a>
+            <a class="navbar-item" href="../../security/latest/spring-oauth2/about.html">Spring OAuth2 Integration</a>
+            <a class="navbar-item" href="../../security/latest/sessionlog/about.html">Session Log</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Web UI (Wicket)</span>
+            <a class="navbar-item" href="../../vw/latest/fullcalendar/about.html">Full Calendar</a>
+            <a class="navbar-item" href="../../vw/latest/pdfjs/about.html">pdf.js</a>
+            <a class="navbar-item" href="../../vw/latest/sse/about.html">Server Side Events</a>
+            <a class="navbar-item" href="../../vw/latest/tabular/about.html">Tabular Download</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">REST API (Restful Objects)</span>
+            <a class="navbar-item" href="../../vro/latest/cors/about.html">CORS</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Persistence</span>
+            <a class="navbar-item" href="../../querydsl/latest/about.html">QueryDSL</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Support</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Contact</span>
+            <a class="navbar-item" href="../../docs/latest/support/slack-channel.html">Slack</a>
+            <a class="navbar-item" href="../../docs/latest/support/mailing-list.html">Mailing Lists</a>
+            <a class="navbar-item" href="https://issues.apache.org/jira/browse/CAUSEWAY">JIRA</a>
+            <a class="navbar-item" href="https://stackoverflow.com/questions/tagged/causeway">Stack Overflow</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Releases</span>
+            <a class="navbar-item" href="../../docs/latest/downloads/how-to.html">Downloads</a>
+            <a class="navbar-item" href="../../relnotes/latest/about.html">Release Notes</a>
+            <hr class="navbar-divider"/>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Framework</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Process</span>
+            <a class="navbar-item" href="../../comguide/latest/about.html">Committers' Guide</a>
+            <a class="navbar-item" href="../../tooling/latest/about.html">Tooling</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Automated Analysis</span>
+            <a class="navbar-item" href="https://sonarcloud.io/dashboard?id=apache_causeway">SonarCloud.io</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Interim Builds</span>
+            <a class="navbar-item" href="../../comguide/latest/nightly-builds.html">Nightly builds</a>
+            <a class="navbar-item" href="../../comguide/latest/weekly-builds.html">Weekly builds</a>
+            <a class="navbar-item" href="https://apache-causeway-committers.github.io/causeway-nightly">Website Preview (not ASF hosted)</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Development</span>
+            <a class="navbar-item" href="../../core/latest/about.html">Internal Design Docs</a>
+            <a class="navbar-item" href="../../regressiontests/latest/about.html">Regression Tests</a>
+            <a class="navbar-item" href="../../incubator/latest/about.html">Incubator</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Thanks</span>
+            <a class="navbar-item" href="../../more-thanks/latest/more-thanks.html">Acknowledgements</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">ASF</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://www.apache.org/">Apache Homepage</a>
+            <a class="navbar-item" href="https://www.apache.org/events/current-event">Events</a>
+            <a class="navbar-item" href="https://www.apache.org/licenses/">License</a>
+            <a class="navbar-item" href="https://www.apache.org/security/">Security</a>
+            <a class="navbar-item" href="https://privacy.apache.org/policies/privacy-policy-public.html">Privacy</a>
+            <a class="navbar-item" href="https://www.apache.org/foundation/sponsorship.html">Sponsorship</a>
+            <a class="navbar-item" href="https://www.apache.org/foundation/thanks.html">Thanks</a>
+            <hr class="navbar-divider"/>
+            <a class="navbar-item" href="https://whimsy.apache.org/board/minutes/Causeway.html">PMC board minutes</a>
+          </div>
+        </div>
+        <a class="navbar-item" href="../../docs/latest/about.html">
+          <span class="icon">
+            <img src="../../_/img/home.png"></img>
+          </span>
+        </a>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body ">
+<div class="nav-container" data-component="gqlv" data-version="latest">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-search hide-for-print">
+  <input id="algolia-search-input" placeholder="Search"></span>
+</div>
+<div class="nav-panel-pagination">
+  <a class="page-previous" rel="prev" href="rich-object-interactions.html" title="Rich Object Interaction Correctness"><span></span></a>
+  <a class="page-next" rel="next"
+     href="rich-collection-windowing.html" title="Rich collection windows"><span></span></a>
+<!--
+page.parent doesn't seem to be set...
+  <a class="page-parent disabled" rel="prev" href="" title="Rich Object Interaction Correctness"><span></span></a>
+-->
+</div>
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="about.html">GraphQL Viewer</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="setup-and-configuration.html">Setup and Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="reference-application-coverage.html">Reference Application Coverage Analysis</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="rich-object-interactions.html">Rich Object Interaction Correctness</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="1">
+    <a class="nav-link" href="rich-value-semantics.html">Rich GraphQL value and resource semantics</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="rich-collection-windowing.html">Rich collection windows</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="rich-application-entry-points.html">Rich application entry points</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="testsupport.html">Test Support</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="spi-services.html">SPI Services</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="i18n.html">i18n Concerns</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">GraphQL Viewer</span>
+    <span class="version">latest</span>
+  </div>
+  <ul class="components">
+    <li class="component">
+      <span class="title"> </span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../docs/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Committers' Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../comguide/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Contributors' Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../conguide/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Design Docs</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../core/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Extensions</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../extensions/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component is-current">
+      <span class="title">GraphQL Viewer</span>
+      <ul class="versions">
+        <li class="version is-current">
+          <a href="about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Incubator Catalog</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../incubator/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">JPA</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../pjpa/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">QueryDSL</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../querydsl/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Reference Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../refguide/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">regressiontests</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../regressiontests/latest/index.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Release Notes</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../relnotes/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">REST API (Restful Objects Viewer)</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../vro/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Security Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../security/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Setup Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../setupguide/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Testing Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../testing/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Tutorials</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../tutorials/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">User Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../userguide/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Value Types Catalog</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../valuetypes/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Web Component Viewers</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../webcomponents/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Web UI (Wicket Viewer)</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../vw/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main role="main">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../docs/latest/about.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="about.html">GraphQL Viewer</a></li>
+    <li><a href="rich-value-semantics.html">Rich GraphQL value and resource semantics</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="https://github.com/apache/causeway/edit/main/viewers/graphql/adoc/modules/ROOT/pages/rich-value-semantics.adoc">Edit</a></div>
+</div>
+<article class="doc">
+    <a name="section-top"></a>
+<h1 class="page">Rich GraphQL value and resource semantics</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>The rich GraphQL schema advertises a value as input-capable only when GraphQL coercion can reconstruct its declared Java type.
+Output compatibility alone does not establish input support.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="canonical-standard-values"><a class="anchor" href="#canonical-standard-values"></a>Canonical standard values</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The viewer provides the following reversible mappings in addition to its established scalar mappings:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Java type</th>
+<th class="tableblock halign-left valign-top">GraphQL scalar</th>
+<th class="tableblock halign-left valign-top">Canonical representation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>java.time.LocalDateTime</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>LocalDateTime</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ISO-8601 local date-time without an offset or zone, preserving fractional seconds.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>java.net.URL</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Url</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">An absolute URL and its normalized external form.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>java.util.Date</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>LegacyDateTime</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ISO-8601 UTC instant.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>java.sql.Date</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SqlDate</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ISO-8601 date-only value.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>java.sql.Timestamp</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SqlTimestamp</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ISO-8601 local date-time preserving fractional seconds.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>java.sql.Time</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SqlTime</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ISO-8601 time-only value at second precision.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>java.util.Locale</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Locale</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IETF BCP 47 language tag.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.apache.causeway.applib.services.bookmark.Bookmark</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Bookmark</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Causeway <code>logical-type:identifier</code> bookmark text.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.apache.causeway.applib.services.appfeat.ApplicationFeatureId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ApplicationFeatureId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">URL-safe encoded Causeway application-feature identifier.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Malformed values fail during GraphQL coercion before the domain member is invoked.
+Error messages identify the required scalar without echoing variable content.
+Null remains available only where the Causeway member is optional.</p>
+</div>
+<div class="paragraph">
+<p>A client can inspect one scalar at a time using targeted standard introspection:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-graphql hljs" data-lang="graphql">query LocalDateTimeContract {
+  __type(name: "LocalDateTime") {
+    kind
+    name
+    description
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The existing rich <code>datatype</code> field continues to identify the declared Causeway semantics when multiple Java types use related textual representations.
+No separate datatype catalogue is introduced.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="built-in-classification"><a class="anchor" href="#built-in-classification"></a>Built-in classification</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Every framework-provided Causeway value semantics has a reviewed GraphQL classification.
+The classification coverage fails if a new framework value is introduced without a decision.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 66.6667%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Classification</th>
+<th class="tableblock halign-left valign-top">Built-in treatment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Reversible scalar</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Primitive wrappers, strings, numbers, supported temporal values, URL, UUID, Locale, Bookmark, and ApplicationFeatureId.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Structured</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Blob, Clob, and LocalResourcePath.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Protected</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Password accepts explicit input but always serializes its Causeway suppressed placeholder.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Output-only</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Markup returns its HTML through the documented <code>Markup</code> scalar and is never advertised as input-capable.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Unsupported</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Composite Identifier, schema DTO, image, and tree values remain non-disclosing until dedicated representations are defined.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="application-value-extensions"><a class="anchor" href="#application-value-extensions"></a>Application value extensions</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>An application can register a scalar-shaped value by providing a Spring bean implementing <code>ScalarMarshaller&lt;T&gt;</code>.
+The bean selects the Java class and supplies a documented <code>GraphQLScalarType</code>.
+A marshaller is output-only by default.
+A reversible implementation explicitly returns <code>true</code> from <code>supportsInput()</code>, or passes <code>true</code> to the corresponding <code>ScalarMarshallerAbstract</code> constructor, and reconstructs <code>T</code> from the value produced by that scalar&#8217;s coercion.
+Existing compiled application marshallers remain output-capable but no longer imply input support.</p>
+</div>
+<div class="paragraph">
+<p>Marshaller ordering follows the existing <code>@Priority</code> chain, with the first matching marshaller winning.
+A custom scalar must use typed GraphQL coercion exceptions and must not place rejected input values in messages.
+The example <code>ComplexNumber</code> marshaller uses conventional algebraic text such as <code>3+4i</code> or <code>3-4i</code>.
+Structured application values can replace the <code>TypeMapper</code> SPI when a scalar is not an appropriate representation.
+The viewer does not infer constructors, parsers, or factories from <code>toString()</code>.</p>
+</div>
+<div class="paragraph">
+<p>When no explicit marshaller exists, output uses <code>UnsupportedValue</code> and returns the constant <code>[unsupported]</code> without invoking the domain value&#8217;s <code>toString()</code> method.
+Input uses the same documented scalar, which always rejects coercion and directs the application to register <code>ScalarMarshaller</code> or <code>TypeMapper</code>.
+This replaces the previous behavior that serialized arbitrary output and passed a raw Java <code>String</code> to an incompatible domain member.
+Applications requiring a migration interval can explicitly set <a href="../../refguide/latest/config/sections/causeway.viewer.graphql.html#causeway.viewer.graphql.values.unsupported-output-policy" class="xref page"><code>causeway.viewer.graphql.values.unsupported-output-policy=LEGACY_STRING</code></a>.
+The legacy policy restores only output serialization; input remains unsupported.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="local-resource-paths"><a class="anchor" href="#local-resource-paths"></a>Local resource paths</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>LocalResourcePath</code> uses structured input and output so its path and browser-opening strategy both survive a round trip:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-graphql hljs" data-lang="graphql">input LocalResourcePathInput {
+  path: String!
+  openUrlStrategy: OpenUrlStrategy!
+}
+
+type LocalResourcePathValue {
+  path: String!
+  openUrlStrategy: OpenUrlStrategy!
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>OpenUrlStrategy</code> enum contains <code>NEW_WINDOW</code> and <code>SAME_WINDOW</code>.
+This value is separate from Blob and Clob content policy because it identifies an application-local navigation target rather than transferring resource bytes.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="blob-and-clob-input"><a class="anchor" href="#blob-and-clob-input"></a>Blob and Clob input</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When value-content policy is enabled, Blob input uses this generated shape:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-graphql hljs" data-lang="graphql">input BlobInput {
+  name: String!
+  mimeType: String!
+  base64: String!
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Clob input uses this generated shape:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-graphql hljs" data-lang="graphql">input ClobInput {
+  name: String!
+  mimeType: String!
+  chars: String!
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Blob content is RFC 4648 base64 and Clob limits are measured using its UTF-8 encoded byte length.
+The viewer validates the configured limit before constructing the Causeway <code>Blob</code> or <code>Clob</code>.
+It also enforces a member&#8217;s <code>fileAccept</code> constraint using exact media types, wildcard media groups, or filename extensions.
+Normal Causeway visibility, usability, and validity checks still run before property update or action invocation.</p>
+</div>
+<div class="paragraph">
+<p>The default decoded input limit is one mebibyte.
+Configure it with <a href="../../refguide/latest/config/sections/causeway.viewer.graphql.html#causeway.viewer.graphql.resources.inline-input-max-bytes" class="xref page"><code>causeway.viewer.graphql.resources.inline-input-max-bytes</code></a>.
+When value-content policy is <code>FORBIDDEN</code>, resource input resolves to <code>UnsupportedValue</code> and resource parameter metadata reports <code>FORBIDDEN</code>.
+Both <code>DIRECT</code> and <code>ATTACHMENT</code> enable bounded GraphQL resource values; attachment disposition continues to apply only to resource-controller responses.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="resource-output-and-metadata"><a class="anchor" href="#resource-output-and-metadata"></a>Resource output and metadata</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Blob and Clob properties retain their secured, same-origin resource links from the resource-link safety contract.
+Their metadata now also reports byte length, member <code>fileAccept</code>, input limit, and transfer mode without transferring content.
+Clob metadata additionally reports character length.</p>
+</div>
+<div class="paragraph">
+<p>Blob and Clob action results use <code>BlobValue</code> and <code>ClobValue</code> output objects.
+These expose name, media type, byte length, transfer mode, and the configured inline-output limit.
+Content is included only when value-content policy is enabled and the value is within that limit.
+An oversized action result reports <code>METADATA_ONLY</code> and returns null for its base64 or character-content field.</p>
+</div>
+<div class="paragraph">
+<p>The default inline-output limit is one mebibyte.
+Configure it with <a href="../../refguide/latest/config/sections/causeway.viewer.graphql.html#causeway.viewer.graphql.resources.inline-output-max-bytes" class="xref page"><code>causeway.viewer.graphql.resources.inline-output-max-bytes</code></a>.
+Large property values continue to use the authorization-rechecking resource controller rather than inline GraphQL output.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="security-and-migration"><a class="anchor" href="#security-and-migration"></a>Security and migration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Passwords can be submitted through the protected <code>Password</code> scalar but retain only their Causeway suppressed placeholder on every output and never expose their underlying value.
+Hidden member values and resource capabilities remain unavailable, and negotiation or invocation attempts are vetoed before submitted content is processed.
+Opaque, tree-shaped, composite, or custom values without an explicit strategy return only <code>[unsupported]</code> and reject input through <code>UnsupportedValue</code>.
+Resource validation, coercion errors, and diagnostics are bounded and do not include submitted content.</p>
+</div>
+<div class="paragraph">
+<p>Existing clients reading implicit fallback strings must either register an explicit safe output marshaller or temporarily select <code>LEGACY_STRING</code>.
+Existing custom marshallers that require input must explicitly opt in after verifying reversible coercion.
+Clients that previously submitted arbitrary strings for unsupported inputs must register a reversible strategy or stop advertising that operation as input-capable.
+Clients submitting Blob or Clob arguments must migrate from descriptive strings to <code>BlobInput</code> or <code>ClobInput</code>.
+The category-specific resource policies and legacy global fallback are documented in <a href="about.html" class="xref page">GraphQL API</a>.</p>
+</div>
+</div>
+</div>
+</article>
+<aside class="article-aside toc hide-for-print" role="navigation">
+    <p class="toc-title">On this page</p>
+    <div id="article-toc"></div>
+</aside>
+</main>
+</div>
+<footer class="footer">
+    <div class="content">
+        <div class="copyright">
+            <p>
+                Copyright © 2010~2024 The Apache Software Foundation, licensed under the Apache License, v2.0.
+                <br/>
+                Apache, the Apache feather logo, Apache Causeway, and the Apache Causeway project logo are all trademarks of The Apache Software Foundation.
+            </p>
+        </div>
+        <div class="revision">
+            <p>Revision: 4.0.0-M3-SNAPSHOT.20260921-0720-742e4e1d</p>
+        </div>
+    </div>
+</footer>
+<script src="../../_/js/site.js"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+<script src="../../_/js/vendor/jquery-3.4.1.min.js"></script>
+<script src="../../_/js/vendor/jquery-ui-1.12.1.custom.widget-only.min.js"></script>
+<script src="../../_/js/vendor/jquery.tocify.min.js"></script>
+
+<script>
+    $(function() {
+        $("#article-toc").tocify( {
+            showEffect: "slideDown",
+            hashGenerator: "pretty",
+            hideEffect: "slideUp",
+            selectors: "h2, h3",
+            scrollTo: 120,
+            smoothScroll: true,
+            theme: "jqueryui",
+            highlightOnScroll: true
+        } );
+    });
+</script>
+
+<script src="../../_/js/vendor/docsearch.min.js"></script>
+<script>
+  function focusSearchInput () { document.querySelector('#algolia-search-input').focus() }
+  var search = docsearch({
+    appId: '5ISP5TFAEN',
+    apiKey: '0fc51c28b4ad46e7318e96d4e97fab7c',
+    indexName: 'causeway-apache-org',
+    inputSelector: '#algolia-search-input',
+    autocompleteOptions: { hint: false, keyboardShortcuts: ['s'] },
+    debug: false,
+  }).autocomplete
+  search.on('autocomplete:closed', function () { search.autocomplete.setVal() })
+  focusSearchInput()
+  window.addEventListener('load', focusSearchInput);
+</script>
+
+<!--
+  docsearch options:
+  https://docsearch.algolia.com/docs/behavior/
+-->
+<!--
+  https://www.algolia.com/doc/api-reference/api-parameters/
+  algoliaOptions: { hitsPerPage: 6 },
+-->
+  </body>
+</html>

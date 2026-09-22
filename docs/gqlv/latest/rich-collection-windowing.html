@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Rich collection windows :: causeway</title>
+    <link rel="canonical" href="https://apache-causeway-committers.github.io/causeway-nightly/gqlv/latest/rich-collection-windowing.html">
+    <meta name="generator" content="Antora 3.2.0">
+    <link rel="stylesheet" href="../../_/css/site.css">
+    <link rel="stylesheet" href="../../_/css/site-custom.css">
+<link rel="home" href="https://apache-causeway-committers.github.io/causeway-nightly" title="causeway">
+  <link rel="next" href="rich-application-entry-points.html" title="Rich application entry points">
+  <link rel="prev" href="rich-value-semantics.html" title="Rich GraphQL value and resource semantics">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://apache-causeway-committers.github.io/causeway-nightly">
+          <span class="icon">
+            <img src="../../_/img/causeway-logo-no-words-65x48.png"></img>
+          </span>
+        <span class="navbar-title">causeway</span>
+      </a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <a class="navbar-end">
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Quick Start</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Starter Apps</span>
+            <a class="navbar-item" href="../../docs/latest/starters/helloworld.html">Hello World</a>
+            <a class="navbar-item" href="../../docs/latest/starters/simpleapp.html">Simple App</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Learning &amp; Tutorials</span>
+            <a class="navbar-item" href="../../docs/latest/reference/about.html">Reference App</a>
+            <a class="navbar-item" href="https://danhaywood.gitlab.io/isis-petclinic-tutorial-docs/petclinic/1.16.2/intro.html">Petclinic</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Resources</span>
+            <a class="navbar-item" href="../../docs/latest/resources/cheatsheet.html">Cheatsheet</a>
+            <a class="navbar-item" href="../../docs/latest/resources/icons.html">Icons</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Guides</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Core</span>
+            <a class="navbar-item" href="../../userguide/latest/about.html">User Guide</a>
+            <a class="navbar-item" href="../../refguide/latest/about.html">Reference Guide</a>
+            <a class="navbar-item" href="../../testing/latest/about.html">Testing Guide</a>
+            <a class="navbar-item" href="../../security/latest/about.html">Security Guide</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">For use in apps</span>
+            <a class="navbar-item" href="../../valuetypes/latest/about.html">Value Types</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Development</span>
+            <a class="navbar-item" href="../../setupguide/latest/about.html">Setup Guide</a>
+            <a class="navbar-item" href="../../conguide/latest/about.html">Contributors' Guide</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Components</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Security</span>
+            <a class="navbar-item" href="../../security/latest/bypass/about.html">Bypass</a>
+            <a class="navbar-item" href="../../security/latest/simple/about.html">Simple</a>
+            <a class="navbar-item" href="../../security/latest/spring/about.html">Spring</a>
+            <a class="navbar-item" href="../../security/latest/keycloak/about.html">Keycloak</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Viewers</span>
+            <a class="navbar-item" href="../../vw/latest/about.html">Web UI (Wicket)</a>
+            <a class="navbar-item" href="../../gqlv/latest/about.html">GraphQL API</a>
+            <a class="navbar-item" href="../../vro/latest/about.html">REST API (Restful Objects)</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Persistence</span>
+            <a class="navbar-item" href="../../pjpa/latest/about.html">JPA (EclipseLink)</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Extensions</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Core</span>
+            <a class="navbar-item" href="../../userguide/latest/commandlog/about.html">Command Log</a>
+            <a class="navbar-item" href="../../userguide/latest/docgen/about.html">Doc Gen</a>
+            <a class="navbar-item" href="../../userguide/latest/executionlog/about.html">Execution Log</a>
+            <a class="navbar-item" href="../../userguide/latest/executionoutbox/about.html">Execution Outbox</a>
+            <a class="navbar-item" href="../../userguide/latest/executionrepublisher/about.html">Execution Republisher</a>
+            <a class="navbar-item" href="../../userguide/latest/excel/about.html">Excel</a>
+            <a class="navbar-item" href="../../userguide/latest/flyway/about.html">Flyway</a>
+            <a class="navbar-item" href="../../userguide/latest/layoutloaders/about.html">Layout Loaders</a>
+            <a class="navbar-item" href="../../userguide/latest/titlecache/about.html">Title Cache</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Security</span>
+            <a class="navbar-item" href="../../security/latest/secman/about.html">Secman</a>
+            <a class="navbar-item" href="../../security/latest/audittrail/about.html">Audit Trail</a>
+            <a class="navbar-item" href="../../security/latest/spring-oauth2/about.html">Spring OAuth2 Integration</a>
+            <a class="navbar-item" href="../../security/latest/sessionlog/about.html">Session Log</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Web UI (Wicket)</span>
+            <a class="navbar-item" href="../../vw/latest/fullcalendar/about.html">Full Calendar</a>
+            <a class="navbar-item" href="../../vw/latest/pdfjs/about.html">pdf.js</a>
+            <a class="navbar-item" href="../../vw/latest/sse/about.html">Server Side Events</a>
+            <a class="navbar-item" href="../../vw/latest/tabular/about.html">Tabular Download</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">REST API (Restful Objects)</span>
+            <a class="navbar-item" href="../../vro/latest/cors/about.html">CORS</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Persistence</span>
+            <a class="navbar-item" href="../../querydsl/latest/about.html">QueryDSL</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Support</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Contact</span>
+            <a class="navbar-item" href="../../docs/latest/support/slack-channel.html">Slack</a>
+            <a class="navbar-item" href="../../docs/latest/support/mailing-list.html">Mailing Lists</a>
+            <a class="navbar-item" href="https://issues.apache.org/jira/browse/CAUSEWAY">JIRA</a>
+            <a class="navbar-item" href="https://stackoverflow.com/questions/tagged/causeway">Stack Overflow</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Releases</span>
+            <a class="navbar-item" href="../../docs/latest/downloads/how-to.html">Downloads</a>
+            <a class="navbar-item" href="../../relnotes/latest/about.html">Release Notes</a>
+            <hr class="navbar-divider"/>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Framework</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Process</span>
+            <a class="navbar-item" href="../../comguide/latest/about.html">Committers' Guide</a>
+            <a class="navbar-item" href="../../tooling/latest/about.html">Tooling</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Automated Analysis</span>
+            <a class="navbar-item" href="https://sonarcloud.io/dashboard?id=apache_causeway">SonarCloud.io</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Interim Builds</span>
+            <a class="navbar-item" href="../../comguide/latest/nightly-builds.html">Nightly builds</a>
+            <a class="navbar-item" href="../../comguide/latest/weekly-builds.html">Weekly builds</a>
+            <a class="navbar-item" href="https://apache-causeway-committers.github.io/causeway-nightly">Website Preview (not ASF hosted)</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Development</span>
+            <a class="navbar-item" href="../../core/latest/about.html">Internal Design Docs</a>
+            <a class="navbar-item" href="../../regressiontests/latest/about.html">Regression Tests</a>
+            <a class="navbar-item" href="../../incubator/latest/about.html">Incubator</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Thanks</span>
+            <a class="navbar-item" href="../../more-thanks/latest/more-thanks.html">Acknowledgements</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">ASF</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://www.apache.org/">Apache Homepage</a>
+            <a class="navbar-item" href="https://www.apache.org/events/current-event">Events</a>
+            <a class="navbar-item" href="https://www.apache.org/licenses/">License</a>
+            <a class="navbar-item" href="https://www.apache.org/security/">Security</a>
+            <a class="navbar-item" href="https://privacy.apache.org/policies/privacy-policy-public.html">Privacy</a>
+            <a class="navbar-item" href="https://www.apache.org/foundation/sponsorship.html">Sponsorship</a>
+            <a class="navbar-item" href="https://www.apache.org/foundation/thanks.html">Thanks</a>
+            <hr class="navbar-divider"/>
+            <a class="navbar-item" href="https://whimsy.apache.org/board/minutes/Causeway.html">PMC board minutes</a>
+          </div>
+        </div>
+        <a class="navbar-item" href="../../docs/latest/about.html">
+          <span class="icon">
+            <img src="../../_/img/home.png"></img>
+          </span>
+        </a>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body ">
+<div class="nav-container" data-component="gqlv" data-version="latest">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-search hide-for-print">
+  <input id="algolia-search-input" placeholder="Search"></span>
+</div>
+<div class="nav-panel-pagination">
+  <a class="page-previous" rel="prev" href="rich-value-semantics.html" title="Rich GraphQL value and resource semantics"><span></span></a>
+  <a class="page-next" rel="next"
+     href="rich-application-entry-points.html" title="Rich application entry points"><span></span></a>
+<!--
+page.parent doesn't seem to be set...
+  <a class="page-parent disabled" rel="prev" href="" title="Rich GraphQL value and resource semantics"><span></span></a>
+-->
+</div>
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="about.html">GraphQL Viewer</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="setup-and-configuration.html">Setup and Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="reference-application-coverage.html">Reference Application Coverage Analysis</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="rich-object-interactions.html">Rich Object Interaction Correctness</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="rich-value-semantics.html">Rich GraphQL value and resource semantics</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="1">
+    <a class="nav-link" href="rich-collection-windowing.html">Rich collection windows</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="rich-application-entry-points.html">Rich application entry points</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="testsupport.html">Test Support</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="spi-services.html">SPI Services</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="i18n.html">i18n Concerns</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">GraphQL Viewer</span>
+    <span class="version">latest</span>
+  </div>
+  <ul class="components">
+    <li class="component">
+      <span class="title"> </span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../docs/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Committers' Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../comguide/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Contributors' Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../conguide/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Design Docs</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../core/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Extensions</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../extensions/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component is-current">
+      <span class="title">GraphQL Viewer</span>
+      <ul class="versions">
+        <li class="version is-current">
+          <a href="about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Incubator Catalog</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../incubator/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">JPA</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../pjpa/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">QueryDSL</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../querydsl/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Reference Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../refguide/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">regressiontests</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../regressiontests/latest/index.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Release Notes</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../relnotes/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">REST API (Restful Objects Viewer)</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../vro/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Security Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../security/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Setup Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../setupguide/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Testing Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../testing/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Tutorials</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../tutorials/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">User Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../userguide/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Value Types Catalog</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../valuetypes/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Web Component Viewers</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../webcomponents/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Web UI (Wicket Viewer)</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../vw/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main role="main">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../docs/latest/about.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="about.html">GraphQL Viewer</a></li>
+    <li><a href="rich-collection-windowing.html">Rich collection windows</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="https://github.com/apache/causeway/edit/main/viewers/graphql/adoc/modules/ROOT/pages/rich-collection-windowing.adoc">Edit</a></div>
+</div>
+<article class="doc">
+    <a name="section-top"></a>
+<h1 class="page">Rich collection windows</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>The rich GraphQL schema exposes an additive bounded <code>window</code> field on every readable collection wrapper.
+The established unargumented <code>get</code> field remains available during the compatibility period, but new generic clients should prefer <code>window</code> after targeted introspection discovers it.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="schema-contract"><a class="anchor" href="#schema-contract"></a>Schema contract</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A collection wrapper has this conceptual shape, with a generated result type whose <code>rows</code> field uses the collection element type:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-graphql hljs" data-lang="graphql">type rich__example_Object__items__gqlv_collection {
+  get: [rich__example_Item]
+  window(offset: Int! = 0, size: Int! = 20): rich__example_Object__items__gqlv_collection_window
+}
+
+type rich__example_Object__items__gqlv_collection_window {
+  rows: [rich__example_Item]
+  offset: Int!
+  requestedSize: Int!
+  returnedCount: Int!
+  totalCount: Int
+  maximumSize: Int!
+  hasPrevious: Boolean!
+  hasNext: Boolean!
+  ordering: rich__gqlv_collection_window_ordering!
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>offset</code> is zero-based and defaults to zero.
+<code>size</code> defaults to <code>causeway.viewer.graphql.collections.default-window-size</code>, which is 20 unless configured otherwise.
+A request is rejected before the association is read when its offset is negative, its size is not positive, or its size exceeds <code>causeway.viewer.graphql.collections.max-window-size</code>.
+The default maximum is 100, and application startup rejects a default size larger than the maximum.</p>
+</div>
+<div class="paragraph">
+<p>An offset beyond the current collection returns an empty <code>rows</code> list at the requested offset.
+It does not substitute the last non-empty range.
+<code>returnedCount</code> is always the number of serialized rows, so it never exceeds the requested size.
+<code>hasPrevious</code> and <code>hasNext</code> describe availability for the execution-time collection represented by that response.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="count-and-ordering-semantics"><a class="anchor" href="#count-and-ordering-semantics"></a>Count and ordering semantics</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>totalCount</code> is nullable so a future source can omit a count that cannot be obtained safely or efficiently.
+The current Causeway association implementation materializes the complete authorized collection and therefore returns an exact count.
+A missing count is represented as null rather than zero.</p>
+</div>
+<div class="paragraph">
+<p>The <code>CONFIGURED</code> ordering mode means a supported Causeway collection comparator was applied before selecting rows.
+The <code>ENCOUNTER</code> ordering mode means the materialized collection&#8217;s encounter order was retained.
+Encounter ordering does not claim positional stability across requests.
+Clients cannot request arbitrary field-name sorting through this operation.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="consistency-and-errors"><a class="anchor" href="#consistency-and-errors"></a>Consistency and errors</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Each window is a view of the collection during one GraphQL execution.
+An insertion, removal, or ordering change between requests can move elements to different offsets, so windows are not durable cursors.
+The framework-neutral object context aborts superseded secondary requests where possible and discards a response that has been superseded for the same consumer.</p>
+</div>
+<div class="paragraph">
+<p>A hidden collection returns no rows from either <code>get</code> or <code>window</code> and reports the bounded hidden-member error.
+A disabled but visible collection remains readable because collection reads do not modify domain state, while its <code>disabled</code> field still reports the interaction reason.
+Nullable nested row fields retain normal GraphQL partial-data behavior, so safe row data and window metadata can remain available with a nested error.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="response-bounds-and-materialization"><a class="anchor" href="#response-bounds-and-materialization"></a>Response bounds and materialization</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Windowing bounds the number of rows serialized into one GraphQL response.
+<code>@CollectionLayout(paged=&#8230;&#8203;)</code> remains a presentation hint and does not set or cap the GraphQL transport window.
+The current implementation still invokes and fully materializes the Causeway collection association before applying configured ordering and selecting the requested rows.
+Consequently this feature bounds transport payloads and downstream GraphQL work but does not claim database-level pagination or bounded persistence retrieval.
+Materialization is documented and tested as an implementation characteristic rather than exposed as semantic window metadata.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="client-discovery-and-migration"><a class="anchor" href="#client-discovery-and-migration"></a>Client discovery and migration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Clients should introspect only the generated collection wrapper needed for the current member and test for its <code>window</code> field.
+The <code>offset</code> and <code>size</code> argument defaults are available from ordinary GraphQL introspection.
+The generated window result type exposes range, count, maximum, continuation, and ordering metadata.</p>
+</div>
+<div class="paragraph">
+<p>Clients that do not discover <code>window</code> may continue to execute the established <code>get</code> selection during the compatibility period.
+The Causeway web-component object context follows that same capability-first rule and falls back to <code>get</code> only when bounded windows are unavailable.</p>
+</div>
+</div>
+</div>
+</article>
+<aside class="article-aside toc hide-for-print" role="navigation">
+    <p class="toc-title">On this page</p>
+    <div id="article-toc"></div>
+</aside>
+</main>
+</div>
+<footer class="footer">
+    <div class="content">
+        <div class="copyright">
+            <p>
+                Copyright © 2010~2024 The Apache Software Foundation, licensed under the Apache License, v2.0.
+                <br/>
+                Apache, the Apache feather logo, Apache Causeway, and the Apache Causeway project logo are all trademarks of The Apache Software Foundation.
+            </p>
+        </div>
+        <div class="revision">
+            <p>Revision: 4.0.0-M3-SNAPSHOT.20260921-0720-742e4e1d</p>
+        </div>
+    </div>
+</footer>
+<script src="../../_/js/site.js"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+<script src="../../_/js/vendor/jquery-3.4.1.min.js"></script>
+<script src="../../_/js/vendor/jquery-ui-1.12.1.custom.widget-only.min.js"></script>
+<script src="../../_/js/vendor/jquery.tocify.min.js"></script>
+
+<script>
+    $(function() {
+        $("#article-toc").tocify( {
+            showEffect: "slideDown",
+            hashGenerator: "pretty",
+            hideEffect: "slideUp",
+            selectors: "h2, h3",
+            scrollTo: 120,
+            smoothScroll: true,
+            theme: "jqueryui",
+            highlightOnScroll: true
+        } );
+    });
+</script>
+
+<script src="../../_/js/vendor/docsearch.min.js"></script>
+<script>
+  function focusSearchInput () { document.querySelector('#algolia-search-input').focus() }
+  var search = docsearch({
+    appId: '5ISP5TFAEN',
+    apiKey: '0fc51c28b4ad46e7318e96d4e97fab7c',
+    indexName: 'causeway-apache-org',
+    inputSelector: '#algolia-search-input',
+    autocompleteOptions: { hint: false, keyboardShortcuts: ['s'] },
+    debug: false,
+  }).autocomplete
+  search.on('autocomplete:closed', function () { search.autocomplete.setVal() })
+  focusSearchInput()
+  window.addEventListener('load', focusSearchInput);
+</script>
+
+<!--
+  docsearch options:
+  https://docsearch.algolia.com/docs/behavior/
+-->
+<!--
+  https://www.algolia.com/doc/api-reference/api-parameters/
+  algoliaOptions: { hitsPerPage: 6 },
+-->
+  </body>
+</html>
