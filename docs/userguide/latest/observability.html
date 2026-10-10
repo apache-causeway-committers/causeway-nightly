@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Observability :: causeway</title>
+    <link rel="canonical" href="https://apache-causeway-committers.github.io/causeway-nightly/userguide/latest/observability.html">
+    <meta name="generator" content="Antora 3.2.1">
+    <link rel="stylesheet" href="../../_/css/site.css">
+    <link rel="stylesheet" href="../../_/css/site-custom.css">
+<link rel="home" href="https://apache-causeway-committers.github.io/causeway-nightly" title="causeway">
+  <link rel="next" href="value-types.html" title="Value types">
+  <link rel="prev" href="modules.html" title="Modules">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://apache-causeway-committers.github.io/causeway-nightly">
+          <span class="icon">
+            <img src="../../_/img/causeway-logo-no-words-65x48.png"></img>
+          </span>
+        <span class="navbar-title">causeway</span>
+      </a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <a class="navbar-end">
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Quick Start</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Starter Apps</span>
+            <a class="navbar-item" href="../../docs/latest/starters/helloworld.html">Hello World</a>
+            <a class="navbar-item" href="../../docs/latest/starters/simpleapp.html">Simple App</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Learning &amp; Tutorials</span>
+            <a class="navbar-item" href="../../docs/latest/reference/about.html">Reference App</a>
+            <a class="navbar-item" href="https://danhaywood.gitlab.io/isis-petclinic-tutorial-docs/petclinic/1.16.2/intro.html">Petclinic</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Resources</span>
+            <a class="navbar-item" href="../../docs/latest/resources/cheatsheet.html">Cheatsheet</a>
+            <a class="navbar-item" href="../../docs/latest/resources/icons.html">Icons</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Guides</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Core</span>
+            <a class="navbar-item" href="../../userguide/latest/about.html">User Guide</a>
+            <a class="navbar-item" href="../../refguide/latest/about.html">Reference Guide</a>
+            <a class="navbar-item" href="../../testing/latest/about.html">Testing Guide</a>
+            <a class="navbar-item" href="../../security/latest/about.html">Security Guide</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">For use in apps</span>
+            <a class="navbar-item" href="../../valuetypes/latest/about.html">Value Types</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Development</span>
+            <a class="navbar-item" href="../../setupguide/latest/about.html">Setup Guide</a>
+            <a class="navbar-item" href="../../conguide/latest/about.html">Contributors' Guide</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Components</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Security</span>
+            <a class="navbar-item" href="../../security/latest/bypass/about.html">Bypass</a>
+            <a class="navbar-item" href="../../security/latest/simple/about.html">Simple</a>
+            <a class="navbar-item" href="../../security/latest/spring/about.html">Spring</a>
+            <a class="navbar-item" href="../../security/latest/keycloak/about.html">Keycloak</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Viewers</span>
+            <a class="navbar-item" href="../../vw/latest/about.html">Web UI (Wicket)</a>
+            <a class="navbar-item" href="../../gqlv/latest/about.html">GraphQL API</a>
+            <a class="navbar-item" href="../../vro/latest/about.html">REST API (Restful Objects)</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Persistence</span>
+            <a class="navbar-item" href="../../pjpa/latest/about.html">JPA (EclipseLink)</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Extensions</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Core</span>
+            <a class="navbar-item" href="../../userguide/latest/commandlog/about.html">Command Log</a>
+            <a class="navbar-item" href="../../userguide/latest/docgen/about.html">Doc Gen</a>
+            <a class="navbar-item" href="../../userguide/latest/executionlog/about.html">Execution Log</a>
+            <a class="navbar-item" href="../../userguide/latest/executionoutbox/about.html">Execution Outbox</a>
+            <a class="navbar-item" href="../../userguide/latest/executionrepublisher/about.html">Execution Republisher</a>
+            <a class="navbar-item" href="../../userguide/latest/excel/about.html">Excel</a>
+            <a class="navbar-item" href="../../userguide/latest/flyway/about.html">Flyway</a>
+            <a class="navbar-item" href="../../userguide/latest/layoutloaders/about.html">Layout Loaders</a>
+            <a class="navbar-item" href="../../userguide/latest/titlecache/about.html">Title Cache</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Security</span>
+            <a class="navbar-item" href="../../security/latest/secman/about.html">Secman</a>
+            <a class="navbar-item" href="../../security/latest/audittrail/about.html">Audit Trail</a>
+            <a class="navbar-item" href="../../security/latest/spring-oauth2/about.html">Spring OAuth2 Integration</a>
+            <a class="navbar-item" href="../../security/latest/sessionlog/about.html">Session Log</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Web UI (Wicket)</span>
+            <a class="navbar-item" href="../../vw/latest/fullcalendar/about.html">Full Calendar</a>
+            <a class="navbar-item" href="../../vw/latest/pdfjs/about.html">pdf.js</a>
+            <a class="navbar-item" href="../../vw/latest/sse/about.html">Server Side Events</a>
+            <a class="navbar-item" href="../../vw/latest/tabular/about.html">Tabular Download</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">REST API (Restful Objects)</span>
+            <a class="navbar-item" href="../../vro/latest/cors/about.html">CORS</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Persistence</span>
+            <a class="navbar-item" href="../../querydsl/latest/about.html">QueryDSL</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Support</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Contact</span>
+            <a class="navbar-item" href="../../docs/latest/support/slack-channel.html">Slack</a>
+            <a class="navbar-item" href="../../docs/latest/support/mailing-list.html">Mailing Lists</a>
+            <a class="navbar-item" href="https://issues.apache.org/jira/browse/CAUSEWAY">JIRA</a>
+            <a class="navbar-item" href="https://stackoverflow.com/questions/tagged/causeway">Stack Overflow</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Releases</span>
+            <a class="navbar-item" href="../../docs/latest/downloads/how-to.html">Downloads</a>
+            <a class="navbar-item" href="../../relnotes/latest/about.html">Release Notes</a>
+            <hr class="navbar-divider"/>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Framework</a>
+          <div class="navbar-dropdown">
+            <span class="navbar-item navbar-heading">Process</span>
+            <a class="navbar-item" href="../../comguide/latest/about.html">Committers' Guide</a>
+            <a class="navbar-item" href="../../tooling/latest/about.html">Tooling</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Automated Analysis</span>
+            <a class="navbar-item" href="https://sonarcloud.io/dashboard?id=apache_causeway">SonarCloud.io</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Interim Builds</span>
+            <a class="navbar-item" href="../../comguide/latest/nightly-builds.html">Nightly builds</a>
+            <a class="navbar-item" href="../../comguide/latest/weekly-builds.html">Weekly builds</a>
+            <a class="navbar-item" href="https://apache-causeway-committers.github.io/causeway-nightly">Website Preview (not ASF hosted)</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Development</span>
+            <a class="navbar-item" href="../../core/latest/about.html">Internal Design Docs</a>
+            <a class="navbar-item" href="../../regressiontests/latest/about.html">Regression Tests</a>
+            <a class="navbar-item" href="../../incubator/latest/about.html">Incubator</a>
+            <hr class="navbar-divider"/>
+            <span class="navbar-item navbar-heading">Thanks</span>
+            <a class="navbar-item" href="../../more-thanks/latest/more-thanks.html">Acknowledgements</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">ASF</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://www.apache.org/">Apache Homepage</a>
+            <a class="navbar-item" href="https://www.apache.org/events/current-event">Events</a>
+            <a class="navbar-item" href="https://www.apache.org/licenses/">License</a>
+            <a class="navbar-item" href="https://www.apache.org/security/">Security</a>
+            <a class="navbar-item" href="https://privacy.apache.org/policies/privacy-policy-public.html">Privacy</a>
+            <a class="navbar-item" href="https://www.apache.org/foundation/sponsorship.html">Sponsorship</a>
+            <a class="navbar-item" href="https://www.apache.org/foundation/thanks.html">Thanks</a>
+            <hr class="navbar-divider"/>
+            <a class="navbar-item" href="https://whimsy.apache.org/board/minutes/Causeway.html">PMC board minutes</a>
+          </div>
+        </div>
+        <a class="navbar-item" href="../../docs/latest/about.html">
+          <span class="icon">
+            <img src="../../_/img/home.png"></img>
+          </span>
+        </a>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body ">
+<div class="nav-container" data-component="userguide" data-version="latest">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-search hide-for-print">
+  <input id="algolia-search-input" placeholder="Search"></span>
+</div>
+<div class="nav-panel-pagination">
+  <a class="page-previous" rel="prev" href="modules.html" title="Modules"><span></span></a>
+  <a class="page-next" rel="next"
+     href="value-types.html" title="Value types"><span></span></a>
+<!--
+page.parent doesn't seem to be set...
+  <a class="page-parent disabled" rel="prev" href="" title="Modules"><span></span></a>
+-->
+</div>
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="about.html">User Guide</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="overview.html">10,000ft overview</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="domain-entities.html">Domain Entities</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="domain-services.html">Domain Services</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="properties-collections-actions.html">Properties, Collections &amp; Actions</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="ui-layout-and-hints.html">UI Layout &amp; Hints</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="business-rules.html">Business Rules</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="drop-downs-and-defaults.html">Drop downs &amp; Defaults</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="view-models.html">View Models</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="mixins.html">Mixins</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="events.html">Events</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="modules.html">Modules</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="1">
+    <a class="nav-link" href="observability.html">Observability</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="value-types.html">Value types</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="meta-annotations.html">Meta-annotations</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="background-context-and-theory.html">Background, Context &amp; Theory</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="btb/about.html">Beyond the Basics</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="btb/headless-access.html">Headless Access</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="btb/programming-model.html">Programming Model</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="btb/hints-and-tips.html">Hints-n-Tips</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="btb/logging.html">Logging</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="btb/troubleshooting-visibility-and-usability.html">Troubleshooting Visibility and Usability</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="btb/i18n.html">Internationalization (i18n)</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Extensions</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="commandlog/about.html">Command Log</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="docgen/about.html">DocGen</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="executionlog/about.html">Execution Log</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="executionoutbox/about.html">Execution Outbox</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="executionrepublisher/about.html">Execution Republisher</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="excel/about.html">Excel Library</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="flyway/about.html">Flyway</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="layoutloaders/about.html">Layout Loaders</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="titlecache/about.html">Title Cache</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">User Guide</span>
+    <span class="version">latest</span>
+  </div>
+  <ul class="components">
+    <li class="component">
+      <span class="title"> </span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../docs/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Committers' Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../comguide/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Contributors' Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../conguide/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Design Docs</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../core/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Extensions</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../extensions/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">GraphQL Viewer</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../gqlv/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Incubator Catalog</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../incubator/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">JPA</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../pjpa/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">QueryDSL</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../querydsl/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Reference Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../refguide/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">regressiontests</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../regressiontests/latest/index.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Release Notes</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../relnotes/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">REST API (Restful Objects Viewer)</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../vro/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Security Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../security/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Setup Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../setupguide/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Testing Guide</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../testing/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Tutorials</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../tutorials/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component is-current">
+      <span class="title">User Guide</span>
+      <ul class="versions">
+        <li class="version is-current">
+          <a href="about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Value Types Catalog</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../valuetypes/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Web Component Viewers</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../webcomponents/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component">
+      <span class="title">Web UI (Wicket Viewer)</span>
+      <ul class="versions">
+        <li class="version">
+          <a href="../../vw/latest/about.html">latest</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main role="main">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../docs/latest/about.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="about.html">User Guide</a></li>
+    <li><a href="observability.html">Observability</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="https://github.com/apache/causeway/edit/main/antora/components/userguide/modules/ROOT/pages/observability.adoc">Edit</a></div>
+</div>
+<article class="doc">
+    <a name="section-top"></a>
+<h1 class="page">Observability</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Causeway&#8217;s <code>observation</code> Spring profile enables framework observations for interactions, actions, property editing, transactions, execution publishing, metamodel initialization and JPA operations.
+Without that profile, Causeway uses a no-op integration; an application&#8217;s own observation registry remains usable.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="boot-managed-tracing"><a class="anchor" href="#boot-managed-tracing"></a>Boot-managed tracing</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Use the main BOM&#8217;s <code>spring-boot-starter-opentelemetry</code> and activate the profile:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">spring:
+  profiles:
+    active: observation
+management:
+  opentelemetry:
+    tracing:
+      export:
+        otlp:
+          endpoint: http://localhost:4318/v1/traces</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Boot owns tracing configuration and export in this configuration.
+Causeway uses a supplied single or primary <code>ObservationRegistry</code>, with a fallback when none is supplied.
+Multiple registry candidates without a primary produce a configuration error.
+An active observation profile does not require an agent or exporter to start successfully.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="java-agent-owned-tracing"><a class="anchor" href="#java-agent-owned-tracing"></a>Java-agent-owned tracing</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>An alternative configuration lets the OpenTelemetry Java agent own the SDK, automatic HTTP/JDBC instrumentation and export.
+Provide a registry whose Micrometer tracing handler bridges to the agent&#8217;s global OpenTelemetry context.
+Add the BOM-managed <code>io.micrometer:micrometer-tracing-bridge-otel</code> dependency for this application configuration.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Configuration(proxyBeanMethods = false)
+@Profile("agent")
+class AgentObservationConfiguration {
+    @Bean
+    ObservationRegistry agentObservationRegistry() {
+        var currentContext = new OtelCurrentTraceContext();
+        var tracer = new OtelTracer(
+                GlobalOpenTelemetry.getTracer("org.apache.causeway"),
+                currentContext,
+                event -&gt; {},
+                new OtelBaggageManager(currentContext, List.of(), List.of()));
+        var registry = ObservationRegistry.create();
+        registry.observationConfig()
+                .observationHandler(new DefaultTracingObservationHandler(tracer));
+        return registry;
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The types are from <code>io.micrometer.observation</code>, <code>io.micrometer.tracing.handler</code>, <code>io.micrometer.tracing.otel.bridge</code>, <code>io.opentelemetry.api</code>, <code>java.util</code>, and Spring&#8217;s configuration annotations.
+Import this configuration into the application.
+For the validated Boot 4.2.0-M1 configuration, exclude the competing SDK/tracing auto-configurations:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">spring:
+  profiles:
+    active: observation,agent
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.opentelemetry.autoconfigure.OpenTelemetrySdkAutoConfiguration
+      - org.springframework.boot.micrometer.tracing.opentelemetry.autoconfigure.OpenTelemetryTracingAutoConfiguration
+      - org.springframework.boot.micrometer.tracing.opentelemetry.autoconfigure.otlp.OtlpTracingAutoConfiguration
+      - org.springframework.boot.micrometer.tracing.autoconfigure.MicrometerTracingAutoConfiguration
+management:
+  tracing:
+    export:
+      enabled: false
+causeway:
+  observation:
+    duration-filtering-enabled: false</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Launch the JVM with <code>-javaagent:/path/to/opentelemetry-javaagent.jar</code> and configure the agent&#8217;s service name, sampler and OTLP endpoint through its normal settings.
+For example, a local tracing-only run can use:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">export OTEL_SERVICE_NAME=my-causeway-app
+export OTEL_TRACES_EXPORTER=otlp
+export OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
+export OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://localhost:4318/v1/traces
+export OTEL_METRICS_EXPORTER=none
+export OTEL_LOGS_EXPORTER=none
+java -javaagent:/path/to/opentelemetry-javaagent.jar -jar application.jar</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Do not also construct an independent SDK/export pipeline in this configuration.
+The agent configuration is an explicit application choice; it does not replace the Boot-managed default.
+With the agent profile but without the <code>observation</code> profile, automatic agent spans remain active and Causeway observations remain inactive.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="duration-filtering-and-failures"><a class="anchor" href="#duration-filtering-and-failures"></a>Duration filtering and failures</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Duration filtering is disabled by default, so short successful JPA parents remain available when their children are exported.
+This can increase span volume compared with the previous default.
+It does not override sampling, exporter failures or application-defined filtering.</p>
+</div>
+<div class="paragraph">
+<p>To opt into the lossy Boot-managed duration filter:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">causeway:
+  observation:
+    duration-filtering-enabled: true
+    jpa-duration-threshold: 2ms</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The threshold defaults to <code>2ms</code> and accepts nonnegative durations; <code>0ms</code> suppresses no spans by duration.
+Malformed or negative thresholds fail startup, including when filtering is disabled.
+Successful JPA observations strictly below the configured threshold are marked for discard; observations at or above it and failed observations remain eligible for export.
+The Boot-managed export predicate honors that marker.</p>
+</div>
+<div class="paragraph">
+<p>Filtering can leave children whose parent span was suppressed: discarding a JPA parent cannot retract an independently exported JDBC child.
+This option does not implement tail sampling or a per-request span budget.</p>
+</div>
+<div class="paragraph">
+<p>The agent-owned exporter does not consume Spring&#8217;s span-export predicates.
+Keep <code>duration-filtering-enabled=false</code> in agent mode; the tested behavior retains those spans rather than claiming they were suppressed.
+The setting controls Causeway&#8217;s JPA duration policy, not agent sampling or application-created observations.
+An explicitly discarded observation is still subject to the exporter&#8217;s filtering capabilities.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="observation-names-and-metadata-migration-causeway-4096"><a class="anchor" href="#observation-names-and-metadata-migration-causeway-4096"></a>Observation names and metadata migration (CAUSEWAY-4096)</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Micrometer&#8217;s operation name identifies an operation category and its meters.
+The contextual name is a separate, human-readable label used by the tracing handler for exported span names.
+For example, <code>causeway.jpa.persist</code> is the operation name and <code>Persist com.example.Customer</code> is its contextual/exported name.
+Static entity type, member identifier and declared query name can appear in contextual names and the attributes <code>causeway.entity.type</code>, <code>causeway.member.id</code> and <code>causeway.query.name</code>.
+Bookmarks, instance identifiers, titles, query descriptions and query arguments are excluded from these Causeway-generated fields.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Previous observation name</th>
+<th class="tableblock halign-left valign-top">Operation name</th>
+<th class="tableblock halign-left valign-top">Contextual/exported name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Fetch by Bookmark (&#8230;&#8203;)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>causeway.jpa.fetch-by-bookmark</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Fetch by Bookmark &lt;entity type&gt;</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Fetch all Instances (&#8230;&#8203;)</code> (all instances)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>causeway.jpa.fetch-all</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Fetch all Instances &lt;entity type&gt;</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Fetch all Instances (&#8230;&#8203;)</code> (named query)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>causeway.jpa.named-query</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Named Query &lt;entity type&gt; &lt;query name&gt;</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Persist (type=&#8230;&#8203;)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>causeway.jpa.persist</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Persist &lt;entity type&gt;</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Refresh (type=&#8230;&#8203;)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>causeway.jpa.refresh</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Refresh &lt;entity type&gt;</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Remove (type=&#8230;&#8203;)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>causeway.jpa.remove</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Remove &lt;entity type&gt;</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Detach (type=&#8230;&#8203;)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>causeway.jpa.detach</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Detach &lt;entity type&gt;</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Action Invocation (&#8230;&#8203;)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>causeway.member.action</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Action &lt;member identifier&gt;</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Property Update (&#8230;&#8203;)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>causeway.member.property-update</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Property Update &lt;member identifier&gt;</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Execution Publishing (subscribers=N)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>causeway.execution.publish</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Execution Publishing</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Update meter queries using the operation names and trace searches using contextual names or attributes.
+Legacy observations are not emitted alongside the replacements.
+Other existing fixed operation names are unchanged.
+Missing static member identifiers are omitted; runtime object data is never a fallback.
+Publishing counts are emitted as <code>causeway.execution.subscriber-count</code> high-cardinality data rather than a meter dimension or part of a name.</p>
+</div>
+<div class="paragraph">
+<p>Causeway no longer emits username and multitenancy token by default.
+Each can be enabled independently:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">causeway:
+  observation:
+    include-user-name: true
+    include-multi-tenancy-token: true</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>These options retain the existing <code>causeway.user.name</code> and <code>causeway.user.multiTenancyToken</code> attribute keys for nonempty values.
+High-cardinality attributes are still exported; the classification is not a redaction mechanism.
+Impersonation status and locale metadata remain available.
+These policies govern Causeway&#8217;s instrumentation, not metadata emitted by application observations, agents, JDBC instrumentation or collectors.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="validated-baseline-and-regression-fixture"><a class="anchor" href="#validated-baseline-and-regression-fixture"></a>Validated baseline and regression fixture</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The foundation fixture validates Boot 4.2.0-M1, Micrometer Observation 1.18.0-M1, Micrometer Tracing 1.8.0-M1, OpenTelemetry API/SDK 1.64.0, agent 2.31.1, Java 25.0.4 and Maven 3.9.13.
+These are the tested versions, not a requirement to override the application&#8217;s Causeway BOM.</p>
+</div>
+<div class="paragraph">
+<p>The child-process fixture uses production interaction and action services and the JPA facet with mocked non-telemetry collaborators, a local JDK HTTP server, H2, and a local OTLP receiver.
+Its JPA backend is controlled; agent mode instruments real H2 JDBC automatically, while Boot mode explicitly wraps the SQL call in a fixture observation.
+It proves agent HTTP/framework/JPA/JDBC ancestry, one framework span per invocation, a failure followed by a successful request on the same worker, Boot-managed export, duration filtering, inactive-profile behavior and operation without an agent/exporter.
+It does not prove every servlet container or viewer integration.</p>
+</div>
+<div class="paragraph">
+<p>From the repository root, after building the required main artifacts:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mvn -f regressiontests/tracing-compatibility/pom.xml test</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Fixture output is retained under <code>regressiontests/tracing-compatibility/target/fixture-*.log</code>.
+The fixture drains output while the child runs and enforces a two-minute process timeout.</p>
+</div>
+</div>
+</div>
+</article>
+<aside class="article-aside toc hide-for-print" role="navigation">
+    <p class="toc-title">On this page</p>
+    <div id="article-toc"></div>
+</aside>
+</main>
+</div>
+<footer class="footer">
+    <div class="content">
+        <div class="copyright">
+            <p>
+                Copyright © 2010~2024 The Apache Software Foundation, licensed under the Apache License, v2.0.
+                <br/>
+                Apache, the Apache feather logo, Apache Causeway, and the Apache Causeway project logo are all trademarks of The Apache Software Foundation.
+            </p>
+        </div>
+        <div class="revision">
+            <p>Revision: 4.0.0-M3-SNAPSHOT.20261006-0813-ab80f0f8</p>
+        </div>
+    </div>
+</footer>
+<script src="../../_/js/site.js"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+<script src="../../_/js/vendor/jquery-3.4.1.min.js"></script>
+<script src="../../_/js/vendor/jquery-ui-1.12.1.custom.widget-only.min.js"></script>
+<script src="../../_/js/vendor/jquery.tocify.min.js"></script>
+
+<script>
+    $(function() {
+        $("#article-toc").tocify( {
+            showEffect: "slideDown",
+            hashGenerator: "pretty",
+            hideEffect: "slideUp",
+            selectors: "h2, h3",
+            scrollTo: 120,
+            smoothScroll: true,
+            theme: "jqueryui",
+            highlightOnScroll: true
+        } );
+    });
+</script>
+
+<script src="../../_/js/vendor/docsearch.min.js"></script>
+<script>
+  function focusSearchInput () { document.querySelector('#algolia-search-input').focus() }
+  var search = docsearch({
+    appId: '5ISP5TFAEN',
+    apiKey: '0fc51c28b4ad46e7318e96d4e97fab7c',
+    indexName: 'causeway-apache-org',
+    inputSelector: '#algolia-search-input',
+    autocompleteOptions: { hint: false, keyboardShortcuts: ['s'] },
+    debug: false,
+  }).autocomplete
+  search.on('autocomplete:closed', function () { search.autocomplete.setVal() })
+  focusSearchInput()
+  window.addEventListener('load', focusSearchInput);
+</script>
+
+<!--
+  docsearch options:
+  https://docsearch.algolia.com/docs/behavior/
+-->
+<!--
+  https://www.algolia.com/doc/api-reference/api-parameters/
+  algoliaOptions: { hitsPerPage: 6 },
+-->
+  </body>
+</html>
